@@ -1,0 +1,320 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+         
+
+
+<responseDate>2008-11-10T15:55:29Z</responseDate>
+<request  verb="ListRecords" identifier="" resumptionToken="20060710164909;20081108030258;4500;apis:columbia;pi_dc" >http://wwwappdev.cc.columbia.edu/ldpd/app/apis/oai</request>
+
+<ListRecords>
+<record>
+<header><identifier>oai:papyri.info:identifiers:apis:michigan:1638</identifier><datestamp>2008-10-29T11:38:19Z</datestamp><setSpec>apis:michigan</setSpec></header>
+<metadata
+  xmlns:pi_dc="http://papyri.info/dc/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:dcmi="http://purl.org/dc/terms/"
+  xmlns:dctypes="http://purl.org/dc/dcmitype/"
+  xsi:schemaLocation="http://papyri.info/dc/
+                      ./pi_dc.xsd
+                      http://purl.org/dc/terms/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd
+                      http://purl.org/dc/dcmitype/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcmitype.xsd"
+>
+    <pi_dc:dc>
+
+  <dc:identifier>oai:papyri.info:identifiers:apis:michigan:1638</dc:identifier><dc:identifier>oai:papyri.info:identifiers:inventory:MiU:P.Mich.inv.%202811</dc:identifier>
+  <dc:language>grc-Grek</dc:language>
+  <dc:title>Receipt for Tax Payment in Kind, Vth century A.D.</dc:title>
+  <dc:format>1 papyrus ; 8 X 5 cm</dc:format>
+  <dc:description>Receipt of grain for land tax</dc:description>
+  <dc:date>start=400;end=499;scheme=W3C-DTF</dc:date>
+
+  <dc:subject>Unknown tax-collector</dc:subject><dc:subject>Asemis son of Ptolemaios</dc:subject><dc:subject>Karanis</dc:subject><dc:subject>Agriculture--Taxation--Egypt--Karanis (Extinct city)</dc:subject>
+  <dcmi:hasFormat xsi:type="pi_dc:Translations" xml:lang="en">http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=michigan.apis.1638</dcmi:hasFormat>
+  
+  <dcmi:hasFormat xsi:type="pi_dc:Transcriptions" xml:lang="grc">http://papyri.info/ddbdp/doc?identifier=oai:papyri.info:identifiers:ddbdp:0239:6:9436</dcmi:hasFormat>
+  
+  <dcmi:medium>Papyri</dcmi:medium>
+  <dcmi:references>Pearl OM, Aegyptus 33, 20, 1953 -- SB VI 9436h -- BL VIII, 349 (l. 4); BL X, 199 (date; l. 4) ; SB:6:9436</dcmi:references>
+
+  <dcmi:provenance>Karanis, Herakleidou meris, Arsinoite nome, province of Egypt ; Karanis, Herakleidou meris, Arsinoite nome, province of Egypt</dcmi:provenance>
+  <pi_dc:notes>6 ; Karanis, Herakleidou meris, Arsinoite nome, province of Egypt ; Location: Cairo ; P.Mich. inv. 2811b ; Pub. status: Recto ; Receipt canceled with double lines running diagonally across the writing surface, probably after having been used to compile a summary of the payments of the year.;For the date of this text (more or less contemporary to the archive of Ptollas's sons), see PMich VI, p. 101 and 108 (First half of IVth cent. AD, mainly for proposographical reasons); P.J. Sijpesteijn, ZPE 64 (1986) p. 118 (Beginning of Vth cent. AD, for palaeographical reasons); P.Sorb. II, p. 46 (also favoring a date in the Vth cent. A.D., for typological and palaeographical reasons). ; Source of description: A; Recto</pi_dc:notes>
+  <pi_dc:personalName>Unknown tax-collector</pi_dc:personalName><pi_dc:personalName>Asemis son of Ptolemaios</pi_dc:personalName>
+  
+  <pi_dc:xref>oai:papyri.info:identifiers:ddbdp:0239:6:9436</pi_dc:xref>
+  
+  <dc:description xsi:type="pi_dc:Translations" xsi:lang="en">Pachon 26, of grain of the ninth indiction, for the village of Karanis, through Asemis, son of Ptolemaios, five and one-half and one-third and one-twelfth artabai, 5 11/12 artabai, exclusive of the shipping charge.</dc:description>
+  
+  </pi_dc:dc>
+
+</metadata>
+</record>
+<record>
+<header><identifier>oai:papyri.info:identifiers:apis:columbia:p223</identifier><datestamp>2008-10-24T14:36:40Z</datestamp><setSpec>apis:columbia</setSpec></header>
+<metadata
+  xmlns:pi_dc="http://papyri.info/dc/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:dcmi="http://purl.org/dc/terms/"
+  xmlns:dctypes="http://purl.org/dc/dcmitype/"
+  xsi:schemaLocation="http://papyri.info/dc/
+                      ./pi_dc.xsd
+                      http://purl.org/dc/terms/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd
+                      http://purl.org/dc/dcmitype/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcmitype.xsd"
+>
+    <pi_dc:dc>
+  <dc:identifier>oai:papyri.info:identifiers:apis:columbia:p223</dc:identifier><dc:identifier>oai:papyri.info:identifiers:inventory:NNC:Col.inv.%20181%20(38)</dc:identifier>
+
+  <dc:language>grc-Grek</dc:language>
+  <dc:title>Will 320 AD</dc:title>
+  <dc:format>5papyrus fragments ; 48 x 27 cm</dc:format>
+  <dc:description>Will of Valerius Aion who was stricken with a serious illness; his wife, daugther, and his 5 brothers and sisters are his heirs; the centurion Apion is the executor and 7 more centurions are witnesses; all Aion</dc:description>
+  <dc:date>320</dc:date>
+  <dc:subject>Aurelius Hatres, -- son of Atision and Timarete</dc:subject><dc:subject>Aurelius Heras, -- son of Atision and Timarete</dc:subject><dc:subject>Valerius Aion, centurion, son of Atisios and Timarete</dc:subject><dc:subject>Aurelia Senpachoumis, -- wife of Valerius Aion</dc:subject><dc:subject>Aurelia Thaesis, -- daughter of Atision and Timarete</dc:subject><dc:subject>Aurelia Herois, -- daughter of Atision and Timarete</dc:subject><dc:subject>Hellenistic law; Roman law</dc:subject><dc:subject>Aurelius Abouthios, -- son of Atision and Timarete</dc:subject>
+
+  <dcmi:hasFormat xsi:type="pi_dc:Translations" xml:lang="en">http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p223</dcmi:hasFormat>
+  
+  <dcmi:hasFormat xsi:type="pi_dc:Transcriptions" xml:lang="grc">http://papyri.info/ddbdp/doc?identifier=oai:papyri.info:identifiers:ddbdp:0094:7:188</dcmi:hasFormat>
+  
+  <dcmi:medium>Papyri</dcmi:medium>
+  <dcmi:references>P.Col. VII 188 ; Plate, P.Col. VII, Microfiche 2; published by Lewis, Akten des XIII.Int.Congr. pp. 225-33, SB XII 11042; a copy of the same text published by Bagnall and Worp, CdE 59 (1984) 307-309 corrections to lines 5, 10, 11, and 25 (SB XX 14379); reprinted by Migliardi Zingale, "I testamenti romani" no. 28. BL X p. 41, correction in line 18. ; P.Col.:7:188</dcmi:references>
+  <dcmi:provenance>Belonging to the Karanis Archives of the early Byzantine period ; Purchased by Columbia University from Mr. Blanchard through H.I. Bell, in 1924; no. 38 in Bell</dcmi:provenance>
+  <pi_dc:notes>31 lines of writing by a proficient hand, which is very regular and upright ; Papyrus in very poor condition; only the right third is well preserved; 2 of the small fragments have not been placed yet ; Written along the fibers; the back is blank</pi_dc:notes>
+
+  <pi_dc:personalName>Valerius Aion, centurion, son of Atisios and Timarete</pi_dc:personalName>
+  
+  <pi_dc:xref>oai:papyri.info:identifiers:ddbdp:0094:7:188</pi_dc:xref>
+  
+  <pi_dc:hasImage>
+    <dc:description> medium-sized image of front tile: 1-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=150&amp;face=f&amp;tile=1-0 </dc:source>
+
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> large-sized image of front tile: 0-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=300&amp;face=f&amp;tile=0-0 </dc:source>
+  </pi_dc:hasImage>
+
+  <pi_dc:hasImage>
+    <dc:description> thumbnail-sized image of front tile: 0-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=12&amp;face=f&amp;tile=0-0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+
+    <dc:description> thumbnail-sized image of front tile: 2-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=12&amp;face=f&amp;tile=2-1 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> large-sized image of front tile: 1-0 </dc:description>
+
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=300&amp;face=f&amp;tile=1-0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> small-sized image of front tile: 0-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=75&amp;face=f&amp;tile=0-0 </dc:source>
+
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> small-sized image of front tile: 2-1</dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=75&amp;face=f&amp;tile=2-1 </dc:source>
+  </pi_dc:hasImage>
+
+  <pi_dc:hasImage>
+    <dc:description> large-sized image of front tile: 1-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=300&amp;face=f&amp;tile=1-1 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+
+    <dc:description> medium-sized image of front tile: 2-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=150&amp;face=f&amp;tile=2-0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> thumbnail-sized image of front tile: 1-1 </dc:description>
+
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=12&amp;face=f&amp;tile=1-1 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> thumbnail-sized image of front tile: 0-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=12&amp;face=f&amp;tile=0-1 </dc:source>
+
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> small-sized image of front tile: 1-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=75&amp;face=f&amp;tile=1-0 </dc:source>
+  </pi_dc:hasImage>
+
+  <pi_dc:hasImage>
+    <dc:description> medium-sized image of front tile: 2-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=150&amp;face=f&amp;tile=2-1 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+
+    <dc:description> small-sized image of front tile: 0-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=75&amp;face=f&amp;tile=0-1 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> large-sized image of front tile: 2-1 </dc:description>
+
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=300&amp;face=f&amp;tile=2-1 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> large-sized image of front tile: 0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=300&amp;face=f&amp;tile=0 </dc:source>
+
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> medium-sized image of front tile: 0-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=150&amp;face=f&amp;tile=0-0 </dc:source>
+  </pi_dc:hasImage>
+
+  <pi_dc:hasImage>
+    <dc:description> thumbnail-sized image of front tile: 0 </dc:description>
+    <dc:source>http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=12&amp;face=f&amp;tile=0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> small-sized image of front tile: 1-1 </dc:description>
+
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=75&amp;face=f&amp;tile=1-1 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> large-sized image of front tile: 0-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=300&amp;face=f&amp;tile=0-1 </dc:source>
+
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> large-sized image of front tile: 2-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=300&amp;face=f&amp;tile=2-0 </dc:source>
+  </pi_dc:hasImage>
+
+  <pi_dc:hasImage>
+    <dc:description> small-sized image of front tile: 2-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=75&amp;face=f&amp;tile=2-0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+
+    <dc:description> thumbnail-sized image of front tile: 1-0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=12&amp;face=f&amp;tile=1-0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> thumbnail-sized image of front tile: 2-0 </dc:description>
+
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=12&amp;face=f&amp;tile=2-0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> medium-sized image of front tile: 1-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=150&amp;face=f&amp;tile=1-1 </dc:source>
+
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+    <dc:description> small-sized image of front tile: 0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=75&amp;face=f&amp;tile=0 </dc:source>
+  </pi_dc:hasImage>
+
+  <pi_dc:hasImage>
+    <dc:description> medium-sized image of front tile: 0 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=150&amp;face=f&amp;tile=0 </dc:source>
+  </pi_dc:hasImage>
+  <pi_dc:hasImage>
+
+    <dc:description> medium-sized image of front tile: 0-1 </dc:description>
+    <dc:source> http://www.columbia.edu/cgi-bin/dlo?obj=columbia.apis.p223&amp;size=150&amp;face=f&amp;tile=0-1 </dc:source>
+  </pi_dc:hasImage>
+  <dc:description xsi:type="pi_dc:Translations" xsi:lang="en">In the consulate of our masters Constantinus Augustus for the 6th time and Constantinus the most illustrious Caesar for the I st time, Phamenoth 18.</dc:description>
+  
+  </pi_dc:dc>
+
+</metadata>
+</record>
+<record>
+<header><identifier>oai:papyri.info:identifiers:apis:berenike:254</identifier><datestamp>2007-09-27T12:07:22Z</datestamp><setSpec>apis:berenike</setSpec></header>
+<metadata
+  xmlns:pi_dc="http://papyri.info/dc/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:dcmi="http://purl.org/dc/terms/"
+  xmlns:dctypes="http://purl.org/dc/dcmitype/"
+  xsi:schemaLocation="http://papyri.info/dc/
+                      ./pi_dc.xsd
+                      http://purl.org/dc/terms/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd
+                      http://purl.org/dc/dcmitype/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcmitype.xsd"
+>
+    <pi_dc:dc>
+
+  <dc:identifier>oai:papyri.info:identifiers:apis:berenike:254</dc:identifier>
+  <dc:language>sem</dc:language>
+  <dc:title>Uncertain Text, A.D. 50 - 75</dc:title>
+  <dc:format>1 ostrakon.  6.6 x 5.8 cm.  Broken at right.</dc:format>
+  <dc:description>Uncertain text.</dc:description>
+  <dc:date>start=50;end=75;scheme=W3C-DTF</dc:date>
+
+  
+  
+  
+  <dcmi:hasFormat xsi:type="pi_dc:Transcriptions" xml:lang="grc">http://papyri.info/ddbdp/doc?identifier=oai:papyri.info:identifiers:ddbdp:0250:2:255</dcmi:hasFormat>
+  
+  
+  <dcmi:references>O.Ber. II 254 ; O.Berenike:2:255</dcmi:references>
+  <dcmi:provenance>This document was discovered in a Roman dump at Berenike. ; This ostracon is currently stored in a magazine of the Supreme Council of Antiquities in Quft.</dcmi:provenance>
+  <pi_dc:notes>Dating based on archaeological context. ; Perhaps pen trials, perhaps not all in the same semitic script.  Perhaps contains examples of Palmyrene cursive and an ancestor of Arabic. ; This document was discovered in a Roman dump at Berenike.</pi_dc:notes>
+  
+  
+  <pi_dc:xref>oai:papyri.info:identifiers:ddbdp:0250:2:255</pi_dc:xref>
+  
+  
+  </pi_dc:dc>
+
+</metadata>
+</record>
+<record>
+<header><identifier>oai:papyri.info:identifiers:apis:berenike:255</identifier><datestamp>2007-09-27T12:07:22Z</datestamp><setSpec>apis:berenike</setSpec></header>
+<metadata
+  xmlns:pi_dc="http://papyri.info/dc/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:dcmi="http://purl.org/dc/terms/"
+  xmlns:dctypes="http://purl.org/dc/dcmitype/"
+  xsi:schemaLocation="http://papyri.info/dc/
+                      ./pi_dc.xsd
+                      http://purl.org/dc/terms/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd
+                      http://purl.org/dc/dcmitype/
+                      http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcmitype.xsd"
+>
+    <pi_dc:dc>
+
+  <dc:identifier>oai:papyri.info:identifiers:apis:berenike:255</dc:identifier>
+  <dc:language>sem</dc:language>
+  <dc:title>Uncertain text, A.D. 50 - 75</dc:title>
+  <dc:format>2 ostraka.  8.5 x 6.0 and 9.0 x 6.7 cm.</dc:format>
+  <dc:description>Uncertain text</dc:description>
+  <dc:date>start=50;end=75;scheme=W3C-DTF</dc:date>
+
+  
+  
+  
+  <dcmi:hasFormat xsi:type="pi_dc:Transcriptions" xml:lang="grc">http://papyri.info/ddbdp/doc?identifier=oai:papyri.info:identifiers:ddbdp:0250:2:255</dcmi:hasFormat>
+  
+  
+  <dcmi:references>O.Ber. II 255 ; O.Berenike:2:255</dcmi:references>
+  <dcmi:provenance>This document was discovered in a Roman dump at Berenike. ; This ostracon is currently stored in a magazine of the Supreme Council of Antiquities in Quft.</dcmi:provenance>
+  <pi_dc:notes>Dating based on archaeological context. ; Possibly a cursive Aramaic related to Nabataean and Palmyrene Cursive and Old Syrian Cursive, cf. O.Ber. II 256 and 257. ; This document was discovered in a Roman dump at Berenike.</pi_dc:notes>
+  
+  
+  <pi_dc:xref>oai:papyri.info:identifiers:ddbdp:0250:2:255</pi_dc:xref>
+  
+  
+  </pi_dc:dc>
+
+</metadata>
+</record>
+</ListRecords>
+</OAI-PMH>
+

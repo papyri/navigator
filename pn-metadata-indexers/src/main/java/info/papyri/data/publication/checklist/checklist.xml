@@ -1,0 +1,3445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modsCollection 
+    xmlns="http://www.loc.gov/mods/v3"
+    xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd"
+>
+	<mods version="3.0" ID="ddbdp-0001">
+		<identifier type="perseus">1999.05.0001</identifier>
+		<titleInfo>
+			<title>Aegyptische Urkunden aus den Königlichen (later Staatlichen) Museen zu Berlin</title>
+			<subTitle>Griechische Urkunden</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>BGU</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0002">
+		<identifier type="perseus">1999.05.0002</identifier>
+		<titleInfo>
+			<title>Corpus Epistolarum Latinarum</title>
+			<subTitle>papyris tabulis ostracis servatarum</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Epist.Lat.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>CEL</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0003">
+		<identifier type="perseus">1999.05.0003</identifier>
+		<titleInfo>
+			<title>Corpus des étiquettes de momies grecques</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Étiq.Mom.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>CEMG</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0004">
+		<identifier type="perseus">1999.05.0004</identifier>
+		<titleInfo>
+			<title>Illuminierte Papyri, Pergamente und Papiere I</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Illum.Pap.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0005">
+		<identifier type="perseus">1999.05.0005</identifier>
+		<titleInfo>
+			<title>The Judaean-Syrian-Egyptian Conflict of 103—101 B.C.</title>
+			<subTitle>A Multilingual Dossier Concerning a "War of Sceptres"</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Jud.Syr.Eg.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0006">
+		<identifier type="perseus">1999.05.0006</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Pap.Gr.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>CPGr</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>CP.Gr</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0007">
+		<identifier type="perseus">1999.05.0007</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Chrest.Mitt.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>M.Chr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0008">
+		<identifier type="perseus">1999.05.0008</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Chrest.Wilck.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>W.Chr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0009">
+		<identifier type="perseus">1999.05.0009</identifier>
+		<titleInfo type="uniform"><title>Corpus Papyrorum Raineri</title></titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>CPR</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0010">
+		<identifier type="perseus">1999.05.0010</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Amst.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0011">
+		<identifier type="perseus">1999.05.0011</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Ashm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0012">
+		<identifier type="perseus">1999.05.0012</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Ashm.Shelt.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Ashm.Shelton</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0013">
+		<identifier type="perseus">1999.05.0013</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Berl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0014">
+		<identifier type="perseus">1999.05.0014</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Bodl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0015">
+		<identifier type="perseus">1999.05.0015</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Brux.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0016">
+		<identifier type="perseus">1999.05.0016</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Bu Njem</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0017">
+		<identifier type="perseus">1999.05.0017</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Buch.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0018">
+		<identifier type="perseus">1999.05.0018</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Cair.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0019">
+		<identifier type="perseus">1999.05.0019</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Camb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0020">
+		<identifier type="perseus">1999.05.0020</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Claud.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0021">
+		<identifier type="perseus">1999.05.0021</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Deiss.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Meyer</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0022">
+		<identifier type="perseus">1999.05.0022</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Douch</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0023">
+		<identifier type="perseus">1999.05.0023</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Edfou</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0024">
+		<identifier type="perseus">1999.05.0024</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Elkab</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0025">
+		<identifier type="perseus">1999.05.0025</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Erem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0026">
+		<identifier type="perseus">1999.05.0026</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Fay.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0027">
+		<identifier type="perseus">1999.05.0027</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Florida</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0028">
+		<identifier type="perseus">1999.05.0028</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Joach.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Joachim</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0029">
+		<identifier type="perseus">1999.05.0029</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Leid.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0030">
+		<identifier type="perseus">1999.05.0030</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Lund.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0031">
+		<identifier type="perseus">1999.05.0031</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Masada</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0032">
+		<identifier type="perseus">1999.05.0032</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Medin.Madi</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Medin.Madi</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0033">
+		<identifier type="perseus">1999.05.0033</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Mich.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0034">
+		<identifier type="perseus">1999.05.0034</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Minor</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0035">
+		<identifier type="perseus">1999.05.0035</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Narm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0036">
+		<identifier type="perseus">1999.05.0036</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Oasis</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0037">
+		<identifier type="perseus">1999.05.0037</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Ont.Mus.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.ROM</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0038">
+		<identifier type="perseus">1999.05.0038</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Oslo</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0039">
+		<identifier type="perseus">1999.05.0039</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Paris</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Par.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0040">
+		<identifier type="perseus">1999.05.0040</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Petr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0041">
+		<identifier type="perseus">1999.05.0041</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Sarga</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Sarga</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0042">
+		<identifier type="perseus">1999.05.0042</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Stras.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Strasb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0043">
+		<identifier type="perseus">1999.05.0043</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Tebt.Pad.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0044">
+		<identifier type="perseus">1999.05.0044</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Tebt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0045">
+		<identifier type="perseus">1999.05.0045</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Theb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0046">
+		<identifier type="perseus">1999.05.0046</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Vleem.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Varia</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0047">
+		<identifier type="perseus">1999.05.0047</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Wadi Hamm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0048">
+		<identifier type="perseus">1999.05.0048</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Waqfa</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0049">
+		<identifier type="perseus">1999.05.0049</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Wilb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0050">
+		<identifier type="perseus">1999.05.0050</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Wilck.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0051">
+		<identifier type="perseus">1999.05.0051</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Aberd.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0052">
+		<identifier type="perseus">1999.05.0052</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Abinn.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0053">
+		<identifier type="perseus">1999.05.0053</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Achm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0054">
+		<identifier type="perseus">1999.05.0054</identifier>
+		<titleInfo>
+			<title>The Adler Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Adl.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Adler</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0055">
+		<identifier type="perseus">1999.05.0055</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Alex.Giss.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0056">
+		<identifier type="perseus">1999.05.0056</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Alex.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0057">
+		<identifier type="perseus">1999.05.0057</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Amh.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0058">
+		<identifier type="perseus">1999.05.0058</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Amst.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0059">
+		<identifier type="perseus">1999.05.0059</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Anag.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0060">
+		<identifier type="perseus">1999.05.0060</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ant.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0061">
+		<identifier type="perseus">1999.05.0061</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Apoll.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0062">
+		<identifier type="perseus">1999.05.0062</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ashm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0063">
+		<identifier type="perseus">1999.05.0063</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Athen.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0064">
+		<identifier type="perseus">1999.05.0064</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Athen.Xyla</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Sta.Xyla</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0065">
+		<identifier type="perseus">1999.05.0065</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Aust.Herr.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Trophitis</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0066">
+		<identifier type="perseus">1999.05.0066</identifier>
+		<titleInfo>
+			<title>
+				The Documents from the Bar Kochba Period in the Cave of
+				Letters
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Babatha</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Yadin</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0067">
+		<identifier type="perseus">1999.05.0067</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bacch.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0068">
+		<identifier type="perseus">1999.05.0068</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bad.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>VBP</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0069">
+		<identifier type="perseus">1999.05.0069</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bal.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0070">
+		<identifier type="perseus">1999.05.0070</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bas.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0071">
+		<identifier type="perseus">1999.05.0071</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Batav.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0072">
+		<identifier type="perseus">1999.05.0072</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Bibl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0073">
+		<identifier type="perseus">1999.05.0073</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Bork.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0074">
+		<identifier type="perseus">1999.05.0074</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Brash.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0075">
+		<identifier type="perseus">1999.05.0075</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Frisk</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0076">
+		<identifier type="perseus">1999.05.0076</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Leihg.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0077">
+		<identifier type="perseus">1999.05.0077</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Möller</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0078">
+		<identifier type="perseus">1999.05.0078</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Sarisch.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0079">
+		<identifier type="perseus">1999.05.0079</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Thun.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0080">
+		<identifier type="perseus">1999.05.0080</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Zill.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0081">
+		<identifier type="perseus">1999.05.0081</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bon.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0082">
+		<identifier type="perseus">1999.05.0082</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bour.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0083">
+		<identifier type="perseus">1999.05.0083</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0084">
+		<identifier type="perseus">1999.05.0084</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brookl.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Brook.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0085">
+		<identifier type="perseus">1999.05.0085</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brux.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0086">
+		<identifier type="perseus">1999.05.0086</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bub.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0087">
+		<identifier type="perseus">1999.05.0087</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Cair.Goodsp.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Cair. Goodspeed</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0088">
+		<identifier type="perseus">1999.05.0088</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Cair.Isid.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0089">
+		<identifier type="perseus">1999.05.0089</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Cair.Masp.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0090">
+		<identifier type="perseus">1999.05.0090</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Cair.Mich.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0091">
+		<identifier type="perseus">1999.05.0091</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Cair.Preis.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0092">
+		<identifier type="perseus">1999.05.0092</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Cair.Zen.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0093">
+		<identifier type="perseus">1999.05.0093</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Charite</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0094">
+		<identifier type="perseus">1999.05.0094</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Col.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0095">
+		<identifier type="perseus">1999.05.0095</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Col.Teeter</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0096">
+		<identifier type="perseus">1999.05.0096</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Coll.Youtie</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0097">
+		<identifier type="perseus">1999.05.0097</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Corn.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Cornell</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0098">
+		<identifier type="perseus">1999.05.0098</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Customs</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0099">
+		<identifier type="perseus">1999.05.0099</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.David</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0100">
+		<identifier type="perseus">1999.05.0100</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Diog.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0101">
+		<identifier type="perseus">1999.05.0101</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Dion.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0102">
+		<identifier type="perseus">1999.05.0102</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Dubl.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Dub.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0103">
+		<identifier type="perseus">1999.05.0103</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Dura</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0104">
+		<identifier type="perseus">1999.05.0104</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Edfou</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0105">
+		<identifier type="perseus">1999.05.0105</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Eleph.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0106">
+		<identifier type="perseus">1999.05.0106</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Enteux.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0107">
+		<identifier type="perseus">1999.05.0107</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Erasm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0108">
+		<identifier type="perseus">1999.05.0108</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Erl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0109">
+		<identifier type="perseus">1999.05.0109</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Fam.Tebt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0110">
+		<identifier type="perseus">1999.05.0110</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Fay.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0111">
+		<identifier type="perseus">1999.05.0111</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Flor.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0112">
+		<identifier type="perseus">1999.05.0112</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Fouad</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0113">
+		<identifier type="perseus">1999.05.0113</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Frankf.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0114">
+		<identifier type="perseus">1999.05.0114</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Freer</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0115">
+		<identifier type="perseus">1999.05.0115</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Freib.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0116">
+		<identifier type="perseus">1999.05.0116</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Fuad I Univ.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.FuadUniv.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0117">
+		<identifier type="perseus">1999.05.0117</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Gen.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0118">
+		<identifier type="perseus">1999.05.0118</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Genova</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>PUG</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0119">
+		<identifier type="perseus">1999.05.0119</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Giss.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0120">
+		<identifier type="perseus">1999.05.0120</identifier>
+		<titleInfo>
+			<title>
+				Mitteilungen aus der Papyrussammlung der Giessener
+				Universitätsbibliothek
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Giss.Univ.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Giss.Bibl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0121">
+		<identifier type="perseus">1999.05.0121</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Got.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0122">
+		<identifier type="perseus">1999.05.0122</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Grad.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0123">
+		<identifier type="perseus">1999.05.0123</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Graux</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0124">
+		<identifier type="perseus">1999.05.0124</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Grenf.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0125">
+		<identifier type="perseus">1999.05.0125</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Gron.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0126">
+		<identifier type="perseus">1999.05.0126</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Gur.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Gurob.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0127">
+		<identifier type="perseus">1999.05.0127</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hal.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0128">
+		<identifier type="perseus">1999.05.0128</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hamb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0129">
+		<identifier type="perseus">1999.05.0129</identifier>
+		<titleInfo>
+			<title>
+				The Rendel Harris Papyri of Woodbrooke College
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Harr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0130">
+		<identifier type="perseus">1999.05.0130</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Haun.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0131">
+		<identifier type="perseus">1999.05.0131</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Heid.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0132">
+		<identifier type="perseus">1999.05.0132</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hels.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0133">
+		<identifier type="perseus">1999.05.0133</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Herm.Landl.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Landl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0134">
+		<identifier type="perseus">1999.05.0134</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Herm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0135">
+		<identifier type="perseus">1999.05.0135</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hib.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0136">
+		<identifier type="perseus">1999.05.0136</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hombert</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0137">
+		<identifier type="perseus">1999.05.0137</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Iand.inv. 653</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0138">
+		<identifier type="perseus">1999.05.0138</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Iand.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0139">
+		<identifier type="perseus">1999.05.0139</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.IFAO</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0140">
+		<identifier type="perseus">1999.05.0140</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ital.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0141">
+		<identifier type="perseus">1999.05.0141</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Jena</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0142">
+		<identifier type="perseus">1999.05.0142</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Kar.Goodsp.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0143">
+		<identifier type="perseus">1999.05.0143</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Kell.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Kellis</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0144">
+		<identifier type="perseus">1999.05.0144</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Köln</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0145">
+		<identifier type="perseus">1999.05.0145</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Kroll</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Kroll.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0146">
+		<identifier type="perseus">1999.05.0146</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Kron.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0147">
+		<identifier type="perseus">1999.05.0147</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Laur.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0148">
+		<identifier type="perseus">1999.05.0148</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Leeds Mus.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Leeds Museum</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0149">
+		<identifier type="perseus">1999.05.0149</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Leid.Inst.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0150">
+		<identifier type="perseus">1999.05.0150</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Leipz.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0151">
+		<identifier type="perseus">1999.05.0151</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Leit.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0152">
+		<identifier type="perseus">1999.05.0152</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lille</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0153">
+		<identifier type="perseus">1999.05.0153</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lips.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0154">
+		<identifier type="perseus">1999.05.0154</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lond.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0155">
+		<identifier type="perseus">1999.05.0155</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lund</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0156">
+		<identifier type="perseus">1999.05.0156</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Marm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0157">
+		<identifier type="perseus">1999.05.0157</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Masada</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0158">
+		<identifier type="perseus">1999.05.0158</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Matr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0159">
+		<identifier type="perseus">1999.05.0159</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mert.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Merton</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0160">
+		<identifier type="perseus">1999.05.0160</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Meyer</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0161">
+		<identifier type="perseus">1999.05.0161</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mich.Aphrod.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0162">
+		<identifier type="perseus">1999.05.0162</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mich.Mchl</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0163">
+		<identifier type="perseus">1999.05.0163</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mich.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0164">
+		<identifier type="perseus">1999.05.0164</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Michael.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0165">
+		<identifier type="perseus">1999.05.0165</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mil.Congr.XIV</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0166">
+		<identifier type="perseus">1999.05.0166</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mil.Congr.XIX</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0167">
+		<identifier type="perseus">1999.05.0167</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mil.Congr.XVII</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0168">
+		<identifier type="perseus">1999.05.0168</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mil.Congr.XVIII</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0169">
+		<identifier type="perseus">1999.05.0169</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mil.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Med.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0170">
+		<identifier type="perseus">1999.05.0170</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mil.Vogl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0171">
+		<identifier type="perseus">1999.05.0171</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Münch.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Monac.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0172">
+		<identifier type="perseus">1999.05.0172</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Murabba'ât</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Mur.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0173">
+		<identifier type="perseus">1999.05.0173</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Nag Hamm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0174">
+		<identifier type="perseus">1999.05.0174</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Neph.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Nepheros</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0175">
+		<identifier type="perseus">1999.05.0175</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ness.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Nessana</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0176">
+		<identifier type="perseus">1999.05.0176</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.NYU</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0177">
+		<identifier type="perseus">1999.05.0177</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Oslo</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0178">
+		<identifier type="perseus">1999.05.0178</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Oxf.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0179">
+		<identifier type="perseus">1999.05.0179</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Oxy.Descr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0180">
+		<identifier type="perseus">1999.05.0180</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Oxy.Hels.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0181">
+		<identifier type="perseus">1999.05.0181</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Oxy.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0182">
+		<identifier type="perseus">1999.05.0182</identifier>
+		<titleInfo>
+			<title>
+				Papyri from Panopolis in the Chester Beatty Library	Dublin
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Panop.Beatty</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0183">
+		<identifier type="perseus">1999.05.0183</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Panop.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0184">
+		<identifier type="perseus">1999.05.0184</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Paris</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0185">
+		<identifier type="perseus">1999.05.0185</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Petaus</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0186">
+		<identifier type="perseus">1999.05.0186</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Petr.2</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Petr(2)</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0187">
+		<identifier type="perseus">1999.05.0187</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Petr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0188">
+		<identifier type="perseus">1999.05.0188</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Phil.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0189">
+		<identifier type="perseus">1999.05.0189</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Prag.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0190">
+		<identifier type="perseus">1999.05.0190</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Prag.Varcl</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0191">
+		<identifier type="perseus">1999.05.0191</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Princ.Roll</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0192">
+		<identifier type="perseus">1999.05.0192</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Princ.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0193">
+		<identifier type="perseus">1999.05.0193</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Quseir</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0194">
+		<identifier type="perseus">1999.05.0194</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Rain.Cent.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Rainer Cent.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0195">
+		<identifier type="perseus">1999.05.0195</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Rein.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0196">
+		<identifier type="perseus">1999.05.0196</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Rev.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0197">
+		<identifier type="perseus">1999.05.0197</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ross.Georg.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0198">
+		<identifier type="perseus">1999.05.0198</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ryl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0199">
+		<identifier type="perseus">1999.05.0199</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Sakaon</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0200">
+		<identifier type="perseus">1999.05.0200</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Sarap.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0201">
+		<identifier type="perseus">1999.05.0201</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Sel.Warga</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0202">
+		<identifier type="perseus">1999.05.0202</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Select.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0203">
+		<identifier type="perseus">1999.05.0203</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Sorb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0204">
+		<identifier type="perseus">1999.05.0204</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Soter.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Soterichos</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0205">
+		<identifier type="perseus">1999.05.0205</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Stras.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Strasb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0206">
+		<identifier type="perseus">1999.05.0206</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tebt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0207">
+		<identifier type="perseus">1999.05.0207</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tebt.Tait</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0208">
+		<identifier type="perseus">1999.05.0208</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tebt.Wall</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0209">
+		<identifier type="perseus">1999.05.0209</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Theon.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0210">
+		<identifier type="perseus">1999.05.0210</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Thmouis</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0211">
+		<identifier type="perseus">1999.05.0211</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tor.Amen.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Tor.Amenothes</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0212">
+		<identifier type="perseus">1999.05.0212</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tor.Choach.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0213">
+		<identifier type="perseus">1999.05.0213</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tor.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0214">
+		<identifier type="perseus">1999.05.0214</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Turner</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0215">
+		<identifier type="perseus">1999.05.0215</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ups.Frid</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0216">
+		<identifier type="perseus">1999.05.0216</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vars.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0217">
+		<identifier type="perseus">1999.05.0217</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vat.Aphrod.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vatic.Aphrod.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0218">
+		<identifier type="perseus">1999.05.0218</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vind.Bosw.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob.Bosw.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob. Bosw.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0219">
+		<identifier type="perseus">1999.05.0219</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vind.Pher.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob.Pher.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0220">
+		<identifier type="perseus">1999.05.0220</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vind.Sal.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob.Sal.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0221">
+		<identifier type="perseus">1999.05.0221</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vind.Sijp.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob.Sijp.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0222">
+		<identifier type="perseus">1999.05.0222</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vind.Tand.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob.Tand.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0223">
+		<identifier type="perseus">1999.05.0223</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Vind.Worp</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob.Worp.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0224">
+		<identifier type="perseus">1999.05.0224</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Warr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0225">
+		<identifier type="perseus">1999.05.0225</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Wash.Univ.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0226">
+		<identifier type="perseus">1999.05.0226</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Wisc.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0227">
+		<identifier type="perseus">1999.05.0227</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Würzb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0228">
+		<identifier type="perseus">1999.05.0228</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Yale</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0229">
+		<identifier type="perseus">1999.05.0229</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Zen.Pestm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0230">
+		<identifier type="perseus">1999.05.0230</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Pap.Agon.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0231">
+		<identifier type="perseus">1999.05.0231</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Pap.Biling.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0232">
+		<identifier type="perseus">1999.05.0232</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Pap.Choix</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Choix</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0233">
+		<identifier type="perseus">1999.05.0233</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Congr.XI</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Omaggio</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0234">
+		<identifier type="perseus">1999.05.0234</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Congr.XVII</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0235">
+		<identifier type="perseus">1999.05.0235</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Congr.XX</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0236">
+		<identifier type="perseus">1999.05.0236</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Congr.XXI</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0237">
+		<identifier type="perseus">1999.05.0237</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Corr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0238">
+		<identifier type="perseus">1999.05.0238</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0239">
+		<identifier type="perseus">1999.05.0239</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>SB</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0240">
+		<identifier type="perseus">1999.05.0240</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Stud.Pal.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>SPP</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0241">
+		<identifier type="perseus">1999.05.0241</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Alb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0242">
+		<identifier type="perseus">1999.05.0242</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Mom.Louvre</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0243">
+		<identifier type="perseus">1999.05.0243</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Varie</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0244">
+		<identifier type="perseus">1999.05.0244</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Vindol.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0245">
+		<identifier type="perseus">1999.05.0245</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>UPZ</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0246">
+		<identifier type="perseus">1999.05.0246</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bodl.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0247">
+		<identifier type="perseus">1999.05.0247</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hever</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0248">
+		<identifier type="perseus">1999.05.0248</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Naqlun</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0249">
+		<identifier type="perseus">1999.05.0249</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Pommersf.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0250">
+		<identifier type="perseus">1999.05.0250</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Berenike</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Ber.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0251">
+		<identifier type="perseus">1999.05.0251</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ammon</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0252">
+		<identifier type="perseus">1999.05.0252</identifier>
+		<titleInfo>
+			<title>Greek Papyri in the Benaki Museum</title>
+			<subTitle>
+				from the Collections of the Historical Archive
+			</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Benaki</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Ben. Mus.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0253">
+		<identifier type="perseus">1999.05.0253</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Salmen.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Berl.Salm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0254">
+		<identifier type="perseus">1999.05.0254</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bingen</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0255">
+		<identifier type="perseus">1999.05.0255</identifier>
+		<titleInfo>
+			<title>
+				Wiener Papyri als Festgabe zum 60. Geburtstag von
+				Hermann Harrauer
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Harrauer</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0256">
+		<identifier type="perseus">1999.05.0256</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Petra</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0257">
+		<identifier type="perseus">1999.05.0257</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Polit.Iud.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Polit.Jud.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0258">
+		<identifier type="perseus">1999.05.0258</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Thomas</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0259">
+		<identifier type="perseus">1999.05.0259</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Eirene</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Vindob.Eirene</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0260">
+		<identifier type="perseus">1999.05.0260</identifier>
+		<titleInfo>
+			<title>Oriental Institute Hawara Papyri</title>
+			<subTitle>
+				Demotic and Greek Texts from an Egyptian Family Archive
+				in the Fayum (Fourth to Third Century B.C.)
+			</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Chic.Haw.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.dem.Chic.Haw.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.dem. Chic. Haw.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0261">
+		<identifier type="perseus">1999.05.0261</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Dion.Herm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0262">
+		<identifier type="perseus">1999.05.0262</identifier>
+		<titleInfo>
+			<title>Elephantine XIII</title>
+			<subTitle>
+				Les papyrus et les ostraca grecs d'Elephantine
+			</subTitle>
+		</titleInfo>
+		<titleInfo>
+			<title type="abbreviated" xlink:role="checklist">
+				P.Eleph.Wagner
+			</title>
+		</titleInfo>
+		<titleInfo>
+			<title type="abbreviated">O.Eleph.Wagner</title>
+		</titleInfo>
+		<titleInfo>
+			<title type="abbreviated">P.Eleph.DAIK</title>
+		</titleInfo>
+		<titleInfo>
+			<title type="abbreviated">O.Eleph.DAIK</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0263">
+		<identifier type="perseus">1999.05.0263</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Louvre</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0264">
+		<identifier type="perseus">1999.05.0264</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mon.Apollo</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0265">
+		<identifier type="perseus">1999.05.0265</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.PalauRib</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Palau Rib</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0266">
+		<identifier type="perseus">1999.05.0266</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Gen.2</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0267">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Diosk.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Phrur.Diosk.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0268">
+		<!-- not in checklist? -->
+		<identifier type="perseus">1999.05.0268</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Jud.Des.Misc.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0269">
+		<identifier type="perseus">1999.05.0269</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Erl.Diosp.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0270">
+		<identifier type="perseus">1999.05.0270</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Dryton</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0271">
+		<identifier type="perseus">1999.05.0271</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Kellis</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Kell.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0272">
+		<identifier type="perseus">1999.05.0272</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Giss.Apoll.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0273">
+		<identifier type="perseus">1999.05.0273</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.BawitIFAO</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Bawit IFAO</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0274">
+		<identifier type="perseus">1999.05.0274</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Euphrates</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Euphr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0275">
+		<identifier type="perseus">1999.05.0275</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Congr.XV</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.XV.Congr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0276">
+		<identifier type="perseus">1999.05.0276</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Paramone</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0277">
+		<identifier type="perseus">1999.05.0277</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Com.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0278">
+		<identifier type="perseus">1999.05.0278</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Horak</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="ddbdp-0279">
+		<identifier type="perseus">1999.05.0279</identifier>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Ch.L.A.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>ChLA</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0283">
+		<titleInfo type="abbreviated">
+			<title>Actenstücke</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0284">
+		<titleInfo>
+			<title>Berliner Klassikertexte</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>BKT</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0285">
+		<titleInfo>
+			<title>
+				Aegyptische Urkunden aus den Königlichen (later
+				Staatlichen) Museen zu Berlin
+			</title>
+			<subTitle>Koptische Urkunden</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>BKU</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0286">
+		<titleInfo>
+			<title>Corpus des Ordonnances des Ptolémées</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Ord.Ptol.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0287">
+		<titleInfo type="abbreviated">
+			<title>C.Pap.Jud.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0288">
+		<titleInfo>
+			<title>Corpus Papyrorum Latinarum</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Pap.Lat.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>CPL</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0289">
+		<titleInfo type="abbreviated">
+			<title>C.Pap.Jud.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>CPJ</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0290">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Ptol.Sklav.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0291">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>C.Zen.Palestine</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0292">
+		<titleInfo>
+			<title>Chapa</title>
+			<subTitle>Letters of Condolence</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>Chapa, Letters of Condolence</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0293">
+		<titleInfo type="abbreviated">
+			<title>O.Ain Labakha</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0294">
+		<titleInfo type="abbreviated">
+			<title>O.Bahria</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0295">
+		<titleInfo type="abbreviated">
+			<title>O.Bahria Div.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0296">
+		<titleInfo type="abbreviated">
+			<title>O.Cair. GPW</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0297">
+		<titleInfo type="abbreviated">
+			<title>O.Chams el-Din</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0298">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Crum</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0299">
+		<titleInfo type="abbreviated">
+			<title>O.dem.Joach.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0300">
+		<titleInfo type="abbreviated">
+			<title>O.Dor.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0301">
+		<titleInfo type="abbreviated">
+			<title>O.Krok.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0302">
+		<titleInfo type="abbreviated">
+			<title>O.Nancy</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0303">
+		<titleInfo type="abbreviated">
+			<title>O.Sarm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0304">
+		<titleInfo type="abbreviated">
+			<title>O.Skeat.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0305">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Wångstedt</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0306">
+		<titleInfo>
+			<title>Chester Beatty Biblical Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Beatty</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0307">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Äg.Handschrift.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0308">
+		<titleInfo>
+			<title>Three Demotic Papyri in the Brooklyn Museum</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brookl.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0309">
+		<titleInfo>
+			<title>Greek Papyri</title>
+			<subTitle>
+				Catalogue général des antiquités égyptiennes du Musée du
+				Caire
+			</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Cair.Cat.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Cair. Cat.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0310">
+		<titleInfo type="abbreviated">
+			<title>P.Count.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0311">
+		<titleInfo type="abbreviated">
+			<title>P.Gron.Amst.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0312">
+		<titleInfo>
+			<title>Demotische Urkunden aus Hawara</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hawara</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Haw.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0313">
+		<titleInfo type="abbreviated">
+			<title>P.Haw.dem.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Hawara dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0314">
+		<titleInfo>
+			<title>Koptskie teksty Gosudarstvennogo Ermitazha</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.HermitageCopt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0315">
+		<titleInfo>
+			<title>Kölner ägyptische Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.KölnÄgypt</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.KölnÄg.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0316">
+		<titleInfo>
+			<title>Demotische und Koptische Texte</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.KölnLüdecckens</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0317">
+		<titleInfo>
+			<title>Papyri Graeci Musei Antiquarii Lugduni-Batavi</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Leid.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0318">
+		<titleInfo>
+			<title>Demotische Lesestücke</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lesestücke</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0319">
+		<titleInfo>
+			<title>
+				I, Catalogue of the Coptic Manuscripts in the British
+				Museum
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lond.Copt. London</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Lond.Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0320">
+		<titleInfo>
+			<title>
+				Zur Wasserversorgung einer Metropole im kaiserzeitlichen
+				Ägypten
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lond.Wasser.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0321">
+		<titleInfo type="abbreviated">
+			<title>P.Magdola</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0322">
+		<titleInfo>
+			<title>The Census Register P.Oxy. 984</title>
+			<subTitle>The Reverse of Pindar's Paeans</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Oxy.Census</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0323">
+		<titleInfo>
+			<title>Recueil de textes démotiques et bilingues</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Recueil</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0324">
+		<titleInfo type="abbreviated">
+			<title>P.Zaki.Aly.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0325">
+		<titleInfo>
+			<title>Roman Military Records on Papyrus</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Rom.Mil.Rec.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0326">
+		<titleInfo>
+			<title>Select Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Sel.Pap.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0327">
+		<titleInfo>
+			<title>Supplementum Magicum</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Suppl.Mag.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0328">
+		<titleInfo>
+			<title>Epistulae privatae graecae quae in papyris aetatis Lagidarum servantur</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>Witkowski, Epistulae privatae</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0329">
+		<titleInfo>
+			<title>Le Lettere privati nei papiri greci del III e IV secolo d.C</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>Tibiletti, Lettere privatae</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0330">
+		<titleInfo type="abbreviated">
+			<title>C.Pap.Hengstl</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0331">
+		<titleInfo>
+			<title>Documenti per la storia dell'esercito romano in Egitto</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Doc.Eser.Rom.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0332">
+		<titleInfo>
+			<title>Feste pubbliche e private nei documenti greci</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Feste</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0333">
+		<titleInfo>
+			<title>Juristische Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>Jur.Pap.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0334">
+		<titleInfo>
+			<title>Koptische Ostraka II</title>
+			<subTitle>
+				Ostraka aus dem Ashmolean Museum in Oxford
+			</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Ashm.Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0335">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Crum ST</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0336">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Crum VC</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0337">
+		<titleInfo>
+			<title>
+				The Demotic Ostraca in the National Museum of
+				Antiquities at Leiden
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Leid.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0338">
+		<titleInfo>
+			<title>Ostraca démotiques du Musée du Louvre</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Louvre</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0339">
+		<titleInfo>
+			<title>Le Monastère et la nécropole de Baouit</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Bawit</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0340">
+		<titleInfo>
+			<title>
+				Coptic and Greek Texts of the Christian Period from
+				Ostraka, Stelae, etc. in the British Museum
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Brit.Mus.Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0341">
+		<titleInfo>
+			<title>
+				Die demotischen Papyrus der Musées Royaux du
+				Cinquantenaire
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brux.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0342">
+		<titleInfo>
+			<title>
+				Le Monastère de St. Phoibammon. Deir el-Bahari
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Deir el-Bahari</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0343">
+		<titleInfo>
+			<title>The Archive of Hor</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Hor</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0344">
+		<titleInfo>
+			<title>Quelques reçus d’impôts agricoles</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Magnien</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0345">
+		<titleInfo>
+			<title>Coptic Ostraca from Medinet Habu</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Medin. HabuCopt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0346">
+		<titleInfo>
+			<title>Demotic Ostraca from Medinet Habu</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Medin. HabuDem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0347">
+		<titleInfo>
+			<title>Demotic Ostraca</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Mattha</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0348">
+		<titleInfo>
+			<title>
+				Coptic Texts in the University of Michigan Collection
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Mich.Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0349">
+		<titleInfo>
+			<title>
+				Coptic Texts in the University of Michigan Collection
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Mich.Copt.Etmoulon</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0350">
+		<titleInfo>
+			<title>Ostraka demotici da Narmuti</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Narm.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0351">
+		<titleInfo>
+			<title>
+				Mélanges sur la métrologie, l’économie politique et
+				l’histoire de l’ancienne Égypte
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Métrologie</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0352">
+		<titleInfo>
+			<title>Le Monastère de Phoebammon dans la Thébaïde</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Mon.Phoib.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0353">
+		<titleInfo type="abbreviated">
+			<title>P.Edmondstone</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0354">
+		<titleInfo>
+			<title>The Demotic Ostraca from Qaret el-Muzawwaqa</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Muzawwaqa</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0355">
+		<titleInfo>
+			<title>Die demotischen Tempeleide</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Tempeleide</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0356">
+		<titleInfo>
+			<title>
+				Die koptischen Ostraka der Papyrussammlung der
+				Österreichischen Nationalbibliothek
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Vind.Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0357">
+		<titleInfo>
+			<title>
+				Die demotischen Ostraka der Universtät zu Zürich
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Zürich</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0358">
+		<titleInfo>
+			<title>
+				The Amherst Papyri, Being an Account of the Egyptian
+				Papyri in the Collection of the Right Hon. Lord Amherst
+				of Hackney, F.S.A. at Didlington Hall, Norfolk
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Amh.Eg.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0359">
+		<titleInfo>
+			<title>
+				Les associations religieuses en Égypte d'après les
+				documents démotiques
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Assoc.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0360">
+		<titleInfo>
+			<title>
+				Auswahl frühdemotischer Texte (zum Gebrauch im
+				akademischen Studien sowie zum Selbststudium
+				zusammengestellt)
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Auswahl</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0361">
+		<titleInfo>
+			<title>
+				Demotische Papyri aus den Staatlichen Museen zu Berlin
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0362">
+		<titleInfo>
+			<title>
+				Die griechischen Papyrusurkunden der Königlichen
+				Bibliothek zu Berlin
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Schmidt</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0363">
+		<titleInfo>
+			<title>
+				Demotische Papyrus aus den Königlichen Museen zu Berlin
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Berl.Spieg.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0364">
+		<titleInfo>
+			<title>Papyrus Bodmer</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bodm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0365">
+		<titleInfo>
+			<title>
+				Catalogue of the Demotic Papyri in the British Museum
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brit.Mus.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0366">
+		<titleInfo>
+			<title>
+				Papyri juristischen Inhalts in hieratischer und
+				demotischer Schrift aus dem British Museum
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brit.Mus.Reich.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0367">
+		<titleInfo>
+			<title>
+				Demotische Urkunden zum ägyptischen Bürgschaftsrechte
+				vorzüglich der Ptolemäerzeit
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Bürgsch.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0368">
+		<titleInfo>
+			<title>Ten Coptic Legal Texts</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.CLT</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0369">
+		<titleInfo>
+			<title>The Carlsberg Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Carlsb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0370">
+		<titleInfo>
+			<title>Saite and Persian Demotic Cattle Documents</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.CattleDocs.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0371">
+		<titleInfo>
+			<title>Une Famille de chepteliers au IIIe s.p.C.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Chept.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0372">
+		<titleInfo>
+			<title>Chicago Literary Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Chic.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0373">
+		<titleInfo>
+			<title>The Archive of the Theban Choachytes</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Choach.Survey</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0374">
+		<titleInfo>
+			<title>Nouvelle Chrestomathie démotique</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Chrest.Nouvelle</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0375">
+		<titleInfo>
+			<title>Chrestomathie démotique</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Chrest.Revillout</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0376">
+		<titleInfo>
+			<title>
+				Die sogenannte demotische Chronik des Pap. 215 der
+				Bibliothèque Nationale zu Paris
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Chronik</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0377">
+		<titleInfo>
+			<title>Corpus Papyrorum Aegypti</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Corpus Revillout</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0378">
+		<titleInfo>
+			<title>Demotica</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Demotica</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0379">
+		<titleInfo>
+			<title>Selected Papyri from the Archives of Zenon</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Edg.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0380">
+		<titleInfo>
+			<title>Fragments of an Unknown Gospel and Other Early Christian Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Egerton</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0381">
+		<titleInfo>
+			<title>Bulletin de la Société des antiquaires de France</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Egger</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0382">
+		<titleInfo>
+			<title>Ägyptische Eheverträge</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ehevertr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0383">
+		<titleInfo>
+			<title>Demotische Papyrus von der Insel Elephantine</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Eleph.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0384">
+		<titleInfo>
+			<title>ENTEUCEIS</title>
+			<subTitle>
+				Requêtes et plaintes adressées au Roi d'Égypte au IIIe
+				siècle avant J.-C.
+			</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Enteux.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0385">
+		<titleInfo>
+			<title>Ein Erbstreit aus dem ptolemäischen Ägypten</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Erbstreit</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0386">
+		<titleInfo>
+			<title>A Family Archive from Thebes</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Fam.Theb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0387">
+		<titleInfo>
+			<title>
+				Coptic Manuscripts Brought from the Fayyum by W.M.
+				Flinders Petrie, Esq., D.C.L., Together with a Papyrus
+				in the Bodleian Library
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Fay.Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0388">
+		<titleInfo>
+			<title>
+				Die demotischen Gebelen-Urkunden der Heidelberger
+				Papyrus-Sammlung
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Gebelen</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0389">
+		<titleInfo>
+			<title>
+				Die Giessener literarischen Papyri und die
+				Caracalla-Erlasse
+			</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Giss.Lit.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0390">
+		<titleInfo>
+			<title>The Hauswaldt Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hausw.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0391">
+		<titleInfo>
+			<title>Catalogo dei Papiri Ercolanesi</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hercul.</title>
+		</titleInfo>
+	</mods>
+
+	<mods version="3.0" ID="temp0392">
+		<titleInfo>
+			<title>Le procès d'Hermias d'apres les sources démotiques et grecques</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hermias</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0393">
+		<titleInfo>
+			<title>Koptskie teksty Gosudarstvennogo Ermitazha</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hermitage Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0394">
+		<titleInfo>
+			<title>Papyrus Graecus Holmiensis, Recepte für Silber, Steine und Purpur</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Holm.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0395">
+		<titleInfo>
+			<title>The Gooseherds of Hou</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Hou</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0396">
+		<titleInfo>
+			<title>Koptische Rechtsurkunden des achten Jahrhunderts aus Djême (Theben)</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.KRU</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0397">
+		<titleInfo>
+			<title>Saite Demotic Land Leases</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.LandLeases</title>
+		</titleInfo>
+		<titleInfo>
+			<title type="abbreviated">P.Land Leases</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0398">
+		<titleInfo>
+			<title>Papyrus Égyptiens démotiques I. 373—382 du Musée d'Antiquités des Pays-Bas à Leide</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Leid.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0399">
+		<titleInfo>
+			<title>Der Papyrus Libbey: ein ägyptischer Heiratsvertrag</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Libbey</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0400">
+		<titleInfo>
+			<title>Papyrus démotiques de Lille</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.LilleDem.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Lille Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0401">
+		<titleInfo>
+			<title>Die Demotischen Papyri Loeb</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Loeb</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0402">
+		<titleInfo>
+			<title>Catalogue of the Literary Papyri in the British Museum</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lond.Lit.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0403">
+		<titleInfo>
+			<title>Papyrus Lonsdorfer I</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lonsdorfer</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0404">
+		<titleInfo>
+			<title>Papyrologica Lugduno-Batava</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Lugd.Bat.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.L.Bat.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>Pap.Lugd.Bat.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0405">
+		<titleInfo>
+			<title>Frühdemotische Urkunden aus Hermupolis</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mallawi</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0406">
+		<titleInfo>
+			<title>I papiri diplomatici raccolti ed illustrati</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Marini</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0407">
+		<titleInfo>
+			<title>Die Aegyptische Sammlung des Museum-Meermanno-Westreenianum im Haag</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Meerman.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0408">
+		<titleInfo>
+			<title>Coptic Texts in the University of Michigan Collection</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mich. Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0409">
+		<titleInfo>
+			<title>University of Michigan Demotic Papyri</title>
+			<subTitle>Papyri from Philadelphia</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mich. Nims</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0410">
+		<titleInfo>
+			<title>The Monastery of Epiphanius at Thebes</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Mon.Epiph.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0411">
+		<titleInfo>
+			<title>Catalogue of Coptic Manuscripts in the Pierpont Morgan Library</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.MorganLib.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0412">
+		<titleInfo>
+			<title>Koptskie teksty Gosudarstvennogo muzeia izobrazitel'nykh iskusstv imeni A.S. Pushkina</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.MoscowCopt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0413">
+		<titleInfo>
+			<title>The Astronomical Papyri from Oxyrhynchus</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Oxy.Astr.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0414">
+		<titleInfo>
+			<title>Catalogue des manuscrits grecs de la Bibliothèque Impériale Publique</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Petersb.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0415">
+		<titleInfo>
+			<title>Eine Steuerliste aus Pheretnuis</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Pher.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0416">
+		<titleInfo>
+			<title>Papiri letterari greci</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.PisaLit.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Pisa Lit.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0417">
+		<titleInfo>
+			<title>Textes coptes</title>
+			<subTitle>Extraits de la correspondence de St. Pésunthius, évêque de Coptos, et de plusieurs documents analogues (juridiques et économiques)</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Pisentius</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0418">
+		<titleInfo>
+			<title>Die Satzungen einer ägyptischen Kultgenossenschaft aus der Ptolemäerzeit nach einem demotischen Papyrus in Prag</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Prag.Satzung</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0419">
+		<titleInfo>
+			<title>Demotic Papyri and Ostraca from Qasr Ibrim</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.QasrIbrim</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Qasr Ibrim</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0420">
+		<titleInfo>
+			<title>Quelques textes démotiques archaïques</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.QuelquesTextes</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Quelques Textes</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0421">
+		<titleInfo>
+			<title>Neue Texte aus dem antiken Unterricht</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Rain.Unterricht</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0422">
+		<titleInfo>
+			<title>Neue Texte und Dokumentation zum Koptisch-Unterricht</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Rain.UnterrichtKopt.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Rain.Unterricht Kopt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0423">
+		<titleInfo>
+			<title>Papyrus coptes. Actes et contrats des museés de Boulaq et du Louvre</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Revillout Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0424">
+		<titleInfo>
+			<title>Catalogue of the Coptic Manuscripts in the Collection of the John Rylands Library</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ryl.Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0425">
+		<titleInfo>
+			<title>Catalogue of the Demotic Papyri in the John Rylands Library, Manchester</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ryl.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0426">
+		<titleInfo>
+			<title>Eine demotische Schenkungsurkunde aus der Zeit des Darius</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Schenkung.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0427">
+		<titleInfo>
+			<title>Die Ägyptische Schreibertradition in Aufbau</title>
+			<subTitle>Sprache und Schrift der demotischen Kaufverträge aus ptolemäischer Zeit</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Schreibertrad.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0428">
+		<titleInfo>
+			<title>Griechische literarische Papyri</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Schub.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0429">
+		<titleInfo>
+			<title>Koptische Schutzbriefe</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Schutzbriefe</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0430">
+		<titleInfo>
+			<title>Eine Neue Urkunde zu der Siegesfeier des Ptolemaios IV</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Siegesfeier</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0431">
+		<titleInfo>
+			<title>A Family Archive from Siut, from Papyri in the British Museum Including an Account of a Trial Before the Laocritae in the Year B.C. 170</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Siut</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0432">
+		<titleInfo>
+		    <title>Slavery in Pharaonic Egypt</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.SlaveryDem.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Slavery.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0433">
+		<titleInfo>
+		    <title>Die demotischen Papyrus der Strassburger Bibliothek</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Stras.Dem.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Strasb.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0434">
+		<titleInfo>
+		    <title>Testi Demotici</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.TestiBotti</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Testi Botti</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0435">
+		<titleInfo>
+		    <title>Papyrus de Théadelphie</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Thead.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0436">
+		<titleInfo>
+		    <title>L'Archivio demotico da Deir el-Medineh</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tor.Botti</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0437">
+		<titleInfo>
+		    <title>Les Papyrus démotiques de Tsenhor</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Tsenhor</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0438">
+		<titleInfo>
+		    <title>Der Fluch des Christen Sabinus, Papyrus Upsaliensis 8</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Ups.8</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Ups.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0439">
+		<titleInfo>
+		    <title>Ägyptische Verpfründungsverträge mit Vermögensabtretungen</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Verpfründung.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0440">
+		<titleInfo>
+		    <title>Coptic Documentary Papyri from the Beinecke Library (Yale University)</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.YaleCopt.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Yale Copt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0441">
+		<titleInfo>
+		    <title>Res severa verum gaudium. Festschrift für Karl–Theodore Zauzich zum 65. Geburtstag am 8. Juni 2004</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Zauzich</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0442">
+		<titleInfo>
+		    <title>Die Demotischen Urkunden des Zenon-Archivs</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Zen.Dem.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0443">
+		<titleInfo>
+		    <title>Papiri dell' Iliade</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Il.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>PSI.Il.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0444">
+		<titleInfo>
+		    <title>Papiri dell' Odissea. Seminario papirologico 1977—78</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>PSI Od.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>PSI.Od.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0445">
+		<titleInfo>
+		    <title>Koptisches Sammelbuch</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>SB Kopt.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0446">
+		<titleInfo>
+		    <title>Tablitele Cerate Dacice</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Dacia</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0447">
+		<titleInfo>
+		    <title>Corpus Inscriptionum Latinarum IV Supplementum</title>
+		    <subTitle>Pars I, Tabulae ceratae Pompeis repertae annis MCCCLXXV et MCCCLXXXVII</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Jucundus</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0448">
+		<titleInfo>
+		    <title>Las Pizarras Visigoda: edicÌon crÌtica y estudio</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Pizzaras</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0449">
+		<titleInfo>
+		    <title>Tabulae Pompeianae Sulpiciorum</title>
+		    <subTitle>edizione critica dell'archivio puteolano dei Sulpicii</subTitle>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Sulpicii</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0450">
+		<titleInfo>
+		    <title>Tavolette lignee e cerate da varie collezioni</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Varie</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0451">
+		<titleInfo>
+		    <title>Die römischen Schreibtafeln von Vindonissa</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>T.Vindon.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0452">
+		<titleInfo>
+		    <title>Zeitschrift für ägyptische Sprache und Altertumskunde</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>ZÄS</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>ZAS</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0453">
+		<titleInfo>
+		    <title>Papyrus coptes et grecs du monastère d'apa Apollô de Baouît conservés aux Musées royaux d'Art et d'Histoire de Bruxelles</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Brux.Bawit</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Brux. Bawit</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0454">
+		<titleInfo>
+		    <title>Catalogue général des antiquités égyptiennes du Musée du Caire</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>O.Cair.Cat.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>O.Cair. Cat.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0455">
+		<titleInfo>
+		    <title>Fontes iuris Romani antejustiniani</title>
+		</titleInfo>
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>FIRA</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>F.I.R.A.</title>
+		</titleInfo>
+	</mods>
+	<mods version="3.0" ID="temp0456">
+		<titleInfo type="abbreviated" xlink:role="checklist">
+			<title>P.Col.Zen.</title>
+		</titleInfo>
+		<titleInfo type="abbreviated">
+			<title>P.Col. Zen.</title>
+		</titleInfo>
+	</mods>
+</modsCollection>

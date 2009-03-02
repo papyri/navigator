@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TEI.2><text><body><div0 type="Volume" n="3" org="uniform" sample="complete"><div1 type="document" n="4" org="uniform" sample="complete">
+<head lang="en">
+<date>258-257BC</date>
+<placeName>Philadelphia</placeName>
+<xref type="reprint from" targOrder="U" from="ROOT" to="DITTO">cfPCairZen4,59688,1-17</xref>
+</head>
+<p lang="greek">
+<milestone n="1,ctr" unit="4" />
+<lb n="??" /><gap reason="break" /> 
+<lb n="1" />⟦<num>2?0?</num> <unclear>[SELI/]DWN?</unclear> DE/?S?MAI <space /> <num>20</num>⟧ 
+<lb n="2" /><hi rend="raised">*PANH/MOU</hi> <num>21</num> H)GORA/SQHSAN DIA\ *DI/SKOU 
+<lb n="3" />XA/RTAI  <num>50</num> 
+<lb n="4" />A)PO\ T[OU/]TWN 
+<lb n="5" />*DHMHTRI/WI? E?I)S TO\ LOGIS<expan>TH/RION</expan> <space /> <num>10</num> 
+<lb n="6" />XA/RTAI  <num>50</num> 
+<lb n="7" />A)PO\ T[OU/]TWN 
+<lb n="8" />*DHMHTRI/WI? E?I)S TO\ LOGIS<expan>TH/RION</expan> <space /> <num>10</num> 
+<lb n="9" /><num>22</num> *)ARTE/MWNI <space /> <num>4</num> ⟦<num>2</num>⟧ 
+<lb n="10" />*SWTAI/RWN?I? <space /> <num>4</num> 
+<lb n="11" /><num>24</num> *PU/RWNI W(/STE EI)S E)FHMERI/<expan>DAS</expan> XA/R<expan>THS</expan> <hi rend="raised"><num>1</num></hi> ⟦X?A?⟧ 
+<lb n="12" /><num>25</num> *DHMHTRI/WI EI)S TO\ <app>
+<lem>*NIKA/NOROS</lem>
+<rdg type="auth">LIKANOROS</rdg>
+</app> XA/R<expan>TAI</expan>  <num>10</num> 
+<lb n="13" /><num>27</num> *PEISIKLEI= EI)S E)NEILH/MATA 
+<lb n="14" />KARPA/[SW]N? <space /> XA/RTOU <app>
+<lem>H(/MISU</lem>
+<rdg type="orth">HMUSU</rdg>
+</app> <num /> 
+<lb n="15" />[ <gap extent="?" /> ] <app>
+<lem>H(/MISU</lem>
+<rdg type="orth">HMUSU</rdg>
+</app> <num /> 
+<lb n="16" /><num>28</num> *PU/R[WNI] XA?[R <gap extent="?" /> ]<gap extent="1" />[ <gap extent="?" /> <num>1</num>] 
+<lb n="17" /><num>29</num> *DHMHTRI/W[I EI)S TO\ *NIKA/]NOROS LOG[I]S<expan>TH/RION</expan> ⟦<gap extent="1" />⟧ <num>1?0?</num> 
+<lb n="18" />*LWI/OU <num>3</num> *PU/[RWNI EI)S] DIAGRAFH\N TOU= 
+<lb n="19" />E)LAI/OU [ <gap extent="?" /> ] <space /> XA/RTHS <num>1</num> 
+<lb n="20" />*DHMHTRI/WI [EI)S] TO\ LOGIS<expan>TH/RION</expan> <space /> <num>5</num> 
+<lb n="21" />[ <gap extent="?" /> ] <space /> <num>2</num> 
+<lb n="22" />[ <gap extent="?" /> XA/R]TAS <space /> <gap extent="1" /> 
+<milestone n="1,ms" unit="4" />
+<lb n="1" /><note anchored="yes" place="unspecified">WRITING INVERSE TO MAIN TEXT</note> <handShift new="m2" /> <gap extent="2" /> 
+<lb n="2" /><note anchored="yes" place="unspecified">WRITING INVERSE TO MAIN TEXT</note> OPTO?LE 
+<lb n="3" /><note anchored="yes" place="unspecified">WRITING INVERSE TO MAIN TEXT</note> <gap extent="1" />WN 
+<milestone n="2" unit="4" />
+<lb n="19" /><gap reason="break" /> 
+<lb n="20" /><handShift new="m1" /> [H)GORA/SQHSAN DIA\] 
+<lb n="21" />*XA/RMOU <gap extent="2" /> XA/R<expan>TAI</expan> <space /> <num>20</num> 
+<lb n="22" /><app>
+<lem>TOU/T<hi rend="raised">WN</hi></lem>
+<rdg type="auth">TOUT⟦OUS⟧</rdg>
+</app> E)/XEI *DHMH/TRIOS 
+<lb n="23" />EI)S TO\ LOGISTH/RION <num>18</num> 
+<lb n="24" />*PU/RWNI <space /> <num>2</num> 
+<lb n="25" /><expan>GI/NONTAI</expan>  <num>20</num> 
+<lb n="26" /><num>11</num> *DHMHTRI/WI EI)S TO\ LO<expan>GISTH/RION</expan> <num>10</num> 
+<lb n="27" />⟦<num>16</num>⟧ 
+<lb n="28" /><num>15</num> *DHMHTRI/WI <space /> <num>10</num> 
+<lb n="29" /><hi rend="raised"><num>16</num></hi> ⟦<num>16</num>⟧ *)ARTE/MWNI <space /> <num>10</num> <hi rend="raised">*PU/RWNI <space /> <num>1</num></hi> 
+<lb n="30" /><num>17</num> *DHMHTRI/WI EI)S TO\ <space /> <num>10</num> 
+<lb n="31" /><num>18</num> *DHMHTRI/WI EI)S <space /> <num>10</num> 
+<lb n="32" /><num>19</num> *DHMHTRI/WI <space /> <num>10</num> 
+<lb n="33" />*)ARTE/MWNI <space /> <num>10</num> 
+<lb n="34" /><expan>GI/NONTAI</expan> XA/R<expan>TAI</expan> <num>91</num> 
+<lb n="35" /><num>20</num> *DHMHTRI/WI E?I)?S? T?O\? L?O?<expan>GISTH/RION</expan> [<num>20</num>] 
+<lb n="36" />*)ARTE/MWNI <space /> <num>10</num> 
+<lb n="37" /><num>21</num> *DHMHTRI/WI <space /> <num>10</num> 
+<lb n="38" />*)ARTE/MWNI <space /> <num>10</num> 
+<milestone n="21" unit="block" />
+<lb n="39" /><num>2</num><gap extent="1" /> *D?H?M?HTRI/?W?I? <space /> <num>20</num> 
+<lb n="40" />[ <gap extent="?" /> ] *DHMH[T]RI/WI <space /> <num>20</num> 
+<lb n="41" />[ <gap extent="?" /> *)ARTE/M]WNI <space /> <num>10</num> 
+<lb n="42" /><expan>GI/NONTAI</expan> XA/R<expan>TAI</expan> <num>191</num> 
+<lb n="43" />[<gap extent="2" />] H)GORA/SQHSAN XA/RTAI 
+<lb n="44" />[DIA\ <gap extent="?" /> ] <num>60</num> A)NA\ <expan>O)BOLOU\S</expan> <num>3</num> ½ <expan>GI/NONTAI</expan> <num>35</num> 
+<lb n="45" />[ <gap extent="?" /> *)ARTE/M]WN <space /> <num>10</num> 
+<milestone n="3,ctr" unit="4" />
+<lb n="45" /><gap reason="break" /> 
+<lb n="46" />*)ARTE/MWN <space /> [<num>10</num>] 
+<lb n="47" /><num>30</num> *DHMHTRI/W[I <gap extent="?" /> ] 
+<lb n="48" />W(/STE *NIKA/N[O]R?I? 
+<lb n="49" />TOU\S A)GORASQE/[NT]A?S 
+<lb n="50" />DIA\ *X?A/RMOU <space /> <num>20</num> 
+<lb n="51" />*)ARTE/MWNI? <space /> <num>10</num> 
+<lb n="52" />*G?ORPIEI/OU <num>1</num> 
+<lb n="53" />*DHMHTRI/WI? W(/[ST]E 
+<lb n="54" />*NIKA/NORI <space /> <num>10</num> 
+<lb n="55" /><num>2</num> *DHMHTRI/W[I] <space /> <num>20</num> <hi rend="raised">*PU/RWNI <space /> <num>1</num></hi> 
+<lb n="56" />*)ARTE/MWNI? <space /> <num>10</num> 
+<lb n="57" /><num>3</num> *DHMHTRI/<expan>WI</expan> <space /> <num>10</num>  <num>20</num> 
+<lb n="58" />*)ARTE/MW?NI <space /> <num>10</num> 
+<lb n="59" /><num>4</num> *DHMHT?R?I/W?[I <space /> <num>10</num>] 
+<lb n="60" /><gap extent="1" />[<gap extent="3" />]LWI <space /> <num>1</num> 
+<lb n="61" />*PU/RWNI <space /> <num>2</num> 
+<lb n="62" /><num>5</num> *)ARTEMIDW/RWI 
+<lb n="63" />U(P[O]M?NH?M?<expan>ATOGRAFOU=NTI</expan> 
+<lb n="64" />*DHMHTRI/W[I] <space /> <num>10</num> 
+<milestone n="3,md" unit="4" />
+<lb n="1" /><handShift new="m1" /> X<expan>A/RTAI</expan> <num>6</num> 
+<lb n="2" />X<expan>A/RTAI</expan> <num>10</num> 
+<lb n="3" />X<expan>A/RTAI</expan> <num>3</num> 
+<lb n="4" />X<expan>A/RTAI</expan> <num>3</num> 
+<lb n="5" /><space /> 
+<lb n="6" /><num>22</num> </p>
+</div1></div0></body></text></TEI.2>

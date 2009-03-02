@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TEI.2><text><body><div0 type="Volume" n="2" org="uniform" sample="complete"><div1 type="document" n="20" org="uniform" sample="complete">
+<head lang="en">
+<date>IIspc</date>
+<placeName>?</placeName>
+<xref type="reprint from" targOrder="U" from="ROOT" to="DITTO">SB5,8072</xref>
+</head>
+<p lang="greek">
+<milestone n="FrA" unit="4" />
+<lb n="1" />[ <gap extent="?" /> E)/PARXOS] 
+<lb n="2" />*AI)GU/PTOU LE/GEI: 
+<lb n="3" />KATHXOU=MAI TOU\S TELW/NAS 
+<lb n="4" /><app>
+<lem>DEINW=S</lem>
+<rdg type="orth">DI?[N]W?S</rdg>
+</app> SO?FI/?S?ASQAI TOI=S DIE?R-
+<lb n="5" />X?O?M?E/?NOIS KAI\ A)PAITEI=N T?A\ 
+<lb n="6" />M?H\? <app>
+<lem>O)FEILO/MENA</lem>
+<rdg type="orth">OFILOMENA</rdg>
+</app> AU)TOI=S E)PI\ PLEI=-
+<lb n="7" />[ON] K?A?I\? KRATEI=N TOU\S <app>
+<lem>E)PEIGOME/NOUS</lem>
+<rdg type="orth">EPIGOMEN?[O]U?S</rdg>
+</app> 
+<lb n="8" />[I(/NA] KAI\ TO\ TA/XION <app>
+<lem>A)POXWREI=N</lem>
+<rdg type="orth">APOXWRIN?</rdg>
+</app> TI-
+<lb n="9" />NE\S E)?CWNH/SWNTAI. PARAGGE/L-
+<lb n="10" />LW [DE\] OU)=N AU)TOI=S PAU/SASQAI TH=S 
+<lb n="11" />[TOIAU/]THS PL[E]ONECI/AS PAR?[A]-
+<lb n="12" />[XRH=MA<foreign lang="la">?</foreign> <gap extent="1" />]<gap extent="1" />AT?E?[ <gap extent="?" /> ] 
+<lb n="13" /><gap reason="break" /> 
+<milestone n="FrB" unit="4" />
+<lb n="12" /><gap reason="break" /> 
+<lb n="13" /><handShift new="m2" /> <gap extent="3" />[<gap extent="7" />]<gap extent="3" />[ <gap extent="?" /> ] 
+<lb n="14" />BAI/H TOI=S E)PA/R[XOIS<foreign lang="la">? <gap extent="?" /></foreign> ] 
+<lb n="15" />RW ZH/THSIN EG?[ <gap extent="?" /> ] 
+<lb n="16" />A)NAGKAI=ON H(GH[SA/MHN <foreign lang="la">? <gap extent="?" /></foreign> DIA]-
+<lb n="17" /><unclear>TA/GMATI</unclear> PARA\ H(G?[EMO/NOS<foreign lang="la">? <gap extent="?" /></foreign> ] 
+<lb n="18" />TH\N TH=S EI)RH/NH[S <gap extent="?" /> ] 
+<lb n="19" />AN PRO\ PANTO\S [ <gap extent="?" /> ] 
+<lb n="20" />SIAS XRH/|ZONT[AI <foreign lang="la">? <gap extent="?" /></foreign> ] 
+<lb n="21" />SI XWRI\S P?A/SHS T[ <gap extent="?" /> E)]-
+<lb n="22" />PI\ TA\S KRI/SEIS PAR[ <gap extent="?" /> ] 
+<lb n="23" />TAI E)NTEU=QEN K[ <gap extent="?" /> STRA]-
+<lb n="24" />THGOI=S KI/NDUN[ON <foreign lang="la">? <gap extent="?" /></foreign> PARAG]-
+<lb n="25" /><unclear>GE/LLW</unclear> AN?OXN?I?[ <gap extent="?" /> ] 
+<lb n="26" /><gap reason="break" /> </p>
+</div1></div0></body></text></TEI.2>

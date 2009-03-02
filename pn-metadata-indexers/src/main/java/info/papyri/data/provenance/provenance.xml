@@ -1,0 +1,13 @@
+<!DOCTYPE provenance [
+  <!ELEMENT provenance (form*)>
+  <!ELEMENT form (variant+)>
+  <!ELEMENT variant (#PCDATA)>
+]>
+<provenance>
+	<form id="Antaiopolis">
+		<variant>Antaiopolis</variant>
+		<variant>Antaeopolis</variant></form>
+	<form id="Antaiopolite">
+		<variant>Antaiopolite</variant>
+		<variant>Antaiopolites</variant></form>
+</provenance>

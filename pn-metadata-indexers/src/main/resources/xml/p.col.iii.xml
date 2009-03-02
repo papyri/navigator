@@ -1,0 +1,1074 @@
+<series institution="columbia" volume="3">
+	<document class="searchresult" match="P.Col. III 2">
+	    <data><id class="apis">columbia.apis.p1</id>
+        <id class="hgv">P.Col. III 2</id>
+        <id class="ddbdp">0094;3;2</id>
+        <id class="ldab">1725</id>
+        </data><datum class="inventory">Col.inv. 205</datum>
+		<datum class="pub">P.Col. III 2</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">259 BCE</datum>
+		<datum class="title">Account 259 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p1" />
+		</datum>
+	</document>
+
+	<document class="searchresult" match="P.Col. III 3">
+	    <data><id class="apis">columbia.apis.p2</id>
+        <id class="hgv">P.Cair. Zen. V 59804</id>
+        <id class="ddbdp">0092;5;59804</id>
+        <id class="ldab">1428</id>
+        </data><datum class="inventory">Col.inv. 299</datum>
+		<datum class="pub">P.Col. III 3</datum>
+		<datum class="pub">P.Cair. Zen. V 59804</datum>
+		<datum class="provenance">Gaza</datum>
+		<datum class="date">258 BCE</datum>
+		<datum class="title">Letter September 7, 258</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="bl">VIII, S. 80; IX, S. 56; X, S. 38; XI, S. 57</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p2" />
+        </datum>
+	</document>
+
+	<document class="searchresult" match="P.Col. III 4">
+	    <data><id class="apis">columbia.apis.p3</id>
+        <id class="hgv">P.Col. III 4</id>
+        <id class="ddbdp">0094;3;4</id>
+        <id class="ldab">1726</id>
+        </data><datum class="inventory">Col.inv. 212</datum>
+		<datum class="pub">P.Col. III 4</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">258 BCE - 257 BCE</datum>
+		<datum class="title">Account [258-257 BC]</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="bl"></datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p4" />
+        </datum>
+	</document>
+
+	<document class="searchresult" match="P.Col. III 4a">
+	    <data><id class="apis">columbia.apis.p4</id>
+        <id class="hgv">P.Col. III 4 a</id>
+        <id class="ddbdp">0094;3;4a</id>
+        <id class="ldab">1725</id>
+        </data><datum class="inventory">Col.inv. 212 verso</datum>
+		<datum class="pub">P.Col. III 4 a</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">258 BCE - 257 BCE</datum>
+		<datum class="title">Account [258-257 BC]</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p4a" />
+        </datum>
+	</document>
+
+	<document class="searchresult" match="P.Col. III 5">
+	    <data><id class="apis">columbia.apis.p5</id>
+        <id class="hgv">P.Col. III 5</id>
+        <id class="ddbdp">0094;3;5</id>
+        <id class="ldab">1727</id>
+        </data><datum class="inventory">Col.inv. 231</datum>
+		<datum class="pub">P.Col. III 5</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Daily Record of Receipts and Expenditures</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">XI, S. 66</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p5" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p6</id>
+        <id class="hgv">P.Col. III 6</id>
+        <id class="ddbdp">0094;3;6</id>
+        <id class="ldab">1728</id>
+        </data><datum class="inventory">Col.inv. 286</datum>
+		<datum class="pub">P.Col. III 6</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">A Worried Mother to Zenon</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">VIII, S. 88</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p6" />
+        </datum>
+	</document>
+
+	<document class="searchresult" match="P.Col. III 7">
+	    <data><id class="apis">columbia.apis.p7</id>
+        <id class="hgv">P.Zen. Pestm. 42</id>
+        <id class="ddbdp">0229;;42</id>
+        <id class="ldab">1873</id>
+        </data><datum class="inventory">Col.inv. 290</datum>
+		<datum class="pub">P.Col. III 7</datum>
+		<datum class="pub">P.Zen. Pestm. 42</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter March 257 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">X, S. 115</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p7" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p8</id>
+        <id class="hgv">P.Col. III 8</id>
+        <id class="ddbdp">0094;3;8</id>
+        <id class="ldab">1729</id>
+        </data><datum class="inventory">Col.inv. 288</datum>
+		<datum class="pub">P.Col. III 8</datum>
+		<datum class="provenance">Memphis</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter April 26, 257 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p8" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p9</id>
+        <id class="hgv">P.Col. III 9</id>
+        <id class="ddbdp">0094;3;9</id>
+        <id class="ldab">1730</id>
+        </data><datum class="inventory">Col.inv. 291</datum>
+		<datum class="pub">P.Col. III 9</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter April 27, 257 BC (date of receipt)</datum>
+		<datum class="lang">Greek</datum>
+        <datum class="bl">VIII, S. 88</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p9" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p10</id>
+        <id class="hgv">P.Col. III 10</id>
+        <id class="ddbdp">0094;3;10</id>
+        <id class="ldab">1731</id>
+        </data><datum class="inventory">Col.inv. 292</datum>
+		<datum class="pub">P.Col. III 10</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter of Mnasistratos to Zenon</datum>
+		<datum class="lang">Greek</datum>
+        <datum class="bl">VIII, S. 88; X, S. 43</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p10" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p11</id>
+        <id class="hgv">P.Col. III 11</id>
+        <id class="ddbdp">0094;3;11</id>
+        <id class="ldab">1732</id>
+        </data><datum class="inventory">Col.inv. 300</datum>
+		<datum class="pub">P.Col. III 11</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter to Zenon regarding an Audience with Apollonios</datum>
+		<datum class="lang">Greek</datum>
+        <datum class="bl">VIII, S. 89</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p11" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p12</id>
+        <id class="hgv">P.Col. III 12</id>
+        <id class="ddbdp">0094;3;12</id>
+        <id class="ldab">1733</id>
+        </data><datum class="inventory">Col.inv. 293</datum>
+		<datum class="pub">P.Col. III 12</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter May-June 257 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p12" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p13</id>
+        <id class="hgv">P.Col. III 13</id>
+        <id class="ddbdp">0094;3;13</id>
+        <id class="ldab">1734</id>
+        </data><datum class="inventory">Col.inv. 4</datum>
+		<datum class="pub">P.Col. III 13</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter of Atinas to Zenon regarding the Wages of Hermippos</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p13" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p14</id>
+        <id class="hgv">P.Zen. Pestm. 25</id>
+        <id class="ddbdp">0229;;25</id>
+        <id class="ldab">1856</id>
+        </data><datum class="inventory">Col.inv. 232</datum>
+		<datum class="pub">P.Col. III 14</datum>
+		<datum class="pub">P.Zen. Pestm. 25</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter from Apollonios to Zenon</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p14" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p15</id>
+        <id class="hgv">P.Col. III 15</id>
+        <id class="ddbdp">0094;3;15</id>
+        <id class="ldab">1735</id>
+        </data>
+        <datum class="inventory">Col.inv. 382</datum>
+        <datum class="inventory">Col.inv. 297</datum>
+		<datum class="pub">P.Col. III 15</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Apollonides to Zenon regarding Mattresses</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p15" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p16</id>
+        <id class="hgv">P.Col. III 16</id>
+        <id class="ddbdp">0094;3;16</id>
+        <id class="ldab">1736</id>
+        </data><datum class="inventory">Col.inv. 265</datum>
+		<datum class="pub">P.Col. III 16</datum>
+		<datum class="provenance">Delta</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter of Charoppas to Zenon about a Vine Crop Survey</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p16" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p17</id>
+        <id class="hgv">P.Col. III 17</id>
+        <id class="ddbdp">0094;3;17</id>
+        <id class="ldab">1737</id>
+        </data><datum class="inventory">Col.inv. 294</datum>
+		<datum class="pub">P.Col. III 17</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter of Apollonides regarding Mattresses</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">XI, S. 66</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p17" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p18</id>
+        <id class="hgv">P.Col. III 18</id>
+        <id class="ddbdp">0094;3;18</id>
+        <id class="ldab">1738</id>
+        </data><datum class="inventory">Col.inv. 296</datum>
+		<datum class="pub">P.Col. III 18</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Letter to Panakestor Beseeching Assistance</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p18" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p19</id>
+        <id class="hgv">P.Col. III 19</id>
+        <id class="ddbdp">0094;3;19</id>
+        <id class="ldab">1739</id>
+        </data><datum class="inventory">Col.inv. 269</datum>
+		<datum class="pub">P.Col. III 19</datum>
+		<datum class="provenance">Alexandria</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Gift of Wine for the Thesmophoria</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">X, S. 43</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p19" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p20</id>
+        <id class="hgv">P.Col. III 20</id>
+        <id class="ddbdp">0094;3;20</id>
+        <id class="ldab">1740</id>
+        </data><datum class="inventory">Col.inv. 334</datum>
+		<datum class="pub">P.Col. III 20</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Duplicate Receipt for Salary and Wages</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p20" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p21</id>
+        <id class="hgv">P.Col. III 21</id>
+        <id class="ddbdp">0094;3;21</id>
+        <id class="ldab">1741</id>
+        </data><datum class="inventory">Col.inv. 3</datum>
+		<datum class="pub">P.Col. III 21</datum>
+		<datum class="provenance">Memphis</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Nikon to Panakestor concerning Loss of Castor Oil</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p21" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p22</id>
+        <id class="hgv">P.Col. III 22</id>
+        <id class="ddbdp">0094;3;22</id>
+        <id class="ldab">1742</id>
+        </data><datum class="inventory">Col.inv. 362</datum>
+		<datum class="pub">P.Col. III 22</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Duplicate Receipts for Wages and for Loans. For Loan at 4 Obols per Aroura</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p22" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p23</id>
+        <id class="hgv">P.Col. III 23</id>
+        <id class="ddbdp">0094;3;23</id>
+        <id class="ldab">1743</id>
+        </data><datum class="inventory">Col.inv. 366</datum>
+		<datum class="pub">P.Col. III 23</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Duplicate Receipts for Wages and for Loans. For Loan at 4 Obols per Aroura</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p23" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p24</id>
+        <id class="hgv">P.Col. III 24</id>
+        <id class="ddbdp">0094;3;24</id>
+        <id class="ldab">1744</id>
+        </data><datum class="inventory">Col.inv. 220</datum>
+		<datum class="pub">P.Col. III 24</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Duplicate Receipts for Wages and for Loans. For Loan at 4 Obols per Aroura</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p24" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p25</id>
+        <id class="hgv">P.Col. III 25</id>
+        <id class="ddbdp">0094;3;25</id>
+        <id class="ldab">1745</id>
+        </data><datum class="inventory">Col.inv. 343</datum>
+		<datum class="pub">P.Col. III 25</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Duplicate Receipts for Wages and for Loans. For Loan at 4 Obols per Aroura</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p25" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p26</id>
+        <id class="hgv">P.Zen. Pestm. 6</id>
+        <id class="ddbdp">0229;;26</id>
+        <id class="ldab">1725</id>
+        </data><datum class="inventory">Col.inv. 215</datum>
+		<datum class="pub">P.Col. III 26</datum>
+		<datum class="pub">P.Zen. Pestm. 6</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">257 BCE</datum>
+		<datum class="title">Receipt October 13, 257 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="lang">Demotic</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p26" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p27</id>
+        <id class="hgv">P.Col. III 27</id>
+        <id class="ddbdp">0094;3;27</id>
+        <id class="ldab">1746</id>
+        </data><datum class="inventory">Col.inv. 302a</datum>
+		<datum class="pub">P.Col. III 27</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Duplicate Receipts for Wages and for Loans. For Wages at 2 1/2 Drachmas per Aroura</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p27" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p28</id>
+        <id class="hgv">P.Col. III 28</id>
+        <id class="ddbdp">0094;3;28</id>
+        <id class="ldab">1747</id>
+        </data><datum class="inventory">Col.inv. 285</datum>
+		<datum class="pub">P.Col. III 28</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Duplicate Receipts for Wages and for Loans. For Wages at 2 1/2 Drachmas per Aroura</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p28" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p29</id>
+        <id class="hgv">P.Col. III 29</id>
+        <id class="ddbdp">0094;3;29</id>
+        <id class="ldab">1748</id>
+        </data><datum class="inventory">Col.inv. 304b</datum>
+        <datum class="inventory">Col.inv. 356</datum>
+		<datum class="pub">P.Col. III 29</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Fragment of a Letter</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p29" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p30</id>
+        <id class="hgv">P.Col. III 30</id>
+        <id class="ddbdp">0094;3;30</id>
+        <id class="ldab">1749</id>
+        </data><datum class="inventory">Col.inv. 233</datum>
+		<datum class="pub">P.Col. III 30</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Lower Part of a Letter of Zenon</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p30" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p31</id>
+        <id class="hgv">P.Col. III 31</id>
+        <id class="ddbdp">0094;3;31</id>
+        <id class="ldab">1750</id>
+        </data><datum class="inventory">Col.inv. 263</datum>
+		<datum class="pub">P.Col. III 31</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Letter of Apollonios Sending Midas to Work under Zenon</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p31" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p32</id>
+        <id class="hgv">P.Col. III 32</id>
+        <id class="ddbdp">0094;3;32</id>
+        <id class="ldab">1751</id>
+        </data><datum class="inventory">Col.inv. 484</datum>
+		<datum class="pub">P.Col. III 32</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">255 BCE</datum>
+		<datum class="title">Letter May 27, 255 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p32" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p33</id>
+        <id class="hgv">P.Col. III 33</id>
+        <id class="ddbdp">0094;3;33</id>
+        <id class="ldab">1752</id>
+        </data><datum class="inventory">Col.inv. 245</datum>
+		<datum class="pub">P.Col. III 33</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">255 BCE</datum>
+		<datum class="title">Receipt October 3, 255 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p33" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p34</id>
+        <id class="hgv">P.Col. III 34</id>
+        <id class="ddbdp">0094;3;34</id>
+        <id class="ldab">1753</id>
+        </data><datum class="inventory">Col.inv. 381</datum>
+		<datum class="pub">P.Col. III 34</datum>
+		<datum class="provenance">Krokodilopolis</datum>
+		<datum class="date">254 BCE</datum>
+		<datum class="title">Letter May 21, 254 BC (docketed on the 22nd)</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p34" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p35</id>
+        <id class="hgv">P.Col. III 35</id>
+        <id class="ddbdp">0094;3;35</id>
+        <id class="ldab">1754</id>
+        </data><datum class="inventory">Col.inv. 306b</datum>
+		<datum class="pub">P.Col. III 35</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">254 BCE</datum>
+		<datum class="title">Letter May 27, 254 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p35" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p36</id>
+        <id class="hgv">P.Col. III 36</id>
+        <id class="ddbdp">0094;3;36</id>
+        <id class="ldab">1755</id>
+        </data><datum class="inventory">Col.inv. 216</datum>
+		<datum class="pub">P.Col. III 36</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">254 BCE</datum>
+		<datum class="title">Order for payment July 23, 254 cm</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p36" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p37</id>
+        <id class="hgv">P.Col. III 37</id>
+        <id class="ddbdp">0094;3;37</id>
+        <id class="ldab">1424</id>
+        </data><datum class="inventory">Col.inv. 268</datum>
+		<datum class="pub">P.Col. III 37</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">254 BCE - 250 BCE</datum>
+		<datum class="title">Daily account 254-250 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p37" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p38</id>
+        <id class="hgv">P.Col. III 38</id>
+        <id class="ddbdp">0094;3;38</id>
+        <id class="ldab">1383</id>
+        </data><datum class="inventory">Col.inv. 338</datum>
+		<datum class="pub">P.Col. III 38</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">254 BCE - 250 BCE</datum>
+		<datum class="title">account [254-250 BC]</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p38" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p39</id>
+        <id class="hgv">P.Col. III 39</id>
+        <id class="ddbdp">0094;3;39</id>
+        <id class="ldab">1725</id>
+        </data><datum class="inventory">Col.inv. 5</datum>
+		<datum class="pub">P.Col. III 39</datum>
+		<datum class="pub">P.Lond. VII 1974</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">254 BCE</datum>
+		<datum class="title">Account ca.September-November 254 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p39" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p40</id>
+        <id class="hgv">P.Zen. Pestm. 12</id>
+        <id class="ddbdp">0229;;12</id>
+        <id class="ldab">1843</id>
+        </data><datum class="inventory">Col.inv. 224</datum>
+		<datum class="pub">P.Col. III 40</datum>
+		<datum class="pub">P.Zen. Pestm. 12</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">254 BCE</datum>
+		<datum class="title">Receipt September 12, 254 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="lang">Demotic</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p40" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p41</id>
+        <id class="hgv">P.Col. III 41</id>
+        <id class="ddbdp">0094;3;41</id>
+        <id class="ldab">1758</id>
+        </data><datum class="inventory">Col.inv. 275</datum>
+		<datum class="pub">P.Col. III 41</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">254 BCE</datum>
+		<datum class="title">Letter ca.254 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p41" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p42</id>
+        <id class="hgv">P.Col. III 42</id>
+        <id class="ddbdp">0094;3;42</id>
+        <id class="ldab">1759</id>
+        </data><datum class="inventory">Col.inv. 264</datum>
+		<datum class="pub">P.Col. III 42</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">254 BCE</datum>
+		<datum class="title">Letter December 6, 254 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p42" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p43</id>
+        <id class="hgv">P.Col. III 43</id>
+        <id class="ddbdp">0094;3;43</id>
+        <id class="ldab">1760</id>
+        </data><datum class="inventory">Col.inv. 209</datum>
+		<datum class="pub">P.Col. III 43</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">253 BCE</datum>
+		<datum class="title">Report February or March 253 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p43" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p44</id>
+        <id class="hgv">P.Col. III 44</id>
+        <id class="ddbdp">0094;3;44</id>
+        <id class="ldab">1761</id>
+        </data><datum class="inventory">Col.inv. 206</datum>
+		<datum class="pub">P.Col. III 44</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">253 BCE</datum>
+		<datum class="title">Memorandum of Phamounis to Zenon</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p44" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p45</id>
+        <id class="hgv">P.Col. III 45</id>
+        <id class="ddbdp">0094;3;45</id>
+        <id class="ldab">1762</id>
+        </data><datum class="inventory">Col.inv. 235</datum>
+		<datum class="pub">P.Col. III 45</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">255 BCE - 251 BCE</datum>
+		<datum class="title">Order for payment [ca. 255-251 BC]</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p45" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p46</id>
+        <id class="hgv">P.Col. III 46</id>
+        <id class="ddbdp">0094;3;46</id>
+        <id class="ldab">1763</id>
+        </data><datum class="inventory">Col.inv. 365</datum>
+		<datum class="pub">P.Col. III 46</datum>
+		<datum class="provenance">Syron Kome</datum>
+		<datum class="date">253 BCE</datum>
+		<datum class="title">Apollonides to Zenon about a Consignment of Pigs</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p46" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p47</id>
+        <id class="hgv">P.Col. III 47</id>
+        <id class="ddbdp">0094;3;47</id>
+        <id class="ldab">1764</id>
+        </data><datum class="inventory">Col.inv. 281</datum>
+		<datum class="pub">P.Col. III 47</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">253 BCE</datum>
+		<datum class="title">Notification August-November 253 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p47" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p48</id>
+        <id class="hgv">P.Zen. Pestm. 67</id>
+        <id class="ddbdp">0229;;67</id>
+        <id class="ldab">1898</id>
+        </data><datum class="inventory">Col.inv. 240</datum>
+		<datum class="pub">P.Col. III 48</datum>
+		<datum class="pub">P.Zen. Pestm. 67</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">253 BCE</datum>
+		<datum class="title">Letter November 20, 253 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">XI, S. 127</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p48" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p49</id>
+        <id class="hgv">P.Col. III 49</id>
+        <id class="ddbdp">0094;3;49</id>
+        <id class="ldab">1765</id>
+        </data><datum class="inventory">Col.inv. 221</datum>
+		<datum class="pub">P.Col. III 49</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">252 BCE</datum>
+		<datum class="title">Receipt December 11, 252 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p49" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p50</id>
+        <id class="hgv">P.Col. III 50</id>
+        <id class="ddbdp">0094;3;50</id>
+        <id class="ldab">1766</id>
+        </data><datum class="inventory">Col.inv. 303b</datum>
+		<datum class="pub">P.Col. III 50</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">251 BCE</datum>
+		<datum class="title">Letter August 1, 251 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p50" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p51</id>
+        <id class="hgv">P.Col. III 51</id>
+        <id class="ddbdp">0094;3;51</id>
+        <id class="ldab">1767</id>
+        </data><datum class="inventory">Col.inv. 276</datum>
+		<datum class="pub">P.Col. III 51</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">251 BCE - 250 BCE</datum>
+		<datum class="title">Letter [October 2, 251 or 250 BC]</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p51" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p52</id>
+        <id class="hgv">P.Col. III 52</id>
+        <id class="ddbdp">0094;3;52</id>
+        <id class="ldab">1768</id>
+        </data><datum class="inventory">Col.inv. 219</datum>
+		<datum class="pub">P.Col. III 52</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">251 BCE</datum>
+		<datum class="title">Letter ca.251 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">VIII, S. 89; X, S. 43</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p52" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p53</id>
+        <id class="hgv">P.Col. III 53</id>
+        <id class="ddbdp">0094;3;53</id>
+        <id class="ldab">1769</id>
+        </data><datum class="inventory">Col.inv. 273</datum>
+		<datum class="pub">P.Col. III 53</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">250 BCE</datum>
+		<datum class="title">Notification February 25, 250 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p53" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p54</id>
+        <id class="hgv">P.Col. III 54</id>
+        <id class="ddbdp">0094;3;54</id>
+        <id class="ldab">1770</id>
+        </data><datum class="inventory">Col.inv. 270</datum>
+		<datum class="pub">P.Col. III 54</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">256 BCE</datum>
+		<datum class="title">Lease and petition 28-31 August 256 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p54" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p55</id>
+        <id class="hgv">P.Col. III 55</id>
+        <id class="ddbdp">0094;3;55</id>
+        <id class="ldab">1771</id>
+        </data><datum class="inventory">Col.inv. 210</datum>
+		<datum class="pub">P.Col. III 55</datum>
+		<datum class="provenance">Arsinoites</datum>
+		<datum class="date">250 BCE</datum>
+		<datum class="title">Receipt August 1, 250 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p55" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p56</id>
+        <id class="hgv">P.Col. III 56</id>
+        <id class="ddbdp">0094;3;56</id>
+        <id class="ldab">1772</id>
+        </data><datum class="inventory">Col.inv. 347</datum>
+		<datum class="pub">P.Col. III 56</datum>
+		<datum class="provenance">unknown</datum>
+		<datum class="date">250 BCE</datum>
+		<datum class="title">Letter 250 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p56" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p57</id>
+        <id class="hgv">P.Col. III 57</id>
+        <id class="ddbdp">0094;3;57</id>
+        <id class="ldab">1773</id>
+        </data><datum class="inventory">Col.inv. 217</datum>
+		<datum class="pub">P.Col. III 57</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">249 BCE</datum>
+		<datum class="title">Notification December 249 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl"></datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p57" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p58</id>
+        <id class="hgv">P.Col. III 58</id>
+        <id class="ddbdp">0094;3;58</id>
+        <id class="ldab">1774</id>
+        </data><datum class="inventory">Col.inv. 238</datum>
+		<datum class="pub">P.Col. III 58</datum>
+		<datum class="provenance">Philadelphia</datum>
+		<datum class="date">248 BCE</datum>
+		<datum class="title">List 248 BC ?</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">VIII, S. 89</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p58" />
+        </datum>
+	</document>
+
+	<document class="searchresult">
+	    <data><id class="apis">columbia.apis.p59</id>
+        <id class="hgv">P.Col. III 59</id>
+        <id class="ddbdp">0094;3;59</id>
+        <id class="ldab">1775</id>
+        </data><datum class="inventory">Col.inv. 360</datum>
+		<datum class="pub">P.Col. III 59</datum>
+		<datum class="title">Philadelphia</datum>
+		<datum class="date">248 BCE</datum>
+		<datum class="title">List 248 BC</datum>
+		<datum class="lang">Greek</datum>
+		<datum class="bl">X, S. 43; XI, S. 66</datum>
+		<datum class="translation" lang="EN">#</datum>
+		<datum class="image">
+		  <image uri="http://wwwapp.cc.columbia.edu/ldpd/app/apis/item?mode=item&amp;key=columbia.apis.p59" />
+        </datum>
+	</document>
+</series>

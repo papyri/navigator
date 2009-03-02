@@ -1,0 +1,57 @@
+package info.papyri.data;
+
+public interface APISIndices {
+    static final String CONTROL_NAME = "controlName";
+    static final String INST = "institution";
+    static final String ALL = "all";
+    static final String ALL_NO_TRANS = "allNoTrans";
+    static final String ALL_NOTES_ONLY = "all_NotesOnly";
+    static final String ASSOC_NAME = "associatedName";
+    static final String AUTHOR = "author";
+    static final String BIN_XREF_ID = "xref:id:binary";
+    static final String CUST_HIST_I = "custodialHistoryIndex";
+    static final String CUST_HIST_D = "custodialHistoryDisplay";
+    static final String DDBDP_ALL = "ddbdp_all";
+    static final String DDBDP_FIRST = "ddbdp_first_only";
+    static final String DATE1_D = "date1Display";
+    static final String DATE1_I = "date1Index";
+    static final String DATE2_D = "date2Display";
+    static final String DATE2_I = "date2Index";
+    static final String ERROR = "error";
+    static final String EXTERNAL_RESOURCE = "externalRsrc";
+    static final String GEN_NOTES = "generalNotes";
+    static final String HAS_ERROR = "hasError";
+    static final String HAS_IMGS = "hasImagesSortField";
+    static final String HAS_TRANS = "hasImagesSortField";
+    static final String HIST_DATA = "historicalData";
+    static final String IMG = "image";
+    static final String INV = "inventoryNumber";
+    static final String INDEXED_SERIES = "indexedSeries";
+    static final String LANG = "language";
+    static final String MATERIAL = "material";
+    static final String NUM_IMGS = "numImages";
+    static final String NUM_UNIQUE_IMGS = "numUniqueImages";
+    static final String ORIG_LANG = "originalLanguage";
+    static final String PHYS_DESC = "physicalDescription";
+    static final String PROVENANCE_NOTE = "provenanceNote";
+    static final String PROVENANCE = "provenance";
+    static final String PUBLICATION = "publication";
+    static final String PUBLICATION_NOTE = "publicationNote";
+    static final String PUBLICATION_STRUCTURED  = "publicationStruct";
+    static final String PUB_ABOUT = "publicationsAbout";
+    static final String PUB_ABOUT_INFO = "publicationsAboutMoreInfo";
+    static final String REF_ADV = "referencesAdvanced";
+    static final String REF_PUB_OR_INV = "referencePubOrInv";
+    static final String SUBJECT_I = "subjectSearchField";
+    static final String SUBJECT_D = "subjectDisplayInItemView";
+    static final String SUMMARY = "summary";
+    static final String TITLE = "title";
+    static final String TITLE_OR_TYPE = "titleOrType";
+    static final String TRANSLATION = "translation";
+    static final String TIMESTAMP_I = "timestampIndex";
+    static final String TIMESTAMP_D = "timestampDisplay";
+    static final String MATCH_ALL = "matchAllDocs";
+    static final String SORTABLE_YES_VALUE = "A";
+    static final String SORTABLE_NO_VALUE = "B";
+
+}

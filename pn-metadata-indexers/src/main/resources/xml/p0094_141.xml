@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TEI.2><text><body><div0 type="Volume" n="7" org="uniform" sample="complete"><div1 type="document" n="141" org="uniform" sample="complete">
+<head lang="en">
+<date>AD308-310</date>
+<placeName>Karanis</placeName>
+</head>
+<p lang="greek">
+<milestone n="1" unit="4" />
+<lb n="1" />*A?[U)R<expan>H/LIOS</expan> *)IS]I/DWROS *P?TOLEMAI/OU DIA\ *)I<corr sic="+" />SI/?W?NOS 
+<lb n="2" />U(?P?[E\R] GENH/M?A?TOS <num>16</num> #336 KAI\ <num>4?</num> #336 E)/TO?U?S 
+<lb n="3" />[<gap extent="4" />] K?AI\ O)NO/MATOS *PALH/MWNOS 
+<lb n="4" /><gap extent="2" /> O(MOI/WS <expan>A)RTA/BAS</expan> <num>13</num> ¾, *)EPEI\F <num>24</num>. 
+<lb n="5" />O(M?[O]I/?W?S? <expan>A)RTA/BAS</expan> <num>12</num>. 
+<milestone n="2" unit="4" />
+<lb n="6" /><handShift new="m2" />DE/DW[KEN <app>
+<lem>*)IS]I/DWROS</lem>
+<rdg type="orth">[IS]IDOROS</rdg>
+</app> 
+<lb n="7" />E?I)S TIMH\?N? X?[O/]R?TWN <expan>TA/LANTA</expan> <num>12</num>. 
+<lb n="8" />O(MOI/WS O( AU)TO\S? [E]I)?S TIMH\N XO/RTO<expan>U</expan> <expan>TA/LANTA</expan> <num>12</num>. 
+<milestone n="3" unit="4" />
+<lb n="9" /><handShift new="m3" /> [PARE/SXE]N? *)ISI/DWRO?S? *PTOLEMAI/OU EI)S TIM?H\?[N] 
+<lb n="10" />X?[O/RTOU <gap extent="4" />]<gap extent="3" />[  <gap extent="9" />  ]<gap extent="3" />[ <gap extent="6" /> ] 
+<lb n="11" />E(?CAKOSI/AS <gap extent="4" /><gap extent="4" /><gap extent="3" /> 
+<lb n="12" />P?A?R?E/?[SXE]N *)I?S?I/?D?W?R?O?S? *P?[TOLEMAI/O]U?<gap extent="3" />A? 
+<lb n="13" />KWMHTW=N KW/?M?H?S *KARANI/D?O?S? <gap extent="3" />[<gap extent="1" />]<gap extent="3" />[<gap extent="4" />]<gap extent="2" /> 
+<lb n="14" /><gap extent="2 lin" desc="vestig" /> 
+<lb n="16" /><handShift new="m4" /> PARE/SXEN *)ISI/DWROS *PTOLEMAI/OU E)MOU= 
+<lb n="17" />PARO/NTOS DRAXMA\S <app>
+<lem>PENTAKISXILI/AS</lem>
+<rdg type="orth">PENTAKISXILEIAS</rdg>
+</app> 
+<lb n="18" />PENTAKOSI/AS <num value="5500" />. O( AU)TO\S DI<expan>A\</expan> *(/HRW<expan>NOS</expan> <expan>DRAXMA\S</expan> <num>2800</num> 
+<lb n="19" />*PALH/MWN *PTOLEMAI/OU <expan>DRAXMA\S</expan> <num>2000</num> 
+<lb n="20" /><handShift new="m5" /> KAI\ TH=| <num>14</num> TOU= *FARMOU=QI O( AU)TO\S *)ISI/DWROS 
+<lb n="21" />U(<expan>PE\R</expan> O)NO/<expan>MATOS</expan> *PALH/MONOS *PTOLEMAI/OU <expan>DRAXMA\S</expan> DISXI-
+<lb n="22" /><app>
+<lem>LI/AS</lem>
+<rdg type="orth">DISXEILIAS</rdg>
+</app> <app>
+<lem>E)NAKOSI/AS</lem>
+<rdg type="orth">ENNAKOSIAS</rdg>
+</app>, <expan>GI/NONTAI</expan> <expan>DRAXMAI\</expan> <num>2900</num> 
+<milestone n="4" unit="4" />
+<lb n="23" /><handShift new="m6" /> *A?U)?R?H/LIOS *OU)ALA=S <app>
+<lem>TESSARA/RIOS</lem>
+<rdg type="orth">TESSALARIOS</rdg>
+</app> *AU)RHLI/W| *)ISIDW/RW| 
+<lb n="24" />*P?T?[O]LEMAI/OU KAI\ TOI=S A)DELFOI=S XA<expan>I/REIN</expan>: E)/SXON PAR' U(MW=N 
+<lb n="25" />K?A?T?A\? *QEI/AN PRO/STACIN U(PE\R KW/M<expan>HS</expan> *KARANI/DOS KAI\ O(RIOD<expan>EIKTI/AS</expan> 
+<lb n="26" />*K?[AR]A?NI/DOS XALKH=S XUTH=S? U(/LHS, MH\ DOQEI/SHS U(F' U(MW=N 
+<lb n="27" />TH=?S? A)NAKAQA/RSEWS E(/WS O(/TOU PERI\ TOU/TOU KELEUSQH=|, 
+<lb n="28" />L?I/?<expan>TRAS</expan> D?EKATRE?I=S <num value="13" /> OU)GKI/AS E(\C H(/MISU <num value="6 " />, KAI\ U(PE\R O)NO/<expan>MATOS</expan> *PALH/MO-
+<lb n="29" />N?O?S? *PTOLEMAI/OU O(MOI/WS XALKH=S XUTH=S U(/LHS LI/<expan>TRAN</expan> MI/AN <num value="1" /> 
+<lb n="30" />[OU)]GKI/AS E(/C <num value="6" />, KAI\ U(PE\R O)NO/<expan>MATOS</expan> *TAH/SEWS *KOPRH= XALKOU= XUTOU= 
+<lb n="31" />OU)GKI/AS DE/KA <num value="10" />, O(MOU= TOU= SUMBO/LOU LI/<expan>TRAS</expan> DEKAPE/NTE 
+<lb n="32" />OU)GK<expan>I/AS</expan> DE/KA H(/MISU, G<expan>I/NONTAI</expan> LI/<expan>TRAI</expan> <num>15</num> <expan>OU)GKI/AI</expan> <num>10</num> ½. *AU)RH/L<expan>IOS</expan> *)ISI/DWROS KOUADRA/RIOS E)/GRA<expan>YA</expan> 
+<lb n="33" /><expan>E)/TOUS</expan> [<num>1</num>]<num>7</num> #336 KAI\ <num>5</num> #336 *TU=BI <num>6</num> 
+<lb n="34" /><handShift new="m7" /> KAI\ *P?AXW\N <num>18</num> PARE/LABON PARA\ SOU= TH\N TIMH\N TOU= XO/RTOU XLWROU= 
+<lb n="35" />KATA\ TO\ E)PIBA/LLON SOI ME/ROS TOU= PARASXEQE/NTOS EI)S TROFA\S 
+<lb n="36" />I(/?P?PWN STRATIWTIKW=N PLH/RHS. 
+<milestone n="5" unit="4" />
+<lb n="37" /><handShift new="m8" /> AU)RH/LIOI *(HRWDIANO\S KAI\ *SAR?API/WN KAI\ <app>
+<lem>*)ANTI/NOOS</lem>
+<rdg type="orth">ANTINOOU</rdg>
+</app> 
+<lb n="38" />A)PAITHTAI\ A)XU/ROU KW/MHS *KARANI/DOS KAI\ <app>
+<lem>O(RIODEIKTI/AS</lem>
+<rdg type="orth">ORIODIKTIAS</rdg>
+</app>. 
+<lb n="39" />*AU)RHLI/W| <app>
+<lem>*)ISIDW/RW|</lem>
+<rdg type="orth">ISI[D]WROU</rdg>
+</app> <app>
+<lem>*PTOLEMAI/OU</lem>
+<rdg type="orth">PTOLEMIOU</rdg>
+</app> XAI/REIN: <app>
+<lem>METE/BALES</lem>
+<rdg type="orth">METEBALIS</rdg>
+</app> 
+<lb n="40" />EI)S <app>
+<lem>O(/RMON</lem>
+<rdg type="orth">ORMW</rdg>
+</app> *LEU?KOGI/OU U(PE\R GENH/MATOS <num>17</num> <expan>E)/TOUS</expan> KAI\ <app>
+<lem><num>5</num></lem>
+<rdg type="auth"><num>7</num></rdg>
+</app> <expan>E)/TOUS</expan> 
+<lb n="41" />A)XU/ROU SARG<expan>A/NAS</expan> DE/KA, GI/<expan>NONTAI</expan> SAR<expan>GA/NAI</expan> <num>10</num> EI)S *MESORH\ <num>15</num> 
+<lb n="42" /><num>19</num> O(MOI/WS SAR<expan>GA/NHN</expan> MI/AN, GI/<expan>NETAI</expan> SAR<expan>GA/NH</expan> <num>1</num>. KAI\ TH=| PRO\ <num>7</num> <app>
+<lem>KALANDW=</lem>
+<rdg type="orth">KALANTW</rdg>
+</app><expan>N</expan> 
+<lb n="43" /><app>
+<lem>*SEPTEMBRI/WN</lem>
+<rdg type="orth">SEPTEMBRION</rdg>
+</app> A)PO\ <app>
+<lem>A)POXH=S</lem>
+<rdg type="orth">APOXHN</rdg>
+</app> *SOUXA/MMWNOS 
+<lb n="44" />SARGA/NAS <app>
+<lem>TE/SSARAS</lem>
+<rdg type="orth">TESSARES</rdg>
+</app>, GI/<expan>NONTAI</expan> SAR<expan>GA/NAI</expan> <num>4</num> 
+<milestone n="6" unit="4" />
+<lb n="45" /><handShift new="m9" /> *AU)RH/LIOI *SEU/QHS KAI\ <app>
+<lem>*EU)DAI/MWN</lem>
+<rdg type="orth">EUDAIMWNOS</rdg>
+</app> 
+<lb n="46" /><app>
+<lem>A)PAITHTAI\</lem>
+<rdg type="orth">APETHTAI</rdg>
+</app> DI?A?TUPW/SEWS <num>17</num> <expan>E)/TOUS</expan> KAI\ <num>5</num> <expan>E)/TOUS</expan> 
+<lb n="47" />O(RI<expan>ODEIKTI/AS</expan> *KAR<expan>ANI/DOS</expan> *AU)R?[H]L<expan>I/W|</expan> <app>
+<lem>*)ISIDW/RW|</lem>
+<rdg type="orth">ISIDWROU</rdg>
+</app> 
+<milestone n="49" unit="block" />
+KAI\ <app>
+<lem>TOI=S</lem>
+<rdg type="orth">OI</rdg>
+</app> <app>
+<lem>A)DELFOI=S</lem>
+<rdg type="orth">ADELFOI</rdg>
+</app> XA<expan>I/REIN</expan>: 
+<lb n="48" />E)/SXAMEN PAR' <app>
+<lem>U(MW=N</lem>
+<rdg type="orth">OIMWN</rdg>
+</app> U(PE\R DIATUPW/SEWS 
+<lb n="49" />TOU= AU)TOU= E)/TOUS TA/LANTA DU/O KAI\ DRAX-
+<lb n="50" />MA\S <app>
+<lem>XILI/AS</lem>
+<rdg type="orth">XEILIAS</rdg>
+</app> TETRAKOSI/AS, GI/<expan>NONTAI</expan> <expan>TA/LANTA</expan> <num>2</num> <expan>DRAXMAI\</expan> <num>1400</num>. <num>17?</num> <expan>E)/TOUS</expan> KAI\ <num>5</num> <expan>E)/TOUS</expan> *MESOR<expan>H\</expan> <num>29</num>. 
+<lb n="51" />KAI\ U(?PE\R P<expan>RIMI</expan>P<expan>I/LOU</expan> <num>18</num> <expan>E)/TOUS</expan> KAI\ <num>6</num> <expan>E)/TOUS</expan> <expan>DRAXMA\S</expan> <num>1100</num> KAI\ DI<expan>A\</expan> *(/HRWN<expan>OS</expan> 
+<lb n="52" />A)/LLA<expan>S</expan> <expan>DRAXMA\S</expan> <gap extent="1" /><num>100</num> 
+<lb n="53" /><handShift new="m10" /> *AU)RH/LIOS *)ANOU=FIS <app>
+<lem>TESSARA/RIOS</lem>
+<rdg type="orth">QESSALARIOS</rdg>
+</app> KAI\ *KOPRH=S 
+<lb n="54" />KOUADRA/RIOS KW/M<expan>HS</expan> *KAR<expan>ANI/DOS</expan> KAI\ O(RI<expan>ODIKTI/AS</expan> *KAR<expan>ANI/DOS</expan> 
+<lb n="55" />*AU)RHLI/W| *)ISIDW/RW| *PTOLEMAI/OU XA<expan>I/REIN</expan>: 
+<lb n="56" />E)/SXAMEN PARA\ SOU= <hi rend="raised"><gap extent="2" /> O)NO/MATOS *PALH/MWNOS</hi> EI)S LO/GON <app>
+<lem>TRIM&lt;H&gt;NIAI/OU</lem>
+<rdg type="orth">TRIMNIAIOU</rdg>
+</app> 
+<lb n="57" />A)RGURI/OU TA/LANTON E(\N KAI\ DRAXMA\S TETRAKIS-
+<lb n="58" /><app>
+<lem>XILI/[A]S</lem>
+<rdg type="orth">TETRAKISXEILI[A]S</rdg>
+</app> E(KATO\N PENTH/KONTA, GI/<expan>NETAI</expan> <expan>TA/LANTON</expan> <num>1</num> <expan>DRAXMAI\</expan> <num>4150</num> 
+<lb n="59" /><num>18</num> <expan>E)/TOUS</expan> KAI\ <num>6</num> <expan>E)/TOUS</expan> *FAW=FI <num>6</num>. 
+<milestone n="7" unit="4" />
+<lb n="61" /><handShift new="m11" /> <app>
+<lem>*AU)RH/LIOI</lem>
+<rdg type="orth">AU?[RH]L?IOS</rdg>
+</app> *(/HRWN *(/HRWNOS KAI\ *KAPE/EIS *)APOLLWNI/OU 
+<lb n="62" />DI' E)[MO]U= *(/HRWNOS *AU)RHLI/W| <app>
+<lem>*)ISIDW/RW|</lem>
+<rdg type="orth">ISIDWROU</rdg>
+</app> *PTOLEMAI/OU 
+<lb n="63" />KAI\ <app>
+<lem>TOI=S</lem>
+<rdg type="orth">[OI]</rdg>
+</app> <app>
+<lem>A)DELFOI=S</lem>
+<rdg type="orth">A?DELFOI</rdg>
+</app> XAI/REIN: PARH/NEGKES EI)S TW=| 
+<lb n="64" /><app>
+<lem>O(/RMON</lem>
+<rdg type="orth">OR[MW]</rdg>
+</app> A)XU/ROU SARG<expan>A/NAS</expan> DE/KA KAI\ E)NNE/A <num value="19" /> U(PE\R G[E]N?H/-
+<lb n="65" />M[A]T?O?S? <num>14</num> <expan>E)/TOUS</expan> <space /> *AU)RH/LIOS *)ISI/WN E)/GRAYA U(PE\R AU)-
+<lb n="66" />TW=?N? A)G?RAMMA/TWN. *QW\Q <num>7</num> 
+<lb n="67" /><expan>E)/TOUS</expan> <num>18</num> [KAI\] <num>6?</num>. 
+<lb n="68" /><handShift new="m12" /> *AU)?R?H/?LIOI *(/HRWN *(/HRWNOS KAI\ *KAPE/EIS DI' E)MOU= <app>
+<lem>*PTOLLA=</lem>
+<rdg type="orth">PTOLLAS</rdg>
+</app> 
+<lb n="69" />*)ONOMA/STOU *AU)RHLI/W| <app>
+<lem>*)ISIDW/RW|</lem>
+<rdg type="orth">ISIDWROU</rdg>
+</app> KAI\ <app>
+<lem>TOI=S</lem>
+<rdg type="orth">O?I</rdg>
+</app> <app>
+<lem>A)DELFOI=S</lem>
+<rdg type="orth">ADELFOI</rdg>
+</app> XAI/REIN: 
+<lb n="70" />DIE/G?R?AYEN H(MI=N <app>
+<lem>TIMH\N</lem>
+<rdg type="orth">TIMHS</rdg>
+</app> A)XU/ROU <num>3</num> ME/ROUS TA/LAN-
+<lb n="71" /><app>
+<lem>TON</lem>
+<rdg type="orth">TALANTWN</rdg>
+</app> E(\N KAI\ DRAXMA\S <app>
+<lem>TRISXILI/AS</lem>
+<rdg type="orth">TREISXILIAS?</rdg>
+</app> <app>
+<lem>E)NAKOSI/AS</lem>
+<rdg type="orth">ENNAKOSIAS</rdg>
+</app>, 
+<lb n="72" />G<expan>I/NETAI</expan> <expan>TA/LANTON</expan> <num>1</num> <expan>DRAXMAI\</expan> <num>3900</num>. *)ISI/WN E)/GRAYA U(PE\R <app>
+<lem>AU)TW=N</lem>
+<rdg type="auth">ATTWN</rdg>
+</app> A)GRAMMA/TWN. 
+<lb n="73" /><expan>E)/TOUS</expan> <num>18</num> KAI\ <num>6</num> #336 *QW\Q <num>7</num>. KAI\ O(MOI/WS DIA\ *(/HRWNOS DRAXMA\S? 
+<lb n="74" /><app>
+<lem>TRISXILI/AS</lem>
+<rdg type="orth">TREISXILIAS</rdg>
+</app> PENTAKOSI/AS, <expan>DRAXMAI\</expan> <num>3500</num> {KAI\ *(HRA=S TIMH=S} ⟦ <gap extent="?" /> ⟧ 
+<lb n="75" />⟦          <gap extent="?" />           ⟧ 
+<lb n="76" />KAI\ O(MOI/WS <app>
+<lem>DIE/GRAYAN</lem>
+<rdg type="orth">DIEGRAYEN</rdg>
+</app> OI( AU)TOI\ <app>
+<lem>TIMH\N</lem>
+<rdg type="orth">TIMHS</rdg>
+</app> KRE/WS TOU= AU)TOU= <num>3</num> ME/ROUS 
+<lb n="77" />DIA\ *DOU/LOU KAI\ *)AFU=S <app>
+<lem>TA/LANTON</lem>
+<rdg type="orth">TALANTWN</rdg>
+</app> E(\N KAI\ DRAXMA\S TETRAKISXILI/AS 
+<lb n="78" />E(CAKOSI/AS, G<expan>I/NONTAI</expan> <expan>TA/LANTON</expan> <num>1</num> <expan>DRAXMAI\</expan> <num>4600</num> 
+<milestone n="8" unit="4" />
+<lb n="79" /><handShift new="m13" /> *AU)RH/L?[IO]I? [*KOPRH=S K]A?I\? *(/ARPALOS KAI\ *(ATRH=S KAI\ OI(? KO?I?<expan>NWNOI\</expan> 
+<lb n="80" />A)MFO/TEROI <app>
+<lem>A)PAITHTAI\</lem>
+<rdg type="orth">APETH?[TAI]</rdg>
+</app> A)XU/ROU KW/[M]<expan>HS</expan> *KARANI/DOS NE/A?[S E)]P?IBOL?H=S 
+<lb n="81" />*AU)RHLI/W| <app>
+<lem>*)ISIDW/RW|</lem>
+<rdg type="orth">ISIDW[RO]U</rdg>
+</app> *PTOLEMA?[I/]OU XAI/REIN: E)/SX[A]MEN PARA\ SOU= 
+<lb n="82" />U(PE\R TH=S AU)TH=S E)?[P]I?BOLH=S U(PE\R O)NO/MATOS *(HRWE?I/?DOS *XAIRH/MWNOS <gap extent="3" /> 
+<lb n="83" />KAI\ U(P?E\?R? TOU= AU)TOU= [O)N]O/?MATOS <expan>DRAXMA\S</expan> <num>5800</num>. *K?O?P?RH=S <app>
+<lem>SESHMEI/WMAI</lem>
+<rdg type="orth">S?ESHMIWMAI</rdg>
+</app>. <handShift new="m14" /> *(ATR?H=S SES?<expan>HMEI/WMAI</expan>. 
+<lb n="84" /><expan>E)/TOUS</expan> <num>18</num> [#336] KAI\ <num>6</num> #336 *F[A]W=FI <num>9</num>. 
+<lb n="85" /><space /> 
+<milestone n="9" unit="4" />
+<lb n="85" /><handShift new="m15" /> *AU)RH/LIOI *PLH/EIN KAI\ *)I<corr sic="+" />SI/WN KAI\ *K<gap extent="1" />[<gap extent="3" />]W?N? KAI\ *(=W?ROS KAI\ *(H<gap extent="1" />[<gap extent="3" />] 
+<lb n="86" />KAI\? *P?A?ONA <app>
+<lem>A)MFO/TEROI</lem>
+<rdg type="orth">AMFOTERON</rdg>
+</app> <app>
+<lem>SITOLO/GOI</lem>
+<rdg type="orth">SITOLOGWN</rdg>
+</app> KW/MHS *KA?R?[ANI/]DOS? K?[AI\ <app>
+<lem>O(]RIODEIKTI/AS</lem>
+<rdg type="orth">[O]R?IODIKTIAS</rdg>
+</app> 
+<lb n="87" />G?[E]N?H/?MA?TOS <num>16</num> <expan>E)/TOUS</expan> KAI\ <num>4</num> <expan>E)/TOUS</expan> E)METRH/Q[HSAN] H(?MI=N E)N QHS?A?URW=| [PER]I\ TH\N AU)TH\?[N] 
+<lb n="88" />K[W/M]H?N KAI\ <app>
+<lem>O(RIODEIKTI/AN</lem>
+<rdg type="orth">ORIODIKTIAS</rdg>
+</app> ME/TRW|? M?O?DI/W| CUSTW=| O)NO/M?A?TOS <app>
+<lem>*)ISIDW/ROU</lem>
+<rdg type="orth">ISIDWROS</rdg>
+</app> 
+<lb n="89" />*P?T?O?L?EMAI/OU PUROU= SU\N TA?<gap extent="4" /><gap extent="1" /> <gap extent="2" />[<gap extent="2" />]<gap extent="2" />[<gap extent="2" />]D?[<gap extent="1" />]KAT?  <gap extent="3" /> A)RTA/BAS E(B?[DO]-
+<lb n="90" />M?H/K?ONTA H(/MISU TE/TARTON, <expan>A)RTA/BAI</expan> <num>7?0?</num> ¾?.  *)ISI/WN E)/GRAY?A U(?P?E\?R AU)TW=N A)GRA[MM<expan>A/TWN</expan>]. 
+<lb n="91" /><app>
+<lem>U(PATEI/AS</lem>
+<rdg type="orth">U?P?A?TIAS</rdg>
+</app> TW=N DESPO?TW=N H(M?W=?N? *OU)ALERI/OU *LIK[I]NN?I?A?N?OU= *LIKINNI/OU *SE[B<expan>ASTOU=</expan>] 
+<lb n="92" />K?A?I\? *F?LAUI/OU *OU)ALERI/OU *KWNSTANTI/[NOU] U?I(<corr sic="+" />OU= *SEBA[S]TW=N?. 
+<lb n="93" />E)?[ME]T?RH/?QH<expan>SAN</expan> O(MOI/WS U(PE\R NE/A[S] E)PI?BOLH=S A)R[TA/B]A?S? [D]EKAOKTW\ H(/[MISU], 
+<lb n="94" /><expan>A)RTA/BAI</expan> <num>18</num> ½. *XOI/AK <num>28</num> <gap extent="4" /><gap extent="4" /><gap extent="4" /><gap extent="4" /><gap extent="4" /><gap extent="4" /><gap extent="4" /> 
+<lb n="95" />*AU)RH/LIOI *KOPRH=S KAI\ *S?W/TAS <app>
+<lem>A)MFO/TEROI</lem>
+<rdg type="orth">AMFOTERON</rdg>
+</app> A)PAITHTAI\ <app>
+<lem>O(RIODEIKTI/AS</lem>
+<rdg type="orth">ORIODIKTIAS</rdg>
+</app> *KARANI/D?[OS] 
+<lb n="96" />*AU)RHLI/W| <app>
+<lem>*)ISIDW/RW|</lem>
+<rdg type="orth">ISIDWROS</rdg>
+</app> *PTOLEMAI/OU XAI/REIN: E)/SXAME?N? PARA\ SOU= U(PE\R DIA?[TU]-
+<lb n="97" />PW/SEWS <num>18</num> <expan>E)/TOUS</expan> KAI\ <num>6</num> <expan>E)/TOUS</expan> KAI\ <num>4</num> <expan>E)/TOUS</expan> KAI\ <num>2?</num> <expan>E)/TOUS</expan> DRAXMA\S <app>
+<lem>TRISXILI/AS</lem>
+<rdg type="orth">TRISXILEI?AS</rdg>
+</app> E(KATO/N, G<expan>I/NONTAI</expan> <expan>DRAXMAI\</expan> <num>3100</num>. 
+<lb n="98" />U(PE\R P<expan>RIMI</expan>P<expan>I/LOU</expan> <num>19</num> <expan>E)/TOUS</expan> KAI\ <num>7</num> <expan>E)/TOUS</expan> &lt;KAI\&gt; <num>5</num> <expan>E)/TOUS</expan> KAI\ <num>3</num> <expan>E)/TOUS</expan> DRAXMA\S E)NNAKOSI/AS, <expan>DRAXMAI\</expan> <num>900</num>. 
+<lb n="99" /><app>
+<lem>U(PATEI/AS</lem>
+<rdg type="orth">U?PATIAS</rdg>
+</app> *STATI/OU *)ANDRONI/KOU KAI\ *POMPH?I/OU *PRO/BOU TW=N 
+<lb n="100" />LAMPROTA/TWN <app>
+<lem>E)PA/RXWN</lem>
+<rdg type="orth">EPARXON</rdg>
+</app> *FAW=FI <num>21</num>. 
+<lb n="101" />KAI\ O(MOI/WS DI<expan>A\</expan> *SERH/NOU KAI\ <app>
+<lem>*SARAPI/WNOS</lem>
+<rdg type="orth">SARAPIWN</rdg>
+</app> <app>
+<lem>A)PAITHTW=N</lem>
+<rdg type="orth">APAI?THTAI</rdg>
+</app> KW/MHS *KARANI/DOS 
+<lb n="102" />U(PE\R DIATUPW/SEWS TOU= AU)TOU= E)/TOUS U(PE\R [O)]NO/<expan>MATOS</expan> *PALH/MWNOS 
+<lb n="103" />DIATUPW/S<expan>EWS</expan> KAI\ P<expan>RIMI</expan>P<expan>I/LOU</expan> <num>19</num> <expan>E)/TOUS</expan> KAI\ <num>7</num> <expan>E)/TOUS</expan> KAI\ <num>5</num> <expan>E)/TOUS</expan> KAI\ <num>3</num> <expan>E)/TOUS</expan> DRAXMA\S <app>
+<lem>DISX[IL]I/AS</lem>
+<rdg type="orth">DISX[IL]E?IAS</rdg>
+</app> E(PTAKOSI/AS, GI/<expan>NONTAI</expan> <expan>DRAXMAI\</expan> <num>2700</num>. 
+<lb n="104" />*)ISI/WN E)/GRAYA U(PE\R AU)TW=N A)GRAMMA/?[T]WN. </p>
+</div1></div0></body></text></TEI.2>
