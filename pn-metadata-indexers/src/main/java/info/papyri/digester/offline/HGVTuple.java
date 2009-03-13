@@ -33,7 +33,7 @@ public class HGVTuple {
     private final PrintStream duplicates;
     ArrayList<String>controlNameList = new ArrayList<String>();
     String pl;
-    String zusätzlich;
+    String zus√§tzlich;
     String texID;
     String publikation;
     String nummer;
@@ -174,9 +174,9 @@ public class HGVTuple {
         return result.iterator();
     }
     
-    public void setZusätzlich(String val){
+    public void setZus√§tzlich(String val){
         if (val == null) return;
-        this.zusätzlich = val.trim();
+        this.zus√§tzlich = val.trim();
     }
     
     public void setTexID(String val){
