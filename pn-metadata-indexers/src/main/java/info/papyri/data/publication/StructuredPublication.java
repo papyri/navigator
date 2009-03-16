@@ -19,7 +19,7 @@ public abstract class StructuredPublication {
     private static void oneTimeSetUp() {
         try{
             if(!DBUtils.checkDDBDPXrefTable()){
-                java.net.URL derbydata = DBUtils.class.getResource("ddbdp.xml");
+                java.net.URL derbydata = DBUtils.class.getResource("/xml/ddbdp.xml");
                 info.papyri.util.DBUtils.setupDerby(derbydata);
             }
         }

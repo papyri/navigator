@@ -76,12 +76,12 @@ public class IndexerFactory implements ObjectCreationFactory {
     public static Indexer indexAPIS_OAI(URL baseUrl, Directory indexDir, boolean create) throws IOException, SAXException {
         try{
             if(!DBUtils.checkDDBDPXrefTable()){
-                DBUtils.setupDerby(IndexerFactory.class.getResource("/info/papyri/util/ddbdp.xml"));
+                DBUtils.setupDerby(IndexerFactory.class.getResource("/xml/ddbdp.xml"));
             }
         }
         catch(SQLException e){
             try{
-                DBUtils.setupDerby(IndexerFactory.class.getResource("/info/papyri/util/ddbdp.xml"));
+                DBUtils.setupDerby(IndexerFactory.class.getResource("/xml/ddbdp.xml"));
             }
             catch(SQLException se){
                 throw new IOException(se.toString());

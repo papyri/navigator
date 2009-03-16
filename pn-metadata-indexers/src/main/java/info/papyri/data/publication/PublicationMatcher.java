@@ -273,7 +273,7 @@ public abstract class PublicationMatcher {
             XMLReader rdr = org.xml.sax.helpers.XMLReaderFactory.createXMLReader();
             rdr.setContentHandler(new ContentHandler(map));
             if(DEBUG) System.out.println("parsing checklist variants...");
-            rdr.parse(new InputSource(PublicationMatcher.class.getResourceAsStream("/info/papyri/data/publication/checklist/checklist.xml")));
+            rdr.parse(new InputSource(PublicationMatcher.class.getResourceAsStream("/xml/checklist.xml")));
         }
         catch(Exception e){}
         if(DEBUG) System.out.println("Returning map of " + map.keySet().size() + " known series variants");
