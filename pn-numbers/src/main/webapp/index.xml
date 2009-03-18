@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ore="http://www.openarchives.org/ore/terms/"
+         xmlns:dcterms="http://purl.org/dc/terms/">
+         <rdf:Description rdf:about="oai:papyri.info:identifiers#aggregation">
+             <ore:describes rdf:resource="oai:papyri.info:identifiers" />
+             <dcterms:title>papyri.info: known digital resource identifiers</dcterms:title>
+             <ore:aggregates>
+                 <rdf:Description rdf:about="oai:papyri.info:identifiers:apis#aggregation">
+                     <ore:describes rdf:resource="oai:papyri.info:identifiers:apis" />
+                     <dcterms:source>http://appdev.cul.columbia.edu:8082/numbers/identifers/apis</dcterms:source>
+                 </rdf:Description>
+                 <rdf:Description rdf:about="oai:papyri.info:identifiers:ddbdp#aggregation">
+                     <ore:describes rdf:resource="oai:papyri.info:identifiers:ddbdp" />
+                     <dcterms:source>http://appdev.cul.columbia.edu:8082/numbers/identifers/ddbdp</dcterms:source>
+                 </rdf:Description>
+                 <rdf:Description rdf:about="oai:papyri.info:identifiers:hgv#aggregation">
+                     <ore:describes rdf:resource="oai:papyri.info:identifiers:hgv" />
+                     <dcterms:source>http://appdev.cul.columbia.edu:8082/numbers/identifers/hgv</dcterms:source>
+                 </rdf:Description>
+                 <rdf:Description rdf:about="oai:papyri.info:identifiers:trismegistos#aggregation">
+                     <ore:describes rdf:resource="oai:papyri.info:identifiers:trismegistos" />
+                     <dcterms:source>http://appdev.cul.columbia.edu:8082/numbers/identifers/trismegistos</dcterms:source>
+                 </rdf:Description>
+             </ore:aggregates>
+         </rdf:Description>
+</rdf:RDF>
