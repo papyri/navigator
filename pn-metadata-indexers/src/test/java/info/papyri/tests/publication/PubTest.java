@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.regex.*;
 import info.papyri.data.publication.*;
 
-public class PubTests extends TestCase {
+public class PubTest extends TestCase {
 	private static final String[] CANONICAL_FORMS = new String[] {
 		"P.Col.",
 		"P.Col.Zen.",

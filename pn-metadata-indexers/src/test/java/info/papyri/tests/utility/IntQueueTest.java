@@ -2,7 +2,7 @@ package info.papyri.tests.utility;
 
 import info.papyri.util.IntQueue;
 import junit.framework.TestCase;
-public class IntQueueTests extends TestCase {
+public class IntQueueTest extends TestCase {
     public void testCopy(){
         IntQueue q1 = new IntQueue(5);
         for(int i=1;i<6;i++){

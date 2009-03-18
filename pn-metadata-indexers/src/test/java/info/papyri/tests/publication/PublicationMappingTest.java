@@ -9,12 +9,12 @@ import java.util.Set;
 
 import info.papyri.data.publication.*;
 
-public class PublicationMappingTests extends TestCase {
+public class PublicationMappingTest extends TestCase {
     Pattern plainPub;
     Pattern embeddedPub;
     private static void oneTimeSetUp() {
         try{
-            java.net.URL derbydata = PublicationMappingTests.class.getResource("/xml/ddbdp-perseus.xml");
+            java.net.URL derbydata = PublicationMappingTest.class.getResource("/xml/ddbdp-perseus.xml");
             info.papyri.util.DBUtils.setupDerby(derbydata);
         }
         catch(java.io.IOException e){

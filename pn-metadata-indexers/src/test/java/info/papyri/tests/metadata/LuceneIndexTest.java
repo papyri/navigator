@@ -11,7 +11,7 @@ import info.papyri.data.LuceneIndex;
 
 import java.io.File;
 import java.io.IOException;
-public class LuceneIndexTests extends TestCase {
+public class LuceneIndexTest extends TestCase {
     public void testTermVectors(){
     File dir = new File("C:\\PROGRA~1\\APACHE~1.0\\temp\\apis\\IndexerStartupThread0hgv0");
     try{

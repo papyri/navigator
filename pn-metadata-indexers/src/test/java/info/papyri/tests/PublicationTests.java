@@ -11,10 +11,10 @@ import info.papyri.tests.metadata.APISDataTest;
 import info.papyri.tests.publication.BerenikeScrubberTest;
 import info.papyri.tests.publication.BerkeleyScrubberTest;
 import info.papyri.tests.publication.ColumbiaScrubberTest;
-import info.papyri.tests.publication.PubTests;
-import info.papyri.tests.publication.PublicationMappingTests;
-import info.papyri.tests.publication.PublicationPatternTests;
-import info.papyri.tests.publication.PublicationScrubberTests;
+import info.papyri.tests.publication.PubTest;
+import info.papyri.tests.publication.PublicationMappingTest;
+import info.papyri.tests.publication.PublicationPatternTest;
+import info.papyri.tests.publication.PublicationScrubberTest;
 import info.papyri.util.DBUtils;
 
 import info.papyri.data.Indexer;
@@ -27,7 +27,7 @@ public class PublicationTests {
     public static IndexSearcher HGV = null;
     private static void oneTimeSetUp() {
         try{
-            java.net.URL derbydata = DBUtils.class.getResource("ddbdp.xml");
+            java.net.URL derbydata = DBUtils.class.getResource("/xml/ddbdp.xml");
             DBUtils.setupDerby(derbydata);
             RAMDirectory indexDir = new RAMDirectory();
             IndexerFactory.indexAPIS_OAI(APISDataTest.class.getResource("/xml/apis-oai-data.xml"), indexDir, true);
@@ -68,10 +68,10 @@ public class PublicationTests {
         suite.addTestSuite(BerenikeScrubberTest.class);
         suite.addTestSuite(BerkeleyScrubberTest.class);
         suite.addTestSuite(ColumbiaScrubberTest.class);
-        suite.addTestSuite(PublicationMappingTests.class);
-        suite.addTestSuite(PublicationPatternTests.class);
-        suite.addTestSuite(PublicationScrubberTests.class);
-        suite.addTestSuite(PubTests.class);
+        suite.addTestSuite(PublicationMappingTest.class);
+        suite.addTestSuite(PublicationPatternTest.class);
+        suite.addTestSuite(PublicationScrubberTest.class);
+        suite.addTestSuite(PubTest.class);
         //$JUnit-END$
         return suite;
     }

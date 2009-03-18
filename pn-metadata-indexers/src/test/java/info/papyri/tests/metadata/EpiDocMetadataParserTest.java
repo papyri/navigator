@@ -19,7 +19,7 @@ import java.util.Vector;
 import info.papyri.metadata.CoreMetadataRecord;
 import info.papyri.metadata.NamespacePrefixes;
 import info.papyri.metadata.hgv.*;
-public class EpiDocMetadataParserTests extends TestCase {
+public class EpiDocMetadataParserTest extends TestCase {
     static IndexSearcher s = PublicationTests.APIS;
     public void testWebImages() throws IOException, SAXException {
         CoreMetadataRecord record = getTestRecord("/xml/bgu.1.23.xml");
@@ -169,7 +169,7 @@ public class EpiDocMetadataParserTests extends TestCase {
         EpiDocHandler handler = new EpiDocHandler();
         reader.setContentHandler(handler);
         reader.setEntityResolver(Indexer.getEpiDocResolver(reader.getEntityResolver()));
-        reader.parse(new InputSource(EpiDocMetadataParserTests.class.getResourceAsStream(path)));
+        reader.parse(new InputSource(EpiDocMetadataParserTest.class.getResourceAsStream(path)));
         return handler.getRecords().next();
     }
     static CoreMetadataRecord getTestRecord(String path, String docScope) throws IOException, SAXException {
@@ -177,7 +177,7 @@ public class EpiDocMetadataParserTests extends TestCase {
         EpiDocHandler handler = new EpiDocHandler();
         reader.setContentHandler(handler);
         reader.setEntityResolver(Indexer.getEpiDocResolver(reader.getEntityResolver()));
-        reader.parse(new InputSource(EpiDocMetadataParserTests.class.getResourceAsStream(path)));
+        reader.parse(new InputSource(EpiDocMetadataParserTest.class.getResourceAsStream(path)));
         return handler.getRecord(docScope);
     }
 }

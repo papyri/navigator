@@ -6,7 +6,7 @@ import javax.naming.*;
 import javax.naming.directory.*;
 import junit.framework.TestSuite;
 import junit.framework.TestCase;
-public class JndiTests extends TestCase {
+public class JndiTest extends TestCase {
     final static Properties SYNTAX = getSyntax();
     private static Properties getSyntax(){
         Properties syntax = new Properties();

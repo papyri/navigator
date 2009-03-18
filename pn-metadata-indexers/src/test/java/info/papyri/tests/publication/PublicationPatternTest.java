@@ -5,7 +5,7 @@ import java.util.regex.*;
 
 import info.papyri.data.publication.StandardPublication;
 
-public class PublicationPatternTests extends TestCase {
+public class PublicationPatternTest extends TestCase {
     Pattern plainPub;
     Pattern embeddedPub;
     

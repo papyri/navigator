@@ -267,7 +267,7 @@ public class APISCentricMergeIndexer  implements ObjectCreationFactory{
         }
     }
     
-    public static void main(String [] args){
+    public static void run(String apis, String hgv, String out){
         boolean test = false;
         boolean report = true;
         boolean reindex = true;
@@ -276,14 +276,6 @@ public class APISCentricMergeIndexer  implements ObjectCreationFactory{
         APISCentricMergeIndexer main = null;
         long start = System.currentTimeMillis();
         try {
-            String apis = null;
-            String hgv = null;
-            String out = null;
-            for(int i=0;i<args.length;i++){
-                if(args[i].equals("-a")) apis = args[++i];
-                if(args[i].equals("-h")) hgv = args[++i];
-                if(args[i].equals("-o")) out = args[++i];
-            }
             File outDir = new File(out); //"C:\\staging\\data\\index\\merge");
             File hgvDir = new File(hgv); //"C:\\staging\\data\\index\\hgv_epidoc");
             File apisDir = new File(apis); //"C:\\staging\\data\\index\\apis_oai");

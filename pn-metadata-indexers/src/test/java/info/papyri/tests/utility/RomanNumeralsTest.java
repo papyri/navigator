@@ -4,7 +4,7 @@ import info.papyri.util.NumberConverter;
 import junit.framework.TestCase;
 import info.papyri.util.VolumeUtil;
 
-public class RomanNumeralsTests extends TestCase {
+public class RomanNumeralsTest extends TestCase {
     public void testDecimalStringtoRoman(){
         String roman = NumberConverter.getRoman("1998");
         assertEquals("Bad Roman numeral parse","MCMXCVIII",roman);

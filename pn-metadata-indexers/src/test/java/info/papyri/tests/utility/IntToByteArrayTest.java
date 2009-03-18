@@ -3,7 +3,7 @@ package info.papyri.tests.utility;
 import info.papyri.util.IntUtil;
 import junit.framework.TestCase;
 
-public class TestIntToByteArray extends TestCase {
+public class IntToByteArrayTest extends TestCase {
     public void testIntToByteArray(){
         int i = 50621;
         byte [] b = IntUtil.toBytes(i);

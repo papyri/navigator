@@ -14,7 +14,7 @@ import org.apache.commons.digester.*;
 import info.papyri.*;
 
 
-public class TestDigester {
+public class DigesterTest {
 
 	/**
 	 * @param args

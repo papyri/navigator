@@ -8,7 +8,7 @@ import java.text.*;
 
 import info.papyri.data.*;
 
-public class DateFormatTests extends TestCase {
+public class DateFormatTest extends TestCase {
     String YEAR3 = "yyy";
     String YEAR4 = "yyyy";
     String MONTH = "MMM";

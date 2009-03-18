@@ -116,7 +116,7 @@ public class HGVMappingTest implements org.xml.sax.ContentHandler {
         reader.setContentHandler(main);
         reader.parse(new InputSource(HGVMappingTest.class.getResourceAsStream("mapping.htm")));
         PrintStream report = new PrintStream("report.txt");
-        File dir0 = new File("C:\\staging\\data\\index\\crosswalk");
+        File dir0 = new File("/tmp/staging/data/index/crosswalk");
         Directory baseDir = FSDirectory.getDirectory( dir0 , false);
         IndexSearcher search = new IndexSearcher(baseDir);
         for(int i=0;i<search.getIndexReader().maxDoc();i++){

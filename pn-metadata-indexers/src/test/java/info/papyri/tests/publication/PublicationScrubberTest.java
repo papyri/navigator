@@ -9,7 +9,7 @@ import java.util.*;
 import org.apache.lucene.search.IndexSearcher;
 
 import info.papyri.tests.PublicationTests;
-public class PublicationScrubberTests extends TestCase {
+public class PublicationScrubberTest extends TestCase {
     
     private static IndexSearcher getHGVSearcher()  {
         return PublicationTests.HGV;

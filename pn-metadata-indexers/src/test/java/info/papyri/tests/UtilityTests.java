@@ -1,10 +1,10 @@
 package info.papyri.tests;
 
-import info.papyri.tests.utility.DateFormatTests;
-import info.papyri.tests.utility.IntQueueTests;
-import info.papyri.tests.utility.JndiTests;
-import info.papyri.tests.utility.RomanNumeralsTests;
-import info.papyri.tests.utility.TestIntToByteArray;
+import info.papyri.tests.utility.DateFormatTest;
+import info.papyri.tests.utility.IntQueueTest;
+import info.papyri.tests.utility.JndiTest;
+import info.papyri.tests.utility.RomanNumeralsTest;
+import info.papyri.tests.utility.IntToByteArrayTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -13,11 +13,11 @@ public class UtilityTests {
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for tests");
         //$JUnit-BEGIN$
-        suite.addTestSuite(DateFormatTests.class);
-        suite.addTestSuite(IntQueueTests.class);
-        suite.addTestSuite(JndiTests.class);
-        suite.addTestSuite(RomanNumeralsTests.class);
-        suite.addTestSuite(TestIntToByteArray.class);
+        suite.addTestSuite(DateFormatTest.class);
+        suite.addTestSuite(IntQueueTest.class);
+        suite.addTestSuite(JndiTest.class);
+        suite.addTestSuite(RomanNumeralsTest.class);
+        suite.addTestSuite(IntToByteArrayTest.class);
         //$JUnit-END$
         return suite;
     }

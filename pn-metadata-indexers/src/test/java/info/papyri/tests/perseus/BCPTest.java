@@ -4,7 +4,7 @@ import info.papyri.antlr.BetaChars;
 import info.papyri.antlr.BetaCodeParser;
 import junit.framework.TestCase;
 import info.papyri.*;
-public class BCPTests extends TestCase {
+public class BCPTest extends TestCase {
     BetaCodeParser bcp = new BetaCodeParser();
     public void testCombinations(){
         if (true) return;
