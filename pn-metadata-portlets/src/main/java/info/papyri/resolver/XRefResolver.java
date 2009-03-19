@@ -1,4 +1,4 @@
-package edu.columbia.apis.resolver;
+package info.papyri.resolver;
 
 import info.papyri.metadata.NamespacePrefixes;
 import info.papyri.navigator.portlet.*;

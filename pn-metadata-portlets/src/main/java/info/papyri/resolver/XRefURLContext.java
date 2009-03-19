@@ -1,4 +1,4 @@
-package edu.columbia.apis.resolver;
+package info.papyri.resolver;
 
 import info.papyri.metadata.CoreMetadataFields;
 import info.papyri.metadata.NamespacePrefixes;

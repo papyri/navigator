@@ -1,4 +1,4 @@
-package edu.columbia.apis.portlet;
+package info.papyri.portlet;
 
 import java.io.*;
 import java.net.*;

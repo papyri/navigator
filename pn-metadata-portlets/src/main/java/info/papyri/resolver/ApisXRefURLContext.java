@@ -1,4 +1,4 @@
-package edu.columbia.apis.resolver;
+package info.papyri.resolver;
 
 
 import javax.naming.Name;
