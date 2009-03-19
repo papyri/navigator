@@ -17,7 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import info.papyri.metadata.*;
-import edu.columbia.apis.data.XREFIndices;
+import info.papyri.data.XREFIndices;
 import edu.columbia.apis.digester.APISCentricAnalyzer;
 
 
@@ -88,7 +88,7 @@ public class Indexer {
                         }
                         else if (XREFIndices.PUBLICATION.equals(coverageResource) && idResource != null){
                             publication = true;
-                            Iterator<String> series = edu.columbia.apis.data.publication.PublicationMatcher.indexableSeries(idEl.getAttribute("resource")).iterator();
+                            Iterator<String> series = info.papyri.data.publication.PublicationMatcher.indexableSeries(idEl.getAttribute("resource")).iterator();
                             while (series.hasNext()){
                                 doc.add(new Field(XREFIndices.PUBLICATION_SERIES,series.next(),Field.Store.YES,Field.Index.UN_TOKENIZED));
                             }
