@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="numberserver.xsl"?>
+<DocumentIdentifiers>
+<RDF>
+  <Coverage resource="APIS:metadata:hgv:publikationl">
+    <Identifier resource="P.Col. VII 135 a" />
+  </Coverage>
+  <Coverage resource="APIS:metadata:ddbdp:ddbfull">
+    <Identifier resource="0094;7;135a" />
+  </Coverage>
+  <Coverage resource="APIS:metadata:leuven:texid">
+    <Identifier resource="10488" />
+  </Coverage>
+  <Coverage resource="APIS:publication">
+    <Identifier resource="P.Col. VII 135" />
+  </Coverage>
+  <Coverage resource="APIS:metadata:apis:controlname">
+    <Identifier resource="columbia.apis.p173" />
+  </Coverage>
+</RDF>
+</DocumentIdentifiers>

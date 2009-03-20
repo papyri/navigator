@@ -1,0 +1,25 @@
+<div class="item" xmlns:ex="http://simile.mit.edu/2006/11/exhibit#">
+                           <table style="margin:10px;border:thin solid black;width:100%">
+                        <tbody>
+	                    <tr>
+	                      <th class="metadatalinks" colspan="2">
+	                        <span ex:content=".hgv"></span>
+	                        <span ex:if-not-exist=".hgv">None</span>
+	                        (apis: <span ex:content=".apis"></span>)
+	                      </th>
+                             </tr><tr>
+	                      <td class="publication">
+	                        <b>Publication:</b>
+	                        <br/>
+	                        <span ex:content=".publication-hgv"></span>
+	                      </td>
+	                      <td class="title"><b>Title:</b><br/><span ex:content=".title-hgv"></span></td>
+	                    </tr>
+                        <tr>
+	                      <td class="date"><b>Date:</b><br/><span ex:content=".date-hgv"></span></td>
+	                      <td class="provenance"><b>Provenance:</b><br/><span ex:content=".provenance-hgv"></span></td>
+                        </tr>
+                        <tr><td colspan="2"><span ex:content=".all-hgv"></span></td></tr>
+                        </tbody>
+                           </table>
+                         </div>
