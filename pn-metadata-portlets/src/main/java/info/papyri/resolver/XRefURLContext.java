@@ -10,7 +10,7 @@ import javax.naming.CompoundName;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 import javax.naming.NamingException;
-import edu.columbia.apis.apisURLContext;
+import info.papyri.jndi.apisURLContext;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.*;

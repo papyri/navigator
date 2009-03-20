@@ -19,9 +19,8 @@ import javax.servlet.ServletContextListener;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 
-import edu.columbia.apis.apisURLContext;
+import info.papyri.jndi.apisURLContext;
 import info.papyri.resolver.XRefResolver;
-
 
 public class IndexContextListener implements ServletContextListener {
     
