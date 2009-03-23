@@ -1,0 +1,274 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<script type="text/javascript">
+// VV modified from http://www.alistapart.com/articles/crossbrowserscripting VV
+if (!document.ELEMENT_NODE) {
+  document.ELEMENT_NODE = 1;
+  document.ATTRIBUTE_NODE = 2;
+  document.TEXT_NODE = 3;
+  document.CDATA_SECTION_NODE = 4;
+  document.ENTITY_REFERENCE_NODE = 5;
+  document.ENTITY_NODE = 6;
+  document.PROCESSING_INSTRUCTION_NODE = 7;
+  document.COMMENT_NODE = 8;
+  document.DOCUMENT_NODE = 9;
+  document.DOCUMENT_TYPE_NODE = 10;
+  document.DOCUMENT_FRAGMENT_NODE = 11;
+  document.NOTATION_NODE = 12;
+}
+
+document._importNode = function(node, allChildren) {
+  var newNode = null;
+  typeSwitch:
+  switch (node.nodeType) {
+    case document.ELEMENT_NODE:
+      newNode = document.createElement(node.nodeName);
+      /* does the node have any attributes to add? */
+      if (node.attributes && node.attributes.length > 0){
+        for (var i = 0; i < node.attributes.length;i++){
+           newNode.setAttribute(node.attributes.item(i).nodeName, node.getAttribute(node.attributes.item(i).nodeName));
+        }
+      }
+      if (allChildren && node.childNodes && node.childNodes.length > 0) {
+        for (var j = 0; j < node.childNodes.length;j++){
+          var cNode = document._importNode(node.childNodes.item(j), allChildren);
+          if (window.ActiveXObject && (newNode.nodeName == 'STYLE' || newNode.nodeName == 'SCRIPT')){
+              newNode.text = cNode.nodeValue;
+          }
+          else{
+              newNode.appendChild(cNode);
+          }
+        }
+      }
+      if (newNode == null) alert('returning null for ELEMENT node');
+      break typeSwitch;
+    case document.TEXT_NODE:
+      newNode = document.createTextNode(node.nodeValue);
+      if (newNode == null) alert(('returning null for TEXT node\n' + node.nodeValue));
+      break typeSwitch;
+    case document.CDATA_SECTION_NODE:
+      newNode = document.createTextNode(node.nodeValue);
+      if (newNode == null) alert(('returning null for CDATA node\n' + node.nodeValue));
+      break typeSwitch;
+    case document.COMMENT_NODE:
+      newNode = document.createTextNode(node.nodeValue);
+      if (newNode == null) alert(('returning null for COMMENT node\n' + node.nodeValue));
+      break typeSwitch;
+  }
+  return newNode;
+};
+// ^^ modified from http://www.alistapart.com/articles/crossbrowserscripting ^^
+function processXML(url,target) {
+  var obj;
+  if (window.XMLHttpRequest) {
+    obj = new XMLHttpRequest();
+    obj.onreadystatechange = getNavigationCallBack(obj,target);
+    obj.open("GET", url, true);
+    obj.send(null);
+  // IE/Windows ActiveX object
+  } else if (window.ActiveXObject) {
+    obj = new ActiveXObject("Microsoft.XMLHTTP");
+    if (obj) {
+      obj.onreadystatechange = getNavigationCallBack(obj,target);
+      obj.open("GET", url, true);
+      obj.send();
+    }
+  } else {
+    alert("Your browser does not support AJAX");
+  }
+}
+function processChange() {
+    // 4 means the response has been returned and ready to be processed
+    if (obj.readyState == 4) {
+        // 200 means "OK"
+        if (obj.status == 200) {
+            // process whatever has been sent back here:
+        // anything else means a problem
+        } else {
+            alert("There was a problem in the returned data:\n");
+        }
+    }
+}
+
+function getNavigationCallBack(xmlObj,target){
+    return function(){
+    if (xmlObj.readyState == 4) {
+        if (xmlObj.status == 200) {
+            oldSelected = target.options[target.selectedIndex];
+            var option = document.createElement('OPTION');
+            option.appendChild(document.createTextNode('Select'));
+            option.setAttribute('value','');
+            oldSelected.selected = false;
+            options = [];
+            for (i=0;i<target.options.length;i++){
+                options[options.length] = target.options[i];
+            }
+            while (target.options.length > 0){
+                target.remove(target.options.length - 1);
+            }
+
+            if (target.options.length == 0){
+            target.appendChild(option);
+            }
+            else{
+            target.insertBefore(option,target.options[0]);
+            }
+            target.selectedIndex = 0;
+            
+            var items = xmlObj.responseXML.getElementsByTagName('item');
+            for(i=0;i<items.length;i++){
+                option = document.createElement('option');
+                textNode = items.item(i).childNodes[0];
+                option.appendChild(document.createTextNode(textNode.nodeValue));
+                option.setAttribute('value',textNode.nodeValue);
+                target.appendChild(option);
+            }
+            // parse response, load new options
+        } else {
+            alert("There was a problem in the returned data:\nstatus code: " + xmlObj.status);
+        }
+    }
+    };
+} 
+
+function getDocumentCallBack(xmlObj,target){
+    return function(){
+    if (xmlObj.readyState == 4) {
+        if (xmlObj.status == 200) {
+            var docElement = document.getElementById(target);
+            nodes = [];
+            for (i=0;i<docElement.childNodes.length;i++){
+                nodes[nodes.length] = docElement.childNodes[i];
+            }
+            for (i=0;i<nodes.length;i++){
+                docElement.removeChild(nodes[i]);
+            }
+            var tei2 = xmlObj.responseXML.documentElement;
+            if (tei2 == null) alert('tei2 is null');
+            for (i=0;i<tei2.childNodes.length;i++){
+              var cNode = tei2.childNodes.item(i);
+              var impNode = document._importNode(cNode,true);
+              if (impNode == null){
+                  alert(('imported doc node is null; cNode type was ' + cNode.nodeType + ' name was ' + cNode.nodeName));
+              }
+              else {
+                  docElement.appendChild(impNode);
+                  if (impNode.nodeType != document.ELEMENT_NODE && impNode.nodeType != document.TEXT_NODE) alert('unexpected node type: ' + impNode.nodeType);
+              }
+            }
+            
+        } else {
+            alert("There was a problem in the returned data:\nstatus code: " + xmlObj.status);
+        }
+    }
+    };
+} 
+
+function loadItems(mode) {
+       var series = '';
+       var volume = '';
+       var sI = document.getElementById('series').selectedIndex;
+       var vI = document.getElementById('volume').selectedIndex;
+       if (sI != -1) series = document.getElementById('series').options.item(sI).value;
+       if (vI != -1) volume = document.getElementById('volume').options.item(vI).value;
+       var url  =  'http://localhost:8080/ddbdp-nav/items?mode=' + mode;
+       var target;
+       if (mode == 'volume'){
+         url += '&series=' + series;
+         target = document.getElementById('volume');
+       }
+       if (mode == 'document'){
+         url += '&series=' + series + '&volume=' + volume;
+         target = document.getElementById('document')
+       }
+       if (mode == 'series') target = document.getElementById('series');
+       var items = processXML(url,target);
+}
+
+function resetItems(mode) {
+            var target = document.getElementById(mode);
+            oldSelected = target.options[target.selectedIndex];
+            var option = document.createElement('OPTION');
+            option.appendChild(document.createTextNode('Select'));
+            option.setAttribute('value','');
+            oldSelected.selected = false;
+            options = [];
+            for (i=0;i<target.options.length;i++){
+                options[options.length] = target.options[i];
+            }
+            while (target.options.length > 0){
+                target.remove(target.options.length - 1);
+            }
+
+            if (target.options.length == 0){
+            target.appendChild(option);
+            }
+            else{
+            target.insertBefore(option,target.options[0]);
+            }
+            target.selectedIndex = 0;
+}
+
+function loadDocument() {
+       var series = '';
+       var volume = '';
+       var documentVal = '';
+       var sI = document.getElementById('series').selectedIndex;
+       var vI = document.getElementById('volume').selectedIndex;
+       var dI = document.getElementById('document').selectedIndex;
+       if (sI != -1) series = document.getElementById('series').options.item(sI).value;
+       if (vI != -1) volume = document.getElementById('volume').options.item(vI).value;
+       if (dI != -1) documentVal = document.getElementById('document').options.item(dI).value;
+       if (documentVal == '') return;
+       var url  =  'http://localhost:8080/ddbdp-nav/text?series=' + series;
+       url += '&volume=' + volume;
+       url += '&document=' + documentVal;
+
+  var obj;
+  if (window.XMLHttpRequest) {
+    obj = new XMLHttpRequest();
+    obj.onreadystatechange = getDocumentCallBack(obj,'docText');
+    obj.open("GET", url, true);
+    obj.send(null);
+  // IE/Windows ActiveX object
+  } else if (window.ActiveXObject) {
+    obj = new ActiveXObject("Microsoft.XMLHTTP");
+    if (obj) {
+      obj.onreadystatechange = getDocumentCallBack(obj,'docText');
+      obj.open("GET", url, true);
+      obj.send();
+    }
+  } else {
+    alert("Your browser does not support AJAX");
+  }
+}
+</script>
+<style type="text/css">
+H1 {font-size:1.2em;}
+H2 {
+    font-size:1.1em;
+    font-family: "Arial Unicode MS";
+    }
+</style>
+</head>
+<body onload="loadItems('series');">
+<div id="navigation">
+<form>
+<label for="series">Publication series:</label>
+<select id="series" name="series" onchange="loadItems('volume');resetItems('document');">
+    <option value="">Select</option>
+</select>
+<label for="document">Volume:</label>
+<select id="volume" name="volume" onchange="loadItems('document');">
+    <option value="">Select</option>
+</select>
+<label for="document">Document:</label>
+<select id="document" name="document" onchange="loadDocument();">
+    <option value="">Select</option>
+</select>
+</form>
+</div>
+<div id="docText">
+</div>
+</body>
