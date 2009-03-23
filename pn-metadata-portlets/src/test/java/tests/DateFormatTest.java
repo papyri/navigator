@@ -1,13 +1,11 @@
 package tests;
 
 import junit.framework.TestCase;
-import java.util.*;
-import java.text.*;
 
 import util.NumberConverter;
 import util.OutOfRangeException;
 
-public class DateFormatTests extends TestCase {
+public class DateFormatTest extends TestCase {
     String YEAR3 = "yyy";
     String YEAR4 = "yyyy";
     String MONTH = "MMM";

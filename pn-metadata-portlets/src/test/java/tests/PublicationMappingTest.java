@@ -5,7 +5,7 @@ import junit.framework.*;
 import java.util.regex.*;
 
 
-public class PublicationMappingTests extends TestCase {
+public class PublicationMappingTest extends TestCase {
     Pattern plainPub;
     Pattern embeddedPub;
     

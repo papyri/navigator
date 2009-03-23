@@ -126,14 +126,32 @@
         <finalName>pn-metadata-portlets</finalName>
         <plugins>
             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>1.5</source>
-                <target>1.5</target>
-                <encoding>UTF-8</encoding>
-            </configuration>
-        </plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>**/JndiTest.java</excludes>
+                </configuration>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <targetPath>xml</targetPath>
+                <directory>${basedir}/src/main/resources/xml</directory>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+
+
     </build>
 </project>

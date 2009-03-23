@@ -3,7 +3,7 @@ package tests;
 import info.papyri.metadata.provenance.*;
 import junit.framework.TestCase;
 
-public class ProvenanceTests extends TestCase {
+public class ProvenanceTest extends TestCase {
     public void testProvenanceLD() {
         String source = "Euhermeria";
         String actual = ProvenanceControl.match(source);

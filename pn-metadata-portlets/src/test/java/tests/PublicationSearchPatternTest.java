@@ -5,7 +5,7 @@ import junit.framework.*;
 import java.util.regex.*;
 
 
-public class PublicationSearchPatternTests extends TestCase {
+public class PublicationSearchPatternTest extends TestCase {
     Pattern plainPub;
     Pattern embeddedPub;
     
