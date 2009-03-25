@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"><jsp:directive.page import="edu.columbia.apis.*,java.util.*" pageEncoding="UTF-8"/>
+<?xml version="1.0" encoding="UTF-8"?><jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"><jsp:directive.page import="java.util.*" pageEncoding="UTF-8"/>
 <portlet:defineObjects/>
 <%@ taglib uri="http://java.sun.com/portlet" 
 prefix="portlet"%>

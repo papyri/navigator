@@ -1,4 +1,4 @@
-<%@page import="edu.columbia.apis.*,java.util.*" pageEncoding="UTF-8" %>
+<%@page import="info.papyri.*,java.util.*" pageEncoding="UTF-8" %>
 <h2 class="apis-portal-title">Query Timeout!</h2>
 <p>The DDbDP at Perseus is responding too slowly.  Please try again later.
 </p>

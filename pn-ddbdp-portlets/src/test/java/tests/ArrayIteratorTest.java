@@ -2,7 +2,7 @@ package tests;
 
 import junit.framework.TestCase;
 import info.papyri.ddbdp.util.*;
-public class ArrayIteratorTests extends TestCase {
+public class ArrayIteratorTest extends TestCase {
     public void testIterator(){
         String [] strings = new String[]{"a","b","c"};
         ArrayIterator<String> iter = new ArrayIterator<String>(strings);

@@ -15,7 +15,7 @@
   <xsl:attribute name="version">2.0</xsl:attribute>
   <!-- xsl:attribute name="xmlns:jsp">http://java.sun.com/JSP/Page</xsl:attribute-->
   <xsl:element name="jsp:directive.page">
-     <xsl:attribute name="import">edu.columbia.apis.*,java.util.*</xsl:attribute>
+     <xsl:attribute name="import">info.papyri.*,java.util.*</xsl:attribute>
      <xsl:attribute name="pageEncoding">UTF-8</xsl:attribute>
   </xsl:element>
   <table>

@@ -55,9 +55,9 @@ public class TranslationPortlet extends NavigatorPortlet {
         if(id.startsWith(NamespacePrefixes.ID_NS)){
 
             Hashtable env = new Hashtable();
-            env.put(Context.URL_PKG_PREFIXES, "edu.columbia");
+            env.put(Context.URL_PKG_PREFIXES, "info.papyri");
             try{
-                Context c = NamingManager.getURLContext("apis", env);
+                Context c = NamingManager.getURLContext("jndi", env);
                 Name xName = XREFPortlet.getName(id);
                 c = (Context)c.lookup(xName);
                 if (c == null){

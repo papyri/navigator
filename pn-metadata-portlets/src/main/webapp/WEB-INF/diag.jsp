@@ -1,4 +1,4 @@
-<%@page import="edu.columbia.apis.*,java.util.*" pageEncoding="UTF-8" %>
+<%@page import="info.papyri.*,java.util.*" pageEncoding="UTF-8" %>
 <html>
 <head><title>Diagnostics</title></head>
 <body>

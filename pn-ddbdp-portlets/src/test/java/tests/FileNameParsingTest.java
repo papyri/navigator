@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import info.papyri.ddbdp.servlet.*;
 import info.papyri.epiduke.sax.TEILineHandler;
 
-public class FileNameParsingTests extends TestCase {
+public class FileNameParsingTest extends TestCase {
     public void testNoVolume(){
         String fName = "p.oxy.14.xml";
         String actual = Document.parseName(fName);
@@ -34,7 +34,7 @@ public class FileNameParsingTests extends TestCase {
         String id = "bgu.4.1145";
         String [] parts = TEILineHandler.getNameParts(id, n);
         assertEquals("bgu", parts[TEILineHandler.COLL_IX]);
-        assertEquals("4", parts[TEILineHandler.VOL_IX]);
+        assertEquals("0004", parts[TEILineHandler.VOL_IX]);
         assertEquals("1145", parts[TEILineHandler.DOC_IX]);
     }
 }

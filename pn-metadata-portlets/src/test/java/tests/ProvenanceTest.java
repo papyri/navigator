@@ -4,6 +4,7 @@ import info.papyri.metadata.provenance.*;
 import junit.framework.TestCase;
 
 public class ProvenanceTest extends TestCase {
+    //TODO: Figure out why ProvenanceControl does all-lower-case, but this doesn't test that.
     public void testProvenanceLD() {
         String source = "Euhermeria";
         String actual = ProvenanceControl.match(source);

@@ -1,5 +1,5 @@
 <%@ page language="java"%>
-<%@ page session="false" contentType="text/html" import="edu.columbia.apis.portlet.*,java.util.*,javax.portlet.*" %><div>
+<%@ page session="false" contentType="text/html" import="info.papyri.portlet.*,java.util.*,javax.portlet.*" %><div>
 <%@ taglib uri="http://java.sun.com/portlet" 
 prefix="portlet"%>
 <portlet:defineObjects/>

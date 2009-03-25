@@ -22,7 +22,12 @@ import org.xml.sax.XMLReader;
 
 import junit.framework.TestCase;
 
-public class XSLTTests extends TestCase {
+
+
+
+public class XSLTTest extends TestCase {
+    /**
+     * TODO: test contains no assertions.  Figure out what it's supposed to do
     public void testBadSurrogate()  throws TransformerException, SAXException, UnsupportedEncodingException {
         String xslt = "start-edition.xsl";
         XMLReader reader = DocumentPortlet.createReader();
@@ -37,7 +42,7 @@ public class XSLTTests extends TestCase {
         //DocumentPortlet.fact.setAttribute("http://xml.apache.org/xalan/properties/source-location", Boolean.TRUE);
         Transformer trans = DocumentPortlet.fact.newTransformer(source);
         trans.setErrorListener(new TestErrorListener());
-        InputStream in = XSLTTests.class.getResourceAsStream("/tests/data/p.cair.goodsp.30.xml");
+        InputStream in = XSLTTest.class.getResourceAsStream("/tests/data/p.cair.goodsp.30.xml");
         InputSource inSrc = new InputSource();
         inSrc.setCharacterStream(new InputStreamReader(in,"UTF-8"));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -45,4 +50,5 @@ public class XSLTTests extends TestCase {
         StreamResult result = new StreamResult(out);
         trans.transform(new SAXSource(reader,inSrc), result);
     }
+    */
 }

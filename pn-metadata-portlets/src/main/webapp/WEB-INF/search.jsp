@@ -1,4 +1,4 @@
-<%@page language="java" session="false" contentType="text/html" import="info.papyri.index.LuceneIndex,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,edu.columbia.apis.*,info.papyri.metadata.*,util.jsp.el.Functions,java.util.*,javax.portlet.*,info.papyri.servlet.*" pageEncoding="UTF-8"%>
+<%@page language="java" session="false" contentType="text/html" import="info.papyri.index.LuceneIndex,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,info.papyri.metadata.*,util.jsp.el.Functions,java.util.*,javax.portlet.*,info.papyri.servlet.*" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/portlet" prefix="portlet"%><%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@taglib uri="tld/el-functions.tld" prefix="custom"%><portlet:defineObjects/>
 <%!
 Term cnTemplate = new Term(CoreMetadataFields.DOC_ID,"");
@@ -70,7 +70,7 @@ Term cnTemplate = new Term(CoreMetadataFields.DOC_ID,"");
 			                String next = provenanceVals.next().toString();
 			                pageContext.setAttribute("provenance", next);
 			%>
-			${custom:selectedOption(provenance,PROVENANCE)}
+			${custom:selectedOption(provenance,provenance,PROVENANCE)}
 			<%
 			}
 			%>
@@ -88,7 +88,7 @@ Term cnTemplate = new Term(CoreMetadataFields.DOC_ID,"");
 			                pageContext.setAttribute("institution", next);
 			                //Functions.selectedOption(collection,request.getParameter("apisnum_inst"));
 			%>
-			${custom:selectedOption(institution,INSTITUION)}
+			${custom:selectedOption(institution,institution,INSTITUTION)}
 			<%
 			}
 			%>
@@ -101,16 +101,16 @@ Term cnTemplate = new Term(CoreMetadataFields.DOC_ID,"");
 			<input size="5"
 				id="beginDate" name="beginDate" class="forminput10" value="<%=beginDate %>" /> <select
 				name="beginDateEra">
-			${custom:selectedOption("CE",SUBMITTED_BEGIN_DATE_ERA)}
-			${custom:selectedOption("BCE",SUBMITTED_BEGIN_DATE_ERA)}
+			${custom:selectedOption("CE","CE",SUBMITTED_BEGIN_DATE_ERA)}
+			${custom:selectedOption("BCE","BCE",SUBMITTED_BEGIN_DATE_ERA)}
 			</select>
                   <label for="endDate">On or before:</label>
 			<input size="5"
 				id="endDate" name="endDate" class="forminput10" value="<%=endDate %>" />
 				<select
 				name="endDateEra">
-			${custom:selectedOption("CE",SUBMITTED_END_DATE_ERA)}
-			${custom:selectedOption("BCE",SUBMITTED_END_DATE_ERA)}
+			${custom:selectedOption("CE","CE",SUBMITTED_END_DATE_ERA)}
+			${custom:selectedOption("BCE","BCE",SUBMITTED_END_DATE_ERA)}
 			</select>
             </td>
 		</tr>
@@ -126,7 +126,7 @@ Term cnTemplate = new Term(CoreMetadataFields.DOC_ID,"");
 			    String seriesIndex = seriesIter.next();
 			                pageContext.setAttribute("series", seriesIndex);
 			%>
-			${custom:selectedOption(series,SERIES)}
+			${custom:selectedOption(series,series,SERIES)}
 			<%
 			}
 			%>
@@ -150,7 +150,7 @@ Term cnTemplate = new Term(CoreMetadataFields.DOC_ID,"");
 			                pageContext.setAttribute("invnum_coll", next);
 			                //Functions.selectedOption(collection,request.getParameter("apisnum_inst"));
 			%>
-			${custom:selectedOption(invnum_coll,INVNUM_COLL)}
+			${custom:selectedOption(invnum_coll,invnum_coll,INVNUM_COLL)}
 			<%
 			}
 			%>
@@ -174,7 +174,7 @@ Term cnTemplate = new Term(CoreMetadataFields.DOC_ID,"");
 			                pageContext.setAttribute("apisnum_inst", next);
 			                //Functions.selectedOption(collection,request.getParameter("apisnum_inst"));
 			%>
-			${custom:selectedOption(apisnum_inst,APISNUM_INST)}
+			${custom:selectedOption(apisnum_inst,apisnum_inst,APISNUM_INST)}
 			<%
 			}
 			%>

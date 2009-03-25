@@ -1,4 +1,4 @@
-<%@page language="java" session="false" contentType="text/html" import="java.util.regex.Pattern,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,edu.columbia.apis.*,util.jsp.el.Functions,java.util.*,javax.portlet.*,info.papyri.index.LuceneIndex,info.papyri.navigator.portlet.*" pageEncoding="UTF-8"%>
+<%@page language="java" session="false" contentType="text/html" import="java.util.regex.Pattern,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,util.jsp.el.Functions,java.util.*,javax.portlet.*,info.papyri.index.LuceneIndex,info.papyri.navigator.portlet.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%><%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@taglib uri="tld/el-functions.tld" prefix="custom"%><portlet:defineObjects/>
 <portlet:defineObjects/><%! final Pattern DIGIT = Pattern.compile("^\\d+$"); %>
 <%

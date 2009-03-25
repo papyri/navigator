@@ -35,7 +35,7 @@ public class XRefResolver implements Resolver {
     public ResolveResult resolveToClass(String name,
             Class<? extends Context> arg1) throws NamingException {
 
-        if (!arg1.getName().equals("edu.columbia.apis.apisURLContext")){
+        if (!arg1.getName().equals("info.papyri.jndi.apisURLContext")){
             throw new NamingException("Unexpected resolution class: " + arg1.getName());
         }
         name = name.trim().replaceAll("\\s+","%20");

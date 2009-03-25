@@ -1,5 +1,5 @@
 <%@ page language="java"%>
-<%@ page session="false" contentType="text/html" import="info.papyri.metadata.*,java.util.*,edu.columbia.apis.portlet.*,org.apache.lucene.document.*,java.util.*,javax.portlet.*" %>
+<%@ page session="false" contentType="text/html" import="info.papyri.metadata.*,java.util.*,info.papyri.portlet.*,org.apache.lucene.document.*,java.util.*,javax.portlet.*" %>
 <%@ taglib uri="http://java.sun.com/portlet" 
 prefix="portlet"%><portlet:defineObjects/><%
 String apisId = request.getParameter("controlName").trim();

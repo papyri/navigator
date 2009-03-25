@@ -3,7 +3,7 @@
   <portlet id="IFData">
     <portlet-name>IFData</portlet-name>
     <display-name>APIS Metadata</display-name>
-    <portlet-class>edu.columbia.apis.portlet.IFPortlet</portlet-class>
+    <portlet-class>info.papyri.portlet.IFPortlet</portlet-class>
     <supports>
       <mime-type>text/html</mime-type>
       <portlet-mode>VIEW</portlet-mode>

@@ -1,4 +1,4 @@
-<%@page import="edu.columbia.apis.*,edu.columbia.apis.portlet.*,java.util.*,javax.portlet.*,org.apache.lucene.document.*" pageEncoding="UTF-8" %>
+<%@page import="info.papyri.portlet.*,java.util.*,javax.portlet.*,org.apache.lucene.document.*" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
 <%!
 

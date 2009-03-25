@@ -1,4 +1,4 @@
-<%@page import="edu.columbia.apis.*,edu.columbia.apis.portlet.*,java.util.*" pageEncoding="UTF-8" %>
+<%@page import="info.papyri.antlr.*,info.papyri.portlet.*,java.util.*" pageEncoding="UTF-8" %>
 <h2>Query for <%=request.getAttribute(DDBDPSearchPortlet.QUERY_TERM_ATTR) %></h2>
 <table>
 <thead><tr><th>Perseus ID</th><th>&nbsp;</th><th>&nbsp;</th><th>Matching Text</th></tr></thead>

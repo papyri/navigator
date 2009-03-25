@@ -1,4 +1,4 @@
-<%@page language="java" session="false" contentType="text/html" import="info.papyri.navigator.portlet.*,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,edu.columbia.apis.*,info.papyri.index.*,util.jsp.el.Functions,java.util.*,javax.portlet.*" pageEncoding="UTF-8"%>
+<%@page language="java" session="false" contentType="text/html" import="info.papyri.navigator.portlet.*,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,info.papyri.index.*,util.jsp.el.Functions,java.util.*,javax.portlet.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%><%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@taglib uri="tld/el-functions.tld" prefix="custom"%><%@page import="info.papyri.metadata.CoreMetadataFields"%>
 <%@page import="info.papyri.metadata.NamespacePrefixes"%>
 <portlet:defineObjects/>

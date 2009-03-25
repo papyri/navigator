@@ -41,7 +41,6 @@ public class QueryExecContext extends ScriptableObject implements QueryFunctions
     private static final Term LEMMA_TEMPLATE = new Term(Indexer.LEMMA_TERM,"");
     private static final int DEFAULT_RESULT_SIZE = 50;
     private static final Logger LOG = Logger.getLogger(QueryExecContext.class);
-    private static final BetaCodeParser delegate = new BetaCodeParser();
     private static final UnicodeCConverter converter = new UnicodeCConverter();
     private IndexSearcher searcher;
     private IndexSearcher  bigrams;
@@ -49,6 +48,7 @@ public class QueryExecContext extends ScriptableObject implements QueryFunctions
     private IndexSearcher bigramsLC;
     private IndexSearcher bigramsFL;
     private Connection db;
+
     public QueryExecContext(){
         Object [] myArray = new Object[0];
         Class [] signature = new Class[]{org.mozilla.javascript.Context.class, myArray.getClass(), Function.class, boolean.class };
@@ -106,9 +106,7 @@ public class QueryExecContext extends ScriptableObject implements QueryFunctions
         this.bigramsLC = bigramsLC;
         this.bigramsFL = bigramsFL;
     }
-    
-    
-    
+        
     public synchronized void setBigramsPlain(IndexSearcher bigrams){
     	
     }
@@ -225,8 +223,8 @@ public class QueryExecContext extends ScriptableObject implements QueryFunctions
     public static Object beta(org.mozilla.javascript.Context cx, Object[] args, Function funcObj, boolean inNewExpr){
         String beta = (String)args[0];
         try{
-            DelegatingBetaCodeParser bcp = new DelegatingBetaCodeParser(delegate);
-            String convertSrc = BetaCodeFilter.hideWildcards(beta, 1); 
+            String convertSrc = BetaCodeFilter.hideWildcards(beta, 1);
+            BetaCodeParser bcp = new BetaCodeParser();
             bcp.setString(convertSrc);
             String converted = converter.convertToString(bcp);
             converted =  BetaCodeFilter.showWildcards(converted);

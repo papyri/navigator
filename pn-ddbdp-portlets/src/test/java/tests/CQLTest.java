@@ -6,7 +6,7 @@ import org.z3950.zing.cql.*;
 
 import java.io.IOException;
 import info.papyri.ddbdp.servlet.Search;
-public class CQLTests extends TestCase {
+public class CQLTest extends TestCase {
     private final static String ISO = "ISO-8859-1";
     public void testParse() throws IOException, CQLParseException {
         String test = "%ce%ba%ce%b1%cf%84%ce%b1%ce%bb%ce%b5";

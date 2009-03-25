@@ -64,9 +64,9 @@ public abstract class NavigatorPortlet extends GenericPortlet {
             primary = LuceneIndex.SEARCH_HGV;
             name = new String(name.getBytes("ISO-8859-1"),"UTF-8");
             Hashtable env = new Hashtable();
-                env.put(Context.URL_PKG_PREFIXES, "edu.columbia");
+                env.put(Context.URL_PKG_PREFIXES, "info.papyri");
                 try{
-            Context c = NamingManager.getURLContext("apis", env);
+            Context c = NamingManager.getURLContext("jndi", env);
             int ix = name.indexOf(':',NamespacePrefixes.ID_NS.length());
             if(ix == -1) return null;
 
