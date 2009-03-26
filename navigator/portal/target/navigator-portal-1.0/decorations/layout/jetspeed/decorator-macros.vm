@@ -1,0 +1,115 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+#* include potentially nested links navigation component *#
+#macro (includeNestedLinksWithIconNavigation $_nodeSet $_nodePrefix)
+  <div>
+  #foreach($node in $_nodeSet.iterator()) 
+    #if($node.type == ".psml")
+      <div><a href="$jetspeed.getAbsoluteUrl($node.url)" class="LinkPage" title="$node.getTitle($preferedLocale)">$node.getShortTitle($preferedLocale)</a></div>
+    #elseif($node.type == ".link")
+      <div><a href="$node.url" target="$node.target" class="Link" title="$node.getTitle($preferedLocale)">$node.getShortTitle($preferedLocale)</a></div>
+    #elseif($node.type == "folder")
+      <div><a href="$jetspeed.getAbsoluteUrl($node.url)" class="LinkFolder" title="$node.getTitle($preferedLocale)">$node.getShortTitle($preferedLocale)</a></div>
+    #elseif($node.type == ".ds")
+      <div class="pagetitle" title="$node.getTitle($preferedLocale)">${node.getShortTitle($preferedLocale)}</div>
+      #set($__nodePrefix = "${_nodePrefix}${node.url}")
+      #set($__nodeSet = $site.getDocumentSetNodes($__nodePrefix))
+      #includeNestedLinksWithIconNavigation($__nodeSet $__nodePrefix)
+    #else
+      <div><a href="$node.url" title="$node.getTitle()">$node.getShortTitle()</a></div>
+    #end
+  #end
+  </div>
+#end
+#macro (includeLinksWithIconNavigation $_nodeSet)
+  #includeNestedLinksWithIconNavigation($_nodeSet "")
+#end
+
+#* include folders navigation component *#
+#macro (includeFoldersNavigation $_nodeSet)
+  <div class="FolderList">
+  #foreach($childFolder in $_nodeSet.iterator())
+    <span><a href="$jetspeed.getAbsoluteUrl($childFolder.url)" class="FolderLink" title="$childFolder.getTitle($preferedLocale)">$childFolder.getShortTitle($preferedLocale)</a></span>        
+  #end
+  </div>
+#end
+
+#* include tabs navigation component *#
+#macro (includeTabsNavigation $_nodeSet)
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      #foreach($childPage in $_nodeSet.iterator())
+        #set($tabTitle = $childPage.getTitle($preferedLocale))
+        #set($tabName = $childPage.getShortTitle($preferedLocale))
+        #if($jetspeed.page.id == $childPage.id)
+          <td class="LTabLeft" nowrap="true">&nbsp;</td>
+          <td class="LTab" align="center" valign="middle" nowrap="true" title="$tabTitle">${tabName}</td>
+          <td class="LTabRight"  nowrap="true">&nbsp;</td>
+        #else
+          <td class="LTabLeftLow"  nowrap="true">&nbsp;</td>
+          <td class="LTabLow" align="center" valign="middle" nowrap="true" title="$tabTitle"><a href="$jetspeed.getAbsoluteUrl($childPage.url)">${tabName}</a></td>
+          <td class="LTabRightLow"  nowrap="true">&nbsp;</td>
+        #end
+      #end
+    </tr>
+  </table>
+#end
+
+#* include tabs navigation component *#
+#macro (includeFolderTabsNavigation $_nodeSet $_orientation)
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+    #foreach($childFolder in $_nodeSet.iterator())
+      #set($tabTitle = $childFolder.getTitle($preferedLocale))
+      #set($tabName = $childFolder.getShortTitle($preferedLocale))
+
+      #if($_orientation == $LEFT_TO_RIGHT)
+        #if($site.folder.id == $childFolder.id)
+          <td class="LTabLeft" nowrap="true">&nbsp;</td>
+          <td class="LTab" align="center" valign="middle" nowrap="true" title="$tabTitle">${tabName}</td>
+          <td class="LTabRight"  nowrap="true">&nbsp;</td>
+        #else
+          <td class="LTabLeftLow"  nowrap="true">&nbsp;</td>
+          <td class="LTabLow" align="center" valign="middle" nowrap="true" title="$tabTitle"><a href="$jetspeed.getAbsoluteUrl($childFolder.url)">${tabName}</a></td>
+          <td class="LTabRightLow"  nowrap="true">&nbsp;</td>
+        #end
+      #end
+    #end           
+            
+    </tr>
+  </table>
+#end
+
+#macro (includePagesNavigation $_nodeSet $_orientation)
+  <div class="FolderList">
+  #foreach($childPage in $_nodeSet.iterator())
+    #if($_orientation == $LEFT_TO_RIGHT)
+      <span>
+    #elseif($_orientation == $TOP_TO_BOTTOM)
+      <div>
+    #end
+
+    <a href="$jetspeed.getAbsoluteUrl($childPage.url)" class="FolderLink" title="$childPage.getTitle($preferedLocale)">$childPage.getShortTitle($preferedLocale)</a>        
+
+    #if($_orientation == $LEFT_TO_RIGHT)
+      </span>
+    #elseif($_orientation == $TOP_TO_BOTTOM)
+      </div>
+    #end
+  #end
+  </div>
+#end

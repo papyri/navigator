@@ -1,0 +1,426 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+.portlet-simple
+{
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  voice-family: inherit;
+  font-size: x-small;
+}
+
+.portlet-simple .PTitle
+{
+padding: 2px;
+border: 1px solid #999999;
+color: #990000;
+background-color: #dddddd;
+}
+
+.portlet-simple .PTitleContent
+{
+margin-top:3px;
+margin-left:3px;
+margin-right:3px;
+margin-bottom:0px;
+background-color: #dddddd;
+border: 1px solid #999999;
+font-weight:bold;
+}
+ 
+.portlet-simple .PContent
+{
+margin-top:0px;
+margin-left:3px;
+margin-right:3px;
+margin-bottom:3px;
+padding:3px;
+border: 1px solid #999999;
+}
+
+/* font */
+.portlet-simple .PTitle,
+.portlet-simple .PTitleContent,
+.portlet-simple .PContent,
+{
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+.portlet-simple .noborder{
+border:0px;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.1 Links (Anchor)            */
+/* --------------------------------- */
+
+.portlet-simple A:link, 
+.portlet-simple A:visited {
+text-decoration: none;
+}
+
+.portlet-simple A:hover, 
+.portlet-simple A:active {
+text-decoration: underline;
+}
+
+/* font */
+.portlet-simple A:link,
+.portlet-simple A:visited,
+.portlet-simple A:hover,
+.portlet-simple A:active
+{
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.2 Fonts                     */
+/* --------------------------------- */
+
+.portlet-simple .portlet-font {
+color: black;
+}
+.portlet-simple .portlet-font-dim {
+color: gray;
+}
+
+/* font */
+.portlet-simple .portlet-font,
+.portlet-simple .portlet-font-dim
+{
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+
+
+/* --------------------------------- */
+/* PLT.C.3 Messages                  */
+/* --------------------------------- */
+.portlet-simple .portlet-msg-status,
+.portlet-simple .portlet-msg-info {
+background: url(../images/icon_info_sml.gif);
+background-repeat: no-repeat;
+padding-left: 20px;
+min-height: 15px;
+}
+
+.portlet-simple .portlet-msg-error {
+background: url(../images/icon_error_sml.gif);
+background-repeat: no-repeat;
+padding-left: 20px;
+min-height: 15px;
+}
+
+.portlet-simple .portlet-msg-alert {
+background: url(../images/icon_warning_sml.gif);
+background-repeat: no-repeat;
+padding-left: 20px;
+min-height: 15px;
+}
+
+.portlet-simple .portlet-msg-success {
+background: url(../images/icon_success_sml.gif);
+background-repeat: no-repeat;
+padding-left: 20px;
+min-height: 15px;
+}
+
+/* font */
+.portlet-simple .portlet-msg-status,
+.portlet-simple .portlet-msg-info,
+.portlet-simple .portlet-msg-error,
+.portlet-simple .portlet-msg-alert,
+.portlet-simple .portlet-msg-success
+{
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.4 Sections                  */
+/* --------------------------------- */
+.portlet-simple .portlet-section-header {
+background-image: url(../images/nw_maj_rond.gif);
+background-repeat: no-repeat;
+color: #fff;
+background-color: #036;
+padding: 5px;
+margin-right: 2px;
+margin-left: 2px;
+clear: both;
+}
+
+.portlet-simple .portlet-section-body {
+background: #efefef;
+border: none;
+padding: 2px 3px;
+text-align: left;
+vertical-align: top;
+text-align: left;
+}
+
+.portlet-simple .portlet-section-alternate {
+background: #ddd;
+border: none;
+padding: 2px 3px;
+text-align: left;
+vertical-align: top;
+text-align: left;
+}
+
+.portlet-simple .portlet-section-selected {
+background: #ffe;
+border: none;
+padding: 2px 3px;
+text-align: left;
+vertical-align: top;
+text-align: left;
+font-weight:bold;
+}
+
+.portlet-simple .portlet-section-subheader {
+background-image: url(../images/nw_maj_rond.gif);
+background-repeat: no-repeat;
+color: #fff;
+background-color: #888;
+padding: 5px;
+margin-right: 2px;
+margin-left: 2px;
+clear: both;
+}
+
+.portlet-simple .portlet-section-footer {
+background-repeat: no-repeat;
+background-position: bottom left;
+background-color: #ddd;
+background-image: url(../images/sw_med_rond.gif);
+color: #000;
+padding: 5px;
+margin: .67em 2px;
+margin-top: 0;
+}
+
+.portlet-simple .portlet-section-text {
+padding: 1em;
+padding-bottom: .3em;
+padding-left: 1em;
+}
+
+/* font */
+.portlet-simple .portlet-section-header,
+.portlet-simple .portlet-section-body,
+.portlet-simple .portlet-section-alternate,
+.portlet-simple .portlet-section-selected,
+.portlet-simple .portlet-section-subheader,
+.portlet-simple .portlet-section-footer,
+.portlet-simple .portlet-section-text
+{
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.5 Forms                     */
+/* --------------------------------- */
+.portlet-simple .portlet-form-label {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+.portlet-simple .portlet-form-input-field {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+.portlet-simple .portlet-form-button {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+.portlet-simple .portlet-icon-label {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+.portlet-simple .portlet-dlg-icon-label {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+.portlet-simple .portlet-form-field-label {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+.portlet-simple .portlet-form-field {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+voice-family: inherit;
+font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.6 Menus                     */
+/* --------------------------------- */
+.portlet-simple .portlet-menu {
+background: #efefef;
+margin-bottom: 6px;
+border-right: 1px solid #aaa;
+border-bottom: 1px solid #aaa;
+padding: 4px 4px 4px 0;
+padding-bottom: .3em;
+padding-left: 1em;
+}
+
+.portlet-simple .portlet-menu-item {
+text-decoration: none;
+color: blue;
+}
+
+.portlet-simple .portlet-menu-item-selected {
+text-decoration: none;
+color: #555 !important;
+}
+
+.portlet-simple .portlet-menu-item-hover {
+text-decoration: none;
+color: #f30 !important;
+}
+
+.portlet-simple .portlet-menu-item-hover-selected {
+text-decoration: none;
+color: #555 !important;
+font-weight: bold;
+}
+
+.portlet-simple .portlet-menu-cascade-item {
+text-decoration: none;
+margin-top: .3em;
+padding-bottom: 0;
+color: blue;
+}
+
+.portlet-simple .portlet-menu-cascade-item-selected {
+text-decoration: none;
+color: #555 !important;
+font-weight: bold;
+}
+
+.portlet-simple .portlet-menu-description {
+}
+
+.portlet-simple .portlet-menu-caption {
+border-bottom: 1px solid #666;
+border-right: 1px solid #666;
+background: #ddd;
+color: #555;
+padding: 4px;
+}
+
+
+
+/* --------------------------------- */
+/* WSRP (10.6.5 Tables)              */
+/* --------------------------------- */
+.portlet-simple .portlet-table-header,
+.portlet-simple .portlet-table-body,
+.portlet-simple .portlet-table-alternate,
+.portlet-simple .portlet-table-selected,
+.portlet-simple .portlet-table-subheader,
+.portlet-simple .portlet-table-footer,
+.portlet-simple .portlet-table-text,
+.portlet-simple th,
+.portlet-simple td,
+.portlet-simple input {
+font-family: Verdana, Helvetica, Arial, sans-serif;
+font-size: small;
+}
+
+.portlet-simple table,
+.portlet-simple th,
+.portlet-simple td {
+vertical-align: top;
+border: none;
+}
+
+.portlet-simple .portlet-table-header {
+background-color: #bbb;
+border: 0.75px solid #fff;
+padding: 2px 3px;
+text-align: left;
+}
+
+.portlet-simple .portlet-table-subheader {
+background-color: #ccc;
+border: 0.75px solid #fff;
+padding: 2px 3px;
+text-align: left;
+}
+
+.portlet-simple .portlet-table-footer {
+font-size: x-small;
+padding: 5px;
+margin: .67em 2px;
+margin-top: 0;
+background-color: #ddd;
+background-image: url(../images/sw_med_rond.gif);
+background-repeat: no-repeat;
+background-position: bottom left;
+}
+
+
+.portlet-simple .portlet-table-body,
+.portlet-simple .portlet-table-body td {
+font-size: small;
+background: #ddd;
+border-bottom: 1px solid #fff;
+}
+
+## Others
+
+.portlet-simple .portlet-table-alternate,
+.portlet-simple .portlet-table-alternate td {
+font-size: small;
+background: #efefef;
+border-bottom: 1px solid #fff;
+}
+
+.portlet-simple .portlet-table-selected,
+.portlet-simple .portlet-table-selected td {
+font-size: small;
+background: #ffe;
+border-bottom: 1px solid #fff;
+}
+
+

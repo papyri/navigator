@@ -1,0 +1,298 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+#jetspeedDesktopCell {
+   vertical-align: top;
+   /* hack of "vertical-align: top" needed by IE once the leftnav was added */
+   width: 100%;
+   /* needed to honor explicit size of left nav column when windowTiling is false */
+}
+
+#jetspeedDesktop { 
+   /* do not change overflow setting - must be overflow: visible; */
+   overflow: visible;
+ }
+
+#jetspeedColumns {
+    width: 100%;
+}
+
+.desktopColumn {
+    /* do not change float or overflow setting - must be float: left; overflow: visible; */
+    /* NOTE: since we use float, usage of margin, border or padding on columns will cause
+             the relative (% based) widths to fail in all tested browsers; these styles
+             will work properly if applied to portletWindow */
+    
+    float: left;
+    overflow: visible;
+
+    /*min-height: 1px;*/
+}
+.ie6desktopColumn { 
+    /* do not change - must be overflow-y: visible; overflow-x: hidden */
+    /* do not use for styles other than overflow-y and overflow-x */
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+}
+.desktopColumnClear-PRIVATE {
+    /* do not change float or clear setting - must be float: left; clear: both; */
+    /* do not use for styles other than float and clear */
+    float: left;
+    clear: both;
+}
+.desktopLayoutHeader {
+    /* do not change float or clear setting - must be float: left; clear: both; */
+    float: left;
+    clear: both;
+}
+.columnSpacer { 
+    
+}
+
+
+#pwGhost {
+    border-style: dashed;
+    border-color: #F00;
+    /* border-width, margin, and padding must NOT be set - pwGhost is set with same class names as PortletWindow */
+    background-color: transparent;
+}
+
+#ie6ZappedContentHelper {
+    margin: 0px;
+    padding: 0px;
+    height: 0px;
+    left: auto;
+    top: auto;
+    width: 0px;
+    min-height: 0px;
+    position: static;
+    background-color: transparent;
+}
+
+/********** Outer Window ***************/
+
+.portletWindow {
+    /* essential css */
+    position: absolute;
+    overflow-y: hidden;     /* 'hidden' because IE likes to kindly expand div to fit content otherwise */
+    overflow-x: hidden;
+
+    z-index: 10;
+
+    clear: both;
+
+    /* styling css */
+    border: 1px solid;
+    border-color: ThreeDHighlight ThreeDShadow ThreeDShadow ThreeDHighlight;
+    background-color: ThreeDFace; 
+
+    _zoom: 1; /* force IE6 layout mode for consistency of layout calculations */
+}
+
+
+/********** Title Bar ****************/
+
+.portletWindowTitleBar {
+    margin: 2px 2px 2px 2px;
+    z-index: 10;
+    background-color: #7596c6;
+    cursor: move;
+    overflow: hidden;
+    height: 22px;
+    border-color: ThreeDHighlight ThreeDShadow ThreeDShadow ThreeDHighlight;
+    vertical-align: middle;
+}
+
+.portletWindowTitleText {
+    float: left;
+    padding: 2px 4px 2px 2px;
+    white-space: nowrap;
+    color: CaptionText;
+    font: small-caption;
+}
+
+.portletWindowActionButton {
+    margin-top: 5px;
+    margin-right: 3px;
+
+    cursor: default;
+
+    float: right;
+
+    z-index: 12;
+
+    background-repeat: no-repeat;
+    background-position: top center;
+}
+
+.portalPageActionButton {
+    vertical-align: middle;
+
+    margin-top: 3px; 
+    margin-right: 3px;
+
+    cursor: default;
+
+    float: right;
+
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.portalTooltip {
+	border: solid black 1px;
+	background: beige;
+	color: black;
+	position: absolute;
+	font-size: small;
+	padding: 2px 2px 2px 2px;
+	z-index: 10;
+	display: block;
+}
+
+.portletWindowTitleBarIcon {
+    /* essential css */
+    float: left;
+
+    /* styling css */
+    height: 16px;
+    width: 16px;
+    margin-top: 3px;
+    margin-left: 2px;
+    margin-right: 3px;
+}
+
+/* minimize/maximize icons are specified by CSS only */
+.portletWindowMinimizeIcon,
+.portletWindowMaximizeIcon,
+.portletWindowRestoreIcon,
+.portletWindowCloseIcon {
+    vertical-align: middle;
+    height: 22px;
+    width: 22px;
+    float: right;
+    cursor: default;
+}
+
+/* bar at bottom of window that holds resize handle */
+.portletWindowResizebar {
+    display: block;
+    z-index: 10;
+    height: 13px;
+    background-color: ThreeDFace;
+}
+
+/************* Client Area ***************/
+
+.portletWindowClient {
+    position: relative;
+    z-index: 10;
+    border: 1px solid;
+    border-color: ThreeDShadow ThreeDHighlight ThreeDHighlight ThreeDShadow;
+    margin: 2px;
+    background-color: ThreeDFace;
+    padding: 8px;
+    overflow: auto;
+
+    _zoom: 1; /* force IE6 layout mode for consistency of layout calculations */
+}
+
+.portletWindowResizeHandle {
+	float: right;
+	position: static;
+	right: 2px;
+	bottom: 2px;
+	width: 13px;
+	height: 13px;
+	z-index: 20;
+	cursor: nw-resize;
+	background-image: url(grabCorner.gif);
+	line-height: 0px;
+}
+
+.portletWindowIFrameCover {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    margin: 0px;
+    padding: 0px;
+
+    display: none;
+    z-index: 100;
+
+    background-color: transparent;
+}
+
+.portletWindowIFrameCoverIE {
+    background-color: ThreeDFace !important;
+    filter: Alpha(Opacity="0");
+}
+
+.PContent {
+    z-index: 10;
+}
+
+.portletIFramePContent {
+    /*padding-left: 0px !important;*/
+    height: 100%;
+    border-width: 0px !important;
+    margin: 0px;
+    padding: 0px;
+}
+
+.iframePortletTableContainer {
+    height: 100%;
+    border-width: 0px !important;
+    margin: 0px;
+    padding: 0px;
+    border-spacing: 0px 0px !important;
+    /*overflow: hidden;*/
+}
+
+.iframePortletTbodyContainer {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    border-width: 0px !important;
+}
+
+.iframePortletTbodyContainer td {
+    /*padding: 0px;*/
+    border-width: 0px !important;
+    margin: 0px;
+    padding: 0px;
+}
+
+.iframePortletTbodyContainer iframe {
+    /*border-width: 0px;*/
+}
+
+.portletWindowIFrameClient {
+    padding: 0px;
+}
+
+.ie6BackgroundIFrame {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    filter: Alpha(Opacity="0");
+}

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans>
+  <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    <property name="host"><value>localhost</value></property>
+    <property name="username"><value></value></property>
+    <property name="password"><value></value></property>
+      <property name="javaMailProperties">
+          <props>
+              <prop key="mail.smtp.auth">false</prop>
+          </props>
+      </property>
+  </bean>
+  
+<bean id="adminVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <property name="resourceLoaderPath"><value>/WEB-INF/templates/</value></property>
+    <property name="velocityProperties">
+      <props>
+        <!-- use webapp-logging CommonsLoggingLog4JLogSystem for logging through IsolatedLog4JLogger -->
+        <prop key="runtime.log.logsystem.class">org.apache.jetspeed.webapp.logging.velocity.CommonsLoggingLog4JLogSystem</prop>
+        <prop key="runtime.log.logsystem.log4j.category">velocity</prop>
+        <!-- clear out default global VM_global_library.vm leading to ERROR logging because its not available -->
+        <prop key="velocimacro.library"></prop>
+      </props>
+    </property>
+    <!--  use our own CommonsLoggingLog4JLogSystem specified above, not the default one provided by Spring -->
+    <property name="overrideLogging"><value>false</value></property>
+</bean>
+  
+<bean id='PortalAdministrationImpl' init-method="start"
+      class='org.apache.jetspeed.administration.PortalAdministrationImpl'>
+    	<constructor-arg index='0'>
+    		<ref bean="org.apache.jetspeed.security.UserManager"/>
+    	</constructor-arg>
+        <constructor-arg index='1'>
+    		<ref bean="org.apache.jetspeed.security.RoleManager"/>
+    	</constructor-arg>
+        <constructor-arg index='2'>
+    		<ref bean="org.apache.jetspeed.security.GroupManager"/>
+    	</constructor-arg>
+        <constructor-arg index='3'>
+    		<ref bean="org.apache.jetspeed.page.PageManager"/>
+    	</constructor-arg>
+        <constructor-arg index='4'>
+    		<ref bean="org.apache.jetspeed.prefs.PreferencesProvider"/>
+    	</constructor-arg>        
+        <constructor-arg index='5'>
+    		<ref bean="org.apache.jetspeed.profiler.Profiler"/>
+    	</constructor-arg>
+        <constructor-arg index='6'>
+    		<ref bean="mailSender"/>
+    	</constructor-arg>
+        <constructor-arg index='7'>
+    		<ref bean="adminVelocityEngine"/>
+    	</constructor-arg>                                                            
+</bean>
+    
+<bean id="PortalAdministration" parent="baseTransactionProxy">
+        <property name="proxyInterfaces">
+            <value>org.apache.jetspeed.administration.PortalAdministration</value>
+        </property>
+
+        <property name="target">
+            <ref bean="PortalAdministrationImpl" />
+        </property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="register*">PROPAGATION_REQUIRED,-org.apache.jetspeed.administration.RegistrationException</prop>
+            </props>
+        </property>
+</bean>
+
+<bean id="org.apache.jetspeed.security.SecurityAccessController"
+      class='org.apache.jetspeed.security.impl.SecurityAccessControllerImpl'>
+    	<constructor-arg index='0'>
+    		<ref bean="org.apache.jetspeed.page.PageManager"/> 
+    	</constructor-arg>
+    	<!--
+    	   Security Mode:
+    	      1 = Permissions = use Jetspeed Java Security Policy
+    	      2 = Constraints = use Jetspeed (PageManager) Constraint-based Security  
+    	 -->
+    	 <constructor-arg index="1">
+            <value>2</value>
+        </constructor-arg>
+</bean>
+    
+<bean id='org.apache.jetspeed.administration.PortalAuthenticationConfiguration'
+	class='org.apache.jetspeed.administration.PortalAuthenticationConfigurationImpl'>
+
+   <!--  create new session upon authentication -->   
+   <constructor-arg index='0'>
+   		<value>false</value>
+   </constructor-arg>	
+   <!--  hard session timeout limit in seconds, regardless of (in)activity, setting to 0 turns off this feature 
+   		 note:this feature should be used with 'create new session upon authentication' feature 
+   -->   
+   <constructor-arg index='1'>
+   		<value>0</value>
+   </constructor-arg>
+   <!--  redirect location for hard session expiration -->   
+   <constructor-arg index='2'>
+   		<value>/login/logout</value>
+   </constructor-arg>
+</bean>    
+
+<bean id='org.apache.jetspeed.security.activeauthentication.ActiveAuthenticationIdentityProvider'
+	class='org.apache.jetspeed.security.activeauthentication.ActiveAuthenticationIdentityProviderImpl'>
+    <constructor-arg index="0">
+        <ref bean="activeAuthenticationCache" />
+    </constructor-arg>
+    <!--  list of session attribute names that should be saved and restored upon authentication events -->
+    <constructor-arg>    
+    <list>
+    	<value>org.apache.jetspeed.login.username</value>
+    	<value>org.apache.jetspeed.login.password</value>
+    	<value>org.apache.jetspeed.login.destination</value>
+    	<value>org.apache.jetspeed.login.retrycount</value>
+    	<value>org.apache.jetspeed.login.errorcode</value>
+    	<value>org.apache.jetspeed.login.check</value>    
+    	<value>org.apache.jetspeed.theme.override</value>	
+    </list>    
+    </constructor-arg>
+</bean>    
+
+</beans>

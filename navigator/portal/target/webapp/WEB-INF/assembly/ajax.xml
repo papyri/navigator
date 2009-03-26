@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<beans>
+  <bean id="AJAXService"
+      class="org.apache.jetspeed.ajax.AJAXServiceImpl">
+    <constructor-arg>
+      <map>
+		<entry key="portletRegistry.getPortletApplications">
+			<value>
+			  org.apache.jetspeed.components.portletregistry.PortletRegistry	
+			</value>
+		</entry>
+		<entry key="portletRegistry.getPortletApplication">
+			<value>
+			  org.apache.jetspeed.components.portletregistry.PortletRegistry	
+			</value>
+		</entry>
+		<entry key="entityAccess.getPortletEntities">
+			<value>
+			  org.apache.jetspeed.components.portletentity.PortletEntityAccessComponent
+			</value>
+		</entry>
+		<entry key="entityAccess.getPortletEntity">
+			<value>
+			  org.apache.jetspeed.components.portletentity.PortletEntityAccessComponent
+			</value>
+		</entry>
+	  </map>
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+           <props>
+           <!-- use webapp-logging CommonsLoggingLog4JLogSystem for logging through IsolatedLog4JLogger -->
+           <prop key="runtime.log.logsystem.class">org.apache.jetspeed.webapp.logging.velocity.CommonsLoggingLog4JLogSystem</prop>
+           <prop key="runtime.log.logsystem.log4j.category">velocity</prop>
+           <!-- clear out default global VM_global_library.vm leading to ERROR logging because its not available -->
+           <prop key="velocimacro.library"></prop>
+          </props>
+        </property>
+        <!--  use our own CommonsLoggingLog4JLogSystem specified above, not the default one provided by Spring -->
+        <property name="overrideLogging"><value>false</value></property>
+      </bean>
+    </constructor-arg>
+  <constructor-arg>
+      <map>
+		<entry key="portletRegistry.getPortletApplications">
+			<value>/ajax/portlet_apps.ajax</value>
+		</entry>
+		<entry key="portletRegistry.getPortletApplication">
+			<value>/ajax/portlet_definitions.ajax</value>
+		</entry>
+		<entry key="entityAccess.getPortletEntities">
+			<value>/ajax/portlet_entities.ajax</value>
+		</entry>
+		<entry key="entityAccess.getPortletEntity">
+			<value>/ajax/portlet_entity.ajax</value>
+		</entry>
+	  </map>
+    </constructor-arg>    
+  </bean>  
+	
+</beans>

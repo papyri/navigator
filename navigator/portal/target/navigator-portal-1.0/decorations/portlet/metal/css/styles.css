@@ -1,0 +1,254 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+/**
+    Metal Skin that uses the cascading capability of CSS
+**/
+
+.portlet-Metal .PTitleLeft
+{
+    /**
+    Needs to specify the width of image used
+    otherwise it won't show !
+    **/
+    width:10px;
+    
+    /** Always use relative path ! **/
+    background:  url(../images/titleleft.gif);
+    
+}
+
+.portlet-Metal .PTitle
+{
+    /**Specify the height of the image usedelse it will use the text height**/
+    height:16px;
+    color:#FFFFFF;
+    background: url(../images/title.gif);
+    font-family : monospace;
+    font-weight:bold;
+    font-size:12pt;
+}
+ 
+.portlet-Metal .PTitleRight
+{
+    /**
+    Needs to specify the width of image used
+    otherwise it won't show !
+    **/
+    width:10px;
+    background:  url(../images/titleright.gif);
+}
+
+.portlet-Metal .PContentLeft
+{
+    width:10px;
+    background:  url(../images/contentleft.gif);
+    height : 100%;
+    
+}
+
+.portlet-Metal .PContent
+{
+    padding-left:5px;
+    background-color:#717171;
+}
+
+.portlet-Metal .PContentRight
+{
+    width:10px;
+    background:  url(../images/contentright.gif);
+}
+
+.portlet-Metal .PBottomLeft
+{
+    width:10px;
+    background:  url(../images/bottomleft.gif);
+}
+
+.portlet-Metal .PBottom
+{
+    /**
+    Specify the height of the image used
+    else it won't appear
+    **/
+    height:13px;
+    background:  url(../images/bottom.gif);
+}
+
+.portlet-Metal .PBottomRight
+{
+    width:10px;
+    background:  url(../images/bottomright.gif);
+}
+
+
+/* --------------------------------- */
+
+
+/* --------------------------------- */
+/* PLT.C.1 Links (Anchor)            */
+/* --------------------------------- */
+
+.portlet-Metal A:link, 
+.portlet-Metal A:visited {
+    color:#0000FF;
+    text-decoration: none;
+}
+
+.portlet-Metal A:hover, 
+.portlet-Metal A:active {
+    color:#CC0033;
+}
+
+
+
+/* --------------------------------- */
+/* PLT.C.2 Fonts                     */
+/* --------------------------------- */
+
+.portlet-Metal .portlet-font {
+    color: black;
+}
+.portlet-Metal .portlet-font-dim {
+    color:#F0F8FF;
+}
+
+
+
+
+/* --------------------------------- */
+/* PLT.C.3 Messages                  */
+/* --------------------------------- */
+.portlet-Metal .portlet-msg-status {
+    font-style:italic;
+    font-family: courier, serif;
+}
+.portlet-Metal .portlet-msg-info {
+    font-weight:bold;
+}
+.portlet-Metal .portlet-msg-error {
+    color:#CC0033;
+    font-weight:bold;
+}
+.portlet-Metal .portlet-msg-alert {
+    color:#CCCC00;
+    font-weight:bold;
+    font-style:italic;
+}
+.portlet-Metal .portlet-msg-success {
+    color:#00CC33;
+    font-weight:bold;
+}
+
+/* --------------------------------- */
+/* PLT.C.4 Sections                  */
+/* --------------------------------- */
+.portlet-Metal .portlet-section-header {
+    background-color: #C0C0C0;
+    font-weight:bold;
+}
+.portlet-Metal .portlet-section-body {
+    background-color: white;
+    text-align:left;
+}
+.portlet-Metal .portlet-section-alternate {
+    color: black;
+    background-color:#666633;
+    text-align:left;
+}
+.portlet-Metal .portlet-section-selected {
+    background-color: #000000;
+    color: #FF0000;
+    font-weight:bold;
+    text-align:left;
+}
+.portlet-Metal .portlet-section-subheader {
+    background-color: #C0C0C0;
+    font-weight:bold;
+    font-style:italic;
+}
+.portlet-Metal .portlet-section-footer {
+    background-color: #C0C0C0;
+    text-align:center;
+}
+.portlet-Metal .portlet-section-text {
+    text-decoration:underline;
+}
+
+/* --------------------------------- */
+/* PLT.C.5 Forms                     */
+/* --------------------------------- */
+.portlet-Metal .portlet-form-label {
+    font-weight:bold;
+}
+.portlet-Metal .portlet-form-input-field {
+    font-family: arial, "lucida console", sans-serif;
+}
+.portlet-Metal .portlet-form-button {
+    font-family: arial, "lucida console", sans-serif;
+}
+.portlet-Metal .portlet-icon-label {
+    /* XXX */
+}
+.portlet-Metal .portlet-dlg-icon-label {
+    /* XXX */
+}
+.portlet-Metal .portlet-form-field-label {
+    font-family: arial, "lucida console", sans-serif;
+}
+.portlet-Metal .portlet-form-field {
+    background-color:transparent;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.6 Menus                     */
+/* --------------------------------- */
+.portlet-Metal .portlet-menu {
+    background-color: #C0C0C0;
+}
+.portlet-Metal .portlet-menu-item {
+    background-color: #C0C0C0;
+}
+.portlet-Metal .portlet-menu-item-selected {
+    background-color:#CCCC00;
+}
+
+.portlet-Metal .portlet-menu-item-hover {
+    background-color: #000000;
+    color: #FF0000;    
+}
+.portlet-Metal .portlet-menu-item-hover-selected {
+    background-color:#000000;
+    color:#0000FF;
+}
+.portlet-Metal .portlet-menu-cascade-item {
+    background-color:#666633;
+    color:black;
+    text-decoration:none;
+}
+.portlet-Metal .portlet-menu-cascade-item-selected {
+    background-color:#CCCC00;
+}
+.portlet-Metal .portlet-menu-description {
+    background-color: #C0C0C0;
+}
+.portlet-Metal .portlet-menu-caption {
+    /* XXX */
+}
+

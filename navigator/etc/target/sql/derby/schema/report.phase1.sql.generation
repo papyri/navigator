@@ -1,0 +1,231 @@
+
+
+  
+  Platform used: org.apache.torque.engine.platform.PlatformDefaultImpl
+
+      
+  SQL file to be created: phase1-schema.sql
+
+      Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: No           
+          Primary Key: No           
+          Primary Key: No           
+          Primary Key: No           
+          Primary Key: No           
+          Primary Key: No           
+          Primary Key: No           
+          Primary Key: No           
+          Primary Key: No           
+      
+            
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+      
+  
+
+  
+  Platform used: org.apache.torque.engine.platform.PlatformDefaultImpl
+
+      
+  SQL file to be created: phase2-schema.sql
+
+      Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: No           
+          Primary Key: Yes           
+      
+            
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+      
+  
+
+  
+  Platform used: org.apache.torque.engine.platform.PlatformDefaultImpl
+
+      
+  SQL file to be created: phase3ojb-schema.sql
+
+      Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+      
+            
+                
+                
+                
+                
+                
+                
+                
+      
+  
+
+  
+  Platform used: org.apache.torque.engine.platform.PlatformDefaultImpl
+
+      
+  SQL file to be created: prefs-schema.sql
+
+      Primary Key: Yes           
+          Primary Key: Yes           
+      
+            
+                
+      
+  
+
+  
+  Platform used: org.apache.torque.engine.platform.PlatformDefaultImpl
+
+      
+  SQL file to be created: registry-schema.sql
+
+      Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+      
+            
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+      
+  
+
+  
+  Platform used: org.apache.torque.engine.platform.PlatformDefaultImpl
+
+      
+  SQL file to be created: security-schema.sql
+
+      Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+          Primary Key: Yes           
+      
+            
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+      
+  

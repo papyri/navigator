@@ -1,0 +1,50 @@
+## Licensed to the Apache Software Foundation (ASF) under one or more
+## contributor license agreements.  See the NOTICE file distributed with
+## this work for additional information regarding copyright ownership.
+## The ASF licenses this file to You under the Apache License, Version 2.0
+## (the "License"); you may not use this file except in compliance with
+## the License.  You may obtain a copy of the License at
+## 
+##    http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+#set($myPage = $jetspeed.page)
+#set($myF = $jetspeed.currentFragment)
+#set($myPE = $jetspeed.currentPortletEntity)
+#set($actions = $myF.decoration.actions)
+## Begin portlet/html/simple/decorator.vm
+<div id="${myF.id}" class="portlet-simple">
+##
+## Portlet Title Bar
+##
+<div class="PTitleContent">$!jetspeed.getTitle($myPE, $myF)
+#foreach ($action in $actions)
+<a href="${action.Action}" title="${action.Name}"><img src="${action.Link}" alt="${action.Alt}" class="noborder"/></a>
+#end
+</div>
+##
+## Portlet Content
+##
+#if ($jetspeed.errors)
+#set($portletErrors = $jetspeed.errors)
+#end ## if ($jetspeed.errors)
+#if (!$jetspeed.isHidden($myF) || $jetspeed.WindowState != "minimized")
+<div class="PContent">	
+#if($portletErrors && $portletErrors.size() > 0)
+The following errors ocurred:<br />
+#foreach($errorMsg in $portletErrors)
+<p class="portlet-msg-error">$errorMsg</p>
+#end ## foreach($errorMsg in $portletErrors)
+#end ## if($portletErrors && $portletErrors.size() > 0)
+$myF.renderedContent
+</div>   
+#end ## if (!$jetspeed.isHidden($myF) || $jetspeed.WindowState != "minimized")
+##
+## Portlet Bottom
+##
+</div>
+## portlet/html/simple/decorator.vm 

@@ -1,0 +1,650 @@
+<?xml version="1.0"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE database SYSTEM "http://db.apache.org/torque/dtd/database_3_2.dtd">
+<database name="j2">
+
+    <!--
+       Folder Definition
+    -->
+
+    <table name="FOLDER">
+        <column name="FOLDER_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PARENT_ID" type="INTEGER"/>
+        <column name="PATH" required="true" size="240" type="VARCHAR"/>
+        <column name="NAME" required="true" size="80" type="VARCHAR"/>
+        <column name="TITLE" size="100" type="VARCHAR"/>
+        <column name="SHORT_TITLE" size="40" type="VARCHAR"/>
+        <column name="IS_HIDDEN" required="true" type="BOOLEANINT"/>
+        <column name="SKIN" size="80" type="VARCHAR"/>
+        <column name="DEFAULT_LAYOUT_DECORATOR" size="80" type="VARCHAR"/>
+        <column name="DEFAULT_PORTLET_DECORATOR" size="80" type="VARCHAR"/>
+        <column name="DEFAULT_PAGE_NAME" size="80" type="VARCHAR"/>
+        <column name="SUBSITE" size="40" type="VARCHAR"/>
+        <column name="USER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="MEDIATYPE" size="15" type="VARCHAR"/>
+        <column name="LOCALE" size="20" type="VARCHAR"/>
+        <column name="EXT_ATTR_NAME" size="15" type="VARCHAR"/>
+        <column name="EXT_ATTR_VALUE" size="40" type="VARCHAR"/>
+        <column name="OWNER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <foreign-key foreignTable="FOLDER" name="FK_FOLDER_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="PARENT_ID"/>
+        </foreign-key>
+        <index name="IX_FOLDER_1">
+            <index-column name="PARENT_ID"/>
+        </index>
+        <unique name="UN_FOLDER_1">
+            <unique-column name="PATH"/>
+        </unique>
+    </table>
+    
+    <table name="FOLDER_METADATA">
+        <column name="METADATA_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="FOLDER_ID" type="INTEGER" required="true"/>
+        <column name="NAME" required="true" size="15" type="VARCHAR"/>
+        <column name="LOCALE" required="true" size="20" type="VARCHAR"/>
+        <column name="VALUE" required="true" size="100" type="VARCHAR"/>
+        <foreign-key foreignTable="FOLDER" name="FK_FOLDER_METADATA_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="FOLDER_ID"/>
+        </foreign-key>
+        <index name="IX_FOLDER_METADATA_1">
+            <index-column name="FOLDER_ID"/>
+        </index>
+        <unique name="UN_FOLDER_METADATA_1">
+            <unique-column name="FOLDER_ID"/>
+            <unique-column name="NAME"/>
+            <unique-column name="LOCALE"/>
+            <unique-column name="VALUE"/>
+        </unique>
+    </table>
+
+    <table name="FOLDER_CONSTRAINT">
+        <column name="CONSTRAINT_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="FOLDER_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="USER_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="PERMISSIONS_ACL" size="120" type="VARCHAR"/>
+        <foreign-key foreignTable="FOLDER" name="FK_FOLDER_CONSTRAINT_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="FOLDER_ID"/>
+        </foreign-key>
+        <index name="IX_FOLDER_CONSTRAINT_1">
+            <index-column name="FOLDER_ID"/>
+        </index>
+    </table>
+
+    <table name="FOLDER_CONSTRAINTS_REF">
+        <column name="CONSTRAINTS_REF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="FOLDER_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="NAME" size="40" type="VARCHAR" required="true"/>
+        <foreign-key foreignTable="FOLDER" name="FK_FOLDER_CONSTRAINTS_REF_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="FOLDER_ID"/>
+        </foreign-key>
+        <index name="IX_FOLDER_CONSTRAINTS_REF_1">
+            <index-column name="FOLDER_ID"/>
+        </index>
+        <unique name="UN_FOLDER_CONSTRAINTS_REF_1">
+            <unique-column name="FOLDER_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <table name="FOLDER_ORDER">
+        <column name="ORDER_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="FOLDER_ID" type="INTEGER" required="true"/>
+        <column name="SORT_ORDER" type="INTEGER" required="true"/>
+        <column name="NAME" size="80" type="VARCHAR" required="true"/>
+        <foreign-key foreignTable="FOLDER" name="FK_FOLDER_ORDER_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="FOLDER_ID"/>
+        </foreign-key>
+        <index name="IX_FOLDER_ORDER_1">
+            <index-column name="FOLDER_ID"/>
+        </index>
+        <unique name="UN_FOLDER_ORDER_1">
+            <unique-column name="FOLDER_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <table name="FOLDER_MENU">
+        <column name="MENU_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="CLASS_NAME" required="true" size="100" type="VARCHAR"/>
+        <column name="PARENT_ID" type="INTEGER"/>
+        <column name="FOLDER_ID" type="INTEGER"/>
+        <column name="ELEMENT_ORDER" type="INTEGER"/>
+        <column name="NAME" size="100" type="VARCHAR"/>
+        <column name="TITLE" size="100" type="VARCHAR"/>
+        <column name="SHORT_TITLE" size="40" type="VARCHAR"/>
+        <column name="TEXT" size="100" type="VARCHAR"/>
+        <column name="OPTIONS" size="255" type="VARCHAR"/>
+        <column name="DEPTH" type="INTEGER"/>
+        <column name="IS_PATHS" type="BOOLEANINT"/>
+        <column name="IS_REGEXP" type="BOOLEANINT"/>
+        <column name="PROFILE" size="80" type="VARCHAR"/>
+        <column name="OPTIONS_ORDER" size="255" type="VARCHAR"/>
+        <column name="SKIN" size="80" type="VARCHAR"/>
+        <column name="IS_NEST" type="BOOLEANINT"/>
+        <foreign-key foreignTable="FOLDER_MENU" name="FK_FOLDER_MENU_1" onDelete="cascade">
+            <reference foreign="MENU_ID" local="PARENT_ID"/>
+        </foreign-key>
+        <foreign-key foreignTable="FOLDER" name="FK_FOLDER_MENU_2" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="FOLDER_ID"/>
+        </foreign-key>
+        <index name="IX_FOLDER_MENU_1">
+            <index-column name="PARENT_ID"/>
+        </index>        
+        <index name="UN_FOLDER_MENU_1">
+            <index-column name="FOLDER_ID"/>
+            <index-column name="NAME"/>
+        </index>
+    </table>
+
+    <table name="FOLDER_MENU_METADATA">
+        <column name="METADATA_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="MENU_ID" type="INTEGER" required="true"/>
+        <column name="NAME" required="true" size="15" type="VARCHAR"/>
+        <column name="LOCALE" required="true" size="20" type="VARCHAR"/>
+        <column name="VALUE" required="true" size="100" type="VARCHAR"/>
+        <foreign-key foreignTable="FOLDER_MENU" name="FK_FOLDER_MENU_METADATA_1" onDelete="cascade">
+            <reference foreign="MENU_ID" local="MENU_ID"/>
+        </foreign-key>
+        <index name="IX_FOLDER_MENU_METADATA_1">
+            <index-column name="MENU_ID"/>
+        </index>
+        <unique name="UN_FOLDER_MENU_METADATA_1">
+            <unique-column name="MENU_ID"/>
+            <unique-column name="NAME"/>
+            <unique-column name="LOCALE"/>
+            <unique-column name="VALUE"/>
+        </unique>
+    </table>
+
+    <!--
+       Page Definition
+    -->
+
+    <table name="PAGE">
+        <column name="PAGE_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PARENT_ID" type="INTEGER" required="true"/>
+        <column name="PATH" required="true" size="240" type="VARCHAR"/>
+        <column name="NAME" required="true" size="80" type="VARCHAR"/>
+        <column name="VERSION" required="false" size="40" type="VARCHAR"/>        
+        <column name="TITLE" size="100" type="VARCHAR"/>
+        <column name="SHORT_TITLE" size="40" type="VARCHAR"/>
+        <column name="IS_HIDDEN" required="true" type="BOOLEANINT"/>
+        <column name="SKIN" size="80" type="VARCHAR"/>
+        <column name="DEFAULT_LAYOUT_DECORATOR" size="80" type="VARCHAR"/>
+        <column name="DEFAULT_PORTLET_DECORATOR" size="80" type="VARCHAR"/>
+        <column name="SUBSITE" size="40" type="VARCHAR"/>
+        <column name="USER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="MEDIATYPE" size="15" type="VARCHAR"/>
+        <column name="LOCALE" size="20" type="VARCHAR"/>
+        <column name="EXT_ATTR_NAME" size="15" type="VARCHAR"/>
+        <column name="EXT_ATTR_VALUE" size="40" type="VARCHAR"/>
+        <column name="OWNER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <foreign-key foreignTable="FOLDER" name="FK_PAGE_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="PARENT_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_1">
+            <index-column name="PARENT_ID"/>
+        </index>
+        <unique name="UN_PAGE_1">
+            <unique-column name="PATH"/>
+        </unique>
+    </table>
+    
+    <table name="PAGE_METADATA">
+        <column name="METADATA_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PAGE_ID" type="INTEGER" required="true"/>
+        <column name="NAME" required="true" size="15" type="VARCHAR"/>
+        <column name="LOCALE" required="true" size="20" type="VARCHAR"/>
+        <column name="VALUE" required="true" size="100" type="VARCHAR"/>
+        <foreign-key foreignTable="PAGE" name="FK_PAGE_METADATA_1" onDelete="cascade">
+            <reference foreign="PAGE_ID" local="PAGE_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_METADATA_1">
+            <index-column name="PAGE_ID"/>
+        </index>
+        <unique name="UN_PAGE_METADATA_1">
+            <unique-column name="PAGE_ID"/>
+            <unique-column name="NAME"/>
+            <unique-column name="LOCALE"/>
+            <unique-column name="VALUE"/>
+        </unique>
+    </table>
+
+    <table name="PAGE_CONSTRAINT">
+        <column name="CONSTRAINT_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PAGE_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="USER_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="PERMISSIONS_ACL" size="120" type="VARCHAR"/>
+        <foreign-key foreignTable="PAGE" name="FK_PAGE_CONSTRAINT_1" onDelete="cascade">
+            <reference foreign="PAGE_ID" local="PAGE_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_CONSTRAINT_1">
+            <index-column name="PAGE_ID"/>
+        </index>
+    </table>
+
+    <table name="PAGE_CONSTRAINTS_REF">
+        <column name="CONSTRAINTS_REF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PAGE_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="NAME" size="40" type="VARCHAR" required="true"/>
+        <foreign-key foreignTable="PAGE" name="FK_PAGE_CONSTRAINTS_REF_1" onDelete="cascade">
+            <reference foreign="PAGE_ID" local="PAGE_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_CONSTRAINTS_REF_1">
+            <index-column name="PAGE_ID"/>
+        </index>
+        <unique name="UN_PAGE_CONSTRAINTS_REF_1">
+            <unique-column name="PAGE_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <table name="PAGE_MENU">
+        <column name="MENU_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="CLASS_NAME" required="true" size="100" type="VARCHAR"/>
+        <column name="PARENT_ID" type="INTEGER"/>
+        <column name="PAGE_ID" type="INTEGER"/>
+        <column name="ELEMENT_ORDER" type="INTEGER"/>
+        <column name="NAME" size="100" type="VARCHAR"/>
+        <column name="TITLE" size="100" type="VARCHAR"/>
+        <column name="SHORT_TITLE" size="40" type="VARCHAR"/>
+        <column name="TEXT" size="100" type="VARCHAR"/>
+        <column name="OPTIONS" size="255" type="VARCHAR"/>
+        <column name="DEPTH" type="INTEGER"/>
+        <column name="IS_PATHS" type="BOOLEANINT"/>
+        <column name="IS_REGEXP" type="BOOLEANINT"/>
+        <column name="PROFILE" size="80" type="VARCHAR"/>
+        <column name="OPTIONS_ORDER" size="255" type="VARCHAR"/>
+        <column name="SKIN" size="80" type="VARCHAR"/>
+        <column name="IS_NEST" type="BOOLEANINT"/>
+        <foreign-key foreignTable="PAGE_MENU" name="FK_PAGE_MENU_1" onDelete="cascade">
+            <reference foreign="MENU_ID" local="PARENT_ID"/>
+        </foreign-key>
+        <foreign-key foreignTable="PAGE" name="PM_M_FK_PAGE_ID_PAGE" onDelete="cascade">
+            <reference foreign="PAGE_ID" local="PAGE_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_MENU_1">
+            <index-column name="PARENT_ID"/>
+        </index>        
+        <index name="UN_PAGE_MENU_1">
+            <index-column name="PAGE_ID"/>
+            <index-column name="NAME"/>
+        </index>
+    </table>
+
+    <table name="PAGE_MENU_METADATA">
+        <column name="METADATA_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="MENU_ID" type="INTEGER" required="true"/>
+        <column name="NAME" required="true" size="15" type="VARCHAR"/>
+        <column name="LOCALE" required="true" size="20" type="VARCHAR"/>
+        <column name="VALUE" required="true" size="100" type="VARCHAR"/>
+        <foreign-key foreignTable="PAGE_MENU" name="FK_PAGE_MENU_METADATA_1" onDelete="cascade">
+            <reference foreign="MENU_ID" local="MENU_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_MENU_METADATA_1">
+            <index-column name="MENU_ID"/>
+        </index>
+        <unique name="UN_PAGE_MENU_METADATA_1">
+            <unique-column name="MENU_ID"/>
+            <unique-column name="NAME"/>
+            <unique-column name="LOCALE"/>
+            <unique-column name="VALUE"/>
+        </unique>
+    </table>
+
+    <!--
+       Fragment Definitions (portlets, layouts)
+    -->
+
+    <table name="FRAGMENT">
+        <column name="FRAGMENT_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PARENT_ID" type="INTEGER"/>
+        <column name="PAGE_ID" type="INTEGER"/>
+        <column name="NAME" size="100" type="VARCHAR"/>
+        <column name="TITLE" size="100" type="VARCHAR"/>
+        <column name="SHORT_TITLE" size="40" type="VARCHAR"/>
+        <column name="TYPE" size="40" type="VARCHAR"/>
+        <column name="SKIN" size="80" type="VARCHAR"/>
+        <column name="DECORATOR" size="80" type="VARCHAR"/>
+        <column name="STATE" size="10" type="VARCHAR"/>
+        <column name="PMODE" size="10" type="VARCHAR"/>
+        <column name="LAYOUT_ROW" type="INTEGER"/>
+        <column name="LAYOUT_COLUMN" type="INTEGER"/>
+        <column name="LAYOUT_SIZES" size="20" type="VARCHAR"/>
+        <column name="LAYOUT_X" type="REAL"/>
+        <column name="LAYOUT_Y" type="REAL"/>
+        <column name="LAYOUT_Z" type="REAL"/>
+        <column name="LAYOUT_WIDTH" type="REAL"/>
+        <column name="LAYOUT_HEIGHT" type="REAL"/>
+        <column name="EXT_PROP_NAME_1" size="40" type="VARCHAR"/>
+        <column name="EXT_PROP_VALUE_1" size="80" type="VARCHAR"/>
+        <column name="EXT_PROP_NAME_2" size="40" type="VARCHAR"/>
+        <column name="EXT_PROP_VALUE_2" size="80" type="VARCHAR"/>
+        <column name="OWNER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <foreign-key foreignTable="FRAGMENT" name="FK_FRAGMENT_1" onDelete="cascade">
+            <reference foreign="FRAGMENT_ID" local="PARENT_ID"/>
+        </foreign-key>
+        <foreign-key foreignTable="PAGE" name="FK_FRAGMENT_2" onDelete="cascade">
+            <reference foreign="PAGE_ID" local="PAGE_ID"/>
+        </foreign-key>
+        <index name="IX_FRAGMENT_1">
+            <index-column name="PARENT_ID"/>
+        </index>        
+        <index name="UN_FRAGMENT_1">
+            <index-column name="PAGE_ID"/>
+        </index>
+    </table>
+
+    <table name="FRAGMENT_CONSTRAINT">
+        <column name="CONSTRAINT_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="FRAGMENT_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="USER_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="PERMISSIONS_ACL" size="120" type="VARCHAR"/>
+        <foreign-key foreignTable="FRAGMENT" name="FK_FRAGMENT_CONSTRAINT_1" onDelete="cascade">
+            <reference foreign="FRAGMENT_ID" local="FRAGMENT_ID"/>
+        </foreign-key>
+        <index name="IX_FRAGMENT_CONSTRAINT_1">
+            <index-column name="FRAGMENT_ID"/>
+        </index>
+    </table>
+
+    <table name="FRAGMENT_CONSTRAINTS_REF">
+        <column name="CONSTRAINTS_REF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="FRAGMENT_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="NAME" size="40" type="VARCHAR" required="true"/>
+        <foreign-key foreignTable="FRAGMENT" name="FK_FRAGMENT_CONSTRAINTS_REF_1" onDelete="cascade">
+            <reference foreign="FRAGMENT_ID" local="FRAGMENT_ID"/>
+        </foreign-key>
+        <index name="IX_FRAGMENT_CONSTRAINTS_REF_1">
+            <index-column name="FRAGMENT_ID"/>
+        </index>
+        <unique name="UN_FRAGMENT_CONSTRAINTS_REF_1">
+            <unique-column name="FRAGMENT_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <table name="FRAGMENT_PREF">
+        <column name="PREF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="FRAGMENT_ID" type="INTEGER" required="true"/>
+        <column name="NAME" size="40" type="VARCHAR" required="true"/>
+        <column name="IS_READ_ONLY" required="true" type="BOOLEANINT"/>
+        <foreign-key foreignTable="FRAGMENT" name="FK_FRAGMENT_PREF_1" onDelete="cascade">
+            <reference foreign="FRAGMENT_ID" local="FRAGMENT_ID"/>
+        </foreign-key>
+        <index name="IX_FRAGMENT_PREF_1">
+            <index-column name="FRAGMENT_ID"/>
+        </index>
+        <unique name="UN_FRAGMENT_PREF_1">
+            <unique-column name="FRAGMENT_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <table name="FRAGMENT_PREF_VALUE">
+        <column name="PREF_VALUE_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PREF_ID" type="INTEGER" required="true"/>
+        <column name="VALUE_ORDER" type="INTEGER" required="true"/>
+        <column name="VALUE" required="true" size="100" type="VARCHAR"/>
+        <foreign-key foreignTable="FRAGMENT_PREF" name="FK_FRAGMENT_PREF_VALUE_1" onDelete="cascade">
+            <reference foreign="PREF_ID" local="PREF_ID"/>
+        </foreign-key>
+        <index name="IX_FRAGMENT_PREF_VALUE_1">
+            <index-column name="PREF_ID"/>
+        </index>
+    </table>
+
+    <!--
+       Link Definition
+    -->
+
+    <table name="LINK">
+        <column name="LINK_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PARENT_ID" type="INTEGER" required="true"/>
+        <column name="PATH" required="true" size="240" type="VARCHAR"/>
+        <column name="NAME" required="true" size="80" type="VARCHAR"/>
+        <column name="VERSION" required="false" size="40" type="VARCHAR"/>        
+        <column name="TITLE" size="100" type="VARCHAR"/>
+        <column name="SHORT_TITLE" size="40" type="VARCHAR"/>
+        <column name="IS_HIDDEN" required="true" type="BOOLEANINT"/>
+        <column name="SKIN" size="80" type="VARCHAR"/>
+        <column name="TARGET" size="80" type="VARCHAR"/>
+        <column name="URL" size="255" type="VARCHAR"/>
+        <column name="SUBSITE" size="40" type="VARCHAR"/>
+        <column name="USER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="MEDIATYPE" size="15" type="VARCHAR"/>
+        <column name="LOCALE" size="20" type="VARCHAR"/>
+        <column name="EXT_ATTR_NAME" size="15" type="VARCHAR"/>
+        <column name="EXT_ATTR_VALUE" size="40" type="VARCHAR"/>
+        <column name="OWNER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <foreign-key foreignTable="FOLDER" name="FK_LINK_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="PARENT_ID"/>
+        </foreign-key>
+        <index name="IX_LINK_1">
+            <index-column name="PARENT_ID"/>
+        </index>
+        <unique name="UN_LINK_1">
+            <unique-column name="PATH"/>
+        </unique>
+    </table>
+    
+    <table name="LINK_METADATA">
+        <column name="METADATA_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="LINK_ID" type="INTEGER" required="true"/>
+        <column name="NAME" required="true" size="15" type="VARCHAR"/>
+        <column name="LOCALE" required="true" size="20" type="VARCHAR"/>
+        <column name="VALUE" required="true" size="100" type="VARCHAR"/>
+        <foreign-key foreignTable="LINK" name="FK_LINK_METADATA_1" onDelete="cascade">
+            <reference foreign="LINK_ID" local="LINK_ID"/>
+        </foreign-key>
+        <index name="IX_LINK_METADATA_1">
+            <index-column name="LINK_ID"/>
+        </index>
+        <unique name="UN_LINK_METADATA_1">
+            <unique-column name="LINK_ID"/>
+            <unique-column name="NAME"/>
+            <unique-column name="LOCALE"/>
+            <unique-column name="VALUE"/>
+        </unique>
+    </table>
+
+    <table name="LINK_CONSTRAINT">
+        <column name="CONSTRAINT_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="LINK_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="USER_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="PERMISSIONS_ACL" size="120" type="VARCHAR"/>
+        <foreign-key foreignTable="LINK" name="FK_LINK_CONSTRAINT_1" onDelete="cascade">
+            <reference foreign="LINK_ID" local="LINK_ID"/>
+        </foreign-key>
+        <index name="IX_LINK_CONSTRAINT_1">
+            <index-column name="LINK_ID"/>
+        </index>
+    </table>
+
+    <table name="LINK_CONSTRAINTS_REF">
+        <column name="CONSTRAINTS_REF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="LINK_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="NAME" size="40" type="VARCHAR" required="true"/>
+        <foreign-key foreignTable="LINK" name="FK_LINK_CONSTRAINTS_REF_1" onDelete="cascade">
+            <reference foreign="LINK_ID" local="LINK_ID"/>
+        </foreign-key>
+        <index name="IX_LINK_CONSTRAINTS_REF_1">
+            <index-column name="LINK_ID"/>
+        </index>
+        <unique name="UN_LINK_CONSTRAINTS_REF_1">
+            <unique-column name="LINK_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <!--
+       Page Security Definition
+    -->
+
+    <table name="PAGE_SECURITY">
+        <column name="PAGE_SECURITY_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PARENT_ID" type="INTEGER" required="true"/>
+        <column name="PATH" required="true" size="240" type="VARCHAR"/>
+        <column name="NAME" required="true" size="80" type="VARCHAR"/>
+        <column name="VERSION" required="false" size="40" type="VARCHAR"/>                
+        <column name="SUBSITE" size="40" type="VARCHAR"/>
+        <column name="USER_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPAL" size="40" type="VARCHAR"/>
+        <column name="MEDIATYPE" size="15" type="VARCHAR"/>
+        <column name="LOCALE" size="20" type="VARCHAR"/>
+        <column name="EXT_ATTR_NAME" size="15" type="VARCHAR"/>
+        <column name="EXT_ATTR_VALUE" size="40" type="VARCHAR"/>
+        <foreign-key foreignTable="FOLDER" name="FK_PAGE_SECURITY_1" onDelete="cascade">
+            <reference foreign="FOLDER_ID" local="PARENT_ID"/>
+        </foreign-key>
+        <unique name="UN_PAGE_SECURITY_1">
+            <unique-column name="PARENT_ID"/>
+        </unique>
+        <unique name="UN_PAGE_SECURITY_2">
+            <unique-column name="PATH"/>
+        </unique>
+    </table>
+    
+    <table name="PAGE_SEC_CONSTRAINTS_DEF">
+        <column name="CONSTRAINTS_DEF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PAGE_SECURITY_ID" type="INTEGER" required="true"/>
+        <column name="NAME" required="true" size="40" type="VARCHAR"/>
+        <foreign-key foreignTable="PAGE_SECURITY" name="FK_PAGE_SEC_CONSTRAINTS_DEF_1" onDelete="cascade">
+            <reference foreign="PAGE_SECURITY_ID" local="PAGE_SECURITY_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_SEC_CONSTRAINTS_DEF_1">
+            <index-column name="PAGE_SECURITY_ID"/>
+        </index>
+        <unique name="UN_PAGE_SEC_CONSTRAINTS_DEF_1">
+            <unique-column name="PAGE_SECURITY_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <table name="PAGE_SEC_CONSTRAINT_DEF">
+        <column name="CONSTRAINT_DEF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="CONSTRAINTS_DEF_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="USER_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="ROLE_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="GROUP_PRINCIPALS_ACL" size="120" type="VARCHAR"/>
+        <column name="PERMISSIONS_ACL" size="120" type="VARCHAR"/>
+        <foreign-key foreignTable="PAGE_SEC_CONSTRAINTS_DEF" name="FK_PAGE_SEC_CONSTRAINT_DEF_1" onDelete="cascade">
+            <reference foreign="CONSTRAINTS_DEF_ID" local="CONSTRAINTS_DEF_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_SEC_CONSTRAINT_DEF_1">
+            <index-column name="CONSTRAINTS_DEF_ID"/>
+        </index>
+    </table>
+
+    <table name="PAGE_SEC_CONSTRAINTS_REF">
+        <column name="CONSTRAINTS_REF_ID" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="PAGE_SECURITY_ID" type="INTEGER" required="true"/>
+        <column name="APPLY_ORDER" type="INTEGER" required="true"/>
+        <column name="NAME" size="40" type="VARCHAR" required="true"/>
+        <foreign-key foreignTable="PAGE_SECURITY"  name="FK_PAGE_SEC_CONSTRAINTS_REF_1" onDelete="cascade">
+            <reference foreign="PAGE_SECURITY_ID" local="PAGE_SECURITY_ID"/>
+        </foreign-key>
+        <index name="IX_PAGE_SEC_CONSTRAINTS_REF_1">
+            <index-column name="PAGE_SECURITY_ID"/>
+        </index>
+        <unique name="UN_PAGE_SEC_CONSTRAINTS_REF_1">
+            <unique-column name="PAGE_SECURITY_ID"/>
+            <unique-column name="NAME"/>
+        </unique>
+    </table>
+
+    <!--
+       Profiler
+    -->
+
+    <table name="PROFILING_RULE">
+        <column name="RULE_ID" primaryKey="true" required="true"
+            size="80" type="VARCHAR"/>
+        <column name="CLASS_NAME" required="true" size="100" type="VARCHAR"/>
+        <column name="TITLE" size="100" type="VARCHAR"/>
+    </table>
+
+    <table name="RULE_CRITERION">
+        <column name="CRITERION_ID" primaryKey="true" required="true"
+            size="80" type="VARCHAR"/>
+        <column name="RULE_ID" required="true" size="80" type="VARCHAR"/>
+        <column name="FALLBACK_ORDER" required="true" type="INTEGER"/>
+        <column name="REQUEST_TYPE" required="true" size="40" type="VARCHAR"/>
+        <column name="NAME" required="true" size="80" type="VARCHAR"/>
+        <column name="COLUMN_VALUE" size="128" type="VARCHAR"/>
+        <column default="1" name="FALLBACK_TYPE" type="INTEGER"/>
+        <index name="IX_RULE_CRITERION_1">
+            <index-column name="RULE_ID" />
+            <index-column name="FALLBACK_ORDER" />
+        </index>
+        <foreign-key foreignTable="PROFILING_RULE" name="FK_RULE_CRITERION_1" onDelete="cascade">
+            <reference foreign="RULE_ID" local="RULE_ID"/>
+        </foreign-key>           
+    </table>
+          
+    <table name="PRINCIPAL_RULE_ASSOC">
+        <column name="PRINCIPAL_NAME" primaryKey="true" required="true" size="80" type="VARCHAR"/>
+        <column name="LOCATOR_NAME" primaryKey="true" required="true" size="80" type="VARCHAR"/>
+        <column name="RULE_ID" required="true" size="80" type="VARCHAR"/>
+    </table>
+                
+    <table name="PROFILE_PAGE_ASSOC">
+        <column name="LOCATOR_HASH" required="true" size="40" type="VARCHAR"/>
+        <column name="PAGE_ID" required="true" size="80" type="VARCHAR"/>
+        <unique name="UN_PROFILE_PAGE_1">
+          <unique-column name="LOCATOR_HASH" />
+          <unique-column name="PAGE_ID" />
+        </unique>
+    </table>
+    
+    <table name="CLUBS">
+        <column name="NAME" primaryKey='true' required="true" size="80" type="VARCHAR"/>
+        <column name="COUNTRY" required="true" size="40" type="VARCHAR"/>
+        <column name="CITY" required="true" size="40" type="VARCHAR"/>
+        <column name="STADIUM" required="true" size="80" type="VARCHAR"/>
+        <column name="CAPACITY" type='INTEGER'/>
+        <column name="FOUNDED" type='INTEGER'/>        
+        <column name="PITCH" size="40" type="VARCHAR"/>
+        <column name="NICKNAME" size="40" type="VARCHAR"/>
+    </table>  
+    
+</database>

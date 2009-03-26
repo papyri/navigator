@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<Context path="@CONTEXTPATH@" crossContext="true">
+
+  <Realm className="org.apache.catalina.realm.JAASRealm"
+         appName="Jetspeed"
+         userClassNames="org.apache.jetspeed.security.impl.UserPrincipalImpl"
+         roleClassNames="org.apache.jetspeed.security.impl.RolePrincipalImpl"
+         useContextClassLoader="false"
+         debug="0"/>
+
+	<ResourceParams name="jdbc/jetspeed">
+    <parameter>
+      <name>factory</name>
+      <value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
+    </parameter>
+
+    <!-- Maximum number of dB connections in pool. Make sure you
+         configure your mysqld max_connections large enough to handle
+         all of your db connections. Set to 0 for no limit.
+         -->
+    <parameter>
+      <name>maxActive</name>
+      <value>100</value>
+    </parameter>
+
+    <!-- Maximum number of idle dB connections to retain in pool.
+         Set to 0 for no limit.
+         -->
+    <parameter>
+      <name>maxIdle</name>
+      <value>30</value>
+    </parameter>
+
+    <!-- Maximum time to wait for a dB connection to become available
+         in ms, in this example 10 seconds. An Exception is thrown if
+         this timeout is exceeded.  Set to -1 to wait indefinitely.
+         -->
+    <parameter>
+      <name>maxWait</name>
+      <value>10000</value>
+    </parameter>
+
+    <!-- HSQL dB username and password for dB connections  -->
+    <parameter>
+     <name>username</name>
+     <value>@USERNAME@</value>
+    </parameter>
+    <parameter>
+     <name>password</name>
+     <value>@PASSWORD@</value>
+    </parameter>
+
+    <!-- Class name for HSQL JDBC driver -->
+    <parameter>
+       <name>driverClassName</name>
+       <value>@DRIVER@</value>
+    </parameter>
+
+    <!-- The JDBC connection url for connecting to your HSQL dB.  -->
+    <parameter>
+      <name>url</name>
+      <value>@URL@</value>
+    </parameter>
+  </ResourceParams>
+
+</Context>

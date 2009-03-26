@@ -1,0 +1,146 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+@import url("../../css/portal-standard.css");
+
+body
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    padding: 1em;
+    background: #fff;
+    color: #000;
+}
+
+a:link, a:visited
+{
+    color: blue;
+}
+
+a:hover
+{
+    color: #f30 !important;
+}
+
+body.layout-jscookmenu
+{
+    margin: 0;
+    padding: 0;
+}
+
+.layout-jscookmenu #banner h1
+{
+    font-size: 1.25em;
+    margin: 0;
+}
+
+.layout-jscookmenu #breadcrumbs
+{
+    border-top: 1px solid #fff;
+    background-color: #ccc;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+    padding: 2px 8px;
+}
+
+.layout-jscookmenu #breadcrumbs a
+{
+    text-decoration: none;
+}
+
+.layout-jscookmenu #tophorizontalmenu
+{
+}
+
+.layout-jscookmenu #leftverticalmenu
+{
+}
+
+.Link
+{
+}
+
+.LinkFolder
+{
+}
+
+.LinkPage
+{
+}
+
+.FolderList
+{
+}
+
+.PageTitle
+{
+}
+
+#portal-page-actions A img
+{
+   display: inline;  
+
+}
+
+#portal-page-actions
+{
+   float:right;
+   position: relative;
+   top: -12px;
+}
+
+.layout-jscookmenu .layout-edit-bar
+{
+  width: 100%;
+  padding-top: 5px;
+  overflow:hidden;
+  clip:auto;
+}
+
+.layout-jscookmenu .layout-edit-bar label, 
+.layout-jscookmenu .layout-edit-bar input, 
+.layout-jscookmenu .layout-edit-bar select 
+{
+  font-size: 8pt;
+  color: blue;
+}
+
+.layout-jscookmenu .layout-edit-bar label
+{
+  padding-left: 9px;
+}
+
+.layout-jscookmenu .layout-edit-bar-left
+{
+  display:inline;
+  float:left;
+}
+
+.layout-jscookmenu .layout-edit-bar-right
+{
+  display:inline;
+  float:right;
+  padding-right: 5px;
+}
+
+.layout-jscookmenu .portlet-edit-bar select
+{
+  font-size: 8pt;
+  color: blue;
+}

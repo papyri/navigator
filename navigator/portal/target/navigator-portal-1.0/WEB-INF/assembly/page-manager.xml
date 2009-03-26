@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<beans>
+    
+  <!-- PageManager -->
+  <bean id="PsmlDocumentHandler"      
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>.psml</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.page.psml.PageImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${applicationRoot}/WEB-INF/pages</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="LinkDocumentHandler"       
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>.link</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.page.psml.LinkImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${applicationRoot}/WEB-INF/pages</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="FolderMetaDataDocumentHandler"         
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>folder.metadata</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.folder.psml.FolderMetaDataImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${applicationRoot}/WEB-INF/pages</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="PageSecurityDocumentHandler"       
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>page.security</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.page.psml.PageSecurityImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${applicationRoot}/WEB-INF/pages</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="DocumentHandlerFactory"        
+       class="org.apache.jetspeed.page.document.psml.DocumentHandlerFactoryImpl" >      
+        <constructor-arg>
+        <map>
+          <entry key=".psml">
+            <ref bean="PsmlDocumentHandler" />
+          </entry>
+          <entry key=".link">
+            <ref bean="LinkDocumentHandler" />
+          </entry>  
+          <entry key="folder.metadata">
+            <ref bean="FolderMetaDataDocumentHandler" />
+          </entry>        
+          <entry key="page.security">
+            <ref bean="PageSecurityDocumentHandler" />
+          </entry>        
+        </map>
+       </constructor-arg>
+  </bean>
+  
+  <bean id="FolderHandler"         
+       class="org.apache.jetspeed.page.document.psml.FileSystemFolderHandler" >         
+       <constructor-arg index="0"><value>${applicationRoot}/WEB-INF/pages</value></constructor-arg>
+       <constructor-arg index="1"><ref bean="DocumentHandlerFactory"/></constructor-arg>
+       <constructor-arg index="2"><ref bean="PageFileCache"/></constructor-arg>        
+  </bean>
+    
+  <bean id="org.apache.jetspeed.page.PageManager" 
+       name="pageManager"
+       class="org.apache.jetspeed.page.psml.CastorXmlPageManager">         
+       <constructor-arg index="0"><ref bean="IdGenerator"/></constructor-arg>
+       <constructor-arg index="1"><ref bean="DocumentHandlerFactory"/></constructor-arg>
+       <constructor-arg index="2"><ref bean="FolderHandler"/></constructor-arg>
+       <constructor-arg index="3"><ref bean="PageFileCache"/></constructor-arg>        
+       <!-- permissions security enabled flag, default=false -->
+       <constructor-arg index="4"><value>false</value></constructor-arg>
+       <!-- constraints security enabled flag, default=true -->
+       <constructor-arg index="5"><value>true</value></constructor-arg>
+  </bean>
+
+  <!-- PortalSite -->
+  <bean id="org.apache.jetspeed.portalsite.PortalSite" 
+       name="portalSite"
+       class="org.apache.jetspeed.portalsite.impl.PortalSiteImpl">         
+       <constructor-arg index="0"><ref bean="pageManager"/></constructor-arg>
+  </bean>
+
+</beans>

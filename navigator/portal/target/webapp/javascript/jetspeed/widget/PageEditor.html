@@ -1,0 +1,80 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--  need to wrap inside a body tag to allow the above license header
+      dojo will look for a body tag and use its content -->
+<body>
+<div class="pageEditorPane">
+
+    <div dojoAttachPoint="containerNode" class="container"></div>
+
+    <div dojoAttachPoint="deletePortletDialog">
+		<div class="container" dojoAttachPoint="deletePortletDialogBg">
+			<div class="deletePortletDialog" dojoAttachPoint="deletePortletDialogFg">
+				<h2>${this.dialogLabels.removeportlet}</h2>
+                <div dojoAttachPoint="deletePortletTitle">&nbsp;</div>
+                <button dojoType="Button" dojoAttachEvent="onClick:deletePortletConfirmed">${this.dialogLabels.ok}</button>
+                <button dojoType="Button" dojoAttachPoint="deletePortletCancel">${this.dialogLabels.cancel}</button>
+				<p></p>
+			</div>
+		</div>
+	</div>
+
+    <div dojoAttachPoint="deleteLayoutDialog">
+		<div class="container" dojoAttachPoint="deleteLayoutDialogBg">
+			<div class="deleteLayoutDialog" dojoAttachPoint="deleteLayoutDialogFg">
+				<h2>${this.dialogLabels.deletelayout}</h2>
+                <div dojoAttachPoint="deleteLayoutTitle">&nbsp;</div>
+                <button dojoType="Button" dojoAttachEvent="onClick:deleteLayoutConfirmed">${this.dialogLabels.ok}</button>
+                <button dojoType="Button" dojoAttachPoint="deleteLayoutCancel">${this.dialogLabels.cancel}</button>
+				<p></p>
+			</div>
+		</div>
+	</div>
+
+	<div dojoAttachPoint="columnSizeDialog">
+		<div class="container" dojoAttachPoint="columnSizeDialogBg">
+			<div class="columnSizeDialog" dojoAttachPoint="columnSizeDialogFg">
+				<h2>${this.dialogLabels.columnsizes}</h2>
+                <div dojoAttachPoint="spinner0Field" class="columnSizeField">
+                    <div>${this.dialogLabels.columnsizes_column1}</div>
+                    <input dojoType="IntegerSpinner" dojoAttachPoint="spinner0" value="0" delta="1" min="0" max="100" separator="," maxlength="10" >
+                </div>
+                <div dojoAttachPoint="spinner1Field" class="columnSizeField">
+                    <div>${this.dialogLabels.columnsizes_column2}</div>
+                    <input dojoType="IntegerSpinner" dojoAttachPoint="spinner1" value="0" delta="1" min="0" max="100" separator="," maxlength="10" >
+                </div>
+                <div dojoAttachPoint="spinner2Field" class="columnSizeField">
+                    <div>${this.dialogLabels.columnsizes_column3}</div>
+                    <input dojoType="IntegerSpinner" dojoAttachPoint="spinner2" value="0" delta="1" min="0" max="100" separator="," maxlength="10" >
+                </div>
+                <div dojoAttachPoint="spinner3Field" class="columnSizeField">
+                    <div>${this.dialogLabels.columnsizes_column4}</div>
+                    <input dojoType="IntegerSpinner" dojoAttachPoint="spinner3" value="0" delta="1" min="0" max="100" separator="," maxlength="10" >
+                </div>
+                <div dojoAttachPoint="spinner4Field" class="columnSizeField">
+                    <div>${this.dialogLabels.columnsizes_column5}</div>
+                    <input dojoType="IntegerSpinner" dojoAttachPoint="spinner4" value="0" delta="1" min="0" max="100" separator="," maxlength="10" >
+                </div>
+                <button dojoType="Button" dojoAttachEvent="onClick:columnSizeConfirmed">${this.dialogLabels.ok}</button>
+                <button dojoType="Button" dojoAttachPoint="columnSizeCancel">${this.dialogLabels.cancel}</button>
+                <p></p>
+			</div>
+		</div>
+	</div>
+
+</div>
+</body>

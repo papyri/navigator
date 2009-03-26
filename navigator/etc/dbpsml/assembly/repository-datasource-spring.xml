@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>		
+
+  <!-- datasource bean -->
+<!--  <bean id="JetspeedDS" class="org.apache.jetspeed.components.rdbms.ojb.ConnectionRepositoryEntry"> -->
+  <bean id="JetspeedDS" class="org.apache.commons.dbcp.BasicDataSource">     
+    <property name="driverClassName">
+      <value>${org.apache.jetspeed.database.driver}</value>
+    </property>
+    <property name="url">
+      <value>${org.apache.jetspeed.database.url}</value>
+    </property>
+    <property name="username">
+      <value>${org.apache.jetspeed.database.user}</value>
+    </property>
+    <property name="password">
+      <value>${org.apache.jetspeed.database.password}</value>
+    </property>
+  </bean>     
+    
+  <bean id="ojbConfigurer" class="org.springframework.orm.ojb.support.LocalOjbConfigurer"/> 
+     
+    <!-- 
+         Dynamically configures Database Platform for OJB by looking at the connection string
+         and figuring out the OJB platform using an OJB metadata utility
+         Its important to get this right otherwise you will be sending the wrong (most likely HSQL)
+         flavor of SQL statements to the backend database.
+     -->
+     <bean id="PlatformConfigurator" 
+           class="org.apache.jetspeed.components.rdbms.ojb.DatabasePlatformConfigurator"
+           init-method="init"
+      >
+    	<constructor-arg index='0'>
+    		<ref bean="JetspeedDS"/>
+    	</constructor-arg>         
+        <!-- JNDI Name -->
+    	<constructor-arg index='1'>
+    		<value>JetspeedDS</value>
+    	</constructor-arg>                  
+     </bean>
+    
+  <!-- properties configurer used to pick up system properties -->
+  <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+	<!-- 	
+		Optional configuration for table schema aware datasource.
+		
+		The way to inject the schema switching is database specific. Here only the DB2 way
+		is shown (set current schema = xx). Oracle statement might 
+		be: "alter session set current_schema=xx", PostGres
+		may look like this: "SET search_path TO xx"
+		
+		The idea was taken from http://forum.springframework.org/showthread.php?t=10728
+		
+		The runtime schema switching support was dropped because it is not needed here.
+	-->
+
+	<!--
+	<bean id="JetspeedDS"
+		class="org.apache.jetspeed.components.datasource.SchemaAwareDataSourceProxy">
+		<property name="targetDataSource">
+			<ref local="dataSourceTarget" />
+		</property>
+		<property name="schemaSql">
+			<value>set current schema = xx</value>
+		</property>
+	</bean>
+	
+	<bean id="dataSourceTarget"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>${org.apache.jetspeed.database.driver}</value>
+		</property>
+		<property name="url">
+			<value>${org.apache.jetspeed.database.url}</value>
+		</property>
+		<property name="username">
+			<value>${org.apache.jetspeed.database.user}</value>
+		</property>
+		<property name="password">
+			<value>${org.apache.jetspeed.database.password}</value>
+		</property>
+	</bean>
+	-->
+
+</beans>

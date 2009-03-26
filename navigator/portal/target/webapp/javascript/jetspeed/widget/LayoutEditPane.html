@@ -1,0 +1,59 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--  need to wrap inside a body tag to allow the above license header
+      dojo will look for a body tag and use its content -->
+<body>
+<div id="${this.widgetId}" class="layoutEditPane">
+
+    <div dojoAttachPoint="containerNode" class="container"></div>
+
+    <fieldset class="pageEditorPaneContainer" dojoAttachPoint="pageEditContainer">
+        <div class="detail">
+            <div class="rowContainer">
+                <fieldset class="pageEditorPaneContainer pageEditorDetailContainer" dojoAttachPoint="pageEditLNContainer">
+                    <div class="layoutNameContainer">
+                        <select class="layoutName" name="layoutNameSelect" dojoAttachPoint="layoutNameSelect" dojoType="Select" autocomplete="false"></select>
+                        <div class="buttonGroup">
+                            <div class="buttonContainerLeft">
+                                <button dojoType="Button" dojoAttachPoint="changeLayoutButton" dojoAttachEvent="onClick:changeLayout"><img height="16" src="${this.layoutImagesRoot}button_ok.png">&nbsp;${this.labels.changelayout}</button>
+                            </div>
+                            <div class="buttonContainerRight">
+                                <button dojoType="Button" dojoAttachPoint="addLayoutButton" dojoAttachEvent="onClick:addLayout"><img height="16" src="${this.layoutImagesRoot}layout_new.png">&nbsp;${this.labels.addlayout}</button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div style="float: right; width: 18px">&nbsp;</div>  <!-- allowing room for layout-move image -->
+                <div class="buttonContainerRight" dojoAttachPoint="buttonGroupRight">
+                    <table cellpadding="0" cellspacing="6" border="0">
+                    <!-- height on images is currently needed to size the button properly, especially when button is inside a table -->
+                    <tr>
+                    <td><button dojoType="Button" dojoAttachEvent="onClick:addPortlet" dojoAttachPoint="addPortletButton"><img height="16" src="${this.layoutImagesRoot}portlet_add.png">&nbsp;${this.labels.addportlet}</button></td>
+                    <td><button dojoType="Button" dojoAttachEvent="onClick:openColumnSizeEditor" dojoAttachPoint="columnSizeButton"><img height="16" src="${this.layoutImagesRoot}column_resize.png">&nbsp;${this.labels.columnsizes}</button></td>
+                    </tr>
+                    <tr>
+                    <td></td>
+                    <td><button dojoType="Button" dojoAttachPoint="deleteLayoutButton" dojoAttachEvent="onClick:deleteLayout"><img height="16" src="${this.layoutImagesRoot}layout_delete.png">&nbsp;${this.labels.deletelayout}</button><button dojoType="Button" dojoAttachPoint="editMoveModeButton" dojoAttachEvent="onClick:editMoveModeStart"><img height="16" src="${this.layoutImagesRoot}edit_mode_layout_move.png">&nbsp;${this.labels.movemode}</button><button dojoType="Button" dojoAttachPoint="editMoveModeExitButton" dojoAttachEvent="onClick:editMoveModeExit"><img height="16" src="${this.layoutImagesRoot}edit_mode_normal.png">&nbsp;${this.labels.movemode_exit}</button></td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+</div>
+</body>

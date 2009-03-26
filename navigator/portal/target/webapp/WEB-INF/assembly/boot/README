@@ -1,0 +1,3 @@
+Any configurations in this driedtory will be used to create a "boot" application context that 
+will be used as a parent Application context for the primary application context
+that is configured via the configurations under WEB-INF/assembly.

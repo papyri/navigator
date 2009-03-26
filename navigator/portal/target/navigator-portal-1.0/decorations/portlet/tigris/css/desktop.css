@@ -1,0 +1,60 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/* since IE6 doesn't support chained class selectors, we create a separate class
+   for the combination of .portletWindow and the portlet decorator name
+   if not for IE6, the next selector would be: ".tigris.portletWindow" instead of ".portletWindow-tigris"
+*/
+.portletWindow-tigris {
+    margin: 2px !important;
+}
+
+.tigris .portletWindowClient {
+    margin: 2px !important;
+}
+
+.tigris .portletWindowTitleBar {
+    background: #98FB98;    /* palegreen */ 
+}
+
+.tigris .portletWindowTitleText {
+	color: #4682B4;  /* steelblue */
+}
+
+.tigris .portletWindowActionButton {
+	height: 11px;
+	width: 11px;
+}
+
+.tigris .portletWindowTitleBarIcon {
+    margin-top: 3px;
+    margin-left: 2px;
+    margin-right: 3px;   /* these margin settings are restated from desktop/widget/PortletWindow.css - to override the .tigris img styles in this file */
+}
+
+
+/*  begin portlet decorator tigris additions  */
+
+.tigris .PContent
+{    
+    padding-left: 10px; /* was 1em;  - dojo dies when calculating width of object - can't convert to pixels */
+    white-space: normal;
+    /* background-color: #EFEFEF; */ /* desktop color should not be set here */
+    font-size: small;
+}
+
+/*  end portlet decorator tigris additions  */

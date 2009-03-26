@@ -1,0 +1,237 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+#*
+ * Use this macro at the top of all of your layout decorations so as 
+ * to provide required context objects.
+*#
+#macro (defineLayoutObjects)
+  #set($preferedLocale = $JS2RequestContext.locale)
+  #set($rootFragment = $jetspeed.currentFragment)
+  #set($site = $request.getAttribute("org.apache.jetspeed.portalsite.PortalSiteRequestContext"))
+  #set($theme = $request.getAttribute("org.apache.jetspeed.theme"))
+  #set($layoutDecoration = $theme.getDecoration($rootFragment))
+#end
+
+#* Adds javascript for PortletSelector on HTML *#
+#macro (includeJavaScriptForHead)
+ <script type="text/javascript"><!--
+    function openWindow(pipeline)
+    {    
+      var vWinUsers = window.open(pipeline, 'PortletSelector', 'status=no,resizable=yes,width=500,height=600,scrollbars=yes');
+      vWinUsers.opener = self;
+      vWinUsers.focus();
+    }
+ //--></script>
+#end
+
+#*
+ * Returns the full URL for the base of this site.  This
+ * can and should be used in the <base href="" /> the <HEAD></HEAD>
+ * of your decoration.
+*#
+
+#macro(BaseHref)${request.scheme}://${request.serverName}:${request.serverPort}${request.contextPath}/#end
+
+#*
+ * Returns the correct Content-type string for use within the Content-type
+ * meta tag.
+*#    
+#macro (ContentType)text/html#if($response.characterEncoding); charset=$response.characterEncoding#end#end
+
+#*
+ * Returns the page title string for the current page
+ *
+*# 
+#macro (PageTitle)$jetspeed.page.getTitle($preferedLocale)#end
+
+#*
+ * Returns the site description string for use within the
+ * <meta name="description" /> meta tag
+ *#
+#macro (PageDescription)$jetspeed.page.getTitle($preferedLocale)#end
+    
+#**
+* Includes all of the stylesheets for this Page's theme.
+*#
+#macro (IncludeStylesheets)
+ #foreach($style in $theme.styleSheets)        
+    
+    <link rel="stylesheet" type="text/css" media="screen, projection" href="$request.contextPath/$style"  />
+ #end
+#end
+
+#* Adds additional style sheets and java script from portlets *#
+#macro (includeHeaderResource)
+ #acquireHeaderResource()
+$resourceHeader.getContent()
+#end
+
+#* Adds additional style sheets and java script from portlets - desktop version *#
+#macro (desktopIncludeDojoHeaderContent)
+ #acquireHeaderResource()
+$resourceHeader.getNamedContentForPrefix( "header.dojo" )
+#end
+
+#* Adds additional style sheets and java script from portlets - desktop version *#
+#macro (desktopIncludeHeaderContent)
+ #acquireHeaderResource()
+$resourceHeader.getContent()
+#end
+
+#macro (acquireHeaderResource)
+ #if ( ! $resourceHeader )
+  #if ( $JS2ComponentManager )
+   #set($resourceHeaderFactory = $JS2ComponentManager.getComponent("org.apache.jetspeed.headerresource.HeaderResourceFactory"))
+  #else
+   #set($resourceHeaderFactory = $jetspeed.getComponent("org.apache.jetspeed.headerresource.HeaderResourceFactory"))
+  #end
+  #set($resourceHeader = $resourceHeaderFactory.getHeaderResouce($JS2RequestContext))
+ #end
+#end
+
+
+#*
+* Returns the base CSS class to use in top level tags
+*#
+#macro (BaseCSSClass $_decoration)${_decoration.baseCSSClass}#end
+
+#macro (PageBaseCSSClass)#BaseCSSClass($layoutDecoration)#end
+
+#**
+ * Returns the fully-qualified path the specified resources using
+ * $decorator
+ *#    
+#macro (GetResource $_decorator $_path)$request.contextPath/$!{_decorator.getResource($_path)}#end
+
+#**
+ * Returns the fully-qualified path the specified resources using
+ * the $layoutDecorator that is defined by calling the #defineLayoutObjects()
+ * macro.
+ *#    
+#macro (GetPageResource $_path)#GetResource($layoutDecoration $_path) #end
+    
+#*
+  Dispalys the standard action bar for this page.
+*#
+#macro (PageActionBar)
+ #set($_actions = $layoutDecoration.actions)
+  <div id="portal-page-actions" >        
+    #if($_actions.size() >0)
+    #foreach ($_action in $_actions)   
+     <a href="${_action.Action}" title="${_action.Name}" class="action pageAction" ><img src="$request.contextPath/${_action.Link}" alt="${_action.Alt}" border="0" /></a>
+    #end   
+    #end
+ </div>
+#end
+
+#macro(PortletActionBar $_decoration)
+ #set($_actions = $_decoration.actions)
+  
+ <div class="PActionBar">
+    #foreach ($_action in $_actions)
+     <a href="${_action.Action}" title="${_action.Name}" class="action portlet-action" #if($_action.target)target="$_action.target"#end><img src="$request.contextPath/${_action.link}" alt="${_action.Alt}" border="0" /></a>
+    #end    
+ </div>
+#end
+
+
+#macro(PagesMenu)
+#set($_pages = $site.getMenu("pages").elements)
+<div id="pages-menu" class="menu">#foreach($_page in $_pages)
+#if($_page.isSelected($site))
+	#set($_cssClass = "link page-link selected")
+#else
+	#set($_cssClass = "link page-link")
+#end
+<a href="portal${_page.url}" class="$!{_cssClass}" title="${_page.getTitle($preferedLocale)}">$_page.getTitle($preferedLocale)</a><span class="separator"></span>#end  
+</div>
+#end
+
+#macro(NavigationsMenu)
+#set($_navigations= $site.getMenu("navigations").elements)
+#set($_seperatorCount = 0)    
+<div id="navgiations-menu" class="menu">#foreach($_element in $_navigations)
+#set($_type = $_element.elementType)
+#if($_type == "separator")
+#if($_seperatorCount > 0)            
+</div>
+#end
+#set($_seperatorCount = $_seperatorCount + 1)          
+<div id="seperator-${_seperatorCount}" class="menu-group"><span class="title">$_element.getText($preferedLocale)</span>
+#elseif($_type == "option")
+#if($_element.type == "link")
+  #set($_url = $_element.url)
+  #set($_cssClass = "link external-link")
+#else
+  #set($_url = "portal${_element.url}")
+  #set($_cssClass = "link page-link")
+#end     
+#if($_element.isSelected($site))
+ #set($_cssClass= "$_cssClass selected")
+#end<a href="$!{_url}" class="link" title="${_element.getTitle($preferedLocale)}">${_element.getTitle($preferedLocale)}</a><span class="separator"></span>
+#end
+#end  
+
+#if($_seperatorCount > 0)</div>#end
+</div>
+#end
+
+#macro (Breadcrumbs)
+  #set($_breadcrumbs = $site.getMenu("breadcrumbs").elements)
+  
+  <div id="breadcrumbs-menu" class="menu breadcrumbs">
+    #foreach($_breadcrumb in $_breadcrumbs)
+        #if($_breadcrumb.isSelected($site))
+            #set($_cssClass = "link breadcrumb-link selected")
+        #else
+            #set($_cssClass = "link breadcrumb-link")
+        #end
+        
+        <a href="portal${_breadcrumb.url}" class="$!{_cssClass}" title="${_breadcrumb.getTitle($preferedLocale)}">$_breadcrumb.getTitle($preferedLocale)</a>
+        <span class="separator"></span>
+    #end    
+   </div>
+#end
+
+#macro (int $_variable)
+  #set($_aint=0)
+  #set($_variable=$_aint.valueOf("$_variable"))
+#end
+
+#macro (bool $_variable)
+  #set($_abool=true)
+  #set($_variable=$_abool.valueOf("$_variable"))
+#end
+
+#macro (getProperty $_property $_properties $_name $_default)
+  #set($_value = "")
+  #set($_value = $_properties.getProperty($_name))
+  #set($_property = $_default)
+  #if($_value != "")
+    #set($_property=$_value)
+  #end
+#end
+
+#macro (getIntProperty $_property $_properties $_name $_default)
+  #getProperty($_property $_properties $_name $_default)
+  #int($_property)
+#end
+
+#macro (getBoolProperty $_property $_properties $_name $_default)
+  #getProperty($_property $_properties $_name $_default)
+  #bool($_property)
+#end

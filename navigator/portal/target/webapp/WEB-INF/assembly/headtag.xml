@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans>
+    <!--  header (html <head>) configuration  -->
+
+    <!--  *****  -->
+    <!--  /desktop header configuration  -->
+    <!--  *****  -->
+    <bean id="HeaderResourceConfigurationDesktop" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map>
+                <entry key="dojo">
+                    <ref bean="DojoConfigurationDesktop" />
+                </entry>
+                <entry key="desktop">
+                    <ref bean="DesktopConfiguration" />
+                </entry>
+                <entry key="header.order">
+                    <list>
+                        <value>header.dojo.parameters</value>            <!-- djConfig definition -->
+                        <value>header.dojo.preinit</value>               <!-- generated djConfig.baseScriptUri definition -->
+                        <value>header.dojo.config</value>                <!-- for adding statements prior to dojo.js load -->
+                        <value>header.dojo.init</value>                  <!-- <script src=".../dojo.js"> -->
+                        <value>header.dojo.requires.core</value>         <!-- dojo.require statements for dojo core modules -->
+                        <value>header.dojo.modules.path</value>          <!-- dojo.registerModulePath statements -->
+                        <value>header.dojo.requires.modules</value>      <!-- dojo.require statements for dojo add-on modules -->
+                        <value>header.dojo.writeincludes</value>         <!-- generated dojo.hostenv.writeIncludes() statement -->
+                        <value>header.dojo.modules.namespace</value>     <!-- dojo.registerNamespace statements -->
+                        <value>header.dojo.style.bodyexpand</value>      <!-- css for body 100% height/width (for some dojo widgets) -->
+                        <!-- <value>header.basetag</value> -->                    <!-- generated <base href=".../jetspeed/"> -->
+                        <value>header.desktop.style.layout</value>       <!-- generated <link href=".../styles.css"> for layout decoration -->
+                        <value>header.desktop.init</value>               <!-- generated desktop startup javascript -->
+                    </list>
+                </entry>
+                <entry key="header.types">
+                    <ref bean="HeaderTypes" />
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="DesktopConfiguration" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map>
+                <!-- layout and portlet decorations -->
+                <entry key="decoration.layout">
+                    <!-- default layout decoration for desktop
+                         this is used when a selected layout decoration does not support desktop -->
+                    <value>blueocean</value>
+                </entry>
+
+                <entry key="decoration.portlet">
+                    <!-- default portlet decoration for desktop
+                         this is used when a selected portlet decoration does not support desktop -->
+                    <value>tigris</value>
+                </entry>
+
+                <!-- page navigation -->
+                <entry key="page.ajaxnavigation">
+                    <!-- enable ajax page navigation - default is false -->
+                    <!-- when set to true, the dojo parameter dojo.parameter.preventBackButtonFix should be set to false -->
+                    <value>true</value>
+                </entry>
+
+                <!-- window modes -->
+                <entry key="window.tiling">
+                    <!-- enable window tiling mode - default is true -->
+                    <value>true</value>
+                </entry>
+                <entry key="window.heightexpand">
+                    <!-- default tiled windows to expand in height to fit content - default is false -->
+                    <value>true</value>
+                </entry>
+
+                <!-- window dimensions -->
+                <entry key="window.height">
+                    <!-- default window height -->
+                    <value>200</value>
+                </entry>
+                <entry key="window.width">
+                    <!-- default window width -->
+                    <value>280</value>
+                </entry>
+
+                <!-- window actions -->
+                <!-- NOTE: each portlet decorator may override any of these properties in its decoratordesktop.properties file -->
+                <entry key="window.action.button.order">
+                    <!-- order, left to right, that action buttons should be rendered -->
+                    <!-- all listed actions are expected to have associated images at derived path -->
+                    <!--    decorations/portlet/{decorator-name}/images/desktop/{action}.gif -->
+
+                    <!-- if an action has no image, it can still be in this list as long as it also appears in -->
+                    <!--    the window.action.noimage entry (the goal here is that the decorator need only override window.action.noimage) -->
+
+                    <!-- of course, each portlet will only display those actions that it supports, etc. -->
+                    <!-- no image mapping is offered because if it is to be supported, it should be from DecoratorAction -->
+                    <!-- some actions, such as "menu" and "restore" have special behaviors (e.g. restore replaces minimize when window is minimized) -->
+                    <list>
+                        <value>menu</value>
+                        <value>config</value>
+                        <value>edit_defaults</value>
+                        <value>edit</value>
+                        <value>view</value>
+                        <value>print</value>
+                        <value>help</value>
+                        <value>minimized</value>
+                        <value>normal</value>
+                        <value>maximized</value>
+                        <value>removeportlet</value>   <!-- activated only when in page edit mode -->
+                    </list>
+                </entry>
+                <entry key="window.action.button.maximum">
+                    <!-- maximum number of action buttons allowed - overflow items will be displayed at top of action menu -->
+                    <value>11</value>
+                </entry>
+                <entry key="window.action.noimage">
+                    <!-- list of actions that do no have images -->
+                    <list>
+                        <value>tile</value>
+                        <value>untile</value>
+                        <value>heightexpand</value>
+                        <value>heightnormal</value>
+                    </list>
+                </entry>
+                <entry key="window.action.menu.order">
+                    <!-- order that the actions should appear in action menu (for each action that is not displayed as a button) -->
+                    <list>
+                        <value>view</value>
+                        <value>maximized</value>
+                        <value>normal</value>
+                        <value>minimized</value>
+                        <value>print</value>
+                        <value>edit</value>
+                        <value>edit_defaults</value>
+                        <value>config</value>
+                        <value>tile</value>
+                        <value>untile</value>
+                        <value>heightexpand</value>
+                        <value>heightnormal</value>
+                        <value>about</value>
+                        <value>help</value>
+                        <value>removeportlet</value>
+                    </list>
+                </entry>
+                <entry key="window.action.button.tooltip">
+                    <!-- display tooltips for window action buttons -->
+                    <value>true</value>
+                </entry>
+
+                <!-- window icons -->
+                <!-- NOTE: each portlet decorator may override any of these properties in its decoratordesktop.properties file -->
+                <entry key="window.icon.enabled">
+                    <!-- display icon for each window -->
+                    <value>true</value>
+                </entry>
+                <entry key="window.icon.path">
+                    <!-- path to window icons -->
+                    <value>/images/portlets/small</value>
+                </entry>
+
+                <!-- page actions -->
+                <entry key="page.action.button.tooltip">
+                    <!-- display tooltips for page action buttons -->
+                    <value>true</value>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="DojoConfigurationDesktop" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map>
+                <entry key="dojo.enable">
+                    <!-- dojo headers only included if dojo.enable is true -->
+                    <value>true</value>
+                </entry>
+                <entry key="dojo.path">
+                    <!-- path to dojo root from portal context path -->
+                    <!-- used in constructing <script src=".../dojo.js"> and djConfig.baseScriptUri -->
+                    <value>/javascript/dojo/</value>  
+                </entry>
+                <entry key="dojo.parameter.isDebug">
+                    <!-- value for djConfig variable isDebug -->
+                    <value>false</value>
+                </entry>
+                <entry key="dojo.parameter.debugAtAllCosts">
+                    <!-- value for djConfig variable debugAtAllCosts -->
+                    <value>false</value>
+                </entry>
+                <entry key="dojo.parameter.preventBackButtonFix">
+                    <!-- enable back button control -->
+                    <value>false</value>
+                </entry>
+                <entry key="dojo.parameters">
+                    <!-- additional djConfig variables expressed as a json object fragment: -->
+                    <!--    key: value[, key: value]*     -->
+                    <!-- if an entry "dojo.parameters" is defined in HeaderResourceRegistry, its value replaces value -->
+                    <!--    built from the value here as well as dojo.parameter.isDebug and dojo.parameter.debugAtAllCosts -->
+                    <!-- template: var djConfig = { ${value} }; -->
+                    <!-- header section: header.dojo.parameters -->
+                    <value></value>
+                </entry>
+                <entry key="dojo.requires.core">
+                    <!-- list of dojo core modules -->
+                    <!-- template: dojo.require( "${value}" ); -->
+                    <!-- header section: header.dojo.requires.core -->
+                    <ref bean="DojoRequiresDesktop" />
+                </entry>
+                <entry key="dojo.modules.path">
+                    <!-- list of statements intended to be dojo.registerModulePath calls -->
+                    <!-- template: none -->
+                    <!-- values can reference entries in HeaderResourceRegistry -->
+                    <!-- header section: header.dojo.modules.path -->
+                    <!-- note: each entry below refers to a HeaderResourceRegistry entry which is currently an -->
+                    <!--       empty value due to dojo 0.4.0 improvements which make this step unnecessary for these modules -->
+                    <list>
+                        <value>dojo.module.jetspeed.ui.widget</value>
+                        <value>dojo.module.jetspeed.desktop</value>
+                    </list>
+                </entry>
+                <entry key="dojo.requires.modules">
+                    <!-- list of dojo add-on modules -->
+                    <!-- template: dojo.require( "${value}" ); -->
+                    <!-- header section: header.dojo.requires.modules -->
+                    <ref bean="DojoRequiresModulesDesktop" />
+                </entry>
+                <entry key="dojo.modules.namespace">
+                    <!-- list of statements intended to be dojo.registerNamespace calls -->
+                    <!-- template: none -->
+                    <!-- values can reference entries in HeaderResourceRegistry -->
+                    <!-- header section: header.dojo.modules.namespace -->
+                    <!-- note: the entry below refers to a HeaderResourceRegistry entry which is currently an -->
+                    <!--       empty value due to dojo 0.4.0 improvements which make this step unnecessary for this module -->
+                    <list>
+                        <value>dojo.module.widget.jetspeed.ui.widget</value>
+                    </list>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="DojoRequiresDesktop" class="java.util.ArrayList">
+        <constructor-arg index="0">
+            <list>
+                <value>dojo.lang.*</value>
+                <value>dojo.event.*</value>
+                <value>dojo.io.*</value>
+                <value>dojo.widget.*</value>
+                <value>dojo.widget.TabContainer</value>
+                <value>dojo.widget.AccordionContainer</value>
+                <value>dojo.widget.Menu2</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="DojoRequiresModulesDesktop" class="java.util.ArrayList">
+        <constructor-arg index="0">
+            <list>
+                <value>jetspeed.desktop.core</value>
+                <value>jetspeed.widget.PortletWindow</value>
+                <value>jetspeed.widget.PortalTabContainer</value>
+                <value>jetspeed.widget.PortalAccordionContainer</value>
+                <value>jetspeed.widget.PortalBreadcrumbContainer</value>
+                <value>jetspeed.widget.PortalTooltipManager</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+
+    <!--  *****  -->
+    <!--  /portal header configuration  -->
+    <!--  *****  -->
+    <bean id="HeaderResourceConfigurationPortal" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map>
+                <entry key="dojo">
+                    <ref bean="DojoConfigurationPortal" />
+                </entry>
+                <entry key="header.order">
+                    <list>  <!-- note: these are only included if dojo.enable is set to true (below or at runtime) -->
+                        <value>header.dojo.parameters</value>            <!-- djConfig definition -->
+                        <value>header.dojo.preinit</value>               <!-- generated djConfig.baseScriptUri definition -->
+                        <value>header.dojo.config</value>                <!-- for adding statements prior to dojo.js load -->
+                        <value>header.dojo.init</value>                  <!-- <script src=".../dojo.js"> -->
+                        <value>header.dojo.requires.core</value>         <!-- dojo.require statements for dojo core modules -->
+                        <value>header.dojo.modules.path</value>          <!-- dojo.registerModulePath statements -->
+                        <value>header.dojo.requires.modules</value>      <!-- dojo.require statements for dojo add-on modules -->
+                        <value>header.dojo.writeincludes</value>         <!-- generated dojo.hostenv.writeIncludes() statement -->
+                        <value>header.dojo.modules.namespace</value>     <!-- dojo.registerNamespace statements -->
+                        <value>header.dojo.style.bodyexpand</value>      <!-- css for body 100% height/width (for some dojo widgets) -->
+                    </list>
+                </entry>
+                <entry key="header.types">
+                    <ref bean="HeaderTypes" />
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+    <bean id="DojoConfigurationPortal" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map>
+                <entry key="dojo.enable">
+                    <!-- dojo headers only included if dojo.enable is true; leaving it up to one or more portlets to set this -->
+                    <value>false</value>
+                </entry>
+                <entry key="dojo.path">
+                    <!-- path to dojo root from portal context path -->
+                    <!-- used in constructing <script src=".../dojo.js"> and djConfig.baseScriptUri -->
+                    <value>/javascript/dojo/</value>
+                </entry>
+                <entry key="dojo.parameter.isDebug">
+                    <!-- value for djConfig variable isDebug -->
+                    <value>false</value>
+                </entry>
+                <entry key="dojo.parameter.debugAtAllCosts">
+                    <!-- value for djConfig variable debugAtAllCosts -->
+                    <value>false</value>
+                </entry>
+                <entry key="dojo.parameters">
+                    <!-- additional djConfig variables expressed as a json object fragment: -->
+                    <!--    key: value[, key: value]*     -->
+                    <!-- if an entry "dojo.parameters" is defined in HeaderResourceRegistry, its value replaces value -->
+                    <!--    built from the value here as well as dojo.parameter.isDebug and dojo.parameter.debugAtAllCosts -->
+                    <!-- template: var djConfig = { ${value} }; -->
+                    <!-- header section: header.dojo.parameters -->
+                    <value></value>
+                </entry>
+                <entry key="dojo.requires.core">
+                    <!-- list of dojo core modules -->
+                    <!-- template: dojo.require( "${value}" ); -->
+                    <!-- header section: header.dojo.requires.core -->
+                    <list>
+                        <value>dojo.lang.*</value>
+                        <value>dojo.event.*</value>
+                        <value>dojo.io.*</value>
+                        <value>dojo.widget.*</value>
+                    </list>
+                </entry>
+                <entry key="dojo.modules.path">
+                    <!-- list of statements intended to be dojo.registerModulePath calls -->
+                    <!-- template: none -->
+                    <!-- values can reference entries in HeaderResourceRegistry -->
+                    <!-- header section: header.dojo.modules.path -->
+                    <!-- note: each entry below refers to a HeaderResourceRegistry entry which is currently an -->
+                    <!--       empty value due to dojo 0.4.0 improvements which make this step unnecessary for these modules -->
+                    <list>
+                        <value>dojo.module.jetspeed.ui.widget</value>
+                        <value>dojo.module.jetspeed.desktop</value>
+                    </list>
+                </entry>
+                <entry key="dojo.requires.modules">
+                    <!-- list of dojo add-on modules -->
+                    <!-- template: dojo.require( "${value}" ); -->
+                    <!-- header section: header.dojo.requires.modules -->
+                    <list>
+                        <value>jetspeed.common</value>
+                    </list>
+                </entry>
+                <entry key="dojo.modules.namespace">
+                    <!-- list of statements intended to be dojo.registerNamespace calls -->
+                    <!-- template: none -->
+                    <!-- values can reference entries in HeaderResourceRegistry -->
+                    <!-- header section: header.dojo.modules.namespace -->
+                    <!-- note: the entry below refers to a HeaderResourceRegistry entry which is currently an -->
+                    <!--       empty value due to dojo 0.4.0 improvements which make this step unnecessary for this module -->
+                    <list>
+                        <value>dojo.module.widget.jetspeed.ui.widget</value>
+                    </list>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+
+    <!--  *****  -->
+    <!--  shared /portal and /desktop header configuration  -->
+    <!--  *****  -->
+    <bean id="HeaderResourceRegistry" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map>
+                <!-- override of content for header fragments added with specified key -->
+                <!-- also acts as way to refer to a shared value within these header configuration settings -->
+                <!-- also, when generating final content, if a header section is included in header.order -->
+                <!--    and it has empty content, then an entry here matching the header section name will -->
+                <!--    be used for content -->
+                <entry key="dojo.module.jetspeed.ui.widget">
+                    <!-- <value>dojo.hostenv.setModulePrefix('jetspeed.ui.widget', '../desktop/widget');</value> --> <!-- dojo 0.3.1 -->
+                    <!-- <value>dojo.registerModulePath("jetspeed.widget", "../desktop/widget");</value> --> <!-- dojo 0.4.0 -->
+                    <!-- note: current value is empty due to dojo 0.4.0 improvements which make this step unnecessary for this module -->
+                    <value></value>
+                </entry>
+                <entry key="dojo.module.jetspeed.desktop">
+                    <!-- <value>dojo.hostenv.setModulePrefix('jetspeed.desktop', '../desktop/core');</value> --> <!-- dojo 0.3.1 -->
+                    <!-- <value>dojo.registerModulePath("jetspeed.desktop", "../desktop/core");</value> --> <!-- dojo 0.4.0 -->
+                    <!-- note: current value is empty due to dojo 0.4.0 improvements which make this step unnecessary for this module -->
+                    <value></value>
+                </entry>
+                <entry key="dojo.module.widget.jetspeed.ui.widget">
+                    <!-- <value>dojo.widget.manager.registerWidgetPackage('jetspeed.ui.widget');</value> --> <!-- dojo 0.3.1 -->
+                    <!-- <value>dojo.registerNamespace("jetspeed", 'jetspeed.widget', function(name){ return "jetspeed.widget."+dojo.string.capitalize(name);});</value> -->  <!-- dojo 0.4.0 -->
+                    <!-- note: current value is empty due to dojo 0.4.0 improvements which make this step unnecessary for this module -->
+                    <value></value>
+                </entry>
+                <entry key="header.dojo.style.bodyexpand">   <!-- dojo.style.bodyexpand -->
+                    <!-- make the body expand to fill the visible window -->
+                    <value>html, body { width: 100%; height: 100%; padding: 0 0 0 0; margin: 0 0 0 0; }</value>
+                    <!-- <value>html, body { padding: 0 0 0 0; margin: 0 0 0 0; }</value> -->
+                </entry>
+                <entry key="header.dojo.style.bodyexpand.noscroll">   <!-- dojo.style.bodyexpand.noscroll -->
+                    <!-- make the body expand to fill the visible window - erase window level scrollbars -->
+                    <value>html, body { width: 100%; height: 100%; overflow: hidden; padding: 0 0 0 0; margin: 0 0 0 0; }</value>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!-- this example HeaderTypes definition can be removed -->
+    <!--    types for all predefined header section names are set automatically -->
+    <!-- supported header types: 
+            script-start
+            script
+            script-end
+            script-tag
+            style
+            link-tag
+            base-tag
+    -->
+    <bean id="HeaderTypes" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map>
+                <entry key="header.dojo.style.bodyexpand">
+                    <value>style</value>
+                </entry>
+                <entry key="header.dojo.style.bodyexpand.noscroll">
+                    <value>style</value>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+</beans>

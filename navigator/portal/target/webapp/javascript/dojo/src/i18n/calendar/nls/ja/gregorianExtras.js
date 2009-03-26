@@ -1,0 +1,2 @@
+
+({"dateFormat-yearOnly":"yyyy年"})

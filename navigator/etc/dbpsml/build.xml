@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+  $Id:$
+-->
+<project name="etc" default="help">
+
+    <!-- Properties -->
+
+    <property name="org.apache.jetspeed.database.enable" value="true"/>
+    <property name="org.apache.jetspeed.database.skip" value="false"/>
+    <property name="org.apache.jetspeed.database.psml" value="false"/>
+    <property name="org.apache.jetspeed.deploy.type" value="full"/>
+    <property name="org.apache.jetspeed.database.default.name" value=""/>
+    <property name="org.apache.jetspeed.database.url" value=""/>
+    <property name="org.apache.jetspeed.database.jdbc.drivers.path" value=""/>
+    <property name="org.apache.jetspeed.database.driver" value=""/>
+    <property name="org.apache.jetspeed.database.user" value=""/>
+    <property name="org.apache.jetspeed.database.password" value=""/>
+    <property name="org.apache.derby.version" value=""/>
+    <property name="hsqldb.version" value=""/>
+    <property name="org.apache.jetspeed.groupid" value=""/>
+    <property name="org.apache.jetspeed.version" value=""/>
+    <property name="org.apache.pluto.version" value=""/>
+    <property name="portlet-api.version" value=""/>
+
+	<property name="org.apache.jetspeed.page.import.configuration" value="${basedir}/import.properties"/>
+	<property name="org.apache.jetspeed.page.import.pages" value="${basedir}/target/data/pages"/>
+
+    <!-- Usage -->
+
+    <target name="help">
+        <echo message="Buildfile for the import maven POM."/>
+        <echo message="Usage: ant [ populate-db-psml ]"/>
+        <echo message="Where:"/>
+        <echo message="    populate-db-psml - build and populate database instance with imported PSML."/>
+        <echo message="Configuration:"/>
+        <echo message="    org.apache.jetspeed.database.enable=${org.apache.jetspeed.database.enable}"/>
+        <echo message="    org.apache.jetspeed.database.skip=${org.apache.jetspeed.database.skip}"/>
+        <echo message="    org.apache.jetspeed.database.psml=${org.apache.jetspeed.database.psml}"/>
+        <echo message="    org.apache.jetspeed.deploy.type=${org.apache.jetspeed.deploy.type}"/>
+        <echo message="    org.apache.jetspeed.database.default.name=${org.apache.jetspeed.database.default.name}"/>
+        <echo message="    org.apache.jetspeed.database.url=${org.apache.jetspeed.database.url}"/>
+        <echo message="    org.apache.jetspeed.database.jdbc.drivers.path=${org.apache.jetspeed.database.jdbc.drivers.path}"/>
+        <echo message="    org.apache.jetspeed.database.driver=${org.apache.jetspeed.database.driver}"/>
+        <echo message="    org.apache.jetspeed.database.user=${org.apache.jetspeed.database.user}"/>
+        <echo message="    org.apache.jetspeed.database.password=${org.apache.jetspeed.database.password}"/>
+        <echo message="    org.apache.derby.version=${org.apache.derby.version}"/>
+        <echo message="    hsqldb.version=${hsqldb.version}"/>
+        <echo message="    org.apache.jetspeed.groupid=${org.apache.jetspeed.groupid}"/>
+        <echo message="    org.apache.jetspeed.version=${org.apache.jetspeed.version}"/>
+        <echo message="    org.apache.pluto.version=${org.apache.pluto.version}"/>
+        <echo message="    portlet-api.version=${portlet-api.version}"/>
+    </target>
+
+    <!-- Additional Task Definitions -->
+
+    <taskdef resource="org/apache/maven/artifact/ant/antlib.xml"/>
+
+    <!-- Populate Database -->
+
+    <target name="populate-db-psml" depends="test-populate-skip" unless="org.apache.jetspeed.skip.psml">
+
+        <!-- aggregate PSML to merge -->
+        <delete dir="${basedir}/target/data/pages"/>
+        <mkdir dir="${basedir}/target/data/pages"/>
+        <antcall target="aggregate-pages"/>
+
+        <!-- prepare a classes directory with resources and libraries to execute import -->
+        <delete dir="${basedir}/target/classes"/>
+        <mkdir dir="${basedir}/target/classes"/>
+        <copy todir="${basedir}/target/classes" flatten="on">
+            <fileset dir="${basedir}/../.." >
+                <include name="etc/serilaizer/log4j/log4j.properties"/>
+                <include name="etc/serializer/db-ojb/*"/>
+                <include name="etc/dbpsml/assembly/import-page-manager.xml"/>
+                <include name="etc/dbpsml/assembly/repository-datasource-spring.xml"/>
+                <include name="etc/serializer/assembly/transaction.xml"/>
+                <include name="etc/dbpsml/assembly/alternate/interceptors.xml"/>
+            </fileset>
+        </copy>
+
+        <!-- construct page manager component classpath -->
+        <dependencies filesetId="page.manager.dependencies.id" useScope="test">
+            <dependency groupId="${org.apache.jetspeed.groupid}"
+                        artifactId="jetspeed-api"
+                        version="${org.apache.jetspeed.version}"/>
+            <dependency groupId="${org.apache.jetspeed.groupid}"
+                        artifactId="jetspeed-commons"
+                        version="${org.apache.jetspeed.version}"/>
+            <dependency groupId="org.apache.pluto"
+                        artifactId="pluto"
+                        version="${org.apache.pluto.version}"/>
+            <dependency groupId="${org.apache.jetspeed.groupid}"
+                        artifactId="jetspeed-id-generator"
+                        version="${org.apache.jetspeed.version}"/>
+            <dependency groupId="portlet-api"
+                        artifactId="portlet-api"
+                        version="${portlet-api.version}"/>
+            <dependency groupId="${org.apache.jetspeed.groupid}"
+                        artifactId="jetspeed-page-manager"
+                        version="${org.apache.jetspeed.version}"/>
+        </dependencies>
+
+        <!-- create sysproperty set to configure import utility -->
+        <propertyset id="import.syspropertyset.id">
+		    <propertyref name="org.apache.jetspeed.page.import.configuration"/>
+		    <propertyref name="org.apache.jetspeed.page.import.pages"/>
+            <propertyref name="org.apache.jetspeed.database.driver"/>
+            <propertyref name="org.apache.jetspeed.database.url"/>
+            <propertyref name="org.apache.jetspeed.database.user"/>
+            <propertyref name="org.apache.jetspeed.database.password"/>
+        </propertyset>
+
+        <!-- execute import utility within the page manager component -->
+        <antcall target="execute-import" inheritall="on" inheritrefs="on"/>
+    </target>
+
+    <target name="aggregate-pages" depends="test-deploy-type, aggregate-pages-min, aggregate-pages-full"/>
+
+    <target name="aggregate-pages-min" if="org.apache.jetspeed.deploy.min">
+        <copy todir="${basedir}/target/data/pages">
+            <fileset dir="${basedir}/../../portal/target/webapp/WEB-INF/pages">
+                <include name="Administrative/**"/>
+                <include name="my-account.psml"/>
+                <include name="page.security"/>
+                <include name="system/**"/>
+            </fileset>
+        </copy>
+        <copy file="${basedir}/../../portal/target/webapp/WEB-INF/pages/minimal-default-page.psml"
+              tofile="${basedir}/target/data/pages/default-page.psml"/>
+        <replace file="${basedir}/target/data/pages/default-page.psml"
+                 token=" hidden=&quot;true&quot;"/>
+    </target>
+
+    <target name="aggregate-pages-full" if="org.apache.jetspeed.deploy.full">
+        <copy todir="${basedir}/target/data/pages">
+            <fileset dir="${basedir}/../../portal/target/webapp/WEB-INF/pages"/>
+        </copy>
+    </target>
+
+    <target name="execute-import" depends="test-database-classpath, execute-import-drivers-path, execute-import-derby, execute-import-hsql"/>
+
+    <target name="execute-import-drivers-path" if="org.apache.jetspeed.database.use.drivers.path">
+
+        <!-- execute import utility with drivers path in classpath -->
+        <java classname="org.apache.jetspeed.page.PageImporter" fork="yes" dir="${basedir}">
+            <classpath>
+                <fileset refid="page.manager.dependencies.id"/>
+                <pathelement path="${org.apache.jetspeed.database.jdbc.drivers.path}"/>
+                <pathelement path="${basedir}/target/classes"/>
+            </classpath>
+		    <syspropertyset>
+                <propertyset refid="import.syspropertyset.id"/>
+		    </syspropertyset>
+        </java>
+
+    </target>
+
+    <target name="execute-import-derby" if="org.apache.jetspeed.database.is.derby.embedded">
+
+        <!-- construct embedded derby classpath -->
+        <dependencies filesetId="derby.embedded.db.dependencies.id" useScope="test">
+            <dependency groupId="org.apache.derby"
+                        artifactId="derby"
+                        version="${org.apache.derby.version}"/>
+        </dependencies>
+
+        <!-- execute import utility with drivers path in classpath -->
+        <java classname="org.apache.jetspeed.page.PageImporter" fork="yes" dir="${basedir}">
+            <classpath>
+                <fileset refid="page.manager.dependencies.id"/>
+                <fileset refid="derby.embedded.db.dependencies.id"/>
+                <pathelement path="${basedir}/target/classes"/>
+            </classpath>
+		    <syspropertyset>
+                <propertyset refid="import.syspropertyset.id"/>
+		    </syspropertyset>
+        </java>
+
+    </target>
+
+    <target name="execute-import-hsql" if="org.apache.jetspeed.database.is.hsql.embedded">
+
+        <!-- construct embedded hsql classpath -->
+        <dependencies filesetId="hsql.embedded.db.dependencies.id" useScope="test">
+            <dependency groupId="hsqldb"
+                        artifactId="hsqldb"
+                        version="${hsqldb.version}"/>
+        </dependencies>
+
+        <!-- execute import utility with drivers path in classpath -->
+        <java classname="org.apache.jetspeed.page.PageImporter" fork="yes" dir="${basedir}">
+            <classpath>
+                <fileset refid="page.manager.dependencies.id"/>
+                <fileset refid="hsql.embedded.db.dependencies.id"/>
+                <pathelement path="${basedir}/target/classes"/>
+            </classpath>
+		    <syspropertyset>
+                <propertyset refid="import.syspropertyset.id"/>
+		    </syspropertyset>
+        </java>
+
+    </target>
+
+    <!-- Utilities -->
+
+    <target name="test-populate-skip">
+        <condition property="org.apache.jetspeed.skip.psml">
+            <or>
+                <equals arg1="${org.apache.jetspeed.database.skip}" arg2="true"/>
+                <not>
+                    <equals arg1="${org.apache.jetspeed.database.enable}" arg2="true"/>
+                </not>
+                <not>
+                    <equals arg1="${org.apache.jetspeed.database.psml}" arg2="true"/>
+                </not>
+            </or>
+        </condition>
+    </target>
+
+    <target name="test-database-classpath">
+        <condition property="org.apache.jetspeed.database.use.drivers.path">
+            <and>
+                <not><equals arg1="${org.apache.jetspeed.database.jdbc.drivers.path}" arg2=""/></not>
+                <not><equals arg1="${org.apache.jetspeed.database.default.name}" arg2="derby"/></not>
+                <not><equals arg1="${org.apache.jetspeed.database.default.name}" arg2="hsql"/></not>
+            </and>
+        </condition>
+        <condition property="org.apache.jetspeed.database.is.derby.embedded">
+            <and>
+                <equals arg1="${org.apache.jetspeed.database.default.name}" arg2="derby"/>
+            	<not><equals arg1="${org.apache.jetspeed.database.jdbc.drivers.path}" arg2=""/></not>
+            </and>
+        </condition>
+        <condition property="org.apache.jetspeed.database.is.hsql.embedded">
+            <and>
+                <equals arg1="${org.apache.jetspeed.database.default.name}" arg2="hsql"/>
+                <not><equals arg1="${org.apache.jetspeed.database.jdbc.drivers.path}" arg2=""/></not>
+            </and>
+        </condition>
+    </target>
+
+    <target name="test-deploy-type">
+        <condition property="org.apache.jetspeed.deploy.full">
+            <equals arg1="${org.apache.jetspeed.deploy.type}" arg2="full"/>
+        </condition>
+        <condition property="org.apache.jetspeed.deploy.min">
+            <equals arg1="${org.apache.jetspeed.deploy.type}" arg2="min"/>
+        </condition>
+    </target>
+
+</project>

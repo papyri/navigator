@@ -1,0 +1,91 @@
+#*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*#
+
+#*
+This original design comes from Open Web Design.
+  http://www.openwebdesign.org/viewdesign.phtml?id=2730&referer=%2Fbrowse.php
+ Modified by Shinsuke Sugaya <shinsuke@yahoo.co.jp>
+*#
+
+#* Add the current layouts configuration values to the context *#
+#defineLayoutObjects()
+
+#* Loads our custom macros *#
+#parse($layoutDecoration.getResource("decorator-macros.vm"))
+
+#* Add all template constants to the current context *#
+#defineNavigationConstants()
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    #includeHeaderResource()
+
+    <meta http-equiv="Content-type" content="#ContentType()" />
+    <meta http-equiv="Content-style-type" content="text/css" />   
+
+    #includeJavaScriptForHead()
+    #IncludeStylesheets()
+	
+    <title>#PageTitle()</title>
+
+    <meta name="keywords" content="" />
+    <meta name="description" content="#PageDescription()" />
+  </head>
+
+<body class="#PageBaseCSSClass()">
+<div class="#PageBaseCSSClass()">
+
+    <div id="container">
+        <div id="topbar">
+<!-- Top Tabs Menu -->
+#set($pagesStandardMenu = $site.getMenu("pages"))
+#if(!$pagesStandardMenu.empty)
+#includeTabsNavigation($pagesStandardMenu $LEFT_TO_RIGHT)
+#end
+        </div>  
+        <div id="header">
+            <h1>Jetspeed 2 Enterprise Portal</h1>
+            <div id="navbar">
+<ul><li>
+#set($breadcrumbsStandardMenu = $site.getMenu("breadcrumbs"))
+#if(!$breadcrumbsStandardMenu.empty)
+#includeLinksNavigation($breadcrumbsStandardMenu $LEFT_TO_RIGHT "" $BREADCRUMBS_STYLE "")
+#else
+        &nbsp;
+#end
+</li></ul>
+            </div>
+        </div>
+        <div id="core">
+            <div id="coreleft">
+<!-- Left Navigations Menu Table Data -->
+#set($navigationsStandardMenu = $site.getMenu("navigations"))
+
+#if(!$navigationsStandardMenu.empty)
+#includeLinksWithIconNavigation($navigationsStandardMenu $TOP_TO_BOTTOM)
+#end
+            </div>
+            <div id="corecenter">
+
+     <!-- Page Action Bar -->
+##   <span style="position:absolute;right:5em">$jetspeed.renderPortletEntity("theClock", "j2-admin::DateTimePortlet")</span>     
+#if ($request.getUserPrincipal())
+<span style="position:absolute;right:15em"><a href="#BaseHref()login/logout">Logout</a></span>   
+#end 
+     #PageActionBar()
+<!--  END: layout/html/thesolution/decorator.vm -->

@@ -1,0 +1,173 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+.blue-gradient
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+.blue-gradient .PTitle
+{
+    padding-left:2px;
+    padding-top: 2px;
+    padding-bottom: 16px;
+    padding-right: 2px; 
+    border-left: 1px solid #517B94;
+    border-right: 1px solid #517B94;
+    border-top: 1px solid #517B94;
+    color: #01375D;    
+    
+    background-image: url(../images/grad2blue.png);
+}
+
+.blue-gradient .PTitleContent
+{   
+    font-weight:bold;
+    display: inline;
+    float: left;
+
+}
+
+.blue-gradient .PActionBar
+{
+   float: right;
+   display: inline;
+
+}
+ 
+.blue-gradient .PContentBorder
+{   
+    border-left: 1px solid #517B94;
+    border-right: 1px solid #517B94;
+    border-bottom: 1px solid #517B94;
+}
+
+.blue-gradient .PContent
+{   
+    padding-left:2px;
+    padding-right:2px;
+}
+
+/* Custom stuff for UGS added by EDB */
+.blue-gradient p.corelink
+{
+    margin-top: 0.5em;
+    margin-bottom: 0em;
+    font-size: 12px;
+}
+
+.blue-gradient p.abstract
+{
+    margin-top: 0em;
+    margin-bottom: 0.5em;
+    font-size: 11px;
+}
+
+.blue-gradient p.title
+{
+    font-family: Arial, Helvetica, sans-serif; 
+    font-size: 17px; 
+    font-weight: bold; 
+    padding-bottom: 0em; 
+    margin-top: 0em; 
+    margin-bottom: 0em;
+}
+
+.blue-gradient p.download
+{
+    font-size:12px;
+    margin-top:0.25em;
+    margin-bottom:0em;
+}
+
+.blue-gradient p.side
+{ 
+    font-size: 12px;
+    margin-left: 0.85em;
+    text-indent: -0.85em;
+    margin-top: 0.25em;
+    margin-bottom:
+    0.25em;
+}
+
+.blue-gradient img
+{
+    display: inline;
+    margin: 0em;
+}
+
+/** Below are tab styles */
+    .blue-gradient .tabContainer
+    {
+      background-image: url(../images/grad1blue.png);
+      width: 100%;
+     
+    }
+    
+    .blue-gradient .tabSpacer
+    {
+      border-bottom: thin solid #01375D;
+      height: 3px;      
+      width: 100%;
+    }
+    
+    .blue-gradient A.tab,
+    .blue-gradient A:LINK.tab,
+    .blue-gradient A:ACTIVE.tab,
+    .blue-gradient A:VISITED.tab,
+    .blue-gradient A:HOVER.tab
+    {
+      color: #02385E;
+      font-size: x-small;
+      text-decoration: none;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+    
+    .blue-gradient A.tabActive
+    {
+       
+        background-color: #85A3B8;
+        border-top: thin solid     #01375D;
+        border-left: thin solid #01375D;
+        border-right: thin solid #01375D;        
+        
+    }
+    
+    .blue-gradient A:LINK.tabActive,
+    .blue-gradient A:ACTIVE.tabActive,
+    .blue-gradient A:VISITED.tabActive
+    {
+        color: #FFFFFF;
+    }
+    
+    .blue-gradient A.tabInactive
+    {
+      background-image: none;
+      border-bottom: thin solid #01375D;
+      border-top: 0 none;
+    }
+    
+    .blue-gradient A:HOVER.tabInactive
+    {
+      background-image: url(../images/grad2blue.png);
+      border-top: thin solid #990000;
+    }
+

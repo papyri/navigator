@@ -1,0 +1,2 @@
+
+({"displayName":"ITL","symbol":"₤"})

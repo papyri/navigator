@@ -1,0 +1,366 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+@import url("../../css/portal-standard.css");
+
+body {
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    padding: 1em;
+    background: #fff;
+    color: #000;
+    white-space: normal;
+
+
+}
+
+/** 
+  This white-space setting is VERY important as it keeps content from "spilling"
+  outside of portlets.
+  */
+
+td,
+th
+{
+  white-space: normal;
+}
+
+th
+{
+  font-size: 12pt;
+}
+
+a:link, a:visited {
+    color: blue;
+}
+
+a:hover {
+    color: #f30 !important;
+}
+
+body.layout-blueocean
+{
+    margin: 0;
+    padding: 0;
+}
+
+
+.Link
+{
+}
+
+.LinkFolder
+{
+}
+
+.LinkPage
+{
+}
+
+
+
+
+
+.layout-blueocean .button
+{
+    background-image:url(../images/button_background.gif);
+    padding-left:5px;
+    padding-right:5px;
+    padding-top:3px;
+    padding-bottom:3px;
+    margin:1px;
+    text-align:center;
+    vertical-align:middle;
+}
+
+.layout-blueocean .button a
+{
+    color:#0080b0;
+    text-decoration: none;
+    font-weight:bold;
+    font-family:Verdana,Helvetica,Arial,sans-serif;
+    voice-family:"\"}\"";
+    voice-family:inherit;
+    font-size:9pt;
+}
+
+.layout-blueocean #banner {
+    margin:0px;
+    padding:0px;
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100px;
+    background-image:url(../images/banner_background.gif);
+}
+
+.layout-blueocean #banner table {
+    margin:0px;
+    padding:1px;
+    width:100%;
+    height:100px;
+}
+
+.layout-blueocean #banner .action {
+    margin:0px;
+    padding:0px;
+    height:20px;
+    vertical-align:middle;
+}
+
+.layout-blueocean #banner .logo {
+    height:95px;
+}
+
+.layout-blueocean #banner .logo img {
+    margin-top:25px;
+}
+
+.layout-blueocean #banner .info {
+    vertical-align:top;
+    text-align:right;
+    height:95px;
+
+    color:#ffffff;
+    font-family:Verdana,Helvetica,Arial,sans-serif;
+    voice-family:"\"}\"";
+    voice-family:inherit;
+    font-size:10pt;
+}
+
+.layout-blueocean #banner .info div {
+    margin:0px;
+    padding:2px;
+}
+
+.layout-blueocean #banner .info input {
+    border:1px;
+    border-color:#0000ff;
+
+    font-weight:bold;
+}
+
+.layout-blueocean #poweredby {
+    margin:0px;
+    padding:1px;
+    position:absolute;
+    top:100px;
+    left:0px;
+    width:100%;
+    height:15px;
+    background-image:url(../images/poweredby_background.gif);
+    text-align:right;
+}
+
+.layout-blueocean .tabs {
+    margin:0px;
+    padding:0px;
+    position:absolute;
+    top:115px;
+    left:0px;
+    width:100%;
+    height:25px;
+    background-image:url(../images/tab_background.gif);
+}
+
+.layout-blueocean .tabs table {
+    margin:0px;
+    padding:0px;
+}
+
+.layout-blueocean .tabs td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    font-family:Verdana,Helvetica,Arial,sans-serif;
+    font-weight: bold;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: 10pt;
+}
+
+.layout-blueocean .LTabLeftLow
+{
+    width: 10px;
+
+    background-image:url(../images/tab_background.gif);
+    border-left: 1px solid #fff;
+    padding:0px;
+}
+
+.layout-blueocean .LTabLow
+{
+    height:25px;    
+
+    background-image:url(../images/tab_background.gif);
+    padding-left: 0px;
+    padding-right: 0px;
+
+}
+
+.layout-blueocean .LTabLow A:link, 
+.layout-blueocean .LTabLow A:visited,
+.layout-blueocean .LTabLow A:hover, 
+.layout-blueocean .LTabLow A:active
+{
+    text-decoration: none;
+    color:#0080b0;
+
+    font-family:Verdana,Helvetica,Arial,sans-serif;
+    font-weight: bold;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: 10pt;
+}
+
+.layout-blueocean .LTabRightLow
+{
+    width: 10px;
+
+    background-image:url(../images/tab_background.gif);
+    border-right: 1px solid #999999;
+    padding:0px;
+}
+
+.layout-blueocean .LTabLeft
+{
+    width: 10px;
+
+    background-image:url(../images/selected_tab_background.gif);
+    border-left: 1px solid #fff;
+    padding:0px;
+}
+
+.layout-blueocean .LTab
+{
+    height:25px;    
+
+    background-image:url(../images/selected_tab_background.gif);
+    color: #ffffff;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+ 
+.layout-blueocean .LTabRight
+{
+    width:10px;
+
+    background-image:url(../images/selected_tab_background.gif);
+    border-right: 1px solid #333;
+    padding: 0px;
+}
+
+/* .layout-blueocean #breadcrumbs located in portal.css and desktop.css */
+
+.layout-blueocean #breadcrumbs a {
+    text-decoration: none;
+    font-family:Verdana,Helvetica,Arial,sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: 10pt;
+}
+
+/* .layout-blueocean #masthead located in portal.css and omitted from desktop.css */
+
+.layout-blueocean #main {
+    margin:0px;
+    padding:3px;
+    width:100%;
+}
+
+.layout-blueocean #leftcol {
+    width:130px;
+    padding:0px;
+    margin:0px;
+}
+
+.layout-blueocean #navcolumn table {
+    width:100%;
+    padding:2px;
+    margin:0px;
+}
+
+.layout-blueocean .toolgroup {
+}
+
+.layout-blueocean .toolgroup .label {
+    background-image:url(../images/tab_background.gif);
+    background-color:#90d0ff;
+    color:#0080b0;
+    padding:4px;
+    margin:0px;
+
+    font-weight: bold;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: 10pt;
+}
+
+.layout-blueocean .toolgroup .body {
+    border: 1px solid #90d0ff;
+    padding: 4px 4px 4px 0;
+    margin-bottom:4px;
+}
+
+.layout-blueocean .toolgroup .body div {
+    padding-bottom: .3em;
+    padding-left: 0;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: 10pt;
+}
+
+.layout-blueocean .toolgroup .body div div {
+    padding-left: .5em;
+}
+
+.layout-blueocean .toolgroup .pagetitle{
+    font-weight: bold;
+    padding-left: .5em;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+.layout-blueocean .toolgroup .body div p {
+    margin-top: .0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: .0;
+    margin-bottom: .0;
+}
+
+
+
+#portal-page-actions A img
+{
+   display: inline;   
+}
+
+#portal-page-actions
+{
+   display: inline;
+   position: absolute;
+   right: 5px;
+}
+
+.FolderList
+{
+   display: inline;
+}
+

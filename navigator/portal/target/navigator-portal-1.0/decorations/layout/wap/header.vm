@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+#set($pagesStandardMenu = $site.getMenu("pages"))
+#if(!$pagesStandardMenu.empty)
+    #foreach($element in $pagesStandardMenu.elements.iterator())
+      #if($element.elementType == "option")
+        #set($tabTitle = $element.getTitle($preferedLocale))
+        #set($tabName = $element.getShortTitle($preferedLocale))
+        #if($_orientation == $LEFT_TO_RIGHT)
+          #if($element.isSelected($site))
+            <card id='${tabName}' title='$!tabTitle'>
+             <a href="">${tabName}</a>
+          #else
+            #set($tabUrl = $jetspeed.getAbsoluteUrl($element.url))
+            <card id='${tabName}' title='$!tabTitle">
+             <a href="$tabUrl">${tabName}</a>            
+            </card>
+          #end
+        #end
+      #end
+    #end
+#end
+
+#if ($request.getUserPrincipal())
+<span style="position:absolute;right:5em"><a href="#BaseHref()login/logout">Logout</a></span>   
+<card id='logout' title='Logout">
+ <a href="#BaseHref()login/logout">Logout</a>            
+</card>
+#end 

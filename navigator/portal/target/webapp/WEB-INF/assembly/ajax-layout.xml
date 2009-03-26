@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans>
+
+<!-- AJAX Actions 
+    
+    == Constructor Arguments ==
+    index 0 = render response VM template, generates XML NORMAL response
+    index 1 = render response VM template, generates XML ERROR response
+    index 2 = action name from AJAX Request
+    index 3 = Page Manager
+    index 4 = Registry (getPortlets)
+    -->
+
+<bean id="EnableCreateUserPagesFromRolesOnEdit" class="java.lang.Boolean">
+    <constructor-arg index="0">
+        <value>true</value>
+    </constructor-arg>
+</bean>
+
+<bean id="PortletActionSecurityBehavior"
+	  class="org.apache.jetspeed.layout.impl.PortletActionSecurityConstraintsBehavior">
+    <constructor-arg index='0'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='1'>
+        <ref bean="EnableCreateUserPagesFromRolesOnEdit"/>
+    </constructor-arg>
+</bean>	
+
+<bean id="RolesSecurityBehavior"
+	  class="org.apache.jetspeed.layout.impl.RolesSecurityBehavior">
+       <!-- List of required roles (comma-separated) 
+            Only need to match one of the listed  roles to pass security requirements
+           -->
+        <constructor-arg>
+            <list>
+                <value>admin</value>
+            </list>
+        </constructor-arg>
+</bean>	
+    
+<bean id="AjaxMove"
+    class="org.apache.jetspeed.layout.impl.MovePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/xmove.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index="3">
+        <value>move</value>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>    
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	
+</bean>
+    	
+<bean id="AjaxMovePortletAbsolute"
+    class="org.apache.jetspeed.layout.impl.MovePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/move.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index="3">
+        <value>moveabs</value>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>    
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	
+</bean>
+
+<bean id="AjaxMovePortletLeft"
+    class="org.apache.jetspeed.layout.impl.MovePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/move.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index="3">
+        <value>moveleft</value>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>        
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		
+</bean>
+
+<bean id="AjaxMovePortletRight"
+    class="org.apache.jetspeed.layout.impl.MovePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/move.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index="3">
+        <value>moveright</value>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>      
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		  
+</bean>
+
+<bean id="AjaxMovePortletUp"
+    class="org.apache.jetspeed.layout.impl.MovePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/move.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index="3">
+        <value>moveup</value>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>      
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		  
+</bean>
+
+<bean id="AjaxMovePortletDown"
+    class="org.apache.jetspeed.layout.impl.MovePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/move.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index="3">
+        <value>movedown</value>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>      
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		  
+</bean>
+
+<bean id="AjaxAddPortlet"
+    class="org.apache.jetspeed.layout.impl.AddPortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/add.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>      
+    <constructor-arg index='4'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		  
+    <constructor-arg index='5'>
+        <ref bean="AjaxGetPortlets"/>        
+    </constructor-arg>     	    
+</bean>
+
+<bean id="AjaxRemovePortlet"
+    class="org.apache.jetspeed.layout.impl.RemovePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/remove.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>        
+    <constructor-arg index='4'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		
+</bean>
+
+<bean id="AjaxGetPortlets"
+    class="org.apache.jetspeed.layout.impl.GetPortletsAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getportlets.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>        
+    <constructor-arg index='3'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.search.SearchEngine"/>        
+    </constructor-arg>              
+    <constructor-arg index='5'>
+        <ref bean="org.apache.jetspeed.security.SecurityAccessController"/>        
+    </constructor-arg>       
+    <constructor-arg index='6'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		       
+</bean>
+
+<bean id="AjaxGetPage"
+    class="org.apache.jetspeed.layout.impl.GetPageAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/psml.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/>        
+    </constructor-arg>              
+    <constructor-arg index='5'>
+        <ref bean="DecorationValve"/>
+    </constructor-arg>
+</bean>
+
+<bean id="AjaxGetPages"
+    class="org.apache.jetspeed.layout.impl.GetPagesAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getpages.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		        
+</bean>
+
+<bean id="AjaxGetFolder"
+    class="org.apache.jetspeed.layout.impl.GetFolderAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getfolder.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		        
+</bean>
+
+<bean id="AjaxGetLink"
+    class="org.apache.jetspeed.layout.impl.GetLinkAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getlink.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		        
+</bean>
+
+<bean id="AjaxGetFolderList"
+    class="org.apache.jetspeed.layout.impl.GetFolderListAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getfolderlist.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		        
+</bean>
+<bean id="AjaxGetFoldersList"
+    class="org.apache.jetspeed.layout.impl.GetFoldersListAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getfolders.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		        
+</bean>
+        
+<bean id="AjaxGetThemes"
+    class="org.apache.jetspeed.layout.impl.GetThemesAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getthemes.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="DecorationFactory"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    		        
+</bean>
+        
+<bean id="AjaxChangeWindow"
+    class="org.apache.jetspeed.layout.impl.ChangePortletAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/window.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index="2">
+        <value>window</value>
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>
+    </constructor-arg>    
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.container.window.PortletWindowAccessor"/>
+    </constructor-arg>
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>
+    </constructor-arg>
+</bean>
+
+<bean id="AjaxGetActions"
+    class="org.apache.jetspeed.layout.impl.GetPortletActionsAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/getactions.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index="2">
+        <value>getactions</value>
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="DecorationValve"/>
+    </constructor-arg>    
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.page.PageManager"/>
+    </constructor-arg>        
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	
+</bean>
+
+<bean id="AjaxGetMenus"
+    class="org.apache.jetspeed.layout.impl.GetMenusAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/menu.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	
+</bean>
+
+<bean id="AjaxGetMenu"
+    class="org.apache.jetspeed.layout.impl.GetMenuAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/menu.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	
+</bean>
+
+<bean id="AjaxSecurityPermissions"
+    class="org.apache.jetspeed.layout.impl.SecurityPermissionAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/permissions.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.security.PermissionManager"/>        
+    </constructor-arg>    
+    <constructor-arg index='3'>
+        <ref bean="RolesSecurityBehavior"/>        
+    </constructor-arg>    	
+    <constructor-arg index='4'>    
+        <map>
+            <entry key="portlet">
+                <value>org.apache.jetspeed.security.PortletPermission</value>
+            </entry>                        
+            <entry key="page">
+                <value>org.apache.jetspeed.security.PagePermission</value>
+            </entry>                                    
+            <entry key="folder">
+                <value>org.apache.jetspeed.security.FolderPermission</value>
+            </entry>                                    
+        </map>
+    </constructor-arg>
+</bean>
+
+<bean id="AjaxSecurityConstraints"
+    class="org.apache.jetspeed.layout.impl.SecurityConstraintsAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/constraints.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>    
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	        
+</bean>
+
+<bean id="AjaxUpdateFolder"
+    class="org.apache.jetspeed.layout.impl.UpdateFolderAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/update.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>    
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	    
+</bean>
+
+<bean id="AjaxUpdatePage"
+    class="org.apache.jetspeed.layout.impl.UpdatePageAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/update.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>    
+    <constructor-arg index='3'>
+        <ref bean="org.apache.jetspeed.container.window.PortletWindowAccessor"/>
+    </constructor-arg>  
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.components.portletentity.PortletEntityAccessComponent" />
+    </constructor-arg>      
+    <constructor-arg index='5'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	            
+</bean>
+                
+<bean id="AjaxUpdateLink"
+    class="org.apache.jetspeed.layout.impl.UpdateLinkAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/update.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>    
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>        
+    </constructor-arg>    	                
+</bean>
+
+<bean id="AjaxGetUserInformation"
+    class="org.apache.jetspeed.layout.impl.GetUserInformationAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/userinfo.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.security.UserManager"/>        
+    </constructor-arg>
+	<constructor-arg index='3'>
+        <ref bean="RolesSecurityBehavior"/>
+    </constructor-arg>
+</bean>
+
+<!-- 
+    == AjaxGetUserList Constructor Arguments ==
+    index 0 = render response VM template, generates XML NORMAL response
+    index 1 = render response VM template, generates XML ERROR response
+    index 2 = User Manager
+    index 3 = Portal statistics
+    index 4 = Portal session manager
+    index 5 = Security behavior
+    index 6 = Protection scope
+    -->
+
+<bean id="AjaxGetUserList"
+    class="org.apache.jetspeed.layout.impl.GetUserListAction">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/userlist.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.security.UserManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortalStatistics"/>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.container.session.PortalSessionsManager"/>
+    </constructor-arg>
+	<constructor-arg index='5'>
+        <ref bean="RolesSecurityBehavior"/>
+    </constructor-arg>
+    <constructor-arg index='6'>
+        <value>private</value>
+    </constructor-arg>
+</bean>
+<bean id="AjaxJetspeedSchemaExportObject"
+    class="org.apache.jetspeed.layout.impl.ExportJetspeedSchema">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/jetspeedSchema.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="org.apache.jetspeed.serializer.JetspeedSerializerFactory"/>
+    </constructor-arg>
+	<constructor-arg index='5'>
+		<value>${java.io.tmpdir}</value>
+    </constructor-arg>
+</bean>
+    
+<bean id="AjaxExportObject"
+    class="org.apache.jetspeed.layout.impl.ExportObject">
+    <constructor-arg index="0">
+        <value>org/apache/jetspeed/layout/ajax-xml/export.vm</value>
+    </constructor-arg>
+    <constructor-arg index="1">
+        <value>org/apache/jetspeed/layout/ajax-xml/error.vm</value>
+    </constructor-arg>
+    <constructor-arg index='2'>    
+        <ref bean="org.apache.jetspeed.page.PageManager"/>        
+    </constructor-arg>
+    <constructor-arg index='3'>
+        <ref bean="PortletActionSecurityBehavior"/>
+    </constructor-arg>
+    <constructor-arg index='4'>
+        <ref bean="importerCastorPageManager"/>
+    </constructor-arg>
+	<constructor-arg index='5'>
+		<value>${java.io.tmpdir}</value>
+    </constructor-arg>
+</bean>
+<bean id="AjaxActionMap" class="java.util.HashMap">
+    <constructor-arg index="0">
+        <map>
+            <entry key="move">
+                <ref bean="AjaxMove"/>
+            </entry>            
+            <entry key="moveabs">
+                <ref bean="AjaxMovePortletAbsolute"/>
+            </entry>
+            <entry key="moveleft">
+                <ref bean="AjaxMovePortletLeft"/>
+            </entry>
+            <entry key="moveright">
+                <ref bean="AjaxMovePortletRight"/>
+            </entry>
+            <entry key="moveup">
+                <ref bean="AjaxMovePortletUp"/>
+            </entry>
+            <entry key="movedown">
+                <ref bean="AjaxMovePortletDown"/>
+            </entry>
+            <entry key="add">
+                <ref bean="AjaxAddPortlet"/>
+            </entry>
+            <entry key="remove">
+                <ref bean="AjaxRemovePortlet"/>
+            </entry>
+            <entry key="getportlets">
+                <ref bean="AjaxGetPortlets"/>
+            </entry>
+            <entry key="getpage">
+                <ref bean="AjaxGetPage"/>
+            </entry>
+            <entry key="getpages">
+                <ref bean="AjaxGetPages"/>
+            </entry>			
+            <entry key="getfolder">
+                <ref bean="AjaxGetFolder"/>
+            </entry>			            
+            <entry key="getlink">
+                <ref bean="AjaxGetLink"/>
+            </entry>			                        
+            <entry key="getfolderlist">
+                <ref bean="AjaxGetFolderList"/>
+            </entry>			                        
+            <entry key="getfolders">
+                <ref bean="AjaxGetFoldersList"/>
+            </entry>			      						
+            <entry key="getthemes">
+                <ref bean="AjaxGetThemes"/>
+            </entry>
+            <entry key="getactions">
+                <ref bean="AjaxGetActions"/>
+            </entry>
+            <entry key="window">
+                <ref bean="AjaxChangeWindow"/>
+            </entry>
+            <entry key="getmenus">
+                <ref bean="AjaxGetMenus"/>
+            </entry>			            
+            <entry key="getmenu">
+                <ref bean="AjaxGetMenu"/>
+            </entry>			            
+            <entry key="permissions">
+                <ref bean="AjaxSecurityPermissions"/>
+            </entry>			                        
+            <entry key="constraints">
+                <ref bean="AjaxSecurityConstraints"/>
+            </entry>			          
+            <entry key="updatefolder">
+                <ref bean="AjaxUpdateFolder"/>                
+            </entry>                          
+            <entry key="updatepage">
+                <ref bean="AjaxUpdatePage"/>                
+            </entry>              
+            <entry key="updatelink">
+                <ref bean="AjaxUpdateLink"/>                
+            </entry>                                                              
+            <entry key="getuserinfo">
+                <ref bean="AjaxGetUserInformation"/>                
+            </entry>
+            <entry key="getuserlist">
+                <ref bean="AjaxGetUserList"/>                
+            </entry>
+            <entry key="export">
+                <ref bean="AjaxExportObject"/>                
+            </entry>                        
+            <entry key="jetspeedexport">
+                <ref bean="AjaxJetspeedSchemaExportObject"/>                
+            </entry>      			
+        </map>
+    </constructor-arg>    
+</bean>    
+
+<bean id="AjaxRequestService" class="org.apache.jetspeed.ajax.AjaxRequestServiceImpl">
+    <constructor-arg index="0">
+        <ref bean="AjaxActionMap"/>
+    </constructor-arg>   
+    <constructor-arg index="1">
+        <ref bean="AjaxVelocityEngine"/>
+    </constructor-arg>
+</bean>
+        
+<bean id="AjaxVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <property name="velocityProperties">
+        <props>
+           <!-- use webapp-logging CommonsLoggingLog4JLogSystem for logging through IsolatedLog4JLogger -->
+           <prop key="runtime.log.logsystem.class">org.apache.jetspeed.webapp.logging.velocity.CommonsLoggingLog4JLogSystem</prop>
+           <prop key="runtime.log.logsystem.log4j.category">velocity</prop>
+            <!-- clear out default global VM_global_library.vm leading to ERROR logging because its not available -->
+            <prop key="velocimacro.library"></prop>
+            <prop key="resource.loader">class</prop>
+            <prop key="class.resource.loader.class">
+                org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+            </prop>
+        </props>
+    </property>
+    <!--  use our own CommonsLoggingLog4JLogSystem specified above, not the default one provided by Spring -->
+    <property name="overrideLogging"><value>false</value></property>
+  </bean>
+  
+	<bean id="layoutValve"
+		class="org.apache.jetspeed.layout.impl.LayoutValve"
+		init-method="initialize">
+		<constructor-arg index="0">
+			<ref bean="AjaxRequestService"/>
+		</constructor-arg>
+	</bean>
+      
+</beans>

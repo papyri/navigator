@@ -1,0 +1,100 @@
+#*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*#
+
+#* Add the current layouts configuration values to the context *#
+#defineLayoutObjects()
+
+#* Loads our custom macros *#
+#parse($layoutDecoration.getResource("decorator-macros.vm"))
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+#includeHeaderResource()
+
+    <meta http-equiv="Content-type" content="#ContentType()" />
+    <title>#PageTitle()</title>
+
+#includeJavaScriptForHead()
+#IncludeStylesheets()
+
+</head>
+<body class="#PageBaseCSSClass()">
+<!--  BEGIN: layout/html/jetspeed/decorator.vm -->
+
+<div id="layout-${layoutFragment.id}" class="#PageBaseCSSClass()" >
+<p>
+<img src="#GetPageResource('images/jetspeed-logo.gif')" alt="Jetspeed 2 Logo" border="0">
+</p>
+
+#set($site = $request.getAttribute("org.apache.jetspeed.profiledPageContext"))
+
+<p>
+    #set($parentFolder = $site.parentFolder)
+    
+    #if($parentFolder)
+     <p style="font-style:italic">    
+        <a href="$jetspeed.getAbsoluteUrl($parentFolder.url)" title="$parentFolder.getTitle($preferedLocale)">Back to $parentFolder.getShortTitle($preferedLocale)</a> &nbsp;
+     </p>
+    #end
+    
+  #includeFoldersNavigation($site.siblingFolders)
+</p>
+  <p>
+  #includeTabsNavigation($site.siblingPages)
+## <span style="position:absolute;right:5em">$jetspeed.renderPortletEntity("theClock", "j2-admin::DateTimePortlet")</span>  
+#if ($request.getUserPrincipal())
+<span style="position:absolute;right:5em"><a href="#BaseHref()login/logout">Logout</a></span>   
+#end 
+  #PageActionBar()
+  </p>
+</p>
+    
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+#set($hasFoldersAndPages = $site.documentSetNames && !$site.documentSetNames.isEmpty())
+#set($hasAdditionaLinks = $site.rootLinks && !$site.rootLinks.isEmpty())
+#if($hasFoldersAndPages || $hasAdditionaLinks)
+  <td valign="top">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    #if($hasAdditionaLinks)
+    <tr>
+      <td nowrap>  
+        <br>Additional Links:
+        #includeLinksWithIconNavigation($site.rootLinks)
+      </td>
+    </tr>
+    #end
+    #foreach($docSetName in $site.documentSetNames)
+      #set($docSet = $site.getDocumentSet($docSetName))
+      #set($docSetNodes = $site.getDocumentSetNodes($docSetName))
+      <tr>
+        <td nowrap>    
+          <br><span title="$docSet.getTitle($preferedLocale)">${docSet.getShortTitle($preferedLocale)}</span>:
+          #includeNestedLinksWithIconNavigation($docSetNodes $docSet.url)
+        </td>
+      </tr>
+    #end
+    </table>
+  </td>
+#end
+  <td width="99%" nowrap valign="top">
+  
+## $jetspeed.include($jetspeed.currentFragment)
+
+<!--  END: layout/html/jetspeed/decorator.vm -->

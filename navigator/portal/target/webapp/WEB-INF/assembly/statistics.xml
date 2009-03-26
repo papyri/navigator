@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans>
+    <!-- Statistics Implementation -->
+    <bean id="PortalStatistics" 
+          class="org.apache.jetspeed.statistics.impl.PortalStatisticsImpl"
+          init-method="springInit"
+          destroy-method="springDestroy"
+          >
+        <!-- logToCLF -->
+      	<constructor-arg index='0' type="boolean"><value>false</value></constructor-arg>
+		
+		<!-- logToDatabase -->
+      	<constructor-arg  index='1'  type="boolean"><value>true</value></constructor-arg>
+		
+		<!-- maxRecordToFlush_Portal -->
+      	<constructor-arg   index='2' ><value>300</value></constructor-arg>
+		
+		<!-- maxRecordToFlush_User -->
+      	<constructor-arg   index='3'><value>50</value></constructor-arg>
+		
+		<!-- maxRecordToFlush_Page -->
+      	<constructor-arg   index='4' ><value>100</value></constructor-arg>
+		
+		<!-- maxTimeMsToFlush_Portal -->
+      	<constructor-arg  index='5'  ><value>300000</value></constructor-arg>
+		
+		<!-- maxTimeMsToFlush_User -->
+      	<constructor-arg  index='6'  ><value>5000</value></constructor-arg>
+		
+		<!-- maxTimeMsToFlush_Page -->
+      	<constructor-arg  index='7' ><value>60000</value></constructor-arg>
+		
+		<!-- jetspeedDSEntry -->
+      	<constructor-arg  index='8' ><ref bean="JetspeedDS" /></constructor-arg>
+	</bean>
+	
+    <!-- Audit Activity Implementation -->
+    <bean id="org.apache.jetspeed.audit.AuditActivity" 
+          class="org.apache.jetspeed.audit.impl.AuditActivityImpl"
+          >
+      	<constructor-arg  index='0' ><ref bean="JetspeedDS" /></constructor-arg>
+		<property name="enabled"><value type='boolean'>true</value></property>          
+	</bean>
+		
+</beans>

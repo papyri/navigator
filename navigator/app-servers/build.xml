@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+  $Id:$
+-->
+<project name="app-servers" default="help">
+
+    <!-- Properties -->
+
+    <property name="org.apache.jetspeed.deploy.enable" value="true"/>
+    <property name="org.apache.jetspeed.deploy.skip" value="false"/>
+    <property name="org.apache.jetspeed.deploy.target" value="none"/>
+    <property name="org.apache.jetspeed.server.home" value=""/>
+    <property name="org.apache.jetspeed.catalina.version.major" value=""/>
+    <property name="org.apache.jetspeed.production.database.default.name" value=""/>
+    <property name="org.apache.jetspeed.production.database.url" value=""/>
+    <property name="org.apache.jetspeed.production.database.jdbc.drivers.path" value=""/>
+    <property name="org.apache.jetspeed.production.database.driver" value=""/>
+    <property name="org.apache.jetspeed.production.database.user" value=""/>
+    <property name="org.apache.jetspeed.production.database.password" value=""/>
+    <property name="org.apache.jetspeed.groupid" value=""/>
+    <property name="org.apache.jetspeed.version" value=""/>
+    <property name="org.apache.portals.bridges.common.version" value=""/>
+    <property name="org.apache.pluto.version" value=""/>
+    <property name="portlet-api.version" value=""/>
+    <property name="org.apache.derby.version" value=""/>
+    <property name="hsqldb.version" value=""/>
+    <property name="portal.groupid" value=""/>
+    <property name="portal.version" value=""/>
+    <property name="org.apache.jetspeed.deploy.groupid" value=""/>
+    <property name="org.apache.jetspeed.deploy.artifactid" value=""/>
+    <property name="org.apache.jetspeed.deploy.version" value=""/>
+
+    <!-- Usage -->
+
+    <target name="help">
+        <echo message="Buildfile for the app-servers maven POM."/>
+        <echo message="Usage: ant [ deploy | hot-deploy | hot-deploy-shared-jar | hot-deploy-jar | hot-deploy-war ]"/>
+        <echo message="Where:"/>
+        <echo message="    deploy - deploy to the target app server."/>
+        <echo message="    hot-deploy - hot deploy content and applications to the target app server."/>
+        <echo message="    hot-deploy-shared-jar - hot deploy shared component jar to the target app server."/>
+        <echo message="    hot-deploy-jar - hot deploy component jar to the target app server."/>
+        <echo message="    hot-deploy-war - hot deploy application war to the target app server."/>
+        <echo message="Configuration:"/>
+        <echo message="    org.apache.jetspeed.deploy.enable=${org.apache.jetspeed.deploy.enable}"/>
+        <echo message="    org.apache.jetspeed.deploy.skip=${org.apache.jetspeed.deploy.skip}"/>
+        <echo message="    org.apache.jetspeed.deploy.target=${org.apache.jetspeed.deploy.target}"/>
+        <echo message="    org.apache.jetspeed.server.home=${org.apache.jetspeed.server.home}"/>
+        <echo message="    org.apache.jetspeed.catalina.version.major=${org.apache.jetspeed.catalina.version.major}"/>
+        <echo message="    org.apache.jetspeed.production.database.default.name=${org.apache.jetspeed.production.database.default.name}"/>
+        <echo message="    org.apache.jetspeed.production.database.url=${org.apache.jetspeed.production.database.url}"/>
+        <echo message="    org.apache.jetspeed.production.database.jdbc.drivers.path=${org.apache.jetspeed.production.database.jdbc.drivers.path}"/>
+        <echo message="    org.apache.jetspeed.production.database.driver=${org.apache.jetspeed.production.database.driver}"/>
+        <echo message="    org.apache.jetspeed.production.database.user=${org.apache.jetspeed.production.database.user}"/>
+        <echo message="    org.apache.jetspeed.production.database.password=${org.apache.jetspeed.production.database.password}"/>
+        <echo message="    org.apache.jetspeed.groupid=${org.apache.jetspeed.groupid}"/>
+        <echo message="    org.apache.jetspeed.version=${org.apache.jetspeed.version}"/>
+        <echo message="    org.apache.portals.bridges.common.version=${org.apache.portals.bridges.common.version}"/>
+        <echo message="    org.apache.pluto.version=${org.apache.pluto.version}"/>
+        <echo message="    portlet-api.version=${portlet-api.version}"/>
+        <echo message="    org.apache.derby.version=${org.apache.derby.version}"/>
+        <echo message="    hsqldb.version=${hsqldb.version}"/>
+        <echo message="    portal.groupid=${portal.groupid}"/>
+        <echo message="    portal.version=${portal.version}"/>
+        <echo message="    org.apache.jetspeed.deploy.groupid=${org.apache.jetspeed.deploy.groupid}"/>
+        <echo message="    org.apache.jetspeed.deploy.artifactid=${org.apache.jetspeed.deploy.artifactid}"/>
+        <echo message="    org.apache.jetspeed.deploy.version=${org.apache.jetspeed.deploy.version}"/>
+    </target>
+
+    <!-- Deployment Classification -->
+
+    <target name="deploy" depends="test-deploy-target, test-deploy-skip" unless="org.apache.jetspeed.skip">
+
+        <antcall target="unsupported-deploy"/>
+        <antcall target="invoke-deploy"/>
+ 
+    </target>
+
+    <target name="hot-deploy" depends="test-deploy-target, test-deploy-skip" unless="org.apache.jetspeed.skip">
+
+        <antcall target="unsupported-deploy"/>
+        <antcall target="invoke-hot-deploy"/>
+ 
+    </target>
+
+    <target name="hot-deploy-shared-jar" depends="test-deploy-target, test-deploy-skip" unless="org.apache.jetspeed.skip">
+
+        <antcall target="unsupported-deploy"/>
+        <antcall target="invoke-hot-deploy-shared-jar"/>
+ 
+    </target>
+
+    <target name="hot-deploy-jar" depends="test-deploy-target, test-deploy-skip" unless="org.apache.jetspeed.skip">
+
+        <antcall target="unsupported-deploy"/>
+        <antcall target="invoke-hot-deploy-jar"/>
+ 
+    </target>
+
+    <target name="hot-deploy-war" depends="test-deploy-target, test-deploy-skip" unless="org.apache.jetspeed.skip">
+
+        <antcall target="unsupported-deploy"/>
+        <antcall target="invoke-hot-deploy-war"/>
+ 
+    </target>
+
+    <target name="test-deploy-target">
+        <condition property="org.apache.jetspeed.unsupported">
+            <not>
+                <or>
+                    <equals arg1="${org.apache.jetspeed.deploy.target}" arg2="none"/>
+                    <available file="${basedir}/${org.apache.jetspeed.deploy.target}-build.xml"/>
+                </or>
+            </not>
+        </condition>
+    </target>
+
+    <target name="test-deploy-skip">
+        <condition property="org.apache.jetspeed.skip">
+            <or>
+                <equals arg1="${org.apache.jetspeed.deploy.skip}" arg2="true"/>
+                <not>
+                    <equals arg1="${org.apache.jetspeed.deploy.enable}" arg2="true"/>
+                </not>
+                <equals arg1="${org.apache.jetspeed.deploy.target}" arg2="none"/>
+            </or>
+        </condition>
+    </target>
+
+    <target name="invoke-deploy" unless="org.apache.jetspeed.unsupported">
+        <ant antfile="${basedir}/${org.apache.jetspeed.deploy.target}-build.xml" dir="${basedir}" target="deploy" inheritall="off">
+            <property name="org.apache.jetspeed.server.home"
+                      value="${org.apache.jetspeed.server.home}"/>
+            <property name="org.apache.jetspeed.catalina.version.major"
+                      value="${org.apache.jetspeed.catalina.version.major}"/>
+            <property name="org.apache.jetspeed.production.database.default.name"
+                      value="${org.apache.jetspeed.production.database.default.name}"/>
+            <property name="org.apache.jetspeed.production.database.url"
+                      value="${org.apache.jetspeed.production.database.url}"/>
+            <property name="org.apache.jetspeed.production.database.jdbc.drivers.path"
+                      value="${org.apache.jetspeed.production.database.jdbc.drivers.path}"/>
+            <property name="org.apache.jetspeed.production.database.driver"
+                      value="${org.apache.jetspeed.production.database.driver}"/>
+            <property name="org.apache.jetspeed.production.database.user"
+                      value="${org.apache.jetspeed.production.database.user}"/>
+            <property name="org.apache.jetspeed.production.database.password"
+                      value="${org.apache.jetspeed.production.database.password}"/>
+            <property name="org.apache.jetspeed.groupid"
+                      value="${org.apache.jetspeed.groupid}"/>
+            <property name="org.apache.jetspeed.version"
+                      value="${org.apache.jetspeed.version}"/>
+            <property name="org.apache.portals.bridges.common.version"
+                      value="${org.apache.portals.bridges.common.version}"/>
+            <property name="org.apache.pluto.version"
+                      value="${org.apache.pluto.version}"/>
+            <property name="portlet-api.version"
+                      value="${portlet-api.version}"/>
+            <property name="org.apache.derby.version"
+                      value="${org.apache.derby.version}"/>
+            <property name="hsqldb.version"
+                      value="${hsqldb.version}"/>
+            <property name="portal.groupid"
+                      value="${portal.groupid}"/>
+            <property name="portal.version"
+                      value="${portal.version}"/>
+        </ant>
+    </target>
+
+    <target name="invoke-hot-deploy" unless="org.apache.jetspeed.unsupported">
+        <ant antfile="${basedir}/${org.apache.jetspeed.deploy.target}-build.xml" dir="${basedir}" target="hot-deploy" inheritall="off">
+            <property name="org.apache.jetspeed.server.home"
+                      value="${org.apache.jetspeed.server.home}"/>
+            <property name="org.apache.jetspeed.groupid"
+                      value="${org.apache.jetspeed.groupid}"/>
+            <property name="org.apache.jetspeed.version"
+                      value="${org.apache.jetspeed.version}"/>
+            <property name="org.apache.portals.bridges.common.version"
+                      value="${org.apache.portals.bridges.common.version}"/>
+            <property name="org.apache.pluto.version"
+                      value="${org.apache.pluto.version}"/>
+            <property name="portlet-api.version"
+                      value="${portlet-api.version}"/>
+            <property name="portal.groupid"
+                      value="${portal.groupid}"/>
+            <property name="portal.version"
+                      value="${portal.version}"/>
+        </ant>
+    </target>
+
+    <target name="invoke-hot-deploy-shared-jar" unless="org.apache.jetspeed.unsupported">
+        <ant antfile="${basedir}/${org.apache.jetspeed.deploy.target}-build.xml" dir="${basedir}" target="hot-deploy-shared-jar" inheritall="off">
+            <property name="org.apache.jetspeed.deploy.groupid"
+                      value="${org.apache.jetspeed.deploy.groupid}"/>
+            <property name="org.apache.jetspeed.deploy.artifactid"
+                      value="${org.apache.jetspeed.deploy.artifactid}"/>
+            <property name="org.apache.jetspeed.deploy.version"
+                      value="${org.apache.jetspeed.deploy.version}"/>
+        </ant>
+    </target>
+
+    <target name="invoke-hot-deploy-jar" unless="org.apache.jetspeed.unsupported">
+        <ant antfile="${basedir}/${org.apache.jetspeed.deploy.target}-build.xml" dir="${basedir}" target="hot-deploy-jar" inheritall="off">
+            <property name="org.apache.jetspeed.deploy.groupid"
+                      value="${org.apache.jetspeed.deploy.groupid}"/>
+            <property name="org.apache.jetspeed.deploy.artifactid"
+                      value="${org.apache.jetspeed.deploy.artifactid}"/>
+            <property name="org.apache.jetspeed.deploy.version"
+                      value="${org.apache.jetspeed.deploy.version}"/>
+        </ant>
+    </target>
+
+    <target name="invoke-hot-deploy-war" unless="org.apache.jetspeed.unsupported">
+        <ant antfile="${basedir}/${org.apache.jetspeed.deploy.target}-build.xml" dir="${basedir}" target="hot-deploy-war" inheritall="off">
+            <property name="org.apache.jetspeed.deploy.groupid"
+                      value="${org.apache.jetspeed.deploy.groupid}"/>
+            <property name="org.apache.jetspeed.deploy.artifactid"
+                      value="${org.apache.jetspeed.deploy.artifactid}"/>
+            <property name="org.apache.jetspeed.deploy.version"
+                      value="${org.apache.jetspeed.deploy.version}"/>
+        </ant>
+    </target>
+
+    <target name="unsupported-deploy" if="org.apache.jetspeed.unsupported">
+        <fail message="Unsupported deployment target: ${org.apache.jetspeed.deploy.target}."/>
+    </target>
+
+</project>

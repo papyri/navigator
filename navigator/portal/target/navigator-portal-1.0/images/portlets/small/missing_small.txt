@@ -1,0 +1,6 @@
+missing ./bbcnews.png
+missing ./gmap.png
+missing ./linux.png
+missing ./lock.png
+missing ./nfl.png
+missing ./weatherchannel.png

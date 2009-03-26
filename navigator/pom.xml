@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+  $Id:$
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <prerequisites>
+        <maven>2.0.4</maven>
+    </prerequisites>
+
+    <!-- POM Identification -->
+
+    <groupId>info.papyri</groupId>
+    <artifactId>navigator</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <name>navigator Portal</name>
+
+
+    <!-- Profiles -->
+
+    <profiles>
+
+        <!-- Test Profiles -->
+        <profile>
+            <id>test</id>
+            <activation>
+                <property>
+                    <name>maven.test.skip</name>
+                    <value>false</value>
+                </property>
+            </activation>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+
+        <!-- Tomcat Production Profile -->
+        <profile>
+            <id>tomcat</id>
+            <properties>
+                <org.apache.jetspeed.env.skip.production>false</org.apache.jetspeed.env.skip.production>
+                <org.apache.jetspeed.env.deploy.target>tomcat</org.apache.jetspeed.env.deploy.target>
+            </properties>
+        </profile>
+
+        <!-- NoDB Deployment Profile -->
+        <profile>
+            <id>nodb</id>
+            <properties>
+                <org.apache.jetspeed.env.deploy.db>false</org.apache.jetspeed.env.deploy.db>
+            </properties>
+        </profile>
+
+        <!-- Hot Deployment Profile -->
+        <profile>
+            <id>hot</id>
+            <properties>
+                <org.apache.jetspeed.env.deploy.db>false</org.apache.jetspeed.env.deploy.db>
+                <org.apache.jetspeed.env.hotdeploy>true</org.apache.jetspeed.env.hotdeploy>
+            </properties>
+        </profile>
+        <!-- DBPSML Deployment Profile -->
+        <profile>
+            <id>dbpsml</id>
+            <properties>
+                <org.apache.jetspeed.env.deploy.db.psml>true</org.apache.jetspeed.env.deploy.db.psml>
+            </properties>
+        </profile>
+
+    </profiles>
+
+    <!-- Properties -->
+
+    <properties>
+
+        <!-- Default Build Properties -->
+        <maven.test.skip>true</maven.test.skip>
+        <org.apache.jetspeed.env.skip.production>true</org.apache.jetspeed.env.skip.production>
+        <org.apache.jetspeed.env.deploy.target>none</org.apache.jetspeed.env.deploy.target>
+        <org.apache.jetspeed.env.deploy.db>true</org.apache.jetspeed.env.deploy.db>
+        <org.apache.jetspeed.env.hotdeploy>false</org.apache.jetspeed.env.hotdeploy>
+
+        <!-- Build Dependency Version Properties -->
+        <ant.version>1.6.5</ant.version>
+        <junit.version>3.8.1</junit.version>
+        <org.apache.maven.artifact.ant.version>2.0.4</org.apache.maven.artifact.ant.version>
+        <!--
+            Bug: using specific version of surefire plugin
+            to ensure test isolation for spring test cases;
+            specifically connection datasource management.
+        -->
+        <org.apache.maven.plugins.maven-surefire-plugin.version>2.1.3</org.apache.maven.plugins.maven-surefire-plugin.version>
+        <torque.version>3.2-rc3</torque.version>
+
+        <!-- Project Dependency Version Properties -->
+        <commons-collections.version>3.2</commons-collections.version>
+        <commons-digester.version>1.8</commons-digester.version>
+        <commons-logging.version>1.1</commons-logging.version>
+        <hsqldb.version>1.8.0.2</hsqldb.version>
+        <javax.servlet.jstl.version>1.1.2</javax.servlet.jstl.version>
+        <javax.servlet.version>2.3</javax.servlet.version>
+        <log4j.version>1.2.14</log4j.version>
+        <org.apache.derby.version>10.1.1.0</org.apache.derby.version>
+        <org.apache.pluto.version>1.0.1</org.apache.pluto.version>
+        <org.apache.portals.bridges.common.version>1.0.4</org.apache.portals.bridges.common.version>
+        <org.apache.portals.bridges.velocity.version>1.0.4</org.apache.portals.bridges.velocity.version>
+        <org.apache.portals.jetspeed-2.version>2.1.3</org.apache.portals.jetspeed-2.version>
+        <org.apache.portals.jetspeed-2.groupid>org.apache.portals.jetspeed-2</org.apache.portals.jetspeed-2.groupid>
+        <portlet-api.version>1.0</portlet-api.version>
+        <taglibs-request.version>1.0.1</taglibs-request.version>
+        <taglibs-standard.version>1.1.2</taglibs-standard.version>
+        <velocity-tools.version>1.3</velocity-tools.version>
+        <velocity.version>1.5</velocity.version>
+        
+        <org.apache.portals.portal.version>1.0</org.apache.portals.portal.version>
+        <org.apache.portals.portal.name>navigator</org.apache.portals.portal.name>
+        <org.apache.jetspeed.env.deploy.type>full</org.apache.jetspeed.env.deploy.type>
+
+    </properties>
+
+    <!-- Default Modules -->
+
+    <modules>
+
+        <!-- Database -->
+        <module>etc</module>
+
+        <!-- Components -->
+        <module>components</module>
+
+        <!-- Applications -->
+        <module>applications</module>
+
+        <!-- Portal Application -->
+        <module>portal</module>
+
+        <!-- DBpsml support -->
+        <module>etc/dbpsml</module>
+
+        <!-- Portal Application Server Deployment -->
+        <module>app-servers</module>
+
+        <!-- Build Enterprise APP -->
+        <!-- <module>enterprise</module> -->
+        
+    </modules>
+
+    <!-- Repositories -->
+
+    <repositories>
+        <repository>
+            <id>com.bluesunrise.m2</id>
+            <name>Maven2 BlueSunrise</name>
+            <url>http://www.bluesunrise.com/maven2</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>com.bluesunrise.m1</id>
+            <name>Maven1 BlueSunrise</name>
+            <url>http://www.bluesunrise.com/maven</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>org.codehaus</id>
+            <name>Maven1 Codehaus</name>
+            <url>http://dist.codehaus.org</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>org.apache</id>
+            <name>Maven1 Apache</name>
+            <url>http://www.ibiblio.org/maven2</url>
+            <layout>legacy</layout>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>com.bluesunrise.m2</id>
+            <name>Maven2 BlueSunrise</name>
+            <url>http://www.bluesunrise.com/maven2</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <url>http://repo1.maven.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <!-- Dependency Configuration -->
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Subprojects -->
+            <dependency>
+                <groupId>${pom.groupId}</groupId>
+                <artifactId>portal-etc</artifactId>
+                <type>pom</type>
+                <version>${pom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${pom.groupId}</groupId>
+                <artifactId>navigator-portal</artifactId>
+                <type>war</type>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <!-- J2 Components -->
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-api</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-commons</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-cm</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-components</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-deploy-tools</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-rdbms</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-prefs</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-search</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-security</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-registry</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-id-generator</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-file-cache</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-locator</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-capability</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-profiler</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-page-manager</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-portal-site</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-portlet-factory</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-sso</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-statistics</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>        
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-header-resource</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-portal</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-rewriter</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-web-content</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-webapp-logging</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-serializer</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+    
+            <!-- Portals Applications JARs -->
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-rss</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>portals-gems</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-layout-portlets</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+
+            <!-- Portals Applications -->
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>jetspeed-layouts</artifactId>
+                <type>war</type>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>j2-admin</artifactId>
+                <type>war</type>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+
+            <!--
+                Limitation: The archetype plugin does not know how to skip over
+                binary or velocity template/macro files. Consequently, we have to
+                pull in many resources after the fact using the separate
+                portal-archetype-resources archive. This is currently being addressed
+                by the maven team, but am proceeding with the workaround until a
+                new version of the archetype plugin is developed and released.
+            -->
+            <dependency>
+                <groupId>org.apache.portals.jetspeed-2</groupId>
+                <artifactId>portal-archetype-resources</artifactId>
+                <version>${org.apache.portals.jetspeed-2.version}</version>
+            </dependency>
+
+            <!-- Standard APIs -->
+            <dependency>
+                <groupId>portlet-api</groupId>
+                <artifactId>portlet-api</artifactId>
+                <version>${portlet-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${javax.servlet.version}</version>
+            </dependency>
+
+            <!-- Pluto Container -->
+            <dependency>
+                <groupId>org.apache.pluto</groupId>
+                <artifactId>pluto</artifactId>
+                <version>${org.apache.pluto.version}</version>
+            </dependency>
+
+            <!-- Jakarta -->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-digester</groupId>
+                <artifactId>commons-digester</artifactId>
+                <version>${commons-digester.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+            </dependency>
+
+            <!-- Test -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit-addons</groupId>
+                        <artifactId>junit-addons-runner</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>      
+            
+            <!-- Database -->
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>${org.apache.derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+            </dependency>
+
+            <!-- Taglibs -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${javax.servlet.jstl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>taglibs</groupId>
+                <artifactId>standard</artifactId>
+                <version>${taglibs-standard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>taglibs</groupId>
+                <artifactId>request</artifactId>
+                <version>${taglibs-request.version}</version>
+            </dependency>
+            
+            <!-- Velocity -->
+            <dependency>
+                <groupId>velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>velocity-tools</groupId>
+                <artifactId>velocity-tools</artifactId>
+                <version>${velocity-tools.version}</version>
+            </dependency>
+             
+            <!-- Portals Bridges -->
+            <dependency>
+                <groupId>org.apache.portals.bridges</groupId>
+                <artifactId>portals-bridges-common</artifactId>
+                <version>${org.apache.portals.bridges.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.bridges</groupId>
+                <artifactId>portals-bridges-velocity</artifactId>
+                <version>${org.apache.portals.bridges.velocity.version}</version>
+            </dependency>
+
+            <!-- Ant -->
+            <dependency>
+                <groupId>ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>${ant.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>    
+
+    <!-- Global Build Configuration -->
+
+    <build>
+
+        <!-- J2 Standard Directories -->
+        <sourceDirectory>src/java</sourceDirectory>
+        <testSourceDirectory>src/test</testSourceDirectory>
+        <outputDirectory>target/classes</outputDirectory>
+        <testOutputDirectory>target/test-classes</testOutputDirectory>
+        <directory>target</directory>
+        <defaultGoal>install</defaultGoal>
+
+        <!-- Resources -->
+        <resources>
+            <resource>
+                <directory>src/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <!-- Test Resources -->
+        <testResources>
+            <testResource>
+                <directory>src/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/JETSPEED-INF/**</exclude>
+                </excludes>
+            </testResource>
+            <testResource>
+                <directory>src/test</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+
+        <!-- Plugin Configuration -->
+        <pluginManagement>    
+            <plugins>
+
+                <!-- Compiler -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.4</source>
+                        <target>1.4</target>
+                        <debug>true</debug>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
+                        <optimize>false</optimize>
+                    </configuration>
+                </plugin>
+
+                <!-- Tests -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${org.apache.maven.plugins.maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>**/Test*.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+
+                <!-- WAR plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <configuration>
+                        <warSourceDirectory>src/webapp</warSourceDirectory>
+                    </configuration>
+                </plugin> 
+
+                <!-- antrun plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <dependencies>
+
+                        <!-- Ant -->
+                        <dependency>
+                            <groupId>ant</groupId>
+                            <artifactId>ant</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>ant</groupId>
+                            <artifactId>ant-launcher</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>ant</groupId>
+                            <artifactId>ant-nodeps</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+
+                        <!-- Maven AntLib -->
+                        <dependency>
+                            <groupId>org.apache.maven</groupId>
+                            <artifactId>maven-artifact-ant</artifactId>
+                            <version>${org.apache.maven.artifact.ant.version}</version>
+                        </dependency>
+
+                        <!-- Torque -->
+                        <dependency>
+                            <groupId>torque</groupId>
+                            <artifactId>torque</artifactId>
+                            <version>${torque.version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>jndi</groupId>
+                                    <artifactId>jndi</artifactId>
+                                </exclusion>
+                                <exclusion>
+                                    <groupId>javax.sql</groupId>
+                                    <artifactId>jdbc-stdext</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>torque</groupId>
+                            <artifactId>torque-gen</artifactId>
+                            <version>${torque.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>torque</groupId>
+                            <artifactId>torque-gen-templates</artifactId>
+                            <version>${torque.version}</version>
+                        </dependency>
+
+                    </dependencies>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>    
+    </build>
+
+    <!-- Global Dependencies -->
+
+    <dependencies>
+
+        <!-- Provided Dependencies -->
+        <dependency>
+            <groupId>portlet-api</groupId>
+            <artifactId>portlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals.bridges</groupId>
+            <artifactId>portals-bridges-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

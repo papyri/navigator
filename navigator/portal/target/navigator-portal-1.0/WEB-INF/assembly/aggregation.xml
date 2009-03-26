@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans>
+   
+     <bean id="org.apache.jetspeed.aggregator.PortletTrackingManager" class="org.apache.jetspeed.aggregator.impl.PortletTrackingManagerImpl">          
+        <constructor-arg index='0'>
+           <ref bean="PortletWindowAccessor"/>
+ 	    </constructor-arg>
+       <!-- Default portlet timeout in milliseconds:
+        Zero means no portlet timeout option by default.
+        -->        
+        <constructor-arg index='1'>
+            <value>0</value>
+        </constructor-arg>        
+        <!--  Out of service limit, if a portlet entity times out past its limit (or default limit) n consecutive times, it is taken out of service -->
+       <constructor-arg index="2">
+           <value>3</value>
+       </constructor-arg>
+     </bean>
+       
+   
+  <!-- Aggregation: Portlet -->
+    <bean id="org.apache.jetspeed.aggregator.PortletAggregator" class="org.apache.jetspeed.aggregator.impl.PortletAggregatorImpl">
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.aggregator.PortletRenderer" />
+        </constructor-arg>        
+    </bean>
+
+    <bean id="org.apache.jetspeed.aggregator.PortletAggregatorTitleInHeader" class="org.apache.jetspeed.aggregator.impl.PortletAggregatorImpl">
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.aggregator.PortletRendererWithTitleHeader" />
+        </constructor-arg>
+    </bean>
+
+    <!-- Portlet Renderer -->
+    <bean id="org.apache.jetspeed.aggregator.PortletRenderer" class="org.apache.jetspeed.aggregator.impl.PortletRendererImpl" init-method="start"
+        destroy-method="stop">
+        <constructor-arg>
+            <ref bean="org.apache.pluto.PortletContainer" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.container.window.PortletWindowAccessor" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.aggregator.WorkerMonitor" />
+        </constructor-arg>        
+        <constructor-arg>
+            <ref bean="PortalStatistics" />
+        </constructor-arg>                        
+        <constructor-arg>
+            <ref bean="org.apache.pluto.services.title.DynamicTitleService" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.aggregator.PortletTrackingManager" />
+        </constructor-arg>
+        <!-- flag indicating whether to check jetspeed-portlet.xml security constraints
+             before rendering a portlet. If security check fails, do not display portlet content
+          -->
+        <constructor-arg type="boolean">
+            <value>false</value>
+        </constructor-arg>           
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.security.SecurityAccessController" />
+        </constructor-arg>             
+        <constructor-arg>
+        	<ref bean="portletContentCache"/>
+        </constructor-arg>
+    </bean>
+
+    <!-- Portlet Renderer w/title in http response header -->
+    <bean id="org.apache.jetspeed.aggregator.PortletRendererWithTitleHeader" class="org.apache.jetspeed.aggregator.impl.PortletRendererImpl" init-method="start"
+        destroy-method="stop">
+        <constructor-arg>
+            <ref bean="org.apache.pluto.PortletContainer" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.container.window.PortletWindowAccessor" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.aggregator.WorkerMonitor" />
+        </constructor-arg>        
+        <constructor-arg>
+            <ref bean="PortalStatistics" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="org.apache.pluto.services.title.DynamicTitleService" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.aggregator.PortletTrackingManager" />
+        </constructor-arg>
+        <!-- flag indicating whether to check jetspeed-portlet.xml security constraints
+             before rendering a portlet. If security check fails, do not display portlet content
+          -->
+        <constructor-arg type="boolean">
+            <value>true</value>
+        </constructor-arg>           
+        <constructor-arg>
+            <ref bean="org.apache.jetspeed.security.SecurityAccessController" />
+        </constructor-arg>             
+        <constructor-arg>
+        	<ref bean="portletContentCache"/>
+        </constructor-arg>
+        <constructor-arg type="boolean">
+            <value>true</value>   
+        </constructor-arg>       
+    </bean>
+
+    <bean id="org.apache.jetspeed.aggregator.PageAggregator" class="org.apache.jetspeed.aggregator.impl.PageAggregatorImpl">
+        <constructor-arg index="0">
+            <ref bean="org.apache.jetspeed.aggregator.PortletRenderer" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="org.apache.jetspeed.aggregator.AsyncPageAggregator" 
+          class="org.apache.jetspeed.aggregator.impl.AsyncPageAggregatorImpl">
+        <constructor-arg index='0'>
+            <ref bean="org.apache.jetspeed.aggregator.PortletRenderer" />
+        </constructor-arg>
+    </bean>
+    
+    <!-- The default Worker Monitor -->
+    <bean id="org.apache.jetspeed.aggregator.WorkerMonitor"
+          class="org.apache.jetspeed.aggregator.impl.WorkerMonitorImpl"
+          init-method="start"  destroy-method="stop" >
+
+        <constructor-arg index="0">
+            <!-- Minimum number of workers to create -->
+            <value>5</value>            
+        </constructor-arg>          
+        <constructor-arg index="1">
+            <!-- Maximum number of workers to create -->
+            <value>50</value>            
+        </constructor-arg>          
+        <constructor-arg index="2">
+            <!-- Spare number of workers to create -->
+            <value>3</value>            
+        </constructor-arg>          
+        <constructor-arg index="3">
+            <!-- Maximum number of jobs processed by a worker before being released -->
+            <value>3</value>            
+        </constructor-arg>          
+          
+    </bean>
+    
+    <!--
+    Commonj Work Manager and Worker Monitor
+    
+    If you want to use Commonj Work Manager provided by the container, uncomment the followings
+    and replace 'org.apache.jetspeed.aggregator.WorkerMonitor' with 'org.apache.jetspeed.aggregator.CommonjWorkerMonitor' in this file.
+    
+    For the bean named 'org.apache.jetspeed.aggregator.CommonjWorkerMonitor', two flags can be added as constructor-args.
+    The second constructor-arg is a flag whether a separate timeout-monitor thread is used or not as the old WorkerMonitorImpl does.
+    By default, this flag is set to true. If it is set to false, then a new commonj work will be created for timeout-monitoring per page request.
+    The third constructor-arg is a flag whether the commonj timeout-monitor work should try to interrupt a timeout worker thread.
+    This flag is meaningful only when the second constructor-arg is set to false, and by default this flag is set to true. 
+    If it is set to false, then it does not wait for the timeout rendering works without interruption.
+    On most platforms such as WebSphere or WebLogic, the default flag options (true, true) will be fine.
+    -->
+    
+    <!--
+    <bean id="JetspeedWorkManager" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="resourceRef"><value>false</value></property> 
+        <property name="jndiName">
+            <value>java:comp/env/wm/jetspeed</value>
+        </property>
+    </bean>
+    <bean id="org.apache.jetspeed.aggregator.CommonjWorkerMonitor"
+          class="org.apache.jetspeed.aggregator.impl.CommonjWorkerMonitorImpl"
+          init-method="start"  destroy-method="stop" >
+        <constructor-arg index="0">
+            <ref bean="JetspeedWorkManager" />           
+        </constructor-arg>
+    </bean>
+    -->
+
+    <bean id="HeaderAggregatorPortal" class="org.apache.jetspeed.aggregator.impl.HeaderAggregatorImpl">
+        <constructor-arg index="0">
+            <ref bean="portletFactory" />
+        </constructor-arg>
+        <constructor-arg index="1">
+            <ref bean="PortletWindowAccessor"/>
+        </constructor-arg>
+        <constructor-arg index="2">
+            <ref bean="org.apache.jetspeed.headerresource.HeaderResourceFactory" />
+        </constructor-arg>
+        <constructor-arg index="3" type="boolean">
+            <value>false</value>   <!-- isDesktop == false -->
+        </constructor-arg>
+        <constructor-arg index="4">
+            <ref bean="HeaderResourceConfigurationPortal"/>
+        </constructor-arg>
+        <constructor-arg index="5">
+            <ref bean="HeaderResourceRegistry"/>
+        </constructor-arg>
+        <constructor-arg index="6">
+            <ref bean="DecorationFactory"/>
+        </constructor-arg>
+        
+        <!-- Uncomment this to HARD CODE your portal URL -->
+        <!-- <constructor-arg><ref bean="BasePortalURL"/></constructor-arg>  -->
+    </bean>
+           
+    <bean id="HeaderAggregatorDesktop" class="org.apache.jetspeed.aggregator.impl.HeaderAggregatorImpl">
+        <constructor-arg index="0">
+            <ref bean="portletFactory" />
+        </constructor-arg>
+        <constructor-arg index="1">
+            <ref bean="PortletWindowAccessor"/>
+        </constructor-arg>
+        <constructor-arg index="2">
+            <ref bean="org.apache.jetspeed.headerresource.HeaderResourceFactory" />
+        </constructor-arg>
+        <constructor-arg index="3" type="boolean">
+            <value>true</value>   <!-- isDesktop == true -->
+        </constructor-arg>
+        <constructor-arg index="4">
+            <ref bean="HeaderResourceConfigurationDesktop"/>
+        </constructor-arg>
+        <constructor-arg index="5">
+            <ref bean="HeaderResourceRegistry"/>
+        </constructor-arg>
+        <constructor-arg index="6">
+            <ref bean="DecorationFactory"/>
+        </constructor-arg>
+        
+        <!-- Uncomment this to HARD CODE your portal URL -->
+        <!-- <constructor-arg><ref bean="BasePortalURL"/></constructor-arg>  -->
+    </bean>
+</beans>

@@ -1,0 +1,401 @@
+#*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*#
+#set($theme = $request.getAttribute("org.apache.jetspeed.theme"))
+#set($sizes = $jetspeed.columnSizes)
+#set($myPage = $jetspeed.page)
+#set($myFragment = $jetspeed.currentFragment)
+#set($decorator = $myPage.getDefaultDecorator($myFragment.getType()))
+#set($actions = $myFragment.decoration.actions)
+#set($messages = $portletConfig.getResourceBundle($renderRequest.Locale))
+#set($rootDecorator = $myPage.getRootFragment().decoration)
+
+#if($myFragment.getDecorator())
+  #set($decorator = $myFragment.getDecorator())
+#end
+
+#if($myFragment == $myPage.getRootFragment())
+  #set($isRoot=true)
+#end
+
+#if($request.getAttribute("editing") == true)
+  #set($editing = true)    
+  #set($lastColumn = $renderRequest.getAttribute("numberOfColumns") - 1)  
+#end    
+
+## Decorator  $decorator  ${decoTop} - ${decoBottom}
+#if ($isRoot)
+  #parse($myFragment.decoration.header)
+   #set($layoutClass = "portal-nested-layout")
+#else
+  #defineLayoutObjects()
+   #set($layoutClass = "portal-layout")
+#end
+
+#set($layoutType =$portletConfig.getInitParameter("layoutType"))
+#set($columnLayout = $renderRequest.getAttribute("columnLayout"))
+#set($decorationFactory = $renderRequest.getAttribute("decorationFactory"))
+#set($rc = $renderRequest.getAttribute("org.apache.jetspeed.request.RequestContext"))
+#set($psrc = $rc.getAttribute("org.apache.jetspeed.portalsite.PortalSiteRequestContext"))
+#set($profiledPage = $psrc.Page.Path)
+
+<div id="$renderResponse.namespace" class="${layoutClass} ${layoutClass}-${layoutType}">
+
+#if($editing)
+  <div class="layout-edit-bar">
+    #if($isRoot)
+      #getBoolProperty($allowChangePageTheme $rootDecorator "allow.change.page.theme" true)
+      #getBoolProperty($allowAddPage $rootDecorator "allow.add.page" true)
+      #getBoolProperty($allowChangePageName $rootDecorator "allow.change.page.name" true)
+      #getBoolProperty($allowNavigatePage $rootDecorator "allow.navigate.page" true)
+      #getBoolProperty($allowDeletePage $rootDecorator "allow.delete.page" true)
+      #getBoolProperty($allowChangeFolderTheme $rootDecorator "allow.change.folder.theme" true)
+      #getBoolProperty($allowAddFolder $rootDecorator "allow.add.folder" true)
+      #getBoolProperty($allowChangeFolderName $rootDecorator "allow.change.folder.name" true)
+      #getBoolProperty($allowNavigateFolder $rootDecorator "allow.navigate.folder" true)
+      #getBoolProperty($allowDeleteFolder $rootDecorator "allow.delete.folder" true)
+      #getBoolProperty($allowCustomizeAll $rootDecorator "allow.customize.all" false)
+    #else
+      #set($allowChangePageTheme=false)
+      #set($allowAddPage=false)
+      #set($allowChangePageName=false)
+      #set($allowNavigatePage=false)
+      #set($allowDeletePage=false)
+      #set($allowChangeFolderTheme=false)
+      #set($allowAddFolder=false)
+      #set($allowChangeFolderName=false)
+      #set($allowNavigateFolder=false)
+      #set($allowDeleteFolder=false)
+      #set($allowCustomizeAll=false)
+    #end
+
+    #getIntProperty($maxLayoutNesting $rootDecorator "max.layout.nesting" 2)
+    #set ($fnl = $request.getAttribute("fragmentNestingLevel"))
+    #if (! $fnl)
+        #set ($fnl = 0)
+    #end
+    #if($fnl < $maxLayoutNesting)
+      #set($allowAddLayout=true)
+    #else
+      #set($allowAddLayout=false)
+    #end
+     
+    #getBoolProperty($allowChangeLayout $rootDecorator "allow.change.layout" true)
+    #getBoolProperty($allowAddPortlet $rootDecorator "allow.add.portlet" true)
+    <fieldset>    
+    <div class="layout-edit-bar-left">
+        <div class="layout-title"><b>$messages.getString("portal.page.customizer.name")</b></div>
+    </div>
+    <div class="layout-edit-bar-right">
+      #if($allowAddPortlet)
+        <label>$messages.getString("portal.page.editing.portlet")</label>
+          #set ($chooser = "${jetspeed.basePath}/system/customizer/selector.psml?jspage=${profiledPage}&jslayoutid=$myFragment.id")  
+          <a href="$response.encodeURL($chooser)">
+          <img src="#GetPageResource('images/select.gif')" border="0" title="$messages.getString("portal.page.editing.addportlet")"/>
+        </a>
+      #end
+    </div>
+    </fieldset>
+      #set($form="f${renderResponse.namespace}")
+      #set($formAction = "$renderResponse.createActionURL()")
+      #set($submit = ".submit()")
+
+    <form name="$form" action="$formAction" method='post'>
+    #if($allowCustomizeAll)
+    <fieldset>
+    	<legend>$messages.getString("portal.userfolder.config.title")</legend>
+    	<label for="user_pages_theme">$messages.getString("portal.page.editing.theme")</label>
+    	<select id="user_pages_theme" name="user_pages_theme">
+        	#foreach($td in $decorationFactory.getPageDecorations($rc))
+            <option value='$td'>$td
+            #end
+        </select>   
+        <input type="submit" name="jsChangeUserPagesTheme" value='$messages.getString("portal.page.editing.changetheme")' />
+        <label for="user_portlets_deco">$messages.getString("portal.page.editing.portlet.decorator")</label>
+        <select id="user_portlets_deco" name="user_portlets_deco">
+    		<option value=''>
+    	    #foreach($pd in $decorationFactory.getPortletDecorations($rc))
+        	<option value='$pd'>$pd
+    	   	#end
+        </select>
+        <input type="submit" name="jsChangeUserPortletsDeco" value='$messages.getString("portal.page.editing.changethemeall")'/>        
+    </fieldset>
+    #end
+    <fieldset>
+    <div class="layout-edit-bar-left">
+        #if($allowAddLayout||$allowChangeLayout)
+      <div class="layout-title"><b>$messages.getString("portal.page.editing.layoutConfiguration")</b></div>
+      <div class="layout-content">
+        #end
+        #if ($allowChangePageTheme)
+        <div>
+          <label for="theme">$messages.getString("portal.page.editing.theme")</label>
+          <select id='theme' name='theme' onChange="$form$submit">
+            #foreach($td in $decorationFactory.getPageDecorations($rc))
+            <option value='$td' #if($rootDecorator.Name == $td) SELECTED #end>$td
+            #end
+          </select>   
+        </div>
+        #end
+        #if($allowAddLayout||$allowChangeLayout)
+        <div>
+          <label for="layout">$messages.getString("portal.page.editing.layout")</label>
+          <select id='layout' name='layout'>
+            #foreach($ld in $decorationFactory.getLayouts($rc))     
+            <option value='$ld.Name' #if($myFragment.Name == $ld.Name) SELECTED #end>$ld.DisplayName
+            #end
+          </select>
+        #end
+        #if ($allowChangeLayout)
+          <input type="submit" name="jsChangeLayout" value="$messages.getString("portal.page.editing.changelayout")" />
+        #end        
+        #if($allowAddLayout)
+          <input type="submit" name="jsAddLayout" value="$messages.getString("portal.page.editing.addlayout")" />
+        #end    
+        #if($allowAddLayout||$allowChangeLayout)
+        </div>
+        #end    
+        #getBoolProperty($allowChangePortletDecorator $rootDecorator "allow.change.portlet.decorator" true)
+         ####### Take all fragments and apply style	  
+        #if($allowChangePortletDecorator)          
+        <div>
+          <input type="hidden" name="fragment" value="">
+          <input type="hidden" name="move" value="">
+          <input type="hidden" name="remove" value="">
+          <label for="decorators">$messages.getString("portal.page.editing.portlet.decorator")</label>
+          <select id="decorators" name="decorators">
+            <option value=''>
+        	    #foreach($pd in $decorationFactory.getPortletDecorations($rc))
+                #set ($fd = "")
+                #if (!$f.Decorator)
+                    #set ($fd = $f.Decorator)
+                #end
+            <option value='$pd' #if ($pd == $fd) SELECTED #end>$pd
+        	    #end
+          </select>
+          <input type="submit" name="jsChangeThemeAll" value="$messages.getString("portal.page.editing.changethemeall")"/>
+        </div>
+        #end	   
+        #if($allowAddLayout||$allowChangeLayout)
+      </div>
+        #end
+    </div> 
+    </fieldset>   
+    <fieldset style="float:left;width:49%;margin:0px;padding:0px;">
+    <div class="layout-edit-bar-left">
+        #if($allowAddPage||$allowChangePageName||$allowDeletePage)
+      <div class="page-title"><b>$messages.getString("portal.page.editing.pageConfiguration")</b></div>
+      <div class="page-content">
+        #end
+        #if($allowAddPage||$allowChangePageName)
+        <div>
+          <label for="pagename">$messages.getString("portal.page.editing.page")</label>
+          <input id='pagename' name='jsPageName'/>
+        </div>
+        <div>
+          <label for="pagetitle">$messages.getString("portal.page.editing.page.title")</label>
+          <input id='pagetitle' name='jsPageTitle'/>
+        </div>
+        <div>
+          <label for="pageshorttitle">$messages.getString("portal.page.editing.page.shorttitle")</label>
+          <input id='pageshorttitle' name='jsPageShortTitle'/>
+        </div>
+        <div>
+        #end
+        #if($allowAddPage)
+          <input type="submit" name="jsSubmitPage" value="$messages.getString("portal.page.editing.addpage")"/>
+        #end
+        #if($allowChangePageName)
+          <input type="submit" name="jsChangePageName" value="$messages.getString("portal.page.editing.changepagename")"/>
+        #end
+        #if($allowAddPage||$allowChangePageName)
+        </div>
+        #end
+        #if($allowNavigatePage)
+        <div>
+          <label>$messages.getString("portal.page.editing.pagenavigation")</label>
+          <input id="move-page-left" type="submit" name="jsMovePageLeft" value="$messages.getString("portal.page.editing.movePageLeft")" />
+          <input id="move-page-right" type="submit" name="jsMovePageRight" value="$messages.getString("portal.page.editing.movePageRight")" />
+        </div>
+        #end
+        #if($allowDeletePage)
+        <div>
+          <label for="deletepage">$messages.getString("portal.page.editing.deleteThisPage")</label>
+          <input id="deletepage" type="submit" name="jsDeletePage" value="$messages.getString("portal.page.editing.deletePage")" onclick="if(window.confirm('$messages.getString("portal.page.editing.confirmDeleteThisPage")')){return true;}return false;"/>
+        </div>
+        #end
+        #if($allowAddPage||$allowChangePageName||$allowDeletePage)
+      </div>
+        #end
+    </div> 
+    </fieldset>
+    <fieldset style="width:49%;margin:0px;padding:0px;">
+    <div class="layout-edit-bar-left">
+        #if($allowAddFolder||$allowChangeFolderName||$allowDeleteFolder)
+      <div class="folder-title"><b>$messages.getString("portal.folder.editing.folderConfiguration")</b></div>
+      <div class="folder-content">
+        #end
+        #if($allowAddFolder||$allowChangeFolderName)
+        <div>
+          <label for="foldername">$messages.getString("portal.folder.editing.folder")</label>
+          <input id='foldername' name='jsFolderName'/>
+        </div>
+        <div>
+          <label for="foldertitle">$messages.getString("portal.folder.editing.folder.title")</label>
+          <input id='foldertitle' name='jsFolderTitle'/>
+        </div>
+        <div>
+          <label for="foldershorttitle">$messages.getString("portal.folder.editing.folder.shorttitle")</label>
+          <input id='foldershorttitle' name='jsFolderShortTitle'/>
+        </div>
+        <div>
+        #end
+        #if($allowAddFolder)
+          <input type="submit" name="jsSubmitFolder" value="$messages.getString("portal.folder.editing.addfolder")"/>
+        #end
+        #if($allowChangeFolderName)
+          <input type="submit" name="jsChangeFolderName" value="$messages.getString("portal.folder.editing.changefoldername")"/>
+        #end
+        #if($allowAddFolder||$allowChangeFolderName)
+        </div>
+        #end
+        #if($allowNavigateFolder)
+        <div>
+          <label>$messages.getString("portal.folder.editing.foldernavigation")</label>
+          <input id="move-folder-left" type="submit" name="jsMoveFolderLeft" value="$messages.getString("portal.folder.editing.moveFolderLeft")" />
+          <input id="move-folder-right" type="submit" name="jsMoveFolderRight" value="$messages.getString("portal.folder.editing.moveFolderRight")" />
+        </div>
+        #end
+        #if($allowDeleteFolder)
+        <div>
+          <label for="deletefolder">$messages.getString("portal.folder.editing.deleteThisFolder")</label>
+          <input id="deletefolder" type="submit" name="jsDeleteFolder" value="$messages.getString("portal.folder.editing.deleteFolder")" onclick="if(window.confirm('$messages.getString("portal.folder.editing.confirmDeleteThisFolder")')){return true;}return false;"/>
+        </div>
+        #end
+        #if($allowAddFolder||$allowChangeFolderName||$allowDeleteFolder)
+      </div>
+        #end
+    </div>
+    </fieldset>
+    <br style="clear:both;">
+    </form>
+  </div>
+## end edit mode
+#end
+
+#set ($dcnt = 0) 
+#set ($columnIndex = 0)
+  
+#foreach($column in $columnLayout.columns)
+	  
+  #set($columnFloat = $columnLayout.getColumnFloat($columnIndex))
+	#set($columnWidth = $columnLayout.getColumnWidth($columnIndex))
+	
+	<div id="column_${myFragment.getId()}_${columnIndex}" 
+	     class="portal-layout-column portal-layout-column-${layoutType}-${columnIndex}" 
+	     style="float:${columnFloat}; width:${columnWidth};">
+	     
+	  #foreach($f in $column)  	     
+      ## Set up coordinates for this fragment
+      #set($coords = $columnLayout.getCoordinate($f))	  
+      #set($col = $coords.x)
+      #set($lastRow = $columnLayout.getLastRowNumber($col))
+      #set($row = $coords.y)
+			
+      ## get the decorated Portlet content
+		  <div class="portal-layout-cell portal-layout-cell-${layoutType}-${row}-${col}" >
+		  
+		    ## editing block
+		    #if($editing)
+		      <div class="portlet-edit-bar">
+            #set ($dcnt = $dcnt + 1)   
+            <form name="$form$dcnt" action="$formAction" method='post'>
+              <input type="hidden" name="fragment" value="$f.id">
+              <input type="hidden" name="move" value="">
+              <input type="hidden" name="remove" value="">
+              #if($f.type == "portlet")
+                #set($fragmentType="Portlet")
+                #if($allowChangePortletDecorator)
+                  <select id='decorator' name='decorator' onChange="$form$dcnt$submit">
+                    <option value=''>
+	                #set ($fd = "")
+	                #if (!$f.Decorator)
+	                    #set ($fd = $f.Decorator)
+	                #end
+                    #foreach($pd in $decorationFactory.getPortletDecorations($rc))
+                      <option value='$pd' #if ($pd == $fd) SELECTED #end>$pd
+                    #end
+                  </select>
+                #end
+              #else
+                #set($fragmentType="Layout")
+              #end              
+			        ## Move portlet left
+			        #if($lastColumn > 0 && $col > 0)            
+                <a href="#" onClick="${form}${dcnt}.move.value='3';$form$dcnt$submit;return false;" class="move-portlet-left">
+                  <img src="#GetPageResource('images/movePortletLeft.gif')" border="0" title="$messages.getString("portal.page.editing.move${fragmentType}Left")"/>
+                </a>
+			        #end
+			        ## Move portlet up	
+			        #if($row > 0)			   
+                <a href="#" onClick="${form}${dcnt}.move.value='1';$form$dcnt$submit;return false;" class="move-portlet-up">
+                  <img src="#GetPageResource('images/movePortletUp.gif')" border="0" title="$messages.getString("portal.page.editing.move${fragmentType}Up")"/>
+                </a>
+			        #end			 
+			        ## Remove portlet from page
+              <a href="#" onClick="${form}${dcnt}.remove.value='y';$form$dcnt$submit;return false;" class="remove-portlet-from-apge">
+                <img src="#GetPageResource('images/close.gif')" border="0" title="$messages.getString("portal.page.editing.remove${fragmentType}")"/>
+              </a>			 
+			        ## Move portlet down
+              #if($row < $lastRow)						
+                <a href="#" onClick="${form}${dcnt}.move.value='2';$form$dcnt$submit;return false;" class="move-portlet-down">
+                  <img src="#GetPageResource('images/movePortletDown.gif')" border="0" title="$messages.getString("portal.page.editing.move${fragmentType}Down")"/>
+                </a>
+			        #end			 
+			        ## Move portlet right
+              #if($lastColumn > 0 && $col < $lastColumn)
+                <a href="#" onClick="${form}${dcnt}.move.value='4';$form$dcnt$submit;return false;" class="move-portlet-right">
+                  <img src="#GetPageResource('images/movePortletRight.gif')" border="0" title="$messages.getString("portal.page.editing.move${fragmentType}Right")"/>
+                </a>
+			        #end
+            </form>			 
+		      </div>
+		    #end
+		   
+		    ## Now get the real content
+	 	 	  $jetspeed.setCurrentFragment($f)	   
+		    #if($f.type == "portlet")
+			    #parse($f.decoration.template)
+		    #else		
+			    $f.renderedContent			
+		    #end
+		  </div>
+		#end
+	</div>
+	#set ($columnIndex = $columnIndex + 1)  
+#end
+  
+</div>  
+  
+<br style="clear:both;"/>
+
+#if ($isRoot)
+  <form name='portletform' action="" method="post">
+    <input type='hidden' name='portlets'/>
+    <input type='hidden' name='page' value='$myPage'/>
+  </form>
+  #parse($myFragment.decoration.footer)
+#end

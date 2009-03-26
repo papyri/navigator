@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+  <!-- Portlet Application and Decorator deployment event listeners -->
+  <bean id="portletAppDeploymentListener" 
+  	   class="org.apache.jetspeed.deployment.impl.JettyDeployPortletAppEventListener"   	   
+  > 	
+  	   <constructor-arg index="0"><ref bean="PAM"/></constructor-arg>
+  	   <constructor-arg index="1"><ref bean="org.apache.jetspeed.components.portletregistry.PortletRegistry"/></constructor-arg>
+       <constructor-arg index="2"><value>${autodeployment.target.dir}</value></constructor-arg>
+       <constructor-arg index="3"><value>${applicationRoot}/WEB-INF/apps</value></constructor-arg>
+       <constructor-arg index="4"><value>${autodeployment.staging.dir}/local</value></constructor-arg>
+       <!-- strip commons-logging and/or log4j jars from war files: for JBoss set this to true -->
+       <constructor-arg index="5"><value>false</value></constructor-arg>
+       <constructor-arg index="6"><value>${applicationRoot}/../../contexts</value></constructor-arg>
+  </bean>
+
+    <!-- Security: Session Manager -->
+    <bean id="org.apache.jetspeed.container.session.PortalSessionsManager" class="org.apache.jetspeed.container.session.PortalSessionsManagerImpl">
+  	  <constructor-arg><value type="boolean">false</value></constructor-arg>
+  	</bean>
+
+</beans>

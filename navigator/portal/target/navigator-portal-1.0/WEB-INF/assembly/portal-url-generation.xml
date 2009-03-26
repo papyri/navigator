@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<beans>
+	
+  <bean id="NavigationalStateCodec" 
+  	   class="org.apache.jetspeed.container.state.impl.JetspeedNavigationalStateCodec"
+  >  	 
+       <constructor-arg><ref bean="PortalContext"/></constructor-arg>
+	   <constructor-arg><ref bean="PortletWindowAccessor"/></constructor-arg>  
+  </bean>
+  
+  <!-- Navigation state we are currently using -->
+  <bean id="NavigationalState" 
+  	   class="org.apache.jetspeed.container.state.impl.SessionFullExtendedNavigationalState"
+	   singleton="false"
+  >  	 
+       <constructor-arg index='0'><ref bean="NavigationalStateCodec"/></constructor-arg>
+       <constructor-arg index='1'>
+        	<ref bean="portletContentCache"/>
+       </constructor-arg>       
+       <constructor-arg index='2'>
+        	<ref bean="decorationContentCache"/>
+       </constructor-arg>
+       <!--
+        JS2-806 
+           - set this to true along with PageHistoryValve will enable clearing the mode and window state of
+            all portlets in the current page request.
+           - setting this to false effectively disables this, and reverts to the default 
+             SessionFullNavigationalState object behaviour
+        -->
+       <constructor-arg index='3'>
+            <value>false</value>
+       </constructor-arg>
+  </bean>
+  
+  <!-- PortalURL we are currently using -->
+  <bean id="PortalURL" 
+  	   class="org.apache.jetspeed.container.url.impl.PathInfoEncodingPortalURL"
+	   singleton="false"
+  >  	 
+       <constructor-arg><ref bean="NavigationalState"/></constructor-arg>
+	   <constructor-arg><ref bean="PortalContext"/></constructor-arg>
+	   <!-- Uncomment this to HARD CODE your portal URL -->
+	   <!-- <constructor-arg><ref bean="BasePortalURL"/></constructor-arg>  -->
+  </bean>
+
+  <!-- PortalURL we are currently using -->
+  <bean id="DesktopPortalURL" 
+  	   class="org.apache.jetspeed.container.url.impl.DesktopEncodingPortalURL"
+	   singleton="false"
+  >  	 
+       <constructor-arg index='0'><ref bean="NavigationalState"/></constructor-arg>
+	   <constructor-arg index='1'><ref bean="PortalContext"/></constructor-arg>
+      <!-- jetspeed pipeline for desktop render -->
+       <constructor-arg index='2'><value>/render</value></constructor-arg>
+      <!-- jetspeed pipeline for desktop action -->      
+       <constructor-arg index='3'><value>/action</value></constructor-arg>      
+	   <!-- Uncomment this to HARD CODE your portal URL -->
+	   <!-- <constructor-arg><ref bean="BasePortalURL"/></constructor-arg>  -->
+  </bean>
+    
+  <!-- Uncomment this to HARD CODE your portal URL -->
+  <!--
+  <bean id="BasePortalURL"
+	    class="org.apache.jetspeed.container.url.impl.BasePortalURLImpl">
+       <constructor-arg><ref bean="ProductionConfiguration"/></constructor-arg>	  
+  </bean>	
+  -->
+		
+	
+  <!--  Navigational State component -->
+  <bean id="NavigationalStateComponent" 
+  	   class="org.apache.jetspeed.container.state.impl.JetspeedNavigationalStateComponent"
+	   name="org.apache.jetspeed.container.state.NavigationalStateComponent"
+  >  	   
+       <constructor-arg index="0"><value>NavigationalState</value></constructor-arg>
+       <constructor-arg index="1"><value>PortalURL</value></constructor-arg>      
+	   <constructor-arg index='2'><ref bean="PortalContext"/></constructor-arg>
+	   <constructor-arg index='3'><value>DesktopPortalURL</value></constructor-arg>            
+  </bean>
+
+</beans>

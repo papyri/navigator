@@ -1,0 +1,202 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+@import url("../../css/portal-standard.css");
+
+body {
+background-color:#444;
+font-family:Lucida Sans Unicode, Arial;
+font-size:12px;
+margin:0px 0px 0px 0px;
+color:#555;
+}
+
+/** 
+  This white-space setting is VERY important as it keeps content from "spilling"
+  outside of portlets.
+  */
+
+a:link, a:visited {
+color:#999;
+text-decoration:none;
+}
+
+a:hover {
+text-decoration:underline;
+}
+
+body.layout-sunflower
+{
+    margin: 0;
+    padding: 0;
+}
+
+
+.layout-sunflower #breadcrumbs {
+    border-top: 1px dotted #666;
+    border-bottom: 1px dotted #666;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+    padding: 3px 8px;
+    margin: 3px;
+}
+
+.layout-sunflower #breadcrumbs a {
+    text-decoration: none;
+}
+
+
+#portal-page-actions A img
+{
+   display: inline;   
+}
+
+#portal-page-actions
+{
+   display: inline;
+   position: absolute;
+   right: 5px;
+}
+
+.layout-sunflower .layout-edit-bar
+{
+  width: 100%;
+  padding-top: 5px;
+  font-size: 8pt;
+  color: blue;
+  overflow:hidden;
+  clip:auto;
+}
+
+.layout-sunflower .layout-edit-bar label, 
+.layout-sunflower .layout-edit-bar input, 
+.layout-sunflower .layout-edit-bar select 
+{
+  font-size: 8pt;
+  color: blue;
+}
+
+.layout-sunflower .layout-edit-bar input
+{
+  font-size: 8pt;
+}
+
+.layout-sunflower .layout-edit-bar-left
+{
+  display:inline;
+  float:left;
+}
+
+.layout-sunflower .layout-edit-bar-right
+{
+  display:inline;
+  float:right;
+  padding-right: 5px;
+}
+
+.layout-sunflower .portlet-edit-bar select
+{
+  font-size: 8pt;
+  color: blue;
+}
+
+.layout-sunflower .content{
+margin-left:150px;
+background-color:#fff;
+border-left:1px solid #eee;
+padding:20px;
+font-size:1.2em;margin-right:5px;
+}
+
+.layout-sunflower p {
+padding:2px 2px 2px 2px;
+}
+
+.layout-sunflower .thebox{
+width:100%;
+position:relative;
+background-color:#fff;
+}
+.layout-sunflower .logo{
+color:#111;
+position:relative;
+margin:0px 0px 0px 0px;
+padding:0px 0px 0px 0px;
+height:230px;
+font-size:2.5em;
+text-align:right;
+background:url(../images/back.jpg) no-repeat #87ADD2;
+}
+
+.layout-sunflower .logo a{
+color:#000;
+}
+
+.layout-sunflower .header{
+position:relative;
+margin:0px 0px 0px 0px;
+padding:0px 0px 0px 0px;
+text-align:right;
+list-style-type:none;
+font-size:1.4em;
+background-color:#444;
+}
+
+.layout-sunflower .header li{
+color:#888;
+display:inline;
+padding:0px 10px 0px 10px;
+}
+.layout-sunflower .header li a{
+color:#aaa;
+text-decoration:none;
+}
+.layout-sunflower .header li a:hover{
+color:#ccc;
+text-decoration:none;
+}
+
+.layout-sunflower .footer{
+position:relative;
+text-align:right;
+font-size:1em;
+color:#ccc;
+background-color:#444;width:100%;
+}
+.layout-sunflower .footer a{
+color:#eee;
+}
+.layout-sunflower .side{
+float:left;
+margin:0px 20px 50px 10px;
+font-size:1.05em;
+width:140px;
+}
+.layout-sunflower .side div a{
+color:#555;
+font-size:1.05em;
+}
+
+.layout-sunflower h2{
+font-size:1.4em;
+color:#888;
+}
+
+.layout-sunflower h4{
+font-size:1.1em;
+}

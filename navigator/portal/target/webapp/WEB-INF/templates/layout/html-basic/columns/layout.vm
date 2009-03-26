@@ -1,0 +1,68 @@
+## Licensed to the Apache Software Foundation (ASF) under one or more
+## contributor license agreements.  See the NOTICE file distributed with
+## this work for additional information regarding copyright ownership.
+## The ASF licenses this file to You under the Apache License, Version 2.0
+## (the "License"); you may not use this file except in compliance with
+## the License.  You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+#set($sizes = $jetspeed.columnSizes)
+#set($myPage = $jetspeed.page)
+#set($myFragment = $jetspeed.currentFragment)
+#set($decorator = $myPage.getDefaultDecorator($myFragment.getType()))
+#set($actions = $myFragment.decoration.actions)
+#set($editing = false)
+#if($jetspeed.portletMode.toString() == "edit")
+#set($editing = true)
+#set($lastColumn = $renderRequest.getAttribute("numberOfColumns") - 1)
+#end
+#parse($myFragment.decoration.header)
+#set($layoutType =$portletConfig.getInitParameter("layoutType"))
+#set($columnLayout = $renderRequest.getAttribute("columnLayout"))
+#if($actions.size()>0)
+<div class="PContent">
+#foreach ($action in $actions)
+<a href="${action.Action}" title="${action.Name}"><img src="#GetPageResource(${action.Link})" alt="${action.Alt}" class="noborder"/></a>
+#end
+#if($editing == true)    		  	  
+#set ($chooser = "${jetspeed.basePath}/Administrative/choosers/portlet-selector.psml")
+#set ($imgsrc="${jetspeed.pageBasePath}/content/images/select.gif")
+##TODO <a href="javascript:openWindow('$response.encodeURL($chooser)')"><img src="$jetspeed.getAbsoluteUrl($imgsrc)" title="Select" class="noborder"/></a>
+#end
+</div>
+#end
+##
+##TODO <form id='portletform' action="$renderResponse.createActionURL()" method="post">
+##TODO <div>
+##TODO <input type='hidden' name='portlets'/>
+##TODO <input type='hidden' name='page' value='$myPage'/>
+##TODO </div>
+##TODO </form>
+##
+<div id="portal-layout-$htmlUtil.getSafeElementId($myPage.id)" class="portal-layout">
+#set ($sizeIndex = 0)
+#foreach($column in $columnLayout.columns)
+#set ($sizeIndex = $sizeIndex + 1)     
+#foreach($f in $column)       
+## TODO: Edit layout
+## get the decorated Portlet content
+#if($f.type == "portlet")
+	$jetspeed.setCurrentFragment($f)	   
+#parse($f.decoration.template)
+#else		
+$jetspeed.setCurrentFragment($f)
+$f.renderedContent			
+#end## if($f.type == "portlet")
+#end## foreach($f in $column)
+#end ## foreach($column in $columnLayout.columns)
+</div>
+##
+#if(($decoBottom ) && ($myFragment == $myPage.getRootFragment()))
+#parse($myFragment.decoration.footer)
+#end

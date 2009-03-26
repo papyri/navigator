@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<beans>
+
+  <bean id="org.apache.jetspeed.page.PageManagerImpl" 
+        name="pageManagerImpl"
+        init-method="init"
+        class="org.apache.jetspeed.page.impl.DatabasePageManager">
+      <!-- OJB configuration file resource path -->
+      <constructor-arg index="0"><value>JETSPEED-INF/ojb/page-manager-repository.xml</value></constructor-arg>       
+      <!-- folder/page/link cache size, default=128, min=128 -->
+      <constructor-arg index="1"><value>128</value></constructor-arg>
+      <!-- folder/page/link cache expires seconds, default=150, infinite=0, min=30 -->
+      <constructor-arg index="2"><value>0</value></constructor-arg>
+      <!-- permissions security enabled flag, default=false -->
+      <constructor-arg index="3"><value>false</value></constructor-arg>
+      <!-- constraints security enabled flag, default=true -->
+      <constructor-arg index="4"><value>false</value></constructor-arg>
+  </bean>
+
+    <!-- Proxying -->
+    <bean id="org.apache.jetspeed.page.PageManager" name="dbPageManager" parent="PageManagerTransactionProxy">
+        <property name="proxyInterfaces">
+            <value>org.apache.jetspeed.page.PageManager</value>
+        </property>
+        <property name="target">
+            <ref bean="pageManagerImpl" />
+        </property>
+        <property name="transactionAttributes">
+            <props>
+              <prop key="getPage*">PROPAGATION_SUPPORTS</prop>  
+              <prop key="getLink*">PROPAGATION_SUPPORTS</prop>  
+              <prop key="getFolder*">PROPAGATION_SUPPORTS</prop>  
+              <prop key="getContentPage">PROPAGATION_SUPPORTS</prop>  
+              <prop key="getAll">PROPAGATION_SUPPORTS</prop>  
+              <prop key="getUserFolder">PROPAGATION_SUPPORTS</prop>  
+              <prop key="update*">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>
+              <prop key="removePage">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>
+              <prop key="removeFolder">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>
+              <prop key="removeLink">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>
+              <prop key="removePageSecurity">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>                            
+              <prop key="createUserHomePagesFromRoles">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>
+              <prop key="deepCopy*">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>
+              <prop key="addPages">PROPAGATION_REQUIRED,-org.apache.jetspeed.page.document.NodeException</prop>              
+              <prop key="folderExists">PROPAGATION_SUPPORTS</prop>  
+              <prop key="pageExists">PROPAGATION_SUPPORTS</prop>  
+              <prop key="linkExists">PROPAGATION_SUPPORTS</prop>  
+              <prop key="userFolderExists">PROPAGATION_SUPPORTS</prop>  
+              <prop key="userPageExists">PROPAGATION_SUPPORTS</prop>  
+            </props>
+        </property>
+    </bean>
+
+    <!-- Inject Page Manager Proxy into Page Manager -->
+    <bean id="injectPageManagerProxy" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject"><ref bean="pageManagerImpl"/></property>
+        <property name="targetMethod"><value>setPageManagerProxy</value></property>
+        <property name="arguments">
+            <list>
+                <ref bean="dbPageManager"/>
+            </list>
+        </property>
+    </bean>
+
+  <!-- PageManager -->
+  <bean id="PsmlDocumentHandler"      
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>.psml</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.page.psml.PageImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${org.apache.jetspeed.page.import.pages}</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="LinkDocumentHandler"       
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>.link</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.page.psml.LinkImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${org.apache.jetspeed.page.import.pages}</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="FolderMetaDataDocumentHandler"         
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>folder.metadata</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.folder.psml.FolderMetaDataImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${org.apache.jetspeed.page.import.pages}</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="PageSecurityDocumentHandler"       
+       class="org.apache.jetspeed.page.document.psml.CastorFileSystemDocumentHandler" >         
+       <constructor-arg index="0"><value>/JETSPEED-INF/castor/page-mapping.xml</value></constructor-arg>
+       <constructor-arg index="1"><value>page.security</value></constructor-arg>
+       <constructor-arg index="2" ><value>org.apache.jetspeed.om.page.psml.PageSecurityImpl</value></constructor-arg>       
+       <constructor-arg index="3" ><value>${org.apache.jetspeed.page.import.pages}</value></constructor-arg>
+       <constructor-arg index="4" ><ref bean="PageFileCache"/></constructor-arg>
+  </bean>
+  
+  <bean id="DocumentHandlerFactory"        
+       class="org.apache.jetspeed.page.document.psml.DocumentHandlerFactoryImpl" >      
+        <constructor-arg>
+        <map>
+          <entry key=".psml">
+            <ref bean="PsmlDocumentHandler" />
+          </entry>
+          <entry key=".link">
+            <ref bean="LinkDocumentHandler" />
+          </entry>  
+          <entry key="folder.metadata">
+            <ref bean="FolderMetaDataDocumentHandler" />
+          </entry>        
+          <entry key="page.security">
+            <ref bean="PageSecurityDocumentHandler" />
+          </entry>        
+        </map>
+       </constructor-arg>
+  </bean>
+  
+  <bean id="FolderHandler"         
+       class="org.apache.jetspeed.page.document.psml.FileSystemFolderHandler" >         
+       <constructor-arg index="0"><value>${org.apache.jetspeed.page.import.pages}</value></constructor-arg>
+       <constructor-arg index="1"><ref bean="DocumentHandlerFactory"/></constructor-arg>
+       <constructor-arg index="2"><ref bean="PageFileCache"/></constructor-arg>        
+  </bean>
+    
+  <bean id="org.apache.jetspeed.page.CastorPageManager" 
+       name="castorPageManager"
+       class="org.apache.jetspeed.page.psml.CastorXmlPageManager">         
+       <constructor-arg index="0"><ref bean="IdGenerator"/></constructor-arg>
+       <constructor-arg index="1"><ref bean="DocumentHandlerFactory"/></constructor-arg>
+       <constructor-arg index="2"><ref bean="FolderHandler"/></constructor-arg>
+       <constructor-arg index="3"><ref bean="PageFileCache"/></constructor-arg>        
+       <!-- permissions security enabled flag, default=false -->
+       <constructor-arg index="4"><value>false</value></constructor-arg>
+       <!-- constraints security enabled flag, default=true -->
+       <constructor-arg index="5"><value>false</value></constructor-arg>
+  </bean>
+
+    <!-- Page File Cache -->
+    <bean id="PageFileCache" class="org.apache.jetspeed.cache.file.FileCache" init-method="startFileScanner" destroy-method="stopFileScanner">
+        <!-- Scan rate for changes in cached files on the file system -->
+        <constructor-arg index="0">
+            <value>10</value>
+        </constructor-arg>
+        <!-- Cache size -->
+        <constructor-arg index="1">
+            <value>100</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="IdGenerator" class="org.apache.jetspeed.idgenerator.JetspeedIdGenerator" init-method="start" destroy-method="stop">
+        <!-- ID Start value -->
+        <constructor-arg index="0">
+            <value>65536</value>
+        </constructor-arg>
+        <!-- ID Prefix -->
+        <constructor-arg index="1">
+            <value>P-</value>
+        </constructor-arg>
+        <!-- ID Suffix -->
+        <constructor-arg index="2">
+            <value></value>
+        </constructor-arg>
+    </bean>
+
+
+    <!-- properties configurer used to pick up system properties -->
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+</beans>

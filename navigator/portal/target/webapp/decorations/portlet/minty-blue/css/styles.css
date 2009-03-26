@@ -1,0 +1,254 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+.portlet-MintyBlue .PTitleLeft
+{
+    /**
+    Needs to specify the width of image used
+    otherwise it won't show !
+    **/
+    width:10px;
+    
+    /** Always use relative path ! **/
+    background:  url(../images/titleleft.gif);
+    
+}
+
+.portlet-MintyBlue .PTitle
+{
+    /**Specify the height of the image usedelse it will use the text height**/
+    height:16px;
+    color:#FFFFFF;
+    background: url(../images/title.gif);
+    font-family : monospace;
+    font-weight:bold;
+    font-size:12pt;
+}
+ 
+.portlet-MintyBlue .PTitleRight
+{
+    /**
+    Needs to specify the width of image used
+    otherwise it won't show !
+    **/
+    width:10px;
+    background:  url(../images/titleright.gif);
+}
+
+.portlet-MintyBlue .PContentLeft
+{
+    width:10px;
+    background:  url(../images/contentleft.gif);
+    height : 100%;
+    
+}
+
+.portlet-MintyBlue .PContent
+{
+    padding-left:5px;
+}
+
+.portlet-MintyBlue .PContentRight
+{
+    width:10px;
+    background:  url(../images/contentright.gif);
+}
+
+.portlet-MintyBlue .PBottomLeft
+{
+    width:10px;
+    background:  url(../images/bottomleft.gif);
+}
+
+.portlet-MintyBlue .PBottom
+{
+    /**
+    Specify the height of the image used
+    else it won't appear
+    **/
+    height:13px;
+    background:  url(../images/bottom.gif);
+}
+
+.portlet-MintyBlue .PBottomRight
+{
+    width:10px;
+    background:  url(../images/bottomright.gif);
+}
+
+
+
+/* --------------------------------- */
+
+
+
+/* --------------------------------- */
+/* PLT.C.1 Links (Anchor)            */
+/* --------------------------------- */
+
+.portlet-MintyBlue A:link, 
+.portlet-MintyBlue A:visited {
+    text-decoration: none;
+}
+
+.portlet-MintyBlue A:hover, 
+.portlet-MintyBlue A:active {
+    text-decoration: underline;
+}
+
+
+
+/* --------------------------------- */
+/* PLT.C.2 Fonts                     */
+/* --------------------------------- */
+
+.portlet-MintyBlue .portlet-font {
+ color: black;
+}
+.portlet-MintyBlue .portlet-font-dim {
+ color: gray;
+}
+
+
+
+
+/* --------------------------------- */
+/* PLT.C.3 Messages                  */
+/* --------------------------------- */
+.portlet-MintyBlue .portlet-msg-status {
+    font-style:italic;
+    font-family: courier, serif;
+}
+.portlet-MintyBlue .portlet-msg-info {
+}
+.portlet-MintyBlue .portlet-msg-error {
+    color:#FF0000;
+}
+.portlet-MintyBlue .portlet-msg-alert {
+    color:#CCCC00;
+    font-style:italic;
+}
+.portlet-MintyBlue .portlet-msg-success {
+    color:#00CC33;
+}
+
+/* --------------------------------- */
+/* PLT.C.4 Sections                  */
+/* --------------------------------- */
+.portlet-MintyBlue .portlet-section-header {
+    font-weight:bold;
+    background-color:#0000CC;
+    color:yellow;
+    padding:2px;
+}
+.portlet-MintyBlue .portlet-section-body {
+    background-color:#66FF66;
+    text-align:left;
+}
+.portlet-MintyBlue .portlet-section-alternate {
+    background-color:#C0C0C0;
+    text-align:left;
+}
+.portlet-MintyBlue .portlet-section-selected {
+    background-color:#0000CC;
+    color:white;
+    font-weight:bold;
+    text-align:left;
+}
+.portlet-MintyBlue .portlet-section-subheader {
+    background-color:#0066CC;
+    color:white;
+    font-weight:bold;
+    font-style:italic;
+    padding:1px;
+}
+.portlet-MintyBlue .portlet-section-footer {
+    background-color:#0066CC;
+    color:white;
+    font-family: courier, serif;
+    text-align:center;
+}
+.portlet-MintyBlue .portlet-section-text {
+    text-decoration:underline;
+}
+
+/* --------------------------------- */
+/* PLT.C.5 Forms                     */
+/* --------------------------------- */
+.portlet-MintyBlue .portlet-form-label {
+    font-weight:bold;
+}
+.portlet-MintyBlue .portlet-form-input-field {
+    font-family: arial, "lucida console", sans-serif;
+    background-color:#66CCFF;
+}
+.portlet-MintyBlue .portlet-form-button {
+    font-family: arial, "lucida console", sans-serif;
+}
+.portlet-MintyBlue .portlet-icon-label {
+    /* XXX */
+}
+.portlet-MintyBlue .portlet-dlg-icon-label {
+    /* XXX */
+}
+.portlet-MintyBlue .portlet-form-field-label {
+    font-family: arial, "lucida console", sans-serif;
+}
+.portlet-MintyBlue .portlet-form-field {
+    background-color:transparent;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.6 Menus                     */
+/* --------------------------------- */
+.portlet-MintyBlue .portlet-menu {
+    background-color:#00CC66;
+}
+.portlet-MintyBlue .portlet-menu-item {
+    background-color:#00CC66;
+}
+.portlet-MintyBlue .portlet-menu-item-selected {
+    background-color:#0000CC;
+    color:white;
+}
+
+.portlet-MintyBlue .portlet-menu-item-hover {
+    background-color:#003366;
+    color:#FFFFFF;
+}
+.portlet-MintyBlue .portlet-menu-item-hover-selected {
+    background-color:#003366;
+    color:#FFFFFF;
+}
+.portlet-MintyBlue .portlet-menu-cascade-item {
+    background-color:#00CC66;
+    color:black;
+    text-decoration:none;
+}
+.portlet-MintyBlue .portlet-menu-cascade-item-selected {
+    background-color:#0000CC;
+    color:white;
+}
+.portlet-MintyBlue .portlet-menu-description {
+    background-color:#F0F8FF;
+}
+.portlet-MintyBlue .portlet-menu-caption {
+    /* XXX */
+}
+

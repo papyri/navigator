@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+  $Id:$
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <prerequisites>
+        <maven>2.0.4</maven>
+    </prerequisites>
+
+    <!-- POM Identification -->
+
+    <artifactId>portal-etc</artifactId>
+    <parent>
+        <groupId>info.papyri</groupId>
+        <artifactId>navigator</artifactId>
+        <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <packaging>pom</packaging>
+    <name>navigator Portal Database</name>
+
+    <!-- Profiles -->
+
+    <profiles>
+
+        <!-- derby database profile -->
+        <profile>
+            <id>jetspeed-db-embedded-derby</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derby</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <!-- hsql database profile -->
+        <profile>
+            <id>jetspeed-db-embedded-hsql</id>
+            <dependencies>
+                <dependency>
+                    <groupId>hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+    </profiles>
+
+    <!-- Build Configuration -->
+
+    <build>
+
+        <!-- Plugin Executions -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+
+                    <!-- generate database schema -->
+                    <execution>
+                        <id>etc-schema</id>
+                        <phase>compile</phase>
+                        <configuration>
+                            <tasks>
+                                <ant target="clean-schema" antfile="build.xml" dir="${basedir}" inheritall="off"/>
+                                <ant target="schema" antfile="build.xml" dir="${basedir}" inheritall="off">
+                                    <property name="org.apache.jetspeed.database.default.name"
+                                              value="${org.apache.jetspeed.production.database.default.name}"/>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- populate production database instance -->
+                    <execution>
+                        <id>etc-populate-production</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <tasks>
+                                <ant target="create-populate-db" antfile="build.xml" dir="${basedir}" inheritRefs="on">
+                                    <property name="org.apache.jetspeed.database.enable"
+                                              value="${org.apache.jetspeed.env.deploy.db}"/>
+                                    <property name="org.apache.jetspeed.database.skip"
+                                              value="${org.apache.jetspeed.env.skip.production}"/>
+                                    <property name="org.apache.jetspeed.database.default.name"
+                                              value="${org.apache.jetspeed.production.database.default.name}"/>
+                                    <property name="org.apache.jetspeed.database.url"
+                                              value="${org.apache.jetspeed.production.database.url}"/>
+                                    <property name="org.apache.jetspeed.database.jdbc.drivers.path"
+                                              value="${org.apache.jetspeed.production.jdbc.drivers.path}"/>
+                                    <property name="org.apache.jetspeed.database.driver"
+                                              value="${org.apache.jetspeed.production.database.driver}"/>
+                                    <property name="org.apache.jetspeed.database.user"
+                                              value="${org.apache.jetspeed.production.database.user}"/>
+                                    <property name="org.apache.jetspeed.database.password"
+                                              value="${org.apache.jetspeed.production.database.password}"/>
+                                    <property name="org.apache.derby.version"
+                                              value="${org.apache.derby.version}"/>
+                                    <property name="ant.version"
+                                              value="${ant.version}"/>
+                                    <property name="hsqldb.version"
+                                              value="${hsqldb.version}"/>
+                                    <property name="org.apache.jetspeed.deploy.groupid"
+                                              value="${org.apache.portals.jetspeed-2.groupid}"/>
+                                    <property name="org.apache.jetspeed.deploy.artifactid"
+                                              value="${pom.artifactId}"/>
+                                    <property name="org.apache.jetspeed.deploy.version"
+                                              value="${org.apache.portals.jetspeed-2.version}"/>
+                                   <property name="org.apache.pluto.version"
+                                              value="${org.apache.pluto.version}"/>
+                                    <property name="portlet-api.version"
+                                              value="${portlet-api.version}"/>                                    
+                                </ant>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

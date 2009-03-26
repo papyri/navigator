@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<beans>
+
+  <!-- Application Server Manager for Tomcat. Comment out for others like JBoss
+       Provides hooks into the application server to help us deploy portlet applications
+       as web application into that server.  This manager is for Tomcat 5
+    -->
+
+    <bean id="JetspeedDesktop" class="org.apache.jetspeed.desktop.impl.JetspeedDesktopImpl">
+        <!-- Location of the desktop themes -->
+        <constructor-arg index="0">
+            <ref bean="DecorationFactory"/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <ref bean="org.apache.jetspeed.headerresource.HeaderResourceFactory" />
+        </constructor-arg>
+        <constructor-arg index="2">
+            <ref bean="desktopContentCache" />
+        </constructor-arg>
+        <constructor-arg index="3">   <!-- desktop servlet path -->
+            <value>/desktop</value>
+        </constructor-arg>        
+        <constructor-arg index="4">   <!-- default desktop layout extension -->
+            <value>.jsp</value>
+        </constructor-arg>
+        <!-- Optional decoration defaults for desktop - bean id 'DesktopConfiguration' (in headtag.xml)
+             supports the settings 'desktop.decoration.layout' and 'desktop.decoration.portlet', which if
+             specified, override the values set here -->
+        <constructor-arg index="5">   <!-- default desktop layout decoration  -->
+            <value>tigris</value>
+        </constructor-arg>
+        <constructor-arg index="6">   <!-- default desktop portlet decoration -->
+            <value>tigris</value>
+        </constructor-arg>
+        
+        <!-- Uncomment this to HARD CODE your portal URL -->
+        <!-- <constructor-arg><ref bean="BasePortalURL"/></constructor-arg>  -->
+     </bean>    
+</beans>

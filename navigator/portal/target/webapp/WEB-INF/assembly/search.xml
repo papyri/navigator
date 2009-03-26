@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<beans>
+
+  <!--SEARCH COMPONENT-->
+  <bean id="org.apache.jetspeed.search.HandlerFactory"
+  	class="org.apache.jetspeed.search.handlers.HandlerFactoryImpl"
+  >
+  	<constructor-arg>
+  		<map>
+  			<entry key="java.net.URL"><value>org.apache.jetspeed.search.handlers.URLToDocHandler</value></entry>
+  			<entry key="org.apache.jetspeed.om.portlet.impl.PortletApplicationDefinitionImpl"><value>org.apache.jetspeed.search.handlers.pam.PortletApplicationHandler</value></entry>
+  			<entry key="org.apache.jetspeed.om.portlet.impl.PortletDefinitionImpl"><value>org.apache.jetspeed.search.handlers.pam.PortletDefinitionHandler</value></entry>
+  		</map>
+	</constructor-arg>
+  </bean>
+  
+  
+  <bean id="org.apache.jetspeed.search.SearchEngine"
+  	class="org.apache.jetspeed.search.lucene.SearchEngineImpl"
+  >
+  	<constructor-arg index="0"><value>${applicationRoot}/WEB-INF/search_index</value></constructor-arg>
+  	<constructor-arg index="1"><null /></constructor-arg>
+  	<constructor-arg type="boolean"><value>true</value></constructor-arg>
+  	<constructor-arg><ref bean="org.apache.jetspeed.search.HandlerFactory"/></constructor-arg>
+  	
+  </bean>
+</beans>
