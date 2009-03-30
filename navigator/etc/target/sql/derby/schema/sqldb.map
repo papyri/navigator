@@ -1,8 +1,0 @@
-#Sqlfile -> Database map
-#Thu Mar 26 11:04:07 EDT 2009
-registry-schema.sql=j2
-phase3ojb-schema.sql=j2
-phase2-schema.sql=j2
-security-schema.sql=j2
-prefs-schema.sql=j2
-phase1-schema.sql=j2

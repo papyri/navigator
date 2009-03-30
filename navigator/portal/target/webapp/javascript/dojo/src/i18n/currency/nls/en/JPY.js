@@ -1,2 +1,0 @@
-
-({"displayName":"Japanese Yen","symbol":"¥"})

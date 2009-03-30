@@ -1,0 +1,78 @@
+#*
+Copyright 2004 The Apache Software Foundation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*#
+
+#* ************************* READ ME *************************************
+This is the default template to be used for rendering decorations.  If you 
+find you cannot accomplish your design requirements by defining a custom
+style sheet for your decoration, you can define your own decorator.vm in 
+the root of your decortaion.  This will be used instead of the default.
+************************************************************************ *#
+#macro(PortletActionBar $_decoration)
+ #set($_actions = $_decoration.actions)
+ #set($_query = ${request.getRequest().getQueryString()})
+
+ <div class="PActionBar">
+    #foreach ($_action in $_actions)
+        #if($_query)
+     <a href="${_action.Action}?${_query}" title="${_action.Name}" class="action portlet-action" ><img src="${_action.link}" alt="${_action.Alt}" border="0" /></a>
+        #else
+     <a href="${_action.Action}" title="${_action.Name}" class="action portlet-action" ><img src="${_action.link}" alt="${_action.Alt}" border="0" /></a>
+        #end
+    #end    
+ </div>
+#end
+
+#set($decoration = $f.decoration)
+#set($actions = $decoration.actions)
+
+<!-- Begin: Fragment: ${f.id} Decoration: ${decoration.name} -->
+
+<div id="${f.id}" class="portlet ${decoration.baseCSSClass}">
+  <div class="PTitle" >
+    <div class="PTitleContent">	
+      $!jetspeed.getTitle($jetspeed.getPortletEntity($f), $f)
+      #set ($linkType = false)
+      #set ($linkTypeAtt = false)
+      #set ($link = false)
+      #set ($linkType = $f.getProperty("idLookup"))
+      #set ($link = $f.getProperty("queryLookup"))
+      #if ($linkType)
+      #set ($linkTypeAtt = $request.getAttribute($linkType))
+      #if ($linkTypeAtt)
+      ##<a href="${request.getAttribute($link)}">${linkTypeAtt}</a>
+      <a href="${request.getAttribute($link)}">[source]</a>
+      <a href="portal/apisfull.psml?controlName=${request.getAttribute($linkType)}">[navigate]</a>
+      #end
+      #end
+<!--
+linkType ${linkType}
+linkTypeAtt ${linkTypeAtt}
+-->
+    </div>
+    
+    #PortletActionBar($decoration)
+	
+  </div>
+  #if (!$jetspeed.isHidden($f) || $jetspeed.WindowState != "minimized")
+  <div class="PContent"><span style="line-height:0.005px;">&nbsp;</span>
+    $f.renderedContent
+  </div>   
+  #end
+</div>
+
+<!-- END: Fragment: ${f.id} Decoration: ${decoration.name} -->
+
+

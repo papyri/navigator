@@ -1,2 +1,0 @@
-
-({"displayName":"EUR","symbol":"€"})

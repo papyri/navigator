@@ -1,2 +1,0 @@
-
-({"displayName":"イタリア リラ","symbol":"₤"})

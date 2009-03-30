@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder>
+  <title>Root Folder</title>  
+  <metadata name="title" xml:lang="fr">Répertoire racine</metadata>
+  <metadata name="title" xml:lang="ja">ルートフォルダ</metadata>
+  <metadata name="title" xml:lang="es">Carpeta raiz</metadata>
+  <metadata name="title" xml:lang="zh">根文件夹</metadata>
+
+
+  <menu name="page-navigations">
+    <separator>
+      <text>Top Pages</text>
+      <metadata name="text" xml:lang="fr">Page haut</metadata>
+      <metadata name="text" xml:lang="ja">トップページ</metadata>
+      <metadata name="text" xml:lang="es">Páginas más populares</metadata>
+      <metadata name="text" xml:lang="zh">顶层页</metadata>
+    </separator>
+    <options>/Administrative</options>
+    <separator>
+      <text>Profiled Pages</text>
+      <metadata name="text" xml:lang="ja">プロファイルページ</metadata>
+      <metadata name="text" xml:lang="es">Páginas del Perfil</metadata>
+      <metadata name="text" xml:lang="zh">Profiled页</metadata>
+    </separator>
+    <options regexp="true">/p[0-9][0-9][0-9].psml</options>
+    <separator>
+      <text>APIS Metadata</text>
+    </separator>
+    <options>/apismetadata.psml</options>
+    <separator>
+      <text>Non Java Pages</text>
+      <metadata name="text" xml:lang="ja">Non-Javaページ</metadata>
+      <metadata name="text" xml:lang="es">Ejemplos sin java</metadata>
+      <metadata name="text" xml:lang="zh">非Java Portlet页</metadata>
+    </separator>
+    <options>/non-java</options>
+  </menu>
+
+  <menu name="site-navigations" regexp="true" options="/*/,/*.psml" depth="-1"/>
+  <menu name="navigator" regexp="false" depth="1">
+    <options>/default-page.psml</options>
+    <options>/ddbdp-search.psml</options>
+    <options>/numbers.psml</options>
+  </menu>
+  <menu name="document" regexp="false" depth="1">
+    <options>/apisfull.psml,/apismetadata.psml,/text.psml</options>
+  </menu>
+  <menu name="search-results" regexp="false" depth="1">
+    <options>/brief.psml,/verbose.psml</options>
+  </menu>
+  <menu name="additional-links" regexp="true" options="/*.link"/>
+
+  <security-constraints>
+    <security-constraints-ref>public-view</security-constraints-ref>
+  </security-constraints>
+</folder>

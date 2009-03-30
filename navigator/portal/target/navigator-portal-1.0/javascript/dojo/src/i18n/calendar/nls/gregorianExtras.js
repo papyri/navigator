@@ -1,2 +1,0 @@
-
-({"dateFormat-yearOnly":"yyyy"})

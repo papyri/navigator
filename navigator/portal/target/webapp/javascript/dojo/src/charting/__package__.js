@@ -1,2 +1,0 @@
-
-dojo.provide("dojo.charting.*");
