@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8" session="false" contentType="text/html; charset=UTF-8" import="java.util.*,javax.portlet.RenderRequest,info.papyri.numbers.portlet.Numbers" %><%@taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
-<portlet:defineObjects/><script type="text/javascript" src="/ddbdp/ddbdp.js"></script><div>
+<portlet:defineObjects/><script type="text/javascript" src="/ddbdp/ddbdp.js"></script>
+<div>
 <%
 RenderRequest rReq = (RenderRequest)renderRequest;
 Collection<String> pubs = (Collection)rReq.getAttribute(Numbers.ATTR_PUBS);
@@ -29,3 +30,4 @@ String prefix = (String)rReq.getAttribute(Numbers.ATTR_PREFIX);
 <% for(String pub:tm){ %>
 <tr><td><%=pub %> <a href="portal/apisfull.psml?controlName=<%=pub.replaceAll("\\s+","%20") %>">[metadata]</a></td></tr>
 <%} %>
+</div>

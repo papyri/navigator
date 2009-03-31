@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlet-app id="pn-numbers" version="1.0">
+  <portlet id="Numbers">
+    <portlet-name>Numbers</portlet-name>
+    <display-name>papyri.info Identifier Search</display-name>
+    <portlet-class>info.papyri.numbers.portlet.Numbers</portlet-class>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Identifier Search</title>
+      <short-title>Identifiers</short-title>
+    </portlet-info>
+  </portlet>
+</portlet-app>

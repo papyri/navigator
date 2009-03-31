@@ -16,6 +16,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>appserv-rt</groupId>
+            <artifactId>appserv-rt</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils-core</artifactId>
             <version>1.8.0</version>
@@ -87,9 +92,20 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-taglib</artifactId>
+            <version>1.1.7</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
