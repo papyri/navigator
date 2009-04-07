@@ -1,6 +1,5 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.papyri</groupId>
     <artifactId>pn-ddbdp-portlets</artifactId>
@@ -54,7 +53,29 @@
                     <artifactId>jmxtools</artifactId>
                     <groupId>com.sun.jdmk</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>mail</artifactId>
+                    <groupId>javax.mail</groupId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>10.1.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbynet</artifactId>
+            <version>10.1.1.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
@@ -118,6 +139,20 @@
                     <include>*.xsl</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources/xslt/portlet</directory>
+                <targetPath>info/papyri/ddbdp/portlet</targetPath>
+                <includes>
+                    <include>ddbdp.xsl</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <targetPath>info/papyri/ddbdp/portlet</targetPath>
+                <includes>
+                    <include>tei-epidoc.dtd</include>
+                </includes>
+            </resource>
         </resources>
         <testResources>
             <testResource>
@@ -128,7 +163,7 @@
                 </includes>
             </testResource>
         </testResources>
-        <finalName>pn-ddbdp-portlets</finalName>
+        <finalName>ddbdp</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

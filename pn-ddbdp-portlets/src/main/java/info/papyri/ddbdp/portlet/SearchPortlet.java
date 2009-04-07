@@ -300,7 +300,9 @@ public class SearchPortlet extends GenericPortlet implements IndexEventListener 
         default:
             sort = SORT_NAME;
         }
+        LOG.debug("Query: " + query.toString());
         Hits  hits = SEARCHER.search(query ,sort);
+        LOG.debug("Hit count: " + hits.length());
         int hitCount = hits.length();
         int hitSize =  hitCount - offset;
         String field = tuple.getField();
@@ -349,7 +351,7 @@ public class SearchPortlet extends GenericPortlet implements IndexEventListener 
                                 String tString = t.toString();
                                 Matcher m = LINE.matcher(tString);
                                 if(m.find()){
-                                    tString = m.replaceAll("<b class=\"lineNumber\">(line $2)</b>");
+                                    tString = m.replaceAll("<b>(line $2)</b>");
                                 }
                                 charBuff.append(tString);
                                 charBuff.append(sep);

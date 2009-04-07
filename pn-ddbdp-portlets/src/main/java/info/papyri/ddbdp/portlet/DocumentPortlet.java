@@ -144,10 +144,12 @@ IndexEventListener {
         }
     }
     public static final Pattern LEADING_ZEROES = Pattern.compile("(^0+).*$");
+
     @Override
     protected void doView(RenderRequest request, RenderResponse response) throws PortletException {
         String xslt = request.getPreferences().getValue("xslt", "start-div-portlet.xsl");
         String cn = (request.getParameter("controlName") == null)?null:request.getParameter("controlName").trim();
+        LOG.debug("request.getParameter(\"controlName\") == " + request.getParameter("controlName"));
         if (cn != null){
             try{
                 cn = cn.trim();
@@ -160,7 +162,7 @@ IndexEventListener {
                 Term term = getTerm(cn);
                 if (term == null) {
                     request.setAttribute(DDB_ERROR, "No context for \"" + cn + "\"");
-                    PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher("/WEB-INF/ddb500.jsp.jsp");
+                    PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher("/WEB-INF/ddb500.jsp");
                     rd.include(request, response);
                     response.flushBuffer();
                     return;
@@ -168,6 +170,7 @@ IndexEventListener {
 
                 Hits hits = SEARCHER.search(new TermQuery(term));
                 request.setAttribute(DDB_ID, term.text());
+                LOG.debug("request.setAttribute(\"" + DDB_ID + ", " + term.text() + ")");
                 if(hits.length()==0){
                     PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher("/WEB-INF/ddb404.jsp");
                     rd.include(request, response);
@@ -200,7 +203,8 @@ IndexEventListener {
                     trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                     LOG.debug("response.getCharacterEncoding()=="+response.getCharacterEncoding());
                     trans.setOutputProperty(OutputKeys.ENCODING, response.getCharacterEncoding());
-                    StreamResult result = new StreamResult(response.getPortletOutputStream());
+                    LOG.debug("trans.getOutputProperty(OutputKeys.ENCODING) == " + trans.getOutputProperty(OutputKeys.ENCODING));
+                    StreamResult result = new StreamResult(response.getWriter());
                     InputSource inSrc = new InputSource();
                     inSrc.setCharacterStream(isr);
                     trans.transform(new SAXSource(reader,inSrc), result);

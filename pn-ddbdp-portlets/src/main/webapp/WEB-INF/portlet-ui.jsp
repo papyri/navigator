@@ -163,7 +163,6 @@ if(rReq.getAttribute(SearchPortlet.ERROR_ATTR) != null){
 
 
 <div>
-<div>
 <form method="GET" action="portal/ddbdp-results.psml" id="query-form" accept-charset="UTF-8" onsubmit="setQueries();">
 <table class="pn-form">
 <tbody>
