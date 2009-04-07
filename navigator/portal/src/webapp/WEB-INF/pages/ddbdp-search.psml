@@ -16,7 +16,7 @@ limitations under the License.
 <page>
   <defaults
      skin="orange"
-     layout-decorator="tigris"
+     layout-decorator="pn"
      portlet-decorator="pn"
   />
   <title>DDBDP Search</title><short-title></short-title>

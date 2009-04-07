@@ -38,7 +38,9 @@ the root of your decortaion.  This will be used instead of the default.
 #set($decoration = $f.decoration)
 #set($actions = $decoration.actions)
 
-<!-- Begin: Fragment: ${f.id} Decoration: ${decoration.name} -->
+<!-- Begin: Fragment: ${f.id} Decoration: ${decoration.name}
+    f.id
+-->
 
 <div id="${f.id}" class="portlet ${decoration.baseCSSClass}">
   <div class="PTitle" >

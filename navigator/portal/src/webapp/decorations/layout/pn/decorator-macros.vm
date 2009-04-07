@@ -1,6 +1,5 @@
 #* define navigation constants *#
 #macro (defineNavigationConstants)
-  #* Constants for layout orientation *#	
   #set($LEFT_TO_RIGHT = "LeftToRight")
   #set($RIGHT_TO_LEFT = "RightToLeft")
   #set($TOP_TO_BOTTOM = "TopToBottom")

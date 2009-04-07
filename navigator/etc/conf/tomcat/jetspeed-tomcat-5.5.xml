@@ -21,7 +21,7 @@ limitations under the License.
          appName="Jetspeed"
          userClassNames="org.apache.jetspeed.security.impl.UserPrincipalImpl"
          roleClassNames="org.apache.jetspeed.security.impl.RolePrincipalImpl"
-         useContextClassLoader="false"
+         useContextClassLoader="true"
          debug="0"/>
 
 
