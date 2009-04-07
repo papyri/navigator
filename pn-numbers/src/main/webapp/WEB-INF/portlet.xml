@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<portlet-app id="pn-numbers" version="1.0">
+<portlet-app id="numbers" version="1.0">
   <portlet id="Numbers">
     <portlet-name>Numbers</portlet-name>
     <display-name>papyri.info Identifier Search</display-name>
