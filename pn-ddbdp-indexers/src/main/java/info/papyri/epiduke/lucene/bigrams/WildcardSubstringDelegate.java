@@ -19,6 +19,7 @@ public class WildcardSubstringDelegate extends SubstringTermDelegate {
     public WildcardSubstringDelegate(IndexSearcher bgSearcher, Term substring) {
         super(bgSearcher,substring);
     }
+    @Override
         public void setTerm(Term substring){
         this.substring = substring;
         this.text = substring.text();

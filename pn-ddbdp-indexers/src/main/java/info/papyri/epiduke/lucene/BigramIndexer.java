@@ -24,24 +24,25 @@ public class BigramIndexer {
 	
 	public static IndexReader indexBigrams(IndexReader src, Term template, Directory store) throws Exception {
 
-	    IndexWriter writer = new IndexWriter(store,null,true);
+	    IndexWriter writer = new IndexWriter(store,null,true,IndexWriter.MaxFieldLength.LIMITED);
 	    writer.setTermIndexInterval(IndexWriter.DEFAULT_TERM_INDEX_INTERVAL/16);
 	    String field = template.field();
 	    TermEnum terms = src.terms(template);
         int ctr = 0;
         try{
-	    do{
-	        Term term = terms.term();
-	        if(term == null || !field.equals(term.field())) break;
-	        String text = term.text();
-	        Document tDoc = new Document();
-	        tDoc.add(new Field("term",text,Field.Store.YES,Field.Index.NO));
-	        tDoc.add(new Field(field,getBigramTokenStream(text)));
-	        writer.addDocument(tDoc);
-	        ctr++;
-	    }while(terms.next());
-        }
-        finally {
+            do{
+                Term term = terms.term();
+                if(term == null || !field.equals(term.field())) break;
+                String text = term.text();
+                Document tDoc = new Document();
+                tDoc.add(new Field("term",text,Field.Store.YES,Field.Index.NO));
+                tDoc.add(new Field(field,getBigramTokenStream(text)));
+                writer.addDocument(tDoc);
+                ctr++;
+            } while(terms.next());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             terms.close();
             writer.optimize();
             writer.close();

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!--xml version="1.0" encoding="UTF-8"--><!-- DOCTYPE TEI.2
+  SYSTEM "/usr/local/epiduke/data/dtd/tei-epidoc.dtd" -->
+<!DOCTYPE TEI.2
+  SYSTEM "tei-epidoc.dtd">
+<TEI.2 id="bgu.2.619" n="0001;2;619"><teiHeader><fileDesc><titleStmt><title>bgu.2.619</title></titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><p/></sourceDesc></fileDesc><profileDesc><langUsage><language id="en">English</language><language id="grc">Ancient Greek</language><language id="la">Latin</language><language id="fr">French</language><language id="de">German</language><language id="grc-Latn">Ancient Greek in Latin script</language><language id="cop">Coptic</language></langUsage><handList><hand id="m2"/><hand id="m3"/><hand id="m4"/><hand id="m1"/><hand id="m5"/><hand id="m6"/><hand id="m7"/><hand id="m9"/><hand id="m8"/><hand id="m10"/><hand id="m11"/><hand id="m12"/><hand id="m13"/><hand id="m14"/><hand id="m15"/><hand id="m16"/><hand id="m17"/></handList></profileDesc><revisionDesc><change><date>2008-05-24</date><respStmt><name>ZA</name></respStmt><item>Automated split from transcoder files</item></change></revisionDesc></teiHeader><text><body><head lang="en"><date>AD155</date>
+<placeName>Arsinoite</placeName></head><div type="edition" lang="grc"><div type="textpart" n="1"><!--milestone unit="4"--><ab>
+
+    <lb n="1"/><gap reason="lost" extent="unknown" unit="line"/> 
+
+    <lb n="1"/>π[<gap reason="illegible" extent="1" unit="character"/>]<gap reason="illegible" extent="1" unit="character"/> τὴ[ν <app type="editorial"><lem resp="bgu 2 p.357">ὁρ]ισθεῖσαν</lem><rdg>[<gap reason="illegible" extent="2" unit="character"/>]ισθεῖσαν</rdg></app> πρόσοδον ὑπὲρ τῶν ὄντ[ω]ν αὐτοῦ ὑπαρ-
+
+    <lb n="2"/>χόντων ἀ[πει]ληφέναι καὶ ὕστερον ὡς τοῦ τῆς κώμης <expan>κωμογρ<ex>αμματέως</ex></expan>, 
+
+    <lb n="3"/>περὶ ἥν ἐστ[ι] <unclear reason="undefined">τὰ</unclear> ἐδάφη, δηλώσαντος τὰ τοῦ Δείου <expan>ὑπάρχοντ<ex>α</ex></expan> 
+
+    <lb n="4"/>κατ᾽ ἄγ[ν]οιαν [ὑπ]ὸ τ<unclear reason="undefined">οῦ</unclear> πρὸ αὐτοῦ <expan>κωμογρ<ex>αμματέως</ex></expan> κεκοιτάσθα[ι] διὰ τὸ πε-
+
+    <lb n="5"/>πρᾶσθ[αι αὐτὰ] πρὸ τῆς κατοχῆς τῆς ἐπιτηρήσεως καὶ τὴν πα-
+
+    <lb n="6"/>ραγ[ρ]αφεῖσαν [πρ]όσοδον ὀφείλειν κουφισθῆναι <app type="BL"><lem resp="1.57">τὸ συναγόμενον</lem><rdg><expan>το<ex>ῦ</ex></expan> <expan>συναγομ<ex>ένου</ex></expan></rdg></app> 
+
+    <lb n="7"/>ἄχρι ἂν ἐξετασθῇ, εἰ πρὸ τῆς εἰς τὴν ἐπιτήρησιν κατοχῆς 
+
+    <lb n="8"/>ἐπράθη καὶ ὑ[π]ὸ τίνων καὶ ἐπὶ ποίοις <hi rend="diaeresis">ὑ</hi>πάρχουσι εἰσεδόθη 
+
+    <lb n="9"/>εἰς τὴν χρεία[ν] ἐπεσχηκέναι, ἐπὶ δὲ τῆς ἐξετάσεως Νικάριον 
+
+    <lb n="10"/>τὴν καὶ Τα[σου]χάριον Ἡρᾶ τοῦ <unclear reason="undefined">Ἀπ</unclear>[ο]λλωνίου <expan>ἀναγρ<ex>αφομένην</ex></expan> ἐπ᾽ ἀμφόδου 
+
+    <lb n="11"/>Γυμνασίο[υ] μ[ε]τὰ κυρίου τοῦ συνγενοῦς Ἰσιδώρου Σωκράτους 
+
+    <lb n="12"/>ἐνόρκως [σ]υ[μ]πεφωνηκέναι τὰς προκτητρίας αὐτῆς Ἰσιδώ-
+
+    <lb n="13"/>ραν Ἰσιδώ[ρου Εὐ]δωρίωνος καὶ [τ]ὴν ταύτης <expan>θυγ<ex>ατέρα</ex></expan> 
+
+Δ[ιο]νυσίαν 
+
+    <lb n="14"/>Πτολεμ[α]ί[ου τ]οῦ Χαιρήμονος ἐωνῆσθαι παρὰ τοῦ [προγ]<expan>εγρ<ex>αμμένου</ex></expan> Δείου 
+
+    <lb n="15"/><app type="BL"><lem resp="cf. 1.57">[]τι</lem><rdg><gap reason="illegible" extent="unknown" unit="character"/> ι</rdg></app> ἀπὸ τ[οῦ <gap reason="illegible" extent="2" unit="character"/>] <expan><ex>ἔτους</ex></expan> θεοῦ Ἁδριανοῦ μηνὶ Ἁδριανῷ <num value="30">λ</num> [κα]τὰ χει-
+
+    <lb n="16"/><expan>ρόγρ<ex>αφον</ex></expan> <app type="BL"><lem resp="1.57">τὸ κ<unclear reason="undefined">αὶ</unclear> <unclear reason="undefined">ἐ</unclear>[κμε]μαρτυρημένον</lem><rdg>τοκ<gap reason="illegible" extent="2" unit="character"/>[<gap reason="illegible" extent="1" unit="character"/> με]μαρτυρημένον</rdg></app> διὰ δημοσίας ὁμολογίας 
+
+    <lb n="17"/>τῷ αὐτῷ [ἔτε]ι Τῦβι <num value="21">κα</num> παρὰ Βερνικίδα αἰγιαλοῦ <expan><ex>ἥμισυ</ex></expan> μέρος 
+
+    <lb n="18"/><expan>ἀμπ<ex>ελῶνος</ex></expan> — <expan><ex>ἀρουρ </ex></expan> [ <gap reason="illegible" extent="unknown" unit="character"/> ]<num value="2">β</num> %52 καὶ <subst><add place="inline">ἄλλο</add><del rend="corrected">αλλο⟦ν⟧</del></subst> ⟦αμ⟧ <expan><ex>ἥμισυ</ex></expan> μέρος <expan>ἀμπ<ex>ελῶνος</ex></expan> <expan><ex>ἀρούρας</ex></expan> <num value="2">β</num> 
+
+    <lb n="19"/>καὶ ὁμοίως <expan><ex>ἥμισυ</ex></expan> μέρος γῆς <expan>ἀμπελ<ex>ίτιδος</ex></expan> <expan><ex>ἄρουραν</ex></expan> <num value="1">α</num> καὶ <expan>καλά<ex>μου</ex></expan>  <app type="editorial"><lem resp="bgu 3 p.3"><expan>Ἑλ<ex>ληνικοῦ</ex></expan></lem><rdg><expan>ἐλ<ex>αιῶνα</ex></expan></rdg></app> <expan><ex>ἀρούρης</ex></expan> %52 
+
+    <lb n="20"/>πρὶν εἰσδοθῆναι τὸν Δεῖον εἰς τὴν ἐπιτήρησιν ὕστερον 
+
+    <lb n="21"/>[γ]ὰρ μετὰ τὸ π[ρ]αθῆναι τὰ <expan>δηλ<ex>ωθέντα</ex></expan> ὑπάρχοντα κατεσχῆσθαι εἰς 
+
+    <lb n="22"/>ἐπιτήρησιν <app type="BL"><lem resp="6.12">[ο]ὐ[σ]<expan>ιακ<ex>ῶν</ex></expan></lem><rdg><gap reason="illegible" extent="1" unit="character"/>[<gap reason="illegible" extent="1" unit="character"/>]<gap reason="illegible" extent="1" unit="character"/><abbr>ιακ</abbr></rdg></app> μισθώσεως <app type="editorial"><lem resp="bgu 3 p.3"><expan>Πτολ<ex>εμαίου</ex></expan></lem><rdg><expan>Πτολ<ex>εμαῖον</ex></expan></rdg></app> Κρονίου τῷ Παῦνι μηνὶ 
+
+    <lb n="23"/>τοῦ <num value="18">ιη</num> <expan><ex>ἔτους</ex></expan> καὶ εἰς ἀπόδειξιν τούτων παρατεθεῖσθαι αὐτὴν 
+
+    <lb n="24"/><expan>ἀντίγρ<ex>αφον</ex></expan> τῆς δ[η]λουμένης δημοσίας <expan>ὁμολ<ex>ογίας</ex></expan> γενομένης 
+
+    <lb n="25"/><gap reason="lost" extent="unknown" unit="line"/> 
+</ab></div><div type="textpart" n="2"><!--milestone unit="4"--><ab>
+
+    <lb n="1"/><gap reason="lost" extent="unknown" unit="line"/> 
+
+    <lb n="1"/>τ[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="2"/>με[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="3"/>εἰς[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="4"/>α<gap reason="illegible" extent="1" unit="character"/>[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="5"/>β[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="6"/><space extent="unknown" unit="character"/> 
+
+    <lb n="6"/>δια<unclear reason="undefined">τ</unclear>[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="7"/>κ[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="8"/>λ[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="9"/>[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="10"/>α[ <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="11"/>κ[α <gap reason="illegible" extent="unknown" unit="character"/> ] 
+
+    <lb n="12"/><gap reason="lost" extent="unknown" unit="line"/> </ab></div></div></body></text></TEI.2>

@@ -64,6 +64,7 @@ public class UnicodeCFilter extends TokenFilter {
         return t;
     }
     
+    @Override
     public Token next() throws IOException {
         return next(null);
     }

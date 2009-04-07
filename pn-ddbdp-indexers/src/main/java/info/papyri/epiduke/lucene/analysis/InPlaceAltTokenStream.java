@@ -14,6 +14,7 @@ public class InPlaceAltTokenStream extends TokenStream {
     public InPlaceAltTokenStream(TokenStream src){
 		this.src = src;
 	}
+    @Override
     public Token next(Token t) throws IOException {
         if(t == null) t = new Token();
         Token result = src.next(t);
@@ -28,6 +29,7 @@ public class InPlaceAltTokenStream extends TokenStream {
         }
         return result;
     }    
+    @Override
 	public Token next() throws IOException {
         return next(null);
 	}

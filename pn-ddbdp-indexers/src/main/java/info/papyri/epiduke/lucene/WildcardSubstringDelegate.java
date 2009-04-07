@@ -166,7 +166,7 @@ public class WildcardSubstringDelegate implements SubstringDelegate {
                 do {
                     Term term = enumerator.term();
                     if (term != null &&
-                            term.field() == substringField) // interned comparison 
+                            term.field().equals(substringField)) // interned comparison
                     {   
                         String text = term.text();
                         if (matches(text))result.add(text);
