@@ -11,7 +11,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.spi.Resolver;
 
-public class apisURLContext implements Context {
+public class jndiURLContext implements Context {
     public final static String DDBDP_DEFAULT = "http://www.perseus.tufts.edu/hopper/collection.jsp?collection=Perseus:collection:DDBDP";
     public final static String LDAB_DEFAULT = "http://ldab.arts.kuleuven.ac.be/ldab_text.php";
     public final static String APIS_DEFAULT = "http://www.columbia.edu/cgi-bin/cul/resolve?ATK2059";
@@ -19,7 +19,7 @@ public class apisURLContext implements Context {
     private static Resolver resolver;
     static final boolean debug = "true".equals(System.getProperty("pn.jndi.debug"));
     public static void setResolver(Resolver resolver){
-        apisURLContext.resolver = resolver;    
+        jndiURLContext.resolver = resolver;
     }
 
 
@@ -114,21 +114,21 @@ public class apisURLContext implements Context {
     }
 
     public Object lookup(Name arg0) throws NamingException {
-        if (debug) System.out.println("apisURLContext looking up Name " + arg0);
+        if (debug) System.out.println("jndiURLContext looking up Name " + arg0);
         Object result = null;
         if (resolver != null){
-            result = resolver.resolveToClass(arg0, apisURLContext.class).getResolvedObj();
+            result = resolver.resolveToClass(arg0, jndiURLContext.class).getResolvedObj();
             if (result != null) return result;
         }
-        if (debug) System.out.println("apisURLContext returning " + result);
+        if (debug) System.out.println("jndiURLContext returning " + result);
         return result;
     }
 
     public Object lookup(String arg0) throws NamingException {
-        if (debug) System.out.println("apisURLContext looking up String " + arg0);
+        if (debug) System.out.println("jndiURLContext looking up String " + arg0);
         Object result = null;
         if (resolver != null){
-            result = resolver.resolveToClass(arg0, apisURLContext.class).getResolvedObj();
+            result = resolver.resolveToClass(arg0, jndiURLContext.class).getResolvedObj();
             if (result != null) return result;
         }
         if ("apis".equals(arg0)){
@@ -143,7 +143,7 @@ public class apisURLContext implements Context {
         else if ("ldab".equals(arg0)){
             result = LDAB_DEFAULT;
         }
-        if (debug) System.out.println("apisURLContext returning " + result);
+        if (debug) System.out.println("jndiURLContext returning " + result);
         return result;
     }
 
