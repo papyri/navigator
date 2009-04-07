@@ -86,17 +86,17 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <version>10.2.2.0</version>
+            <version>10.1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
-            <version>10.2.2.0</version>
+            <version>10.1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbynet</artifactId>
-            <version>10.2.2.0</version>
+            <version>10.1.1.0</version>
         </dependency>
     </dependencies>
     <build>
@@ -109,6 +109,13 @@
                     <include>checklist.xml</include>
                     <include>ddbdp-perseus.xml</include>
                     <include>*.dtd</include>
+                </includes>
+            </resource>
+            <resource>
+                <targetPath>xml</targetPath>
+                <directory>/usr/local/pn/xml</directory>
+                <includes>
+                    <include>ddbdp.xml</include>
                 </includes>
             </resource>
         </resources>
