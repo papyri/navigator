@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -95,13 +96,14 @@ public class MetadataSearchPortlet extends GenericPortlet {
         }
     }
     
+    @Override
      protected void doView(RenderRequest request, RenderResponse response) throws PortletException, IOException {
         if (LuceneIndex.SEARCH_XREF == null){
             PrintWriter writer = response.getWriter();
             writer.println("{\"error\":\"XREF index unavailable\"}");
             return;
         }
-        
+
         boolean getResults = "results".equals(request.getParameter("pn-display-mode"));
         if (!getResults){
             PortletRequestDispatcher rd = this.getPortletContext().getRequestDispatcher("/WEB-INF/searchPortlet.jsp");

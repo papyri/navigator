@@ -31,7 +31,7 @@ public class DBUtils {
     "            PRIMARY KEY GENERATED ALWAYS AS IDENTITY" + 
     "            (START WITH 1, INCREMENT BY 1)," +
     "PERSEUS_ID VARCHAR(25)," +
-    "PUB_COLLECTION VARCHAR(20))";
+    "PUB_COLLECTION VARCHAR(30))";
     
     private static final String dropDDBDP = "DROP table APP.PERSEUS";
     

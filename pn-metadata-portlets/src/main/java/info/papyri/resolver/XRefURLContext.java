@@ -10,12 +10,12 @@ import javax.naming.CompoundName;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 import javax.naming.NamingException;
-import info.papyri.jndi.apisURLContext;
+import info.papyri.jndi.jndiURLContext;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.*;
 
-public class XRefURLContext extends apisURLContext {
+public class XRefURLContext extends jndiURLContext {
     final static Logger LOG = Logger.getLogger(XRefURLContext.class);
     final static Properties SYNTAX = getSyntax();
     final static Name OAI_ID = getName(NamespacePrefixes.ID_NS,SYNTAX);

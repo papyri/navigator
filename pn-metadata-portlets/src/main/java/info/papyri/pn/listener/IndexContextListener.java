@@ -19,7 +19,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 
-import info.papyri.jndi.apisURLContext;
+import info.papyri.jndi.jndiURLContext;
 import info.papyri.resolver.XRefResolver;
 
 public class IndexContextListener implements ServletContextListener {
@@ -64,7 +64,7 @@ public class IndexContextListener implements ServletContextListener {
             LuceneIndex.SEARCH_HGV = new IndexSearcher(LuceneIndex.INDEX_HGV);
             LuceneIndex.SEARCH_XREF = new IndexSearcher(LuceneIndex.INDEX_XREF);
             LuceneIndex.getIndexedValues();
-            apisURLContext.setResolver(new XRefResolver());
+            jndiURLContext.setResolver(new XRefResolver());
             initDerby(ddbdpData.toURL());
         }
         catch (Throwable t){

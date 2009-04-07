@@ -7,19 +7,19 @@
   <description>EXTREMELY Advanced Screen-Scraping</description>
   <context-param>
   	<param-name>apis-src</param-name>
-  	<param-value>${catalina.base}/temp/apis_oai</param-value>
+  	<param-value>/usr/local/pn/indices/apis</param-value>
   </context-param>
   <context-param>
   	<param-name>hgv-src</param-name>
-  	<param-value>${catalina.base}/temp/hgv_epidoc</param-value>
+  	<param-value>/usr/local/pn/indices/hgv</param-value>
   </context-param>
   <context-param>
   	<param-name>crosswalk-src</param-name>
-  	<param-value>${catalina.base}/temp/merge</param-value>
+  	<param-value>/usr/local/pn/indices/merge</param-value>
   </context-param>
   <context-param>
   	<param-name>ddbdp-src</param-name>
-  	<param-value>${catalina.base}/data/ddbdp.xml</param-value>
+  	<param-value>/usr/local/pn/xml/ddbdp.xml</param-value>
   </context-param>
   <listener>
   <listener-class>info.papyri.pn.listener.IndexContextListener</listener-class>

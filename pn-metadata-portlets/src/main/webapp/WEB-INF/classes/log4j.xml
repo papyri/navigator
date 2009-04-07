@@ -9,11 +9,11 @@
     </layout> 
   </appender> 
   <logger name="info.papyri" additivity="false">
-    <priority value ="debug" /> 
+    <priority value="info" /> 
     <appender-ref ref="console" /> 
   </logger>
   <root> 
-    <priority value ="debug" /> 
+    <priority value="info" /> 
     <appender-ref ref="console" /> 
   </root>
   
