@@ -185,4 +185,17 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <releases>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>dlibdev</id>
+            <name>NYU Digital Library Dev Server</name>
+            <url>http://dlibdev.nyu.edu/maven2</url>
+        </repository>
+    </repositories>
 </project>
