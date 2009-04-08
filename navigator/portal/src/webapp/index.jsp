@@ -45,11 +45,11 @@ color:#900;
 <div>
 <ul>
 <li><a href="portal/default-page.psml">Search for Metadata, Images and Duke Databank Transcriptions</a></li>
-<li><a href="portal/apisfull.psml?controlName=toronto.apis.17">See an example display for toronto.apis.17</a></li>
-<li><a href="portal/apisfull.psml?controlName=hermitage.apis.21">See an example display for hermitage.apis.21</a></li>
-<li><a href="portal/apisfull.psml?controlName=columbia.apis.p260">See an example display for columbia.apis.p260</a></li>
-<li><a href="portal/apisfull.psml?controlName=columbia.apis.1377">See an example display for columbia.apis.1377</a></li>
-<li><a href="portal/apisfull.psml?controlName=columbia.apis.p179">See an example display for columbia.apis.p179</a></li>
+<li><a href="portal/apisfull.psml?controlName=oai:papyri.info:identifiers:toronto.apis.17">See an example display for toronto.apis.17</a></li>
+<li><a href="portal/apisfull.psml?controlName=oai:papyri.info:identifiers:hermitage.apis.21">See an example display for hermitage.apis.21</a></li>
+<li><a href="portal/apisfull.psml?controlName=oai:papyri.info:identifiers:columbia.apis.p260">See an example display for columbia.apis.p260</a></li>
+<li><a href="portal/apisfull.psml?controlName=oai:papyri.info:identifiers:columbia.apis.1377">See an example display for columbia.apis.1377</a></li>
+<li><a href="portal/apisfull.psml?controlName=oai:papyri.info:identifiers:columbia.apis.p179">See an example display for columbia.apis.p179</a></li>
 </ul>
   </div>   
 <!--jsp:forward page="portal/"/-->
