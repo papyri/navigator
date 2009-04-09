@@ -14,6 +14,14 @@ Document doc = (Document)renderRequest.getAttribute(SupplementalMetadataPortlet.
    if (doc == null){
        doc = new Document();
    }
+
+    String[] xrefs = doc.getValues(CoreMetadataFields.XREFS);
+    Set<String> tmNumbers = new HashSet<String>();
+    for (String xref:xrefs) {
+        if (xref.contains("trismegistos")) {
+            tmNumbers.add(xref.substring(xref.lastIndexOf(':')+1));
+        }
+    }
    String xml = "/pn-portals/xml?controlName=" + doc.get(CoreMetadataFields.DOC_ID);
    %><tbody>
 <tr><th class="apis-portal-title" colspan="2">Metadata for <%=XREFPortlet.getDisplay(doc.get(CoreMetadataFields.DOC_ID)) %><a class="xml" href="<%=xml %>" target="_new">(xml)</a></th></tr>
@@ -77,7 +85,16 @@ Document doc = (Document)renderRequest.getAttribute(SupplementalMetadataPortlet.
       if (imgs != null){
     %>
 <tr><th class="rowheader">Images on the Web</th><td><%for(int i=0;i<imgs.length;i++)out.print(XMLEncoder.insertLinks(imgs[i],captions[i])+"<br/>"); %></td></tr>
-<%}   String ext = doc.get(CoreMetadataFields.EXTERNAL_RESOURCE);
+<%}   
+      for (String tm:tmNumbers) {
+%>
+<tr>
+    <th class="rowheader">TM Number</th>
+    <td><a href="http://www.trismegistos.org/tm/detail.php?quick=<%=tm%>"><%=tm%></a></td>
+</tr>
+    <%
+      }
+      String ext = doc.get(CoreMetadataFields.EXTERNAL_RESOURCE);
       if (ext != null){
     %>
 <tr><th class="rowheader">Internet Resources</th><td><%=XMLEncoder.insertLinks(ext,"link to resource") %></td></tr>

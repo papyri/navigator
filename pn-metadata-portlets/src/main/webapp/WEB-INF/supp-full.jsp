@@ -39,6 +39,13 @@ if (!id.startsWith(NamespacePrefixes.APIS)){
     dLabels = DisplayFields.apisDebugLabels;
 }
 Document doc = (Document)renderRequest.getAttribute(SupplementalMetadataPortlet.DOC_ATTR);
+String[] xrefs = doc.getValues(CoreMetadataFields.XREFS);
+Set<String> tmNumbers = new HashSet<String>();
+for (String xref:xrefs) {
+    if (xref.contains("trismegistos")) {
+        tmNumbers.add(xref.substring(xref.lastIndexOf(':')+1));
+    }
+}
 
    if (doc == null){
        doc = new Document();
@@ -157,6 +164,14 @@ for (int i =0; i<bibTrans.length; i++){
 		<td><%=XMLEncoder.insertLinks(ext,"link to image") %></td>
 	</tr>
 	<%}
+      for (String tm:tmNumbers) {
+    %>
+    <tr>
+        <th class="rowheader">TM Number</th>
+        <td><a href="http://www.trismegistos.org/tm/detail.php?quick=<%=tm%>"><%=tm%></a></td>
+    </tr>
+    <%
+    }
 
   if ("true".equals(request.getParameter("debug"))){
     for(int i=0;i<dFields.length;i++){
