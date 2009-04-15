@@ -1,5 +1,5 @@
 <%@ page language="java"%>
-<%@ page session="false" contentType="text/html" import="info.papyri.navigator.portlet.*,org.apache.lucene.document.*,java.util.*,javax.portlet.*" %>
+<%@ page session="false" contentType="text/html" import="info.papyri.navigator.portlet.*,org.apache.lucene.document.*,java.util.*,javax.portlet.*,info.papyri.util.JetspeedUrlRewriter" %>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
 <%!
 

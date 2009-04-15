@@ -13,8 +13,7 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
 public class ApisRequestListener implements ServletRequestListener {
-    private Context apisResolver;
-    private static final boolean DEBUG = "true".equals(System.getProperty("pn.jndi.debug"));
+    private static final boolean DEBUG = true; //"true".equals(System.getProperty("pn.jndi.debug"));
     public ApisRequestListener(){
         
     }
@@ -24,8 +23,8 @@ public class ApisRequestListener implements ServletRequestListener {
 
     }
 
-    public void requestInitialized(ServletRequestEvent arg0) {
-        ServletRequest req = arg0.getServletRequest();
+    public void requestInitialized(ServletRequestEvent event) {
+        ServletRequest req = event.getServletRequest();
         String cn = req.getParameter("controlName");
 
         String collection = req.getParameter("collection");
@@ -62,7 +61,6 @@ public class ApisRequestListener implements ServletRequestListener {
                 req.setAttribute("hgv/query", hgvq);
                 req.setAttribute("ddbdp/query", ddbdpq);
                 req.setAttribute("ldab/query", ldabq);
-
                 req.setAttribute("primary/query", primaryq);
                 req.setAttribute("supplemental/query", supplementq);
                 req.setAttribute("primary", primary);

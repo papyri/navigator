@@ -29,12 +29,16 @@
             <td class="LTabRight"  nowrap="nowrap">&nbsp;</td>
           #else
             <td class="LTabLeftLow"  nowrap="nowrap">&nbsp;</td>
-              #set($_tabUrl = $jetspeed.getAbsoluteUrl($element.url))
+            #set($_tabUrl = $jetspeed.getAbsoluteUrl($element.url))
             #if($_controlName && $_docPages)
-            <td class="LTabLow" align="center" valign="middle" nowrap="nowrap" title="$!tabTitle"><a href="${_tabUrl}?controlName=${_controlName}&collection=${_collection}">${tabTitle}<br/>${tabName}</a></td>
+              #set($tabUrl = "${_tabUrl}?controlName=${_controlName}&collection=${_collection}")
             #else
-            <td class="LTabLow" align="center" valign="middle" nowrap="nowrap" title="$!tabTitle"><a href="$_tabUrl">${tabTitle}<br/>${tabName}</a></td>
+              #set($tabUrl = ${_tabUrl})
             #end
+            #if($rewriter)
+              #set($tabUrl = $rewriter.rewriteUrl($tabUrl))
+            #end
+            <td class="LTabLow" align="center" valign="middle" nowrap="nowrap" title="$!tabTitle"><a href="$tabUrl">${tabTitle}<br/>${tabName}</a></td>
 
             <td class="LTabRightLow"  nowrap="nowrap">&nbsp;</td>
           #end
@@ -295,7 +299,7 @@
 #macro (PageTitle)
             #set($_controlName = $request.getParameter("controlName"))
             #set($_docId = "")
-            #if($$request.getAttribute("display"))
+            #if($request.getAttribute("display"))
             #set($_docId = $request.getAttribute("display"))
             #else
             #set($_docId = $_controlName)

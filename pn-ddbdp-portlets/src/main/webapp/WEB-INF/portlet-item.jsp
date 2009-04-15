@@ -1,4 +1,4 @@
-<%@ page language="java" pageEncoding="UTF-8" session="false" contentType="text/html; charset=UTF-8" import="java.util.*,info.papyri.ddbdp.servlet.IndexEventPropagator,info.papyri.ddbdp.servlet.ScriptSearch,javax.portlet.RenderRequest" %><%@taglib uri="http://java.sun.com/portlet" prefix="portlet"%><%@page import="info.papyri.ddbdp.servlet.IndexEventPropagator"%>
+<%@ page language="java" pageEncoding="UTF-8" session="false" contentType="text/html; charset=UTF-8" import="java.util.*,info.papyri.ddbdp.servlet.IndexEventPropagator,info.papyri.ddbdp.servlet.ScriptSearch,javax.portlet.RenderRequest,info.papyri.util.JetspeedUrlRewriter" %><%@taglib uri="http://java.sun.com/portlet" prefix="portlet"%><%@page import="info.papyri.ddbdp.servlet.IndexEventPropagator"%>
 <%@page import="info.papyri.ddbdp.portlet.SearchPortlet,org.apache.lucene.document.Document"%>
 <%@page import="info.papyri.metadata.CoreMetadataFields"%><%! String CSS_ATTR = "jsp:private:css"; %>
 <portlet:defineObjects/>
@@ -7,7 +7,8 @@ boolean nofrags = "on".equals(request.getParameter("nofrags"));
 RenderRequest rReq = (RenderRequest)renderRequest;
 String fname = (String)rReq.getAttribute(SearchPortlet.FNAME_ATTR);
 String ddbName = fname.substring(0,fname.length()-4);
-String id = (String)rReq.getAttribute(SearchPortlet.DDB_ID_ATTR);
+JetspeedUrlRewriter jur = new JetspeedUrlRewriter();
+String id = jur.rewriteId(rReq.getAttribute(SearchPortlet.DDB_ID_ATTR));
 String fragment = (String)rReq.getAttribute(SearchPortlet.FRAGMENT_ATTR);
 Document doc = (Document)rReq.getAttribute(SearchPortlet.RESULT_ITEM_ATTR);
 String css = (String)rReq.getAttribute(CSS_ATTR);
@@ -27,7 +28,7 @@ else{
     out.print("<td>&nbsp;</td>");
     //out.print("<td>" + doc.get(CoreMetadataFields.SORT_HAS_IMG) + "</td>");
 }
-        out.println("<td style=\"font-weight:bold;font-size:1.1em;\"><a href=\"portal/text.psml?controlName=" + id + "\" >" +  ddbName + "</a><a target=\"_new\" href=\"/ddbdp/html?identifier=" + id + "\">[html]</a></td>");
+        out.println("<td style=\"font-weight:bold;font-size:1.1em;\"><a href=\"text/" + id + "\" >" +  ddbName + "</a><a target=\"_new\" href=\"/ddbdp/html?identifier=" + id + "\">[html]</a></td>");
         out.print("<td>");
         String [] pubs = doc.getValues(CoreMetadataFields.BIBL_PUB);
         HashSet<String> pubSet = new HashSet<String>();

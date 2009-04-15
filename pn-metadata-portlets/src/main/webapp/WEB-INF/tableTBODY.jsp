@@ -1,4 +1,4 @@
-<%@page language="java" session="false" contentType="text/html" import="info.papyri.metadata.*,org.apache.lucene.search.*,org.apache.lucene.search.highlight.*,org.apache.lucene.index.*,org.apache.lucene.document.*,edu.columbia.apis.*,info.papyri.index.LuceneIndex,util.jsp.el.Functions,java.util.*,javax.portlet.*,info.papyri.navigator.portlet.*" pageEncoding="UTF-8"%>
+<%@page language="java" session="false" contentType="text/html" import="info.papyri.metadata.*,org.apache.lucene.search.*,org.apache.lucene.search.highlight.*,org.apache.lucene.index.*,org.apache.lucene.document.*,info.papyri.index.LuceneIndex,util.jsp.el.Functions,java.util.*,javax.portlet.*,info.papyri.navigator.portlet.*,info.papyri.util.JetspeedUrlRewriter" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%><%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@taglib uri="tld/el-functions.tld" prefix="custom"%>
 <portlet:defineObjects/>
 <%!
@@ -10,11 +10,8 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
 <%
                     Document xrefDoc = (Document)request.getAttribute(MetadataSearchPortlet.XREF_DOC);
                     Object docNo = request.getAttribute(MetadataSearchPortlet.XREF_PAGE_DOC_NUMBER);
-                    String detailURL = request.getAttribute(NavigatorPortlet.XREF_REQ_URL).toString();
-                    if (detailURL.indexOf(".psml") == -1){
-                        detailURL = detailURL + "/apisfull.psml";
-                    }
-                    else detailURL = detailURL.replaceAll("\\/[\\w-]+\\.psml","/apisfull.psml");
+                    JetspeedUrlRewriter jur = new JetspeedUrlRewriter();
+                    String detailURL = "/navigator/full/";
                     int pageDocIndex = (docNo == null)?0:(Integer)docNo;
                     String docId = xrefDoc.get(CoreMetadataFields.DOC_ID);
                     String apisDisplay = XREFPortlet.getDisplay(docId);
@@ -37,7 +34,7 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
                     if(docId.indexOf(":hgv:") != -1){ 
                         detailId = docId;
                     }
-                    detailId = Functions.encode(detailId);
+                    detailId = jur.rewriteId(detailId);
                     String title = "";
                     String archive = "";
                     boolean apisImg = CoreMetadataFields.SORTABLE_YES_VALUE.equals(xrefDoc.get(CoreMetadataFields.SORT_HAS_IMG));
@@ -68,7 +65,7 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
                         String pl = docId.substring(NamespacePrefixes.HGV.length()).replaceAll("%20"," ").replaceAll(":"," ");
                         for (int i = 0; i < publication.length; i++){
                             if (pl.equals(publication[i])){
-                                publication[i] = "<b class=\"preferred-pub\"><a href=\"" + detailURL + "?controlName=" + Functions.encode(docId) + "\">"+  publication[i] + "</a></b>";
+                                publication[i] = "<b class=\"preferred-pub\"><a href=\"" + detailURL + jur.rewriteId(docId) + "\">"+  publication[i] + "</a></b>";
                                 break;
                             }
                         }
@@ -85,7 +82,7 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
                             }
                             for (int i = 0; i < publication.length; i++){
                                 if (pl.equals(publication[i])){
-                                    publication[i] = "<b class=\"preferred-pub\"><a href=\"" + detailURL + "?controlName=" + Functions.encode(id) + "\">"+  publication[i] + "</a></b>";
+                                    publication[i] = "<b class=\"preferred-pub\"><a href=\"" + detailURL + jur.rewriteId(id) + "\">"+  publication[i] + "</a></b>";
                                     break;
                                 }
                             }
@@ -97,7 +94,7 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
 	                      <td>
 	                      <%if (apisImg || hgvImg){ %><img src="/pn-portals/iavail.gif" alt="Image available" /><%} %>
 	                      </td>
-	                      <td><a href="<%=detailURL + "?controlName=" + detailId %>">[view]</a><br/>
+	                      <td><a href="<%=detailURL + detailId %>">[view]</a><br/>
 	                      </td>
 	                      <td class="metadatalinks">
 	                        <span><%=apisDisplay %></span>

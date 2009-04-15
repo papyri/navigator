@@ -35,10 +35,13 @@ limitations under the License.
 ##            type="text/javascript"></script>
 ##         <script src="/pn-portals/numbers?${request.getRequest().getQueryString().replaceAll("&","&amp;")}" type="text/javascript"></script>
 ##end
-#if($request.getParameter("exhibit") == "metadata")
+##if($request.getParameter("exhibit") == "metadata")
 ##         <script src="/pn-portals/api/exhibit-api.js?bundle=false"
 ##            type="text/javascript"></script>
 ##         <script src="/pn-portals/metadata?${request.getRequest().getQueryString().replaceAll("&","&amp;")}" type="text/javascript"></script>
+##end
+#if($request.getAttribute("url-rewriter"))
+#set($rewriter = $request.getAttribute("url-rewriter"))
 #end
 #if($request.getParameter("controlName"))
 #set($cnValue = $request.getParameter("controlName").trim())
@@ -60,7 +63,7 @@ limitations under the License.
     <meta name="keywords" content="" />
     <meta name="description" content="#PageDescription()" />
   </head>
-#if($request.getParameter("exhibit") == "numbers")
+#if($request.getParameter("exhibit") && $request.getParameter("exhibit") == "numbers")
   <body class="#PageBaseCSSClass()" onload="Exhibit.create(PN_EXHIBIT_DATA, 'Search Result');">
 #else
   <body class="#PageBaseCSSClass()">
@@ -130,7 +133,7 @@ limitations under the License.
 #if(!$documentMenu.empty && $request.getParameter("controlName"))
 #includeTabsNavigation($documentMenu $LEFT_TO_RIGHT true)
 #end
-#if(!$resultsMenu.empty && $request.getParameter("pn-display-mode") == "results")
+#if(!$resultsMenu.empty && $request.getParameter("pn-display-mode") && $request.getParameter("pn-display-mode") == "results")
 #includeResultsTabsNavigation($resultsMenu $LEFT_TO_RIGHT)
 #end
 #includeNewsTab()

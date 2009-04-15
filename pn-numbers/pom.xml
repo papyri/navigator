@@ -76,6 +76,11 @@
         </dependency>
         <dependency>
             <groupId>info.papyri</groupId>
+            <artifactId>pn-jndi</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>info.papyri</groupId>
             <artifactId>pn-metadata-indexers</artifactId>
             <version>1.0</version>
             <exclusions>

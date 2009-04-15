@@ -1,4 +1,4 @@
-<%@page language="java" session="false" contentType="text/html" import="info.papyri.navigator.portlet.*,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,info.papyri.index.*,util.jsp.el.Functions,java.util.*,javax.portlet.*" pageEncoding="UTF-8"%>
+<%@page language="java" session="false" contentType="text/html" import="info.papyri.navigator.portlet.*,org.apache.lucene.search.*,org.apache.lucene.index.*,org.apache.lucene.document.*,info.papyri.index.*,util.jsp.el.Functions,java.util.*,javax.portlet.*,info.papyri.util.JetspeedUrlRewriter" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%><%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@taglib uri="tld/el-functions.tld" prefix="custom"%><%@page import="info.papyri.metadata.CoreMetadataFields"%>
 <%@page import="info.papyri.metadata.NamespacePrefixes"%>
 <portlet:defineObjects/>
@@ -11,11 +11,8 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
 <%
                     org.apache.lucene.document.Document doc = (Document)request.getAttribute(MetadataSearchPortlet.XREF_DOC);
                     int pageDocIndex = (Integer)request.getAttribute(MetadataSearchPortlet.XREF_PAGE_DOC_NUMBER);
-                    String detailURL = request.getAttribute(NavigatorPortlet.XREF_REQ_URL).toString();
-                    if (detailURL.indexOf(".psml") == -1){
-                        detailURL = detailURL + "/apisfull.psml";
-                    }
-                    else detailURL = detailURL.replaceAll("\\/[\\w-]+\\.psml","/apisfull.psml");
+                    JetspeedUrlRewriter jur = new JetspeedUrlRewriter();
+                    String detailURL = "/navigator/full/";
                     String apisId = doc.get(CoreMetadataFields.DOC_ID);
                     String apisDisplay = apisId;
                     TreeSet<String> hgvs = new TreeSet<String>();
@@ -88,7 +85,7 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
                             pl = pl.replaceAll(":"," ").replaceAll("%20"," ");
                             for (int i = 0; i < publication.length; i++){
                                 if (pl.equals(publication[i])){
-                                    publication[i] = "<b class=\"preferred-pub\"><a href=\"" + detailURL + "?controlName=" + hgvName + "\">"+  publication[i] + "</a></b>";
+                                    publication[i] = "<b class=\"preferred-pub\"><a href=\"" + detailURL + jur.rewriteId(hgvName) + "\">"+  publication[i] + "</a></b>";
                                     break;
                                 }
                             }
@@ -135,9 +132,9 @@ String DDB_LINK_ICON = "<img src=\"decorations/images/external.gif\" alt=\"link 
 	                      if(apisId.startsWith(NamespacePrefixes.APIS + "none")){ 
 	                          detailId = hgvId[0];
 	                      }
-	                      detailId = Functions.encode(detailId);
+                          detailId = jur.rewriteId(detailId);
 	                      %>
-	                      <a href="<%=detailURL + "?controlName=" + detailId %>">[view]</a>
+	                      <a href="<%=detailURL + detailId %>">[view]</a>
 	                      </td>
 	                      <td class="metadatalinks" rowspan="2">
 	                        <b>Identifiers:</b>

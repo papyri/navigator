@@ -56,7 +56,7 @@ the root of your decortaion.  This will be used instead of the default.
       #if ($linkTypeAtt)
       ##<a href="${request.getAttribute($link)}">${linkTypeAtt}</a>
       <a href="${request.getAttribute($link)}">[source]</a>
-      <a href="portal/apisfull.psml?controlName=${request.getAttribute($linkType)}">[navigate]</a>
+      <a href="full/${rewriter.rewriteId($request.getAttribute($linkType))}">[navigate]</a>
       #end
       #end
 <!--

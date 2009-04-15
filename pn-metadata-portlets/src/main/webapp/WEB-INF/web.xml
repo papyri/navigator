@@ -3,76 +3,76 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4">
-      <display-name>papyri.info:navigator</display-name>
-  <description>EXTREMELY Advanced Screen-Scraping</description>
-  <context-param>
-  	<param-name>apis-src</param-name>
-  	<param-value>/usr/local/pn/indices/apis</param-value>
-  </context-param>
-  <context-param>
-  	<param-name>hgv-src</param-name>
-  	<param-value>/usr/local/pn/indices/hgv</param-value>
-  </context-param>
-  <context-param>
-  	<param-name>crosswalk-src</param-name>
-  	<param-value>/usr/local/pn/indices/merge</param-value>
-  </context-param>
-  <context-param>
-  	<param-name>ddbdp-src</param-name>
-  	<param-value>/usr/local/pn/xml/ddbdp.xml</param-value>
-  </context-param>
-  <listener>
-  <listener-class>info.papyri.pn.listener.IndexContextListener</listener-class>
-  </listener>
+    <display-name>papyri.info:navigator</display-name>
+    <description>EXTREMELY Advanced Screen-Scraping</description>
+    <context-param>
+        <param-name>apis-src</param-name>
+        <param-value>/usr/local/pn/indices/apis</param-value>
+    </context-param>
+    <context-param>
+        <param-name>hgv-src</param-name>
+        <param-value>/usr/local/pn/indices/hgv</param-value>
+    </context-param>
+    <context-param>
+        <param-name>crosswalk-src</param-name>
+        <param-value>/usr/local/pn/indices/merge</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ddbdp-src</param-name>
+        <param-value>/usr/local/pn/xml/ddbdp.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>info.papyri.pn.listener.IndexContextListener</listener-class>
+    </listener>
 
-  <servlet>
-      <servlet-name>xml</servlet-name>
-      <servlet-class>info.papyri.navigator.servlet.XMLServlet</servlet-class>
-  </servlet>
+    <servlet>
+        <servlet-name>xml</servlet-name>
+        <servlet-class>info.papyri.navigator.servlet.XMLServlet</servlet-class>
+    </servlet>
 
-  <servlet-mapping>
-      <servlet-name>xml</servlet-name>
-    <url-pattern>/xml</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>xml</servlet-name>
+        <url-pattern>/xml</url-pattern>
+    </servlet-mapping>
   
-        <jsp-config>
+    <jsp-config>
         <taglib>
-          <taglib-uri>http://java.sun.com/portlet</taglib-uri>
-          <taglib-location>/WEB-INF/tld/portletTaglib.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/portlet</taglib-uri>
+            <taglib-location>/WEB-INF/tld/portletTaglib.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/fmt</taglib-uri>
-          <taglib-location>/WEB-INF/fmt.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/fmt</taglib-uri>
+            <taglib-location>/WEB-INF/fmt.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/fmt-rt</taglib-uri>
-          <taglib-location>/WEB-INF/fmt-rt.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/fmt-rt</taglib-uri>
+            <taglib-location>/WEB-INF/fmt-rt.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
-          <taglib-location>/WEB-INF/c.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
+            <taglib-location>/WEB-INF/c.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/core-rt</taglib-uri>
-          <taglib-location>/WEB-INF/c-rt.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/core-rt</taglib-uri>
+            <taglib-location>/WEB-INF/c-rt.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/sql</taglib-uri>
-          <taglib-location>/WEB-INF/sql.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/sql</taglib-uri>
+            <taglib-location>/WEB-INF/sql.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/sql-rt</taglib-uri>
-          <taglib-location>/WEB-INF/sql-rt.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/sql-rt</taglib-uri>
+            <taglib-location>/WEB-INF/sql-rt.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/x</taglib-uri>
-          <taglib-location>/WEB-INF/x.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/x</taglib-uri>
+            <taglib-location>/WEB-INF/x.tld</taglib-location>
         </taglib>
         <taglib>
-          <taglib-uri>http://java.sun.com/jstl/x-rt</taglib-uri>
-          <taglib-location>/WEB-INF/x-rt.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jstl/x-rt</taglib-uri>
+            <taglib-location>/WEB-INF/x-rt.tld</taglib-location>
         </taglib>
-        </jsp-config>
+    </jsp-config>
 
   
   
