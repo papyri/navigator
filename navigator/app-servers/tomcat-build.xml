@@ -291,7 +291,6 @@ limitations under the License.
     </target>
 
     <target name="deploy-shared-components">
-        <!-- deploy embedded derby database in shared/lib -->
         <delete>
             <fileset dir="${org.apache.jetspeed.server.home}/shared/lib">
                 <include name="pluto-*.jar"/>
@@ -391,11 +390,6 @@ limitations under the License.
           <param name="org.apache.jetspeed.deploy.groupid" value="org.apache.derby"/>
           <param name="org.apache.jetspeed.deploy.artifactid" value="derby"/>
           <param name="org.apache.jetspeed.deploy.version" value="${org.apache.derby.version}"/>
-        </antcall>
-        <antcall target="hot-deploy-shared-jar">
-          <param name="org.apache.jetspeed.deploy.groupid" value="info.papyri"/>
-          <param name="org.apache.jetspeed.deploy.artifactid" value="pn-jndi"/>
-          <param name="org.apache.jetspeed.deploy.version" value="1.0"/>
         </antcall>
     </target>
 
