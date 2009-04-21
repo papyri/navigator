@@ -195,6 +195,11 @@ limitations under the License.
             <url>http://www.ibiblio.org/maven2</url>
             <layout>legacy</layout>
         </repository>
+        <repository>
+          <id>dlibdev</id>
+          <name>NYU Digital Library Dev Repository</name>
+          <url>http://dlibdev.nyu.edu/maven2</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
