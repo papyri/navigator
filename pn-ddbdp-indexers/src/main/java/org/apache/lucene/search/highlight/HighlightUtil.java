@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -14,7 +15,13 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.util.PriorityQueue;
 import org.apache.lucene.analysis.CachingTokenFilter;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.index.memory.MemoryIndex;
+import org.apache.lucene.search.spans.SpanQuery;
 import info.papyri.epiduke.lucene.analysis.CopyingTokenFilter;
+
+import org.apache.log4j.Logger;
 
 public abstract class HighlightUtil {
 
@@ -27,6 +34,8 @@ public abstract class HighlightUtil {
     private static final FastHTMLFormatter formatter = FastHTMLFormatter.THREADSAFE_FORMATTER;
     private static final BracketEncoder encoder = BracketEncoder.THREADSAFE_ENCODER;
     private static final Pattern LINE_TOKEN = Pattern.compile("&LINE-[A-Za-z0-9]+;");
+    private static final Logger LOG = Logger.getLogger(HighlightUtil.class);
+    private static final HashMap readers = new HashMap();
 
     public static final TextFragment[] getBestTextFragmentsNoGroup(
             CachingTokenFilter cache,
@@ -324,12 +333,14 @@ public abstract class HighlightUtil {
         return docFrags;
     }
 
+    //TODO: debug this method!
     public static final BuilderTextFragment[] insureTextFragments(
             CachingTokenFilter tokens,
             final String text,
             LineFragmenter textFragmenter,
             SpanScorer fragmentScorer)
             throws IOException {
+        LOG.debug("Matching: "+text);
         char[] textChars = text.toCharArray();
         int probableFragSize = 0;
         Matcher match = LINE_TOKEN.matcher(text);
@@ -344,10 +355,11 @@ public abstract class HighlightUtil {
         BuilderTextFragment currentFrag = new BuilderTextFragment(newText, newText.length(), docFrags.length);
         fragmentScorer.startFragment(currentFrag);
         CachingTokenFilter cache = new CopyingTokenFilter(tokens);
-        cache.next();
+        Token token = new Token();
+        cache.next(token);
         cache.reset();
         try {
-            Token token = cache.next();
+            token = cache.next(token);
             Token hangingToken = null;
             char[] tokenText;
             int startOffset = 0;
@@ -373,6 +385,8 @@ public abstract class HighlightUtil {
                 }
 
                 if (textFragmenter.isNewFragment(token)) {
+                    LOG.debug("textFragmenter.isNewFragment");
+                    LOG.debug("Fragment score: "+fragmentScorer.getFragmentScore());
                     currentFrag.setScore(fragmentScorer.getFragmentScore());
                     //record stats for a new fragment
                     currentFrag.textEndPos = newText.length();
@@ -389,6 +403,8 @@ public abstract class HighlightUtil {
                         for (int i = 0; i < docFrags.length; i++) {
                             if (docFrags[i] != null) {
                                 docFrags[next++] = docFrags[i];
+                            } else {
+                                LOG.debug("docFrags["+i+"] is null");
                             }
                         }
                         if (next == docFrags.length) {
@@ -401,6 +417,7 @@ public abstract class HighlightUtil {
                     currentFrag = (BuilderTextFragment) docFrags[docFragCtr];
                     fragmentScorer.startFragment(currentFrag);
                 } else {
+
                     if (docFragCtr == 0 && docFrags[0] == null) {
                         docFragCtr = 0;
                         docFrags[0] = currentFrag;
@@ -436,7 +453,13 @@ public abstract class HighlightUtil {
                     hangingToken = token;
                 }
                 currentFrag.setScore(fragmentScorer.getFragmentScore());
-            } while (((token = cache.next()) != null)); // thruMaxChars
+                token = cache.next(token);
+                if (token != null) {
+                    LOG.debug("Token: "+token.toString());
+                } else {
+                    LOG.debug("Token is null");
+                }
+            } while ((token != null)); // thruMaxChars
 
             lastToken:
             if (hangingToken != null && docFragCtr < docFrags.length) {
@@ -475,15 +498,10 @@ public abstract class HighlightUtil {
             }
 
             currentFrag.textEndPos = newText.length();
-        } finally {
-            if (tokens != null) {
-                try {
-                    //tokenStream.close();
-                } catch (Exception e) {
-                }
-
-            }
+        } catch (Exception e) {
+            LOG.error(e.toString(), e);
         }
+        if (nullArray(docFrags)) LOG.debug("insureTextFragments returning array of nulls");
 
         return docFrags;
     }
@@ -509,6 +527,7 @@ public abstract class HighlightUtil {
                 continue;
             }
             if (docFrags[i].getScore() == 0) {
+                LOG.debug("Setting docFrags["+i+"] to null.");
                 docFrags[i] = null;
             } else {
                 ctr++;
@@ -536,6 +555,22 @@ public abstract class HighlightUtil {
         return frag;
     }
 
+    /*
+     * Copied from source of WeightedSpanTermExtractor
+     */
+    private static IndexReader getReaderForField(String field, CachingTokenFilter cachedTokenFilter) {
+        IndexReader reader = (IndexReader) readers.get(field);
+        if (reader == null) {
+          MemoryIndex indexer = new MemoryIndex();
+          indexer.addField(field, cachedTokenFilter);
+          IndexSearcher searcher = indexer.createSearcher();
+          reader = searcher.getIndexReader();
+          readers.put(field, reader);
+        }
+        return reader;
+      }
+
+    //Entry point for SearchPortlet
     public static final TextFragment[] getBestTextFragmentsNoGroup(
             CachingTokenFilter cache,
             final String texty,
@@ -545,20 +580,30 @@ public abstract class HighlightUtil {
             final boolean mergeContiguousFragments,
             int maxNumFragments)
             throws IOException {
-        SpanScorer scorer = new SpanScorer(query, field, cache);
+        SpanQuery spanQuery = (SpanQuery)query.rewrite(getReaderForField(field, cache));
+        SpanScorer scorer = new SpanScorer(spanQuery, field, cache);
         cache.reset();
+        //TODO: check docFrags array for nulls
         BuilderTextFragment[] docFrags = insureTextFragments(cache, texty, textFragmenter, scorer);
+        if (nullArray(docFrags)) {
+            LOG.debug("insureTextFragments returned array of nulls");
+        } else {
+            LOG.debug("docFrags not nulls after insureTextFragments");
+        }
 //            BuilderTextFragment [] docFrags = getTextFragments(cache, texty, textFragmenter, scorer);
         if (docFrags.length == 0) {
+            LOG.debug("insureTextFragments returned 0 fragments");
             return docFrags;
         }
 
         //return the most relevant fragments
         for (int i = 0; i < docFrags.length; i++) {
             if (docFrags[i] != null && docFrags[i].getScore() == 0) {
+                LOG.debug("Setting docFrags["+i+"] to null because score == 0");
                 docFrags[i] = null;
             }
         }
+        if (nullArray(docFrags)) LOG.debug("getBestTextFragmentsNoGroup set all "+docFrags.length+"docFrags to null");
 
 
         //merge any contiguous fragments to improve readability
@@ -576,8 +621,11 @@ public abstract class HighlightUtil {
                 docFrags = fragTexts;
             }
         }
+        LOG.debug("docFrags length is "+docFrags.length);
 
         TextFragment[] frag = getTopFromQueue(docFrags, maxNumFragments);
+
+        LOG.debug("Returning "+frag.length+" text fragments.");
 
         return frag;
     }
@@ -633,10 +681,6 @@ public abstract class HighlightUtil {
                             }
                         }
 //                        System.out.println("Merging required...");
-                        try {
-                            //tokens.reset();
-                        } catch (Throwable t) {
-                        }
                         float test = (scorer == null) ? (Math.max(frag1.score, frag2.score) + 0.1f) : testMerge(frag1, frag2, cache, scorer);
                         if (test > frag1.score && test > frag2.score) {
                             if (frag1.score > frag2.score) {
@@ -661,6 +705,7 @@ public abstract class HighlightUtil {
     }
 
     private static int mergeContiguousFragments(BuilderTextFragment[] frag, Query query, String field, CachingTokenFilter cache, SpanScorer scorer) throws IOException {
+        if (nullArray(frag)) LOG.debug("mergeContiguousFragments got null array");
         boolean mergingStillBeingDone;
         int merged = frag.length;
         if (frag.length > 1) {
@@ -725,7 +770,17 @@ public abstract class HighlightUtil {
                 }
             } while (mergingStillBeingDone);
         }
+        if (nullArray(frag)) LOG.debug("mergeContiguousFragments returning null array.");
         return merged;
+    }
+
+    private static boolean nullArray(Object[] stuff) {
+        for (Object o:stuff) {
+            if (o != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     static boolean tokenEquals(Token t1, Token t2) {
@@ -791,6 +846,7 @@ public abstract class HighlightUtil {
         if (last1 != 0 && second2 != 0 && score == max) {
             score += .1f;
         }
+        LOG.debug("testMerge scores: "+score+", "+max);
         return Math.max(score, max);
     }
 
@@ -800,6 +856,12 @@ public abstract class HighlightUtil {
             if (i != null && i.getScore() > 0) {
                 fragQueue.insert(i);
             }
+            if (i == null) {
+                LOG.debug("Null text fragment");
+            } else {
+                LOG.debug("Fragment "+i.getFragNum()+" score: "+i.getScore());
+            }
+
         }
 
         //return the most relevant fragments
