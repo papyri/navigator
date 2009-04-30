@@ -1,21 +1,5 @@
 package org.apache.lucene.search.highlight;
 
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,11 +32,14 @@ import org.apache.lucene.search.spans.SpanOrQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.apache.lucene.search.spans.Spans;
-import info.papyri.epiduke.lucene.spans.SubstringSpanTermQuery;
+
 /**
  * Class used to extract {@link WeightedSpanTerm}s from a {@link Query} based on whether Terms from the query are contained in a supplied TokenStream.
+ *
+ * WARNING: this class is a copy of WeightedSpanTermExtractor, with the single exception of a query rewrite added to a private method.
+ * TODO: revisit whenever Lucene is upgraded.
  */
-public class WeightedSpanTermExtractor {
+public class PNWeightedSpanTermExtractor {
 
     private String fieldName;
     private CachingTokenFilter cachedTokenFilter;
@@ -60,10 +47,10 @@ public class WeightedSpanTermExtractor {
     private String defaultField;
     private boolean highlightCnstScrRngQuery;
 
-    public WeightedSpanTermExtractor() {
+    public PNWeightedSpanTermExtractor() {
     }
 
-    public WeightedSpanTermExtractor(String defaultField) {
+    public PNWeightedSpanTermExtractor(String defaultField) {
         if (defaultField != null) {
             this.defaultField = defaultField.intern();
         }
@@ -85,7 +72,7 @@ public class WeightedSpanTermExtractor {
 
     /**
      * Fills a <code>Map</code> with <@link WeightedSpanTerm>s using the terms from the supplied <code>Query</code>.
-     * 
+     *
      * @param query
      *          Query to extract Terms from
      * @param terms
@@ -165,8 +152,7 @@ public class WeightedSpanTermExtractor {
                 for (int i = 0; i < disjunctLists.length; ++i) {
                     List disjuncts = disjunctLists[i];
                     if (disjuncts != null) {
-                        clauses[position++] = new SpanOrQuery((SpanQuery[]) disjuncts
-                                .toArray(new SpanQuery[disjuncts.size()]));
+                        clauses[position++] = new SpanOrQuery((SpanQuery[]) disjuncts.toArray(new SpanQuery[disjuncts.size()]));
                     } else {
                         ++positionGaps;
                     }
@@ -179,13 +165,13 @@ public class WeightedSpanTermExtractor {
                 sp.setBoost(query.getBoost());
                 extractWeightedSpanTerms(terms, sp);
             }
-        } else if (query instanceof ConstantScoreRangeQuery) {
+        } else if (highlightCnstScrRngQuery && query instanceof ConstantScoreRangeQuery) {
             ConstantScoreRangeQuery q = (ConstantScoreRangeQuery) query;
             Term lower = new Term(fieldName, q.getLowerVal());
             Term upper = new Term(fieldName, q.getUpperVal());
             FilterIndexReader fir = new FilterIndexReader(getReaderForField(fieldName));
-            TermEnum te = fir.terms(lower);
             try {
+                TermEnum te = fir.terms(lower);
                 BooleanQuery bq = new BooleanQuery();
                 do {
                     Term term = te.term();
@@ -198,14 +184,13 @@ public class WeightedSpanTermExtractor {
                 extract(bq, terms);
             } finally {
                 fir.close();
-                te.close();
             }
-        } 
+        }
     }
 
     /**
      * Fills a <code>Map</code> with <@link WeightedSpanTerm>s using the terms from the supplied <code>SpanQuery</code>.
-     * 
+     *
      * @param terms
      *          Map to place created WeightedSpanTerms in
      * @param spanQuery
@@ -215,11 +200,12 @@ public class WeightedSpanTermExtractor {
     private void extractWeightedSpanTerms(Map terms, SpanQuery spanQuery) throws IOException {
         Set nonWeightedTerms = new HashSet();
         // TODO rewrite for substrings?
-        if(fieldName != null){
+        if (fieldName != null) {
             IndexReader reader = getReaderForField(fieldName);
-            spanQuery = (SpanQuery)spanQuery.rewrite(reader);
+            spanQuery = (SpanQuery) spanQuery.rewrite(reader);
         }
         spanQuery.extractTerms(nonWeightedTerms);
+
         Set fieldNames;
 
         if (fieldName == null) {
@@ -236,22 +222,24 @@ public class WeightedSpanTermExtractor {
         if (defaultField != null) {
             fieldNames.add(defaultField);
         }
+
         Iterator it = fieldNames.iterator();
         List spanPositions = new ArrayList();
 
         while (it.hasNext()) {
             String field = (String) it.next();
 
-            IndexReader fldReader = getReaderForField(field);
-            Spans spans = spanQuery.getSpans(fldReader);
+            IndexReader reader = getReaderForField(field);
+            Spans spans = spanQuery.getSpans(reader);
 
             // collect span positions
             while (spans.next()) {
-                spanPositions.add(new WeightedSpanTerm.PositionSpan(spans.start(), spans.end() - 1));
+                spanPositions.add(new PositionSpan(spans.start(), spans.end() - 1));
             }
 
             cachedTokenFilter.reset();
         }
+
         if (spanPositions.size() == 0) {
             // no spans found
             return;
@@ -279,7 +267,7 @@ public class WeightedSpanTermExtractor {
 
     /**
      * Fills a <code>Map</code> with <@link WeightedSpanTerm>s using the terms from the supplied <code>Query</code>.
-     * 
+     *
      * @param terms
      *          Map to place created WeightedSpanTerms in
      * @param query
@@ -289,6 +277,7 @@ public class WeightedSpanTermExtractor {
     private void extractWeightedTerms(Map terms, Query query) throws IOException {
         Set nonWeightedTerms = new HashSet();
         query.extractTerms(nonWeightedTerms);
+
         for (Iterator iter = nonWeightedTerms.iterator(); iter.hasNext();) {
             Term queryTerm = (Term) iter.next();
 
@@ -303,8 +292,7 @@ public class WeightedSpanTermExtractor {
      * Necessary to implement matches for queries against <code>defaultField</code>
      */
     private boolean fieldNameComparator(String fieldNameToCheck) {
-        boolean rv = fieldName == null || fieldNameToCheck == fieldName
-        || fieldNameToCheck == defaultField;
+        boolean rv = fieldName == null || fieldNameToCheck == fieldName || fieldNameToCheck == defaultField;
         return rv;
     }
 
@@ -322,9 +310,9 @@ public class WeightedSpanTermExtractor {
 
     /**
      * Creates a Map of <code>WeightedSpanTerms</code> from the given <code>Query</code> and <code>TokenStream</code>.
-     * 
+     *
      * <p>
-     * 
+     *
      * @param query
      *          that caused hit
      * @param tokenStream
@@ -333,7 +321,7 @@ public class WeightedSpanTermExtractor {
      * @throws IOException
      */
     public Map getWeightedSpanTerms(Query query, CachingTokenFilter cachingTokenFilter)
-    throws IOException {
+            throws IOException {
         this.fieldName = null;
         this.cachedTokenFilter = cachingTokenFilter;
 
@@ -346,30 +334,12 @@ public class WeightedSpanTermExtractor {
 
         return terms;
     }
-//    public Map getRewrittenWeightedSpanTerms(SpanQuery query, String field, CachingTokenFilter cachingTokenFilter)
-//    throws IOException {
-//    	System.out.println("getRewrittenWeightedSpanTerms");
-//
-//        MemoryIndex indexer = new MemoryIndex();
-//        indexer.addField(field, cachingTokenFilter);
-//        IndexSearcher searcher = indexer.createSearcher();
-//        IndexReader reader = searcher.getIndexReader();
-//        try {
-//        	query = (SpanQuery)query.rewrite(reader);
-//        	cachingTokenFilter.reset();
-//            Map terms =  getWeightedSpanTerms(query,cachingTokenFilter,field);
-//        	System.out.println("getRewrittenWeightedSpanTerms: " + terms.size() + " terms");
-//        	return terms;
-//        } finally {
-//            reader.close();
-//        }
-//    }
 
     /**
      * Creates a Map of <code>WeightedSpanTerms</code> from the given <code>Query</code> and <code>TokenStream</code>.
-     * 
+     *
      * <p>
-     * 
+     *
      * @param query
      *          that caused hit
      * @param tokenStream
@@ -392,15 +362,16 @@ public class WeightedSpanTermExtractor {
         } finally {
             closeReaders();
         }
+
         return terms;
     }
 
     /**
      * Creates a Map of <code>WeightedSpanTerms</code> from the given <code>Query</code> and <code>TokenStream</code>. Uses a supplied
      * <code>IndexReader</code> to properly weight terms (for gradient highlighting).
-     * 
+     *
      * <p>
-     * 
+     *
      * @param query
      *          that caused hit
      * @param tokenStream
@@ -428,7 +399,10 @@ public class WeightedSpanTermExtractor {
             while (it.hasNext()) {
                 WeightedSpanTerm weightedSpanTerm = (WeightedSpanTerm) terms.get(it.next());
                 int docFreq = reader.docFreq(new Term(fieldName, weightedSpanTerm.term));
-
+                // docFreq counts deletes
+                if (totalNumDocs < docFreq) {
+                    docFreq = totalNumDocs;
+                }
                 // IDF algorithm taken from DefaultSimilarity class
                 float idf = (float) (Math.log((float) totalNumDocs / (double) (docFreq + 1)) + 1.0);
                 weightedSpanTerm.weight *= idf;
@@ -455,6 +429,7 @@ public class WeightedSpanTermExtractor {
      */
     private class PositionCheckingMap extends HashMap {
 
+        @Override
         public void putAll(Map m) {
             Iterator it = m.keySet().iterator();
             while (it.hasNext()) {
@@ -464,16 +439,18 @@ public class WeightedSpanTermExtractor {
             }
         }
 
+        @Override
         public Object put(Object key, Object value) {
             Object prev = super.put(key, value);
-            if (prev == null) return prev;
-            WeightedSpanTerm prevTerm = (WeightedSpanTerm)prev;
-            WeightedSpanTerm newTerm = (WeightedSpanTerm)value;
+            if (prev == null) {
+                return prev;
+            }
+            WeightedSpanTerm prevTerm = (WeightedSpanTerm) prev;
+            WeightedSpanTerm newTerm = (WeightedSpanTerm) value;
             if (!prevTerm.positionSensitive) {
                 newTerm.positionSensitive = false;
             }
             return prev;
         }
-
     }
 }

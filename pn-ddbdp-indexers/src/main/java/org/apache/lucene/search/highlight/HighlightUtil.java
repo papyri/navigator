@@ -1,5 +1,6 @@
 package org.apache.lucene.search.highlight;
 
+import org.apache.lucene.search.highlight.PNSpanScorer;
 import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigInteger;
@@ -41,7 +42,7 @@ public abstract class HighlightUtil {
             CachingTokenFilter cache,
             String texty,
             SimpleFragmenter textFragmenter,
-            SpanScorer fragmentScorer,
+            PNSpanScorer fragmentScorer,
             boolean mergeContiguousFragments,
             int maxNumFragments)
             throws IOException {
@@ -338,7 +339,7 @@ public abstract class HighlightUtil {
             CachingTokenFilter tokens,
             final String text,
             LineFragmenter textFragmenter,
-            SpanScorer fragmentScorer)
+            PNSpanScorer fragmentScorer)
             throws IOException {
         LOG.debug("Matching: "+text);
         char[] textChars = text.toCharArray();
@@ -510,7 +511,7 @@ public abstract class HighlightUtil {
             CachingTokenFilter cache,
             final String texty,
             LineFragmenter textFragmenter,
-            SpanScorer fragmentScorer,
+            PNSpanScorer fragmentScorer,
             final boolean mergeContiguousFragments,
             int maxNumFragments)
             throws IOException {
@@ -580,8 +581,7 @@ public abstract class HighlightUtil {
             final boolean mergeContiguousFragments,
             int maxNumFragments)
             throws IOException {
-        SpanQuery spanQuery = (SpanQuery)query.rewrite(getReaderForField(field, cache));
-        SpanScorer scorer = new SpanScorer(spanQuery, field, cache);
+        PNSpanScorer scorer = new PNSpanScorer(query, field, cache);
         cache.reset();
         //TODO: check docFrags array for nulls
         BuilderTextFragment[] docFrags = insureTextFragments(cache, texty, textFragmenter, scorer);
@@ -636,7 +636,7 @@ public abstract class HighlightUtil {
      * 
      * @param frag An array of document fragments in descending score
      */
-    private static int mergeContiguousFragments(BuilderTextFragment[] frag, CachingTokenFilter cache, SpanScorer scorer) throws IOException {
+    private static int mergeContiguousFragments(BuilderTextFragment[] frag, CachingTokenFilter cache, PNSpanScorer scorer) throws IOException {
         boolean mergingStillBeingDone;
         int merged = frag.length;
         if (frag.length > 1) {
@@ -704,7 +704,7 @@ public abstract class HighlightUtil {
         return merged;
     }
 
-    private static int mergeContiguousFragments(BuilderTextFragment[] frag, Query query, String field, CachingTokenFilter cache, SpanScorer scorer) throws IOException {
+    private static int mergeContiguousFragments(BuilderTextFragment[] frag, Query query, String field, CachingTokenFilter cache, PNSpanScorer scorer) throws IOException {
         if (nullArray(frag)) LOG.debug("mergeContiguousFragments got null array");
         boolean mergingStillBeingDone;
         int merged = frag.length;
@@ -806,7 +806,7 @@ public abstract class HighlightUtil {
         return (t1.getPositionIncrement() == t2.getPositionIncrement());
     }
 
-    private static float testMerge(BuilderTextFragment frag1, BuilderTextFragment frag2, CachingTokenFilter cache, SpanScorer scorer) throws IOException {
+    private static float testMerge(BuilderTextFragment frag1, BuilderTextFragment frag2, CachingTokenFilter cache, PNSpanScorer scorer) throws IOException {
         float max = Math.max(frag1.score, frag2.score);
         //BuilderTextFragment test = new BuilderTextFragment(frag1.builder,frag1.textStartPos,frag2.textEndPos);
         cache.reset();

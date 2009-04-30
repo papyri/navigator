@@ -1,5 +1,6 @@
 package info.papyri.tests;
 
+import org.apache.lucene.search.highlight.PNSpanScorer;
 import info.papyri.epiduke.lucene.BigramIndexer;
 import info.papyri.epiduke.lucene.Indexer;
 import info.papyri.epiduke.lucene.analysis.AncientGreekAnalyzer;
@@ -168,7 +169,7 @@ public class LongDocTest extends GreekTestsBase {
         CachingTokenFilter scoreCache = new CachingTokenFilter(analyzer.tokenStream(template.field(), new StringReader(text)));
         scoreCache.next();
         scoreCache.reset();
-        SpanScorer scorer = new SpanScorer(fullTermQuery,template.field(),scoreCache);
+        PNSpanScorer scorer = new PNSpanScorer(fullTermQuery,template.field(),scoreCache);
         WeightedSpanTerm wst = scorer.getWeightedSpanTerm(testText);
         java.util.List positions = wst.getPositionSpans();
 

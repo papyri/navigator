@@ -10,23 +10,26 @@ import org.apache.lucene.analysis.CachingTokenFilter;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.spans.SpanQuery;
-
 
 /**
  * {@link Scorer} implementation which scores text fragments by the number of
  * unique query terms found. This class converts appropriate Querys to
  * SpanQuerys and attempts to score only those terms that participated in
  * generating the 'hit' on the document.
+ *
+ * WARNING: This class is a copy of SpanScorer, with the single exception that
+ * it calls PNWeightedSpanTermExtractor instead of WeightedSpanTermExtractor.
+ *
+ * TODO: Revisit whenever Lucene is upgraded.
  */
-public class SpanScorer implements Scorer {
+public class PNSpanScorer implements Scorer {
   private float totalScore;
   private Set foundTerms;
   private Map fieldWeightedSpanTerms;
   private float maxTermWeight;
   private int position = -1;
   private String defaultField;
-  private boolean highlightCnstScrRngQuery;
+  private static boolean highlightCnstScrRngQuery;
 
   /**
    * @param query
@@ -37,7 +40,7 @@ public class SpanScorer implements Scorer {
    *            of source text to be highlighted
    * @throws IOException
    */
-  public SpanScorer(Query query, String field,
+  public PNSpanScorer(Query query, String field,
     CachingTokenFilter cachingTokenFilter) throws IOException {
     init(query, field, cachingTokenFilter, null);
   }
@@ -52,7 +55,7 @@ public class SpanScorer implements Scorer {
    * @param reader
    * @throws IOException
    */
-  public SpanScorer(Query query, String field,
+  public PNSpanScorer(Query query, String field,
     CachingTokenFilter cachingTokenFilter, IndexReader reader)
     throws IOException {
     init(query, field, cachingTokenFilter, reader);
@@ -61,7 +64,7 @@ public class SpanScorer implements Scorer {
   /**
    * As above, but with ability to pass in an <tt>IndexReader</tt>
    */
-  public SpanScorer(Query query, String field,
+  public PNSpanScorer(Query query, String field,
     CachingTokenFilter cachingTokenFilter, IndexReader reader, String defaultField)
     throws IOException {
     this.defaultField = defaultField.intern();
@@ -71,16 +74,16 @@ public class SpanScorer implements Scorer {
   /**
    * @param defaultField - The default field for queries with the field name unspecified
    */
-  public SpanScorer(Query query, String field,
+  public PNSpanScorer(Query query, String field,
     CachingTokenFilter cachingTokenFilter, String defaultField) throws IOException {
     this.defaultField = defaultField.intern();
     init(query, field, cachingTokenFilter, null);
   }
-
-  /**
+  
+    /**
    * @param weightedTerms
    */
-  public SpanScorer(WeightedSpanTerm[] weightedTerms) {
+  public PNSpanScorer(WeightedSpanTerm[] weightedTerms) {
     this.fieldWeightedSpanTerms = new HashMap(weightedTerms.length);
 
     for (int i = 0; i < weightedTerms.length; i++) {
@@ -94,10 +97,6 @@ public class SpanScorer implements Scorer {
         maxTermWeight = Math.max(maxTermWeight, weightedTerms[i].getWeight());
       }
     }
-  }
-  
-  public float getMaxUnweightedScore(){
-      return fieldWeightedSpanTerms.size();
   }
 
   /*
@@ -126,7 +125,7 @@ public class SpanScorer implements Scorer {
    */
   public float getTokenScore(Token token) {
     position += token.getPositionIncrement();
-    String termText = new String(token.termBuffer(), 0, token.termLength());
+    String termText = token.term();
 
     WeightedSpanTerm weightedSpanTerm;
 
@@ -141,6 +140,7 @@ public class SpanScorer implements Scorer {
     }
 
     float score = weightedSpanTerm.getWeight();
+
     // found a query term - is it unique in this doc?
     if (!foundTerms.contains(termText)) {
       totalScore += score;
@@ -171,8 +171,8 @@ public class SpanScorer implements Scorer {
   private void init(Query query, String field,
     CachingTokenFilter cachingTokenFilter, IndexReader reader)
     throws IOException {
-    WeightedSpanTermExtractor qse = defaultField == null ? new WeightedSpanTermExtractor()
-      : new WeightedSpanTermExtractor(defaultField);
+    PNWeightedSpanTermExtractor qse = defaultField == null ? new PNWeightedSpanTermExtractor()
+      : new PNWeightedSpanTermExtractor(defaultField);
     
     qse.setHighlightCnstScrRngQuery(highlightCnstScrRngQuery);
 
@@ -188,7 +188,7 @@ public class SpanScorer implements Scorer {
   /**
    * @return whether ConstantScoreRangeQuerys are set to be highlighted
    */
-  public boolean isHighlightCnstScrRngQuery() {
+  public static boolean isHighlightCnstScrRngQuery() {
     return highlightCnstScrRngQuery;
   }
 
@@ -202,12 +202,12 @@ public class SpanScorer implements Scorer {
 
   /**
    * Turns highlighting of ConstantScoreRangeQuery on/off. ConstantScoreRangeQuerys cannot be
-   * highlighted if you rewrite the query first.
-   * 
+   * highlighted if you rewrite the query first. Must be called before SpanScorer construction.
+   *
    * @param highlightCnstScrRngQuery
    */
-  public void setHighlightCnstScrRngQuery(boolean highlightCnstScrRngQuery) {
-    this.highlightCnstScrRngQuery = highlightCnstScrRngQuery;
+  public static void setHighlightCnstScrRngQuery(boolean highlight) {
+    highlightCnstScrRngQuery = highlight;
   }
 
   /*

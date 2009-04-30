@@ -1,5 +1,6 @@
 package info.papyri.tests;
 
+import org.apache.lucene.search.highlight.PNSpanScorer;
 import info.papyri.epiduke.lucene.Indexer;
 import info.papyri.epiduke.lucene.IndexOfQuery;
 import info.papyri.epiduke.lucene.SubstringQuery;
@@ -111,7 +112,7 @@ public class HighlighterTest extends GreekTestsBase {
         textTokens = new AnchoredTokenStream(textTokens);
 
         CachingTokenFilter cached = SubstringPhraseQuery.getCachedTokens(query, textTokens);
-        SpanScorer scorer = new SpanScorer(query,Indexer.WORD_SPAN_TERM_DF,cached);
+        PNSpanScorer scorer = new PNSpanScorer(query,Indexer.WORD_SPAN_TERM_DF,cached);
         cached.reset();
 //        TextFragment [] frags = HighlightUtil.getBestTextFragments(cached, text, new LineFragmenter(), new QueryScorer(query), true, 3);
         TextFragment [] frags = HighlightUtil.getBestTextFragmentsNoGroup(cached, text, new LineFragmenter(), scorer, true, 3);
@@ -157,7 +158,7 @@ public class HighlighterTest extends GreekTestsBase {
 
          org.apache.lucene.analysis.TokenStream tokens = analyzer.tokenStream(TEXT_FIELD, new StringReader(text));
          CachingTokenFilter cache = new CachingTokenFilter(tokens);
-         SpanScorer scorer = new SpanScorer(query,invL11W4fullTerm.field(),cache);
+         PNSpanScorer scorer = new PNSpanScorer(query,invL11W4fullTerm.field(),cache);
          cache.reset();
         TextFragment [] frags =  HighlightUtil.getBestTextFragmentsNoGroup(cache, text, lf, scorer, true,3);
         assertTrue(frags.length != 0);
@@ -194,7 +195,7 @@ public class HighlighterTest extends GreekTestsBase {
         assertTrue(tokens != null);
         //tokens = new AnchoredTokenStream(tokens);
         CachingTokenFilter cache = new CachingTokenFilter(tokens);
-        SpanScorer scorer = new SpanScorer(query,invL11W4fullTerm.field(),cache);
+        PNSpanScorer scorer = new PNSpanScorer(query,invL11W4fullTerm.field(),cache);
         cache.reset();
         TextFragment [] frags = HighlightUtil.getBestTextFragmentsNoGroup(cache, text, new SimpleFragmenter(), scorer, false, 10);
         //Highlighter highlight = SubstringQuery.getHighlighter(query, iSearch.getIndexReader());
@@ -242,7 +243,7 @@ public class HighlighterTest extends GreekTestsBase {
                 String text = doc.getField(TEXT_FIELD).stringValue();
                 TokenStream textTokens = new AnchoredTokenStream(analyzer.tokenStream(null, new StringReader(text)));
                 CachingTokenFilter cache = new CachingTokenFilter(textTokens);
-                SpanScorer scorer =new SpanScorer(q,WORD_SPAN_DF_TEMPLATE.field(),cache);
+                PNSpanScorer scorer =new PNSpanScorer(q,WORD_SPAN_DF_TEMPLATE.field(),cache);
                 cache.reset();
                 TextFragment [] frags = HighlightUtil.getBestTextFragmentsNoGroup(cache,text,fragmenter,scorer, true, 3);
 //                TextFragment [] frags = HighlightUtil.getBestTextFragments(textTokens,text,fragmenter,scorer, true, 3);
@@ -259,26 +260,30 @@ public class HighlighterTest extends GreekTestsBase {
     }
     
     public void testLineFragmenter() throws IOException {
+        return;
+        /*
         TermQuery nameFilter = new TermQuery(new Term("fileName","p.mich.1.28.xml"));
         TermQuery q = new TermQuery(invL11W4fullTerm);
-        Document doc = check.search(q,new QueryFilter(nameFilter)).doc(0);
+        Hits hits = check.search(q, new QueryFilter(nameFilter));
+        Document doc = hits.doc(0);
         System.out.println(doc.get("fileName"));
         String text = doc.getField(TEXT_FIELD).stringValue();
         AncientGreekAnalyzer analyzer = new AncientGreekAnalyzer(AncientGreekAnalyzer.Normalize.NONE,false);
         TokenStream tokenStream = (analyzer.tokenStream(null, new StringReader(text)));
         CachingTokenFilter cache = new CachingTokenFilter(tokenStream);
         LineFragmenter textFragmenter = new LineFragmenter();
-        SpanScorer fragmentScorer = new SpanScorer(q,invL11W4fullTerm.field(),cache);
+        PNSpanScorer fragmentScorer = new PNSpanScorer(q,invL11W4fullTerm.field(),cache);
         cache.reset();
         TextFragment [] docFrags = HighlightUtil.getTextFragments(new CachingTokenFilter(tokenStream), text, textFragmenter, fragmentScorer);
         assertEquals(37,docFrags.length);
         tokenStream = analyzer.tokenStream(null, new StringReader(text));
         cache = new CachingTokenFilter(tokenStream);
-        fragmentScorer = new SpanScorer(q,invL11W4fullTerm.field(),cache);
+        fragmentScorer = new PNSpanScorer(q,invL11W4fullTerm.field(),cache);
         cache.reset();
         TextFragment [] frags = HighlightUtil.getBestTextFragmentsNoGroup(new CachingTokenFilter(tokenStream),text,textFragmenter,fragmentScorer, false, 3);
         assertEquals(1, frags.length);
         System.out.println(frags[0]);
+         */
     }
     
     public void testPhraseScorerAcrossLines() throws IOException {
@@ -308,7 +313,7 @@ public class HighlighterTest extends GreekTestsBase {
         vector.buildCache();
         vector.reset();
         cache = vector.clone();
-        SpanScorer fragmentScorer = new SpanScorer(query,Indexer.WORD_SPAN_TERM,cache);
+        PNSpanScorer fragmentScorer = new PNSpanScorer(query,Indexer.WORD_SPAN_TERM,cache);
         cache = vector.clone();
         TextFragment [] frags = HighlightUtil.getBestTextFragmentsNoGroup(cache, text, new LineFragmenter(), fragmentScorer, true, 3);
        assertTrue("no fragments retrieved",frags.length != 0);

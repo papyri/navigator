@@ -54,7 +54,7 @@ public abstract class GreekTestsBase extends TestCase {
     
     protected static final String BAR = "--------------------------------------------------------------------------------";
     protected static final Term LINE_SPAN_TEMPLATE = new Term(Indexer.LINE_SPAN_TERM,"");
-    protected static final Term WORD_SPAN_TEMPLATE = new Term(Indexer.WORD_SPAN_TERM,"");
+    protected static final Term WORD_SPAN_TEMPLATE = new Term("text","");
     protected static final Term WORD_SPAN_DF_TEMPLATE = new Term(Indexer.WORD_SPAN_TERM_DF,"");
     protected static final Term WORD_SPAN_FL_TEMPLATE = new Term(Indexer.WORD_SPAN_TERM_FL,"");
     protected static final Term WORD_SPAN_LC_TEMPLATE = new Term(Indexer.WORD_SPAN_TERM_LC,"");
@@ -130,7 +130,7 @@ public abstract class GreekTestsBase extends TestCase {
         tokens = WORD_SPAN_ANALYZER_FL.tokenStream(Indexer.WORD_SPAN_TERM_FL, new StringReader(main.getText()));
         doc.add(new Field(Indexer.WORD_SPAN_TERM_FL,tokens));
 //        cache.close();
-        Connection db = LemmaIndexer.getSeedData(new File("C:/DOCUME~1/User/MYDOCU~1/ddbdp/epidoc-lemmas"));
+        Connection db = LemmaIndexer.getSeedData(new File("/usr/local/pn/db/lemmas"));
         tokens = new LemmaFilter(WORD_SPAN_ANALYZER.tokenStream(Indexer.LEMMA_TERM, new StringReader(main.getText())),db);
         doc.add(new Field(Indexer.LEMMA_TERM,tokens));
         return doc;
@@ -231,7 +231,7 @@ public abstract class GreekTestsBase extends TestCase {
         //props.load(GreekFullTermTest.class.getResourceAsStream("/index.properties"));
         FSDirectory.setDisableLocks(true);
         //Directory check = FSDirectory.getDirectory(new File(props.getProperty("index.root")));
-        Directory check = FSDirectory.getDirectory(new File("/usr/local/pn/indices/ddbdp/metadata"));
+        Directory check = FSDirectory.getDirectory(new File("/usr/local/pn/indices/ddbdp/docs"));
         this.check = new IndexSearcher(IndexReader.open(check));
         
         //File bigramRoot = new File(props.getProperty("bigram.root"));
