@@ -25,7 +25,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.highlight.HighlightUtil;
 import org.apache.lucene.search.highlight.LineFragmenter;
-import org.apache.lucene.search.highlight.SpanScorer;
+import org.apache.lucene.search.highlight.PNSpanScorer;
 import org.apache.lucene.search.highlight.TextFragment;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
@@ -152,7 +152,7 @@ public class ScriptSearch extends DDBDPServlet implements IndexEventListener {
                         //CachingTokenFilter scoreCache = new CachingTokenFilter(cache);
                         //scoreCache.next(); // fill cache
                         //scoreCache.reset();
-                        //SpanScorer scorer = new SpanScorer(query,field,scoreCache);
+                        //PNSpanScorer scorer = new PNSpanScorer(query,field,scoreCache);
                         cache.reset();
                         TextFragment [] frags = HighlightUtil.getBestTextFragmentsNoGroup(cache,text, new LineFragmenter(),query,field, true, 5);
 

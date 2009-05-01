@@ -23,7 +23,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.highlight.HighlightUtil;
 import org.apache.lucene.search.highlight.LineFragmenter;
-import org.apache.lucene.search.highlight.SpanScorer;
+import org.apache.lucene.search.highlight.PNSpanScorer;
 import org.apache.lucene.search.highlight.TextFragment;
 import info.papyri.epiduke.lucene.analysis.CopyingTokenFilter;
 import org.mozilla.javascript.Context;
@@ -153,7 +153,7 @@ public class ScriptJSON extends DDBDPServlet implements IndexEventListener {
                     if (textTokens != null){
                         pw.println(",\"fragments\":[");
                         CachingTokenFilter cache = new CachingTokenFilter(textTokens);
-                        SpanScorer scorer = new SpanScorer(query,field,cache);
+                        PNSpanScorer scorer = new PNSpanScorer(query,field,cache);
                         cache.reset();
                         TextFragment [] frags = HighlightUtil.getBestTextFragmentsNoGroup(cache,text,fragmenter,scorer, true, 5);
 

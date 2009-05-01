@@ -160,12 +160,35 @@ public class QueryExecContext extends ScriptableObject implements QueryFunctions
     }
     private static final String GET_MORPHS = "SELECT MORPH FROM APP.LEMMA WHERE LEMMA=?";
 
+    private static String testDb(Connection db) throws IOException, SQLException {
+        PreparedStatement ps = db.prepareStatement("SELECT * FROM APP.LEMMA WHERE LEMMA=?");
+        ps.setString(1, "\u03c3\u03c4\u03c1\u03b1\u30c4\u03b7\u03b3\u03cc\u03c2");
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+            result.append(" | "+rs.getString(i+1) + " | ");
+        }
+        return "Test Results: " + result.toString();
+        } else {
+            return "no results.";
+        }
+    }
+
     private static SpanQuery getMorphs(String lemma, Connection db) throws IOException, SQLException {
+        LOG.debug("Connection: " + db.getMetaData().getURL());
+        LOG.debug(testDb(db));
         PreparedStatement ps = db.prepareStatement(GET_MORPHS);
         if (lemma.endsWith("\u03c3")) {
             lemma = lemma.substring(0, lemma.length() - 1);
             lemma += "\u03c2";
         }
+        char[] lemmach = lemma.toCharArray();
+        StringBuffer lemmaConv = new StringBuffer();
+        for (char ch : lemmach) {
+            lemmaConv.append("\\u"+Integer.toHexString((int)ch));
+        }
+        LOG.debug(lemmaConv.toString());
         ps.setString(1, lemma);
         ResultSet results = ps.executeQuery();
         int morphIx = results.findColumn("MORPH");

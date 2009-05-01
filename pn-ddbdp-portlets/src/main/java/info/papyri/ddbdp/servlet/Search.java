@@ -58,9 +58,9 @@ import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.QueryTermExtractor;
 import org.apache.lucene.search.highlight.Scorer;
-import org.apache.lucene.search.highlight.SpanScorer;
+import org.apache.lucene.search.highlight.PNSpanScorer;
 import org.apache.lucene.search.highlight.TextFragment;
-import org.apache.lucene.search.highlight.WeightedSpanTermExtractor;
+import org.apache.lucene.search.highlight.PNWeightedSpanTermExtractor;
 
 public class Search extends DDBDPServlet implements IndexEventListener {
     private static final Logger LOG = Logger.getLogger(Search.class);
@@ -136,7 +136,7 @@ public class Search extends DDBDPServlet implements IndexEventListener {
                 qParm = ScriptSearch.getSafeUTF8(qParm);
             }
             Query query;
-            SpanScorer scorer;
+            PNSpanScorer scorer;
             CQLNode qNode = null;
 
             try{
@@ -162,7 +162,7 @@ public class Search extends DDBDPServlet implements IndexEventListener {
 
             Object [] tuple = Sru.processNode(qNode,SEARCHER,bigrams);
             query = (Query)tuple[0];
-            scorer = (SpanScorer)tuple[1];
+            scorer = (PNSpanScorer)tuple[1];
             hits = Sru.getHits(query,SEARCHER);
 
             req.setAttribute(DDBDPServlet.NUM_RECS_ATTR, Integer.toString(hits.cardinality()));

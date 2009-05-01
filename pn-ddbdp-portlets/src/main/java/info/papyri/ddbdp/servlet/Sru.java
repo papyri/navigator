@@ -61,8 +61,8 @@ import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.QueryTermExtractor;
 import org.apache.lucene.search.highlight.Scorer;
-import org.apache.lucene.search.highlight.SpanScorer;
-import org.apache.lucene.search.highlight.WeightedSpanTermExtractor;
+import org.apache.lucene.search.highlight.PNSpanScorer;
+import org.apache.lucene.search.highlight.PNWeightedSpanTermExtractor;
 
 public class Sru extends DDBDPServlet implements IndexEventListener, QueryFunctions {
     

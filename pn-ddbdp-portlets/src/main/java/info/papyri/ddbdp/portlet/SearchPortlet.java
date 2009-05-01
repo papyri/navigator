@@ -231,6 +231,7 @@ public class SearchPortlet extends GenericPortlet implements IndexEventListener 
         Context.exit();
         int resultMode = (mode == null)?(DDBDPServlet.MODE_NONE):mode.intValue(); // result text will not be in Betacode
         query = tuple.getQuery();
+        LOG.debug("Query: "+query.getClass().getCanonicalName());
         //scorer = tuple.getScorer(SEARCHER.getIndexReader());
         String apis = request.getParameter("apis");
         String pub = request.getParameter("pubSeries");
@@ -344,6 +345,7 @@ public class SearchPortlet extends GenericPortlet implements IndexEventListener 
                         StringBuffer charBuff = new StringBuffer();
 
                         for(TextFragment t:frags){
+
                             if(t != null && t.getScore()>0){
                                 if(charBuff.length() > 0) {
                                     charBuff.append(BR_TAG);
@@ -359,6 +361,11 @@ public class SearchPortlet extends GenericPortlet implements IndexEventListener 
                                 charBuff.append(" ( ");
                                 charBuff.append(Float.toString(t.getScore()));
                                 charBuff.append(" ) ");
+                            } else {
+                                if (t == null) {
+                                    LOG.debug("Null fragment");
+                                }
+                                LOG.debug("Score: "+ t.getScore());
                             }
                         }
 
