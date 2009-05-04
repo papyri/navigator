@@ -36,6 +36,10 @@ public class JetspeedUrlRewriterTest extends TestCase {
         expResult = "http://localhost/navigator/search";
         result = instance.rewriteUrl(in);
         assertEquals(expResult, result);
+        in = "http://localhost/navigator/portal/_ns:YWFwaXMtZGF0YS1hcGlzfGQx/apisfull.psml?controlName=oai:papyri.info:identifiers:apis:toronto:17";
+        expResult = "http://localhost/navigator/full/apis_toronto_17/_ns:YWFwaXMtZGF0YS1hcGlzfGQx";
+        result = instance.rewriteUrl(in);
+        assertEquals(expResult, result);
     }
 
     public void testRewriteId() {

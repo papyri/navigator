@@ -20,6 +20,7 @@ public class JetspeedUrlRewriter {
     public JetspeedUrlRewriter(){}
 
     private Pattern p = Pattern.compile("oai:papyri.info:identifiers:(apis|ddbdp|hgv):([^:]+):(.+)");
+    private Pattern ns = Pattern.compile(".*(_ns:[a-zA-Z0-9]+).*");
 
 
     /**
@@ -36,10 +37,17 @@ public class JetspeedUrlRewriter {
         try {
             URL url = new URL(in.toString());
                  //           "http://localhost:80/navigator/portal/apisfull.psml?controlName=oai:papyri.info:identifiers:hgv:P.Oxy.:4:744"
+                 //http://localhost/navigator/portal/_ns:YWFwaXMtZGF0YS1hcGlzfGQx/apisfull.psml?controlName=oai:papyri.info:identifiers:apis:toronto:17
                 //URL url = new URL("http://localhost/navigator/hgv/P.Oxy./4_744");
-            String path = url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
+            String nsId = "";
+            String page = url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
+            Matcher m = ns.matcher(url.toString());
+            if (m.matches()) {
+                nsId = m.group(1);
+
+            }
             String port = "";
-            if (80 != url.getPort()) {
+            if (80 != url.getPort() && url.getPort() > 0) {
                 port = ":" + url.getPort();
             }
             result.append(url.getProtocol()+"://"+url.getHost()+port+"/navigator/");
@@ -50,31 +58,36 @@ public class JetspeedUrlRewriter {
                     String[] parts = param.split("=");
                     params.put(parts[0], parts[1]);
                 }
-                if ("apisfull.psml".equals(path)) {
+                if ("apisfull.psml".equals(page)) {
                     result.append("full/");
                     result.append(rewriteId(params.get("controlName")));
-                } else if ("apismetadata.psml".equals(path)) {
+                } else if ("apismetadata.psml".equals(page)) {
                     result.append("metadata/");
                     result.append(rewriteId(params.get("controlName")));
-                } else if ("text.psml".equals(path)) {
+                } else if ("text.psml".equals(page)) {
                     result.append("text/");
                     result.append(rewriteId(params.get("controlName")));
                 } else {
                     return in.toString();
                 }
-            } else if ("default-page.psml".equals(path)) {
+            } else if ("default-page.psml".equals(page)) {
                     result.append("search");
-            } else if ("ddbdp-search.psml".equals(path)) {
+            } else if ("ddbdp-search.psml".equals(page)) {
                 result.append("ddbdpsearch");
-            } else if ("numbers.psml".equals(path)) {
+            } else if ("numbers.psml".equals(page)) {
                 result.append("numbers");
             } else {
                 return in.toString();
+            }
+            if (!"".equals(nsId)) {
+                result.append("/");
+                result.append(nsId);
             }
         } catch (Exception e) {
             e.printStackTrace();
             return in.toString();
         }
+
         return result.toString();
     }
 

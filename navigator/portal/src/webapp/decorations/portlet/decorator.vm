@@ -27,11 +27,12 @@ the root of your decortaion.  This will be used instead of the default.
  <div class="PActionBar">
     #foreach ($_action in $_actions)
         #if($_query)
-     <a href="${_action.Action}?${_query}" title="${_action.Name}" class="action portlet-action" ><img src="${_action.link}" alt="${_action.Alt}" border="0" /></a>
+        #set($_url = $_action.Action + "?" + $_query)
+     <a href="${rewriter.rewriteUrl($_url)}" title="${_action.Name}" class="action portlet-action" ><img src="${_action.link}" alt="${_action.Alt}" border="0" /></a>
         #else
-     <a href="${_action.Action}" title="${_action.Name}" class="action portlet-action" ><img src="${_action.link}" alt="${_action.Alt}" border="0" /></a>
+     <a href="${rewriter.rewriteUrl($_action.Action)}" title="${_action.Name}" class="action portlet-action" ><img src="${_action.link}" alt="${_action.Alt}" border="0" /></a>
         #end
-    #end    
+    #end
  </div>
 #end
 
