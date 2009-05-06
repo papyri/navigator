@@ -48,6 +48,10 @@ public class JetspeedUrlRewriterTest extends TestCase {
         String expResult = "hgv_P.Oxy._4:744";
         String result = instance.rewriteId(in);
         assertEquals(expResult, result);
+        in = "oai:papyri.info:identifiers:trismegistos:69865";
+        result = instance.rewriteId(in);
+        expResult = "trismegistos_69865";
+        assertEquals(expResult, result);
     }
 
 }

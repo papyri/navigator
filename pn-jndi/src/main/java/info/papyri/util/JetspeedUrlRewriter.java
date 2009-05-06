@@ -19,7 +19,7 @@ public class JetspeedUrlRewriter {
      */
     public JetspeedUrlRewriter(){}
 
-    private Pattern p = Pattern.compile("oai:papyri.info:identifiers:(apis|ddbdp|hgv):([^:]+):(.+)");
+    private Pattern p = Pattern.compile("oai:papyri.info:identifiers:(apis|ddbdp|hgv|trismegistos):([^:]+)(?::(.+))?");
     private Pattern ns = Pattern.compile(".*(_ns:[a-zA-Z0-9]+).*");
 
 
@@ -99,8 +99,13 @@ public class JetspeedUrlRewriter {
      */
     public String rewriteId(Object in) {
         Matcher m = p.matcher(in.toString());
+        StringBuffer result = new StringBuffer();
         if (m.matches()) {
-            return m.group(1)+"_"+m.group(2)+"_"+m.group(3);
+            result.append(m.group(1)+"_"+m.group(2));
+            if (m.group(3) != null) {
+                result.append("_"+m.group(3));
+            }
+            return result.toString();
         }
         return in.toString();
     }

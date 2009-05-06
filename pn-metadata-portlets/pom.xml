@@ -17,7 +17,7 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- appserv-jstl and appserv-rt are taken from Glassfish v2 libs -->
+        <!-- appserv-jstl is taken from Glassfish v2 libs -->
         <dependency>
             <groupId>appserv-jstl</groupId>
             <artifactId>appserv-jstl</artifactId>
@@ -120,13 +120,13 @@
         <dependency>
             <groupId>info.papyri</groupId>
             <artifactId>pn-jndi</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>info.papyri</groupId>
             <artifactId>pn-metadata-indexers</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <artifactId>derby</artifactId>
