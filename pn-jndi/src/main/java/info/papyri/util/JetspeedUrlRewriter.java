@@ -56,7 +56,9 @@ public class JetspeedUrlRewriter {
                 Map<String,String> params = new HashMap<String,String>();
                 for (String param:query.split("&")){
                     String[] parts = param.split("=");
-                    params.put(parts[0], parts[1]);
+                    if (parts.length == 2) {
+                        params.put(parts[0], parts[1]);
+                    }
                 }
                 if ("apisfull.psml".equals(page)) {
                     result.append("full/");
