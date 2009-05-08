@@ -190,7 +190,7 @@ if (submitted){
 <tr>
 <th>Jump to page:</th>
 <%
-int currPage = (offset)/ScriptSearch.PAGE_SIZE + 1;
+int currPage = (offset)/ScriptSearch.PAGE_SIZE;
 int this10 = (offset / (10*ScriptSearch.PAGE_SIZE)) ;
 if(numPages > 10){
     int last10 =  this10 - 1;
