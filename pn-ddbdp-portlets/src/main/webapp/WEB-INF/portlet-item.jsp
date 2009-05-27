@@ -9,6 +9,7 @@ String fname = (String)rReq.getAttribute(SearchPortlet.FNAME_ATTR);
 String ddbName = fname.substring(0,fname.length()-4);
 JetspeedUrlRewriter jur = new JetspeedUrlRewriter();
 String id = jur.rewriteId(rReq.getAttribute(SearchPortlet.DDB_ID_ATTR));
+String staticFile = jur.getStaticDir(ddbName, id);
 String fragment = (String)rReq.getAttribute(SearchPortlet.FRAGMENT_ATTR);
 Document doc = (Document)rReq.getAttribute(SearchPortlet.RESULT_ITEM_ATTR);
 String css = (String)rReq.getAttribute(CSS_ATTR);
@@ -28,7 +29,7 @@ else{
     out.print("<td>&nbsp;</td>");
     //out.print("<td>" + doc.get(CoreMetadataFields.SORT_HAS_IMG) + "</td>");
 }
-        out.println("<td style=\"font-weight:bold;font-size:1.1em;\"><a href=\"text/" + id + "\" >" +  ddbName + "</a><a target=\"_new\" href=\"/ddbdp/html?identifier=" + id + "\">[html]</a></td>");
+        out.println("<td style=\"font-weight:bold;font-size:1.1em;\"><a href=\"text/" + id + "\" >" +  ddbName + "</a><a target=\"_new\" href=\"/static/current/ddb/html" + staticFile + ".html\">[html]</a></td>");
         out.print("<td>");
         String [] pubs = doc.getValues(CoreMetadataFields.BIBL_PUB);
         HashSet<String> pubSet = new HashSet<String>();

@@ -40,6 +40,10 @@ public class JetspeedUrlRewriterTest extends TestCase {
         expResult = "http://localhost/navigator/full/apis_toronto_17/_ns:YWFwaXMtZGF0YS1hcGlzfGQx";
         result = instance.rewriteUrl(in);
         assertEquals(expResult, result);
+        in = "portal/numbers.psml?prefix=oai:papyri.info:identifiers:apis:berkeley:1038&apisPrefix=berkeley";
+        expResult = "/navigator/numbers/apis_berkeley_1038?apisPrefix=berkeley";
+        result = instance.rewriteUrl(in);
+        assertEquals(expResult, result);
     }
 
     public void testRewriteId() {
@@ -51,6 +55,25 @@ public class JetspeedUrlRewriterTest extends TestCase {
         in = "oai:papyri.info:identifiers:trismegistos:69865";
         result = instance.rewriteId(in);
         expResult = "trismegistos_69865";
+        assertEquals(expResult, result);
+    }
+
+    public void testGetStaticDir() {
+        String filename = "o.deiss.30a";
+        String id = "ddbdp_0021_:30a";
+        JetspeedUrlRewriter instance = new JetspeedUrlRewriter();
+        String expResult = "/o.deiss/o.deiss.30a";
+        String result = instance.getStaticDir(filename, id);
+        assertEquals(expResult, result);
+        filename = "o.bodl.2.2304";
+        id = "ddbdp_0014_2:2304";
+        expResult = "/o.bodl/o.bodl.2/o.bodl.2.2304";
+        result = instance.getStaticDir(filename, id);
+        assertEquals(expResult, result);
+        filename = "p.gen.2.1.1";
+        id = "ddbdp_0266_1:1";
+        expResult = "/p.gen.2/p.gen.2.1/p.gen.2.1.1";
+        result = instance.getStaticDir(filename, id);
         assertEquals(expResult, result);
     }
 

@@ -26,7 +26,7 @@ public class JetspeedUrlRewriter {
     /**
      * Checks whether this is a rewritable URL, and rewrites it if so,
      * otherwise returns the input URL.  If an invalid URL is passed in, the
-     * input String is returned.
+     * input String is returned.  Relative URLs are accepted.
      *
      * @param Object in
      * @return String the rewritten URL, or the URL that was passed in
@@ -35,25 +35,38 @@ public class JetspeedUrlRewriter {
         //TODO: Add support for rewriting min/max links
         StringBuffer result = new StringBuffer();
         try {
-            URL url = new URL(in.toString());
-                 //           "http://localhost:80/navigator/portal/apisfull.psml?controlName=oai:papyri.info:identifiers:hgv:P.Oxy.:4:744"
-                 //http://localhost/navigator/portal/_ns:YWFwaXMtZGF0YS1hcGlzfGQx/apisfull.psml?controlName=oai:papyri.info:identifiers:apis:toronto:17
-                //URL url = new URL("http://localhost/navigator/hgv/P.Oxy./4_744");
+            URL url;
+            String page;
+            String query = "";
+            if (in.toString().startsWith("http")) {
+                url = new URL(in.toString());
+                page = url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
+                query = url.getQuery();
+                String port = "";
+                if (80 != url.getPort() && url.getPort() > 0) {
+                    port = ":" + url.getPort();
+                }
+                result.append(url.getProtocol()+"://"+url.getHost()+port+"/navigator/");
+            } else {
+                if (!in.toString().contains("/")) {
+                    page = in.toString();
+                } else {
+                    page = in.toString().substring(in.toString().lastIndexOf('/') + 1);
+                }
+                if (page.contains("?")) {
+                    query = page.substring(page.indexOf("?") + 1);
+                    page = page.substring(0, page.indexOf("?"));
+                }
+                result.append("/navigator/");
+            }
             String nsId = "";
-            String page = url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
-            Matcher m = ns.matcher(url.toString());
+            Matcher m = ns.matcher(in.toString());
             if (m.matches()) {
                 nsId = m.group(1);
-
             }
-            String port = "";
-            if (80 != url.getPort() && url.getPort() > 0) {
-                port = ":" + url.getPort();
-            }
-            result.append(url.getProtocol()+"://"+url.getHost()+port+"/navigator/");
-            String query = url.getQuery();
+            Map<String,String> params = new HashMap<String,String>();
             if (query != null) {
-                Map<String,String> params = new HashMap<String,String>();
+                
                 for (String param:query.split("&")){
                     String[] parts = param.split("=");
                     if (parts.length == 2) {
@@ -62,16 +75,20 @@ public class JetspeedUrlRewriter {
                 }
                 if ("apisfull.psml".equals(page)) {
                     result.append("full/");
-                    result.append(rewriteId(params.get("controlName")));
+                    result.append(rewriteId(params.remove("controlName")));
                 } else if ("apismetadata.psml".equals(page)) {
                     result.append("metadata/");
-                    result.append(rewriteId(params.get("controlName")));
+                    result.append(rewriteId(params.remove("controlName")));
                 } else if ("text.psml".equals(page)) {
                     result.append("text/");
-                    result.append(rewriteId(params.get("controlName")));
+                    result.append(rewriteId(params.remove("controlName")));
+                } else if ("numbers.psml".equals(page)) {
+                    result.append("numbers/");
+                    result.append(rewriteId(params.remove("prefix")));
                 } else {
                     return in.toString();
                 }
+
             } else if ("default-page.psml".equals(page)) {
                     result.append("search");
             } else if ("ddbdp-search.psml".equals(page)) {
@@ -84,6 +101,16 @@ public class JetspeedUrlRewriter {
             if (!"".equals(nsId)) {
                 result.append("/");
                 result.append(nsId);
+            }
+            if (params.size() > 0) {
+                result.append("?");
+                for (String key : params.keySet()) {
+                    String value = params.remove(key);
+                    result.append(key + "=" + value);
+                    if (params.size() > 0) {
+                        result.append("&");
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,6 +137,27 @@ public class JetspeedUrlRewriter {
             return result.toString();
         }
         return in.toString();
+    }
+
+    public String getStaticDir(Object file, Object id) {
+        String[] idbits = id.toString().split("_");
+        String filename = idbits[idbits.length - 1].replace(':', '.');
+        if (filename.startsWith(".")) {
+            filename = filename.substring(1);
+        }
+        String collection = file.toString().substring(0, file.toString().indexOf(filename));
+        if (collection.endsWith(".")) {
+            collection = collection.substring(0, collection.lastIndexOf("."));
+        }
+        String volume = "";
+        if (filename.contains(".")) {
+            volume = filename.substring(0, filename.indexOf("."));
+        }
+        if (!"".equals(volume)) {
+            volume = collection + "." + volume;
+        } 
+        filename = collection + "." + filename;
+        return "/" + collection + "/" + (volume.length()>0?volume + "/":"") + filename;
     }
 
 }
