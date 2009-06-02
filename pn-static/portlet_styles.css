@@ -1,0 +1,819 @@
+/*
+Copyright 2004 The Apache Software Foundation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+
+.pn .PTitleLeft
+{
+}
+
+
+
+.pn .PTitle
+{
+      
+    padding-top: 2px;
+    padding-bottom: 16px;
+    padding-right: 2px;
+    border-left: 1px solid #dcd982;
+    border-right: 1px solid #acaa7a;
+    border-top: 1px solid #dcd982;
+    border-bottom: 1px solid #acaa7a;
+    color: #000;
+    background-color: #eed;
+        
+    
+}
+
+.pn .PTitleContent
+{
+    font-weight:bold;
+    font-size:18px;
+    display: inline;
+    float: left;
+    white-space: normal;
+    color:#1f4e66;
+}
+
+.pn .PActionBar
+{
+   float: right;
+   display: inline;
+}
+ 
+.pn .PTitleRight
+{
+}
+
+.pn .PContentLeft
+{
+}
+
+.pn .PContent
+{    
+    padding-left: 1em;
+    white-space: normal;
+    background-color: #FFF;
+    border-right: 1px solid #acaa7a;
+    border-bottom: 1px solid #dcd982;
+    border-left: 1px solid #dcd982;
+    overflow: hidden;
+    font-size: small;
+}
+
+
+
+.pn .PContentRight
+{
+}
+
+.pn .PBottomLeft
+{
+}
+
+.pn .PBottom
+{
+}
+
+.pn .PBottomRight
+{
+}
+
+/* font */
+.pn .PTitleLeft,
+.pn .PTitle,
+.pn .PTitleContent,
+.pn .PTitleRight,
+.pn .PContentLeft,
+.pn .PContent,
+.pn .PContentRight,
+.pn .PBottomLeft,
+.pn .PBottom,
+.pn .PBottomRight
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+
+
+/* --------------------------------- */
+/* PLT.C.1 Links (Anchor)            */
+/* --------------------------------- */
+
+.pn A:link, 
+.pn A:visited {
+    text-decoration: underline;
+}
+
+.pn A:hover, 
+.pn A:active {
+    text-decoration: underline;
+}
+
+/* font */
+.pn A:link,
+.pn A:visited,
+.pn A:hover,
+.pn A:active
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: 12px;
+    color: #900;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.2 Fonts                     */
+/* --------------------------------- */
+
+.pn .portlet-font {
+    color: black;
+}
+.pn .portlet-font-dim {
+    color: gray;
+}
+
+/* font */
+.pn .portlet-font,
+.pn .portlet-font-dim
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+
+
+/* --------------------------------- */
+/* PLT.C.3 Messages                  */
+/* --------------------------------- */
+.pn .portlet-msg-status {
+    background: url(../images/icon_status_sml.gif);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    min-height: 15px;
+}
+
+.pn .portlet-msg-info {
+    background: url(../images/icon_info_sml.gif);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    min-height: 15px;
+}
+
+.pn .portlet-msg-error {
+    background: url(../images/icon_error_sml.gif);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    min-height: 15px;
+}
+
+.pn .portlet-msg-alert {
+    background: url(../images/icon_warning_sml.gif);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    min-height: 15px;
+}
+
+.pn .portlet-msg-success {
+    background: url(../images/icon_success_sml.gif);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    min-height: 15px;
+}
+
+/* font */
+.pn .portlet-msg-status,
+.pn .portlet-msg-info,
+.pn .portlet-msg-error,
+.pn .portlet-msg-alert,
+.pn .portlet-msg-success
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.4 Sections                  */
+/* --------------------------------- */
+.pn .portlet-section-header {
+    background-image: url(../images/nw_maj_rond.gif);
+    background-repeat: no-repeat;
+    color: #fff;
+    background-color: #036;
+    padding: 5px;
+    margin-right: 2px;
+    margin-left: 2px;
+    clear: both;
+}
+
+.pn .portlet-section-body {
+    background: #efefef;
+    border: none;
+    padding: 2px 3px;
+    text-align: left;
+    vertical-align: top;
+    text-align: left;
+}
+
+.pn .portlet-section-alternate {
+    background: #ddd;
+    border: none;
+    padding: 2px 3px;
+    text-align: left;
+    vertical-align: top;
+    text-align: left;
+}
+
+.pn .portlet-section-selected {
+    /* TODO : ex. change color */
+    background: #ffe;
+    border: none;
+    padding: 2px 3px;
+    text-align: left;
+    vertical-align: top;
+    text-align: left;
+    font-weight:bold;
+}
+
+.pn .portlet-section-subheader {
+    background-image: url(../images/nw_maj_rond.gif);
+    background-repeat: no-repeat;
+    color: #fff;
+    background-color: #888;
+    padding: 5px;
+    margin-right: 2px;
+    margin-left: 2px;
+    clear: both;
+}
+
+.pn .portlet-section-footer {
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    background-color: #ddd;
+    background-image: url(../images/sw_med_rond.gif);
+    color: #000;
+    padding: 5px;
+    margin: .67em 2px;
+    margin-top: 0;
+}
+
+.pn .portlet-section-text {
+    padding: 1em;
+    padding-bottom: .3em;
+    padding-left: 1em;
+}
+
+/* font */
+.pn .portlet-section-header,
+.pn .portlet-section-body,
+.pn .portlet-section-alternate,
+.pn .portlet-section-selected,
+.pn .portlet-section-subheader,
+.pn .portlet-section-footer,
+.pn .portlet-section-text,
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.5 Forms                     */
+/* --------------------------------- */
+.pn .portlet-form-label {
+}
+
+.pn .portlet-form-input-field {
+}
+
+.pn .portlet-form-button {
+}
+
+.pn .portlet-icon-label {
+}
+
+.pn .portlet-dlg-icon-label {
+}
+
+.pn .portlet-form-field-label {
+}
+
+.pn .portlet-form-field {
+}
+
+/* font */
+.pn .portlet-section-header,
+.pn .portlet-section-body,
+.pn .portlet-section-alternate,
+.pn .portlet-section-selected,
+.pn .portlet-section-subheader,
+.pn .portlet-section-footer,
+.pn .portlet-section-text,
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.6 Menus                     */
+/* --------------------------------- */
+.pn .portlet-menu {
+    background: #efefef;
+    margin-bottom: 6px;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    padding: 4px 4px 4px 0;
+    padding-bottom: .3em;
+    padding-left: 1em;
+}
+
+.pn .portlet-menu-item {
+    text-decoration: none;
+    color: blue;
+}
+
+.pn .portlet-menu-item-selected {
+    text-decoration: none;
+    color: #555 !important;
+}
+
+.pn .portlet-menu-item-hover {
+    text-decoration: none;
+    color: #f30 !important;
+}
+
+.pn .portlet-menu-item-hover-selected {
+    text-decoration: none;
+    color: #555 !important;
+    font-weight: bold;
+}
+
+.pn .portlet-menu-cascade-item {
+    text-decoration: none;
+    margin-top: .3em;
+    padding-bottom: 0;
+    color: blue;
+}
+
+.pn .portlet-menu-cascade-item-selected {
+    text-decoration: none;
+    color: #555 !important;
+    font-weight: bold;
+}
+
+.pn .portlet-menu-description {
+}
+
+.pn .portlet-menu-caption {
+    border-bottom: 1px solid #666;
+    border-right: 1px solid #666;
+    background: #ddd;
+    color: #555;
+    padding: 4px;
+}
+
+/* font */
+.pn .portlet-menu,
+.pn .portlet-menu-item,
+.pn .portlet-menu-item-selected,
+.pn .portlet-menu-item-hover,
+.pn .portlet-menu-item-hover-selected,
+.pn .portlet-menu-cascade-item,
+.pn .portlet-menu-cascade-item-selected,
+.pn .portlet-menu-description,
+.pn .portlet-menu-caption
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+
+/* --------------------------------- */
+/* PLT.C.6 Menus (arrowfolder style) */
+/* --------------------------------- */
+.pn .arrowfolder .portlet-menu {
+    background: #efefef;
+    margin-bottom: 6px;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    padding: 4px 4px 4px 0;
+    padding-bottom: .3em;
+    padding-left: 1em;
+}
+
+.pn .arrowfolder .portlet-menu-item {
+    text-decoration: none;
+    color: blue;
+    padding-left: 34px;
+    background-image: url(../images/icon_arrowdoc_sml.gif);
+    background-repeat: no-repeat;
+
+}
+
+.pn .arrowfolder .portlet-menu-item-selected {
+    text-decoration: none;
+    color: #555 !important;
+    padding-left: 34px;
+    background-image: url(../images/icon_arrowdoc_sml.gif);
+    background-repeat: no-repeat;
+}
+
+.pn .arrowfolder .portlet-menu-item-hover {
+    text-decoration: none;
+    color: #f30 !important;
+    padding-left: 34px;
+    background-image: url(../images/icon_arrowdoc_sml.gif);
+    background-repeat: no-repeat;
+}
+
+.pn .arrowfolder .portlet-menu-item-hover-selected {
+    text-decoration: none;
+    color: #555 !important;
+    font-weight: bold;
+    padding-left: 34px;
+    background-image: url(../images/icon_arrowdoc_sml.gif);
+    background-repeat: no-repeat;
+}
+
+.pn .arrowfolder .portlet-menu-cascade-item {
+    text-decoration: none;
+    margin-top: .3em;
+    padding-bottom: 0;
+    color: blue;
+    padding-left: 34px;
+    background-image: url(../images/icon_arrowfolderclosed1_sml.gif);
+    background-repeat: no-repeat;
+}
+
+.pn .arrowfolder .portlet-menu-cascade-item-selected {
+    text-decoration: none;
+    color: #555 !important;
+    font-weight: bold;
+    padding-left: 34px;
+    background-image: url(../images/icon_arrowfolderopen2_sml.gif);
+    background-repeat: no-repeat;
+}
+
+.pn .arrowfolder .portlet-menu-description {
+}
+
+.pn .arrowfolder .portlet-menu-caption {
+    border-bottom: 1px solid #666;
+    border-right: 1px solid #666;
+    background: #ddd;
+    color: #555;
+    padding: 4px;
+}
+
+/* font */
+.pn .arrowfolder .portlet-menu,
+.pn .arrowfolder .portlet-menu-item,
+.pn .arrowfolder .portlet-menu-item-selected,
+.pn .arrowfolder .portlet-menu-item-hover,
+.pn .arrowfolder .portlet-menu-item-hover-selected,
+.pn .arrowfolder .portlet-menu-cascade-item,
+.pn .arrowfolder .portlet-menu-cascade-item-selected,
+.pn .arrowfolder .portlet-menu-description,
+.pn .arrowfolder .portlet-menu-caption
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    voice-family: "\"}\"";
+    voice-family: inherit;
+    font-size: x-small;
+}
+
+/* --------------------------------- */
+/* Tree component                    */
+/* --------------------------------- */
+
+.pn .tree {
+   lineheight: 18px;
+   font-family: arial, sans-serif;
+}
+
+.pn .tree-node {
+   padding: 2px 15px 2px 5px;
+}
+
+.pn .tree-node a {
+   text-decoration: none;
+}
+
+.pn .tree-node-selected {
+   padding: 2px 15px 2px 5px;
+}
+
+.pn .tree-node-selected a {
+   text-decoration: none;
+   font-weight: bold;
+}
+
+/* --------------------------------- */
+/* Portlet Table                     */
+/* --------------------------------- */
+.pn th, td, input {
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+.pn table, 
+.pn th, 
+.pn td {
+    vertical-align: top;
+    font-size: 10pt;    
+    border: none;
+    white-space: normal;
+    /* action buttons shifts right a few millimeters by the following */
+}
+
+.pn th
+{
+   font-size: 12pt;  
+}
+
+.pn .portlet-table-header {
+    background-color: #bbb;
+    border: 0.75px solid #fff;
+    padding: 2px 3px;
+    text-align: left;
+}
+
+.pn .portlet-table-footer {
+    font-size: x-small;
+    padding: 5px;
+    margin: .67em 2px;
+    margin-top: 0;
+    background-color: #ddd;
+    background-image: url(../images/sw_med_rond.gif);
+    background-repeat: no-repeat;
+    background-position: bottom left;
+}
+
+
+.pn .portlet-table-row1 td {
+    font-size: small;
+    background: #ddd;
+    border-bottom: 1px solid #fff;
+}
+
+.pn .portlet-table-row2 td {
+    font-size: small;
+    background: #efefef;
+    border-bottom: 1px solid #fff;
+}
+
+.pn .portlet-table-col1 {
+    border-right: 1px solid #fff;
+    padding: 2px 15px 2px 5px;
+}
+
+.pn .portlet-table-col2 {
+    border-left: 1px solid #fff;
+    padding: 2px 15px 2px 5px;
+}
+
+/* --------------------------------- */
+/* Portlet Data Scroller Table       */
+/* --------------------------------- */
+
+.pn .portlet-scroller-grid td {
+    horizontal-align: center;
+}
+
+.pn .portlet-scroller {
+    horizontal-align: center;
+}
+
+.pn .portlet-paginator {
+    horizontal-align: center;
+}
+
+/* Custom stuff for UGS added by EDB */
+.pn p.corelink
+{
+    margin-top: 0.5em;
+    margin-bottom: 0em;
+    font-size: 12px;
+}
+
+.pn p.abstract
+{
+    margin-top: 0em;
+    margin-bottom: 0.5em;
+    font-size: 11px;
+}
+
+.pn p.title
+{
+    font-family: Arial, Helvetica, sans-serif; 
+    font-size: 17px; 
+    font-weight: bold; 
+    padding-bottom: 0em; 
+    margin-top: 0em; 
+    margin-bottom: 0em;
+}
+
+.pn p.download
+{
+    font-size:12px;
+    margin-top:0.25em;
+    margin-bottom:0em;
+}
+
+.pn p.side
+{ 
+    font-size: 12px;
+    margin-left: 0.85em;
+    text-indent: -0.85em;
+    margin-top: 0.25em;
+    margin-bottom:
+    0.25em;
+}
+
+.pn img
+{
+    display: inline;
+    margin: 0em;
+}
+TABLE.metadata THEAD TH, TABLE.metadata TFOOT TH {
+  font-size:1em;
+  color:#256;
+  text-align: left;
+}
+TH.rowheader, TH.pn-search-subsection-header {
+  font-weight:bold;
+  font-size:1em;
+  text-align:right;
+  margin-right:5px;
+  padding-right:5px;
+}
+
+.greek {
+  font-family: "New Athena Unicode", Gentium, "Palatino Linotype", "Lucida Grande", Galilee, "Arial Unicode MS", sans-serif;
+}
+DIV.greek {
+    font-size: 115%;
+}
+
+.serif .greek {
+    font-family: Gentium, Cardo, serif;
+}
+
+table.metadata {
+    font-size: 100%;
+    white-space:normal;
+    width:auto;
+    padding-bottom:15px;
+}
+
+table.metadata td {
+    font-size: 100%;
+    white-space:normal;
+    text-align:left;
+}
+
+table.metadata ul {
+  margin-top:5px;
+}
+
+table.metadata caption {
+    width:100%;
+    padding-bottom:15px;
+}
+TD.keyword-in-context B {
+        color: #000000;
+	background-color: #b7edff;
+}
+TBODY.searchresult TD {
+	border: 1px solid #dcd982;
+}
+TBODY.searchresult TR {
+	width:100%;
+}
+
+TABLE[rules=groups]{
+  border-collapse:collapse;
+}
+
+TABLE[rules=groups] TBODY{
+  border-style:none none groove none;
+  border-width:medium;
+  border-color:#985;
+  padding:15px;
+}
+FORM#ui {
+	margin:8px;
+}
+INPUT[type=button].pn-button, INPUT[type=submit].pn-button { 
+  color: #256;
+  background-color: #eed; 
+  font-weight:bold;
+  margin:5px;
+}
+#pn-resultcount {
+  border-width: medium 0px medium 0px;
+  border-color: #900;
+  border-style: solid;
+  width:100%;
+  overflow:auto;
+}
+TABLE.pn-form {
+  border-collapse:collapse;
+}
+TR.pn-form-row {
+  vertical-align:top;
+}
+TR.pn-form-row TD {
+  padding:15px;
+  border-top:1px solid #985;
+  vertical-align:top;
+}
+TD.pn-form-section {
+  color:#256;
+  font-weight:bold;
+}
+TD.pn-options-section {
+  background-color:#eed;
+}
+#no-results-msg {
+  padding:15px;
+  color:#900;
+  font-weight:bold;
+  font-size:1.1em;
+}
+
+.pn-apis-data {
+  background:url(/apisplusPortals/apis.gif) no-repeat;
+  background-position:top right;
+  margin-right:4px;
+}
+.pn-hgv-data {
+  background:url(/apisplusPortals/hgv.gif) no-repeat;
+  background-position:top right;
+  margin-right:4px;
+}
+.pn-ddbdp-data {
+  background:url(/apisplusPortals/ddb.gif) no-repeat;
+  background-position:top right;
+  margin-right:4px;
+}
+.pn-doc-name {
+  font-size:24px;
+  font-family: "Times New Roman",Times,Serif;
+  font-weight:normal;
+  text-align:center;
+  color:#900;
+}
+TD.pn-options-section DIV {
+  margin-top:2px;
+}
+#pn-query {
+  margin-left:5px;
+  font-style:italic;
+  color:#985;
+}
+.portlet A {
+  color:#900;
+}
+.portlet A IMG {
+  border:none;
+}
+
+#apis-data-apistext DIV.PContent, #apis-ddbdptext DIV.PContent{
+  overflow-x:hidden;
+  overflow-y:auto;
+  max-height:250px;
+}
+TH.apis-portal-title {
+  text-align:left;
+  font-size:14px;
+}
