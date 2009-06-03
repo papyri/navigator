@@ -31,7 +31,7 @@
             <td class="LTabLeftLow"  nowrap="nowrap">&nbsp;</td>
             #set($_tabUrl = $jetspeed.getAbsoluteUrl($element.url))
             #if($_controlName && $_docPages)
-              #set($tabUrl = "${_tabUrl}?controlName=${_controlName}&collection=${_collection}")
+              #set($tabUrl = "${_tabUrl}?controlName=${_controlName}")
             #else
               #set($tabUrl = ${_tabUrl})
             #end

@@ -25,7 +25,6 @@ limitations under the License.
 
 <html>
   <head>
-	<base href="#BaseHref()" />
     <meta http-equiv="Content-type" content="#ContentType()" />
     <meta http-equiv="Content-style-type" content="text/css" />   
     #includeJavaScriptForHead()

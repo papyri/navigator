@@ -29,7 +29,7 @@ else{
     out.print("<td>&nbsp;</td>");
     //out.print("<td>" + doc.get(CoreMetadataFields.SORT_HAS_IMG) + "</td>");
 }
-        out.println("<td style=\"font-weight:bold;font-size:1.1em;\"><a href=\"text/" + id + "\" >" +  ddbName + "</a><a target=\"_new\" href=\"/static/current/ddb/html" + staticFile + ".html\">[html]</a></td>");
+        out.println("<td style=\"font-weight:bold;font-size:1.1em;\"><a href=\"text/" + id + "\" >" +  ddbName + "</a><a target=\"_new\" href=\"/idp_static/current/ddb/html" + staticFile + ".html\">[html]</a></td>");
         out.print("<td>");
         String [] pubs = doc.getValues(CoreMetadataFields.BIBL_PUB);
         HashSet<String> pubSet = new HashSet<String>();
