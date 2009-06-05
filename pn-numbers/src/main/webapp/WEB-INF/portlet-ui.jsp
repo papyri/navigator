@@ -38,7 +38,7 @@ return 'oai:papyri.info:identifiers:ddbdp:' + collection + ':' + volume + ':' + 
 }
 </script>
 <div>
-<form id="apisNumber" action="">
+<form id="apisNumber" action="numbers">
 <input type="hidden"  name="prefix" value="oai:papyri.info:identifiers:apis:" />
 APIS Collection: <select  name="apisPrefix" value="<%=apisPrefix %>" >
 <option value="">[Select]</option>
@@ -51,7 +51,7 @@ APIS Collection: <select  name="apisPrefix" value="<%=apisPrefix %>" >
 </select>
 <input type="submit" value="Go" onclick="this.form.prefix.value =getAPIS(this.form.apisPrefix.value,'*')" />
 </form>
-<form id="hgvNumber" action="">
+<form id="hgvNumber" action="numbers">
 <input type="hidden"  name="prefix" value="oai:papyri.info:identifiers:apis:" />
 HGV Series: <select  name="hgvPrefix" value="<%=hgvPrefix %>" >
 <option value="">[Select]</option>
@@ -64,7 +64,7 @@ HGV Series: <select  name="hgvPrefix" value="<%=hgvPrefix %>" >
 </select>
 <input type="submit" value="Go" onclick="this.form.prefix.value =getHGV(this.form.hgvPrefix.value,'*','*')" />
 </form>
-<form id="ddbNumber" action="">
+<form id="ddbNumber" action="numbers">
 <input type="hidden"  name="prefix" value="oai:papyri.info:identifiers:apis:ddbdp:*" />
 DDbDP Series: <select  name="ddbPrefix" value="<%=ddbPrefix %>" >
 <option value="">[Select]</option>
@@ -77,7 +77,7 @@ DDbDP Series: <select  name="ddbPrefix" value="<%=ddbPrefix %>" >
 </select>
 <input type="submit" value="Go" onclick="this.form.prefix.value =getDDB(this.form.ddbPrefix.value,'*','*')" />
 </form>
-<form id="tmNumber" action="">
+<form id="tmNumber" action="numbers">
 <input type="hidden"  name="prefix" value="oai:papyri.info:identifiers:trismegistos:" />
 TM number: <input type="text"  name="tmPrefix" value="<%=tmPrefix %>" />
 <input type="submit" value="Go" onclick="if(this.form.tmPrefix.value > ' ')this.form.prefix.value=this.form.prefix.value+this.form.tmPrefix.value; else this.form.prefix.value=this.form.prefix.value+'*'" />
