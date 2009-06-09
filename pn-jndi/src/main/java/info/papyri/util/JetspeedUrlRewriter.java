@@ -144,6 +144,7 @@ public class JetspeedUrlRewriter {
         String filename = idbits[idbits.length - 1].replace(':', '.');
         if (filename.startsWith(".")) {
             filename = filename.substring(1);
+            filename = filename.replace(',', '-');
         }
         String collection = file.toString().substring(0, file.toString().indexOf(filename));
         if (collection.endsWith(".")) {
