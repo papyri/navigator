@@ -140,11 +140,12 @@ public class JetspeedUrlRewriter {
     }
 
     public String getStaticDir(Object file, Object id) {
+        System.out.println("file: \"" + file.toString() + "\"; id: \"" + id.toString() + "\"");
         String[] idbits = id.toString().split("_");
         String filename = idbits[idbits.length - 1].replace(':', '.');
+        filename = filename.replace(',', '-');
         if (filename.startsWith(".")) {
             filename = filename.substring(1);
-            filename = filename.replace(',', '-');
         }
         String collection = file.toString().substring(0, file.toString().indexOf(filename));
         if (collection.endsWith(".")) {

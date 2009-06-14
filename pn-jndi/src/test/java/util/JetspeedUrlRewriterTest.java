@@ -80,6 +80,11 @@ public class JetspeedUrlRewriterTest extends TestCase {
         expResult = "/p.fuad.i.univ/p.fuad.i.univ.AppII-139";
         result = instance.getStaticDir(filename, id);
         assertEquals(expResult, result);
+        filename = "p.col.2.1-r-1b";
+        id = "ddbdp_0094_2:1,r,1b";
+        expResult = "/p.col/p.col.2/p.col.2.1-r-1b";
+        result = instance.getStaticDir(filename, id);
+        assertEquals(expResult, result);
     }
 
 }
