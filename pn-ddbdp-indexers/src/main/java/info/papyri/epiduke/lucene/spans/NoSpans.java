@@ -2,9 +2,9 @@ package info.papyri.epiduke.lucene.spans;
 
 import java.io.IOException;
 
-import org.apache.lucene.search.spans.Spans;
-import org.apache.lucene.index.Term;
-public class NoSpans implements Spans {
+import java.util.Collection;
+import org.apache.lucene.search.spans.PayloadSpans;
+public class NoSpans implements PayloadSpans {
     public NoSpans(){
     }
     public int doc() {
@@ -26,5 +26,13 @@ public class NoSpans implements Spans {
     public int start() {
         return 0;
     }
+
+  public Collection getPayload() throws IOException {
+    throw new UnsupportedOperationException("Not supported.");
+  }
+
+  public boolean isPayloadAvailable() {
+    return false;
+  }
 
 }
