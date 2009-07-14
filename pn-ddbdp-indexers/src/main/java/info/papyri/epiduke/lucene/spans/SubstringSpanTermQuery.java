@@ -3,7 +3,6 @@ import info.papyri.epiduke.lucene.bigrams.SubstringTermDelegate;
 import info.papyri.epiduke.lucene.bigrams.WildcardSubstringDelegate;
 import info.papyri.epiduke.lucene.MultipleTermPositions;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Collection;
 import java.util.Set;
 
@@ -13,10 +12,12 @@ import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.index.TermTextSwap;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.spans.PayloadSpans;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.Spans;
 import org.apache.lucene.search.spans.TermSpans;
 import org.apache.lucene.util.ToStringUtils;
+
 public class SubstringSpanTermQuery extends SpanQuery {
     private final SubstringTermDelegate delegate;
 
@@ -64,6 +65,11 @@ public class SubstringSpanTermQuery extends SpanQuery {
             return new NoSpans(); 
         }
          return new TermSpans(new MultipleTermPositions(reader,rewrites,term.field()),term);
+    }
+
+  @Override
+    public PayloadSpans getPayloadSpans(final IndexReader reader) throws IOException {
+      return (PayloadSpans)getSpans(reader);
     }
 
     @Override

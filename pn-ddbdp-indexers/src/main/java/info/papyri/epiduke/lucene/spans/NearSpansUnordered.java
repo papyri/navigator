@@ -99,6 +99,7 @@ class NearSpansUnordered implements Spans {
     public int start() { return spans.start(); }
     public int end() { return spans.end(); }
 
+    @Override
     public String toString() { return spans.toString() + "#" + index; }
   }
 
@@ -197,6 +198,7 @@ class NearSpansUnordered implements Spans {
   public int end() { return max.end(); }
 
 
+  @Override
   public String toString() {
     return getClass().getName() + "("+query.toString()+")@"+
       (firstTime?"START":(more?(doc()+":"+start()+"-"+end()):"END"));
