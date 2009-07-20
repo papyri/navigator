@@ -174,20 +174,4 @@ public class HtmlDocument extends HttpServlet implements IndexEventListener {
          doGet(arg0, arg1);
     }
     
-    public static String parseName(String fName){
-        int xmlDot = fName.indexOf(".xml");
-        int docDot = fName.substring(0,xmlDot).lastIndexOf('.');
-        int volDot = fName.substring(0,docDot).lastIndexOf('.');
-        int colDot = fName.substring(0,volDot).indexOf('.',3);
-        String volName = null;
-        if(volDot > 2){
-             volName = fName.substring(0,docDot);
-        }
-        String result = (colDot != -1)?fName.substring(0,colDot):fName.substring(0,docDot);
-        if(volName != null) result = fName.substring(0,volDot) + "/" + volName;
-        result += "/" + fName;
-        return result;
-    }
-    
-    
 }

@@ -4,8 +4,11 @@ import info.papyri.ddbdp.parser.DefaultReporter;
 import info.papyri.ddbdp.parser.ModeQueryParser;
 import info.papyri.ddbdp.parser.QueryExecContext;
 import info.papyri.ddbdp.parser.QueryFunctions;
+import info.papyri.ddbdp.parser.QueryResult;
 
 import org.apache.lucene.search.spans.SpanNearQuery;
+import org.apache.lucene.search.Query;
+
 import org.mozilla.javascript.CompilerEnvirons;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
@@ -148,4 +151,5 @@ public class RhinoTest extends TestCase {
         int mode = mqp.getMode();
         assertEquals(QueryFunctions.MODE_BETA_FILTER_DIACRITICS,mode);
     }
+
 }

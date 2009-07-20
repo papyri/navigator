@@ -14,8 +14,15 @@ public class Log4JTransformListener implements ErrorListener {
 
     public void error(TransformerException arg0) throws TransformerException {
         SourceLocator loc = arg0.getLocator();
-        String msg = "error: " + loc.getSystemId() + " line " + loc.getLineNumber() + "; column " + loc.getColumnNumber() + " : " + arg0.toString(); 
-        this.log.error(msg,arg0);
+        if (loc != null) {
+          String msg = "error: " + loc.getSystemId()
+                  + " line " + loc.getLineNumber()
+                  + "; column " + loc.getColumnNumber()
+                  + " : " + arg0.toString();
+          this.log.error(msg,arg0);
+        } else {
+          this.log.error("Tranform error", arg0);
+        }
     }
 
     public void fatalError(TransformerException arg0)
