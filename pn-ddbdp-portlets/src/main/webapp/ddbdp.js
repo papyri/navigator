@@ -2,10 +2,7 @@ var firstByteMark = [ 0x00,0x00,0xC0,0xE0,0xF0,0xF8,0xFC ];
 var byteMask = 0xBF;
 var byteMark = 0x80;
 function clearForm(form){
-    for(var i=0;i<form.elements.length;i++){
-        if(form.elements[i].checked) form.elements[i].checked = false;
-        else if(form.elements[i].type == 'text') form.elements[i].value = "";
-    }
+    form.reset();
 }
 
 function help(id){
