@@ -101,6 +101,7 @@ public class TEILineHandler extends TEIHandler {
         return this.document;
     }
 
+  @Override
     public void characters(char[] cdata, int start, int length) throws SAXException {
         if (collect.peek().booleanValue()) {
             if (lineNum != null) {
@@ -113,7 +114,7 @@ public class TEILineHandler extends TEIHandler {
                         System.arraycopy(cdata, start, first, 0, first.length);
                         System.arraycopy(cdata, start + first.length, second, 0, second.length);
                         text.append(first);
-                        text.append(" &LINE-");
+                        text.append("\n &LINE-");
                         text.append(lineNum);
                         text.append("; ");
                         text.append(second);
@@ -206,16 +207,13 @@ public class TEILineHandler extends TEIHandler {
         if ("lb".equals(arg1)) {
             String n = arg3.getValue("n");
             lineNum = n;
-            char last = ' ';
-
-            for (int i = text.length() - 1; i > 0; i--) {
-                if (Character.isWhitespace(text.charAt(i))) {
-                    continue;
-                }
-                last = text.charAt(i);
-                break;
+            if ("worddiv".equals(arg3.getValue("type"))) {
+              //strip space from the end of text
+              while (Character.isWhitespace(text.charAt(text.length() - 1))) {
+                text.deleteCharAt(text.length() - 1);
+              }
             }
-            if (lineNum != null && text.length() > 0 && last != '-') {
+            if (lineNum != null && text.length() > 0 && !"worddiv".equals(arg3.getValue("type"))) {
                 //text.s
                 text.append(" &LINE-");
                 text.append(lineNum);
@@ -235,7 +233,6 @@ public class TEILineHandler extends TEIHandler {
     @Override
     public void startPrefixMapping(String arg0, String arg1)
             throws SAXException {
-        // TODO Auto-generated method stub
     }
 
     public static final int COLL_IX = 0;
