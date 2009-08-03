@@ -198,8 +198,9 @@ public class QueryExecContext extends ScriptableObject implements QueryFunctions
             morphs.add(val);
         }
         if (morphs.size() == 0) {
-            LOG.info("No morphs found, defaulting to lemma: " + lemma);
-            morphs.add(lemma);
+            //The string below contains characters from Mongolian, Han Chinese,
+            //Hiragana, and Arabic, and is therefore guaranteed to find nothing
+            morphs.add("\u1820\u2e92\u3052\ufe86");
         }
 
         if (morphs.size() > 1) {

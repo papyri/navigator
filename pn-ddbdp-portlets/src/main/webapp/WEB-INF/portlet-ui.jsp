@@ -149,7 +149,9 @@ if(rReq.getAttribute(SearchPortlet.ERROR_ATTR) != null){
 <table width="100%" class="helpTitle"><tr><td class="title">
 			Lemmatized Search</td>
 		<td class="close" align="right"><a href="javascript:disableHelp('lemmatized')" class="close">[x] close</a></td></tr></table>
-			<p><span class="impt">Lemmatized Search</span> searches for all forms of the entered dictionary headword.</p>
+			<p><span class="impt">Lemmatized Search</span> searches for all forms of the entered dictionary headword (Greek only for now). 
+                            For words that have lemmas identical to other words (like δέω, e.g.), you may append a number corresponding to the article's
+                            order in LSJ. If you do not append a number, the search will be done on all forms of all corresponding lemmas.</p>
 
 		</div>
 		<div id="capitals" class="helpBox">
