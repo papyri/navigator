@@ -2,14 +2,12 @@ package info.papyri.epiduke.lucene;
 
 import info.papyri.epiduke.lucene.analysis.AncientGreekAnalyzer;
 import info.papyri.epiduke.lucene.analysis.CopyingTokenFilter;
-import info.papyri.epiduke.lucene.analysis.LemmaFilter;
 import info.papyri.epiduke.lucene.analysis.LinePositionTokenStream;
 import info.papyri.epiduke.sax.TEILineHandler;
 import info.papyri.metadata.CoreMetadataFields;
 import info.papyri.metadata.NamespacePrefixes;
 import info.papyri.util.NumberConverter;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import java.io.File;
@@ -20,7 +18,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.zip.*;
 
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.CachingTokenFilter;
@@ -72,7 +69,6 @@ public class FastIndexer {
     private final IndexWriter metadata;
     private final IndexSearcher coreMetadata;
     private final TEILineHandler main;
-    private final Connection db;
     private XMLReader digest;
     private int files = 0;
     private boolean indexLines = false;
@@ -97,7 +93,7 @@ public class FastIndexer {
         return result;
     }
 
-    public FastIndexer(File out, String meta, Connection db) throws IOException {
+    public FastIndexer(File out, String meta) throws IOException {
         main = new TEILineHandler(true);
         main.addLineBreakTag("lb");
         main.addTextPattern("TEI.2/text/body/div");
@@ -122,7 +118,6 @@ public class FastIndexer {
             this.coreMetadata = null;
             this.metadata = null;
         }
-        this.db = db;
     }
 
     public void index(java.io.File file, boolean recur) throws IOException, SAXException, SQLException {
@@ -413,19 +408,8 @@ public class FastIndexer {
         return xr;
     }
 
-    private static void index(String in, String out, boolean recur, boolean lines, String meta, String lemmas) throws IOException, SQLException, SAXException {
-        String docRoot = in;
-        File lemmaDir;
-        if (lemmas == null) {
-            // TODO make a temp directory, copy seed lemmas
-            String name = "pi_lemmas_" + System.currentTimeMillis();
-            lemmaDir = File.createTempFile(name, null);
-            lemmaDir.mkdirs();
-        } else {
-            lemmaDir = new File(lemmas);
-        }
-        Connection db = LemmaIndexer.getSeedData(lemmaDir);
-        FastIndexer main = new FastIndexer(new File(out), meta, db);
+    private static void index(String in, String out, boolean recur, boolean lines, String meta) throws IOException, SQLException, SAXException {
+        FastIndexer main = new FastIndexer(new File(out), meta);
         main.indexLines = lines;
         System.out.println("Start index: " + new java.util.Date(System.currentTimeMillis()));
         main.index(new File(in), recur);
@@ -441,17 +425,15 @@ public class FastIndexer {
         System.exit(0);
         }
         HashMap opts = getOpts(args,
-        new String[]{"-e","-i","-o","-r","-t","-l","-m"},
-        new String[]{"--lemmas","--in","--out","--recur","--rotate","--lines","--meta"});
+        new String[]{"-i","-o","-r","-t","-l","-m"},
+        new String[]{"--in","--out","--recur","--rotate","--lines","--meta"});
         String in = opts.get("-i").toString();
         String out = opts.get("-o").toString();
         String meta = opts.get("-m").toString();
-        String lemmas = opts.get("-e").toString();
         Object recur = opts.get("-r");
         Object lines = opts.get("-l");
 
         // this is just to load the driver class
-        org.apache.derby.jdbc.EmbeddedDriver ed = new org.apache.derby.jdbc.EmbeddedDriver();
         /*
          * Test code.  TODO: Refactor into real test
         String in = "/usr/local/pn/xml/idp.data/trunk/DDB_EpiDoc_XML/p.muench/p.muench.3.1";
@@ -461,16 +443,14 @@ public class FastIndexer {
         String meta = "/usr/local/pn/indices/merge";
         Object lines = null;
          */
-        index(in, out, recur != null, lines != null, meta, lemmas);
+        index(in, out, recur != null, lines != null, meta);
     }
 
     private static void printHelp() {
         System.out.println("Usage:");
-        System.out.println("-e/--lemmas\t<STRING>\t:  - path to directory of derby db for morphs to lemmas");
         System.out.println("-i/--in\t<STRING>\t: top-level source directory for TEI xml");
         System.out.println("-o/--out\t<STRING>\t: directory for Lucene index");
         System.out.println("-r/--recur\t<BOOL>\t: index all xml files in subdirectories of source directory");
-        System.out.println("-t/--rotate\t<BOOL>\t: OBSOLETE - rotate tokens");
         System.out.println("-l/--lines\t<BOOL>\t:  - index tokens with line-based position increments");
         System.out.println("-m/--meta\t<STRING>\t:  - directory with Lucene core metadata index");
     }

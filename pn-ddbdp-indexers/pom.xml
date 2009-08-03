@@ -156,6 +156,10 @@
     </dependencies>
     <build>
         <testResources>
+          <testResource>
+            <targetPath>xml</targetPath>
+            <directory>${basedir}/src/test/resources</directory>
+          </testResource>
             <testResource>
                 <targetPath></targetPath>
                 <directory>${basedir}/src/main/resources</directory>
@@ -164,6 +168,7 @@
                     <include>lemma-seed.zip</include>
                 </includes>
             </testResource>
+            <!--
             <testResource>
                 <targetPath>xml</targetPath>
                 <directory>${basedir}/src/main/resources/xml</directory>
@@ -173,6 +178,7 @@
                     <include>**/*.xsl</include>
                 </includes>
             </testResource>
+            -->
         </testResources>
         <plugins>
             <plugin>
@@ -203,7 +209,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.2</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -277,3 +282,4 @@
         </repository>
     </distributionManagement>
 </project>
+
