@@ -2,30 +2,25 @@ package info.papyri.ddbdp.portlet;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import info.papyri.ddbdp.parser.QueryExecContext;
 import info.papyri.ddbdp.servlet.IndexEvent;
 import info.papyri.ddbdp.servlet.IndexEventListener;
 import info.papyri.ddbdp.servlet.IndexEventPropagator;
 import info.papyri.ddbdp.servlet.SearcherEvent;
-import info.papyri.ddbdp.xslt.DelegatingResolver;
-import info.papyri.ddbdp.xslt.Log4JTransformListener;
-import info.papyri.epiduke.lucene.Indexer;
 
 import info.papyri.metadata.*;
 
@@ -40,19 +35,15 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.servlet.ServletException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
+import javax.xml.transform.Templates;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.Source;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
@@ -60,11 +51,15 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.XMLReader;
 import org.xml.sax.EntityResolver;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.trans.CompilerInfo;
+import net.sf.saxon.PreparedStylesheet;
+import net.sf.saxon.StandardErrorListener;
+import net.sf.saxon.StandardURIResolver;
 
 public class DocumentPortlet extends GenericPortlet implements
 IndexEventListener {
@@ -75,14 +70,29 @@ IndexEventListener {
     private static final Term TEMPLATE = new Term("ddbdpId","");
     public static final String DDB_ID = "info.papyri:identifiers:ddbdp:id";
     public static final String DDB_ERROR = "info.papyri:identifiers:ddbdp:error";
-    public  static final TransformerFactory fact = getFactory();
-    private static final TransformerFactory getFactory(){
-        TransformerFactory fact = TransformerFactory.newInstance();
-        fact.setURIResolver(new DelegatingResolver(fact.getURIResolver()));
-        fact.setErrorListener(new Log4JTransformListener(LOG));
-        return fact;
+    private static final Map<String,Templates> templates = new HashMap<String,Templates>();
+
+    private static Templates getTemplates(String xslt) {
+        Templates result = templates.get(xslt);
+        if (result == null) {
+            try {
+                StreamSource xslSrc = new StreamSource(new FileInputStream(xslt));
+                xslSrc.setSystemId(xslt);
+                Configuration configuration = new Configuration();
+                configuration.setRetainDTDAttributeTypes(false);
+                CompilerInfo compilerInfo = new CompilerInfo();
+                compilerInfo.setErrorListener(new StandardErrorListener());
+                compilerInfo.setURIResolver(new StandardURIResolver(configuration));
+                result = (Templates)PreparedStylesheet.compile(xslSrc, configuration, compilerInfo);
+                templates.put(xslt, result);
+            } catch (Exception e) {
+                LOG.error("Error setting up " + xslt + ".", e);
+            }
+        }
+        return result;
     }
 
+    @Override
     public void init() throws PortletException {
         super.init();
         String docroot = this.getPortletContext().getInitParameter("docroot");
@@ -196,9 +206,9 @@ IndexEventListener {
                      
                     response.setContentType("text/html");
                     XMLReader reader = createReader();
-                    InputStream xsl = DocumentPortlet.class.getResourceAsStream("/info/papyri/ddbdp/xslt/" + xslt);
-                    StreamSource source = new StreamSource(xsl); 
-                    Transformer trans = fact.newTransformer(source);
+                    URL xsl = DocumentPortlet.class.getResource("/info/papyri/ddbdp/xslt/" + xslt);
+                    Templates tFactory = getTemplates(xsl.getFile());
+                    Transformer trans = tFactory.newTransformer();
                     trans.setOutputProperty(OutputKeys.METHOD, "xml");
                     trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                     LOG.debug("response.getCharacterEncoding()=="+response.getCharacterEncoding());

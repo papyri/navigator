@@ -21,22 +21,35 @@ public class Log4JTransformListener implements ErrorListener {
                   + " : " + arg0.toString();
           this.log.error(msg,arg0);
         } else {
-          this.log.error("Tranform error", arg0);
+          this.log.error("Transform error", arg0);
         }
     }
 
     public void fatalError(TransformerException arg0)
             throws TransformerException {
         SourceLocator loc = arg0.getLocator();
-        String msg = "error: " + loc.getSystemId() + " line " + loc.getLineNumber() + "; column " + loc.getColumnNumber() + " : " + arg0.toString(); 
-        this.log.fatal(msg,arg0);
+        if (loc != null) {
+            String msg = "error: " + loc.getSystemId() 
+                    + " line " + loc.getLineNumber() 
+                    + "; column " + loc.getColumnNumber() 
+                    + " : " + arg0.toString(); 
+            this.log.fatal(msg,arg0);
+        } else {
+            this.log.fatal("Transform error", arg0);
+        }
         throw arg0;
     }
 
     public void warning(TransformerException arg0) throws TransformerException {
         SourceLocator loc = arg0.getLocator();
-        String msg = "error: " + loc.getSystemId() + " line " + loc.getLineNumber() + "; column " + loc.getColumnNumber() + " : " + arg0.toString(); 
-        this.log.warn(msg,arg0);
+        if (loc != null) {
+            String msg = "error: " + loc.getSystemId() 
+                    + " line " + loc.getLineNumber()
+                    + "; column " + loc.getColumnNumber()
+                    + " : " + arg0.toString();
+            this.log.warn(msg,arg0);
+        } else {
+            this.log.warn("Transform warning", arg0);
+        }
     }
-
 }
