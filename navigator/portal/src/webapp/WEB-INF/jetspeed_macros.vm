@@ -45,12 +45,7 @@
 *#
 
 #macro(BaseHref)
-  #if ( $request.serverPort == "80" )
-    ${request.scheme}://${request.serverName}${request.contextPath}/
-  #else
-    ${request.scheme}://${request.serverName}:${request.serverPort}${request.contextPath}/
-  #end
-#end
+#if ( $request.serverPort == "80" )${request.scheme}://${request.serverName}${request.contextPath}/#else ${request.scheme}://${request.serverName}:${request.serverPort}${request.contextPath}/#end#end
 
 #*
  * Returns the correct Content-type string for use within the Content-type
