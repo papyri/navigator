@@ -1,0 +1,9 @@
+body {
+  font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Arial, Helvetica, sans-serif;
+}
+a {
+  color:black;
+}
+a:visited {
+  color:maroon;
+}
