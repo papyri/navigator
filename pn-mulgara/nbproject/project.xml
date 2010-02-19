@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.ant.freeform</type>
+    <configuration>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>Mulgara</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+            <!-- Do not use Project Properties customizer when editing this file manually. -->
+            <name>Mulgara</name>
+            <properties/>
+            <folders>
+                <source-folder>
+                    <label>Mulgara</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>tools/src</label>
+                    <type>java</type>
+                    <location>tools/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/ant-task/java</label>
+                    <type>java</type>
+                    <location>src/jar/ant-task/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/client-jrdf/java</label>
+                    <type>java</type>
+                    <location>src/jar/client-jrdf/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/content-mbox/java</label>
+                    <type>java</type>
+                    <location>src/jar/content-mbox/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/content-mp3/java</label>
+                    <type>java</type>
+                    <location>src/jar/content-mp3/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/content-n3/java</label>
+                    <type>java</type>
+                    <location>src/jar/content-n3/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/content-rdfxml/java</label>
+                    <type>java</type>
+                    <location>src/jar/content-rdfxml/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/content-rlog/java</label>
+                    <type>java</type>
+                    <location>src/jar/content-rlog/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/querylang/java</label>
+                    <type>java</type>
+                    <location>src/jar/querylang/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/descriptor/src/java</label>
+                    <type>java</type>
+                    <location>src/jar/descriptor/src/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/doclet/java</label>
+                    <type>java</type>
+                    <location>src/jar/doclet/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/driver/java</label>
+                    <type>java</type>
+                    <location>src/jar/driver/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/dtd/java</label>
+                    <type>java</type>
+                    <location>src/jar/dtd/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/jrdf/java</label>
+                    <type>java</type>
+                    <location>src/jar/jrdf/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/krule/java</label>
+                    <type>java</type>
+                    <location>src/jar/krule/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/query/java</label>
+                    <type>java</type>
+                    <location>src/jar/query/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/querylang/javacc</label>
+                    <type>java</type>
+                    <location>src/jar/querylang/javacc</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/rdql/java</label>
+                    <type>java</type>
+                    <location>src/jar/rdql/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-distributed/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-distributed/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-filesystem/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-filesystem/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-gis/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-gis/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-http/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-http/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-jar/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-jar/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-lucene/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-lucene/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-memory/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-memory/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-nodetype/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-nodetype/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-null/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-null/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-prefix/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-prefix/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-relational/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-relational/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-spi/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-spi/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-store/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-store/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-test/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-test/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-url/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-url/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-view/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-view/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/resolver-xsd/java</label>
+                    <type>java</type>
+                    <location>src/jar/resolver-xsd/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/server/java</label>
+                    <type>java</type>
+                    <location>src/jar/server/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/server-http/java</label>
+                    <type>java</type>
+                    <location>src/jar/server-http/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/server-local/java</label>
+                    <type>java</type>
+                    <location>src/jar/server-local/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/server-rmi/java</label>
+                    <type>java</type>
+                    <location>src/jar/server-rmi/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store/java</label>
+                    <type>java</type>
+                    <location>src/jar/store/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-nodepool/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-nodepool/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-nodepool-memory/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-nodepool-memory/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-nodepool-xa/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-nodepool-xa/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-stringpool/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-stringpool/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-stringpool-memory/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-stringpool-memory/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-stringpool-xa/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-stringpool-xa/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-stringpool-xa11/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-stringpool-xa11/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/store-xa/java</label>
+                    <type>java</type>
+                    <location>src/jar/store-xa/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/swrl/java</label>
+                    <type>java</type>
+                    <location>src/jar/swrl/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/tag/java</label>
+                    <type>java</type>
+                    <location>src/jar/tag/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/tuples/java</label>
+                    <type>java</type>
+                    <location>src/jar/tuples/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/tuples-hybrid/java</label>
+                    <type>java</type>
+                    <location>src/jar/tuples-hybrid/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/util/java</label>
+                    <type>java</type>
+                    <location>src/jar/util/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/util-xa/java</label>
+                    <type>java</type>
+                    <location>src/jar/util-xa/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/jar/web/java</label>
+                    <type>java</type>
+                    <location>src/jar/web/java</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+            </folders>
+            <ide-actions>
+                <action name="build">
+                    <target>dist</target>
+                </action>
+                <action name="clean">
+                    <target>clean</target>
+                </action>
+                <action name="javadoc">
+                    <target>javadoc-dist</target>
+                </action>
+                <action name="run">
+                    <target>start</target>
+                </action>
+                <action name="test">
+                    <target>test</target>
+                </action>
+                <action name="rebuild">
+                    <target>clean</target>
+                    <target>dist</target>
+                </action>
+            </ide-actions>
+            <view>
+                <items>
+                    <source-folder style="packages">
+                        <label>tools/src</label>
+                        <location>tools/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/ant-task/java</label>
+                        <location>src/jar/ant-task/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/client-jrdf/java</label>
+                        <location>src/jar/client-jrdf/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/content-mbox/java</label>
+                        <location>src/jar/content-mbox/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/content-mp3/java</label>
+                        <location>src/jar/content-mp3/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/content-n3/java</label>
+                        <location>src/jar/content-n3/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/content-rdfxml/java</label>
+                        <location>src/jar/content-rdfxml/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/content-rlog/java</label>
+                        <location>src/jar/content-rlog/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/querylang/java</label>
+                        <location>src/jar/querylang/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/descriptor/src/java</label>
+                        <location>src/jar/descriptor/src/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/doclet/java</label>
+                        <location>src/jar/doclet/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/driver/java</label>
+                        <location>src/jar/driver/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/dtd/java</label>
+                        <location>src/jar/dtd/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/jrdf/java</label>
+                        <location>src/jar/jrdf/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/krule/java</label>
+                        <location>src/jar/krule/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/query/java</label>
+                        <location>src/jar/query/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/querylang/javacc</label>
+                        <location>src/jar/querylang/javacc</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/rdql/java</label>
+                        <location>src/jar/rdql/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver/java</label>
+                        <location>src/jar/resolver/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-distributed/java</label>
+                        <location>src/jar/resolver-distributed/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-filesystem/java</label>
+                        <location>src/jar/resolver-filesystem/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-gis/java</label>
+                        <location>src/jar/resolver-gis/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-http/java</label>
+                        <location>src/jar/resolver-http/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-jar/java</label>
+                        <location>src/jar/resolver-jar/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-lucene/java</label>
+                        <location>src/jar/resolver-lucene/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-memory/java</label>
+                        <location>src/jar/resolver-memory/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-nodetype/java</label>
+                        <location>src/jar/resolver-nodetype/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-null/java</label>
+                        <location>src/jar/resolver-null/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-prefix/java</label>
+                        <location>src/jar/resolver-prefix/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-relational/java</label>
+                        <location>src/jar/resolver-relational/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-spi/java</label>
+                        <location>src/jar/resolver-spi/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-store/java</label>
+                        <location>src/jar/resolver-store/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-test/java</label>
+                        <location>src/jar/resolver-test/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-url/java</label>
+                        <location>src/jar/resolver-url/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-view/java</label>
+                        <location>src/jar/resolver-view/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/resolver-xsd/java</label>
+                        <location>src/jar/resolver-xsd/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/server/java</label>
+                        <location>src/jar/server/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/server-http/java</label>
+                        <location>src/jar/server-http/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/server-local/java</label>
+                        <location>src/jar/server-local/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/server-rmi/java</label>
+                        <location>src/jar/server-rmi/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store/java</label>
+                        <location>src/jar/store/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-nodepool/java</label>
+                        <location>src/jar/store-nodepool/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-nodepool-memory/java</label>
+                        <location>src/jar/store-nodepool-memory/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-nodepool-xa/java</label>
+                        <location>src/jar/store-nodepool-xa/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-stringpool/java</label>
+                        <location>src/jar/store-stringpool/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-stringpool-memory/java</label>
+                        <location>src/jar/store-stringpool-memory/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-stringpool-xa/java</label>
+                        <location>src/jar/store-stringpool-xa/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-stringpool-xa11/java</label>
+                        <location>src/jar/store-stringpool-xa11/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/store-xa/java</label>
+                        <location>src/jar/store-xa/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/swrl/java</label>
+                        <location>src/jar/swrl/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/tag/java</label>
+                        <location>src/jar/tag/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/tuples/java</label>
+                        <location>src/jar/tuples/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/tuples-hybrid/java</label>
+                        <location>src/jar/tuples-hybrid/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/util/java</label>
+                        <location>src/jar/util/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/util-xa/java</label>
+                        <location>src/jar/util-xa/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/jar/web/java</label>
+                        <location>src/jar/web/java</location>
+                    </source-folder>
+                    <source-file>
+                        <location>build.xml</location>
+                    </source-file>
+                </items>
+                <context-menu>
+                    <ide-action name="build"/>
+                    <ide-action name="rebuild"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="javadoc"/>
+                    <ide-action name="run"/>
+                    <ide-action name="test"/>
+                </context-menu>
+            </view>
+            <subprojects/>
+        </general-data>
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
+            <compilation-unit>
+                <package-root>tools/src</package-root>
+                <package-root>src/jar/ant-task/java</package-root>
+                <package-root>src/jar/client-jrdf/java</package-root>
+                <package-root>src/jar/content-mbox/java</package-root>
+                <package-root>src/jar/content-mp3/java</package-root>
+                <package-root>src/jar/content-n3/java</package-root>
+                <package-root>src/jar/content-rdfxml/java</package-root>
+                <package-root>src/jar/content-rlog/java</package-root>
+                <package-root>src/jar/querylang/java</package-root>
+                <package-root>src/jar/descriptor/src/java</package-root>
+                <package-root>src/jar/doclet/java</package-root>
+                <package-root>src/jar/driver/java</package-root>
+                <package-root>src/jar/dtd/java</package-root>
+                <package-root>src/jar/jrdf/java</package-root>
+                <package-root>src/jar/krule/java</package-root>
+                <package-root>src/jar/query/java</package-root>
+                <package-root>src/jar/querylang/javacc</package-root>
+                <package-root>src/jar/rdql/java</package-root>
+                <package-root>src/jar/resolver/java</package-root>
+                <package-root>src/jar/resolver-distributed/java</package-root>
+                <package-root>src/jar/resolver-filesystem/java</package-root>
+                <package-root>src/jar/resolver-gis/java</package-root>
+                <package-root>src/jar/resolver-http/java</package-root>
+                <package-root>src/jar/resolver-jar/java</package-root>
+                <package-root>src/jar/resolver-lucene/java</package-root>
+                <package-root>src/jar/resolver-memory/java</package-root>
+                <package-root>src/jar/resolver-nodetype/java</package-root>
+                <package-root>src/jar/resolver-null/java</package-root>
+                <package-root>src/jar/resolver-prefix/java</package-root>
+                <package-root>src/jar/resolver-relational/java</package-root>
+                <package-root>src/jar/resolver-spi/java</package-root>
+                <package-root>src/jar/resolver-store/java</package-root>
+                <package-root>src/jar/resolver-test/java</package-root>
+                <package-root>src/jar/resolver-url/java</package-root>
+                <package-root>src/jar/resolver-view/java</package-root>
+                <package-root>src/jar/resolver-xsd/java</package-root>
+                <package-root>src/jar/server/java</package-root>
+                <package-root>src/jar/server-http/java</package-root>
+                <package-root>src/jar/server-local/java</package-root>
+                <package-root>src/jar/server-rmi/java</package-root>
+                <package-root>src/jar/store/java</package-root>
+                <package-root>src/jar/store-nodepool/java</package-root>
+                <package-root>src/jar/store-nodepool-memory/java</package-root>
+                <package-root>src/jar/store-nodepool-xa/java</package-root>
+                <package-root>src/jar/store-stringpool/java</package-root>
+                <package-root>src/jar/store-stringpool-memory/java</package-root>
+                <package-root>src/jar/store-stringpool-xa/java</package-root>
+                <package-root>src/jar/store-stringpool-xa11/java</package-root>
+                <package-root>src/jar/store-xa/java</package-root>
+                <package-root>src/jar/swrl/java</package-root>
+                <package-root>src/jar/tag/java</package-root>
+                <package-root>src/jar/tuples/java</package-root>
+                <package-root>src/jar/tuples-hybrid/java</package-root>
+                <package-root>src/jar/util/java</package-root>
+                <package-root>src/jar/util-xa/java</package-root>
+                <package-root>src/jar/web/java</package-root>
+                <classpath mode="compile">lib/activation-1.1.1.jar:lib/ant-1.7.0.jar:lib/ant-apache-bsf-1.7.0.jar:lib/ant-junit-1.7.0.jar:lib/ant-launcher-1.7.0.jar:lib/ant-nodeps-1.7.0.jar:lib/ant-trax-1.7.0.jar:lib/antlr.jar:lib/apache-mime4j-0.5.jar:lib/apache-soap-2.2.jar:lib/aspectjrt-1.2.jar:lib/axis-1.4.jar:lib/axis-ant-1.4.jar:lib/bsf-2.3.0.jar:lib/bsh-2.0b1.jar:lib/carol-2.0.5.jar:lib/castor-1.2-codegen.jar:lib/castor-1.2-xml-schema.jar:lib/castor-1.2-xml.jar:lib/commons-codec-1.3.jar:lib/commons-discovery-1.2.jar:lib/commons-httpclient-3.1.jar:lib/commons-logging-1.1.1.jar:lib/concurrent-1.3.4.jar:lib/connector-1_5.jar:lib/core-3.1.1.jar:lib/derby.jar:lib/emory-util-2.1-remote.jar:lib/gnu-regexp-1.1.4.jar:lib/howl-logger-0.1.11.jar:lib/httpclient-4.0-beta2.jar:lib/httpcore-4.0-beta3.jar:lib/httpmime-4.0-beta2.jar:lib/icu4j_3_4.jar:lib/interruptiblermi-1.1.jar:lib/iri-0.5.jar:lib/jakarta-oro-2.0.5.jar:lib/jakarta-regexp-1.5.jar:lib/jargs-0.2.jar:lib/jasper-compiler-4.2.29.jar:lib/jasper-runtime-4.2.29.jar:lib/javacc.jar:lib/jaxrpc-1.4.jar:lib/jboss-j2ee.jar:lib/jena-2.5.6.jar:lib/jenatest-2.5.6.jar:lib/jetty-6.1.11.jar:lib/jetty-util-6.1.11.jar:lib/jid3-0.34.jar:lib/jl1.0.jar:lib/jline-0.9.94.jar:lib/joda-time-1.5.2.jar:lib/jotm-2.0.10.jar:lib/jotm_jrmp_stubs-2.0.10.jar:lib/js-1.5r3.jar:lib/jsp-2.1.jar:lib/jsp-api-2.1.jar:lib/jta-spec1_0_1.jar:lib/jtidy-r7-xmlc-2.2.jar:lib/junit-3.8.1.jar:lib/jxunit3.jar:lib/log4j-1.2.15.jar:lib/lucene-core-2.4.0.jar:lib/mail-1.3.jar:lib/Quick4rt.jar:lib/Quick4util.jar:lib/saaj-1.4.jar:lib/sablecc-2.18.2.jar:lib/serializer-2.7.0.jar:lib/servlet-api-2.5-6.1.11.jar:lib/sesame-model-2.2.1.jar:lib/trove-2.0.4.jar:lib/velocity-1.5.jar:lib/wsdl4j-1.5.1.jar:lib/xalan-2.7.0.jar:lib/xercesImpl-2.9.1.jar:lib/xml-apis-2.9.1.jar:lib/xom-1.0d21.jar</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+        </java-data>
+    </configuration>
+</project>

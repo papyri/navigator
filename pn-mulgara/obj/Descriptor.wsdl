@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://mulgara.org/descriptor" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://mulgara.org/descriptor" xmlns:intf="http://mulgara.org/descriptor" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="mapItem">
+    <sequence>
+     <element name="key" nillable="true" type="xsd:anyType"/>
+     <element name="value" nillable="true" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+   <complexType name="Map">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="apachesoap:mapItem"/>
+    </sequence>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="invokeToStringResponse">
+
+      <wsdl:part name="invokeToStringReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="invokeToStringRequest">
+
+      <wsdl:part name="params" type="apachesoap:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="invokeDescriptorResponse">
+
+      <wsdl:part name="invokeDescriptorReturn" type="apachesoap:Element"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="invokeDescriptorRequest">
+
+      <wsdl:part name="eparams" type="apachesoap:Element"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="DescriptorUtil">
+
+      <wsdl:operation name="invokeToString" parameterOrder="params">
+
+         <wsdl:input message="impl:invokeToStringRequest" name="invokeToStringRequest"/>
+
+         <wsdl:output message="impl:invokeToStringResponse" name="invokeToStringResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="invokeDescriptor" parameterOrder="eparams">
+
+         <wsdl:input message="impl:invokeDescriptorRequest" name="invokeDescriptorRequest"/>
+
+         <wsdl:output message="impl:invokeDescriptorResponse" name="invokeDescriptorResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="DescriptorServiceSoapBinding" type="impl:DescriptorUtil">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="invokeToString">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="invokeToStringRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://mulgara.org/descriptor" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="invokeToStringResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://mulgara.org/descriptor" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="invokeDescriptor">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="invokeDescriptorRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://mulgara.org/descriptor" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="invokeDescriptorResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://mulgara.org/descriptor" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="DescriptorUtilService">
+
+      <wsdl:port binding="impl:DescriptorServiceSoapBinding" name="DescriptorService">
+
+         <wsdlsoap:address location="http://mid-campus-00800.wireless.unc.edu:8080/webservices/services/DescriptorService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
