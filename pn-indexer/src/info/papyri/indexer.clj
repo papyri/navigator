@@ -2,8 +2,8 @@
   (:use clojure.contrib.math)
   (:import 
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
-    (java.io File FileInputStream FileReader StringWriter)
-    (java.net URI URL URLEncoder)
+    (java.io File FileInputStream FileOutputStream FileReader StringWriter)
+    (java.net URI URL URLEncoder URLDecoder)
     (java.nio.charset Charset)
     (java.text Normalizer Normalizer$Form)
     (java.util ArrayList TreeMap)
@@ -15,7 +15,7 @@
     (net.sf.saxon Configuration FeatureKeys PreparedStylesheet StandardErrorListener StandardURIResolver TransformerFactoryImpl)
     (net.sf.saxon.trans CompilerInfo XPathException)
     (org.apache.solr.client.solrj SolrServer)
-    (org.apache.solr.client.solrj.impl StreamingUpdateSolrServer BinaryRequestWriter)
+    (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
     (org.mulgara.connection Connection ConnectionFactory)
@@ -36,12 +36,32 @@
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
 (def html (ref (ConcurrentLinkedQueue.)))
-(def texttemplates (ref nil))
+(def solrtemplates (ref nil))
 (def text (ref (ConcurrentLinkedQueue.)))
+(def texttemplates (ref (ConcurrentLinkedQueue.)))
 (def links (ref (ConcurrentLinkedQueue.)))
 (def documents (ref (ConcurrentLinkedQueue.)))
 (def morphs (ref (TreeMap.)))
 
+(defn copy
+  "Performs a file copy from the source to the destination, making directories if necessary."
+  [in out]
+  (try
+    (let [outfile (File. out)]
+      (.mkdirs (.getParentFile outfile))
+      (.createNewFile outfile))
+    (let [buffer (byte-array 1024)
+	  from (FileInputStream. in)
+	  to (FileOutputStream. out)]
+      (loop []
+	(let [size (.read from buffer)]
+	  (when (pos? size)
+	    (.write to buffer 0 size)
+	    (recur))))
+      (.close from)
+      (.close to))
+    (catch Exception e
+      (println (str (.getMessage e) " copying " in " to " out ".")))))
 
 (defn init-templates
   "Initialize XSLT template pool."
@@ -84,32 +104,59 @@
         (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
       (when (.contains url "apis/")
         (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-          (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml")))))) 
+          (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
+
+(defn get-txt-filename
+  [url]
+  (try (if (.startsWith url "file:")
+    (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".txt")
+    (if (.contains url "ddbdp")
+      (let [url (URLDecoder/decode url "UTF-8")]
+	(when (.endsWith url "/source")
+	  (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
+	    (if (= (second identifier) "")
+	      (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
+		   (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")
+	      (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) 
+		   "/" (first identifier) "." (second identifier) "."
+		   (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")))))
+      (if (.contains url "hgv")
+        (when (.endsWith url "/source")
+          (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
+                id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".txt")))
+        (when (.contains url "/apis")
+          (if (.endsWith url "/source")
+            (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
+              (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt")))))))
+       (catch Exception e
+	 (println (str (.getMessage e) " processing " url ".")))))
           
 (defn get-html-filename
   [url]
-  (if (.startsWith url "file:")
-    (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".html")
+  (try (if (.startsWith url "file:")
+    (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".html") "/xml/" "/")
     (if (.contains url "ddbdp")
-      (if (.endsWith url "/source")
+      (let [url (URLDecoder/decode url "UTF-8")]
+	(if (.endsWith url "/source")
         (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
           (if (= (second identifier) "")
             (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-		 (.replace (.replace (.replace (.replace (last identifier) "," "-") "/" "_") "%2F" "_") "%2C" "-") ".html")
+		 (.replace (.replace (last identifier) "," "-") "/" "_") ".html")
             (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) 
 		 "/" (first identifier) "." (second identifier) "."
-		 (.replace (.replace (.replace (.replace (last identifier) "," "-") "/" "_") "%2F" "_") "%2C" "-") ".html")))
+		 (.replace (.replace (last identifier) "," "-") "/" "_") ".html")))
         (if (= url "http://papyri.info/ddbdp")
           (str htpath "/DDB_EpiDoc_XML/index.html")
 	  (if (.contains url ";")
 	    (let [identifier (.split (substring-after url "http://papyri.info/ddbdp/") ";")]
 	      (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) "/index.html"))
-	    (str htpath "/DDB_EpiDoc_XML/" (substring-after url "http://papyri.info/ddbdp/") "/index.html"))))
+	    (str htpath "/DDB_EpiDoc_XML/" (substring-after url "http://papyri.info/ddbdp/") "/index.html")))))
       (if (.contains url "hgv")
         (if (.endsWith url "/source")
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".html"))
+            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".html"))
           (if (= url "http://papyri.info/hgv")
             (str htpath "/HGV_meta_EpiDoc/index.html")
             (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
@@ -119,7 +166,9 @@
               (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".html"))
             (if (= url "http://papyri.info/apis")
               (str htpath "/APIS/index.html")
-              (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html"))))))))
+              (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html")))))))
+       (catch Exception e
+	 (println (str (.getMessage e) " processing " url ".")))))
 
 (defn transform
   "Takes an java.io.InputStream, a list of key/value parameter pairs, and a javax.xml.transform.Result"
@@ -187,7 +236,6 @@
   [answer]
   (when (.next answer)
     (cons (list (.getObject answer 0) (.getObject answer 1) (.getObject answer 2)) (answer-seq answer))))
-    
             
 (defn queue-items
   [url exclude]
@@ -204,20 +252,16 @@
                 reprint-in (if (empty? is-replaced-by) ()
 			       (filter (fn [x] (= (first x) item)) is-replaced-by))
                 exclusion (some (set (for [x (filter 
-                  (fn [x] (.startsWith (.toString x) "http://papyri.info")) related)] 
-				       (substring-before (substring-after (.toString x) "http://papyri.info/") "/"))) exclude)]
+                  (fn [s] (.startsWith (.toString (last s)) "http://papyri.info")) related)] 
+				       (substring-before (substring-after (.toString (last x)) "http://papyri.info/") "/"))) exclude)]
 	    (if (nil? exclusion)
-	      (do 
-		(.add @html (list (str "file:" (get-filename (.toString item)))
-				  (list "collection" (substring-before (substring-after (.toString item) "http://papyri.info/") "/"))
-				  (list "related" (apply str (interpose " " (for [x related] (.toString (last x))))))
-				  (list "replaces" (apply str (interpose " " (for [x reprint-from] (.toString (last x)))))) 
-				  (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (.toString (last x))))))))
-		(.add @text (list (str "file:" (get-filename (.toString item)))
-				  (list "collection" (substring-before (substring-after (.toString item) "http://papyri.info/") "/"))
-				  (list "related" (apply str (interpose " " (for [x related] (.toString (last x)))))))))
-	      (.add @links (list (get-html-filename (.toString item)) 
-				 (get-html-filename (.toString (reduce (fn [x y] (if (.contains (.toString x) exclusion) x y)) related))))))))))
+	      (.add @html (list (str "file:" (get-filename (.toString item)))
+				(list "collection" (substring-before (substring-after (.toString item) "http://papyri.info/") "/"))
+				(list "related" (apply str (interpose " " (for [x related] (.toString (last x))))))
+				(list "replaces" (apply str (interpose " " (for [x reprint-from] (.toString (last x)))))) 
+				(list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (.toString (last x))))))))
+	      (.add @links (list (get-html-filename (.toString (last (reduce (fn [x y] (if (.contains (.toString (last x)) exclusion) x y)) related))))
+				 (get-html-filename (.toString item)))))))))
                   
 (defn queue-collections
   "Adds URLs to the HTML transform and indexing queues for processing.  Takes a URL, like http://papryi.info/ddbdp/rdf,
@@ -272,41 +316,10 @@
     (.. SAXParserFactory newInstance newSAXParser
                     (parse (InputSource. (FileInputStream. file)) 
 			   handler))))
-(defn index-solr
+
+(defn generate-html
   []
-  (.start (Thread. 
-    (fn [] 
-      (let [solr (StreamingUpdateSolrServer. solrurl 500 5)]
-        (doto solr (.setRequestWriter (BinaryRequestWriter.)))
-        (while (= (count @documents) 0)
-          (Thread/sleep 1000))
-        (while (> (count @documents) 0)
-          (doto solr (.add (.poll @documents))))
-        (doto solr (.commit))
-        (doto solr (.optimize))
-	(Thread/sleep 1000)
-	(when (> (count @documents) 0)
-	  (index-solr)))))))
-
-
-
-(defn -main [& args]
-
-  (init-templates (str xsltpath "/" "RDF2HTML.xsl") 20 "htmltemplates")
-  (init-templates (str xsltpath "/" "RDF2Solr.xsl") 20 "texttemplates")
-  (println "Queueing DDbDP...")
-  (queue-collections "http://papyri.info/ddbdp" ())
-  (println (str "Queued " (count @html) " documents."))
-  (println "Queueing HGV...")
-  (queue-collections "http://papyri.info/hgv" '("ddbdp"))
-  (println (str "Queued " (count @html) " documents."))
-  (println "Queueing APIS...")
-  (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
-  (println (str "Queued " (count @html) " documents."))
-  
-  ;; Generate HTML
-  (println "Generating HTML...")
-  (let [pool (Executors/newFixedThreadPool 10)
+    (let [pool (Executors/newFixedThreadPool 20)
         tasks (map (fn [x]
 		     (fn []
 		       (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
@@ -324,19 +337,90 @@
       (.get future))
     (doto pool
       (.shutdown)))
-      
-  ;; Generate symlinks
-  (println "Generating symlinks...")
-  (let [pool (Executors/newFixedThreadPool 10)
-        tasks (map (fn [files]
-    (fn [] 
-        (.mkdirs (.getParentFile (File. (last files))))
-        (.exec (Runtime/getRuntime) (str "ln -s " (first files) " " (last files)))))
-    @links)]
+    (dosync (ref-set text @html)
+	    (ref-set htmltemplates nil)))
+
+(defn generate-text
+  []
+    (let [pool (Executors/newFixedThreadPool 20)
+        tasks (map (fn [x]
+		     (fn []
+		       (when (not (.startsWith (first x) "http"))
+			 (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
+					;(println "Transforming " (first x) " to " (get-html-filename (first x)))
+			      (transform (first x)
+					 (list (second x) (nth x 2) (nth x 3) (nth x 4))
+					 (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)
+			      (catch Exception e
+				(.printStackTrace e)
+				(println (str "Error converting file " (first x) "to" (get-txt-filename (first x)))))))))
+		   @text)]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
-      (doto pool
-        (.shutdown)))
+    (doto pool
+      (.shutdown)))
+    (dosync (ref-set texttemplates nil)))
+
+(defn index-solr
+  []
+  (.start (Thread. 
+    (fn [] 
+      (let [solr (StreamingUpdateSolrServer. solrurl 5000 5)]
+        (doto solr (.setRequestWriter (BinaryRequestWriter.)))
+        (while (= (count @documents) 0)
+          (Thread/sleep 10000))
+	(when (> (count @documents) 0)
+	  (let [docs (ArrayList.)]
+	    (.addAll docs @documents)
+	    (.removeAll @documents docs)
+	    (doto solr (.add docs))))
+	(Thread/sleep 100000)
+	(when (> (count @documents) 0)
+	  (index-solr)))))))
+
+
+
+(defn -main [& args]
+
+  (init-templates (str xsltpath "/RDF2HTML.xsl") 20 "htmltemplates")
+  (init-templates (str xsltpath "/RDF2Solr.xsl") 20 "solrtemplates")
+  (init-templates (str xsltpath "/MakeText.xsl") 20 "texttemplates")
+  (println "Queueing DDbDP...")
+  (queue-collections "http://papyri.info/ddbdp" ())
+  (println (str "Queued " (count @html) " documents."))
+  (println "Queueing HGV...")
+  (queue-collections "http://papyri.info/hgv" '("ddbdp"))
+  (println (str "Queued " (count @html) " documents."))
+  (println "Queueing APIS...")
+  (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
+  (println (str "Queued " (count @html) " documents."))
+
+  (dosync (ref-set text @html))
+  
+  ;; Generate HTML
+  (println "Generating HTML...")
+  (generate-html)
+
+  ;; Generate text
+  (println "Generating text...")
+  (generate-text)
+ 
+  ;; Copy identical files
+  (println (str "Making " (count @links) " copies..."))
+  (let [pool (Executors/newFixedThreadPool 10)
+        tasks (map (fn [x]
+		     (fn []
+		       (try
+			 (copy (first x) (second x))
+		       (catch Exception e
+			 ;(.printStackTrace e)
+			 (println (str "Error copying file " (first x) " to " (second x)))))))
+		   @links)]
+   (doseq [future (.invokeAll pool tasks)]
+     (.get future))
+   (doto pool
+      (.shutdown))
+    (dosync (ref-set links nil)))
 
   (println "Loading morphs...")
   (let [files '("/Users/hcayless/Development/APIS/idp/pn/trunk/pn-lemmas/greek.morph.unicode.xml"
@@ -356,34 +440,45 @@
   
   ;; Index docs queued in @text
   (println "Indexing text...")
-  (let [pool (Executors/newFixedThreadPool 10)
-        tasks (map (fn [x]
-    (fn []
-      (transform (first x)
-		 (list (second x) (nth x 2))
-		 (SAXResult. 
-        (let [current (StringBuilder.)
-              chars  (StringBuilder.)
-              solrdoc (SolrInputDocument.)]
-              (proxy [DefaultHandler] []
-                (startElement [uri local qname atts]
-                  (when (= local "field")
-                    (doto current (.append (.getValue atts "name")))
-                    (when (> (.length chars) 0)
-                      (doto chars (.delete 0 (.length chars))))))
-                (characters [ch start length]
-                    (doto chars (.append ch start length)))
-                (endElement [uri local qname]
-                  (when (> (.length current) 0)
-                    (.addField solrdoc (.toString current) (.toString chars))
-                    (doto current (.delete 0 (.length current)))))
-                (endDocument []
-                  (when (not (nil? (.getField solrdoc "transcription")))
-                    (.addField solrdoc "transcription_l" (get-lemmas (.getFieldValue solrdoc "transcription"))))
-                  (.add @documents solrdoc))))) @texttemplates))) @text)]
-    (doseq [future (.invokeAll pool tasks)]
-      (.get future))
-    (doto pool
-      (.shutdown))))
+  (let [pool (Executors/newFixedThreadPool 20)
+        tasks
+	(map (fn [x]
+	       (fn []
+		 (when (not (.startsWith (first x) "http"))
+					 (transform (first x)
+						    (list (second x) (nth x 2))
+						    (SAXResult. 
+						     (let [current (StringBuilder.)
+							   chars  (StringBuilder.)
+							   solrdoc (SolrInputDocument.)]
+						       (proxy [DefaultHandler] []
+							 (startElement [uri local qname atts]
+								       (when (= local "field")
+									 (doto current (.append (.getValue atts "name")))
+									 (when (> (.length chars) 0)
+									   (doto chars (.delete 0 (.length chars))))))
+							 (characters [ch start length]
+								     (doto chars (.append ch start length)))
+							 (endElement [uri local qname]
+								     (when (> (.length current) 0)
+								       (.addField solrdoc (.toString current) (.toString chars))
+								       (doto current (.delete 0 (.length current)))))
+							 (endDocument []
+								      (when (not (nil? (.getField solrdoc "transcription")))
+									(.addField solrdoc "transcription_l" (get-lemmas (.getFieldValue solrdoc "transcription"))))
+								      (.add @documents solrdoc))))) @solrtemplates)))) @text)]
+		     (doseq [future (.invokeAll pool tasks)]
+		       (.get future))
+		     (doto pool
+		       (.shutdown)))
+  (dosync (ref-set html nil)
+	  (ref-set morphs nil)
+	  (ref-set text nil)
+	  (ref-set solrtemplates nil))
+  (let [solr (CommonsHttpSolrServer. solrurl)]
+    (doto solr 
+      (.commit)
+      (.optimize))))
+
   
 (-main)
