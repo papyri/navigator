@@ -26,6 +26,28 @@ public class DispatcherServlet extends HttpServlet {
 
   private static String graph = "rmi://localhost/papyri.info#pi";
   private static String path = "/sparql/";
+  private enum Method {
+    RDF ("rdfxml"),
+    N3,
+    SOURCE,
+    ATOM;
+
+    private final String name;
+
+    Method() {
+      this.name = this.name().toLowerCase();
+    }
+    Method(String name) {
+      this.name = name;
+    }
+
+    @Override
+    public String toString() {
+      return this.name;
+    }
+
+
+  }
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -40,36 +62,41 @@ public class DispatcherServlet extends HttpServlet {
       StringBuilder query = new StringBuilder();
       query.append(request.getParameter("query"));
       String format = query.substring(query.lastIndexOf("/") + 1);
-      if ("rdf".equals(format)) {
-        format = "rdfxml";
-      }
-      query.delete(query.lastIndexOf("/"), query.length());
-      String domain;
-      if (query.indexOf("/") > 0) {
-        domain = query.substring(0, query.indexOf("/"));
-        query.delete(0, domain.length() + 1);
-      } else {
-        domain = query.toString();
-        query.delete(0, query.length());
-      }
 
-      if ("ddbdp".equals(domain)) {
-        wRequest.setParameter("query", ddbdp(query.toString()));
+      for (Method method : Method.values()) {
+        if (method.name().toLowerCase().equals(format)) {
+          format = method.toString();
+        }
       }
-      if ("apis".equals(domain)) {
-        wRequest.setParameter("query", apis(query.toString()));
+      if ("rdfxml".equals(format) || "n3".equals(format)) {
+        query.delete(query.lastIndexOf("/"), query.length());
+        String domain;
+        if (query.indexOf("/") > 0) {
+          domain = query.substring(0, query.indexOf("/"));
+          query.delete(0, domain.length() + 1);
+        } else {
+          domain = query.toString();
+          query.delete(0, query.length());
+        }
+
+        if ("ddbdp".equals(domain)) {
+          wRequest.setParameter("query", ddbdp(query.toString()));
+        }
+        if ("apis".equals(domain)) {
+          wRequest.setParameter("query", apis(query.toString()));
+        }
+        if ("hgv".equals(domain)) {
+          wRequest.setParameter("query", hgv(query.toString()));
+        }
+        if ("hgvtrans".equals(domain)) {
+          wRequest.setParameter("query", hgvtrans(query.toString()));
+        }
+        wRequest.setParameter("default-graph-uri", graph);
+        wRequest.setParameter("format", format);
+        ServletContext ctx = this.getServletContext();
+        RequestDispatcher rd = ctx.getContext("/mulgara").getRequestDispatcher(path);
+        rd.forward(wRequest, response);
       }
-      if ("hgv".equals(domain)) {
-        wRequest.setParameter("query", hgv(query.toString()));
-      }
-      if ("hgvtrans".equals(domain)) {
-        wRequest.setParameter("query", hgvtrans(query.toString()));
-      }
-      wRequest.setParameter("default-graph-uri", graph);
-      wRequest.setParameter("format", format);
-      ServletContext ctx = this.getServletContext();
-      RequestDispatcher rd = ctx.getContext("/mulgara").getRequestDispatcher(path);
-      rd.forward(wRequest, response);
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

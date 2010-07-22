@@ -4,6 +4,42 @@
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Search</servlet-name>
+        <servlet-class>info.papyri.dispatch.Search</servlet-class>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8081/solr</param-value>
+        </init-param>
+        <init-param>
+            <param-name>xmlPath</param-name>
+            <param-value>/usr/local/pn/git/idp.data</param-value>
+        </init-param>
+        <init-param>
+            <param-name>htmlPath</param-name>
+            <param-value>/content/dev/pn/idp.html</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>Reader</servlet-name>
+        <servlet-class>info.papyri.dispatch.Reader</servlet-class>
+        <init-param>
+            <param-name>xmlPath</param-name>
+            <param-value>/usr/local/pn/git/idp.data</param-value>
+        </init-param>
+        <init-param>
+            <param-name>htmlPath</param-name>
+            <param-value>/content/dev/pn/idp.html</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Reader</servlet-name>
+        <url-pattern>/reader</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Search</servlet-name>
+        <url-pattern>/search</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -13,5 +49,4 @@
             30
         </session-timeout>
     </session-config>
-
 </web-app>
