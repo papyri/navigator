@@ -1,0 +1,298 @@
+@import url("yui/reset-fonts-grids.css");
+@import url("smoothness/jquery-ui-1.8.1.custom.css");
+
+html {
+	background: #E4E5E0 url(../images/bodybg.jpg) no-repeat top left;
+}
+body {
+	color: #3c2217;
+	font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
+  font-size:108%;
+	min-height:100%;
+}
+
+#hd h1 {
+	color:#3c2217;
+	font-family: Georgia, serif;
+  margin-left:0.25em;
+  margin-bottom:0;
+}
+h2#title {
+	color:#3c2217;
+	font-family: Georgia, serif;
+	position:absolute;
+	top:1em;
+	width:100%;
+	text-align:center;
+}
+
+div.footer {
+	background:#f8f6f4;
+	border: thin solid #426a30;
+	margin-top:1em;
+	margin-left:1em;
+	margin-right:1em;
+	opacity:0.8;
+	padding:.5em;
+	text-align:center;
+}
+
+div.content {
+	background: #f8f6f4;
+	border: thin solid #426a30;
+	float:left;
+	margin-left:160px;
+	margin-right: 1em;
+  padding: .5em;
+	min-width:900px;
+}
+
+div.content h2 {
+	font-family:Georgia,serif;
+	font-size:108%;
+	font-weight:bold;
+	border-top:thin solid #426a30;
+	border-bottom:thin solid #426a30;
+	margin-bottom:0.25em;
+}
+
+div.content h3 {
+	font-size:104%;
+	font-weight:bold;
+}
+
+div.content h4 {
+  font-family:Georgia,serif;
+  font-size:96%;
+  font-weight:bold;
+}
+
+div.page {
+	width: 100%;
+	float:left;
+	margin:0;
+	min-width:800px;
+	text-align:left;
+}
+div#search {
+	background-image:url(../images/button.png);
+	background-position:center center;
+	background-repeat:no-repeat;
+	margin:1em;
+	padding-top:20px;
+	text-align:center;
+	height:50px;
+}
+div#search a {
+	color: white;
+	font-size:153.9%;
+	text-decoration:none;
+}
+
+/* Left-hand Navigation */
+div.nav {
+	position:absolute;
+	left:0;
+	width:150px;
+}
+ul.nav {
+	background-image:url(../images/navbg.png);
+	background-position:bottom;
+	background-repeat:repeat-x;
+	border: thin solid #426a30;
+	color:black;
+	font-size: 80%;
+	line-height:22px;
+  margin-left:15px;
+	padding:.25em;
+}
+ul.nav li {
+	padding-left:0.5em;
+	padding-right:0.5em;
+}
+div.nav a {
+	color:black;
+	text-decoration:none;
+}
+
+
+div.about {
+	float:left;
+	margin-left:20%;
+}
+div.info {
+	float:left;
+	margin-left:10%;
+}
+.papyriDotInfo {
+	color:maroon;
+	font-family: Georgia, serif;
+	font-size:167%;
+}
+ul.about {
+	line-height:24px;
+	margin-left:5px;
+}
+a {
+  color:#162A5C;
+}
+a:visited {
+  color:maroon;
+}
+h1 {
+  font-size:300%;
+}
+h2 {
+  font-size:167%;
+}
+h3 {
+	font-family: Georgia, serif;
+  font-size:138.5%;
+}
+input.navField {
+	border: thin solid gray;
+	font-size: 85%;
+	width: 4em;
+}
+input.navButton {
+	border: thin solid gray;
+	font-size: 85%;
+	font-weight: bold;
+}
+select#APIS-Collection {
+	border: thin solid gray;
+	font-size: 85%;
+}
+
+/* View Page */
+div#controls {
+	font-size:70%;
+	line-height:1.4;
+}
+div#controls div {
+	padding-left:1em;
+	padding-right:1em;
+	padding-top:0.25em;
+	padding-bottom:0.5em;
+	float:left;
+	margin-right:1em;
+	margin-top:0.25em;
+	margin-bottom:0.25em;
+}
+div#controls div label{
+	margin-left:1em;
+	
+}
+div#controls div label:first-child{
+	font-weight:bold;
+	margin-left:-0.25em;
+}
+
+div#tabs {
+	clear:both;
+	float:left;
+	margin:0;
+	width:99%;
+}
+
+div.text {
+	clear:both;
+	float:left;
+	margin:0;
+	width:100%;
+}
+div.text div.data {
+	float:left;
+	margin-top:0.5em;
+	min-width:350px;
+}
+div.image {
+	width:50%;
+}
+div.transcription {
+	margin-right:0.5em;
+	width:49%;
+}
+div.translation {
+	width:50%;
+}
+div.metadata {
+	clear:both;
+	float:left;
+	width:100%;
+}
+div.metadata div {
+	margin-top:0.5em;
+}
+div.metadata th {
+	vertical-align:top;
+	font-weight:bold;
+	width:20%;
+}
+
+div#edition {
+	margin-left:3em;
+}
+
+/* Copied from http://papyri.info/global.css */
+.latinnum {
+    border-top: thin black solid;
+     }
+     
+.previouslyread {
+    text-decoration: underline;
+     }
+     
+*[lang="la"] {
+    font-family: "GentiumAlt", "Gentium","Palatino Linotype", "Palatino", "Times New Roman", "Times", "Arial Unicode MS", serif;
+}
+
+*[lang="grc"] {
+    font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
+   }
+   
+div.textpart {
+    font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
+    line-height: 1.4;
+    vertical-align: -20%;
+    margin-bottom: 8px;
+    padding:0px;
+}
+
+div#apparatus {
+    font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
+}
+
+span.textpartnumber {
+    display:block;
+		line-height:1;
+		margin-left:-3em;
+		margin-bottom:0;
+}
+    
+.linenumber {
+		float:left;
+		margin-left:-2em;
+}
+    
+.underline {
+    text-decoration: underline;
+}
+
+.italic {
+    font-style: italic;
+}
+
+
