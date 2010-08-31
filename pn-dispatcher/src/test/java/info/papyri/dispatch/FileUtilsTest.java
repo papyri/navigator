@@ -37,8 +37,8 @@ public class FileUtilsTest extends TestCase {
     System.out.println("getHtmlFile");
     String collection = "ddbdp";
     String item = "bgu;1;2";
-    FileUtils instance = new FileUtils("/Users/hcayless/Development/APIS/idp.xml", "/Users/hcayless/Development/APIS/idp.html");
-    File expResult = new File("/Users/hcayless/Development/APIS/idp.html/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.html");
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    File expResult = new File("/data/papyri.info/pn/idp.html/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.html");
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
   }
@@ -50,8 +50,8 @@ public class FileUtilsTest extends TestCase {
     System.out.println("getTextFile");
     String collection = "ddbdp";
     String item = "bgu;1;2";
-    FileUtils instance = new FileUtils("/Users/hcayless/Development/APIS/idp.xml", "/Users/hcayless/Development/APIS/idp.html");
-    File expResult = new File("/Users/hcayless/Development/APIS/idp.html/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.txt");
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    File expResult = new File("/data/papyri.info/pn/idp.html/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.txt");
     File result = instance.getTextFile(collection, item);
     assertEquals(expResult, result);
   }
@@ -63,8 +63,8 @@ public class FileUtilsTest extends TestCase {
     System.out.println("getXmlFile");
     String collection = "ddbdp";
     String item = "bgu;1;2";
-    FileUtils instance = new FileUtils("/Users/hcayless/Development/APIS/idp.xml", "/Users/hcayless/Development/APIS/idp.html");
-    File expResult = new File("/Users/hcayless/Development/APIS/idp.xml/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    File expResult = new File("/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
     File result = instance.getXmlFile(collection, item);
     assertEquals(expResult, result);
   }
@@ -76,7 +76,7 @@ public class FileUtilsTest extends TestCase {
     System.out.println("findMatches");
     String query = "ostrak*";
     String id = "http://papyri.info/ddbdp/o.heid;;123";
-    FileUtils instance = new FileUtils("/Users/hcayless/Development/APIS/idp.xml", "/Users/hcayless/Development/APIS/idp.html");
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("Ostrakon");
     List<String> result = instance.findMatches(query, id);
