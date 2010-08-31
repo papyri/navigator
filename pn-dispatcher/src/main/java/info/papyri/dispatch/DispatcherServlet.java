@@ -6,29 +6,35 @@
 package info.papyri.dispatch;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
  * @author hcayless
  */
-@WebServlet(name="SparqlWrapperServlet", urlPatterns={"/SparqlWrapper"})
+@WebServlet(name="DispatcherServlet", urlPatterns={"/dispatch"})
 public class DispatcherServlet extends HttpServlet {
 
   private static String graph = "rmi://localhost/papyri.info#pi";
   private static String path = "/sparql/";
+  private String mulgara;
   private enum Method {
     RDF ("rdfxml"),
     N3,
+    JSON,
     SOURCE,
     ATOM;
 
@@ -48,6 +54,12 @@ public class DispatcherServlet extends HttpServlet {
 
 
   }
+
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    mulgara = config.getInitParameter("mulgaraUrl");
+  }
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -58,7 +70,7 @@ public class DispatcherServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-      DispatcherRequestWrapper wRequest = new DispatcherRequestWrapper(request);
+      Map<String,String> params = new HashMap<String,String>();
       StringBuilder query = new StringBuilder();
       query.append(request.getParameter("query"));
       String format = query.substring(query.lastIndexOf("/") + 1);
@@ -68,7 +80,7 @@ public class DispatcherServlet extends HttpServlet {
           format = method.toString();
         }
       }
-      if ("rdfxml".equals(format) || "n3".equals(format)) {
+      if ("rdfxml".equals(format) || "n3".equals(format) || "json".equals(format)) {
         query.delete(query.lastIndexOf("/"), query.length());
         String domain;
         if (query.indexOf("/") > 0) {
@@ -80,22 +92,39 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         if ("ddbdp".equals(domain)) {
-          wRequest.setParameter("query", ddbdp(query.toString()));
+          params.put("query", ddbdp(query.toString()));
         }
         if ("apis".equals(domain)) {
-          wRequest.setParameter("query", apis(query.toString()));
+          params.put("query", apis(query.toString()));
         }
         if ("hgv".equals(domain)) {
-          wRequest.setParameter("query", hgv(query.toString()));
+          params.put("query", hgv(query.toString()));
         }
         if ("hgvtrans".equals(domain)) {
-          wRequest.setParameter("query", hgvtrans(query.toString()));
+          params.put("query", hgvtrans(query.toString()));
         }
-        wRequest.setParameter("default-graph-uri", graph);
-        wRequest.setParameter("format", format);
-        ServletContext ctx = this.getServletContext();
-        RequestDispatcher rd = ctx.getContext("/mulgara").getRequestDispatcher(path);
-        rd.forward(wRequest, response);
+        params.put("default-graph-uri", graph);
+        params.put("format", format);
+
+        URL m = new URL(mulgara + path + "?" + readParams(params));
+        System.out.println(m.toString());
+        HttpURLConnection http = (HttpURLConnection)m.openConnection();
+        if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+          response.setContentType(http.getContentType());
+          byte[] b = new byte[4096];
+          BufferedInputStream in = new BufferedInputStream(http.getInputStream());
+          BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
+          int s = in.read(b, 0, b.length);
+          while (s > 0) {
+            out.write(b, 0, s);
+            s = in.read(b, 0, b.length);
+          }
+          out.close();
+          in.close();
+        } else {
+          response.sendError(http.getResponseCode());
+        }
+        http.disconnect();
       }
     } 
 
@@ -134,7 +163,23 @@ public class DispatcherServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
+
+    protected String readParams(Map params) throws ServletException {
+      StringBuilder result = new StringBuilder();
+      Object[] keys = params.keySet().toArray();
+      for (int i = 0; i < keys.length; i++) {
+        result.append((String)keys[i]);
+        result.append("=");
+        try {
+          result.append(URLEncoder.encode((String)params.get(keys[i]), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+          throw new ServletException(e);
+        }
+        if (i < keys.length - 1) result.append("&");
+      }
+      return result.toString();
+    }
+
     protected String ddbdp(String in) {
       if ("".equals(in) || in == null) {
         return "prefix dc: <http://purl"

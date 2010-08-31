@@ -3,21 +3,29 @@
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
+        <init-param>
+          <param-name>mulgaraUrl</param-name>
+          <param-value>http://localhost:8090</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>Search</servlet-name>
         <servlet-class>info.papyri.dispatch.Search</servlet-class>
         <init-param>
+          <param-name>home</param-name>
+          <param-value>/data/papyri.info/pn/home</param-value>
+        </init-param>
+        <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8081/solr</param-value>
+            <param-value>http://localhost:8082/solr</param-value>
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/usr/local/pn/git/idp.data</param-value>
+            <param-value>/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/content/dev/pn/idp.html</param-value>
+            <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -25,11 +33,11 @@
         <servlet-class>info.papyri.dispatch.Reader</servlet-class>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/usr/local/pn/git/idp.data</param-value>
+            <param-value>/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/content/dev/pn/idp.html</param-value>
+            <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
