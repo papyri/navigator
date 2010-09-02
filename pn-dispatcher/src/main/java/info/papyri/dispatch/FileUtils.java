@@ -144,28 +144,31 @@ public class FileUtils {
               Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
     }
     try {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(getTextFile(parts[0], parts[1])), Charset.forName("UTF-8")));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        for (Pattern pattern : patterns) {
-          Matcher m = pattern.matcher(line);
-          if (m.find()) {
-            int start = m.toMatchResult().start();
-            if (start > 20) {
-              start -= 20;
-            } else {
-              start = 0;
-            }
-            int end = m.toMatchResult().end();
-            if (end > line.length() - 20) {
-              end = line.length();
-            } else {
-              end += 20;
-            }
-            result.add(line.substring(start, end));
+      InputStreamReader reader = new InputStreamReader(new FileInputStream(getTextFile(parts[0], parts[1])), Charset.forName("UTF-8"));
+      char[] buffer = new char[1024];
+      StringBuilder text = new StringBuilder();
+      int size = -1;
+      while((size = reader.read(buffer)) > 0) {
+        text.append(buffer, 0, size);
+      }
+      for (Pattern pattern : patterns) {
+        Matcher m = pattern.matcher(text);
+        if (m.find()) {
+          int start = m.toMatchResult().start();
+          if (start > 20) {
+            start -= 20;
+          } else {
+            start = 0;
           }
-          if (result.size() > 2) return result;
+          int end = m.toMatchResult().end();
+          if (end > text.length() - 20) {
+            end = text.length();
+          } else {
+            end += 20;
+          }
+          result.add(text.substring(start, end));
         }
+        if (result.size() > 2) return result;
       }
     } catch (Exception e) {
       e.printStackTrace();
