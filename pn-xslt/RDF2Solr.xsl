@@ -135,7 +135,10 @@
           <xsl:when test="$collection = 'apis'">
             <field name="id">http://papyri.info/apis/<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']"/></field>
             <xsl:call-template name="metadata">
-              <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
+              <xsl:with-param name="docs" select="/"/>
+            </xsl:call-template>
+            <xsl:call-template name="translation">
+              <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
             <field name="volume_sort">zzz<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']"/></field>
           </xsl:when>
