@@ -173,18 +173,13 @@
 (defn transform
   "Takes an java.io.InputStream, a list of key/value parameter pairs, and a javax.xml.transform.Result"
   [url, params, #^Result out, pool]
-  (try
     (let [xslt (.poll pool)
         transformer (.newTransformer xslt)]
-    
       (when (not (== 0 (count params)))
         (doseq [param params] (doto transformer
           (.setParameter (first param) (second param)))))
       (.transform transformer (StreamSource. (.openStream (URL. url))) out)
-      
-      (.add pool xslt))
-    
-  )
+      (.add pool xslt)))
     
 (defn has-part-query
   [url]
@@ -199,8 +194,7 @@
             construct {?a dc:relation ?b}
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:hasPart ?a .
-                    ?a dc:relation ?b
-                    filter regex(str(?b), \"^http://papyri.info/(ddbdp|hgv).*\")}" url))
+                    ?a dc:relation ?b}" url))
 
 (defn replaces-query
   [url]
@@ -254,7 +248,7 @@
                 reprint-in (if (empty? is-replaced-by) ()
 			       (filter (fn [x] (= (first x) item)) is-replaced-by))
                 exclusion (some (set (for [x (filter 
-                  (fn [s] (.startsWith (.toString (last s)) "http://papyri.info")) related)] 
+                  (fn [s] (and (.startsWith (.toString (last s)) "http://papyri.info") (not (.contains (.toString (last s)) "/images/")))) related)] 
 				       (substring-before (substring-after (.toString (last x)) "http://papyri.info/") "/"))) exclude)]
 	    (if (nil? exclusion)
 	      (.add @html (list (str "file:" (get-filename (.toString item)))
