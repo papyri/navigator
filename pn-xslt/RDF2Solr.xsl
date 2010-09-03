@@ -32,7 +32,6 @@
   <xsl:import href="teiabbrandexpan.xsl"/>
   <xsl:import href="teiaddanddel.xsl"/>
   <xsl:import href="teichoice.xsl"/>
-  <xsl:import href="teihandshift.xsl"/>
   <xsl:import href="teiheader.xsl"/>
   <xsl:import href="teihi.xsl"/>
   <xsl:import href="teimilestone.xsl"/>
@@ -85,7 +84,7 @@
               <xsl:for-each select="tokenize(., ' ')"><field name="identifier">http://papyri.info/hgv/<xsl:value-of select="."/></field></xsl:for-each>
             </xsl:for-each>
             <xsl:variable name="text"><xsl:apply-templates select="//t:div[@type = 'edition']"/></xsl:variable>
-            <xsl:variable name="textnfc" select="normalize-space(translate($text, '[]{},.-()+^?̣&lt;&gt;*&#xD;', ''))"/>
+            <xsl:variable name="textnfc" select="normalize-space(replace(translate($text, '[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"/>
             <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
             <!-- transcription fields are 8-fold: plain, plain ignore diacriticals, plain ignore case, plain ignore case and diacriticals,
               ngram, ngram ignore diacriticals, ngram ignore case, ngram ignore case and diacriticals-->
@@ -112,7 +111,7 @@
             -->
             <field name="transcription_ngram_ia">
               <xsl:for-each select="tokenize(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), '\s+')">
-                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+                <xsl:if test="string-length(normalize-space(.)) &gt; 0"><xsl:text>^</xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>^ </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
             <xsl:if test="$hgv or $apis">
@@ -228,6 +227,10 @@
   
   <xsl:template match="text()[local-name(following-sibling::*[1]) = 'lb' and following-sibling::t:lb[1][@type='inWord']]">
     <xsl:text> </xsl:text><xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+  
+  <xsl:template match="t:div[@type = 'textpart']" priority="1">
+    <xsl:apply-templates/>
   </xsl:template>
   
   <xsl:template match="t:lb[@type='inWord']"/>
