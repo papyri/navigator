@@ -173,17 +173,18 @@
 (defn transform
   "Takes an java.io.InputStream, a list of key/value parameter pairs, and a javax.xml.transform.Result"
   [url, params, #^Result out, pool]
-  (let [xslt (.poll pool)
+  (try
+    (let [xslt (.poll pool)
         transformer (.newTransformer xslt)]
-    (try
+    
       (when (not (== 0 (count params)))
         (doseq [param params] (doto transformer
           (.setParameter (first param) (second param)))))
       (.transform transformer (StreamSource. (.openStream (URL. url))) out)
-      (catch Exception e 
-        (println (str (.getMessage e) " processing file " url))
-        (.printStackTrace e)))
-    (.add pool xslt)))
+      
+      (.add pool xslt))
+    
+  )
     
 (defn has-part-query
   [url]
@@ -198,7 +199,8 @@
             construct {?a dc:relation ?b}
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:hasPart ?a .
-                    ?a dc:relation ?b }" url))
+                    ?a dc:relation ?b
+                    filter regex(str(?b), \"^http://papyri.info/(ddbdp|hgv).*\")}" url))
 
 (defn replaces-query
   [url]
