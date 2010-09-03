@@ -25,11 +25,11 @@
     (org.xml.sax InputSource)
     (org.xml.sax.helpers DefaultHandler)))
       
-(def filepath "/Users/hcayless/Development/APIS/idp.data")
-(def xsltpath "/Users/hcayless/Development/APIS/idp/pn/trunk/pn-xslt")
-(def htpath "/Users/hcayless/Development/APIS/idp.html")
-(def solrurl "http://localhost:8080/solr/")
-(def numbersurl "http://papyri.info/mulgara/sparql?query=")
+(def filepath "/data/papyri.info/idp.data")
+(def xsltpath "/data/papyri.info/svn/pn/pn-xslt")
+(def htpath "/data/papyri.info/pn/idp.html")
+(def solrurl "http://localhost:8082/solr/")
+(def numbersurl "http://localhost:8090/sparql?query=")
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def conn (.newConnection (ConnectionFactory.) server))
@@ -319,13 +319,13 @@
 
 (defn generate-html
   []
-    (let [pool (Executors/newFixedThreadPool 20)
+    (let [pool (Executors/newFixedThreadPool 10)
         tasks (map (fn [x]
 		     (fn []
 		       (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
 					;(println "Transforming " (first x) " to " (get-html-filename (first x)))
 		       (transform (if (.startsWith (first x) "http")
-				    (str (first x) "/rdf")
+				    (str (.replace (first x) "papyri.info" "dev-dl-pa.home.nyu.edu") "/rdf")
 				    (first x))
 				  (list (second x) (nth x 2) (nth x 3) (nth x 4))
 				  (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
@@ -342,7 +342,7 @@
 
 (defn generate-text
   []
-    (let [pool (Executors/newFixedThreadPool 20)
+    (let [pool (Executors/newFixedThreadPool 10)
         tasks (map (fn [x]
 		     (fn []
 		       (when (not (.startsWith (first x) "http"))
@@ -382,9 +382,9 @@
 
 (defn -main [& args]
 
-  (init-templates (str xsltpath "/RDF2HTML.xsl") 20 "htmltemplates")
-  (init-templates (str xsltpath "/RDF2Solr.xsl") 20 "solrtemplates")
-  (init-templates (str xsltpath "/MakeText.xsl") 20 "texttemplates")
+  (init-templates (str xsltpath "/RDF2HTML.xsl") 10 "htmltemplates")
+  (init-templates (str xsltpath "/RDF2Solr.xsl") 10 "solrtemplates")
+  (init-templates (str xsltpath "/MakeText.xsl") 10 "texttemplates")
   (println "Queueing DDbDP...")
   (queue-collections "http://papyri.info/ddbdp" ())
   (println (str "Queued " (count @html) " documents."))
@@ -423,8 +423,8 @@
     (dosync (ref-set links nil)))
 
   (println "Loading morphs...")
-  (let [files '("/Users/hcayless/Development/APIS/idp/pn/trunk/pn-lemmas/greek.morph.unicode.xml"
-		"/Users/hcayless/Development/APIS/idp/pn/trunk/pn-lemmas/latin.morph.xml")
+  (let [files '("/data/papyri.info/svn/pn/pn-lemmas/greek.morph.unicode.xml"
+		"/data/papyri.info/svn/pn/pn-lemmas/latin.morph.xml")
 	pool (Executors/newFixedThreadPool (count files))
           tasks (map (fn [file]
             (fn [] 
@@ -440,7 +440,7 @@
   
   ;; Index docs queued in @text
   (println "Indexing text...")
-  (let [pool (Executors/newFixedThreadPool 20)
+  (let [pool (Executors/newFixedThreadPool 10)
         tasks
 	(map (fn [x]
 	       (fn []
