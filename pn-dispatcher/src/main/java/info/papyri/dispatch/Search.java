@@ -205,8 +205,13 @@ public class Search extends HttpServlet {
       rows = Integer.parseInt(request.getParameter("rows"));
     } catch (Exception e) {
     }
+    String sort = request.getParameter("sort");
+    if (sort == null || "".equals(sort)) {
+      sort = "volume_sort";
+    }
     sq.setRows(rows);
     sq.setQuery(q);
+    sq.setSortField(sort, SolrQuery.ORDER.asc);
     QueryResponse rs = solr.query(sq);
     SolrDocumentList docs = rs.getResults();
     out.println("<p>" + docs.getNumFound() + " hits.</p>");
