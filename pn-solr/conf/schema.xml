@@ -7,7 +7,9 @@
     
     <fieldType name="ntext" class="solr.TextField">
       <analyzer type="index">
-        <tokenizer class="solr.NGramTokenizerFactory" minGramSize="3" maxGramSize="15"/>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+	<filter class="solr.ShingleFilterFactory" maxShingleSize="2" minShingleSize="2" outputUnigrams="false"/>
+	<filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="15"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.KeywordTokenizerFactory"/>
@@ -38,7 +40,7 @@
     <field name="transcription_ngram" type="ntext" indexed="true" stored="false"/>
     <field name="transcription_ngram_id" type="ntext" indexed="true" stored="false"/>
     <field name="transcription_ngram_ic" type="ntext" indexed="true" stored="false"/>
-    <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="true"/>
+    <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
     <field name="translation" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="place" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
