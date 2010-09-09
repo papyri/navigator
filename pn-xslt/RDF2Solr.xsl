@@ -122,14 +122,38 @@
                 <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"/>
               </xsl:call-template>
             </xsl:if>
-            <field name="volume_sort"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']"/></field>
+            <xsl:variable name="sort" select="tokenize(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'], ';')"/>
+            <field name="series"><xsl:value-of select="$sort[1]"/></field>
+            <field name="volume">
+              <xsl:choose>
+                <xsl:when test="$sort[2] = ''">0</xsl:when>
+                <xsl:otherwise><xsl:value-of select="$sort[2]"/></xsl:otherwise>
+              </xsl:choose>
+            </field>
+            <field name="item"><xsl:value-of select="replace($sort[3], '\D', '')"/></field>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id">http://papyri.info/hgv/<xsl:value-of select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/></field>
             <xsl:call-template name="metadata">
               <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
-            <field name="volume_sort"><xsl:for-each select="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/*"><xsl:value-of select="normalize-space(lower-case(.))"/><xsl:if test="position() != last()">;</xsl:if></xsl:for-each></field>
+            <field name="series"><xsl:value-of select="normalize-space(lower-case(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/title[@level = 's']))"/></field>
+            <field name="volume">
+              <xsl:choose>
+                <xsl:when test="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'volume']">
+                  <xsl:value-of select="normalize-space(lower-case(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'volume']))"/>
+                </xsl:when>
+                <xsl:otherwise>0</xsl:otherwise>
+              </xsl:choose>
+            </field>
+            <field name="item">
+              <xsl:choose>
+                <xsl:when test="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'numbers']">
+                  <xsl:value-of select="normalize-space(lower-case(replace(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'numbers'], '\D', '')))"/>
+                </xsl:when>
+                <xsl:otherwise>0</xsl:otherwise>
+              </xsl:choose>
+            </field>
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
             <field name="id">http://papyri.info/apis/<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']"/></field>
@@ -139,7 +163,9 @@
             <xsl:call-template name="translation">
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
-            <field name="volume_sort">zzz<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']"/></field>
+            <field name="series">zzz</field>
+            <field name="volume"><xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
+            <field name="item"><xsl:value-of select="substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], 'apis.')"/></field>
           </xsl:when>
         </xsl:choose>
         
