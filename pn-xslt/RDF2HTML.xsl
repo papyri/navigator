@@ -68,8 +68,8 @@
   <xsl:param name="replaces"/>
   <xsl:param name="isReplacedBy"/>
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
-  <xsl:variable name="path">/Users/hcayless/Development/APIS/idp.data</xsl:variable>
-  <xsl:variable name="outbase">/Users/hcayless/Development/APIS/idp.html</xsl:variable>
+  <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
+  <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="doc-id">
     <xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']"><xsl:value-of select="//t:idno[@type='apisid']"/></xsl:when>
