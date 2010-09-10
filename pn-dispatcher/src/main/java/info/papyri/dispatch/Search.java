@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -141,28 +142,34 @@ public class Search extends HttpServlet {
       }
       String field = null;
       if (query != null) {
-        if ("text".equals(request.getParameter("target"))) {
-          field = "transcription";
-          if ("substring".equals(request.getParameter("type"))) {
-            field += "_ngram";
-            query = query.replace("^", "\\^");
-          } else if ("proximity".equals(request.getParameter("type"))) {
-            query = "\"" + query + "\"~" + request.getParameter("within");
+        // assume that if the query string contains ":", the query specifies a field already,
+        // so don't attempt to determine which one to target
+        if (!query.contains(":")) {
+          // substring queries can target only the transcription_ngram_ia field "^" is only
+          // used as a word boundary marker and so is a clear indicator of a substring search
+          if ("substring".equals(request.getParameter("type")) || query.contains("^")) {
+              field = "transcription_ngram_ia";
+              query = "\"" + query.replace("^", "\\^") + "\"";
+          } else if ("text".equals(request.getParameter("target"))) {
+            field = "transcription";
+            if ("proximity".equals(request.getParameter("type"))) {
+              query = "\"" + query + "\"~" + request.getParameter("within");
+            }
+            if ("on".equals(request.getParameter("caps")) && "on".equals(request.getParameter("marks"))) {
+              field += "_ia";
+            } else if ("on".equals(request.getParameter("caps"))) {
+              field += "_ic";
+            } else if ("on".equals(request.getParameter("marks"))) {
+              field += "_id";
+            }
+            if ("on".equals(request.getParameter("lemmas"))) {
+              field = "transcription_l";
+            }
+          } else if ("metadata".equals(request.getParameter("target"))) {
+            field = "metadata";
+          } else if ("translation".equals(request.getParameter("target"))) {
+            field = "translation";
           }
-          if ("on".equals(request.getParameter("caps")) && "on".equals(request.getParameter("marks"))) {
-            field += "_ia";
-          } else if ("on".equals(request.getParameter("caps"))) {
-            field += "_ic";
-          } else if ("on".equals(request.getParameter("marks"))) {
-            field += "_id";
-          }
-          if ("on".equals(request.getParameter("lemmas"))) {
-            field = "transcription_l";
-          }
-        } else if ("metadata".equals(request.getParameter("target"))) {
-          field = "metadata";
-        } else if ("translation".equals(request.getParameter("target"))) {
-          field = "translation";
         }
       }
       if (field != null) {
@@ -229,6 +236,9 @@ public class Search extends HttpServlet {
       out.println("<p id=\"resultpages\">");
       int pages = (int) Math.ceil((double)docs.getNumFound() / (double)rows);
       int p = 0;
+      try {
+        URLEncoder.encode(q, "UTF-8");
+      } catch (Exception e) {}
       while (p < pages) {
         if ((p * rows) == start) {
           out.print((p + 1) + " ");

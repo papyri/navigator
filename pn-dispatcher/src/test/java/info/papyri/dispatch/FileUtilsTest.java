@@ -72,7 +72,7 @@ public class FileUtilsTest extends TestCase {
   /**
    * Test of findMatches method, of class FileUtils.
    */
-  public void testFindMatches() {
+  public void testFindMatchesWildcard() {
     System.out.println("findMatches");
     String query = "ostrak*";
     String id = "http://papyri.info/ddbdp/o.heid;;123";
@@ -82,6 +82,7 @@ public class FileUtilsTest extends TestCase {
     List<String> result = instance.findMatches(query, id);
     int matches = 0;
     for (String r : result) {
+      System.out.println(r);
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
@@ -92,6 +93,46 @@ public class FileUtilsTest extends TestCase {
     assertEquals(matches, expResult.size());
   }
 
+  public void testFindMatchesSubstringPhrase() {
+    System.out.println("findMatches");
+    String query = "\"\\^και\\^ \\^στρατηγ\"";
+    String id = "http://papyri.info/ddbdp/bgu;14;2373";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("καὶ στρ]ατηγ");
+    List<String> result = instance.findMatches(query, id);
+    int matches = 0;
+    for (String r : result) {
+      System.out.println(r);
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
 
+public void testFindMatchesLinebreak() {
+    System.out.println("findMatches");
+    String query = "στρατηγωι";
+    String id = "http://papyri.info/ddbdp/bgu;16;2629";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("στρ̣[ατη]γῶι");
+    List<String> result = instance.findMatches(query, id);
+    int matches = 0;
+    for (String r : result) {
+      System.out.println(r);
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
 
 }

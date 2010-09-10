@@ -127,12 +127,17 @@ public class FileUtils {
     if (q.contains(":")) {
       q = q.substring(q.indexOf(":") + 1);
     }
-    String[] find = q.replaceAll("[?*()\"'~^0-1]", "").replaceAll("(AND|OR|TO)", "").split("\\s+");
+    String[] find;
+    if (q.startsWith("\"") && q.endsWith("\"")) {
+      find = new String[] {q.replaceAll("\\s", " ").replaceAll("[?*()\\\\/\"'~^0-1]", "")};
+    } else {
+      find = q.replaceAll("[?*\\\\/()\"'~^0-1]", "").replaceAll("(AND|OR|TO)", "").split("\\s+");
+    }
     String[] parts = id.substring("http://papyri.info/".length()).split("/");
     Pattern[] patterns = new Pattern[find.length];
     for (int i = 0; i < find.length; i++) {
       patterns[i] = Pattern.compile(find[i].toLowerCase()
-              .replaceAll("(\\S)", sigla + "$1" + sigla)
+              .replaceAll("(\\S)", sigla + "$1")
               .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
               .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
               .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
@@ -140,23 +145,25 @@ public class FileUtils {
               .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
               .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ||ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
               .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
-              .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)"),
+              .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)") + sigla,
               Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
     }
     try {
       InputStreamReader reader = new InputStreamReader(new FileInputStream(getTextFile(parts[0], parts[1])), Charset.forName("UTF-8"));
       char[] buffer = new char[1024];
-      StringBuilder text = new StringBuilder();
+      StringBuilder t = new StringBuilder();
       int size = -1;
       while((size = reader.read(buffer)) > 0) {
-        text.append(buffer, 0, size);
+        t.append(buffer, 0, size);
       }
+      String text = t.toString().replaceAll("-(\\s|\\r|\\n)+[0-9]*\\s*", "");
       for (Pattern pattern : patterns) {
         Matcher m = pattern.matcher(text);
         if (m.find()) {
           int start = m.toMatchResult().start();
           if (start > 20) {
             start -= 20;
+            start = text.indexOf(' ', start) + 1;
           } else {
             start = 0;
           }
@@ -165,6 +172,9 @@ public class FileUtils {
             end = text.length();
           } else {
             end += 20;
+            if (text.indexOf(' ', end) > 0) {
+              end = text.indexOf(' ', end) + 1;
+            }
           }
           result.add(text.substring(start, end));
         }
@@ -180,7 +190,7 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "[-\\\\[\\\\]()<>\u0323〚〛]?";
+  private static String sigla = "[-\\\\[\\\\]()<>\u0323〚〛]*";
 }
 
 
