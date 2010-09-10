@@ -3,6 +3,7 @@
   <types>
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true"/>
     <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
     
     <fieldType name="ntext" class="solr.TextField">
@@ -49,7 +50,7 @@
     <field name="all" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
-    <field name="item" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
+    <field name="item" type="long" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
   </fields>
 
   <uniqueKey>id</uniqueKey>
