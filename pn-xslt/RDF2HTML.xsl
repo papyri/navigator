@@ -111,6 +111,16 @@
             </title>
             <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery-ui-1.8.1.custom.min.js" type="text/javascript" charset="utf-8"></script>
+            <script type="text/javascript" charset="utf-8">
+              <![CDATA[
+        		function initNav() {
+        			$("li.dialog").each(function(i) {
+        				jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:$('#"+this.id+"').dialog()\">"+this.title+"</a></li>");
+        				jQuery(this).hide();
+        			});
+        		}
+        	]]>
+          </script>
           </head>
           <body>
             <div id="d" class="page">
