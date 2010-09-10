@@ -126,11 +126,16 @@
             <field name="series"><xsl:value-of select="$sort[1]"/></field>
             <field name="volume">
               <xsl:choose>
-                <xsl:when test="string-length($sort[2]) = 0">0</xsl:when>
+                <xsl:when test="string-length(replace($sort[2], '\D', '')) = 0">0</xsl:when>
                 <xsl:otherwise><xsl:value-of select="replace($sort[2], '\D', '')"/></xsl:otherwise>
               </xsl:choose>
             </field>
-            <field name="item"><xsl:value-of select="replace($sort[3], '\D', '')"/></field>
+            <field name="item">
+              <xsl:choose>
+                <xsl:when test="string-length(replace($sort[3], '\D', '')) = 0">0</xsl:when>
+                <xsl:otherwise><xsl:value-of select="replace($sort[3], '\D', '')"/></xsl:otherwise>
+              </xsl:choose>
+             </field>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id">http://papyri.info/hgv/<xsl:value-of select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/></field>
@@ -147,10 +152,11 @@
                 <xsl:otherwise>0</xsl:otherwise>
               </xsl:choose>
             </field>
+            <xsl:variable name="item" select="replace(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'numbers'], '\D', '')"/>
             <field name="item">
               <xsl:choose>
-                <xsl:when test="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'numbers']">
-                  <xsl:value-of select="normalize-space(lower-case(replace(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'numbers'], '\D', '')))"/>
+                <xsl:when test="string-length($item) &gt; 0">
+                  <xsl:value-of select="$item"/>
                 </xsl:when>
                 <xsl:otherwise>0</xsl:otherwise>
               </xsl:choose>
@@ -164,6 +170,10 @@
             <xsl:call-template name="translation">
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
+            <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']">
+              <field name="invnum"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']"/></field>
+            </xsl:if>
+            
             <field name="series">zzz</field>
             <field name="volume"><xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
             <field name="item"><xsl:value-of select="substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], 'apis.')"/></field>
