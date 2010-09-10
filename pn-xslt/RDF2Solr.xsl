@@ -174,8 +174,8 @@
               <field name="invnum"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']"/></field>
             </xsl:if>
             
-            <field name="series">zzz</field>
-            <field name="volume"><xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
+            <field name="series">zzz<xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
+            <field name="volume">0</field>
             <field name="item"><xsl:value-of select="substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], 'apis.')"/></field>
           </xsl:when>
         </xsl:choose>
