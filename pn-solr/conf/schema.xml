@@ -45,10 +45,11 @@
     <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="metadata" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="images" type="boolean" indexed="true" stored="false"/>
+    <field name="invnum" type="string" indexed="true" stored="false"/>
     <field name="all" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
-    <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true"/>
-    <field name="item" type="int" indexed="true" stored="false" multiValued="false" required="true"/>
+    <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
+    <field name="item" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
   </fields>
 
   <uniqueKey>id</uniqueKey>
