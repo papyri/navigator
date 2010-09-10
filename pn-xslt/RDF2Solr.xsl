@@ -176,7 +176,7 @@
             
             <field name="series">zzz<xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
             <field name="volume">0</field>
-            <field name="item"><xsl:value-of select="substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], 'apis.')"/></field>
+            <field name="item"><xsl:value-of select="replace(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], 'apis.'), '\D', '')"/></field>
           </xsl:when>
         </xsl:choose>
         
