@@ -126,8 +126,8 @@
             <field name="series"><xsl:value-of select="$sort[1]"/></field>
             <field name="volume">
               <xsl:choose>
-                <xsl:when test="$sort[2] = ''">0</xsl:when>
-                <xsl:otherwise><xsl:value-of select="$sort[2]"/></xsl:otherwise>
+                <xsl:when test="string-length($sort[2]) = 0">0</xsl:when>
+                <xsl:otherwise><xsl:value-of select="replace($sort[2], '\D', '')"/></xsl:otherwise>
               </xsl:choose>
             </field>
             <field name="item"><xsl:value-of select="replace($sort[3], '\D', '')"/></field>
@@ -138,10 +138,11 @@
               <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
             <field name="series"><xsl:value-of select="normalize-space(lower-case(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/title[@level = 's']))"/></field>
+            <xsl:variable name="volume" select="replace(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'volume'], '\D', '')"/>
             <field name="volume">
               <xsl:choose>
-                <xsl:when test="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'volume']">
-                  <xsl:value-of select="normalize-space(lower-case(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/biblScope[@type = 'volume']))"/>
+                <xsl:when test="string-length($volume) &gt; 0">
+                  <xsl:value-of select="$volume"/>
                 </xsl:when>
                 <xsl:otherwise>0</xsl:otherwise>
               </xsl:choose>
