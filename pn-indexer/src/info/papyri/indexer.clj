@@ -42,7 +42,6 @@
 (def links (ref (ConcurrentLinkedQueue.)))
 (def documents (ref (ConcurrentLinkedQueue.)))
 (def morphs (ref (TreeMap.)))
-(def solr (ref nil))
 
 (defn copy
   "Performs a file copy from the source to the destination, making directories if necessary."
@@ -362,17 +361,18 @@
   []
   (.start (Thread. 
 	   (fn []
-	     (dosync (.setRequestWriter @solr (BinaryRequestWriter.)))
-	     (while (= (count @documents) 0)
-	       (Thread/sleep 10000))
-	     (when (> (count @documents) 0)
-	       (let [docs (ArrayList.)]
-		 (.addAll docs @documents)
-		 (.removeAll @documents docs)
-		 (dosync (.add @solr docs))))
-	     (Thread/sleep 100000)
-	     (when (> (count @documents) 0)
-	       (index-solr))))))
+	     (let [solr (StreamingUpdateSolrServer. solrurl 5000 5)]
+	       (.setRequestWriter solr (BinaryRequestWriter.))
+	       (while (= (count @documents) 0)
+		 (Thread/sleep 10000))
+	       (when (> (count @documents) 0)
+		 (let [docs (ArrayList.)]
+		   (.addAll docs @documents)
+		   (.removeAll @documents docs)
+		   (.add solr docs)))
+	       (Thread/sleep 10000)
+	       (when (> (count @documents) 0)
+		 (index-solr)))))))
 
 (defn -main [& args]
 
@@ -430,7 +430,6 @@
           (.shutdown)))
   
   ;; Start Solr indexing thread
-  (dosync (ref-set solr (StreamingUpdateSolrServer. solrurl 5000 5)))
   (index-solr)
   
   ;; Index docs queued in @text
