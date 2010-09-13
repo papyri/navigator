@@ -89,7 +89,7 @@ public class Search extends HttpServlet {
           }
           if (line.contains("<!-- Search form end -->")) {
             out.println("</div>");
-            out.println("<p><a class=\"button\" onclick=\"$('#hidesearch').css('display:block')\">New Search</a></p>");
+            out.println("<p><a href=\"#\" class=\"button\" onclick=\"$('#hidesearch').css('display:block')\">New Search</a></p>");
             runQuery(out, request, response);
           }
           out.println(line);
@@ -100,7 +100,7 @@ public class Search extends HttpServlet {
         BufferedReader reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
         String line = "";
         while ((line = reader.readLine()) != null) {
-          out.write(line);
+          out.println(line);
         }
         reader.close();
       }
@@ -198,6 +198,14 @@ public class Search extends HttpServlet {
           q += " AND date_start:[" + qds + " TO " + qde + "] AND date_end:[" + qds + " TO " + qde + "]";
         }
       }
+      String invnum = request.getParameter("invnum");
+      if (invnum != null && !"".equals(invnum)) {
+        if (q == null) {
+          q = "invnum:(" + invnum + ")";
+        } else {
+          q += " AND invnum:(" + invnum + ")";
+        }
+      }
 
     }
     SolrQuery sq = new SolrQuery();
@@ -214,11 +222,15 @@ public class Search extends HttpServlet {
     }
     String sort = request.getParameter("sort");
     if (sort == null || "".equals(sort)) {
-      sort = "volume_sort";
+      sq.addSortField("series", SolrQuery.ORDER.asc);
+      sq.addSortField("volume", SolrQuery.ORDER.asc);
+      sq.addSortField("item", SolrQuery.ORDER.asc);
+    } else {
+      sq.setSortField(sort, SolrQuery.ORDER.desc);
     }
     sq.setRows(rows);
     sq.setQuery(q);
-    sq.setSortField(sort, SolrQuery.ORDER.asc);
+    
     QueryResponse rs = solr.query(sq);
     SolrDocumentList docs = rs.getResults();
     out.println("<p>" + docs.getNumFound() + " hits.</p>");
