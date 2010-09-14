@@ -4,16 +4,16 @@
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
         <init-param>
-          <param-name>mulgaraUrl</param-name>
-          <param-value>http://localhost:8090</param-value>
+            <param-name>mulgaraUrl</param-name>
+            <param-value>http://localhost:8090</param-value>
         </init-param>
     </servlet>
     <servlet>
         <servlet-name>Search</servlet-name>
         <servlet-class>info.papyri.dispatch.Search</servlet-class>
         <init-param>
-          <param-name>home</param-name>
-          <param-value>/data/papyri.info/pn/home</param-value>
+            <param-name>home</param-name>
+            <param-value>/data/papyri.info/pn/home</param-value>
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
@@ -40,6 +40,10 @@
             <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>ImageMetadata</servlet-name>
+        <servlet-class>info.papyri.dispatch.ImageMetadata</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
@@ -51,6 +55,10 @@
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImageMetadata</servlet-name>
+        <url-pattern>/images</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
