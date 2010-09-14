@@ -49,19 +49,18 @@
           <!-- Search form -->
           <form action="search" method=post accept-charset="UTF-8">
             <div>
-            <label for="keyword">Keyword Search</label> <input type="text" name="keyword" value="" id="keyword" size="60"> in <select name="target" id="target" onchange="" size="1">
+            <label for="keyword">Keyword Search</label> <input type="text" name="keyword" value="" id="keyword" size="60"> in <select name="target" id="target" onchange="if(this.form.substring.checked){this.selectedIndex=1}" size="1">
               <option value="all">All</option>
               <option value="text" selected>Text</option>
               <option value="metadata">Metadata</option>
               <option value="translation">Translations</option>
             </select>
             <br>
-            Search type
-            <label for="phrase">phrase</label> <input type="radio" name="type" value="phrase" id="phrase"> 
-            <label for="substring">substring</label> <input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}">
-            <label for="proximity">within</label><input type="radio" name="type" value="proximity" id="proximity"> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em">
+            Search type:
+            <span class="stype" id="phrasespan"><label for="phrase" id="phraselabel">phrase</label> <input type="radio" name="type" value="phrase" id="phrase"></span> 
+            <span class="stype" id="substrspan"><label for="substring" id="substringlabel">substring</label> <input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"></span>
+            <span class="stype" id="proxspan"><label for="proximity" id="proximitylabel">within</label><input type="radio" name="type" value="proximity" id="proximity"> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"></span>
             <br>
-
 
             <input type="checkbox" name="beta" id="betaYes" value="on"> search text is in <a id="betaCodeLink" href="javascript:enableHelp('betaCodeDiv')" style="background:transparent;">beta code</a>
             <br>
@@ -87,9 +86,9 @@
                   </div>
             		   
             		  <div>
-                        <label for="invnum_num"><strong>Inventory Number <span class="pn-note">(apis only)</span></strong></label>
+                        <label for="invnum"><strong>Inventory Number <span class="pn-note">(apis only)</span></strong></label>
 
-            			<input id="invnum_num" name="invnum_num" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span>
+            			<input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span>
             		  </div>
             <p><input type="submit" value="Search &rarr;"></p>
           </form>
