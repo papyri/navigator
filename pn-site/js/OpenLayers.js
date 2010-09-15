@@ -50470,9 +50470,16 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
     },
 
     getViewerLevel: function() {
-        return Math.ceil(Math.min(this.getLevels(), Math.max(
-        (Math.log(this.imgMetadata.width) - Math.log(this.map.getSize().w)),
-        (Math.log(this.imgMetadata.height) - Math.log(this.map.getSize().h))) / Math.log(2))) + 1;
+        if (this.map) {
+            return Math.ceil(Math.min(this.getLevels(), Math.max(
+                (Math.log(this.imgMetadata.width) - Math.log(this.map.getSize().w)),
+                (Math.log(this.imgMetadata.height) - Math.log(this.map.getSize().h))) / Math.log(2))) + 1;
+        } else {
+            return Math.ceil(Math.min(this.getLevels(), Math.max(
+                (Math.log(this.imgMetadata.width) - Math.log(OpenLayers.Layer.OpenURL.viewerWidth)),
+                (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight = 512;))) / Math.log(2))) + 1;
+        }
+        
     },
 
     CLASS_NAME: "OpenLayers.Layer.OpenURL"
