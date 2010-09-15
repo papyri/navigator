@@ -46,7 +46,7 @@ function loadImage(imageURL) {
     var options = { resolutions: resolutions,
                     maxExtent: maxExtent,
                     tileSize: tileSize};
-    map = new OpenLayers.Map( 'olimage', options);
+    map = new OpenLayers.Map('olimage', options);
     map.addLayer(OUlayer);
 
     var lon = metadata.width / 2;
