@@ -50404,7 +50404,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
         var xtiles = Math.ceil(1 / (xTileSize / max.getWidth()));
         //8.32 -> 9
         // Find out which tile we're on
-        var xpos = Math.ceil((bounds.left + 1 / max.getWidth()) * xtiles);
+        var xpos = Math.ceil(((bounds.left + 1) / max.getWidth()) * xtiles);
         //bounds(bottom:6000,top:8000,left:-6000,right:-4000)
         // Set x
         var x = (xpos * xTileSize);

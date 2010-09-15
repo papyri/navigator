@@ -5,7 +5,7 @@ var djatokaserverURL = "http://dl-img.home.nyu.edu";  // djatoka server URL
 
 function initImage() {
   var images = jQuery("#image img").detach();
-  jQuery("#image ul").replaceWith('<div id="olimage"><p></div>');
+  jQuery("#image ul").replaceWith('<div id="olimage"></div>');
   if (images.length > 1) {
     jQuery("#image").prepend('<form><select id="imglist" onchange="loadImage(this[this.selectedIndex].value)"></select></form>');
     images.each(function(i) {
@@ -18,9 +18,9 @@ function initImage() {
 
 function loadImage(imageURL) {
 
-    /****************************************************************************/ 
-    /*  Get image meta data for the open layers map */  
-    /****************************************************************************/
+    if (map) {
+        map.destroy();
+    }
 
     /* Initialize URLs */
     metadataURL = "/dispatch/images?url=" + imageURL;        
@@ -55,6 +55,6 @@ function loadImage(imageURL) {
 
     /* set the center of the map to the center of the height and width */      
     map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
-    map.zoomTo(1);
+    map.zoomTo(2);
 
 }
