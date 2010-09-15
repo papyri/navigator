@@ -5,14 +5,15 @@ var djatokaserverURL = "http://dl-img.home.nyu.edu";  // djatoka server URL
 
 function initImage() {
   var images = jQuery("#image img").detach();
-  jQuery("#image ul").replaceWith('<div id="olimage"></div>');
+  jQuery("#image ul").replaceWith('<div id="olimage"><p></div>');
   if (images.length > 1) {
     jQuery("#image").prepend('<form><select id="imglist" onchange="loadImage(this[this.selectedIndex].value)"></select></form>');
     images.each(function(i) {
-      var imgname = jQuery(this).attr("src").substr(jQuery(this).attr("src").lastIndexOf("/"));
+      var imgname = jQuery(this).attr("src").substr(jQuery(this).attr("src").lastIndexOf("/") + 1);
       jQuery("#imglist").prepend('<option value="' + jQuery(this).attr("src") + '">' + imgname + '</option>');
     });
   }
+  loadImage(images.attr("src"));
 }
 
 function loadImage(imageURL) {
