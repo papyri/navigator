@@ -50477,7 +50477,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
         } else {
             return Math.ceil(Math.min(this.getLevels(), Math.max(
                 (Math.log(this.imgMetadata.width) - Math.log(OpenLayers.Layer.OpenURL.viewerWidth)),
-                (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight = 512;))) / Math.log(2))) + 1;
+                (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight))) / Math.log(2))) + 1;
         }
         
     },
