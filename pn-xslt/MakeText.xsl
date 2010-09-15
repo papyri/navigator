@@ -64,10 +64,16 @@
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     <xsl:variable name="docs" select="pi:get-docs($relations, 'xml')"/>
     <!-- No templates for metadata just yet -->
-    <xsl:if test="$collection = 'ddbdp'">
-      <xsl:apply-templates/>
-    </xsl:if>
-    <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
+    <xsl:choose>
+      <xsl:when test="$collection = 'ddbdp'">
+        <xsl:apply-templates/>
+        <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    
     <xsl:if test="$translation">
       <xsl:for-each select="$docs/t:TEI//t:div[@type = 'translation']">
         <xsl:sort select="number(.//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>

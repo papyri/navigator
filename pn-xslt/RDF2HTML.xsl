@@ -295,27 +295,8 @@
             <script src="/js/jquery-ui-1.8.1.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/highlight.js" type="text/javascript" charset="utf-8"></script>
-            <script type="text/javascript" charset="utf-8">
-            	function init() {
-            		$("li.dialog").each(function(i) {
-            			$(this).after("&lt;li&gt;&lt;a href=\"#\" onclick=\"javascript:$('#"+this.id+"c').dialog({height:100,modal:true})\"&gt;"+this.title+"&lt;/a&gt;&lt;/li&gt;");
-            			$(this).hide();
-            		});
-            		$("ul.nav li").hover(function(){$(this).css('background-color','#445B88');$(this).find("a").css('color','white')},function(){$(this).css('background-color','transparent');$(this).find("a").css('color','black')});
-            		$("div.controls input").each(function() {
-            		  if (!this.checked) {
-            		    $("."+this.name).css('display','none');
-            		  }
-            		});
-            		if ($(".translation").length == 0) {
-            		  $(".transcription").css('width', '100%');
-            		}
-            		if ($("#image")) {
-            		  initImage();
-            		}
-            	}
-            </script>
           </head>
           <body onload="init()">
             <div id="d" class="page">
@@ -388,9 +369,11 @@
                           <xsl:apply-templates select="/t:TEI"/>
                         </div>
                         <xsl:if test="$image">
-                          <div id="image" class="data"> 
+                          <div id="image" class="image data"> 
+                            <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
                             <ul>
                               <xsl:for-each select="$relations[contains(., 'images/')]">
+                                <xsl:sort order="descending"/>
                                 <li><img src="{.}" alt="papyrus image"/></li>
                               </xsl:for-each>
                             </ul>
