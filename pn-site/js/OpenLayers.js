@@ -50397,38 +50397,37 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
     },
 
     calculatePositionAndSize: function(bounds) {
-        // Have to recalculate x and y (instead of using bounds and resolution), because resolution will be off.
-        // Get number of tiles in image
-        var max = this.map.getMaxExtent();
-        var xTileSize = this.getTileSize().w * this.map.getResolution();
-        var xtiles = Math.ceil(1 / (xTileSize / max.getWidth()));
-        //8.32 -> 9
-        // Find out which tile we're on
-        var xpos = Math.ceil(((bounds.left + 1) / max.getWidth()) * xtiles);
-        //bounds(bottom:6000,top:8000,left:-6000,right:-4000)
-        // Set x
-        var x = (xpos * xTileSize);
-        var w,
-        h;
-        if (xpos == xtiles) {
-            w = max.getWidth() % xTileSize;
-        } else {
-            w = this.getTileSize().w;
-        }
-        // Do the same for y
-        var yTileSize = this.getTileSize().h * this.map.getResolution();
-        var ytiles = Math.ceil(1 / (yTileSize / max.getHeight()));
-        // Djatoka's coordinate system is top-down, not bottom-up, so invert for y
-        var ypos = ytiles - Math.ceil((bounds.bottom / max.getHeight()) * ytiles);
-        var y = (ypos * yTileSize);
-        if (ypos == ytiles) {
-            h = max.getHeight() % yTileSize;
-        } else {
-            h = this.getTileSize().h;
-        }
-        this.tilePos = new OpenLayers.LonLat(x, y);
-        this.imageSize = new OpenLayers.Size(w, h);
-    },
+          // Have to recalculate x and y (instead of using bounds and resolution), because resolution will be off.
+          // Get number of tiles in image
+          var max = this.map.getMaxExtent();
+          var xtiles = Math.round( 1 / (this.tileSize.w / max.getWidth()));
+          // Find out which tile we're on
+          var xpos = Math.round((bounds.left / max.getWidth()) * xtiles);
+          // Set x
+          var x = xpos * (this.tileSize.w + 1);
+          var w,h;
+          var xExtent = max.getWidth() / this.map.getResolution();
+          if (xpos == xtiles - 1) {
+            w = xExtent % (this.tileSize.w + 1);
+          } else {
+            w = this.tileSize.w;
+          }
+          // Do the same for y
+          var ytiles = Math.round( 1 / (this.tileSize.h / max.getHeight()));
+          // Djatoka's coordinate system is top-down, not bottom-up, so invert for y
+          var y = max.getHeight() - bounds.top;
+          y = y < 0? 0 : y;
+          var ypos = Math.round((y / max.getHeight()) * ytiles);
+          var y = ypos * (this.tileSize.h + 1);
+          var yExtent = max.getHeight() / this.map.getResolution();
+          if (ypos == ytiles - 1) {
+            h = yExtent % (this.tileSize.h + 1);
+          } else {
+            h = this.tileSize.h;
+          }
+          this.tilePos = new OpenLayers.LonLat(x,y);
+          this.imageSize = new OpenLayers.Size(w,h);
+        },
 
     getImageMetadata: function() {
         return this.imgMetadata;
