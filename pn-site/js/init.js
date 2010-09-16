@@ -19,7 +19,7 @@ function init() {
     if (jQuery(".translation").length == 0 && jQuery(".image").length == 0) {
         jQuery(".transcription").css('width', '100%');
     }
-    if (jQuery(".image")) {
+    if (jQuery("#image")) {
         initImage();
     }
 }
