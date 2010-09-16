@@ -422,17 +422,6 @@
                         </xsl:for-each>
                       </xsl:if>
                     </xsl:if>
-                    <xsl:if test="$image">
-                      <div id="image" class="image data"> 
-                        <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
-                        <ul>
-                          <xsl:for-each select="$relations[contains(., 'images/')]">
-                            <xsl:sort order="descending"/>
-                            <li><img src="{.}" alt="papyrus image"/></li>
-                          </xsl:for-each>
-                        </ul>
-                      </div>
-                    </xsl:if>
                     <xsl:if test="$collection = 'apis'">
                       <div class="metadata">
                         <xsl:apply-templates select="/t:TEI" mode="metadata"/>
