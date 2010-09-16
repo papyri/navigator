@@ -109,7 +109,7 @@
 (defn get-txt-filename
   [url]
   (try (if (.startsWith url "file:")
-    (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".txt")
+    (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".txt") "/xml/" "/")
     (if (.contains url "ddbdp")
       (let [url (URLDecoder/decode url "UTF-8")]
 	(when (.endsWith url "/source")
@@ -256,8 +256,10 @@
 				(list "related" (apply str (interpose " " (for [x related] (.toString (last x))))))
 				(list "replaces" (apply str (interpose " " (for [x reprint-from] (.toString (last x)))))) 
 				(list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (.toString (last x))))))))
-	      (.add @links (list (get-html-filename (.toString (last (reduce (fn [x y] (if (.contains (.toString (last x)) exclusion) x y)) related))))
-				 (get-html-filename (.toString item)))))))))
+	      (do (.add @links (list (get-html-filename (.toString (last (reduce (fn [x y] (if (.contains (.toString (last x)) exclusion) x y)) related))))
+				     (get-html-filename (.toString item))))
+		  (.add @links (list (get-txt-filename (.toString (last (reduce (fn [x y] (if (.contains (.toString (last x)) exclusion) x y)) related))))
+				     (get-txt-filename (.toString item))))))))))
                   
 (defn queue-collections
   "Adds URLs to the HTML transform and indexing queues for processing.  Takes a URL, like http://papryi.info/ddbdp/rdf,
@@ -343,7 +345,6 @@
 		     (fn []
 		       (when (not (.startsWith (first x) "http"))
 			 (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
-					;(println "Transforming " (first x) " to " (get-html-filename (first x)))
 			      (transform (first x)
 					 (list (second x) (nth x 2) (nth x 3) (nth x 4))
 					 (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)
@@ -369,10 +370,10 @@
 		 (let [docs (ArrayList.)]
 		   (.addAll docs @documents)
 		   (.removeAll @documents docs)
-		   (.add solr docs)))
-	       (Thread/sleep 10000)
+		   (.add solr docs))))
+	       (Thread/sleep 30000)
 	       (when (> (count @documents) 0)
-		 (index-solr)))))))
+		 (index-solr))))))
 
 (defn -main [& args]
 
@@ -434,7 +435,7 @@
   
   ;; Index docs queued in @text
   (println "Indexing text...")
-  (let [pool (Executors/newFixedThreadPool 10)
+vi   (let [pool (Executors/newFixedThreadPool 10)
         tasks
 	(map (fn [x]
 	       (fn []
