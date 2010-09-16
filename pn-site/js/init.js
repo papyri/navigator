@@ -1,6 +1,6 @@
 function init() {
     jQuery("li.dialog").each(function(i) {
-        jQuery(this).after("&lt;li&gt;&lt;a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\"&gt;" + this.title + "&lt;/a&gt;&lt;/li&gt;");
+        jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
         jQuery(this).hide();
     });
     jQuery("ul.nav li").hover(function() {
