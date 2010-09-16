@@ -80,6 +80,9 @@
                 </xsl:choose>
               </field>
             </xsl:for-each>
+            <xsl:for-each select="$relations">
+              <field name="identifier"><xsl:value-of select="."/></field>
+            </xsl:for-each>
             <xsl:for-each select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'HGV']">
               <xsl:for-each select="tokenize(., ' ')"><field name="identifier">http://papyri.info/hgv/<xsl:value-of select="."/></field></xsl:for-each>
             </xsl:for-each>
@@ -139,6 +142,9 @@
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id">http://papyri.info/hgv/<xsl:value-of select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/></field>
+            <xsl:for-each select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'TM']">
+              <field name="identifier"><xsl:value-of select="."/></field>
+            </xsl:for-each>
             <xsl:call-template name="metadata">
               <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
