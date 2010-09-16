@@ -426,7 +426,8 @@
                       <div class="metadata">
                         <xsl:apply-templates select="/t:TEI" mode="metadata"/>
                       </div>
-                      <xsl:if test="$image">
+                      <div class="text">
+                        <xsl:if test="$image">
                         <div id="image" class="image data"> 
                           <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
                           <ul>
@@ -436,7 +437,11 @@
                             </xsl:for-each>
                           </ul>
                         </div>
-                      </xsl:if>
+                        </xsl:if>
+                        <xsl:if test="$translation">
+                          <xsl:apply-templates select="/t:TEI" mode="apistrans"/>
+                        </xsl:if>
+                      </div>
                     </xsl:if>
                   </div>
                 </div>
