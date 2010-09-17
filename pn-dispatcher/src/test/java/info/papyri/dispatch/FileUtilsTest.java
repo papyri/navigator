@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package info.papyri.dispatch;
 
 import java.io.File;
@@ -15,20 +14,20 @@ import junit.framework.TestCase;
  * @author hcayless
  */
 public class FileUtilsTest extends TestCase {
-    
-    public FileUtilsTest(String testName) {
-        super(testName);
-    }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+  public FileUtilsTest(String testName) {
+    super(testName);
+  }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    super.tearDown();
+  }
 
   /**
    * Test of getHtmlFile method, of class FileUtils.
@@ -114,7 +113,7 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
-public void testFindMatchesLinebreak() {
+  public void testFindMatchesLinebreak() {
     System.out.println("findMatches");
     String query = "στρατηγωι";
     String id = "http://papyri.info/ddbdp/bgu;16;2629";
@@ -135,4 +134,24 @@ public void testFindMatchesLinebreak() {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testFindMatchesAPIS() {
+    System.out.println("findMatches");
+    String query = "sheep";
+    String id = "http://papyri.info/apis/michigan.apis.4520";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("sheep");
+    List<String> result = instance.findMatches(query, id);
+    int matches = 0;
+    for (String r : result) {
+      System.out.println(r);
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
 }

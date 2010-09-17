@@ -87,7 +87,7 @@ public class FileUtils {
         }
       } else if ("apis".equals(collection)) {
         if (item.contains(".")) {
-          String[] parts = item.split(".");
+          String[] parts = item.split("\\.");
           return new File(htmlPath + "/APIS/" + parts[0] + "/" + parts[0] + ".apis." + parts[2] + ".txt");
         }
       }
