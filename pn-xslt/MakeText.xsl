@@ -61,7 +61,7 @@
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
-    <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
+    <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
     <xsl:variable name="docs" select="pi:get-docs($relations, 'xml')"/>
     <!-- No templates for metadata just yet -->
     <xsl:choose>
