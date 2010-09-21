@@ -135,6 +135,7 @@ public class Search extends HttpServlet {
           try {
             TransCoder tc = new TransCoder("BetaCode", "UnicodeC");
             query = tc.getString(query);
+            query = query.replace("ΑΝΔ", "AND").replace("ΟΡ", "OR").replace("ΝΟΤ", "NOT");
           } catch (Exception e) {
             throw new ServletException(e);
           }
@@ -238,7 +239,7 @@ public class Search extends HttpServlet {
     for (SolrDocument doc : docs) {
       out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/\">"
               + doc.getFieldValue("id") + "</a><br>");
-      for (String line : util.findMatches(q, (String)doc.getFieldValue("id"))) {
+      for (String line : util.highlightMatches(q, (String)doc.getFieldValue("id"))) {
         out.print(line + "<br>\n");
       }
       out.println("</li>");

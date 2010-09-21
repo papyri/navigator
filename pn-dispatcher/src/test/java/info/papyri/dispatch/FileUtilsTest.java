@@ -33,7 +33,6 @@ public class FileUtilsTest extends TestCase {
    * Test of getHtmlFile method, of class FileUtils.
    */
   public void testGetHtmlFile() {
-    System.out.println("getHtmlFile");
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
@@ -46,7 +45,6 @@ public class FileUtilsTest extends TestCase {
    * Test of getTextFile method, of class FileUtils.
    */
   public void testGetTextFile() {
-    System.out.println("getTextFile");
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
@@ -59,7 +57,6 @@ public class FileUtilsTest extends TestCase {
    * Test of getXmlFile method, of class FileUtils.
    */
   public void testGetXmlFile() {
-    System.out.println("getXmlFile");
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
@@ -72,16 +69,14 @@ public class FileUtilsTest extends TestCase {
    * Test of findMatches method, of class FileUtils.
    */
   public void testFindMatchesWildcard() {
-    System.out.println("findMatches");
     String query = "ostrak*";
     String id = "http://papyri.info/ddbdp/o.heid;;123";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("Ostrakon");
-    List<String> result = instance.findMatches(query, id);
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
-      System.out.println(r);
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
@@ -89,20 +84,18 @@ public class FileUtilsTest extends TestCase {
         }
       }
     }
-    assertEquals(matches, expResult.size());
+    assertEquals(expResult.size(), matches);
   }
 
   public void testFindMatchesSubstringPhrase() {
-    System.out.println("findMatches");
     String query = "\"\\^και\\^ \\^στρατηγ\"";
     String id = "http://papyri.info/ddbdp/bgu;14;2373";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("καὶ στρ]ατηγ");
-    List<String> result = instance.findMatches(query, id);
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
-      System.out.println(r);
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
@@ -114,16 +107,33 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindMatchesLinebreak() {
-    System.out.println("findMatches");
     String query = "στρατηγωι";
     String id = "http://papyri.info/ddbdp/bgu;16;2629";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("στρ̣[ατη]γῶι");
-    List<String> result = instance.findMatches(query, id);
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
-      System.out.println(r);
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+
+  public void testFindMatchesElision() {
+    String query = "τουτεστιν";
+    String id = "http://papyri.info/ddbdp/p.neph;;31";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("τουτ’έστιν");
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    int matches = 0;
+    for (String r : result) {
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
@@ -135,16 +145,14 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindMatchesAPIS() {
-    System.out.println("findMatches");
     String query = "sheep";
     String id = "http://papyri.info/apis/michigan.apis.4520";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("sheep");
-    List<String> result = instance.findMatches(query, id);
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
-      System.out.println(r);
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
@@ -153,5 +161,27 @@ public class FileUtilsTest extends TestCase {
       }
     }
     assertEquals(expResult.size(), matches);
+  }
+
+  public void testGetDivIndexes() {
+    String id = "http://papyri.info/apis/toronto.apis.17";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    String html = instance.loadHtmlFromId(id);
+    List<int[]> divs = instance.getDivIndexes(html);
+    assertEquals(5, divs.size());
+  }
+
+  public void testDivHighlight() {
+    String id = "http://papyri.info/apis/toronto.apis.17";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    String html = instance.loadHtmlFromId(id);
+    List<int[]> divs = instance.getDivIndexes(html);
+    boolean foundText = false;
+    for (int[] div : divs) {
+      if (instance.highlight("εσμεν", html.substring(div[0], div[1])).contains("<span class=\"highlight\">&lt;ἔ&gt;σμεν<a href=\"#to-app-choice04\" xml:id=\"from-app-choice04\">(*)</a></span>")) {
+        foundText = true;
+      }
+    }
+    assertTrue(foundText);
   }
 }
