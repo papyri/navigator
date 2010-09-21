@@ -184,4 +184,20 @@ public class FileUtilsTest extends TestCase {
     }
     assertTrue(foundText);
   }
+  
+  public void testDivHighlight2() {
+    String id = "http://papyri.info/ddbdp/bgu;1;74";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    String html = instance.loadHtmlFromId(id);
+    List<int[]> divs = instance.getDivIndexes(html);
+    boolean foundText = false;
+    for (int[] div : divs) {
+      System.out.print(instance.highlight("αρχιερ", html.substring(div[0], div[1])));
+      if (instance.highlight("αρχιερ", html.substring(div[0], div[1])).contains("<span class=\"highlight\">ἀρχιερ</span>")) {
+        foundText = true;
+      }
+    }
+    assertTrue(foundText);
+  }
+
 }

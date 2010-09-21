@@ -154,7 +154,7 @@ public class FileUtils {
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
       while (m.find()) {
-        hl.append(text.substring(index, m.start() - 1));
+        hl.append(text.substring(index, m.start()));
         hl.append(hlStart);
         hl.append(text.substring(m.start(), m.end()));
         hl.append(hlEnd);

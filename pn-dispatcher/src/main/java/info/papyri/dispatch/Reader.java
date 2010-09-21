@@ -103,6 +103,7 @@ public class Reader extends HttpServlet {
 
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
     throws ServletException, IOException {
+    System.out.println(q);
     PrintWriter out = response.getWriter();
     //read whole file into buffer
     if (f != null && f.exists()) {
