@@ -49,6 +49,7 @@ public class Reader extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     String page = request.getParameter("p");
+    System.out.println()request.getPathInfo());
     if (page != null) {
       String[] parts = page.split("/");
       String collection = parts[0];
