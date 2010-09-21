@@ -49,7 +49,7 @@ public class Reader extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     String page = request.getParameter("p");
-    System.out.println()request.getPathInfo());
+    System.out.println(request.getPathInfo());
     if (page != null) {
       String[] parts = page.split("/");
       String collection = parts[0];
@@ -79,7 +79,6 @@ public class Reader extends HttpServlet {
   private void send(HttpServletResponse response, File f)
           throws ServletException, IOException {
     FileInputStream reader = null;
-    System.out.println(f.getAbsolutePath());
     OutputStream out = response.getOutputStream();
     if (f != null && f.exists()) {
       try {
@@ -104,17 +103,15 @@ public class Reader extends HttpServlet {
 
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
     throws ServletException, IOException {
-    System.out.println(q);
     PrintWriter out = response.getWriter();
     //read whole file into buffer
     if (f != null && f.exists()) {
       try {
         String text = util.loadFile(f);
-        List<int[]> divIndexes = util.getDivIndexes(text.toString());
-        
+        List<int[]> divIndexes = util.getDivIndexes(text);
         int start = 0;
         for (int[] divIndex : divIndexes) {
-          out.write(q, start, divIndex[0]);
+          out.write(text, start, divIndex[0]);
           out.write(util.highlight(q, text.substring(divIndex[0], divIndex[1])));
           start = divIndex[1];
         }
