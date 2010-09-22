@@ -17,6 +17,10 @@ body {
   margin-left:0.25em;
   margin-bottom:0;
 }
+div#bd {
+	min-height:8em;
+}
+
 h2#title {
 	color:#3c2217;
 	font-family: Georgia, serif;
@@ -114,7 +118,11 @@ div.nav a {
 	color:black;
 	text-decoration:none;
 }
-
+/* Images */
+div#olimage {
+	width: 512px;
+        height: 512px;
+}
 
 div.about {
 	float:left;
@@ -295,4 +303,6 @@ span.textpartnumber {
     font-style: italic;
 }
 
-
+span.highlight {
+    background:orange;
+}
