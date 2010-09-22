@@ -269,7 +269,7 @@
   </xsl:template>
   
   <xsl:template match="text()[local-name(following-sibling::*[1]) = 'lb' and following-sibling::t:lb[1][@type='inWord']]">
-    <xsl:value-of select="normalize-space(.)"/>
+    <xsl:value-of select="replace(., '\s+$', '')"/>
   </xsl:template>
   
   <xsl:template match="t:div[@type = 'textpart']" priority="1">
