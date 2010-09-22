@@ -226,9 +226,17 @@ public class FileUtils {
       }
       String[] find;
       if (q.startsWith("\"") && q.endsWith("\"")) {
-        find = new String[]{q.replaceAll("\\s", " ").replaceAll("[?*()\\\\/\"'~^0-1]", "")};
+        q = q.replaceAll("\\s", " ").replaceAll("[?*()\\\\/\"'~^0-1]", "");
+        if (q.length() == 0) {
+          return new Pattern[0];
+        }
+        find = new String[]{q};
       } else {
-        find = q.replaceAll("[\\\\/()\"'~^0-1]", "").replaceAll("(AND|OR|TO)", "").split("\\s+");
+        q = q.replaceAll("[\\\\/()\"'~^0-1]", "").replaceAll("(AND|OR|TO)", "");
+        if (q.length() == 0) {
+          return new Pattern[0];
+        }
+        find = q.split("\\s+");
       }
       Pattern[] patterns = new Pattern[find.length];
       for (int i = 0; i < find.length; i++) {

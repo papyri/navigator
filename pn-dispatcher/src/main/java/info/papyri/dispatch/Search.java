@@ -251,7 +251,9 @@ public class Search extends HttpServlet {
       int p = 0;
       try {
         q = URLEncoder.encode(q, "UTF-8");
-      } catch (Exception e) {}
+      } catch (Exception e) {
+        e.printStackTrace(System.out);
+      }
       while (p < pages) {
         if ((p * rows) == start) {
           out.print((p + 1) + " ");
