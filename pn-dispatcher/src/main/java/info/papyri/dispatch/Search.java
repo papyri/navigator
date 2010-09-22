@@ -237,7 +237,7 @@ public class Search extends HttpServlet {
     out.println("<p>" + docs.getNumFound() + " hits.</p>");
     out.println("<ul class=\"results\">");
     for (SolrDocument doc : docs) {
-      out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/\">"
+      out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + q +"\">"
               + doc.getFieldValue("id") + "</a><br>");
       for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
         out.print(line + "<br>\n");
