@@ -236,11 +236,12 @@ public class Search extends HttpServlet {
     SolrDocumentList docs = rs.getResults();
     out.println("<p>" + docs.getNumFound() + " hits.</p>");
     out.println("<ul class=\"results\">");
+    String uq = q;
     try {
-      q = URLEncoder.encode(q, "UTF-8");
+      uq = URLEncoder.encode(q, "UTF-8");
     } catch (Exception e) {}
     for (SolrDocument doc : docs) {
-      out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + q +"\">"
+      out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + uq +"\">"
               + doc.getFieldValue("id") + "</a><br>");
       for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
         out.print(line + "<br>\n");
@@ -256,7 +257,7 @@ public class Search extends HttpServlet {
         if ((p * rows) == start) {
           out.print((p + 1) + " ");
         } else {
-          out.print("<a href=\"/search?q=" + q + "&start=" + p * rows + "&rows=" + rows + "\">" + (p + 1) + "</a> ");
+          out.print("<a href=\"/search?q=" + uq + "&start=" + p * rows + "&rows=" + rows + "\">" + (p + 1) + "</a> ");
         }
         p++;
       }
