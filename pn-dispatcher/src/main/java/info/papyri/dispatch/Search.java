@@ -236,6 +236,9 @@ public class Search extends HttpServlet {
     SolrDocumentList docs = rs.getResults();
     out.println("<p>" + docs.getNumFound() + " hits.</p>");
     out.println("<ul class=\"results\">");
+    try {
+      q = URLEncoder.encode(q, "UTF-8");
+    } catch (Exception e) {}
     for (SolrDocument doc : docs) {
       out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + q +"\">"
               + doc.getFieldValue("id") + "</a><br>");
@@ -249,11 +252,6 @@ public class Search extends HttpServlet {
       out.println("<p id=\"resultpages\">");
       int pages = (int) Math.ceil((double)docs.getNumFound() / (double)rows);
       int p = 0;
-      try {
-        q = URLEncoder.encode(q, "UTF-8");
-      } catch (Exception e) {
-        e.printStackTrace(System.out);
-      }
       while (p < pages) {
         if ((p * rows) == start) {
           out.print((p + 1) + " ");
