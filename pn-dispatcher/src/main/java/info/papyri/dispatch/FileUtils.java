@@ -218,7 +218,7 @@ public class FileUtils {
   }
 
     private Pattern[] getPatterns(String query) {
-      String q = query.replace("*", "@").replace("?", "#");
+      String q = query.replace("*", "£").replace("?", "#");
       if (q.contains(":")) {
         q = q.substring(q.indexOf(":") + 1);
       }
@@ -232,7 +232,7 @@ public class FileUtils {
       for (int i = 0; i < find.length; i++) {
         patterns[i] = Pattern.compile(find[i].toLowerCase()
                 .replaceAll("(\\S)", sigla + "$1")
-                .replace("@", "\\S*").replace("#", "\\S")
+                .replace("£", "\\S*").replace("#", "\\S")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
                 .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
@@ -240,7 +240,7 @@ public class FileUtils {
                 .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
                 .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ||ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
                 .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
-                .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)"),
+                .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
       }
     return patterns;
