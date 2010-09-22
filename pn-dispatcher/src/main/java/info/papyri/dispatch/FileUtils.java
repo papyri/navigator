@@ -200,7 +200,7 @@ public class FileUtils {
         }
         StringBuilder hit = new StringBuilder();
         if (m.toMatchResult().start() > 0) {
-          hit.append(text.substring(start, m.toMatchResult().start() - 1));
+          hit.append(text.substring(start, m.toMatchResult().start()));
         }
         hit.append(hlStart);
         hit.append(text.substring(m.toMatchResult().start(), m.toMatchResult().end()));
@@ -209,9 +209,9 @@ public class FileUtils {
           hit.append(text.substring(m.toMatchResult().end(), end));
         }
         result.add(hit.toString());
-      }
-      if (result.size() > 2) {
-        return result;
+        if (result.size() > 2) {
+          return result;
+        }
       }
     }
     return result;
