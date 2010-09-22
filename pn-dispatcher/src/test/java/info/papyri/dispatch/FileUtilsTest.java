@@ -162,6 +162,28 @@ public class FileUtilsTest extends TestCase {
     }
     assertEquals(expResult.size(), matches);
   }
+  
+  public void testFindMatchesSheep() {
+    String query = "sheep";
+    String id = "http://papyri.info/ddbdp/p.cair.zen;1;59068";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("sheep");
+    expResult.add("sheep");
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    int matches = 0;
+    for (String r : result) {
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+
+
 
   public void testGetDivIndexes() {
     String id = "http://papyri.info/apis/toronto.apis.17";
@@ -178,7 +200,7 @@ public class FileUtilsTest extends TestCase {
     List<int[]> divs = instance.getDivIndexes(html);
     boolean foundText = false;
     for (int[] div : divs) {
-      if (instance.highlight("εσμεν", html.substring(div[0], div[1])).contains("<span class=\"highlight\">&lt;ἔ&gt;σμεν<a href=\"#to-app-choice04\" xml:id=\"from-app-choice04\">(*)</a></span>")) {
+      if (instance.highlight("εσμεν", html.substring(div[0], div[1])).contains("<span class=\"highlight\">&lt;ἔ&gt;σμεν</span>")) {
         foundText = true;
       }
     }
@@ -192,7 +214,6 @@ public class FileUtilsTest extends TestCase {
     List<int[]> divs = instance.getDivIndexes(html);
     boolean foundText = false;
     for (int[] div : divs) {
-      System.out.print(instance.highlight("αρχιερ", html.substring(div[0], div[1])));
       if (instance.highlight("αρχιερ", html.substring(div[0], div[1])).contains("<span class=\"highlight\">ἀρχιερ</span>")) {
         foundText = true;
       }

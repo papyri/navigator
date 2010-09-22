@@ -240,7 +240,7 @@ public class FileUtils {
                 .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
                 .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ||ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
                 .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
-                .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)") + sigla,
+                .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)"),
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
       }
     return patterns;
