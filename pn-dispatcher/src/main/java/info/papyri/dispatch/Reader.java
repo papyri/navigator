@@ -49,7 +49,6 @@ public class Reader extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     String page = request.getParameter("p");
-    System.out.println(request.getPathInfo());
     if (page != null) {
       String[] parts = page.split("/");
       String collection = parts[0];
@@ -111,7 +110,7 @@ public class Reader extends HttpServlet {
         List<int[]> divIndexes = util.getDivIndexes(text);
         int start = 0;
         for (int[] divIndex : divIndexes) {
-          out.write(text, start, divIndex[0]);
+          out.write(text, start, divIndex[0] - start);
           out.write(util.highlight(q, text.substring(divIndex[0], divIndex[1])));
           start = divIndex[1];
         }
