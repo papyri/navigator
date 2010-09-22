@@ -160,7 +160,9 @@ public class FileUtils {
         hl.append(hlEnd);
         index = m.end();
       }
-      hl.append(text.substring(index));
+      if (hl.length() > 0) {
+        hl.append(text.substring(index));
+      }
     }
     String result;
     if (hl.length() > 0) {
