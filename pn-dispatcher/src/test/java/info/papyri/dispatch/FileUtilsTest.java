@@ -192,6 +192,25 @@ public void testFindMatchesBroken() {
     assertTrue(result.equals(text));
   }
 
+public void testFindMatchesNot() {
+    String query = "^καισ NOT ^καισαρ";
+    String id = "http://papyri.info/ddbdp/p.hamb;2;187";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("κα̣ισ");
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    int matches = 0;
+    for (String r : result) {
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+
   public void testGetDivIndexes() {
     String id = "http://papyri.info/apis/toronto.apis.17";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");

@@ -187,7 +187,9 @@ public class FileUtils {
         int start = m.toMatchResult().start();
         if (start > 20) {
           start -= 20;
-          start = text.indexOf(' ', start) + 1;
+          if (text.indexOf(' ', start) < start) {
+            start = text.indexOf(' ', start) + 1;
+          }
         } else {
           start = 0;
         }
@@ -232,7 +234,7 @@ public class FileUtils {
         }
         find = new String[]{q};
       } else {
-        q = q.replaceAll("[\\\\/()\"'~^0-1]", "").replaceAll("(AND|OR|TO)", "");
+        q = q.replaceAll("[\\\\/()\"'~^0-1]", "").replaceAll("(AND|OR|NOT|TO)", "");
         if (q.length() == 0) {
           return new Pattern[0];
         }
