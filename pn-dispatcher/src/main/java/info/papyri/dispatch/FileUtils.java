@@ -149,9 +149,9 @@ public class FileUtils {
     Pattern[] patterns = getPatterns(query);
     List<String> exclusions = getExclusions(t);
     String text = t.toString().replaceAll(exclude, "@@@");
-    StringBuilder hl = new StringBuilder();
     int index = 0;
     for (Pattern pattern : patterns) {
+      StringBuilder hl = new StringBuilder();
       Matcher m = pattern.matcher(text);
       while (m.find()) {
         hl.append(text.substring(index, m.start()));
@@ -162,18 +162,13 @@ public class FileUtils {
       }
       if (hl.length() > 0) {
         hl.append(text.substring(index));
+        text = hl.toString();
       }
     }
-    String result;
-    if (hl.length() > 0) {
-      result = hl.toString();
-    } else { // if we didn't find anything, we're done
-      return t;
-    }
     for (String ex : exclusions) {
-      result = result.replaceFirst("@@@", ex);
+      text = text.replaceFirst("@@@", ex);
     }
-    return result;
+    return text;
   }
   
   public List<String> highlightMatches(String query, String t) {
