@@ -323,13 +323,13 @@
 		       (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
 					;(println "Transforming " (first x) " to " (get-html-filename (first x)))
 		       (transform (if (.startsWith (first x) "http")
-				    (str (.replace (first x) "papyri.info" "dev-dl-pa.home.nyu.edu") "/rdf")
+				    (str (.replace (first x) "papyri.info" "dev.papyri.info") "/rdf")
 				    (first x))
 				  (list (second x) (nth x 2) (nth x 3) (nth x 4))
 				  (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
 		       (catch Exception e
 			 (.printStackTrace e)
-			 (println (str "Error converting file " (first x) "to" (get-html-filename (first x))))))))
+			 (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
 		   @html)]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
@@ -345,12 +345,14 @@
 		     (fn []
 		       (when (not (.startsWith (first x) "http"))
 			 (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
-			      (transform (first x)
+			      (transform (if (.startsWith (first x) "http")
+                                           (str (.replace (first x) "papyri.info" "dev.papyri.info") "/rdf")
+                                           (first x))
 					 (list (second x) (nth x 2) (nth x 3) (nth x 4))
 					 (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)
 			      (catch Exception e
 				(.printStackTrace e)
-				(println (str "Error converting file " (first x) "to" (get-txt-filename (first x)))))))))
+				(println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
 		   @text)]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
@@ -435,7 +437,7 @@
   
   ;; Index docs queued in @text
   (println "Indexing text...")
-vi   (let [pool (Executors/newFixedThreadPool 10)
+   (let [pool (Executors/newFixedThreadPool 10)
         tasks
 	(map (fn [x]
 	       (fn []
