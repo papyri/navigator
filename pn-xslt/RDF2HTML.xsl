@@ -365,7 +365,7 @@
                       </xsl:if>
                       <div class="text">
                         <div class="transcription data">
-                          <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="./source">xml</a>]</h2>
+                          <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
                           <xsl:apply-templates select="/t:TEI"/>
                         </div>
                         <xsl:if test="$image">
