@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/jquery-ui-1.8.1.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       function initNav() {
         jQuery("li.dialog").each(function(i) {
@@ -30,7 +30,7 @@
           <!-- left nav -->
           <ul class="nav ui-corner-all">
             <li>
-              <form action="pn-view-mockup_submit" method="get" accept-charset="utf-8">
+              <form method="get" accept-charset="utf-8">
                 <ul class="nav-section">
                   <li>
                     <a href="/">Home</a>
@@ -44,7 +44,7 @@
                   <li>
                     <a href="/apis/">Browse APIS</a>
                   </li>
-                  <li id="tm" class="dialog" title="TM Number">TM#: <input type="text" name="tmid" value="[enter id]" id="tmid" onclick="this.setAttribute('value','')" class="navField"> <input type="button" name="tmgo" value=" &gt; " class="navButton">
+                  <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+this.form.tmid.value;" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
                   </li>
                 </ul>
               </form>
@@ -105,7 +105,7 @@
                 <label for="invnum"><strong>Inventory Number <span class="pn-note">(apis only)</span></strong></label> <input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span>
               </div>
               <p>
-                <input type="submit" value="Search →">
+                <input type="submit" value="Search">
               </p>
             </form><!-- Search form end -->
           </div>

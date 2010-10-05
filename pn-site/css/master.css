@@ -79,16 +79,13 @@ min-width: 800px;
 text-align: left;
 }
 div#search {
-background-image: url(../images/button.png);
-background-position: center center;
-background-repeat: no-repeat;
-margin: 1em;
+margin-bottom: 2em;
 padding-top: 20px;
 text-align: center;
 height: 50px;
 }
-div#search a {
-color: white;
+div#search span {
+color: #3c2217;
 font-size: 153.9%;
 text-decoration: none;
 }

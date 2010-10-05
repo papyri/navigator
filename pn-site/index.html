@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>pn-view-mockup</title>
+  <link rel="stylesheet" href="css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    jQuery("#search>span").button();
+    function initNav() {
+      $("li.dialog").each(function(i) {
+        jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:$('#"+this.id+"').dialog()\">"+this.title+"</a></li>");
+        jQuery(this).hide();
+      });
+    }
+  </script>
+</head>
+
+<body onload="initNav()">
+  <div id="d" class="page">
+    <div id="hd">
+      <h1>Papyri.info</h1>
+    </div>
+    <div id="bd">
+      <div class="nav">
+        <!-- left nav -->
+        <ul class="nav ui-corner-all">
+          <li>
+            <form method="get" accept-charset="utf-8">
+              <ul class="nav-section">
+                <li>
+                  <a href="/">Home</a>
+                </li>
+                <li>
+                  <a href="/ddbdp/">Browse DDbDP</a>
+                </li>
+                <li>
+                  <a href="/hgv/">Browse HGV</a>
+                </li>
+                <li>
+                  <a href="/apis/">Browse APIS</a>
+                </li>
+                <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+this.form.tmid.value;" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
+                </li>
+              </ul>
+            </form>
+          </li>
+          <li>
+            <ul class="nav-section">
+              <li>
+                <a href="/search">Search</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div id="main">
+        <div class="content ui-corner-all">
+          <p><span class="papyriDotInfo">Papyri.info</span> is
+                    dedicated to the study of ancient papyrological documents.&nbsp; It offers links to
+                    papyrological resources and a customized search engine (called the <em>Papyrological
+                    Navigator</em>) capable of retrieving information from multiple related sites.
+                    The Papyrological Navigator currently retrieves and displays information from
+                    the Advanced Papyrological Information System (APIS), the Duke Databank of
+                    Documentary Papyri (DDbDP) and the Heidelberger Gesamtverzeichnis (HGV).&nbsp; 
+              <!-- <a href="about.html">More information about the <em>Papyrological Navigator</em> and <em>papyri.info . . .</em></a> -->
+
+            </p>
+                <div id="search"> 
+                  <span class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all">
+                     <a href="/search" class="ui-button-text">Search the navigator</a>
+                  </span>
+                </div>
+                <table width="100%">
+                  <tr>
+                    <td width="50%" valign="top" style="padding-left:10em;padding-right:2em;"><h2>About</h2>
+                    <ul class="about">
+                      <li><a href="about.html">about papyri.info</a></li>
+                      <li><a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/about.html">about APIS</a></li>
+
+                      <li><a href="http://idp.atlantides.org/trac/idp/wiki/DDBDP">about DDbDP</a></li>
+                      <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/">about HGV</a></li>
+                    </ul></td>
+                    <td width="50%" valign="top" style="padding-left:2em;padding-right:10em;"><h2>More information</h2>
+                    <ul class="about">
+                      <li><a href="news.html">news and notes</a></li> 
+          <!--
+                      <li>frequently asked questions</li>
+          -->
+
+                      <li><a href="resources.html">papyrological resources</a></li>
+                      <li><a href="feedback.html">send feedback</a></li>
+                    </ul></td>
+                  </tr>
+                </table>
+        </div>
+      </div>
+
+    </div>
+    <div class="footer ui-corner-all">
+      papyri.info is produced by <a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> and the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.
+    </div>
+  </div>
+</body>
+</html>
