@@ -110,7 +110,7 @@
               </xsl:choose>
             </title>
             <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/jquery-ui-1.8.1.custom.min.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script type="text/javascript" charset="utf-8">
               <![CDATA[
         		function initNav() {
