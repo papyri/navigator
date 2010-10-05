@@ -16,6 +16,7 @@
           jQuery(this).hide();
         });
       }
+      jQuery("#tmid").button();
     </script>
   </head>
   <body onload="initNav()">
@@ -44,7 +45,7 @@
                   <li>
                     <a href="/apis/">Browse APIS</a>
                   </li>
-                  <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+this.form.tmid.value;" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
+                  <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
                   </li>
                 </ul>
               </form>
