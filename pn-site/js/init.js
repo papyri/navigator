@@ -2,7 +2,6 @@ function init() {
     jQuery("li.dialog").each(function(i) {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
         jQuery(this).hide();
-        jQuery("#tmid").next().attr("onclick") = "window.location = '/trismegistos/' + jQuery('#tmid').attr('value')";
     });
     jQuery("ul.nav li").hover(function() {
         jQuery(this).css('background-color', '#445B88');
