@@ -119,6 +119,7 @@
         				jQuery(this).hide();
         			});
         		}
+        		jQuery("#tmid").button();
         	]]>
           </script>
           </head>
@@ -292,7 +293,7 @@
               <xsl:call-template name="get-references"/>
             </title>
             <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/jquery-ui-1.8.1.custom.min.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
