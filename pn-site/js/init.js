@@ -22,4 +22,5 @@ function init() {
     if (jQuery("#image")) {
         initImage();
     }
+    jQuery("#tmid").button();
 }
