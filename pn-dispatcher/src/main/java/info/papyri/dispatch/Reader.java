@@ -65,9 +65,9 @@ public class Reader extends HttpServlet {
       } else {
         response.setContentType("text/html;charset=UTF-8");
         if (request.getParameter("q") != null) {
-          sendWithHighlight(response, util.getHtmlFile(collection, item.replaceAll(",", "-").replaceAll("/", "_")), request.getParameter("q"));
+          sendWithHighlight(response, util.getHtmlFile(collection, item), request.getParameter("q"));
         } else {
-          send(response, util.getHtmlFile(collection, item.replaceAll(",", "-").replaceAll("/", "_")));
+          send(response, util.getHtmlFile(collection, item));
         }
       }
     } else {
