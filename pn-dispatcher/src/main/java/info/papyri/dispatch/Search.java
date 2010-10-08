@@ -89,7 +89,7 @@ public class Search extends HttpServlet {
           }
           if (line.contains("<!-- Search form end -->")) {
             out.println("</div>");
-            out.println("<p><button id=\"newsearch\">New Search</button></p>");
+            out.println("<p><a href=\"#\" id=\"newsearch\">New Search</a></p>");
             runQuery(out, request, response);
           }
           out.println(line);
