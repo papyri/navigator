@@ -163,6 +163,7 @@ public class FileUtils {
       if (hl.length() > 0) {
         hl.append(text.substring(index));
         text = hl.toString();
+        index = 0;
       }
     }
     for (String ex : exclusions) {
@@ -172,7 +173,6 @@ public class FileUtils {
   }
   
   public List<String> highlightMatches(String query, String t) {
-    //System.out.println(query + " " + id);
     List<String> result = new ArrayList<String>();
     Pattern[] patterns = getPatterns(query);
     String text = t.toString().replaceAll(exclude, "");
@@ -219,7 +219,7 @@ public class FileUtils {
     private Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "#");
       if (q.contains(":")) {
-        q = q.substring(q.indexOf(":") + 1);
+        q = q.substring(q.indexOf(":") + 1).replaceAll("[()]", "");
       }
       String[] find;
       if (q.startsWith("\"") && q.endsWith("\"")) {

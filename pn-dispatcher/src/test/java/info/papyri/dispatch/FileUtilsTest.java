@@ -183,7 +183,7 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
-  public void testFindMatchesBroken() {
+  public void testFindMatchesBrokenQuery() {
     String query = "transcription_ngram_ia:(";
     String id = "http://papyri.info/ddbdp/bgu;2;521";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
