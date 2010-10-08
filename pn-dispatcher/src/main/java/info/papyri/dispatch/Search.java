@@ -133,7 +133,7 @@ public class Search extends HttpServlet {
       if (query != null) {
         if ("on".equals(request.getParameter("beta"))) {
           try {
-            TransCoder tc = new TransCoder("BetaCode", "UnicodeC");
+            TransCoder tc = new TransCoder("BetaCodeCaps", "UnicodeC");
             query = query.replace("ΑΝΔ", "AND").replace("ΟΡ", "OR").replace("ΝΟΤ", "NOT");
           } catch (Exception e) {
             throw new ServletException(e);
