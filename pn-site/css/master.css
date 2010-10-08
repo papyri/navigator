@@ -84,10 +84,16 @@ padding-top: 20px;
 text-align: center;
 height: 50px;
 }
-div#search span {
-color: #3c2217;
-font-size: 153.9%;
-text-decoration: none;
+div.search p {
+padding:4px;
+}
+
+div#search-options {
+  font-size:77%;
+}
+
+div#help {
+  display:none;
 }
 
 /* Left-hand Navigation */

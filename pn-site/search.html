@@ -6,17 +6,48 @@
       PN Search
     </title>
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
+      var help = false;
       function initNav() {
         jQuery("li.dialog").each(function(i) {
           jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
           jQuery(this).hide();
         });
+        jQuery("#togglehelp-label").CreateBubblePopup({
+          innerHtml: "Click to turn contextual help for the search form on and off.",
+          position: "left"
+        })
       }
-      jQuery("#tmid").button();
+      function toggleHelp() {
+        if(!help) {
+          help = true;
+          jQuery("#help div").each(function() {
+            var helptext = this.innerHTML;
+            //alert("#" + this.id.substring(0, this.id.indexOf("-")) + "-span");
+            var label = jQuery("#" + this.id.substring(0, this.id.indexOf("-")) + "-label");
+            label.CreateBubblePopup(
+                  {
+                     innerHtml: helptext, 
+                     innerHtmlStyle: {
+                       'text-align':'left'
+                       },
+                     width: 350,
+                     position: label.offset().left > 600? "left" : "right",
+                     closingDelay: 2000
+                  });
+          });
+        } else {
+          help = false;
+          jQuery("#help div").each(function() {
+            jQuery("#" + this.id.substring(0, this.id.indexOf("-")) + "-label").RemoveBubblePopup();
+          });
+        }
+      }
     </script>
   </head>
   <body onload="initNav()">
@@ -60,12 +91,12 @@
           </ul>
         </div>
         <div id="main">
-          <div class="content ui-corner-all">
+          <div class="content ui-corner-all search">
             <!-- Search form -->
             <form action="search" method="post" accept-charset="UTF-8">
               <div>
-                <span class="stype" id="phrasespan"><input type="radio" name="type" value="phrase" id="phrase"> <label for="phrase" id="phraselabel">phrase search</label></span> <span class="stype" id="substrspan"><input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"> <label for="substring" id="substringlabel">substring</label> </span> <span class="stype" id="proxspan"><input type="radio" name="type" value="proximity" id="proximity"> <label for="proximity" id="proximitylabel">within</label> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"></span><br>
-                <input type="text" name="keyword" value="" id="keyword" size="80"> in <select name="target" id="target" onchange="if(this.form.substring.checked){this.selectedIndex=1}if(this.selectedIndex!=1 && this.form.substring.checked){this.form.phrase.checked}" size="1">
+                <p><input type="radio" name="type" value="phrase" id="phrase" onchange="if(this.checked){this.form.target.selectedIndex=0}"> <label for="phrase" id="phrase-label">phrase search</label> <input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"> <label for="substring" id="substring-label">substring search</label> <input type="radio" name="type" value="proximity" id="proximity"> <label for="proximity" id="proximity-label">find within</label> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"></p>
+                <p><input type="text" name="keyword" value="" id="keyword" size="80"> in <select name="target" id="target" onchange="if(this.form.substring.checked){this.selectedIndex=1}if(this.selectedIndex!=1 && this.form.substring.checked){this.form.phrase.checked}" size="1">
                   <option value="all">
                     All
                   </option>
@@ -78,37 +109,50 @@
                   <option value="translation">
                     Translations
                   </option>
-                </select><br>
-                <input type="checkbox" name="beta" id="betaYes" value="on"> search text is in <a id="betaCodeLink" href="javascript:enableHelp('betaCodeDiv')" style="background:transparent;" name="betaCodeLink">beta code</a><br>
-                <input type="checkbox" name="caps" id="caps" value="on"> ignore <a id="betaCodeLink" href="javascript:enableHelp('capitals')" style="background:transparent;" name="betaCodeLink">capitalization</a><br>
-                <input type="checkbox" name="marks" id="marks" value="on"> ignore diacritics/accents<br>
-                <input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.caps.checked=this.checked;this.form.marks.checked=this.checked;}"> <a id="lemmaLink" href="javascript:enableHelp('lemmatized')" name="lemmaLink">lemmatized</a> search
+                </select></p>
+                <div id="search-options"><p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text is in Beta Code</label> <input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label> <input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label> <input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.caps.checked=this.checked;this.form.marks.checked=this.checked;}"> <label for="lemmas" id="lemmas-label">lemmatized search</label></p></div>
               </div>
               <div>
-                <label for="provenance">Provenance</label> <input type="text" name="provenance" value="" id="provenance"><br>
-                Date <label for="date_start">on or after</label> <input type="text/submit/hidden/button" name="date_start" value="" id="date_start"> <select name="start_era" id="start_era" onchange="" size="1">
+                <p><label for="provenance">Provenance</label> <input type="text" name="provenance" value="" id="provenance"></p>
+                <p>Date <label for="date_start">on or after</label> <input type="text/submit/hidden/button" name="date_start" value="" id="date_start"> <select name="start_era" id="start_era" onchange="" size="1">
                   <option value="bce">
                     BCE
                   </option>
                   <option value="ce">
                     CE
                   </option>
-                </select> <label for="date_end">on or before</label><input type="text" name="date_end" value="" id="date_end"> <select name="end_era" id="end_era" onchange="" size="1">
+                </select> <label for="date_end">on or before</label> <input type="text" name="date_end" value="" id="date_end"> <select name="end_era" id="end_era" onchange="" size="1">
                   <option value="bce">
                     BCE
                   </option>
                   <option value="ce">
                     CE
                   </option>
-                </select><br>
+                </select></p>
+
+                <p><label for="invnum"><strong>Inventory Number <span class="pn-note">(apis only)</span></strong></label> <input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span></p>
               </div>
-              <div>
-                <label for="invnum"><strong>Inventory Number <span class="pn-note">(apis only)</span></strong></label> <input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span>
-              </div>
-              <p>
-                <input type="submit" value="Search">
+              <p style="text-align:right;font-size:123.1%">
+                <input type="checkbox" id="togglehelp" onchange="toggleHelp()" autocomplete="off"><label for="togglehelp" id="togglehelp-label">Help</label>
+                <input type="submit" value="Search" id="search" style="height:52px">
               </p>
             </form><!-- Search form end -->
+          </div>
+          <div id="help">
+            <div id="phrase-help">Phrase search uses the query syntax built in to the Lucene search engine.  For example, you can do wildcard searches using * for multiple missing characters and ? for a single missing character (e.g. Καισ*).  Phrase searches can ignore or use diacritics and capitalization.  Wildcards cannot appear at the beginning of a word. For more details, see <a href="http://lucene.apache.org/java/3_0_2/queryparsersyntax.html">Lucene query syntax</a>.</div>
+            <div id="substring-help">Substring searches look for text occurring anywhere in a word, even in the middle.  Use the ^ character to mark a word-boundary (e.g. "^και^ ^υπο"). To search for one term followed by another, enclose the whole search string in quotes.  Substring searches do not take diacritics or capitalization into account.</div>
+            <div id="proximity-help">Proximity searches look for terms near to one another, within the specified number of words.</div>
+            <div id="betaYes-help">Beta code allows you to search for Greek characters using a non-Greek character set. The following Roman alphabet characters represent the Greek equivalences:
+              <ul>
+                <li>eta = h</li>
+                <li>theta = q</li>
+                <li>xi = c</li>
+                <li>chi = x</li>
+                <li>psi = y</li>
+                <li>omega = w</li>
+              </ul>
+            <b>You cannot use beta code to search for Latin terms</b>.</div>
+            <div id="lemmas-help">Lemmatized Search searches for all forms of the entered dictionary headword (Greek only for now). For words that have lemmas identical to other words (like δέω, e.g.), you may append a number corresponding to the article's order in LSJ. If you do not append a number, the search will be done on all forms of all corresponding lemmas.</div>
           </div>
         </div>
       </div>
@@ -116,5 +160,15 @@
         papyri.info is produced by <a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> and the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.
       </div>
     </div>
+    <script type="text/javascript" charset="utf-8">
+      jQuery("#tmid").button();
+      jQuery("#phrase,#substring,#proximity").button();
+      jQuery("#betaYes,#caps,#marks,#lemmas").button();
+      jQuery("#togglehelp,#search,#newsearch").button();
+      jQuery("#newsearch").click(function(){
+        jQuery("#hidesearch").show();
+        jQuery(this).hide();
+      })
+    </script>
   </body>
 </html>
