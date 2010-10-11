@@ -75,6 +75,9 @@
     </xsl:choose>
     
     <xsl:if test="$translation">
+      <xsl:if test="//t:div[@type = 'translation']">
+        <xsl:value-of select="//t:div[@type = 'translation']"/>
+      </xsl:if>
       <xsl:for-each select="$docs/t:TEI//t:div[@type = 'translation']">
         <xsl:sort select="number(.//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
         <xsl:value-of select="."/>
