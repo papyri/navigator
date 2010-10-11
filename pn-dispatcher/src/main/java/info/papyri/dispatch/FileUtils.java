@@ -178,38 +178,42 @@ public class FileUtils {
     String text = t.toString().replaceAll(exclude, "");
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
+      int prevEnd = text.length();
       while (m.find()) {
         int start = m.toMatchResult().start();
-        if (start > 20) {
-          start -= 20;
-          if (text.indexOf(' ', start) < start) {
+        if (start > 30) {
+          start -= 30;
+          if (text.indexOf(' ', start) > start) {
             start = text.indexOf(' ', start) + 1;
           }
         } else {
           start = 0;
         }
         int end = m.toMatchResult().end();
-        if (end > text.length() - 20) {
+        if (end > text.length() - 30) {
           end = text.length();
         } else {
-          end += 20;
+          end += 30;
           if (text.indexOf(' ', end) > 0) {
             end = text.indexOf(' ', end) + 1;
           }
         }
-        StringBuilder hit = new StringBuilder();
-        if (m.toMatchResult().start() > 0) {
-          hit.append(text.substring(start, m.toMatchResult().start()));
-        }
-        hit.append(hlStart);
-        hit.append(text.substring(m.toMatchResult().start(), m.toMatchResult().end()));
-        hit.append(hlEnd);
-        if (m.toMatchResult().end() < text.length()) {
-          hit.append(text.substring(m.toMatchResult().end(), end));
-        }
-        result.add(hit.toString());
-        if (result.size() > 2) {
-          return result;
+        if (start > prevEnd) {
+          StringBuilder hit = new StringBuilder();
+          if (m.toMatchResult().start() > 0) {
+            hit.append(text.substring(start, m.toMatchResult().start()));
+          }
+          hit.append(hlStart);
+          hit.append(text.substring(m.toMatchResult().start(), m.toMatchResult().end()));
+          hit.append(hlEnd);
+          if (m.toMatchResult().end() < text.length()) {
+            hit.append(text.substring(m.toMatchResult().end(), end));
+          }
+          result.add(hit.toString());
+          if (result.size() > 2) {
+            return result;
+          }
+          prevEnd = end;
         }
       }
     }
