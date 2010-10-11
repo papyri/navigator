@@ -214,6 +214,20 @@ public class FileUtils {
             return result;
           }
           prevEnd = end;
+        } else {
+          StringBuilder hit = new StringBuilder();
+          String prevHit = result.remove(result.size() - 1);
+          hit.append(prevHit.substring(0, start - prevEnd - prevHit.length()));
+          hit.append(hlStart);
+          hit.append(text.substring(m.toMatchResult().start(), m.toMatchResult().end()));
+          hit.append(hlEnd);
+          if (prevEnd < text.length()) {
+            hit.append(text.substring(m.toMatchResult().end(), prevEnd));
+          }
+          result.add(hit.toString());
+          if (result.size() > 2) {
+            return result;
+          }
         }
       }
     }
