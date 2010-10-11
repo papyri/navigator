@@ -83,6 +83,13 @@
   <!-- Given an identifier URL, get the bare id -->
   <xsl:function name="pi:get-id" as="xs:string">
     <xsl:param name="url"/>
-    <xsl:sequence select="replace(replace(replace(replace(replace(replace($url, 'http://papyri\.info/[^/]+/', ''), '/source$', ''), ';;', '.'), ';', '.'), '%2C', ','), '%2F', '/')"/>
+    <xsl:choose>
+      <xsl:when test="matches($url, '^http://papyri\.info/(ddbdp|hgv|apis)$')">
+        <xsl:sequence select="upper-case(replace($url, 'http://papyri\.info/', ''))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="replace(replace(replace(replace(replace(replace($url, 'http://papyri\.info/[^/]+/', ''), '/source$', ''), ';;', '.'), ';', '.'), '%2C', ','), '%2F', '/')"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:function>
 </xsl:stylesheet>

@@ -111,19 +111,9 @@
             </title>
             <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
-            <script type="text/javascript" charset="utf-8">
-              <![CDATA[
-        		function initNav() {
-        			$("li.dialog").each(function(i) {
-        				jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:$('#"+this.id+"').dialog()\">"+this.title+"</a></li>");
-        				jQuery(this).hide();
-        			});
-        		}
-        		jQuery("#tmid").button();
-        	]]>
-          </script>
+            <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
           </head>
-          <body>
+          <body onload="init()">
             <div id="d" class="page">
               <div id="hd">
                 <h1>
