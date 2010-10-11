@@ -176,10 +176,6 @@
             <xsl:call-template name="translation">
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
-            <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']">
-              <field name="invnum"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']"/></field>
-            </xsl:if>
-            
             <field name="series">zzz<xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
             <field name="volume">0</field>
             <field name="item"><xsl:value-of select="replace(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], 'apis.'), '\D', '')"/></field>
@@ -241,6 +237,7 @@
         <field name="place"><xsl:value-of select="normalize-space($doc/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace)"/></field>
       </xsl:when>
     </xsl:choose>
+    <!-- Dates -->
     <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate">
       <xsl:choose>
         <xsl:when test="pi:iso-date-to-num(@notBefore) and pi:iso-date-to-num(@notAfter)">
@@ -259,6 +256,10 @@
         </xsl:when>
       </xsl:choose>
     </xsl:for-each>
+    <!-- InvNum -->
+    <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']">
+      <field name="invnum"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']"/></field>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template name="translation">
