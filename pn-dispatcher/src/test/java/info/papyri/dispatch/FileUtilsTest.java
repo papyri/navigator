@@ -87,6 +87,27 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testFindMatchesMultiple() {
+    String query = "sheep";
+    String id = "http://papyri.info/ddbdp/p.ross.georg;2;15";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("Sheep");
+    expResult.add("sheep");
+    expResult.add("sheep");
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    int matches = 0;
+    for (String r : result) {
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+
   public void testFindMatchesSubstringPhrase() {
     String query = "\"\\^και\\^ \\^στρατηγ\"";
     String id = "http://papyri.info/ddbdp/bgu;14;2373";

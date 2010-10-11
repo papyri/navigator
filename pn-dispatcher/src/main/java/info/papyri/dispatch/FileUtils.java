@@ -216,14 +216,16 @@ public class FileUtils {
           prevEnd = end;
         } else {
           StringBuilder hit = new StringBuilder();
-          String prevHit = result.remove(result.size() - 1);
-          hit.append(prevHit.substring(0, start - (prevEnd - prevHit.length())));
+          String prevHit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
+          Matcher nm = pattern.matcher(prevHit);
+          int nstart = prevHit.lastIndexOf(hlEnd) + hlEnd.length() + 1;
+          hit.append(prevHit.substring(0, nstart));
+          nm.find(nstart);
+          hit.append(prevHit.substring(nstart, nm.toMatchResult().start()));
           hit.append(hlStart);
-          hit.append(text.substring(m.toMatchResult().start(), m.toMatchResult().end()));
+          hit.append(prevHit.substring(nm.toMatchResult().start(), nm.toMatchResult().end()));
           hit.append(hlEnd);
-          if (prevEnd < text.length()) {
-            hit.append(text.substring(m.toMatchResult().end(), prevEnd));
-          }
+          hit.append(prevHit.substring(nm.toMatchResult().end()));
           result.add(hit.toString());
           if (result.size() > 2) {
             return result;
