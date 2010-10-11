@@ -178,7 +178,7 @@ public class FileUtils {
     String text = t.toString().replaceAll(exclude, "");
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
-      int prevEnd = text.length();
+      int prevEnd = 0;
       while (m.find()) {
         int start = m.toMatchResult().start();
         if (start > 30) {
@@ -198,7 +198,7 @@ public class FileUtils {
             end = text.indexOf(' ', end) + 1;
           }
         }
-        if (start > prevEnd) {
+        if (start >= prevEnd) {
           StringBuilder hit = new StringBuilder();
           if (m.toMatchResult().start() > 0) {
             hit.append(text.substring(start, m.toMatchResult().start()));
