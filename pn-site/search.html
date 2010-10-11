@@ -13,7 +13,7 @@
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       var help = false;
-      function initNav() {
+      function init() {
         jQuery("li.dialog").each(function(i) {
           jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
           jQuery(this).hide();
@@ -21,7 +21,15 @@
         jQuery("#togglehelp-label").CreateBubblePopup({
           innerHtml: "Click to turn contextual help for the search form on and off.",
           position: "left"
-        })
+        });
+        jQuery("ul.nav li").hover(function() {
+              jQuery(this).css('background-color', '#445B88');
+              jQuery(this).find("a").css('color', 'white')
+          },
+          function() {
+              jQuery(this).css('background-color', 'transparent');
+              jQuery(this).find("a").css('color', 'black')
+          });
       }
       function toggleHelp() {
         if(!help) {
@@ -50,7 +58,7 @@
       }
     </script>
   </head>
-  <body onload="initNav()">
+  <body onload="init()">
     <div id="d" class="page">
       <div id="hd">
         <h1>
@@ -60,40 +68,32 @@
       <div id="bd">
         <div class="nav">
           <!-- left nav -->
-          <ul class="nav ui-corner-all">
-            <li>
-              <form method="get" accept-charset="utf-8">
-                <ul class="nav-section">
-                  <li>
-                    <a href="/">Home</a>
-                  </li>
-                  <li>
-                    <a href="/ddbdp/">Browse DDbDP</a>
-                  </li>
-                  <li>
-                    <a href="/hgv/">Browse HGV</a>
-                  </li>
-                  <li>
-                    <a href="/apis/">Browse APIS</a>
-                  </li>
-                  <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
-                  </li>
-                </ul>
-              </form>
-            </li>
-            <li>
-              <ul class="nav-section">
-                <li>
-                  <a href="/search">Search</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
+          <form method="get" accept-charset="utf-8">
+            <ul class="nav ui-corner-all">
+              <li>
+                <a href="/">Home</a>
+              </li>
+              <li>
+                <a href="/ddbdp/">Browse DDbDP</a>
+              </li>
+              <li>
+                <a href="/hgv/">Browse HGV</a>
+              </li>
+              <li>
+                <a href="/apis/">Browse APIS</a>
+              </li>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
+              </li>
+              <li>
+                <a href="/search">Search</a>
+              </li>
+            </ul>
+          </form>
         </div>
         <div id="main">
           <div class="content ui-corner-all search">
             <!-- Search form -->
-            <form action="search" method="post" accept-charset="UTF-8">
+            <form action="/search" method="post" accept-charset="UTF-8">
               <div>
                 <p><input type="radio" name="type" value="phrase" id="phrase" onchange="if(this.checked){this.form.target.selectedIndex=0}"> <label for="phrase" id="phrase-label">phrase search</label> <input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"> <label for="substring" id="substring-label">substring search</label> <input type="radio" name="type" value="proximity" id="proximity"> <label for="proximity" id="proximity-label">find within</label> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"></p>
                 <p><input type="text" name="keyword" value="" id="keyword" size="80"> in <select name="target" id="target" onchange="if(this.form.substring.checked){this.selectedIndex=1}if(this.selectedIndex!=1 && this.form.substring.checked){this.form.phrase.checked}" size="1">
@@ -144,14 +144,15 @@
             <div id="proximity-help">Proximity searches look for terms near to one another, within the specified number of words.</div>
             <div id="betaYes-help">Beta code allows you to search for Greek characters using a non-Greek character set. The following Roman alphabet characters represent the Greek equivalences:
               <ul>
-                <li>eta = h</li>
-                <li>theta = q</li>
-                <li>xi = c</li>
-                <li>chi = x</li>
-                <li>psi = y</li>
-                <li>omega = w</li>
+                <li>η (eta) = h</li>
+                <li>θ (theta) = q</li>
+                <li>ξ (xi) = c</li>
+                <li>χ (chi) = x</li>
+                <li>ψ (psi) = y</li>
+                <li>ω (omega) = w</li>
+                <li>σ (medial sigma) = s1</li>
               </ul>
-            <b>You cannot use beta code to search for Latin terms</b>.</div>
+            <b>Use s1 for medial sigma at the end of a search term (e.g. ^kais1 (= ^καισ) rather than ^kais (= ^καις).  You cannot use beta code to search for Latin terms</b>.</div>
             <div id="lemmas-help">Lemmatized Search searches for all forms of the entered dictionary headword (Greek only for now). For words that have lemmas identical to other words (like δέω, e.g.), you may append a number corresponding to the article's order in LSJ. If you do not append a number, the search will be done on all forms of all corresponding lemmas.</div>
           </div>
         </div>
@@ -161,7 +162,7 @@
       </div>
     </div>
     <script type="text/javascript" charset="utf-8">
-      jQuery("#tmid").button();
+      jQuery("#tmgo").button();
       jQuery("#phrase,#substring,#proximity").button();
       jQuery("#betaYes,#caps,#marks,#lemmas").button();
       jQuery("#togglehelp,#search,#newsearch").button();

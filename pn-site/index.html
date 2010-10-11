@@ -8,19 +8,10 @@
   <link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
-    jQuery("#search>span").button();
-    function initNav() {
-      $("li.dialog").each(function(i) {
-        jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:$('#"+this.id+"').dialog()\">"+this.title+"</a></li>");
-        jQuery(this).hide();
-      });
-    }
-    jQuery("#tmid").button();
-  </script>
+  <script src="js/init.js" type="text/javascript" charset="utf-8"></script>
 </head>
 
-<body onload="initNav()">
+<body onload="init()">
   <div id="d" class="page">
     <div id="hd">
       <h1>Papyri.info</h1>
@@ -28,35 +19,27 @@
     <div id="bd">
       <div class="nav">
         <!-- left nav -->
-        <ul class="nav ui-corner-all">
-          <li>
-            <form method="get" accept-charset="utf-8">
-              <ul class="nav-section">
-                <li>
-                  <a href="/">Home</a>
-                </li>
-                <li>
-                  <a href="/ddbdp/">Browse DDbDP</a>
-                </li>
-                <li>
-                  <a href="/hgv/">Browse HGV</a>
-                </li>
-                <li>
-                  <a href="/apis/">Browse APIS</a>
-                </li>
-                <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
-                </li>
-              </ul>
-            </form>
-          </li>
-          <li>
-            <ul class="nav-section">
-              <li>
-                <a href="/search">Search</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
+        <form method="get" accept-charset="utf-8">
+          <ul class="nav">
+            <li>
+              <a href="/">Home</a>
+            </li>
+            <li>
+              <a href="/ddbdp/">Browse DDbDP</a>
+            </li>
+            <li>
+              <a href="/hgv/">Browse HGV</a>
+            </li>
+            <li>
+              <a href="/apis/">Browse APIS</a>
+            </li>
+            <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
+            </li>
+            <li>
+              <a href="/search">Search</a>
+            </li>
+          </ul>
+        </form>
       </div>
       <div id="main">
         <div class="content ui-corner-all">
@@ -64,9 +47,10 @@
                     dedicated to the study of ancient papyrological documents.&nbsp; It offers links to
                     papyrological resources and a customized search engine (called the <em>Papyrological
                     Navigator</em>) capable of retrieving information from multiple related sites.
-                    The Papyrological Navigator currently retrieves and displays information from
+                    The Papyrological Navigator currently aggregates and displays information from
                     the Advanced Papyrological Information System (APIS), the Duke Databank of
-                    Documentary Papyri (DDbDP) and the Heidelberger Gesamtverzeichnis (HGV).&nbsp; 
+                    Documentary Papyri (DDbDP) and the Heidelberger Gesamtverzeichnis der griechischen
+                    Papyrusurkunden Ägyptens (HGV), as well as links to Trismegistos. 
               <!-- <a href="about.html">More information about the <em>Papyrological Navigator</em> and <em>papyri.info . . .</em></a> -->
 
             </p>
@@ -84,6 +68,7 @@
 
                       <li><a href="http://idp.atlantides.org/trac/idp/wiki/DDBDP">about DDbDP</a></li>
                       <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/">about HGV</a></li>
+                      <li><a href="http://www.trismegistos.org/">about Trismegistos</a></li>
                     </ul></td>
                     <td width="50%" valign="top" style="padding-left:2em;padding-right:10em;"><h2>More information</h2>
                     <ul class="about">
