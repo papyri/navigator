@@ -106,16 +106,7 @@ public class Reader extends HttpServlet {
     //read whole file into buffer
     if (f != null && f.exists()) {
       try {
-        String text = util.loadFile(f);
-        List<int[]> divIndexes = util.getDivIndexes(text);
-        int start = 0;
-        for (int[] divIndex : divIndexes) {
-          out.write(text, start, divIndex[0] - start);
-          out.write(util.highlight(q, text.substring(divIndex[0], divIndex[1])));
-          start = divIndex[1];
-        }
-        out.write(text.substring(start));
-
+        out.write(util.highlight(q, util.loadFile(f)));
       } catch (Exception e) {
         e.printStackTrace(System.out);
       } finally {

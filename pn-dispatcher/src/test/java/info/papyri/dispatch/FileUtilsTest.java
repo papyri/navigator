@@ -5,6 +5,7 @@
 package info.papyri.dispatch;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
@@ -107,6 +108,8 @@ public class FileUtilsTest extends TestCase {
     }
     assertEquals(expResult.size(), matches);
   }
+
+
 
   public void testFindMatchesSubstringPhrase() {
     String query = "\"\\^και\\^ \\^στρατηγ\"";
