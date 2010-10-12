@@ -32,8 +32,8 @@
 (def numbersurl "http://localhost:8090/sparql?query=")
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
-(def nthreads 3)
-(def nserver "http://dev.papyri.info")
+(def nthreads 10)
+(def nserver "dev.papyri.info")
 (def conn (.newConnection (ConnectionFactory.) server))
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
@@ -175,7 +175,6 @@
 (defn transform
   "Takes an java.io.InputStream, a list of key/value parameter pairs, and a javax.xml.transform.Result"
   [url, params, #^Result out, pool]
-    (println url)
     (let [xslt (.poll pool)
         transformer (.newTransformer xslt)]
       (when (not (== 0 (count params)))
@@ -383,7 +382,6 @@
 (defn -main [& args]
 
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "htmltemplates")
-(print @htmltemplates)
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "texttemplates")
   (println "Queueing DDbDP...")
