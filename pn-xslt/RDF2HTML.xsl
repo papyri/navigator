@@ -287,7 +287,6 @@
             <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/highlight.js" type="text/javascript" charset="utf-8"></script>
           </head>
           <body onload="init()">
             <div id="d" class="page">
