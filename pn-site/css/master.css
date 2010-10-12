@@ -175,6 +175,15 @@ border: thin solid gray;
 font-size: 85%;
 }
 
+p.prose {
+  padding:0.75em;
+  text-align:justify;
+}
+ul.prose {
+  margin-left:2em;
+  padding:0.5em;
+}
+
 /* View Page */
 div#controls {
 font-size: 70%;

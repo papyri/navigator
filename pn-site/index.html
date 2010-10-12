@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>pn-view-mockup</title>
+  <title>Papyri.info</title>
   <link rel="stylesheet" href="css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
@@ -55,9 +55,7 @@
 
             </p>
                 <div id="search"> 
-                  <span class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all">
-                     <a href="/search" class="ui-button-text">Search the navigator</a>
-                  </span>
+                  <a href="/search" id="searchbutton">Search the navigator</a>
                 </div>
                 <table width="100%">
                   <tr>
@@ -90,5 +88,8 @@
       papyri.info is produced by <a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> and the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.
     </div>
   </div>
+  <script type="text/javascript" charset="utf-8">
+    jQuery("#searchbutton").button();
+  </script>
 </body>
 </html>
