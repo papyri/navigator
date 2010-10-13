@@ -166,10 +166,19 @@ public class FileUtils {
         index = 0;
       }
     }
-    for (String ex : exclusions) {
-      text = text.replaceFirst("@@@", ex);
+    Pattern p = Pattern.compile("@@@");
+    int i = 0;
+    int start = 0;
+    Matcher m = p.matcher(text);
+    StringBuilder result = new StringBuilder();
+    while (m.find()) {
+      result.append(text.substring(start, m.start()));
+      result.append(exclusions.get(i));
+      start = m.end();
+      i++;
     }
-    return text;
+    result.append(text.substring(start));
+    return result.toString();
   }
   
   public List<String> highlightMatches(String query, String t) {

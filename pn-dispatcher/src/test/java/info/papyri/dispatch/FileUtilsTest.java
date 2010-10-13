@@ -108,6 +108,15 @@ public class FileUtilsTest extends TestCase {
     }
     assertEquals(expResult.size(), matches);
   }
+  
+  public void testFindMatchesBigFile() {
+    String query = "sheep";
+    String id = "http://papyri.info/ddbdp/p.mich;2;123";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    String text = instance.loadHtmlFromId(id);
+    //System.out.println(instance.highlight(query, text));
+    assertTrue(true); //TODO: fix
+  }
 
 
 
