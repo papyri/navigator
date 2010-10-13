@@ -63,11 +63,11 @@
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
     <xsl:variable name="docs" select="pi:get-docs($relations, 'xml')"/>
-    <!-- No templates for metadata just yet -->
+    
     <xsl:choose>
       <xsl:when test="$collection = 'ddbdp'">
-        <xsl:apply-templates/>
         <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
+        <xsl:apply-templates/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:apply-templates select="/t:TEI" mode="metadata"/>
@@ -103,7 +103,7 @@
     <!-- Translations -->
     <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
     <!-- Provenance -->
-    <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p/t:place[@type='ancientFindspot'])" mode="metadata"/>
+    <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
     <!-- Material -->
     <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
     <!-- Language -->
@@ -175,8 +175,14 @@
   </xsl:template>
   
   <!-- Provenance -->
-  <xsl:template match="t:origPlace|t:place" mode="metadata">
-    <xsl:value-of select="."/><xsl:text>
+  <xsl:template match="t:origPlace|t:p[parent::t:origin]" mode="metadata">
+    <xsl:choose>
+      <xsl:when test="local-name(.) = 'origPlace'"><xsl:value-of select="."/></xsl:when>
+      <xsl:otherwise><xsl:if test="t:placeName[@type='ancientFindspot']"><xsl:value-of select="t:placeName[@type='ancientFindspot']"/><xsl:if test="t:geogName">, </xsl:if></xsl:if>
+        <xsl:if test="t:geogName[@type='nome']"><xsl:value-of select="t:geogName[@type='nome']"/><xsl:if test="t:geogName[@type='ancientRegion']">, </xsl:if></xsl:if>
+      <xsl:value-of select="t:geogName[@type='ancientRegion']"/></xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>
 </xsl:text>
   </xsl:template>
   

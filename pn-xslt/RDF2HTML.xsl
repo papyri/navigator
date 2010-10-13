@@ -529,7 +529,7 @@
             <!-- Translations -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
             <!-- Provenance -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p/t:place[@type='ancientFindspot'])" mode="metadata"/>
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
             <!-- Material -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
             <!-- Language -->
@@ -639,7 +639,12 @@
     <tr>
       <th class="rowheader" rowspan="1">Provenance</th>
       <td class="mdprov">
-        <xsl:value-of select="."/>
+        <xsl:choose>
+          <xsl:when test="local-name(.) = 'origPlace'"><xsl:value-of select="."/></xsl:when>
+          <xsl:otherwise><xsl:if test="t:placeName[@type='ancientFindspot']"><xsl:value-of select="t:placeName[@type='ancientFindspot']"/><xsl:if test="t:geogName">, </xsl:if></xsl:if>
+            <xsl:if test="t:geogName[@type='nome']"><xsl:value-of select="t:geogName[@type='nome']"/><xsl:if test="t:geogName[@type='ancientRegion']">, </xsl:if></xsl:if>
+            <xsl:value-of select="t:geogName[@type='ancientRegion']"/></xsl:otherwise>
+        </xsl:choose>
       </td>
     </tr>
   </xsl:template>
