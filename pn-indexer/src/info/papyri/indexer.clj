@@ -175,13 +175,19 @@
 (defn transform
   "Takes an java.io.InputStream, a list of key/value parameter pairs, and a javax.xml.transform.Result"
   [url, params, #^Result out, pool]
+  
     (let [xslt (.poll pool)
-        transformer (.newTransformer xslt)]
-      (when (not (== 0 (count params)))
-        (doseq [param params] (doto transformer
-          (.setParameter (first param) (second param)))))
-      (.transform transformer (StreamSource. (.openStream (URL. url))) out)
-      (.add pool xslt)))
+	  transformer (.newTransformer xslt)]
+      (try
+	(when (not (== 0 (count params)))
+	  (doseq [param params] (doto transformer
+				  (.setParameter (first param) (second param)))))
+	(.transform transformer (StreamSource. (.openStream (URL. url))) out)
+	(catch Exception e
+	  (println (str (.getMessage e) " transforming " url ".")))
+	(finally
+	 (.add pool xslt)))))
+    
     
 (defn has-part-query
   [url]
@@ -320,11 +326,11 @@
 (defn generate-html
   []
     (let [pool (Executors/newFixedThreadPool nthreads)
-        tasks (map (fn [x]
+	  tasks (map (fn [x]
 		     (fn []
 		       (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
 					;(println "Transforming " (first x) " to " (get-html-filename (first x)))
-		       (transform (if (.startsWith (first x) "http")
+			    (transform (if (.startsWith (first x) "http")
 				    (str (.replace (first x) "papyri.info" nserver) "/rdf")
 				    (first x))
 				  (list (second x) (nth x 2) (nth x 3) (nth x 4))
