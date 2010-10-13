@@ -107,7 +107,7 @@ public class DispatcherServlet extends HttpServlet {
         params.put("format", format);
 
         URL m = new URL(mulgara + path + "?" + readParams(params));
-        System.out.println(m.toString());
+        //System.out.println(m.toString());
         HttpURLConnection http = (HttpURLConnection)m.openConnection();
         if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
           response.setContentType(http.getContentType());

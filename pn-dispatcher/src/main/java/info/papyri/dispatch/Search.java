@@ -38,7 +38,7 @@ import org.apache.solr.common.SolrDocumentList;
  */
 public class Search extends HttpServlet {
 
-  private SolrServer solr;
+  private String solrUrl;
   private URL searchURL;
   private String xmlPath = "";
   private String htmlPath = "";
@@ -48,12 +48,12 @@ public class Search extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
+    solrUrl = config.getInitParameter("solrUrl");
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     home = config.getInitParameter("home");
     util = new FileUtils(xmlPath, htmlPath);
     try {
-      solr = new CommonsHttpSolrServer(config.getInitParameter("solrUrl"));
       searchURL = new URL("file://" + home + "/" + "search.html");
     } catch (MalformedURLException e) {
       throw new ServletException(e);
@@ -119,12 +119,15 @@ public class Search extends HttpServlet {
     } catch (SolrServerException e) {
       // TODO Auto-generated catch block
       throw new IOException(e);
+    } catch (MalformedURLException mue) {
+      throw new ServletException(mue);
     } finally {
       out.close();
     }
   }
 
-  private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws SolrServerException, ServletException {
+  private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
+    SolrServer solr = new CommonsHttpSolrServer(solrUrl);
     String q = request.getParameter("q");
     if (q == null) {
       String query = request.getParameter("keyword");
