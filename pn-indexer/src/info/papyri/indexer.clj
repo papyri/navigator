@@ -1,6 +1,7 @@
 (ns info.papyri.indexer
   (:use clojure.contrib.math)
-  (:import 
+  (:import
+    (clojure.lang ISeq)
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
     (java.io File FileInputStream FileOutputStream FileReader StringWriter)
     (java.net URI URL URLEncoder URLDecoder)
@@ -29,7 +30,7 @@
 (def xsltpath "/data/papyri.info/svn/pn/pn-xslt")
 (def htpath "/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8082/solr/")
-(def numbersurl "http://localhost:8090/sparql?query=")
+(def numbersurl "http://dev.papyri.info/mulgara/sparql?query=")
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def nthreads 10)
@@ -238,8 +239,17 @@
 
 (defn answer-seq
   [answer]
-  (when (.next answer)
-    (cons (list (.getObject answer 0) (.getObject answer 1) (.getObject answer 2)) (answer-seq answer))))
+  (proxy [ISeq] []
+    (first []
+	   (.beforeFirst answer)
+	   (.next answer)
+	   answer)
+    (next []
+	  (.next answer)
+	  (answer-seq answer))
+    (more []
+	  (.next answer)
+	  (answer-seq answer))))
             
 (defn queue-items
   [url exclude]
