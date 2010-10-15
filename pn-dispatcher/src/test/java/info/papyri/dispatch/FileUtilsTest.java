@@ -140,7 +140,7 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindMatchesLinebreak() {
-    String query = "στρατηγωι";
+    String query = "transcription_ngram_ia:(στρατηγωι)";
     String id = "http://papyri.info/ddbdp/bgu;16;2629";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
@@ -226,7 +226,7 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindMatchesNot() {
-    String query = "^καισ NOT ^καισαρ";
+    String query = "\\^καισ NOT \\^καισαρ";
     String id = "http://papyri.info/ddbdp/p.hamb;2;187";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();

@@ -250,7 +250,7 @@ public class FileUtils {
 
     private Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "#");
-      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/()~^]", "").replaceAll("(AND|OR|NOT|TO)", ""));
+      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/~^]", ""));
       QueryLexer ql = new QueryLexer(a);
       CommonTokenStream tokens = new CommonTokenStream(ql);
       QueryParser qp = new QueryParser(tokens);

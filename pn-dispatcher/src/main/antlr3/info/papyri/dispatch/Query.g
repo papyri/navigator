@@ -20,12 +20,17 @@ public List<String> getStrings() {
 query 	: 	querypart;
 querypart
 	:	clause (WS|clause)*;
-clause  :	('+'|'-')? FIELD? ((TERM|PHRASE) | '(' querypart ')') {find.add($clause.text);};
+queryterm
+	:	(TERM|PHRASE) {find.add($queryterm.text);};
+clause  :	('+'|'-')? FIELD? (queryterm | '(' querypart ')') ;
 
 WS	:	(' '|'\r'|'\t'|'\n');
 COLON	:	':';
 QUOTE	:	'"';
-TERM 	:	~(WS|COLON|QUOTE|'('|')')+;
+OPERATOR:	('AND'|'OR'|'NOT'|'TO') { $channel=HIDDEN; };
+TERM 	:	~(WS|COLON|QUOTE|'('|')'|'['|']')+;
+DATEFIELD
+	:	'date_' TERM COLON '[' (TERM|WS)+ ']' { $channel=HIDDEN; };
 FIELD	:	TERM COLON;
 PHRASE	:	QUOTE TERM WS (TERM|WS)* QUOTE;
 
