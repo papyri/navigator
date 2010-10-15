@@ -635,7 +635,7 @@
   </xsl:template>
   
   <!-- Provenance -->
-  <xsl:template match="t:origPlace|t:place" mode="metadata">
+  <xsl:template match="t:origPlace|t:p" mode="metadata">
     <tr>
       <th class="rowheader" rowspan="1">Provenance</th>
       <td class="mdprov">
