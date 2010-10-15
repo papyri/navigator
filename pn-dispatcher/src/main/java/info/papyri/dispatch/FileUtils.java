@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.antlr.runtime.*;
 
 /**
  *
@@ -110,6 +111,8 @@ public class FileUtils {
         return new File(xmlPath + "/HGV_meta_EpiDoc/HGV"
                 + (int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000) + "/" + item + ".xml");
       }
+    } else if ("hgvtrans".equals(collection)) {
+      return new File(xmlPath + "/HGV_trans_EpiDoc/" + item + ".xml");
     } else if ("apis".equals(collection)) {
       if (item.contains(".")) {
         String[] parts = item.split("\\.");
@@ -247,28 +250,25 @@ public class FileUtils {
 
     private Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "#");
+      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/()~^]", "").replaceAll("(AND|OR|NOT|TO)", ""));
+      QueryLexer ql = new QueryLexer(a);
+      CommonTokenStream tokens = new CommonTokenStream(ql);
+      QueryParser qp = new QueryParser(tokens);
+      List<String> find = new ArrayList<String>();
+      try {
+        qp.clause();
+        find = qp.getStrings();
+      } catch (RecognitionException e) {
+        return new Pattern[0];
+      }
       if (q.contains(":")) {
         q = q.substring(q.indexOf(":") + 1).replaceAll("[()]", "");
       }
-      String[] find;
-      if (q.startsWith("\"") && q.endsWith("\"")) {
-        q = q.replaceAll("\\s", " ").replaceAll("[?*()\\\\/\"'~^0-1]", "");
-        if (q.length() == 0) {
-          return new Pattern[0];
-        }
-        find = new String[]{q};
-      } else {
-        q = q.replaceAll("[\\\\/()\"'~^0-1]", "").replaceAll("(AND|OR|NOT|TO)", "");
-        if (q.length() == 0) {
-          return new Pattern[0];
-        }
-        find = q.split("\\s+");
-      }
-      Pattern[] patterns = new Pattern[find.length];
-      for (int i = 0; i < find.length; i++) {
-        patterns[i] = Pattern.compile(find[i].toLowerCase()
+      Pattern[] patterns = new Pattern[find.size()];
+      for (int i = 0; i < find.size(); i++) {
+        patterns[i] = Pattern.compile(find.get(i).toLowerCase()
                 .replaceAll("(.)", sigla + "$1")
-                .replace("£", "\\S*").replace("#", "\\S")
+                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
                 .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
