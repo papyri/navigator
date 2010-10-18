@@ -284,6 +284,7 @@
             </title>
             <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
