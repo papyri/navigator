@@ -267,7 +267,7 @@ public class FileUtils {
       Pattern[] patterns = new Pattern[find.size()];
       for (int i = 0; i < find.size(); i++) {
         patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                .replaceAll("(\\S)", sigla + "$1").replaceAll("\\s", "\\s+")
+                .replaceAll("([^ ^])", sigla + "$1").replaceAll("\\s", "\\\\s+")
                 .replace("^", "\\b")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
