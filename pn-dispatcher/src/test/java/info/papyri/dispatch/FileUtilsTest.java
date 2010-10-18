@@ -158,6 +158,23 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testFindMatchesPlace() {
+    String query = "place:Alexandria";
+    String id = "http://papyri.info/ddbdp/p.cair.zen;2;59195";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("Alexandria");
+    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    int matches = 0;
+    for (String e : expResult) {
+      if (result.contains(e)) {
+        matches++;
+        break;
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+
   public void testFindMatchesElision() {
     String query = "τουτεστιν";
     String id = "http://papyri.info/ddbdp/p.neph;;31";

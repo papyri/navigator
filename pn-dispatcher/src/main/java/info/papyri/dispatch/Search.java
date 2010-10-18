@@ -195,6 +195,12 @@ public class Search extends HttpServlet {
       if ("".equals(de)) de = null;
       String qds = ds == null ? "*" : ds;
       String qde = de == null ? "*" : de;
+      if (!"*".equals(qds) && "bce".equals(request.getParameter("start_era"))) {
+        qds = "-" + qds;
+      }
+      if (!"*".equals(qde) && "bce".equals(request.getParameter("end_era"))) {
+        qde = "-" + qde;
+      }
       if (ds != null || de != null) {
         if (q == null) {
           q = "date_start:[" + qds + " TO " + qde + "] AND date_end:[" + qds + " TO " + qde + "]";
