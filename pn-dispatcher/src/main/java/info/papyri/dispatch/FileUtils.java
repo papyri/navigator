@@ -211,34 +211,14 @@ public class FileUtils {
           }
         }
         if (start >= prevEnd) {
-          StringBuilder hit = new StringBuilder();
-          if (m.toMatchResult().start() > 0) {
-            hit.append(text.substring(start, m.toMatchResult().start()));
-          }
-          hit.append(hlStart);
-          hit.append(text.substring(m.toMatchResult().start(), m.toMatchResult().end()));
-          hit.append(hlEnd);
-          if (m.toMatchResult().end() < text.length()) {
-            hit.append(text.substring(m.toMatchResult().end(), end));
-          }
-          result.add(hit.toString());
+          result.add(highlight(query, text.substring(start, end)));
           if (result.size() > 2) {
             return result;
           }
           prevEnd = end;
         } else {
-          StringBuilder hit = new StringBuilder();
-          String prevHit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
-          Matcher nm = pattern.matcher(prevHit);
-          int nstart = prevHit.lastIndexOf(hlEnd) + hlEnd.length() + 1;
-          hit.append(prevHit.substring(0, nstart));
-          nm.find(nstart);
-          hit.append(prevHit.substring(nstart, nm.toMatchResult().start()));
-          hit.append(hlStart);
-          hit.append(prevHit.substring(nm.toMatchResult().start(), nm.toMatchResult().end()));
-          hit.append(hlEnd);
-          hit.append(prevHit.substring(nm.toMatchResult().end()));
-          result.add(hit.toString());
+          String hit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
+          result.add(highlight(query, hit));
           if (result.size() > 2) {
             return result;
           }
