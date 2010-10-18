@@ -241,7 +241,7 @@ public class FileUtils {
         QueryParser qp = new QueryParser(tokens);
         List<String> find = new ArrayList<String>();
         try {
-          qp.clause();
+          qp.query();
           find = qp.getStrings();
         } catch (RecognitionException e) {
           return new Pattern[0];
