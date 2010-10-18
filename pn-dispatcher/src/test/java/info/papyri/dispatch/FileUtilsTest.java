@@ -139,6 +139,26 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testFindMatchesSubstringPhraseWordBoundaries() {
+    String query = "transcription_ngram_ia:(\"\\^μεν\\^ \\^κα\")";
+    String id = "http://papyri.info/ddbdp/bgu;8;1772";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("μὲ̣ν̣ κ̣α");
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    int matches = 0;
+    for (String r : result) {
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+
+
   public void testFindMatchesLinebreak() {
     String query = "transcription_ngram_ia:(στρατηγωι)";
     String id = "http://papyri.info/ddbdp/bgu;16;2629";
@@ -259,42 +279,6 @@ public class FileUtilsTest extends TestCase {
       }
     }
     assertEquals(expResult.size(), matches);
-  }
-
-  public void testGetDivIndexes() {
-    String id = "http://papyri.info/apis/toronto.apis.17";
-    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-    String html = instance.loadHtmlFromId(id);
-    List<int[]> divs = instance.getDivIndexes(html);
-    assertEquals(5, divs.size());
-  }
-
-  public void testDivHighlight() {
-    String id = "http://papyri.info/apis/toronto.apis.17";
-    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-    String html = instance.loadHtmlFromId(id);
-    List<int[]> divs = instance.getDivIndexes(html);
-    boolean foundText = false;
-    for (int[] div : divs) {
-      if (instance.highlight("εσμεν", html.substring(div[0], div[1])).contains("<span class=\"highlight\">&lt;ἔ&gt;σμεν</span>")) {
-        foundText = true;
-      }
-    }
-    assertTrue(foundText);
-  }
-  
-  public void testDivHighlight2() {
-    String id = "http://papyri.info/ddbdp/bgu;1;74";
-    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-    String html = instance.loadHtmlFromId(id);
-    List<int[]> divs = instance.getDivIndexes(html);
-    boolean foundText = false;
-    for (int[] div : divs) {
-      if (instance.highlight("αρχιερ", html.substring(div[0], div[1])).contains("<span class=\"highlight\">ἀρχιερ</span>")) {
-        foundText = true;
-      }
-    }
-    assertTrue(foundText);
   }
 
 }

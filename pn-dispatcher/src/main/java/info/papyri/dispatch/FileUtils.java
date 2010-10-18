@@ -8,6 +8,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
@@ -229,38 +231,40 @@ public class FileUtils {
   }
 
     private Pattern[] getPatterns(String query) {
-      String q = query.replace("*", "£").replace("?", "#");
-      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
-      QueryLexer ql = new QueryLexer(a);
-      CommonTokenStream tokens = new CommonTokenStream(ql);
-      QueryParser qp = new QueryParser(tokens);
-      List<String> find = new ArrayList<String>();
-      try {
-        qp.clause();
-        find = qp.getStrings();
-      } catch (RecognitionException e) {
-        return new Pattern[0];
+      if (patternMap.containsKey(query)) {
+        return patternMap.get(query);
+      } else {
+        String q = query.replace("*", "£").replace("?", "#");
+        ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
+        QueryLexer ql = new QueryLexer(a);
+        CommonTokenStream tokens = new CommonTokenStream(ql);
+        QueryParser qp = new QueryParser(tokens);
+        List<String> find = new ArrayList<String>();
+        try {
+          qp.clause();
+          find = qp.getStrings();
+        } catch (RecognitionException e) {
+          return new Pattern[0];
+        }
+        Pattern[] patterns = new Pattern[find.size()];
+        for (int i = 0; i < find.size(); i++) {
+          patterns[i] = Pattern.compile(find.get(i).toLowerCase()
+                  .replaceAll("([^ ^])", sigla + "$1" + sigla).replaceAll("\\s", "\\\\s+")
+                  .replace("^", "\\b")
+                  .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
+                  .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
+                  .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
+                  .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
+                  .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
+                  .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
+                  .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
+                  .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
+                  .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
+                  Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
+        }
+        patternMap.put(query, patterns);
+        return patterns;
       }
-      if (q.contains(":")) {
-        q = q.substring(q.indexOf(":") + 1).replaceAll("[()]", "");
-      }
-      Pattern[] patterns = new Pattern[find.size()];
-      for (int i = 0; i < find.size(); i++) {
-        patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                .replaceAll("([^ ^])", sigla + "$1").replaceAll("\\s", "\\\\s+")
-                .replace("^", "\\b")
-                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
-                .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
-                .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
-                .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
-                .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
-                .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
-                .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
-                .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
-                .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
-                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
-      }
-    return patterns;
   }
 
   public List<int[]> getDivIndexes(String text) {
@@ -297,8 +301,9 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "[-’\\\\[\\\\]()<>\u0323〚〛\\\\\\\\/\"|?*@]*";
+  private static String sigla = "[-’ʼ\\\\[\\\\]()<>\u0323〚〛\\\\\\\\/\"|?*@]*";
   private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|<[^>]+>|&\\w+;)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
+  private Map<String,Pattern[]> patternMap = new HashMap<String,Pattern[]>();
 }
