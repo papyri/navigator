@@ -10,7 +10,6 @@
       <xsl:when test="$leiden-style = 'ddbdp' and ancestor::t:div[@type = 'translation'] and @target">
             <xsl:variable name="lang" select="ancestor::t:div[@type = 'translation']/@xml:lang"/>
             <xsl:variable name="term" select="@target"/>
-        
             <xsl:choose>
                <xsl:when test="ancestor::t:lem">
                   <xsl:apply-templates/>
@@ -23,8 +22,6 @@
                </xsl:otherwise>
             </xsl:choose>
          </xsl:when>
-      
-      
          <xsl:otherwise>
             <xsl:apply-templates/>
          </xsl:otherwise>

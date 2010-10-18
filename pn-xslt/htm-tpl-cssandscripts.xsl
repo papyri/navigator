@@ -18,9 +18,5 @@
          </xsl:attribute>
       </link>
 
-      <xsl:if test="$leiden-style = 'ddbdp' and //t:div[@type = 'translation']">
-         <script type="text/javascript" src="http://papyri.info/js/overlib_mini.js">
-             </script>
-      </xsl:if>
    </xsl:template>
 </xsl:stylesheet>
