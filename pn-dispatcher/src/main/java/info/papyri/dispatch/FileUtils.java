@@ -250,7 +250,7 @@ public class FileUtils {
 
     private Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "#");
-      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/~^]", ""));
+      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
       QueryLexer ql = new QueryLexer(a);
       CommonTokenStream tokens = new CommonTokenStream(ql);
       QueryParser qp = new QueryParser(tokens);
@@ -267,7 +267,8 @@ public class FileUtils {
       Pattern[] patterns = new Pattern[find.size()];
       for (int i = 0; i < find.size(); i++) {
         patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                .replaceAll("(.)", sigla + "$1")
+                .replaceAll("(\\S)", sigla + "$1").replaceAll("\\s", "\\s+")
+                .replace("^", "\\b")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
