@@ -700,7 +700,7 @@
   
   <!-- Images -->
   <xsl:template match="t:div[@type = 'figure']" mode="metadata">
-    <xsl:for-each select=".//figure">
+    <xsl:for-each select=".//t:figure">
       <tr>
       <td colspan="2"><a href="{t:graphic/@url}"><xsl:choose>
         <xsl:when test="t:figDesc"><xsl:value-of select="t:figDesc"/></xsl:when>
