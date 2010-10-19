@@ -153,7 +153,7 @@ public class Search extends HttpServlet {
           // used as a word boundary marker and so is a clear indicator of a substring search
           if ("substring".equals(request.getParameter("type")) || query.contains("^")) {
               field = "transcription_ngram_ia";
-              query = query.replace("^", "\\^");
+              query = query.replace("^", "\\^").replaceAll("ς$", "σ");
           } else if ("text".equals(request.getParameter("target"))) {
             field = "transcription";
             if ("proximity".equals(request.getParameter("type"))) {
@@ -166,9 +166,8 @@ public class Search extends HttpServlet {
             } else if ("on".equals(request.getParameter("marks"))) {
               field += "_id";
             }
-            if ("on".equals(request.getParameter("lemmas"))) {
-              field = "transcription_l";
-            }
+          } else if ("on".equals(request.getParameter("lemmas"))) {
+            field = "transcription_l";
           } else if ("metadata".equals(request.getParameter("target"))) {
             field = "metadata";
           } else if ("translation".equals(request.getParameter("target"))) {
