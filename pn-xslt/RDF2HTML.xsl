@@ -285,8 +285,10 @@
             <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
+            <xsl:if test="$image">
+              <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
+              <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
+            </xsl:if>            
             <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
           </head>
           <body onload="init()">
@@ -372,7 +374,7 @@
                         </xsl:if>
                         <xsl:if test="$translation">
                           <xsl:for-each select="pi:get-docs($relations[contains(., 'hgvtrans')], 'xml')/t:TEI//t:div[@type = 'translation']">
-                            <xsl:sort select="number(.//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
+                            <xsl:sort select="number(ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
                             <div class="translation data">
                               <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
                                 [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>

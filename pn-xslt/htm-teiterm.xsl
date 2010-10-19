@@ -15,10 +15,13 @@
                   <xsl:apply-templates/>
                </xsl:when>
                <xsl:otherwise>
-                 <span class="term">
+                 <xsl:choose>
+                   <xsl:when test="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]"><span class="term">
                    <xsl:apply-templates/>
                    <span class="gloss" style="display:none"><xsl:value-of select="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]"/></span>                 
-                 </span>
+                   </span></xsl:when>
+                   <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
+                 </xsl:choose>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:when>
@@ -26,6 +29,5 @@
             <xsl:apply-templates/>
          </xsl:otherwise>
       </xsl:choose>
-    
   </xsl:template>
 </xsl:stylesheet>
