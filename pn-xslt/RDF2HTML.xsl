@@ -704,9 +704,10 @@
   <xsl:template match="t:div[@type = 'figure']" mode="metadata">
     <xsl:for-each select=".//t:figure">
       <tr>
-      <td colspan="2"><a href="{t:graphic/@url}"><xsl:choose>
+        <th class="rowheader">Images</th>
+      <td><a href="{t:graphic/@url}"><xsl:choose>
         <xsl:when test="t:figDesc"><xsl:value-of select="t:figDesc"/></xsl:when>
-        <xsl:otherwise><xsl:value-of select="substring(t:graphic/@url, 1, 25)"/>...</xsl:otherwise>
+        <xsl:otherwise><xsl:value-of select="substring(t:graphic/@url, 1, 60)"/>...</xsl:otherwise>
       </xsl:choose>
       </a></td>
     </tr>
