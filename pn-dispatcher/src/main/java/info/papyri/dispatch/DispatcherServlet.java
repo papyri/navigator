@@ -186,7 +186,8 @@ public class DispatcherServlet extends HttpServlet {
              +  ".org/dc/terms/> construct{<http://papyri."
              +  "info/ddbdp> ?Predicate ?Object} from <rmi:/"
              +  "/localhost/papyri.info#pi> where { <http://papyri.info/ddbdp>" 
-             +  " ?Predicate ?Object }";
+             +  " ?Predicate ?Object } "
+             + "order by ?Object";
       }
       String[] parts = in.split(";");
       if (parts.length == 1) {
@@ -195,7 +196,8 @@ public class DispatcherServlet extends HttpServlet {
              +  "/papyri.info/ddbdp/" + parts[0] + "> ?Predicate ?Object}"
              +  " from <rmi://localhost/papyri.info#pi>" 
              +  " where { <http://papyri.info/ddbdp/" + parts[0] + ">"
-             +  " ?Predicate ?Object }";
+             +  " ?Predicate ?Object } "
+             + "order by ?Object";
       }
       if (parts.length == 2) {
         return "prefix dc: <http://"
@@ -203,7 +205,8 @@ public class DispatcherServlet extends HttpServlet {
              +  "papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + "> ?Predicate ?Object} "
              +  "from <rmi://localhost/papyri.info#pi> where "
              +  "{ <http://papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + ">"
-             +  " ?Predicate ?Object }";
+             +  " ?Predicate ?Object } "
+             + "order by ?Object";
       }
       if (parts.length == 3) {
           parts[2] = encode(parts[2]);
@@ -214,7 +217,8 @@ public class DispatcherServlet extends HttpServlet {
              +  "papyri.info#pi> where {<http://"  
              +  "papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + ";" + parts[2]  
              +  "/source> ?Predicate"  
-             +  " ?Object}";
+             +  " ?Object} "
+             + "order by ?Object";
       }
       return in;
     }
@@ -225,17 +229,20 @@ public class DispatcherServlet extends HttpServlet {
              +  ".org/dc/terms/> construct{<http://papyri."
              +  "info/apis> ?Predicate ?Object} from <rmi:/"
              +  "/localhost/papyri.info#pi> " 
-             +  "where { <http://papyri.info/apis> ?Predicate ?Object}";
+             +  "where { <http://papyri.info/apis> ?Predicate ?Object} "
+             + "order by ?Object";
       }
       if (!in.contains(".")) {
         return "prefix dc: <http://purl.org/dc/terms/> " 
              + "construct{<http://papyri.info/apis/" + in + "> ?Predicate ?Object} "
              +  "from <rmi://localhost/papyri.info#pi> "
-             +  "where { <http://papyri.info/apis/" + in + "> ?Predicate ?Object}";
+             +  "where { <http://papyri.info/apis/" + in + "> ?Predicate ?Object} "
+             + "order by ?Object";
       }
       return "construct{<http://papyri.info/apis/" + in + "/source> " 
            +  "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> "
-           +  "where {<http://papyri.info/apis/" + in + "/source> ?Predicate ?Object}";
+           +  "where {<http://papyri.info/apis/" + in + "/source> ?Predicate ?Object} "
+             + "order by ?Object";
     }
     
     protected String hgv(String in) {
@@ -244,23 +251,27 @@ public class DispatcherServlet extends HttpServlet {
              +  ".org/dc/terms/> construct{<http://papyri."
              +  "info/hgv> ?Predicate ?Object} from <rmi:/"
              +  "/localhost/papyri.info#pi> " 
-             +  "where { <http://papyri.info/hgv> ?Predicate ?Object}";
+             +  "where { <http://papyri.info/hgv> ?Predicate ?Object} "
+             + "order by ?Object";
       }
       if (in.matches("\\d+[a-z]*")) {
         return "construct{<http://papyri.info/hgv/" + in + "/source> " +
                 "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> " +
-                "where {<http://papyri.info/hgv/" + in + "/source> ?Predicate ?Object}";
+                "where {<http://papyri.info/hgv/" + in + "/source> ?Predicate ?Object} "
+             + "order by ?Object";
       }
       return "prefix dc: <http://purl.org/dc/terms/> " +
               "construct{<http://papyri.info/hgv/" + in + "> ?Predicate ?Object} " +
               "from <rmi://localhost/papyri.info#pi> " +
-              "where {<http://papyri.info/hgv/" + in + "> ?Predicate ?Object}";
+              "where {<http://papyri.info/hgv/" + in + "> ?Predicate ?Object} "
+             + "order by ?Object";
     }
 
     protected String hgvtrans(String in) {
       return "construct{<http://papyri.info/hgvtrans/" + in + "/source> " +
                 "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> " +
-                "where {<http://papyri.info/hgvtrans/" + in + "/source> ?Predicate ?Object}";
+                "where {<http://papyri.info/hgvtrans/" + in + "/source> ?Predicate ?Object} "
+             + "order by ?Object";
     }
 
     protected static String encode(String in) {

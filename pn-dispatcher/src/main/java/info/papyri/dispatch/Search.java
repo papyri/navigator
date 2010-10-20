@@ -180,7 +180,7 @@ public class Search extends HttpServlet {
       if (field != null) {
         q = field + ":(" + query + ")";
       } else {
-        q = query;
+        q = FileUtils.stripDiacriticals(query);;
       }
       String param;
       if ((param = request.getParameter("provenance")) != null && !"".equals(param)) {
