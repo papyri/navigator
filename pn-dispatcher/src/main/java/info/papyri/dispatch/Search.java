@@ -225,9 +225,9 @@ public class Search extends HttpServlet {
       }
       if ((param = request.getParameter("apiscol")) != null && !"".equals(param)) {
         if (q == null) {
-          q = "apiscol:" + param;
+          q = "series:zzz" + param;
         } else {
-          q += " AND apiscol:" + param;
+          q += " AND series:zzz" + param;
         }
       }
       if ((param = request.getParameter("invnum")) != null && !"".equals(param)) {
