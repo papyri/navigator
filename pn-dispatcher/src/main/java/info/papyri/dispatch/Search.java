@@ -209,12 +209,32 @@ public class Search extends HttpServlet {
           q += " AND date_start:[" + qds + " TO " + qde + "] AND date_end:[" + qds + " TO " + qde + "]";
         }
       }
-      String invnum = request.getParameter("invnum");
-      if (invnum != null && !"".equals(invnum)) {
+      if ((param = request.getParameter("series")) != null && !"".equals(param)) {
         if (q == null) {
-          q = "invnum:(" + invnum + ")";
+          q = "series:" + param;
         } else {
-          q += " AND invnum:(" + invnum + ")";
+          q += " AND series:" + param;
+        }
+      }
+      if ((param = request.getParameter("volume")) != null && !"".equals(param)) {
+        if (q == null) {
+          q = "volume:" + param;
+        } else {
+          q += " AND volume:" + param;
+        }
+      }
+      if ((param = request.getParameter("apiscol")) != null && !"".equals(param)) {
+        if (q == null) {
+          q = "apiscol:" + param;
+        } else {
+          q += " AND apiscol:" + param;
+        }
+      }
+      if ((param = request.getParameter("invnum")) != null && !"".equals(param)) {
+        if (q == null) {
+          q = "invnum:(" + param + ")";
+        } else {
+          q += " AND invnum:(" + param + ")";
         }
       }
 
