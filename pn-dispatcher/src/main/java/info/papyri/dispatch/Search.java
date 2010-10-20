@@ -209,11 +209,18 @@ public class Search extends HttpServlet {
           q += " AND date_start:[" + qds + " TO " + qde + "] AND date_end:[" + qds + " TO " + qde + "]";
         }
       }
-      if ((param = request.getParameter("series")) != null && !"".equals(param)) {
+      if ((param = request.getParameter("ddbseries")) != null && !"".equals(param)) {
         if (q == null) {
-          q = "series:" + param;
+          q = "identifier:http\\://papyri.info/ddbdp/" + param + "/*";
         } else {
-          q += " AND series:" + param;
+          q += " AND identifier:http\\://papyri.info/ddbdp/" + param + "/*";
+        }
+      }
+      if ((param = request.getParameter("hgvseries")) != null && !"".equals(param)) {
+        if (q == null) {
+          q = "identifier:http\\://papyri.info/hgv/" + param + "/*";
+        } else {
+          q += " AND identifier:http\\://papyri.info/hgv/" + param + "/*";
         }
       }
       if ((param = request.getParameter("volume")) != null && !"".equals(param)) {
@@ -225,9 +232,9 @@ public class Search extends HttpServlet {
       }
       if ((param = request.getParameter("apiscol")) != null && !"".equals(param)) {
         if (q == null) {
-          q = "series:zzz" + param;
+          q = "identifier:http\\://papyri.info/apis/" + param + "/*";
         } else {
-          q += " AND series:zzz" + param;
+          q += " AND identifier:http\\://papyri.info/apis/" + param + "/*";
         }
       }
       if ((param = request.getParameter("invnum")) != null && !"".equals(param)) {
