@@ -6,6 +6,7 @@ package info.papyri.dispatch;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class FileUtils {
   public String highlight(String query, String t) {
     Pattern[] patterns = getPatterns(query);
     List<String> exclusions = getExclusions(t);
-    String text = t.toString().replaceAll(exclude, "@@@");
+    String text = t.toString().replaceAll(exclude, "ЖЖЖ");
     int index = 0;
     for (Pattern pattern : patterns) {
       StringBuilder hl = new StringBuilder();
@@ -171,7 +172,7 @@ public class FileUtils {
         index = 0;
       }
     }
-    Pattern p = Pattern.compile("@@@");
+    Pattern p = Pattern.compile("ЖЖЖ");
     int i = 0;
     int start = 0;
     Matcher m = p.matcher(text);
@@ -248,9 +249,11 @@ public class FileUtils {
         }
         Pattern[] patterns = new Pattern[find.size()];
         for (int i = 0; i < find.size(); i++) {
-          patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                  .replaceAll("([^ ^])", sigla + "$1" + sigla).replaceAll("\\s", "\\\\s+")
-                  .replace("^", "\\b")
+          if (query.contains("^") || query.contains("ngram")) {
+            patterns[i] = Pattern.compile(find.get(i).toLowerCase()
+                  .replaceAll("([^ ^])", sigla + "$1" + sigla)
+                  .replace("^ ", "\\s+")
+                  .replaceAll("\\s", "\\\\s+").replace("^", "\\b")
                   .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                   .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                   .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
@@ -261,11 +264,32 @@ public class FileUtils {
                   .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
                   .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
                   Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
+          } else {
+            patterns[i] = Pattern.compile(find.get(i).toLowerCase()
+                  .replaceAll("([^ ^])", sigla + "$1" + sigla)
+                  .replaceAll("^", "\\\\b").replaceAll("([^£#])$", "$1\\\\b")
+                  .replaceAll("\\s", "\\\\s+")
+                  .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
+                  .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
+                  .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
+                  .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
+                  .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
+                  .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
+                  .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
+                  .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
+                  .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
+                  Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
+          }
+          
         }
         patternMap.put(query, patterns);
         return patterns;
       }
   }
+
+    public static String stripDiacriticals(String in) {
+      return Normalizer.normalize(in, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+    }
 
   public List<int[]> getDivIndexes(String text) {
     List<int[]> divIndexes = new ArrayList<int[]>();
@@ -301,8 +325,8 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "[-’ʼ\\\\[\\\\]()<>\u0323〚〛\\\\\\\\/\"|?*@]*";
-  private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|<[^>]+>|&\\w+;)";
+  private static String sigla = "[-’ʼ\\\\[\\\\]()<>\u0323〚〛\\\\\\\\/\"|?*Ж]*";
+  private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|-<[^>]+>(\\s|\\r|\\n)*<span class=\"linenumber\">\\d+</span>\\s*|<[^>]+>|&\\w+;)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
   private Map<String,Pattern[]> patternMap = new HashMap<String,Pattern[]>();

@@ -129,6 +129,14 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testStripDiacriticals() {
+    String in = "ὑπόμνημα";
+    String out = "υπομνημα";
+    assertEquals(FileUtils.stripDiacriticals(in), out);
+  }
+
+
+
 
   
   public void testFindMatchesBigFile() {
@@ -162,11 +170,11 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindMatchesSubstringPhraseWordBoundaries() {
-    String query = "transcription_ngram_ia:(\"\\^μεν\\^ \\^κα\")";
-    String id = "http://papyri.info/ddbdp/bgu;8;1772";
+    String query = "transcription_ngram_ia:(\"μεν\\^ \\^κα\")";
+    String id = "http://papyri.info/ddbdp/bgu;2;454";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
-    expResult.add("μὲ̣ν̣ κ̣α");
+    expResult.add("μεν(*) κα");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {

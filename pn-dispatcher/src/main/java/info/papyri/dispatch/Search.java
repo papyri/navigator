@@ -161,10 +161,12 @@ public class Search extends HttpServlet {
             }
             if ("on".equals(request.getParameter("caps")) && "on".equals(request.getParameter("marks"))) {
               field += "_ia";
+              query = FileUtils.stripDiacriticals(query);
             } else if ("on".equals(request.getParameter("caps"))) {
               field += "_ic";
             } else if ("on".equals(request.getParameter("marks"))) {
               field += "_id";
+              query = FileUtils.stripDiacriticals(query);
             }
           } else if ("on".equals(request.getParameter("lemmas"))) {
             field = "transcription_l";
