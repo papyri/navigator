@@ -370,6 +370,10 @@
                                 <li><img src="{.}" alt="papyrus image"/></li>
                               </xsl:for-each>
                             </ul>
+                            <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
+                              concerning the use and reproduction of digital images included in APIS.  Please contact 
+                              the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
+                              if you wish to use any image in APIS or to publish any material from APIS.</p>
                           </div>
                         </xsl:if>
                         <xsl:if test="$translation">
@@ -429,6 +433,10 @@
                               <li><img src="{.}" alt="papyrus image"/></li>
                             </xsl:for-each>
                           </ul>
+                          <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
+                            concerning the use and reproduction of digital images included in APIS.  Please contact 
+                            the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
+                            if you wish to use any image in APIS or to publish any material from APIS.</p>
                         </div>
                         </xsl:if>
                         <xsl:if test="$translation">
@@ -549,6 +557,22 @@
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']" mode="metadata"/>
             <!-- Images -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
+            <xsl:choose>
+              <xsl:when test="$md-collection = 'hgv'">
+                <tr>
+                  <th class="rowheader">License</th>
+                  <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
+                    <br />© Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
+                </tr>
+              </xsl:when>
+              <xsl:otherwise>
+                <tr>
+                  <th class="rowheader">License</th>
+                  <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
+                </tr>                  
+              </xsl:otherwise>
+            </xsl:choose>
+            
           </tbody>
         </table>
       </div>
