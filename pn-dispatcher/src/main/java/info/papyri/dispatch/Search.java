@@ -180,7 +180,7 @@ public class Search extends HttpServlet {
       if (field != null) {
         q = field + ":(" + query + ")";
       } else {
-        if (query != null) {
+        if (query != null && !query.contains("transcription_l")) {
           q = FileUtils.stripDiacriticals(query);
         }
       }
@@ -212,6 +212,9 @@ public class Search extends HttpServlet {
         }
       }
       if ((param = request.getParameter("ddbseries")) != null && !"".equals(param)) {
+        if (request.getParameter("volume") != null && !"".equals(request.getParameter("volume"))) {
+          param += ";" + request.getParameter("volume");
+        }
         if (q == null) {
           q = "identifier:http\\://papyri.info/ddbdp/" + param + "*";
         } else {
@@ -276,37 +279,41 @@ public class Search extends HttpServlet {
     }
     sq.setRows(rows);
     sq.setQuery(q);
-    
-    QueryResponse rs = solr.query(sq);
-    SolrDocumentList docs = rs.getResults();
-    out.println("<p>" + docs.getNumFound() + " hits.</p>");
-    out.println("<ul class=\"results\">");
-    String uq = q;
+
     try {
-      uq = URLEncoder.encode(q, "UTF-8");
-    } catch (Exception e) {}
-    for (SolrDocument doc : docs) {
-      out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + uq +"\">"
-              + doc.getFieldValue("id") + "</a><br>");
-      for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
-        out.print(line + "<br>\n");
-      }
-      out.println("</li>");
-    }
-    out.println("</ul>");
-    if (docs.getNumFound() > rows) {
-      out.println("<p id=\"resultpages\">");
-      int pages = (int) Math.ceil((double)docs.getNumFound() / (double)rows);
-      int p = 0;
-      while (p < pages) {
-        if ((p * rows) == start) {
-          out.print((p + 1) + " ");
-        } else {
-          out.print("<a href=\"/search?q=" + uq + "&start=" + p * rows + "&rows=" + rows + "\">" + (p + 1) + "</a> ");
+      QueryResponse rs = solr.query(sq);
+      SolrDocumentList docs = rs.getResults();
+      out.println("<p>" + docs.getNumFound() + " hits.</p>");
+      out.println("<ul class=\"results\">");
+      String uq = q;
+      try {
+        uq = URLEncoder.encode(q, "UTF-8");
+      } catch (Exception e) {}
+      for (SolrDocument doc : docs) {
+        out.print("<li><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + uq +"\">"
+                + doc.getFieldValue("id") + "</a><br>");
+        for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
+          out.print(line + "<br>\n");
         }
-        p++;
+        out.println("</li>");
       }
-      out.println("</p>");
+      out.println("</ul>");
+      if (docs.getNumFound() > rows) {
+        out.println("<p id=\"resultpages\">");
+        int pages = (int) Math.ceil((double)docs.getNumFound() / (double)rows);
+        int p = 0;
+        while (p < pages) {
+          if ((p * rows) == start) {
+            out.print((p + 1) + " ");
+          } else {
+            out.print("<a href=\"/search?q=" + uq + "&start=" + p * rows + "&rows=" + rows + "\">" + (p + 1) + "</a> ");
+          }
+          p++;
+        }
+        out.println("</p>");
+      }
+    } catch (SolrServerException e) {
+      out.println("<p>Unable to execute query.  Please try again.</p>");
     }
   }
 
