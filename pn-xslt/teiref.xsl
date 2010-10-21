@@ -12,9 +12,7 @@
       <xsl:text>Reprinted </xsl:text>
       <xsl:value-of select="$direction"/>
       <xsl:text>: </xsl:text>
-      <xsl:call-template name="divide-links">
-         <xsl:with-param name="val" select="@n"/>
-      </xsl:call-template>
+      <a href="/ddbdp/{@n}"><xsl:value-of select="."/></a>
       <xsl:text>] </xsl:text>
       <xsl:apply-templates/>
   </xsl:template>

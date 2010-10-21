@@ -222,11 +222,9 @@
       <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/><xsl:text> </xsl:text>
     </field>
     <!-- Images -->
-    <xsl:choose>
-      <xsl:when test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
-        <field name="images">true</field>
-      </xsl:when>
-    </xsl:choose>
+    <xsl:if test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
+      <field name="images">true</field>
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:p">
         <xsl:variable name="doc" select="$docs[/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:p][1]"/>
@@ -267,6 +265,9 @@
     <xsl:for-each select="$docs//t:div[@type='translation']">
       <field name="translation"><xsl:value-of select="."/></field>
     </xsl:for-each>
+    <xsl:if test="$docs//t:div[@type='translation']">
+      <field name="has_translation">true</field>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="text()[local-name(following-sibling::*[1]) = 'lb' and following-sibling::t:lb[1][@type='inWord']]">

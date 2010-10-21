@@ -16,7 +16,7 @@
                </xsl:when>
                <xsl:otherwise>
                  <xsl:choose>
-                   <xsl:when test="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]"><span class="term">
+                   <xsl:when test="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]/text()"><span class="term">
                    <xsl:apply-templates/>
                    <span class="gloss" style="display:none"><xsl:value-of select="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]"/></span>                 
                    </span></xsl:when>
