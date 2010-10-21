@@ -39,7 +39,7 @@
               <li>
                 <a href="/apis/">Browse APIS</a>
               </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " /></div>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
               <li>
                 <a href="/search">Search</a>
@@ -91,7 +91,7 @@
                   </select> --><label for="volume">Volume:</label> <input type="text" name="volume" id="volume" size="3"></p>
                 <p><label for="apiscol">APIS collection:</label> <select name="apiscol" id="apiscol" onchange="" size="1"><option value="">All</option>
                 </select> <label for="invnum"><strong>Inventory Number <span class="pn-note">(APIS only)</span></strong></label> <input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span></p>
-                <p>Show records with <label for="imagesfirst" id="imagesfirst-label">images first</label><input type="checkbox" name="imagesfirst" value="yes" id="imagesfirst"> <label for="translationsfirst" id="translationsfirst-label">translations first</label><input type="checkbox" name="translationsfirst" value="" id="translationsfirst"></p>
+                <p id="sort-options">Show records with <label for="imagesfirst" id="imagesfirst-label">images first</label><input type="checkbox" name="imagesfirst" value="yes" id="imagesfirst"> <label for="translationsfirst" id="translationsfirst-label">translations first</label><input type="checkbox" name="translationsfirst" value="" id="translationsfirst"></p>
               </div>
               <p style="text-align:center;font-size:123.1%">
                 <a href="#" class="button" id="showeg">Examples</a>
@@ -185,7 +185,7 @@
       //    var val = row.object.value.substr(row.object.value.lastIndexOf("/") + 1);
       //    series.append('<option value="' + val + '">'+ val + '</option');
       //  })
-      });
+      //});
       jQuery.getJSON("/apis/json", function(data) {
         var apis = jQuery("#apiscol");
         jQuery.each(data.results.bindings, function(i, row) {
@@ -203,7 +203,7 @@
           innerHtml: "Click to turn contextual help for the search form on and off.",
           position: "left"
         });
-        jQuery("ul.nav li").hover(function() {
+        jQuery("ul.nav li").not(".dialog").hover(function() {
               jQuery(this).css('background-color', '#445B88');
               jQuery(this).find("a").css('color', 'white')
           },
@@ -290,7 +290,8 @@
       });
       jQuery("#lemma_plus_eg").click(function() {
         setupSearch(
-          {keyword:"transcription_l:λύω φιλωτας"})
+          {keyword:"transcription_l:λύω φιλωτας",
+           phrase:true})
       });
       jQuery("#substring_anchor_eg").click(function() {
         setupSearch(

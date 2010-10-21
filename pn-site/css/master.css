@@ -93,6 +93,10 @@ div#search-options {
   font-size:77%;
 }
 
+p#sort-options {
+  font-size:77%;
+}
+
 div#help {
   display:none;
 }
@@ -348,5 +352,25 @@ div#examples h3 {
 
 div#examples li {
   margin-left:0.5em;
+  padding:0.25em;
+}
+
+a.button {
+  color:black;
+}
+
+p.rights {
+  font-size:77%;
+}
+
+table#resources {
+  font-size: 93%;
+}
+
+table#resources h1 {
+  font-size:138.5%;
+}
+
+table#resources p {
   padding:0.25em;
 }

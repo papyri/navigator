@@ -7,7 +7,7 @@ function initImage() {
   var images = jQuery("#image img").detach();
   jQuery("#image ul").replaceWith('<div id="olimage"></div>');
   if (images.length > 1) {
-    jQuery("#image").append('<form><select id="imglist" onchange="loadImage(this[this.selectedIndex].value)"></select></form>');
+    jQuery("#olimage").after('<form><select id="imglist" onchange="loadImage(this[this.selectedIndex].value)"></select></form>');
     images.each(function(i) {
       var imgname = jQuery(this).attr("src").substr(jQuery(this).attr("src").lastIndexOf("/") + 1);
       jQuery("#imglist").append('<option value="' + jQuery(this).attr("src") + '">' + imgname + '</option>');
