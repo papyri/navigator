@@ -19,8 +19,18 @@ function init() {
     if (jQuery(".translation").length == 0 && jQuery(".image").length == 0) {
         jQuery(".transcription").css('width', '100%');
     }
-    if (jQuery("#image")) {
+    if (jQuery("#image").length > 0) {
         initImage();
     }
     jQuery("#tmgo").button();
+    jQuery("span.term").each( function (i, elt) {
+        jQuery(elt).CreateBubblePopup({
+            innerHtml: jQuery(elt).find("span.gloss").html(),
+            position: "top",
+            themePath: "/jquerybubblepopup-template/",
+            selectable: "true",
+            width: 200,
+            closingDelay: 500
+        });
+    });
 }

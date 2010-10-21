@@ -1,5 +1,6 @@
 @import url("yui/reset-fonts-grids.css");
 @import url("custom-theme/jquery-ui-1.8.5.custom.css");
+@import url("jquery.bubblepopup.v2.1.5.css");
 
 html {
 background: #E4E5E0 url(../images/bodybg.jpg) no-repeat top left;
@@ -330,4 +331,22 @@ ul.results a {
 
 span.highlight {
 background: orange;
+}
+
+span.term {
+  border: thin solid gray;
+}
+
+div#examples {
+  font-size: 77%;
+}
+
+div#examples h3 {
+  font-size: 100%;
+  font-weight: bold;
+}
+
+div#examples li {
+  margin-left:0.5em;
+  padding:0.25em;
 }
