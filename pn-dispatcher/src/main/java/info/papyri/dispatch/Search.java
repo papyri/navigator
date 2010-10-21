@@ -180,7 +180,9 @@ public class Search extends HttpServlet {
       if (field != null) {
         q = field + ":(" + query + ")";
       } else {
-        q = FileUtils.stripDiacriticals(query);;
+        if (query != null) {
+          q = FileUtils.stripDiacriticals(query);
+        }
       }
       String param;
       if ((param = request.getParameter("provenance")) != null && !"".equals(param)) {
@@ -260,6 +262,12 @@ public class Search extends HttpServlet {
     }
     String sort = request.getParameter("sort");
     if (sort == null || "".equals(sort)) {
+      if ("yes".equals(request.getParameter("imagesfirst"))) {
+        sq.addSortField("images", SolrQuery.ORDER.desc);
+      }
+      if ("yes".equals(request.getParameter("translationssfirst"))) {
+        sq.addSortField("has_translation", SolrQuery.ORDER.desc);
+      }
       sq.addSortField("series", SolrQuery.ORDER.asc);
       sq.addSortField("volume", SolrQuery.ORDER.asc);
       sq.addSortField("item", SolrQuery.ORDER.asc);
