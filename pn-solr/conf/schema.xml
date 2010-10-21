@@ -11,7 +11,7 @@
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.ShingleFilterFactory" maxShingleSize="2" minShingleSize="2" outputUnigrams="false"/>
-        <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="15"/>
+        <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.KeywordTokenizerFactory"/>
@@ -41,12 +41,13 @@
     <field name="transcription_ia" type="text" indexed="true" stored="false"/>
     <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
     <field name="translation" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="has_translation" type="boolean" indexed="true" stored="false"/>
     <field name="place" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="metadata" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="images" type="boolean" indexed="true" stored="false"/>
-    <field name="invnum" type="string" indexed="true" stored="false"/>
+    <field name="invnum" type="text" indexed="true" stored="false"/>
     <field name="all" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
