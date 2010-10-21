@@ -180,8 +180,12 @@ public class Search extends HttpServlet {
       if (field != null) {
         q = field + ":(" + query + ")";
       } else {
-        if (query != null && !query.contains("transcription_l")) {
-          q = FileUtils.stripDiacriticals(query);
+        if (query != null) {
+          if (!query.contains("transcription_l")) {
+            q = FileUtils.stripDiacriticals(query);
+          } else {
+            q = query;
+          }
         }
       }
       String param;
