@@ -53,7 +53,7 @@
             <form action="/search" method="post" accept-charset="UTF-8" name="searchform">
               <div>
                 <p><input type="radio" name="type" value="phrase" id="phrase" onchange="if(this.checked){this.form.target.selectedIndex=0}"> <label for="phrase" id="phrase-label">phrase search</label> <input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"> <label for="substring" id="substring-label">substring search</label> <input type="radio" name="type" value="proximity" id="proximity"> <label for="proximity" id="proximity-label">find within</label> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"></p>
-                <p><input type="text" name="keyword" value="" id="keyword" size="80"> in <select name="target" id="target" onchange="if(this.form.substring.checked){this.selectedIndex=1}if(this.selectedIndex!=1 && this.form.substring.checked){this.form.phrase.checked}" size="1">
+                <p><input type="text" name="keyword" value="" id="keyword" size="80"> in <select name="target" id="target" onchange="if(this.selectedIndex!=1 && this.form.substring.checked){jQuery('#phrase,#phrase-label').trigger('click')}" size="1">
                   <option value="all">
                     All
                   </option>
