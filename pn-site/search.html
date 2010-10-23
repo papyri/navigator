@@ -172,7 +172,7 @@
         });
         jQuery("#examples").show();
       });
-      jQuery.getJSON("http://dev.papyri.info/mulgara/sparql/?query=prefix%20dc%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%20%0Aconstruct%7B%3Chttp%3A%2F%2Fpapyri.info%2Fddbdp%3E%20%3FPredicate%20%3FObject%7D%20%0Afrom%20%3Crmi%3A%2F%2Flocalhost%2Fpapyri.info%23pi%3E%20%0Awhere%20%7B%20%3Chttp%3A%2F%2Fpapyri.info%2Fddbdp%3E%20%3FPredicate%20%3FObject%20%7D%20%0Aorder%20by%20%3FObject&format=json", function(data) {
+      jQuery.getJSON("/ddbdp/json", function(data) {
         var series = jQuery("#ddbseries");
         jQuery.each(data.results.bindings, function(i, row) {
           var val = row.object.value.substr(row.object.value.lastIndexOf("/") + 1);
