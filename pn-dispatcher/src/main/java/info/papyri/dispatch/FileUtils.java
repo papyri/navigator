@@ -321,7 +321,31 @@ public class FileUtils {
     return exclusions;
   }
 
+  public static String substringAfter(String in, String find) {
+    if (in.contains(find)) {
+      return in.substring(in.indexOf(find) + find.length());
+    } else {
+      return "";
+    }
+  }
+  
+  public static String substringBefore (String in, String find) {
+    if (in.contains(find)) {
+      return in.substring(0, in.indexOf(find));
+    } else {
+      return "";
+    }
+  }
 
+  public static String rewriteOldUrl(String url) {
+    String[] staticpath = substringAfter(url, "/html/").split("/");
+    StringBuilder result = new StringBuilder();
+    result.append("http://papyri.info/ddbdp/").append(staticpath[0])
+            .append(";").append(substringAfter(staticpath[1], staticpath[0] + "."))
+            .append(";")
+            .append(substringBefore(substringAfter(staticpath[2], staticpath[1] + ".").replace("_", "/").replace(",", "-"), ".html"));
+    return result.toString();
+  }
 
   private String xmlPath;
   private String htmlPath;

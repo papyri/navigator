@@ -311,4 +311,17 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testSubstringAfter() {
+    String in = "foobarbaz";
+    String find = "bar";
+    assertEquals ("baz", FileUtils.substringAfter(in, find));
+  }
+
+  public void testRewriteOldUrl() {
+    String url = "/idp_static/current/data/ddb/html/bgu/bgu.1/bgu.1.308.html";
+    String expResult = "http://papyri.info/ddbdp/bgu;1;308";
+    System.out.println(FileUtils.rewriteOldUrl(url));
+    assertEquals(expResult, FileUtils.rewriteOldUrl(url));
+  }
+
 }

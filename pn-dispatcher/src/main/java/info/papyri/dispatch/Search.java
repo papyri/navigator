@@ -79,9 +79,10 @@ public class Search extends HttpServlet {
     request.setCharacterEncoding("UTF-8");
     response.setContentType("text/html;charset=UTF-8");
     PrintWriter out = response.getWriter();
+    BufferedReader reader = null;
     try {
       if (request.getParameter("keyword") != null || request.getParameter("q") != null) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
+        reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
         String line = "";
         while ((line = reader.readLine()) != null) {
           if (line.contains("<!-- Search form -->")) {
@@ -94,15 +95,12 @@ public class Search extends HttpServlet {
           }
           out.println(line);
         }
-        reader.close();
-
       } else {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
+        reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
         String line = "";
         while ((line = reader.readLine()) != null) {
           out.println(line);
         }
-        reader.close();
       }
 
       // q=transcription_ngram_ia:και+\^υπο&version=2.2&start=0&rows=10&indent=on&wt=json
@@ -123,6 +121,7 @@ public class Search extends HttpServlet {
       throw new ServletException(mue);
     } finally {
       out.close();
+      if (reader != null) reader.close();
     }
   }
 
@@ -153,7 +152,7 @@ public class Search extends HttpServlet {
           // used as a word boundary marker and so is a clear indicator of a substring search
           if ("substring".equals(request.getParameter("type")) || query.contains("^")) {
               field = "transcription_ngram_ia";
-              query = query.replace("^", "\\^").replaceAll("ς$", "σ");
+              query = query.replace("^", "\\^");
           } else if ("text".equals(request.getParameter("target"))) {
             field = "transcription";
             if ("proximity".equals(request.getParameter("type"))) {

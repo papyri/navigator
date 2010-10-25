@@ -62,6 +62,15 @@ public class Reader extends HttpServlet {
       } else if (page.endsWith("text")) {
         response.setContentType("text/plain;charset=UTF-8");
         send(response, util.getTextFile(collection, item));
+      } else if (page.endsWith(".html")) {
+        if (page.contains("ddb/html") || page.contains("aggregated/html")) {
+          response.setHeader("Location", FileUtils.rewriteOldUrl(page));
+          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        } else if (page.contains("hgvmeta")) {
+          response.setHeader("Location", page.replaceAll(".*/HGV\\d/([^.]+).html", "http://papyri.info/hgv/$1"));
+          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        }
+
       } else {
         response.setContentType("text/html;charset=UTF-8");
         if (request.getParameter("q") != null) {
