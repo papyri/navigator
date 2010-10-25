@@ -152,6 +152,12 @@ public class Search extends HttpServlet {
           // used as a word boundary marker and so is a clear indicator of a substring search
           if ("substring".equals(request.getParameter("type")) || query.contains("^")) {
               field = "transcription_ngram_ia";
+              if ("on".equals(request.getParameter("caps"))) {
+                query = query.toLowerCase();
+              }
+              if ("on".equals(request.getParameter("marks"))) {
+                query = FileUtils.stripDiacriticals(query);
+              }
               query = query.replace("^", "\\^");
           } else if ("text".equals(request.getParameter("target"))) {
             field = "transcription";
