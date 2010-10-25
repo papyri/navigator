@@ -288,7 +288,7 @@ public class FileUtils {
   }
 
     public static String stripDiacriticals(String in) {
-      return Normalizer.normalize(in, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+      return Normalizer.normalize(in, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "").toLowerCase();
     }
 
   public List<int[]> getDivIndexes(String text) {
