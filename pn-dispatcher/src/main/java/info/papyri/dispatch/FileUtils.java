@@ -340,10 +340,15 @@ public class FileUtils {
   public static String rewriteOldUrl(String url) {
     String[] staticpath = substringAfter(url, "/html/").split("/");
     StringBuilder result = new StringBuilder();
-    result.append("http://papyri.info/ddbdp/").append(staticpath[0])
+    if (staticpath.length == 3) {
+      result.append("http://papyri.info/ddbdp/").append(staticpath[0])
             .append(";").append(substringAfter(staticpath[1], staticpath[0] + "."))
             .append(";")
             .append(substringBefore(substringAfter(staticpath[2], staticpath[1] + ".").replace("_", "/").replace(",", "-"), ".html"));
+    } else {
+      result.append("http://papyri.info/ddbdp/").append(staticpath[0])
+            .append(";;").append(substringBefore(substringAfter(staticpath[1], staticpath[0] + ".").replace("_", "/").replace(",", "-"), ".html"));
+    }
     return result.toString();
   }
 
