@@ -312,9 +312,9 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testSubstringAfter() {
-    String in = "foobarbaz";
-    String find = "bar";
-    assertEquals ("baz", FileUtils.substringAfter(in, find));
+    String in = "foobar/baz/";
+    String find = "/";
+    assertEquals ("baz/", FileUtils.substringAfter(in, find));
   }
 
   public void testRewriteOldUrl() {
