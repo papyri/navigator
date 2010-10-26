@@ -316,7 +316,10 @@ public class Search extends HttpServlet {
           if ((p * rows) == start) {
             out.print((p + 1) + " ");
           } else {
-            out.print("<a href=\"/search?q=" + uq + "&start=" + p * rows + "&rows=" + rows + "\">" + (p + 1) + "</a> ");
+            StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
+            if ("yes".equals(request.getParameter("imagesfirst"))) plink.append("&imagesfirst=yes");
+            if ("yes".equals(request.getParameter("translationsfirst"))) plink.append("&translationssfirst=yes");
+            out.print("<a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a> ");
           }
           p++;
         }

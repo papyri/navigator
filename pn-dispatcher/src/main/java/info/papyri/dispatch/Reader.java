@@ -50,11 +50,10 @@ public class Reader extends HttpServlet {
           throws ServletException, IOException {
     String page = request.getParameter("p");
     if (page != null) {
-      String[] parts = page.split("/");
-      String collection = parts[0];
+      String collection = FileUtils.substringBefore(page, "/");
       String item = "";
-      if (parts.length > 1) {
-        item = parts[1];
+      if (page.contains("/")) {
+        item = FileUtils.substringAfter(page, "/");
       }
       if (page.endsWith("/source")) {
         response.setContentType("application/xml;charset=UTF-8");

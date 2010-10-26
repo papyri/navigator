@@ -323,7 +323,7 @@ public class FileUtils {
     if (in.contains(find)) {
       return in.substring(in.indexOf(find) + find.length());
     } else {
-      return "";
+      return in;
     }
   }
   
@@ -331,7 +331,7 @@ public class FileUtils {
     if (in.contains(find)) {
       return in.substring(0, in.indexOf(find));
     } else {
-      return "";
+      return in;
     }
   }
 
