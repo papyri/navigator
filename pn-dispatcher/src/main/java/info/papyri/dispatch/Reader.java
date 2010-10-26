@@ -53,7 +53,7 @@ public class Reader extends HttpServlet {
       String collection = FileUtils.substringBefore(page, "/");
       String item = "";
       if (page.contains("/")) {
-        item = FileUtils.substringAfter(page, "/");
+        item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
       }
       if (page.endsWith("/source")) {
         response.setContentType("application/xml;charset=UTF-8");
