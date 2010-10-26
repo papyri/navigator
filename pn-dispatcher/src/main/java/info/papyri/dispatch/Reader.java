@@ -50,19 +50,7 @@ public class Reader extends HttpServlet {
           throws ServletException, IOException {
     String page = request.getParameter("p");
     if (page != null) {
-      String collection = FileUtils.substringBefore(page, "/");
-      String item = "";
-      if (page.contains("/")) {
-        item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
-        System.out.println(item);
-      }
-      if (page.endsWith("/source")) {
-        response.setContentType("application/xml;charset=UTF-8");
-        send(response, util.getXmlFile(collection, item));
-      } else if (page.endsWith("text")) {
-        response.setContentType("text/plain;charset=UTF-8");
-        send(response, util.getTextFile(collection, item));
-      } else if (page.endsWith(".html")) {
+      if (page.endsWith(".html")) {
         if (page.contains("ddb/html") || page.contains("aggregated/html")) {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
@@ -70,13 +58,23 @@ public class Reader extends HttpServlet {
           response.setHeader("Location", page.replaceAll(".*/HGV\\d/([^.]+).html", "http://papyri.info/hgv/$1"));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         }
-
-      } else {
-        response.setContentType("text/html;charset=UTF-8");
-        if (request.getParameter("q") != null) {
-          sendWithHighlight(response, util.getHtmlFile(collection, item), request.getParameter("q"));
+      } else if (page.contains("/")) {
+        String collection = FileUtils.substringBefore(page, "/");
+        String item = "";
+        item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
+        if (item.endsWith("/source")) {
+          response.setContentType("application/xml;charset=UTF-8");
+          send(response, util.getXmlFile(collection, item.replace("/source", "")));
+        } else if (page.endsWith("text")) {
+          response.setContentType("text/plain;charset=UTF-8");
+          send(response, util.getTextFile(collection, item.replace("/text", "")));
         } else {
-          send(response, util.getHtmlFile(collection, item));
+          response.setContentType("text/html;charset=UTF-8");
+          if (request.getParameter("q") != null) {
+            sendWithHighlight(response, util.getHtmlFile(collection, item), request.getParameter("q"));
+          } else {
+            send(response, util.getHtmlFile(collection, item));
+          }
         }
       }
     } else {
