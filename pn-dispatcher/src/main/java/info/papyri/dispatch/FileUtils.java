@@ -126,13 +126,11 @@ public class FileUtils {
   }
 
   public String loadTextFromId(String id) {
-    String[] parts = id.substring("http://papyri.info/".length()).split("/");
-    return loadFile(getTextFile(parts[0], parts[1]));
+    return loadFile(getTextFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/")));
   }
 
   public String loadHtmlFromId(String id) {
-    String[] parts = id.substring("http://papyri.info/".length()).split("/");
-    return loadFile(getHtmlFile(parts[0], parts[1]));
+    return loadFile(getHtmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/")));
   }
 
   public String loadFile(File f) {
@@ -252,7 +250,7 @@ public class FileUtils {
           if (query.contains("^") || query.contains("ngram")) {
             patterns[i] = Pattern.compile(find.get(i).toLowerCase()
                   .replaceAll("([^ ^])", sigla + "$1" + sigla)
-                  .replace("^ ", "\\s+")
+                  .replace("^ ", sigla + "\\s+")
                   .replaceAll("\\s", "\\\\s+").replace("^", "\\b")
                   .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                   .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
@@ -260,14 +258,14 @@ public class FileUtils {
                   .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
                   .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
                   .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
-                  .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
+                  .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
                   .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
                   .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
                   Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
           } else {
             patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                  .replaceAll("([^ ^])", sigla + "$1" + sigla)
-                  .replaceAll("^", "\\\\b").replaceAll("([^£#])$", "$1\\\\b")
+                  .replaceAll("(\\S)", sigla + "$1" + sigla)
+                  .replaceAll("([^£#])$", "$1\\\\b")
                   .replaceAll("\\s", "\\\\s+")
                   .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                   .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
@@ -275,7 +273,7 @@ public class FileUtils {
                   .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
                   .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
                   .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
-                  .replace("υ", "(υ|ύ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
+                  .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
                   .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
                   .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
                   Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
