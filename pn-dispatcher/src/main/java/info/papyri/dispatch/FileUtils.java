@@ -35,11 +35,11 @@ public class FileUtils {
                   + "." + parts[1] + "/index.html");
         } else if ("".equals(parts[1])) {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".html");
+                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".html");
         } else {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
                   + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
-                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".html");
+                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".html");
         }
       } else {
         if ("".equals(item)) {
@@ -78,11 +78,11 @@ public class FileUtils {
         String[] parts = item.split(";");
         if ("".equals(parts[1])) {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".txt");
+                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".txt");
         } else {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
                   + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
-                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".txt");
+                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".txt");
         }
       }
     } else if ("hgv".equals(collection)) {
@@ -106,11 +106,11 @@ public class FileUtils {
         if ("".equals(parts[1])) {
           return new File(xmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
                   + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_")
-                  .replace("+", "%2B") + ".xml");
+                  .replace(" ", "+") + ".xml");
         } else {
           return new File(xmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
                   + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
-                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B") + ".xml");
+                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+") + ".xml");
         }
       }
     } else if ("hgv".equals(collection)) {

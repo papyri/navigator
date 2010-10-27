@@ -50,6 +50,7 @@ public class Reader extends HttpServlet {
           throws ServletException, IOException {
     String page = request.getParameter("p");
     if (page != null) {
+      // Redirection for old static URLs
       if (page.endsWith(".html")) {
         if (page.contains("ddb/html") || page.contains("aggregated/html")) {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
