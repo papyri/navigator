@@ -20,7 +20,7 @@
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
     (org.mulgara.connection Connection ConnectionFactory)
-    (org.mulgara.query ConstructQuery Query)
+    (org.mulgara.query Answer ConstructQuery Query)
     (org.mulgara.query.operation Command CreateGraph)
     (org.mulgara.sparql SparqlInterpreter)
     (org.xml.sax InputSource)
@@ -30,7 +30,7 @@
 (def xsltpath "/data/papyri.info/svn/pn/pn-xslt")
 (def htpath "/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8082/solr/")
-(def numbersurl "http://dev.papyri.info/mulgara/sparql?query=")
+(def numbersurl "http://localhost:8090/sparql?query=")
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def nthreads 10)
@@ -239,18 +239,12 @@
 
 (defn answer-seq
   [answer]
-  (proxy [ISeq] []
-    (first []
-	   (.beforeFirst answer)
-	   (.next answer)
-	   answer)
-    (next []
-	  (.next answer)
-	  (answer-seq answer))
-    (more []
-	  (.next answer)
-	  (answer-seq answer))))
-            
+  (let [answerlist (ArrayList.)]
+    (dotimes [_ (.getRowCount answer)]
+      (when (.next answer)
+	(doto answerlist (.add (list (.getObject answer 0) (.getObject answer 1) (.getObject answer 2))))))
+    (seq answerlist)))           
+ 
 (defn queue-items
   [url exclude]
   (let [items (execute-query (has-part-query url))
