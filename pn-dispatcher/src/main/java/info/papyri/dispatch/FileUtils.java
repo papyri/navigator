@@ -35,10 +35,11 @@ public class FileUtils {
                   + "." + parts[1] + "/index.html");
         } else if ("".equals(parts[1])) {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_") + ".html");
+                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".html");
         } else {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_") + ".html");
+                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
+                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".html");
         }
       } else {
         if ("".equals(item)) {
@@ -77,10 +78,11 @@ public class FileUtils {
         String[] parts = item.split(";");
         if ("".equals(parts[1])) {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_") + ".txt");
+                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".txt");
         } else {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_") + ".txt");
+                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
+                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B")  + ".txt");
         }
       }
     } else if ("hgv".equals(collection)) {
@@ -103,10 +105,12 @@ public class FileUtils {
         String[] parts = item.split(";");
         if ("".equals(parts[1])) {
           return new File(xmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_") + ".xml");
+                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_")
+                  .replace("+", "%2B") + ".xml");
         } else {
           return new File(xmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_") + ".xml");
+                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
+                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace("+", "%2B") + ".xml");
         }
       }
     } else if ("hgv".equals(collection)) {
@@ -137,7 +141,7 @@ public class FileUtils {
     StringBuilder t = new StringBuilder();
     try {
       InputStreamReader reader = new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8"));
-      char[] buffer = new char[1024];
+      char[] buffer = new char[8192];
       int size = -1;
       while ((size = reader.read(buffer)) > 0) {
         t.append(buffer, 0, size);

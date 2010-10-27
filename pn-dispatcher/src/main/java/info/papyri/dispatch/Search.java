@@ -97,9 +97,10 @@ public class Search extends HttpServlet {
         }
       } else {
         reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
-        String line = "";
-        while ((line = reader.readLine()) != null) {
-          out.println(line);
+        char[] cbuf = new char[8192];
+        int l = -1;
+        while ((l = reader.read(cbuf)) > 0) {
+          out.write(cbuf, 0, l);
         }
       }
 
