@@ -60,7 +60,7 @@ public class Reader extends HttpServlet {
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         }
       } else if (page.contains("-citations-") || page.endsWith("index.html")) {
-        response.setStatus(HttpServletResponse.SC_GONE);
+        response.sendError(HttpServletResponse.SC_GONE);
       }
       else if (page.contains("/")) {
         String collection = FileUtils.substringBefore(page, "/");
