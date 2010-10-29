@@ -51,7 +51,6 @@ public class Reader extends HttpServlet {
     String page = request.getParameter("p");
     if (page != null) {
       // Redirection for old static URLs
-      System.out.println(page);
       if (page.contains("current") && (page.contains("-citations-") || page.contains("index.html"))) {
         response.sendError(HttpServletResponse.SC_GONE);
       } else if (page.endsWith(".html")) {
