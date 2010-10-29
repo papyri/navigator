@@ -51,7 +51,9 @@ public class Reader extends HttpServlet {
     String page = request.getParameter("p");
     if (page != null) {
       // Redirection for old static URLs
-      if (page.endsWith(".html")) {
+      if (page.contains("idp_static") && (page.contains("-citations-") || page.endsWith("index.html"))) {
+        response.sendError(HttpServletResponse.SC_GONE);
+      } else if (page.endsWith(".html")) {
         if (page.contains("ddb/html") || page.contains("aggregated/html")) {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
@@ -59,10 +61,7 @@ public class Reader extends HttpServlet {
           response.setHeader("Location", page.replaceAll(".*/HGV\\d/([^.]+).html", "http://papyri.info/hgv/$1"));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         }
-      } else if (page.contains("idp_static") && (page.contains("-citations-") || page.endsWith("index.html"))) {
-        response.sendError(HttpServletResponse.SC_GONE);
-      }
-      else if (page.contains("/")) {
+      } else if (page.contains("/")) {
         String collection = FileUtils.substringBefore(page, "/");
         String item = "";
         item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
