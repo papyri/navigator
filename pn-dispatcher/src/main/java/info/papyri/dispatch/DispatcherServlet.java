@@ -111,7 +111,7 @@ public class DispatcherServlet extends HttpServlet {
         HttpURLConnection http = (HttpURLConnection)m.openConnection();
         if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
           response.setContentType(http.getContentType());
-          byte[] b = new byte[4096];
+          byte[] b = new byte[8192];
           BufferedInputStream in = new BufferedInputStream(http.getInputStream());
           BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
           int s = in.read(b, 0, b.length);

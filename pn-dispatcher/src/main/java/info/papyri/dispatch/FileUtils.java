@@ -356,7 +356,7 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "[-’ʼ\\\\[\\\\]()<>\u0323〚〛\\\\\\\\/\"|?*Ж]*";
+  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж]|&gt;|&lt;)*";
   private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|-<[^>]+>(\\s|\\r|\\n)*<span class=\"linenumber\">\\d+</span>\\s*|<[^>]+>|&\\w+;)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
