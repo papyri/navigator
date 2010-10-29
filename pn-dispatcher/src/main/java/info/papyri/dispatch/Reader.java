@@ -58,7 +58,7 @@ public class Reader extends HttpServlet {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         } else if (page.contains("hgvmeta")) {
-          response.setHeader("Location", page.replaceAll(".*/([^./]+).html", "http://papyri.info/hgv/$1"));
+          response.setHeader("Location", page.replaceAll(".*/([0-9]+[a-z]*).html", "http://papyri.info/hgv/$1"));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         }
       } else if (page.contains("/")) {
