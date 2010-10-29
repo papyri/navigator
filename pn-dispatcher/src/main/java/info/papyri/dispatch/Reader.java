@@ -59,7 +59,11 @@ public class Reader extends HttpServlet {
           response.setHeader("Location", page.replaceAll(".*/HGV\\d/([^.]+).html", "http://papyri.info/hgv/$1"));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         }
-      } else if (page.contains("/")) {
+      } else if (page.contains("idp_static")) {
+        response.setHeader("Location", "/");
+        response.setStatus(HttpServletResponse.SC_GONE);
+      }
+      else if (page.contains("/")) {
         String collection = FileUtils.substringBefore(page, "/");
         String item = "";
         item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
