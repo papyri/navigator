@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -106,25 +107,33 @@ public class DispatcherServlet extends HttpServlet {
         params.put("default-graph-uri", graph);
         params.put("format", format);
 
-        URL m = new URL(mulgara + path + "?" + readParams(params));
-        //System.out.println(m.toString());
-        HttpURLConnection http = (HttpURLConnection)m.openConnection();
-        if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
-          response.setContentType(http.getContentType());
-          byte[] b = new byte[8192];
-          BufferedInputStream in = new BufferedInputStream(http.getInputStream());
-          BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
-          int s = in.read(b, 0, b.length);
-          while (s > 0) {
-            out.write(b, 0, s);
-            s = in.read(b, 0, b.length);
+        BufferedInputStream in = null;
+        BufferedOutputStream out = null;
+        HttpURLConnection http = null;
+        try {
+          URL m = new URL(mulgara + path + "?" + readParams(params));
+          http = (HttpURLConnection)m.openConnection();
+          http.setConnectTimeout(2000);
+          if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            response.setContentType(http.getContentType());
+            byte[] b = new byte[8192];
+            in = new BufferedInputStream(http.getInputStream());
+            out = new BufferedOutputStream(response.getOutputStream());
+            int s = in.read(b, 0, b.length);
+            while (s > 0) {
+              out.write(b, 0, s);
+              s = in.read(b, 0, b.length);
+            }
+          } else {
+            response.sendError(http.getResponseCode());
           }
-          out.close();
-          in.close();
-        } else {
-          response.sendError(http.getResponseCode());
+        } catch (SocketTimeoutException e) {
+          e.printStackTrace(System.out);
+        } finally {
+          if (out != null) out.close();
+          if (in != null) in.close();
+          if (http != null) http.disconnect();
         }
-        http.disconnect();
       }
     } 
 
