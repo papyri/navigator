@@ -192,7 +192,7 @@ public class FileUtils {
   public List<String> highlightMatches(String query, String t) {
     List<String> result = new ArrayList<String>();
     Pattern[] patterns = getPatterns(query);
-    String text = t.toString().replaceAll(exclude, "");
+    String text = t.toString().replaceAll(excludeTxt, "").replace("<", "&lt;").replace(">", "&gt;");
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
       int prevEnd = 0;
@@ -358,6 +358,7 @@ public class FileUtils {
   private String htmlPath;
   private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж]|&gt;|&lt;)*";
   private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|-<[^>]+>(\\s|\\r|\\n)*<span class=\"linenumber\">\\d+</span>\\s*|<[^>]+>|&\\w+;)";
+  private static String excludeTxt = "(-(\\s|\\r|\\n)+[0-9]*\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
   private Map<String,Pattern[]> patternMap = new HashMap<String,Pattern[]>();
