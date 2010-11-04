@@ -67,7 +67,7 @@
                     Translations
                   </option>
                 </select></p>
-                <div id="search-options"><p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text is in Beta Code</label> <input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label> <input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label> <input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.target.selectedIndex=1;}"> <label for="lemmas" id="lemmas-label">lemmatized search</label></p></div>
+                <div id="search-options"><p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text in Beta Code</label> <input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label> <input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label> <input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.target.selectedIndex=1;jQuery('#phrase,#phrase-label').trigger('click');}"> <label for="lemmas" id="lemmas-label">lemmatized search</label></p></div>
               </div>
               <div>
                 <p><label for="provenance">Provenance:</label> <input type="text" name="provenance" value="" id="provenance"></p>

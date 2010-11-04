@@ -33,4 +33,7 @@ function init() {
             closingDelay: 500
         });
     });
+    jQuery("[xml:id]").each( function (i, elt) {
+       elt.id = jQuery(elt).attr("xml:id"); 
+    }); 
 }
