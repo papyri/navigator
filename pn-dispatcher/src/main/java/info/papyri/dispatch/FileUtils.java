@@ -78,11 +78,11 @@ public class FileUtils {
         String[] parts = item.split(";");
         if ("".equals(parts[1])) {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".txt");
+                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B").replace("+", "%2B")  + ".txt");
         } else {
           return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
                   + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
-                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".txt");
+                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B").replace("+", "%2B")  + ".txt");
         }
       }
     } else if ("hgv".equals(collection)) {
@@ -255,7 +255,7 @@ public class FileUtils {
             patterns[i] = Pattern.compile(find.get(i).toLowerCase()
                   .replaceAll("([^ ^])", sigla + "$1" + sigla)
                   .replace("^ ", sigla + "\\s+")
-                  .replaceAll("\\s", "\\\\s+").replace("^", "\\b")
+                  .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\b")
                   .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                   .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                   .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
