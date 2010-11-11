@@ -311,6 +311,14 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testHighlightLineNo() {
+    String query = "transcription_ngram_ia:(θμοινεθυμις)";
+    String id = "http://papyri.info/ddbdp/p.fuad.i.univ;;5";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    assertTrue(result.contains("<span class=\"highlight\"><br id=\"av,2-l3\"><span class=\"linenumber\">3</span>Θμ̣ο̣ινεθῦμις</span>"));
+  }
+
   public void testSubstringAfter() {
     String in = "foobar/baz/";
     String find = "/";

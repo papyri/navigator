@@ -21,11 +21,24 @@ import org.antlr.runtime.*;
  */
 public class FileUtils {
 
+  /**
+   * FileUtils provides utility methods for dispatcher classes that deal with
+   * files in a variety of ways.
+   * @param xmlPath the root path where the XML sources are to be found
+   * @param htmlPath the root path where the HTML and .txt files are located
+   */
   public FileUtils(String xmlPath, String htmlPath) {
     this.xmlPath = xmlPath;
     this.htmlPath = htmlPath;
   }
 
+  /**
+   * Returns the HTML <code>java.io.File</code> for the given collection
+   * and item.
+   * @param collection
+   * @param item
+   * @return the HTML file
+   */
   public File getHtmlFile(String collection, String item) {
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
@@ -72,6 +85,13 @@ public class FileUtils {
     return null;
   }
 
+  /**
+   * Returns the text <code>java.io.File</code> for the given collection
+   * and item.
+   * @param collection
+   * @param item
+   * @return the text file
+   */
   public File getTextFile(String collection, String item) {
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
@@ -99,6 +119,13 @@ public class FileUtils {
     return null;
   }
 
+  /**
+   * Returns the XML <code>java.io.File</code> for the given collection
+   * and item.
+   * @param collection
+   * @param item
+   * @return the XML file
+   */
   public File getXmlFile(String collection, String item) {
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
@@ -129,14 +156,29 @@ public class FileUtils {
     return null;
   }
 
+  /**
+   * Given an id, loads the corresponding text file and returns it as a String
+   * @param id
+   * @return the text
+   */
   public String loadTextFromId(String id) {
     return loadFile(getTextFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/")));
   }
 
+  /**
+   * Given an id, loads the corresponding HTML file and returns it as a String
+   * @param id
+   * @return the HTML
+   */
   public String loadHtmlFromId(String id) {
     return loadFile(getHtmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/")));
   }
 
+  /**
+   * Reads the given File into a String and returns it
+   * @param f
+   * @return the File contents
+   */
   public String loadFile(File f) {
     StringBuilder t = new StringBuilder();
     try {
@@ -153,6 +195,13 @@ public class FileUtils {
     return t.toString();
   }
 
+  /**
+   * Takes a query string and any text or HTML and returns the string with
+   * HTML spans that highlight the found query text.
+   * @param query
+   * @param t
+   * @return the highlighted text
+   */
   public String highlight(String query, String t) {
     Pattern[] patterns = getPatterns(query);
     List<String> exclusions = getExclusions(t);
@@ -189,6 +238,14 @@ public class FileUtils {
     return result.toString();
   }
   
+  /**
+   * Finds matches in a text file and returns the top 3 matches with HTML
+   * highlighting applied and with context surrounding the highlighted text.
+   * @param query the text to match
+   * @param t the text
+   * @return A <code>java.util.List</code> containing the top 3 matches plus
+   * context
+   */
   public List<String> highlightMatches(String query, String t) {
     List<String> result = new ArrayList<String>();
     Pattern[] patterns = getPatterns(query);
@@ -289,29 +346,15 @@ public class FileUtils {
       }
   }
 
+    /**
+     * Removes combining diacritical marks from the input string and returns
+     * the result.
+     * @param in
+     * @return in with combining diacriticals removed
+     */
     public static String stripDiacriticals(String in) {
       return Normalizer.normalize(in, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     }
-
-  public List<int[]> getDivIndexes(String text) {
-    List<int[]> divIndexes = new ArrayList<int[]>();
-    int index = 0;
-    while ((index = text.indexOf("<div", index) + 1) > 0) {
-      if (text.substring(index, text.indexOf(">", index)).contains(" data")) { //divs with @class="<something> data" are where the target text occurs
-        divIndexes.add(new int[] {text.indexOf(">", index) + 1, getClosingDivLocation(text.toString(), text.indexOf(">", index) + 1)});
-      }
-    }
-    return divIndexes;
-  }
-
-  public int getClosingDivLocation(String t, int start) {
-    int end = t.indexOf("</div>", start);
-    while (t.indexOf("<div", start) < end && t.indexOf("<div", start) > 0) {
-      start = t.indexOf("<div", start) + 1;
-      end = t.indexOf("</div>", end + 1);
-    }
-    return end - 1;
-  }
 
   private List<String> getExclusions(String t) {
     List<String> exclusions = new ArrayList<String>();
@@ -323,6 +366,15 @@ public class FileUtils {
     return exclusions;
   }
 
+  /**
+   * Given an input string and a string to find within it, returns the
+   * remainder of the input string after the first occurrence of the
+   * search string.  NOTE: if the search string is not found, this method
+   * returns the input string
+   * @param in the string to search
+   * @param find the string to search for
+   * @return the remainder (or the input string if no match)
+   */
   public static String substringAfter(String in, String find) {
     if (in.contains(find)) {
       return in.substring(in.indexOf(find) + find.length());
@@ -331,7 +383,16 @@ public class FileUtils {
     }
   }
   
-  public static String substringBefore (String in, String find) {
+  /**
+   * Given an input string and a string to find within it, returns the
+   * beginning of the input string before the first occurrence of the
+   * search string.  NOTE: if the search string is not found, this method
+   * returns the input string
+   * @param in the string to search
+   * @param find the string to search for
+   * @return the beginning (or the input string if no match)
+   */
+  public static String substringBefore(String in, String find) {
     if (in.contains(find)) {
       return in.substring(0, in.indexOf(find));
     } else {
@@ -339,6 +400,11 @@ public class FileUtils {
     }
   }
 
+  /**
+   * Utility function for mapping old PN static release URLs to new PN URLS
+   * @param url
+   * @return the rewritten URL
+   */
   public static String rewriteOldUrl(String url) {
     String[] staticpath = substringAfter(url, "/html/").split("/");
     StringBuilder result = new StringBuilder();
@@ -356,8 +422,8 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж]|&gt;|&lt;)*";
-  private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|-<[^>]+>(\\s|\\r|\\n)*<span class=\"linenumber\">\\d+</span>\\s*|<[^>]+>|&\\w+;)";
+  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж.]|&gt;|&lt;|ca\\.)*";
+  private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|-<[^>]+>(\\s|\\r|\\n)*<span class=\"linenumber\">\\d+</span>\\s*|<br[^>]+><span class=\"linenumber\">\\d+</span>|<[^>]+>|&\\w+;)";
   private static String excludeTxt = "(-(\\s|\\r|\\n)+[0-9]*\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
