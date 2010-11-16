@@ -291,59 +291,53 @@ public class FileUtils {
   }
 
     private Pattern[] getPatterns(String query) {
-      if (patternMap.containsKey(query)) {
-        return patternMap.get(query);
-      } else {
-        String q = query.replace("*", "£").replace("?", "#");
-        ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
-        QueryLexer ql = new QueryLexer(a);
-        CommonTokenStream tokens = new CommonTokenStream(ql);
-        QueryParser qp = new QueryParser(tokens);
-        List<String> find = new ArrayList<String>();
-        try {
-          qp.query();
-          find = qp.getStrings();
-        } catch (RecognitionException e) {
-          return new Pattern[0];
-        }
-        Pattern[] patterns = new Pattern[find.size()];
-        for (int i = 0; i < find.size(); i++) {
-          if (query.contains("^") || query.contains("ngram")) {
-            patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                  .replaceAll("([^ ^])", sigla + "$1" + sigla)
-                  .replace("^ ", sigla + "\\s+")
-                  .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\bЖ*")
-                  .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
-                  .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
-                  .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
-                  .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
-                  .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
-                  .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
-                  .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
-                  .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
-                  .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
-                  Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
-          } else {
-            patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                  .replaceAll("(\\S)", sigla + "$1" + sigla)
-                  .replaceAll("([^£#])$", "$1\\\\b")
-                  .replaceAll("\\s", "\\\\s+")
-                  .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
-                  .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
-                  .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
-                  .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
-                  .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
-                  .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
-                  .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
-                  .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
-                  .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
-                  Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
-          }
-          
-        }
-        patternMap.put(query, patterns);
-        return patterns;
+      String q = query.replace("*", "£").replace("?", "#");
+      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
+      QueryLexer ql = new QueryLexer(a);
+      CommonTokenStream tokens = new CommonTokenStream(ql);
+      QueryParser qp = new QueryParser(tokens);
+      List<String> find = new ArrayList<String>();
+      try {
+        qp.query();
+        find = qp.getStrings();
+      } catch (RecognitionException e) {
+        return new Pattern[0];
       }
+      Pattern[] patterns = new Pattern[find.size()];
+      for (int i = 0; i < find.size(); i++) {
+        if (query.contains("^") || query.contains("ngram")) {
+          patterns[i] = Pattern.compile(find.get(i).toLowerCase()
+                .replaceAll("([^ ^])", sigla + "$1" + sigla)
+                .replace("^ ", sigla + "\\s+")
+                .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\bЖ*")
+                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
+                .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
+                .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
+                .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
+                .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
+                .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
+                .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
+                .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
+                .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
+                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
+        } else {
+          patterns[i] = Pattern.compile(find.get(i).toLowerCase()
+                .replaceAll("(\\S)", sigla + "$1" + sigla)
+                .replaceAll("([^£#])$", "$1\\\\b")
+                .replaceAll("\\s", "\\\\s+")
+                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
+                .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
+                .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
+                .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
+                .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
+                .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
+                .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
+                .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
+                .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
+                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
+        }
+    }
+    return patterns;
   }
 
     /**
@@ -423,7 +417,7 @@ public class FileUtils {
   private String xmlPath;
   private String htmlPath;
   private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж.]|&gt;|&lt;|ca\\.)*";
-  private static String exclude = "(-(\\s|\\r|\\n)+[0-9]*\\s*|-<[^>]+>(\\s|\\r|\\n)*<span class=\"linenumber\">\\d+</span>\\s*|<br[^>]+><span class=\"linenumber\">\\d+</span>|<[^>]+>|&\\w+;)";
+  private static String exclude = "(<span[^>]+>[^<]+</span>|<[^>]+>|&\\w+;)";
   private static String excludeTxt = "(-(\\s|\\r|\\n)+[0-9]*\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
