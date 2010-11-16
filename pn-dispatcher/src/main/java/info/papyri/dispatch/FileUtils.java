@@ -205,21 +205,15 @@ public class FileUtils {
   public String highlight(String query, String t) {
     Pattern[] patterns = getPatterns(query);
     List<String> exclusions = getExclusions(t);
-    String text = t.toString().replaceAll(exclude, "ЖЖЖ");
+    String text = t.toString().replaceAll(exclude, "ЖЖЖ\n");
     int index = 0;
     for (Pattern pattern : patterns) {
       StringBuilder hl = new StringBuilder();
       Matcher m = pattern.matcher(text);
       while (m.find()) {
-        int start = m.start();
-        int mi = 0;
-        while (text.substring(m.start(), m.end()).charAt(mi) == 'Ж') {
-          mi++;
-          start++;
-        }
-        hl.append(text.substring(index, start));
+        hl.append(text.substring(index, m.start()));
         hl.append(hlStart);
-        hl.append(text.substring(start, m.end()));
+        hl.append(text.substring(m.start(), m.end()));
         hl.append(hlEnd);
         index = m.end();
       }
@@ -229,7 +223,7 @@ public class FileUtils {
         index = 0;
       }
     }
-    Pattern p = Pattern.compile("ЖЖЖ");
+    Pattern p = Pattern.compile("ЖЖЖ\\n?");
     int i = 0;
     int start = 0;
     Matcher m = p.matcher(text);
@@ -315,7 +309,7 @@ public class FileUtils {
           patterns[i] = Pattern.compile(find.get(i).toLowerCase()
                 .replaceAll("([^ ^])", sigla + "$1" + sigla)
                 .replace("^ ", sigla + "\\s+")
-                .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\b")
+                .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\bЖ*")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")

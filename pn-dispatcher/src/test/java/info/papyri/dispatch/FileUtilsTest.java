@@ -318,6 +318,14 @@ public class FileUtilsTest extends TestCase {
     String result = instance.highlight(query, instance.loadHtmlFromId(id));
     assertTrue(result.contains("<br id=\"av,2-l3\"><span class=\"linenumber\">3</span><span class=\"highlight\">Θμ̣ο̣ινεθῦμις</span>"));
   }
+  
+  public void testNgramHighlightLineNo() {
+    String query = "transcription_ngram_ia:(\\^θρασω\\^)";
+    String id = "http://papyri.info/ddbdp/p.sakaon;;94";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    assertTrue(result.contains("<br id=\"ar-l5\"><span class=\"linenumber\">5</span><span class=\"highlight\">Θρασώ</span>"));
+  }
 
   public void testHighlightByAnchor() {
     String query = "transcription_ngram_ia:(απολλωνιωι)";
