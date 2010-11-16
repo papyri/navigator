@@ -417,7 +417,7 @@ public class FileUtils {
   private String xmlPath;
   private String htmlPath;
   private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж.]|&gt;|&lt;|ca\\.)*";
-  private static String exclude = "(<span[^>]+>[^<]+</span>|<[^>]+>|&\\w+;)";
+  private static String exclude = "(<(span|a)\\s[^>]+>[^<]+</span>|<[^>]+>|&\\w+;)";
   private static String excludeTxt = "(-(\\s|\\r|\\n)+[0-9]*\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
