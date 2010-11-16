@@ -316,7 +316,15 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/p.fuad.i.univ;;5";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     String result = instance.highlight(query, instance.loadHtmlFromId(id));
-    assertTrue(result.contains("<span class=\"highlight\"><br id=\"av,2-l3\"><span class=\"linenumber\">3</span>Θμ̣ο̣ινεθῦμις</span>"));
+    assertTrue(result.contains("<br id=\"av,2-l3\"><span class=\"linenumber\">3</span><span class=\"highlight\">Θμ̣ο̣ινεθῦμις</span>"));
+  }
+
+  public void testHighlightByAnchor() {
+    String query = "transcription_ngram_ia:(απολλωνιωι)";
+    String id = "http://papyri.info/ddbdp/bgu;10;1941";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    assertTrue(result.contains("<span class=\"highlight\">Ἀπολλωνί̣ωι<br id=\"aFrA,2-l3\"></span>"));
   }
 
   public void testSubstringAfter() {

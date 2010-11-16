@@ -211,9 +211,15 @@ public class FileUtils {
       StringBuilder hl = new StringBuilder();
       Matcher m = pattern.matcher(text);
       while (m.find()) {
-        hl.append(text.substring(index, m.start()));
+        int start = m.start();
+        int mi = 0;
+        while (text.substring(m.start(), m.end()).charAt(mi) == 'Ж') {
+          mi++;
+          start++;
+        }
+        hl.append(text.substring(index, start));
         hl.append(hlStart);
-        hl.append(text.substring(m.start(), m.end()));
+        hl.append(text.substring(start, m.end()));
         hl.append(hlEnd);
         index = m.end();
       }
@@ -309,7 +315,7 @@ public class FileUtils {
           patterns[i] = Pattern.compile(find.get(i).toLowerCase()
                 .replaceAll("([^ ^])", sigla + "$1" + sigla)
                 .replace("^ ", sigla + "\\s+")
-                .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\bЖ*")
+                .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\b")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
@@ -417,9 +423,8 @@ public class FileUtils {
   private String xmlPath;
   private String htmlPath;
   private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж.]|&gt;|&lt;|ca\\.)*";
-  private static String exclude = "(<(span|a)\\s[^>]+>[^<]+</span>|<[^>]+>|&\\w+;)";
+  private static String exclude = "(<span\\s[^>]+>[^<]+</span>|<a\\s[^>]+>[^<]+</a>|<[^>]+>|&\\w+;)";
   private static String excludeTxt = "(-(\\s|\\r|\\n)+[0-9]*\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlEnd = "</span>";
-  private Map<String,Pattern[]> patternMap = new HashMap<String,Pattern[]>();
 }
