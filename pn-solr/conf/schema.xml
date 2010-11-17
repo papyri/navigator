@@ -15,6 +15,7 @@
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
 
@@ -25,6 +26,19 @@
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="lctext" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
       </analyzer>
     </fieldType>
@@ -42,7 +56,7 @@
     <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
     <field name="translation" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="has_translation" type="boolean" indexed="true" stored="false"/>
-    <field name="place" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="metadata" type="text" indexed="true" stored="false" multiValued="true"/>
