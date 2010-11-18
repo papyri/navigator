@@ -88,8 +88,22 @@
         <xsl:sequence select="upper-case(replace($url, 'http://papyri\.info/', ''))"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="replace(replace(replace(replace(replace(replace($url, 'http://papyri\.info/[^/]+/', ''), '/source$', ''), ';;', '.'), ';', '.'), '%2C', ','), '%2F', '/')"/>
+        <xsl:sequence select="pi:decode-uri(replace(replace(replace(replace($url, 'http://papyri\.info/[^/]+/', ''), '/source$', ''), ';;', '.'), ';', '.'))"/>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="pi:hex-to-dec">
+    <xsl:param name="str"/>
+    <xsl:variable name="len" select="string-length($str)"/>
+      <xsl:value-of
+      select="if (string-length($str) &lt; 1)
+      then 0
+      else pi:hex-to-dec(substring($str,1,$len - 1))*16+string-length(substring-before('0123456789ABCDEF',substring($str,$len)))"/>
+  </xsl:function>
+  
+  <xsl:function name="pi:decode-uri">
+    <xsl:param name="uri"/>
+    <xsl:sequence select=" replace($uri, '%(\d\d)', pi:hex-to-dec('$1'))"/>
   </xsl:function>
 </xsl:stylesheet>
