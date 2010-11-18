@@ -91,6 +91,14 @@
   [string1 string2]
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
+(defn encode-url
+  [url]
+  (URLEncoder/encode url "UTF-8"))
+
+(defn decode-url
+  [url]
+  (URLDecoder/decode url "UTF-8"))
+
 (defn get-filename
   [url]
   (if (.contains url "ddbdp/")
@@ -114,7 +122,7 @@
   (try (if (.startsWith url "file:")
     (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".txt") "/xml/" "/")
     (if (.contains url "ddbdp")
-      (let [url (URLDecoder/decode url "UTF-8")]
+      (let [url (decode-url url)]
 	(when (.endsWith url "/source")
 	  (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
 	    (if (= (second identifier) "")
@@ -140,7 +148,7 @@
   (try (if (.startsWith url "file:")
     (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".html") "/xml/" "/")
     (if (.contains url "ddbdp")
-      (let [url (URLDecoder/decode url "UTF-8")]
+      (let [url (decode-url url)]
 	(if (.endsWith url "/source")
         (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
           (if (= (second identifier) "")
