@@ -83,9 +83,10 @@
   <!-- Given an identifier URL, get the bare id -->
   <xsl:function name="pi:get-id" as="xs:string">
     <xsl:param name="url"/>
+    
     <xsl:choose>
       <xsl:when test="matches($url, '^http://papyri\.info/(ddbdp|hgv|apis)$')">
-        <xsl:sequence select="upper-case(replace($url, 'http://papyri\.info/', ''))"/>
+        <xsl:sequence select="pi:decode-uri(upper-case(replace($url, 'http://papyri\.info/', '')))"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="pi:decode-uri(replace(replace(replace(replace($url, 'http://papyri\.info/[^/]+/', ''), '/source$', ''), ';;', '.'), ';', '.'))"/>
@@ -93,17 +94,82 @@
     </xsl:choose>
   </xsl:function>
   
+  <xsl:function name="pi:dec-to-bin">
+    <xsl:param name="dec" as="xs:integer"/>
+    <xsl:choose>
+      <xsl:when test="$dec gt 1"><xsl:value-of select="concat(pi:dec-to-bin($dec idiv 2), $dec mod 2)"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="$dec"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="pi:bin-to-dec" as="xs:integer">
+    <xsl:param name="bin"/>
+    <xsl:sequence
+      select="if (string-length($bin) eq 1)
+      then xs:integer($bin)
+      else if (starts-with($bin, '1')) 
+        then pi:exp(2, string-length($bin) - 1) + pi:bin-to-dec(substring($bin, 2))
+        else pi:bin-to-dec(substring($bin, 2)) "/>
+  </xsl:function>
+  
   <xsl:function name="pi:hex-to-dec">
-    <xsl:param name="str"/>
-    <xsl:variable name="len" select="string-length($str)"/>
-      <xsl:value-of
-      select="if (string-length($str) &lt; 1)
-      then 0
-      else pi:hex-to-dec(substring($str,1,$len - 1))*16+string-length(substring-before('0123456789ABCDEF',substring($str,$len)))"/>
+    <xsl:param name="hex" as="xs:string"/>
+    <xsl:variable name="length" select="string-length($hex)" as="xs:integer"/>
+    <xsl:value-of select="
+      if ($length &gt; 0) then
+      if ($length &lt; 2) then
+      string-length(substring-before('0 1 2 3 4 5 6 7 8 9 AaBbCcDdEeFf',$hex)) idiv 2
+      else
+      pi:hex-to-dec(substring($hex,1,$length - 1))*16+pi:hex-to-dec(substring($hex,$length))
+      else
+      0
+      "/>
+  </xsl:function>
+  
+  <xsl:function name="pi:decode-uri-segment">
+    <xsl:param name="seg"/>
+    <xsl:value-of select="pi:hex-to-unicode(subsequence(tokenize($seg, '%'), 2))"/>
+  </xsl:function>
+  
+  <xsl:function name="pi:hex-to-unicode">
+    <xsl:param name="binseq"/>
+      <xsl:if test="not(empty($binseq))">
+        <xsl:choose>
+          <xsl:when test="not(matches($binseq[1], '^[C-E].*'))">
+            <xsl:value-of select="concat(codepoints-to-string(pi:bin-to-dec(replace(pi:dec-to-bin(pi:hex-to-dec($binseq[1])), '^0+', ''))), pi:hex-to-unicode(subsequence($binseq, 2)))"/>
+          </xsl:when>
+          <xsl:when test="matches($binseq[1], '^[CD].*')">
+            <xsl:value-of select="concat(codepoints-to-string(pi:bin-to-dec(replace(concat(substring-after(pi:dec-to-bin(pi:hex-to-dec($binseq[1])), '110'), substring-after(pi:dec-to-bin(pi:hex-to-dec($binseq[2])), '10')), '^0+', ''))), pi:hex-to-unicode(subsequence($binseq, 3)))"/>
+          </xsl:when>
+          <xsl:when test="matches($binseq[1], '^E.*')">
+            <xsl:value-of select="concat(codepoints-to-string(pi:bin-to-dec(replace(concat(substring-after(pi:dec-to-bin(pi:hex-to-dec($binseq[1])), '1110'), substring-after(pi:dec-to-bin(pi:hex-to-dec($binseq[2])), '10'), substring-after(pi:dec-to-bin(pi:hex-to-dec($binseq[3])), '10')), '^0+', ''))), pi:hex-to-unicode(subsequence($binseq, 4)))"/>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:if>
+  </xsl:function>
+  
+  <xsl:function name="pi:exp" as="xs:integer">
+    <xsl:param name="base" as="xs:integer"/>
+    <xsl:param name="exponent" as="xs:integer"/>
+    <xsl:choose>
+      <xsl:when test="$exponent = 1"><xsl:value-of select="$base"></xsl:value-of></xsl:when>
+      <xsl:otherwise><xsl:value-of select="$base * pi:exp($base, $exponent - 1)"/></xsl:otherwise>
+    </xsl:choose>
   </xsl:function>
   
   <xsl:function name="pi:decode-uri">
     <xsl:param name="uri"/>
-    <xsl:sequence select=" replace($uri, '%(\d\d)', pi:hex-to-dec('$1'))"/>
+    <xsl:variable name="decoded-component" as="xs:string*">
+      <xsl:analyze-string select="$uri" regex="((%[0-9a-fA-F][0-9a-fA-F])+)">
+        <xsl:matching-substring>
+          <xsl:value-of select="pi:decode-uri-segment(regex-group(1))"/>
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:value-of select="."/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:variable>
+    
+    <xsl:sequence select="string-join($decoded-component,'')"/>
   </xsl:function>
 </xsl:stylesheet>
