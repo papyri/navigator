@@ -321,7 +321,7 @@ public class FileUtils {
                 .replace("ρ", "(ρ|ῥ)").replaceAll("(σ|ς)", "(σ|ς)" + sigla),
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
         } else {
-          patterns[i] = Pattern.compile(find.get(i).toLowerCase()
+          patterns[i] = Pattern.compile("\\b" + find.get(i).toLowerCase()
                 .replaceAll("(\\S)", sigla + "$1" + sigla)
                 .replaceAll("([^£#])$", "$1\\\\b")
                 .replaceAll("\\s", "\\\\s+")
