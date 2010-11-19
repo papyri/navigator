@@ -197,6 +197,7 @@ public class Search extends HttpServlet {
       }
       String param;
       if ((param = request.getParameter("provenance")) != null && !"".equals(param)) {
+        param = param.toLowerCase();
         if (q == null) {
           q = "place:" + param;
         } else {
