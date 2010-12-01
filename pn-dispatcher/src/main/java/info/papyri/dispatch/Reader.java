@@ -30,6 +30,7 @@ public class Reader extends HttpServlet {
   private String xmlPath = "";
   private String htmlPath = "";
   private FileUtils util;
+  private byte[] buffer = new byte[8192];
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -63,8 +64,7 @@ public class Reader extends HttpServlet {
         }
       } else if (page.contains("/")) {
         String collection = FileUtils.substringBefore(page, "/");
-        String item = "";
-        item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
+        String item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
         if (item.endsWith("/source")) {
           response.setContentType("application/xml;charset=UTF-8");
           send(response, util.getXmlFile(collection, item.replace("/source", "")));
@@ -92,7 +92,6 @@ public class Reader extends HttpServlet {
     if (f != null && f.exists()) {
       try {
         reader = new FileInputStream(f);
-        byte[] buffer = new byte[4096];
         int size = reader.read(buffer);
         while (size > 0) {
           out.write(buffer, 0, size);
@@ -113,7 +112,6 @@ public class Reader extends HttpServlet {
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
     throws ServletException, IOException {
     PrintWriter out = response.getWriter();
-    //read whole file into buffer
     if (f != null && f.exists()) {
       try {
         out.write(util.highlight(q, util.loadFile(f)));

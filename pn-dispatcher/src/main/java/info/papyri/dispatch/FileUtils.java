@@ -32,6 +32,8 @@ public class FileUtils {
     this.htmlPath = htmlPath;
   }
 
+  private char[] buffer = new char[8192];
+
   /**
    * Returns the HTML <code>java.io.File</code> for the given collection
    * and item.
@@ -183,7 +185,6 @@ public class FileUtils {
     StringBuilder t = new StringBuilder();
     try {
       InputStreamReader reader = new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8"));
-      char[] buffer = new char[8192];
       int size = -1;
       while ((size = reader.read(buffer)) > 0) {
         t.append(buffer, 0, size);
