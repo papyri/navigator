@@ -43,7 +43,7 @@ public class FileUtils {
    * @return the HTML file
    */
   public File getHtmlFile(String collection, String item) {
-    if (pathname.length() > 0) pathname.delete(0, pathname.length() - 1);
+    if (pathname.length() > 0) pathname.delete(0, pathname.length());
     pathname.append(htmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
@@ -133,7 +133,7 @@ public class FileUtils {
    * @return the text file
    */
   public File getTextFile(String collection, String item) {
-    if (pathname.length() > 0) pathname.delete(0, pathname.length() - 1);
+    if (pathname.length() > 0) pathname.delete(0, pathname.length());
     pathname.append(htmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
@@ -193,7 +193,7 @@ public class FileUtils {
    * @return the XML file
    */
   public File getXmlFile(String collection, String item) {
-    if (pathname.length() > 0) pathname.delete(0, pathname.length() - 1);
+    if (pathname.length() > 0) pathname.delete(0, pathname.length());
     pathname.append(xmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {

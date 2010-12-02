@@ -154,7 +154,7 @@ public class Search extends HttpServlet {
           if ("substring".equals(request.getParameter("type")) || query.contains("^")) {
               field = "transcription_ngram_ia";
               if ("on".equals(request.getParameter("caps"))) {
-                if (!(query.contains("NOT") || query.contains("AND") || query.contains("OR"))) {
+                if (query.contains("NOT") || query.contains("AND") || query.contains("OR")) {
                   query = query.toLowerCase();
                   query = query.replaceAll("\\bnot\\b", "NOT").replaceAll("\\band\\b", "AND").replaceAll("\\bor\\b", "OR");
                 } else {
