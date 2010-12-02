@@ -95,6 +95,7 @@ public class Reader extends HttpServlet {
         int size = reader.read(buffer);
         while (size > 0) {
           out.write(buffer, 0, size);
+          response.flushBuffer();
           size = reader.read(buffer);
         }
       } catch (IOException e) {

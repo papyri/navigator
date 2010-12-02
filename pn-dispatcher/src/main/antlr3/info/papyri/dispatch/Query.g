@@ -31,6 +31,8 @@ OPERATOR:	('AND'|'OR'|'NOT'|'TO') { $channel=HIDDEN; };
 TERM 	:	~(WS|COLON|QUOTE|'('|')'|'['|']')+;
 DATEFIELD
 	:	'date_' TERM COLON '[' (TERM|WS)+ ']' { $channel=HIDDEN; };
+IDENTIFIERFIELD
+  : 'identifier' COLON 'http://' TERM { $channel=HIDDEN; };
 FIELD	:	TERM COLON;
 PHRASE	:	QUOTE TERM WS (TERM|WS)* QUOTE;
 

@@ -33,6 +33,7 @@ public class FileUtils {
   }
 
   private char[] buffer = new char[8192];
+  private StringBuilder pathname = new StringBuilder();
 
   /**
    * Returns the HTML <code>java.io.File</code> for the given collection
@@ -42,46 +43,83 @@ public class FileUtils {
    * @return the HTML file
    */
   public File getHtmlFile(String collection, String item) {
+    if (pathname.length() > 0) pathname.delete(0, pathname.length() - 1);
+    pathname.append(htmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if (parts.length == 2) {
-          return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[1] + "/index.html");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(parts[0])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[1])
+                  .append("/index.html").toString());
         } else if ("".equals(parts[1])) {
-          return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".html");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(parts[0])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B"))
+                  .append(".html").toString());
         } else {
-          return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
-                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B")  + ".html");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(parts[0])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[1])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[1])
+                  .append(".")
+                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B"))
+                  .append(".html").toString());
         }
       } else {
         if ("".equals(item)) {
-          return new File(htmlPath + "/DDB_EpiDoc_XML/index.html");
+          return new File(pathname.append("/DDB_EpiDoc_XML/index.html").toString());
         } else {
-          return new File(htmlPath + "/DDB_EpiDoc_XML/" + item + "/index.html");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(item)
+                  .append("/index.html").toString());
         }
       }
     } else if ("hgv".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
-        return new File(htmlPath + "/HGV_meta_EpiDoc/HGV"
-                + (int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000) + "/" + item + ".html");
+        return new File(pathname.append("/HGV_meta_EpiDoc/HGV")
+                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append("/")
+                .append(item)
+                .append(".html").toString());
       } else {
         if ("".equals(item)) {
-          return new File(htmlPath + "/HGV_meta_EpiDoc/index.html");
+          return new File(pathname.append("/HGV_meta_EpiDoc/index.html").toString());
         } else {
-          return new File(htmlPath + "/HGV_meta_EpiDoc/" + item + "/index.html");
+          return new File(pathname.append("/HGV_meta_EpiDoc/")
+                  .append(item)
+                  .append("/index.html").toString());
         }
       }
     } else if ("apis".equals(collection)) {
       if ("".equals(item)) {
-        return new File(htmlPath + "/APIS/index.html");
+        return new File(pathname.append("/APIS/index.html").toString());
       } else if (item.contains(".")) {
         String[] parts = item.split("\\.");
-        return new File(htmlPath + "/APIS/" + parts[0] + "/" + parts[0] + ".apis." + parts[2] + ".html");
+        return new File(pathname.append("/APIS/")
+                .append(parts[0])
+                .append("/")
+                .append(parts[0])
+                .append(".apis.")
+                .append(parts[2])
+                .append(".html").toString());
       } else {
-        return new File(htmlPath + "/APIS/" + item + "/index.html");
+        return new File(pathname.append("/APIS/")
+                .append(item)
+                .append("/index.html").toString());
       }
     }
     return null;
@@ -95,27 +133,53 @@ public class FileUtils {
    * @return the text file
    */
   public File getTextFile(String collection, String item) {
+    if (pathname.length() > 0) pathname.delete(0, pathname.length() - 1);
+    pathname.append(htmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if ("".equals(parts[1])) {
-          return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B").replace("+", "%2B")  + ".txt");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(parts[0])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B").replace("+", "%2B"))
+                  .append(".txt").toString());
         } else {
-          return new File(htmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
-                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B").replace("+", "%2B")  + ".txt");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(parts[0])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[1])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[1])
+                  .append(".")
+                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B").replace("+", "%2B"))
+                  .append(".txt").toString());
         }
       }
     } else if ("hgv".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
-        return new File(htmlPath + "/HGV_meta_EpiDoc/HGV"
-                + (int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000) + "/" + item + ".txt");
+        return new File(pathname.append("/HGV_meta_EpiDoc/HGV")
+                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append("/")
+                .append(item)
+                .append(".txt").toString());
       }
     } else if ("apis".equals(collection)) {
       if (item.contains(".")) {
         String[] parts = item.split("\\.");
-        return new File(htmlPath + "/APIS/" + parts[0] + "/" + parts[0] + ".apis." + parts[2] + ".txt");
+        return new File(pathname.append("/APIS/")
+                .append(parts[0])
+                .append("/")
+                .append(parts[0])
+                .append(".apis.")
+                .append(parts[2])
+                .append(".txt").toString());
       }
     }
     return null;
@@ -129,30 +193,55 @@ public class FileUtils {
    * @return the XML file
    */
   public File getXmlFile(String collection, String item) {
+    if (pathname.length() > 0) pathname.delete(0, pathname.length() - 1);
+    pathname.append(xmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if ("".equals(parts[1])) {
-          return new File(xmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[2].replaceAll(",", "-").replaceAll("/", "_")
-                  .replace(" ", "+") + ".xml");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(parts[0]).append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+"))
+                  .append(".xml").toString());
         } else {
-          return new File(xmlPath + "/DDB_EpiDoc_XML/" + parts[0] + "/" + parts[0]
-                  + "." + parts[1] + "/" + parts[0] + "." + parts[1] + "." 
-                  + parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+") + ".xml");
+          return new File(pathname.append("/DDB_EpiDoc_XML/")
+                  .append(parts[0])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[1])
+                  .append("/")
+                  .append(parts[0])
+                  .append(".")
+                  .append(parts[1])
+                  .append(".")
+                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+")) + ".xml");
         }
       }
     } else if ("hgv".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
-        return new File(xmlPath + "/HGV_meta_EpiDoc/HGV"
-                + (int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000) + "/" + item + ".xml");
+        return new File(pathname.append("/HGV_meta_EpiDoc/HGV")
+                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append("/")
+                .append(item)
+                .append(".xml").toString());
       }
     } else if ("hgvtrans".equals(collection)) {
-      return new File(xmlPath + "/HGV_trans_EpiDoc/" + item + ".xml");
+      return new File(pathname.append("/HGV_trans_EpiDoc/")
+              .append(item)
+              .append(".xml").toString());
     } else if ("apis".equals(collection)) {
       if (item.contains(".")) {
         String[] parts = item.split("\\.");
-        return new File(xmlPath + "/APIS/" + parts[0] + "/xml/" + parts[0] + ".apis." + parts[2] + ".xml");
+        return new File(pathname.append("/APIS/")
+                .append(parts[0])
+                .append("/xml/")
+                .append(parts[0])
+                .append(".apis.")
+                .append(parts[2])
+                .append(".xml").toString());
       }
     }
     return null;
