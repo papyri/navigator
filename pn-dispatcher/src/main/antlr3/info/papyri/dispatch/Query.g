@@ -17,12 +17,12 @@ public List<String> getStrings() {
   return find;
 }
 }
-query 	: 	querypart ;
+query 	: 	(querypart | EOF) ;
 querypart
 	:	clause (WS|clause)*;
 queryterm
 	:	(TERM|PHRASE) {find.add($queryterm.text);};
-clause  :	('+'|'-')? FIELD? (queryterm | '(' querypart ')' | EOF ) ;
+clause  :	('+'|'-')? FIELD? (queryterm | '(' querypart ')') ;
 
 WS	:	(' '|'\r'|'\t'|'\n');
 COLON	:	':';
