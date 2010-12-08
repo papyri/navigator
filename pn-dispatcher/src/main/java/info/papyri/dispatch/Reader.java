@@ -7,12 +7,8 @@ package info.papyri.dispatch;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.ServletConfig;
@@ -93,9 +89,8 @@ public class Reader extends HttpServlet {
       try {
         reader = new FileInputStream(f);
         int size = reader.read(buffer);
-        while (size > 0) {
+        while (size > 0) { 
           out.write(buffer, 0, size);
-          response.flushBuffer();
           size = reader.read(buffer);
         }
       } catch (IOException e) {

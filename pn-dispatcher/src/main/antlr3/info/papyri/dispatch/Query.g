@@ -17,12 +17,12 @@ public List<String> getStrings() {
   return find;
 }
 }
-query 	: 	querypart;
+query 	: 	querypart ;
 querypart
 	:	clause (WS|clause)*;
 queryterm
 	:	(TERM|PHRASE) {find.add($queryterm.text);};
-clause  :	('+'|'-')? FIELD? (queryterm | '(' querypart ')') ;
+clause  :	('+'|'-')? FIELD? (queryterm | '(' querypart ')' | EOF ) ;
 
 WS	:	(' '|'\r'|'\t'|'\n');
 COLON	:	':';
@@ -32,7 +32,7 @@ TERM 	:	~(WS|COLON|QUOTE|'('|')'|'['|']')+;
 DATEFIELD
 	:	'date_' TERM COLON '[' (TERM|WS)+ ']' { $channel=HIDDEN; };
 IDENTIFIERFIELD
-  : 'identifier' COLON 'http://' TERM { $channel=HIDDEN; };
+  	: 	'identifier:http\\' COLON TERM { $channel=HIDDEN; };
 FIELD	:	TERM COLON;
 PHRASE	:	QUOTE TERM WS (TERM|WS)* QUOTE;
 
