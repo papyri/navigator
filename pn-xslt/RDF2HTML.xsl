@@ -7,6 +7,7 @@
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="2.0" exclude-result-prefixes="#all">
   
   <xsl:import href="global-varsandparams.xsl"/>
@@ -84,19 +85,20 @@
   <xsl:template match="/">
     <xsl:choose>
       <xsl:when test="//dc:hasPart">
-        <xsl:variable name="children" select="pi:get-toc(//dc:hasPart)"/>
-        <xsl:variable name="hgv" select="contains(/rdf:RDF/rdf:Description/@rdf:about, '/hgv/') and contains($children[1], '/source')"/>
+        <xsl:variable name="hgv" select="contains(/rdf:RDF/rdf:Description/@rdf:about, '/hgv/') and contains(//dc:hasPart[1]/@rdf:resource, '/source')"/>
         <xsl:variable name="query">
           prefix dc: &lt;http://purl.org/dc/terms/&gt;
-          construct {?a dc:identifier ?b}
+          select ?a ?b
           from &lt;rmi://localhost/papyri.info#pi&gt;
           where { &lt;<xsl:value-of select="/rdf:RDF/rdf:Description/@rdf:about"/>&gt; dc:hasPart ?a .
           ?a dc:identifier ?b .
           filter regex(str(?b), "^http:")}
+          order by ?b
         </xsl:variable>
         <xsl:variable name="hgvdoc">
           <xsl:if test="$hgv"><xsl:copy-of select="doc(concat('http://papyri.info/mulgara/sparql?query=', encode-for-uri($query)))"/></xsl:if>
         </xsl:variable>
+        <xsl:variable name="children" select="if ($hgv) then pi:get-toc($hgvdoc//sl:result) else pi:get-toc(//dc:hasPart) "/>
 
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <html lang="en">
@@ -143,7 +145,7 @@
                         <ul>
                           <xsl:for-each select="$children">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -154,7 +156,7 @@
                           <xsl:for-each select="$children[position() &lt; 41]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
                               <xsl:when test="$hgv">
-                                <xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                                <xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -162,7 +164,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; 40]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -172,7 +174,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &lt; 41]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -180,7 +182,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; 40 and position() &lt; 81]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -188,7 +190,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; 80]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -198,7 +200,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &lt; 41]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -206,7 +208,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; 40 and position() &lt; 81]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -214,7 +216,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; 80 and position() &lt; 121]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -222,7 +224,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; 120]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -233,7 +235,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &lt; $csize + 1]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -241,7 +243,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; $csize and position() &lt; ($csize * 2) + 1]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -249,7 +251,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; ($csize * 2) and position() &lt; ($csize * 3) + 1]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -257,7 +259,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; ($csize * 3) and position() &lt; ($csize * 4) + 1]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -265,7 +267,7 @@
                         <ul style="margin-left:2em;float:left;">
                           <xsl:for-each select="$children[position() &gt; ($csize * 4)]">
                             <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="replace(pi:get-id($hgvdoc//rdf:Description[@rdf:about = current()]/dc:identifier/@rdf:resource), '_', ' ')"/></xsl:when>
+                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
                               <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
                             </xsl:choose></a></li>
                           </xsl:for-each>
@@ -524,11 +526,22 @@
   </xsl:template>
   
   <xsl:function name="pi:get-toc">
-    <xsl:param name="parts"></xsl:param>
-    <xsl:for-each select="$parts">
-      <xsl:sort select="replace(pi:get-id(@rdf:resource), '[-a-z;/_,.]', '')" data-type="number"/>
-      <xsl:sequence select="string(@rdf:resource)"/>
-    </xsl:for-each>
+    <xsl:param name="parts"/>
+    <xsl:choose>
+      <xsl:when test="$parts[1]/@rdf:resource">
+        <xsl:for-each select="$parts">
+          <xsl:sort select="replace(pi:get-id(@rdf:resource), '[-a-z;/_,.]', '')" data-type="number"/>
+          <xsl:sequence select="string(@rdf:resource)"/>
+        </xsl:for-each>
+      </xsl:when>
+      <xsl:when test="$parts[1]/sl:binding">
+        <xsl:for-each select="$parts">
+          <xsl:sort select="replace(sl:binding[@name='a']/sl:uri, '[-a-zA-Z;/_,.]', '')" data-type="number"/>
+          <xsl:sequence select="string(sl:binding[@name='a']/sl:uri)"/>
+        </xsl:for-each>
+      </xsl:when>
+    </xsl:choose>
+    
   </xsl:function>
   
   <xsl:template match="t:TEI" mode="metadata">

@@ -194,6 +194,8 @@
   
   <xsl:template name="metadata">
     <xsl:param name="docs"/>
+    <field name="display_place"><xsl:value-of select="normalize-space(string-join($docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/></field>
+    <field name="display_date"><xsl:value-of select="pi:get-date-range($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate/(@when|@notBefore|@notAfter))"/></field>
     <field name="metadata">
       <!-- Title -->
       <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, ' '))"/><xsl:text> </xsl:text>
@@ -210,7 +212,7 @@
       <!-- Translations -->
       <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations'], ' '))"/><xsl:text> </xsl:text>
       <!-- Provenance -->
-      <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p/t:place[@type='ancientFindspot']), ' '))"/><xsl:text> </xsl:text>
+      <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/><xsl:text> </xsl:text>
       <!-- Material -->
       <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material, ' '))"/><xsl:text> </xsl:text>
       <!-- Language -->
@@ -330,16 +332,64 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:function name="pi:iso-date-to-num">
-    <xsl:param name="date"/>
+    <xsl:function name="pi:iso-date-to-num">
+      <xsl:param name="date"/>
+      <xsl:choose>
+        <xsl:when test="starts-with($date, '-')">
+          <xsl:sequence select=" number(substring($date, 1, 5))"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:sequence select="number(substring($date, 1, 4))"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:function>
+  
+  <xsl:function name="pi:get-date-range">
+    <xsl:param name="date-seq"/>
+    <xsl:variable name="min" select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
+    <xsl:variable name="max" select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
     <xsl:choose>
-      <xsl:when test="starts-with($date, '-')">
-        <xsl:sequence select=" number(substring($date, 1, 5))"/>
+      <xsl:when test="$min = $max"><xsl:sequence select="$min"/></xsl:when>
+      <xsl:otherwise><xsl:sequence select="concat($min, ' - ', $max)"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="pi:get-min-date">
+    <xsl:param name="date-seq"/>
+    <xsl:param name="current"/>
+    <xsl:choose>
+      <xsl:when test="count($date-seq) = 0">
+        <xsl:choose>
+          <xsl:when test="$current le 0"><xsl:sequence select="concat(abs($current), ' BCE')"/></xsl:when>
+          <xsl:otherwise><xsl:sequence select="concat($current, ' CE')"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="pi:iso-date-to-num($date-seq[1]) lt $current">
+        <xsl:sequence select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="number(substring($date, 1, 4))"/>
+        <xsl:sequence select="pi:get-min-date(remove($date-seq, 1), $current)"/>
       </xsl:otherwise>
     </xsl:choose>
-    
   </xsl:function>
+  
+  <xsl:function name="pi:get-max-date">
+    <xsl:param name="date-seq"/>
+    <xsl:param name="current"/>
+    <xsl:choose>
+      <xsl:when test="count($date-seq) = 0">
+        <xsl:choose>
+          <xsl:when test="$current le 0"><xsl:sequence select="concat(abs($current), ' BCE')"/></xsl:when>
+          <xsl:otherwise><xsl:sequence select="concat($current, ' CE')"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="pi:iso-date-to-num($date-seq[1]) gt $current">
+        <xsl:sequence select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="pi:get-max-date(remove($date-seq, 1), $current)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
 </xsl:stylesheet>
