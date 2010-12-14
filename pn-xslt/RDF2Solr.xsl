@@ -73,14 +73,14 @@
             <field name="id">http://papyri.info/ddbdp/<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']"/></field>
             <xsl:for-each select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type != 'HGV']">
               <xsl:choose>
-                <xsl:when test="@type='ddb-hybrid'"><field name="id">http://papyri.info/ddbdp/<xsl:value-of select="."/></field></xsl:when>
-                <xsl:when test="@type='apisid'"><field name="id">http://papyri.info/apis/<xsl:value-of select="."/></field></xsl:when>
+                <xsl:when test="@type='ddb-hybrid'"><field name="identifier">http://papyri.info/ddbdp/<xsl:value-of select="."/></field></xsl:when>
+                <xsl:when test="@type='apisid'"><field name="identifier">http://papyri.info/apis/<xsl:value-of select="."/></field></xsl:when>
                 <xsl:otherwise>
                   <xsl:choose>
                     <xsl:when test="contains(., ' ')">
-                      <xsl:for-each select="tokenize(., ' ')"><field name="id"><xsl:value-of select="."/></field></xsl:for-each>
+                      <xsl:for-each select="tokenize(., ' ')"><field name="identifier"><xsl:value-of select="."/></field></xsl:for-each>
                     </xsl:when>
-                    <xsl:otherwise><field name="id"><xsl:value-of select="."/></field></xsl:otherwise>
+                    <xsl:otherwise><field name="identifier"><xsl:value-of select="."/></field></xsl:otherwise>
                   </xsl:choose>
                   <xsl:value-of select="."/></xsl:otherwise>
               </xsl:choose>
