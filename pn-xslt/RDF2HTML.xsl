@@ -93,12 +93,12 @@
           where { &lt;<xsl:value-of select="/rdf:RDF/rdf:Description/@rdf:about"/>&gt; dc:hasPart ?a .
           ?a dc:identifier ?b .
           filter regex(str(?b), "^http:")}
-          order by ?b
         </xsl:variable>
         <xsl:variable name="hgvdoc">
           <xsl:if test="$hgv"><xsl:copy-of select="doc(concat('http://papyri.info/mulgara/sparql?query=', encode-for-uri($query)))"/></xsl:if>
         </xsl:variable>
         <xsl:variable name="children" select="if ($hgv) then pi:get-toc($hgvdoc//sl:result) else pi:get-toc(//dc:hasPart) "/>
+        <xsl:message><xsl:value-of select="$children"/></xsl:message>
 
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <html lang="en">
@@ -536,14 +536,13 @@
       </xsl:when>
       <xsl:when test="$parts[1]/sl:binding">
         <xsl:for-each select="$parts">
-          <xsl:sort select="replace(sl:binding[@name='a']/sl:uri, '[-a-zA-Z;/_,.]', '')" data-type="number"/>
+          <xsl:sort select="number(replace(pi:decode-uri(sl:binding[@name='b']/sl:uri), '[^0-9]', ''))"/>
           <xsl:sequence select="string(sl:binding[@name='a']/sl:uri)"/>
         </xsl:for-each>
       </xsl:when>
     </xsl:choose>
-    
   </xsl:function>
-  
+    
   <xsl:template match="t:TEI" mode="metadata">
     <xsl:variable name="md-collection"><xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
