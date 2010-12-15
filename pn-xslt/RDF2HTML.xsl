@@ -98,8 +98,6 @@
           <xsl:if test="$hgv"><xsl:copy-of select="doc(concat('http://papyri.info/mulgara/sparql?query=', encode-for-uri($query)))"/></xsl:if>
         </xsl:variable>
         <xsl:variable name="children" select="if ($hgv) then pi:get-toc($hgvdoc//sl:result) else pi:get-toc(//dc:hasPart) "/>
-        <xsl:message><xsl:value-of select="$children"/></xsl:message>
-
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <html lang="en">
           <head>
