@@ -341,6 +341,14 @@ span.term {
   border: thin solid gray;
 }
 
+span.resulthead {
+  background:#e8e8e8;
+  display:block;
+  margin-left:-2px;
+  padding:2px;
+  width:100%;
+}
+
 div#examples {
   font-size: 77%;
 }
@@ -373,4 +381,8 @@ table#resources h1 {
 
 table#resources p {
   padding:0.25em;
+}
+
+div#related h4 {
+  font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 }

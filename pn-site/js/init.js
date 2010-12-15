@@ -33,7 +33,18 @@ function init() {
             closingDelay: 500
         });
     });
-    jQuery("[xml:id]").each( function (i, elt) {
-       elt.id = jQuery(elt).attr("xml:id"); 
-    }); 
+    jQuery.getJSON("/mulgara/sparql/?query="
+        + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
+        + "select ?subject "
+        + "from <rmi://localhost/papyri.info#pi> "
+        + "where { ?subject dc:references <http://papyri.info" + window.location.pathname.replace(/\/$/, "") + "/source>}")
+        + "&format=json", function(data) {
+            if (data.results.bindings.length > 0) {
+                jQuery("#controls").append('<div id="related" class="ui-widget-content ui-corner-all" style="margin-left:2em"><h4>related resources</h4></div>')
+                jQuery.each(data.results.bindings, function(i, row) {
+                    var val = row.subject.value;
+                    jQuery("#related").append('<a href="'+ val + '" style="margin-left:1em" target="_blank">GLRT</a>');
+                })
+            }
+    });
 }
