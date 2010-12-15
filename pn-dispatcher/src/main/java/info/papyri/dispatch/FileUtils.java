@@ -398,8 +398,11 @@ public class FileUtils {
         if (query.contains("^") || query.contains("ngram")) {
           patterns[i] = Pattern.compile(find.get(i).toLowerCase()
                 .replaceAll("([^ ^])", sigla + "$1" + sigla)
-                .replace("^ ", sigla + "\\s+")
-                .replaceAll("\\s", "\\\\s+").replace("^", sigla + "\\bЖ*")
+                .replace("^ ^", "\\s+")
+                .replace("^", "(\\b)")
+                .replaceAll("\\s", "\\\\s+")
+                .replaceAll("^\\^", "(\\s|^)")
+                .replaceAll("^$", "(\\s|$)")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")

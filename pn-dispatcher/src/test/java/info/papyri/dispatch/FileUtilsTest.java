@@ -311,6 +311,25 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
 
+  public void testFindNgram() {
+    String query = "transcription_ngram_ia:(\"μεν\\^ \\^κα\")";
+    String id = "http://papyri.info/ddbdp/bgu;3;923";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("<span class=\"highlight\">μὲν [κα</span>");
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    int matches = 0;
+    for (String r : result) {
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+
   public void testHighlightLineNo() {
     String query = "transcription_ngram_ia:(θμοινεθυμις)";
     String id = "http://papyri.info/ddbdp/p.fuad.i.univ;;5";
