@@ -309,7 +309,7 @@ public class Search extends HttpServlet {
       for (SolrDocument doc : docs) {
         out.print("<li><span class=\"resulthead\"><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + uq +"\">"
                 + util.substringAfter(((String)doc.getFieldValue("id")), "http://papyri.info/").replace("/", " - ")
-                + "</a> " + doc.getFieldValue("display_date") + ", " + doc.getFieldValue("display_place") +"</span><br>");
+                + "</a> " + doc.getFieldValue("display_date") + ", " + doc.getFieldValue("display_place") +"</span>");
         for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
           out.print(line + "<br>\n");
         }
