@@ -291,7 +291,6 @@
           <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
             <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-            <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cardo" />
             <title>
               <xsl:call-template name="get-references"/>
             </title>
