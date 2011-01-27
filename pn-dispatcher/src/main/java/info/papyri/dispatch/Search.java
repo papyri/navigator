@@ -295,7 +295,7 @@ public class Search extends HttpServlet {
       sq.setSortField(sort, SolrQuery.ORDER.desc);
     }
     sq.setRows(rows);
-    sq.setQuery(q);
+    sq.setQuery(q.replace("ς", "σ"));
 
     try {
       QueryResponse rs = solr.query(sq);

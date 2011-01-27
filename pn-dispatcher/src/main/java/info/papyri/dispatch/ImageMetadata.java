@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author hcayless
  */
 public class ImageMetadata extends HttpServlet {
-   
+
+    private byte[] b = new byte[8192];
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -31,7 +32,6 @@ public class ImageMetadata extends HttpServlet {
                   + request.getParameter("url")
                   + "&svc_id=info:lanl-repo/svc/getMetadata");
           InputStream in = url.openStream();
-          byte[] b = new byte[1024];
           int read = 0;
           while ((read = in.read(b)) > 0) {
             out.write(b, 0, read);
