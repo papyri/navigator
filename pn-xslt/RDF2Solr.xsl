@@ -96,10 +96,10 @@
             <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
             <!-- transcription fields are 8-fold: plain, plain ignore diacriticals, plain ignore case, plain ignore case and diacriticals,
               ngram, ngram ignore diacriticals, ngram ignore case, ngram ignore case and diacriticals-->
-            <field name="transcription"><xsl:value-of select="$textnfc"/></field>
-            <field name="transcription_id"><xsl:value-of select="replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')"/></field>
-            <field name="transcription_ic"><xsl:value-of select="lower-case($textnfc)"/></field>
-            <field name="transcription_ia"><xsl:value-of select="lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''))"/></field>
+            <field name="transcription"><xsl:value-of select="translate($textnfc, 'ς', 'σ')"/></field>
+            <field name="transcription_id"><xsl:value-of select="translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"/></field>
+            <field name="transcription_ic"><xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"/></field>
+            <field name="transcription_ia"><xsl:value-of select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"/></field>
             <!--
             <field name="transcription_ngram">
               <xsl:for-each select="tokenize($textnfc, '\s+')">
@@ -118,7 +118,7 @@
             </field>
             -->
             <field name="transcription_ngram_ia">
-              <xsl:for-each select="tokenize(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), '\s+')">
+              <xsl:for-each select="tokenize(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), '\s+')">
                 <xsl:if test="string-length(normalize-space(.)) &gt; 0"><xsl:text>^</xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>^ </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
@@ -247,7 +247,7 @@
       <xsl:choose>
         <xsl:when test="pi:iso-date-to-num(@notBefore) and pi:iso-date-to-num(@notAfter)">
           <field name="date_start"><xsl:value-of select="pi:iso-date-to-num(@notBefore)"/></field>
-          <field name="date_end"><xsl:value-of select="pi:iso-date-to-num(@notBefore)"/></field>
+          <field name="date_end"><xsl:value-of select="pi:iso-date-to-num(@notAfter)"/></field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@when)">
           <field name="date_start"><xsl:value-of select="pi:iso-date-to-num(@when)"/></field>
@@ -255,8 +255,10 @@
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@notBefore)">
           <field name="date_start"><xsl:value-of select="pi:iso-date-to-num(@notBefore)"/></field>
+          <field name="date_end"><xsl:value-of select="pi:iso-date-to-num(@notBefore)"/></field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@notAfter)">
+          <field name="date_start"><xsl:value-of select="pi:iso-date-to-num(@notAfter)"/></field>
           <field name="date_end"><xsl:value-of select="pi:iso-date-to-num(@notAfter)"/></field>
         </xsl:when>
       </xsl:choose>
