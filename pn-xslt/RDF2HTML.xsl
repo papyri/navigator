@@ -336,10 +336,10 @@
                         <div id="metadatacontrols" class="ui-widget-content ui-corner-all">
                           <label for="mdt">metadata</label><input type="checkbox" name="metadata" id="mdt" checked="checked"/><br/>
                           <xsl:if test="$hgv">
-                            <label for="hgvm">HGV metadata</label><input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
+                            <label for="hgvm">HGV data</label><input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
                           </xsl:if>
                           <xsl:if test="$apis">
-                            <label for="apism">APIS metadata</label><input type="checkbox" name="apis" id="apism" checked="checked"/>
+                            <label for="apism">APIS catalog record</label><input type="checkbox" name="apis" id="apism" checked="checked"/>
                           </xsl:if>
                         </div>
                       </xsl:if>
@@ -551,12 +551,12 @@
         <xsl:choose>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
-              HGV Metadata for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
+              HGV Data for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
             </h2>
           </xsl:when>
           <xsl:otherwise>
             <h2>
-              APIS Metadata for <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
+              APIS Catalog Record for <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
             </h2>
           </xsl:otherwise>
         </xsl:choose>
@@ -584,6 +584,8 @@
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:textLang" mode="metadata"/>
             <!-- Date -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
+            <!-- Commentary -->
+            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']" mode="metadata"/>
             <!-- Notes (general|lines|palaeography|recto/verso|conservation|preservation) -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:note" mode="metadata"/>
             <!-- Print Illustrations -->
@@ -652,6 +654,14 @@
         <td><xsl:value-of select="."/></td>
       </tr>
     </xsl:for-each>
+  </xsl:template>
+  
+  <!-- Commentary -->
+  <xsl:template match="t:div[@type = 'commentary']" mode="metadata">
+    <tr>
+      <th>Commentary</th>
+      <td><xsl:value-of select="t:p"/></td>
+    </tr>
   </xsl:template>
   
   <!-- Print Illustrations -->
