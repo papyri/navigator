@@ -223,9 +223,9 @@ public class Search extends HttpServlet {
       }
       if (ds != null || de != null) {
         if (q == null) {
-          q = "date_start:[" + qds + " TO " + qde + "] AND date_end:[" + qds + " TO " + qde + "]";
+          q = "(date_start:[" + qds + " TO " + qde + "] OR date_end:[" + qds + " TO " + qde + "])";
         } else {
-          q += " AND date_start:[" + qds + " TO " + qde + "] AND date_end:[" + qds + " TO " + qde + "]";
+          q += " AND (date_start:[" + qds + " TO " + qde + "] OR date_end:[" + qds + " TO " + qde + "])";
         }
       }
       if ((param = request.getParameter("ddbseries")) != null && !"".equals(param)) {
@@ -296,8 +296,6 @@ public class Search extends HttpServlet {
     }
     sq.setRows(rows);
     sq.setQuery(q.replace("ς", "σ"));
-    System.out.println(q);
-    System.out.println(q.replace("ς", "σ"));
     try {
       QueryResponse rs = solr.query(sq);
       SolrDocumentList docs = rs.getResults();
