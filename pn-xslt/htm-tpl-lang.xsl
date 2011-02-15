@@ -13,12 +13,4 @@
       </xsl:if>
   </xsl:template>
   
-  <!-- Idiosyncratic to InsAph - to be killed
-    <xsl:template match="term">
-    <span class="lang">
-      <xsl:call-template name="attr-lang"/>
-      <xsl:apply-templates/>
-    </span>
-  </xsl:template>-->
-  
 </xsl:stylesheet>

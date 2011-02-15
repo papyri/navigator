@@ -9,7 +9,7 @@
   <!-- Apparatus framework -->
   <xsl:template name="tpl-apparatus">
     <!-- An apparatus is only created if one of the following is true -->
-    <xsl:if test=".//t:choice[child::t:sic and child::t:corr] | .//t:subst | .//t:app |        
+     <xsl:if test=".//t:choice[child::t:sic and child::t:corr] | .//t:choice[child::t:orig and child::t:reg] | .//t:subst | .//t:app |        
        .//t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |
        .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
       
@@ -19,7 +19,7 @@ Apparatus
 
 </xsl:text>
          <!-- An entry is created for-each of the following instances -->
-      <xsl:for-each select=".//t:choice[child::t:sic and child::t:corr] | .//t:subst | .//t:app |
+       <xsl:for-each select=".//t:choice[child::t:sic and child::t:corr] | .//t:choice[child::t:orig and child::t:reg] | .//t:subst | .//t:app |
          .//t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |
          .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
         
@@ -49,7 +49,10 @@ Apparatus
     <xsl:param name="location"/>
     
       <!-- Only produces an indicator if it is not nested in an element that would be in apparatus -->
-    <xsl:if test="not(ancestor::t:choice[child::t:sic and child::t:corr] or ancestor::t:subst or ancestor::t:app or        ancestor::t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |       ancestor::t:del[@rend='slashes' or @rend='cross-strokes'])">
+    <xsl:if test="not(ancestor::t:choice or ancestor::t:subst or ancestor::t:app or
+       ancestor::t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or
+       @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |
+       ancestor::t:del[@rend='slashes' or @rend='cross-strokes'])">
          <xsl:choose>
             <xsl:when test="$location = 'text'">
                <xsl:text>(*)</xsl:text>

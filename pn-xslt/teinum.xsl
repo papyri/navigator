@@ -7,19 +7,18 @@
   
   <xsl:template match="t:num[child::node()]">
       <xsl:choose>
-         <xsl:when test="ancestor::t:*[@xml:lang][1][@xml:lang = 'grc'] and not($leiden-style = 'ddbdp')">
-            <xsl:if test="@value &gt;= 1000">
+         <xsl:when test="ancestor::t:*[@xml:lang][1][@xml:lang = 'grc'] and not(($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch'))">
+            <xsl:if test="$edition-type='interpretive' and @value &gt;= 1000">
                <xsl:text>͵</xsl:text>
             </xsl:if>
             <xsl:apply-templates/>
-            <xsl:if test="not(@value mod 1000 = 0)">
+            <xsl:if test="$edition-type='interpretive' and not(@value mod 1000 = 0)">
                <xsl:text>´</xsl:text>
             </xsl:if>
          </xsl:when>
       
-         <xsl:when test="$leiden-style = 'ddbdp'">
+         <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
             <xsl:apply-templates/>
-<!--            <xsl:if test="contains(@value, '/') and not(@value = '1/2' or @value = '2/3' or @value = '3/4')">-->
             <xsl:if test="@rend='fraction'">
                <xsl:text>´</xsl:text>
             </xsl:if>

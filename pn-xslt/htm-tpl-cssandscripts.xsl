@@ -8,7 +8,7 @@
       <link rel="stylesheet" type="text/css" media="screen, projection">
          <xsl:attribute name="href">
             <xsl:choose>
-               <xsl:when test="$leiden-style = 'ddbdp'">
+               <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
                   <xsl:text>http://papyri.info/global.css</xsl:text>
                </xsl:when>
                <xsl:otherwise>

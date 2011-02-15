@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<?xm-well_formed path="C:\epiduke\code\epidoc_xslt\global-parameters.dtd"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <parameters>
   <!-- HTML site navigation -->
   <parameter>
@@ -18,12 +17,14 @@
     <value>london</value>
     <value>panciera</value>
     <value>seg</value>
+    <value>sammelbuch</value>
   </parameter>
   
   <parameter>
     <name>meta-style</name>
     <value on="yes">default</value>
     <value>hgv</value>
+    <value>sammelbuch</value>
   </parameter>
   
   <parameter>
