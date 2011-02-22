@@ -9,6 +9,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.net.SocketTimeoutException;
+import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.ServletConfig;
@@ -16,13 +21,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.JsonNode;
+
 /**
  *
  * @author hcayless
  */
 @WebServlet(name = "Reader", urlPatterns = {"/reader"})
 public class Reader extends HttpServlet {
-
+  private static String graph = "rmi://localhost/papyri.info#pi";
+  private static String path = "/sparql/";
+  private String mulgara;
   private String xmlPath = "";
   private String htmlPath = "";
   private FileUtils util;
@@ -34,6 +44,7 @@ public class Reader extends HttpServlet {
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     util = new FileUtils(xmlPath, htmlPath);
+    mulgara = config.getInitParameter("mulgaraUrl");
   }
 
   /**
@@ -61,20 +72,32 @@ public class Reader extends HttpServlet {
       } else if (page.contains("/")) {
         String collection = FileUtils.substringBefore(page, "/");
         String item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
+        File file = null;
         if (item.endsWith("/source")) {
           response.setContentType("application/xml;charset=UTF-8");
-          send(response, util.getXmlFile(collection, item.replace("/source", "")));
+          file = util.getXmlFile(collection, item.replace("/source", ""));
+          if (!file.exists()) { //use triple store to resolve to source file
+            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Xml");
+          }
         } else if (page.endsWith("text")) {
           response.setContentType("text/plain;charset=UTF-8");
-          send(response, util.getTextFile(collection, item.replace("/text", "")));
+          file = util.getTextFile(collection, item.replace("/text", ""));
+          if (!file.exists()) { //use triple store to resolve to source file
+            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Text");
+          }
         } else {
           response.setContentType("text/html;charset=UTF-8");
-          if (request.getParameter("q") != null) {
-            sendWithHighlight(response, util.getHtmlFile(collection, item), request.getParameter("q"));
-          } else {
-            send(response, util.getHtmlFile(collection, item));
+          file = util.getHtmlFile(collection, item);
+          if (!file.exists()) { //use triple store to resolve to source file
+            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Html");
           }
         }
+
+        if (request.getParameter("q") != null) {
+            sendWithHighlight(response, file, request.getParameter("q"));
+          } else {
+            send(response, file);
+          }
       }
     } else {
       response.sendError(response.SC_NOT_FOUND);
@@ -119,6 +142,36 @@ public class Reader extends HttpServlet {
     } else {
       response.sendError(response.SC_NOT_FOUND);
     }
+  }
+
+  private File resolveFile(String page, String type) {
+    File result = null;
+    String sparql = "prefix dc: <http://purl.org/dc/terms/> "
+                  + "select ?related "
+                  + "from <rmi://localhost/papyri.info#pi> "
+                  + "where { <http://papyri.info/" + page +"> dc:relation ?related . "
+                  + "filter regex(string(?related), \"^http://papyri.info/(ddbdp|hgv)\") }";
+    try {
+      URL m = new URL(mulgara + path + "?" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
+      HttpURLConnection http = (HttpURLConnection)m.openConnection();
+      http.setConnectTimeout(2000);
+      ObjectMapper o = new ObjectMapper();
+      JsonNode root = o.readValue(http.getInputStream(), JsonNode.class);
+      Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
+      String uri = "";
+      while (i.hasNext()) {
+        uri = i.next().path("related").path("value").getValueAsText();
+        if (uri.contains("ddbdp/")) {
+          result = (File)util.getClass().getMethod("get"+type+"File", String.class).invoke(util, uri);
+        }
+      }
+      if (uri.contains("hgv/")) {
+        result = (File)util.getClass().getMethod("get"+type+"File", String.class).invoke(util, uri);
+      }
+    } catch (Exception e) {
+      return null;
+    }
+    return result;
   }
 
 

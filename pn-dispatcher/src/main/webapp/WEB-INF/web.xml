@@ -39,6 +39,10 @@
             <param-name>htmlPath</param-name>
             <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
+        <init-param>
+            <param-name>mulgaraUrl</param-name>
+            <param-value>http://localhost:8090</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>ImageMetadata</servlet-name>

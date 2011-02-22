@@ -263,6 +263,18 @@ public class FileUtils {
     return loadFile(getHtmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/")));
   }
 
+  public File getTextFileFromId(String id) {
+    return this.getTextFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+  }
+
+  public File getHtmlFileFromId(String id) {
+    return this.getHtmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+  }
+
+  public File getXmlFileFromId(String id) {
+    return this.getXmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+  }
+
   /**
    * Reads the given File into a String and returns it
    * @param f

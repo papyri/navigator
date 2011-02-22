@@ -13,6 +13,22 @@
             <name>Repository hosting the jee6 artifacts</name>
             <url>http://download.java.net/maven/2</url>
         </repository>
+        <repository>
+          <releases>
+            <enabled>false</enabled>
+            <updatePolicy>always</updatePolicy>
+            <checksumPolicy>warn</checksumPolicy>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+            <checksumPolicy>fail</checksumPolicy>
+          </snapshots>
+          <id>codehausSnapshots</id>
+          <name>Codehaus Snapshots</name>
+          <url>http://snapshots.maven.codehaus.org/maven2</url>
+          <layout>default</layout>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -45,6 +61,11 @@
           <groupId>org.antlr</groupId>
           <artifactId>antlr-runtime</artifactId>
           <version>3.2</version>
+        </dependency>
+        <dependency>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-mapper-asl</artifactId>
+          <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
