@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: tpl-apparatus.xsl 1447 2008-08-07 12:57:55Z zau $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="1.0">
 
   <!-- Generates the apparatus from the edition -->
@@ -12,6 +12,7 @@
     2. Indicator in text: [htm | txt]-element.xsl to add call-template to [htm | txt]-tpl-apparatus.xsl for links and/or stars.
     3. Add to ddbdp-app template below using local-name() to define context
   -->
+  
 
   <!-- Defines the output of individual elements in apparatus -->
   <xsl:template name="ddbdp-app">
@@ -22,7 +23,7 @@
          </xsl:for-each>
       </xsl:variable>
       <xsl:choose>
-         <xsl:when test="not(ancestor::t:choice[child::t:sic and child::t:corr] or ancestor::t:subst or ancestor::t:app or
+         <xsl:when test="not(ancestor::t:choice or ancestor::t:subst or ancestor::t:app or
             ancestor::t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis'
             or @rend = 'circumflex'])">
             <xsl:value-of select="$div-loc"/>
@@ -47,12 +48,17 @@
                  <xsl:apply-templates select="t:corr/node()"/>
               </xsl:when>
               <xsl:otherwise>
+                 <!-- when ddbdp changeover happens:
+                    <xsl:text>Read </xsl:text>
+                    <xsl:apply-templates select="t:corr/node()"/>
+                    <xsl:text> (correction)</xsl:text>
+                 -->
                  <xsl:apply-templates select="t:sic/node()"/>
-              </xsl:otherwise>
+                 <xsl:call-template name="childCertainty"/>
+                 <xsl:text> papyrus</xsl:text>
+             </xsl:otherwise>
            </xsl:choose>
            
-           <xsl:call-template name="childCertainty"/>
-           <xsl:text> pap.</xsl:text>
            
         </xsl:when>
         
@@ -64,12 +70,16 @@
                  <xsl:apply-templates select="t:reg/node()"/>
               </xsl:when>
               <xsl:otherwise>
+                 <!-- when ddbdp changeover happens:
+                    <xsl:text>Read </xsl:text>
+                    <xsl:apply-templates select="t:reg/node()"/>
+                 -->
                  <xsl:apply-templates select="t:orig/node()"/>
+                 <xsl:call-template name="childCertainty"/>
+                 <xsl:text> papyrus</xsl:text>
               </xsl:otherwise>
            </xsl:choose>
            
-           <xsl:call-template name="childCertainty"/>
-           <xsl:text> pap.</xsl:text>
            
         </xsl:when>
         

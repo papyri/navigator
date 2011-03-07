@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: teilb.xsl 1447 2008-08-07 12:57:55Z zau $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="1.0">
   <!-- Imported by [htm|txt]-teilb.xsl -->
   
@@ -25,6 +25,15 @@
             </xsl:when>
          </xsl:choose>
       </xsl:if>
+     <xsl:if test="$leiden-style = 'ddbdp' and $leiden-style = 'sammelbuch'">
+        <xsl:choose>
+           <xsl:when test="@rend">
+              <xsl:text> (</xsl:text>
+              <xsl:value-of select="@rend"/>
+              <xsl:text>) </xsl:text>
+           </xsl:when>
+        </xsl:choose>
+     </xsl:if>
   </xsl:template>
   
 

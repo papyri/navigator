@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" version="1.0">
+   xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="1.0">
    <!-- html hi part of transformation in htm-teihi.xsl -->
 
    <xsl:template match="t:hi">
@@ -15,7 +15,8 @@
                </xsl:call-template>
             </xsl:if>
          </xsl:when>
-         <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+         <!-- I *think* this entire "xsl:when" is redundant now
+            <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
             <xsl:choose>
                <xsl:when test="@rend='superscript'">
                   <xsl:text>\</xsl:text>
@@ -31,7 +32,7 @@
                   <xsl:apply-templates/>
                </xsl:otherwise>
             </xsl:choose>
-         </xsl:when>
+         </xsl:when>-->
          <xsl:otherwise>
             <xsl:apply-templates/>
          </xsl:otherwise>

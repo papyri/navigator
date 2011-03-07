@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: teigap.xsl 1487 2008-08-11 14:38:11Z zau $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" version="1.0">
+   xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="1.0">
    <!-- Templates imported by [htm|txt]teigap.xsl -->
 
    <!-- style of the dot defined here -->
@@ -143,9 +143,12 @@
       <xsl:choose>
          <xsl:when test="@extent='unknown'">
             <xsl:choose>
-               <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+               <xsl:when test="$leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch'">
                   <xsl:choose>
-                     <xsl:when test="desc = 'vestiges' and @reason = 'illegible'">
+                     <xsl:when test="@reason='lost' and @unit='line'"> <!--and (not(preceding-sibling::t:lb[2]) or not(following-sibling::*))-->
+                        <xsl:text>-- -- -- -- -- -- -- -- -- --</xsl:text>
+                     </xsl:when>
+                     <xsl:when test="t:desc = 'vestiges' and @reason = 'illegible'">
                         <xsl:call-template name="tpl-vest">
                            <xsl:with-param name="circa" select="$circa"/>
                         </xsl:call-template>
@@ -461,6 +464,7 @@
       </xsl:if>
    </xsl:template>
 
+
    <!-- Template for vestiges -->
    <xsl:template name="tpl-vest">
       <xsl:param name="circa"/>
@@ -468,8 +472,10 @@
       <xsl:value-of select="$circa"/>
       <xsl:text>traces</xsl:text>
       <xsl:if test="not(@extent = 'unknown')">
-         <xsl:text/>
-         <xsl:value-of select="@atLeast"/> - <xsl:value-of select="@atMost"/>
+         <xsl:text> </xsl:text>
+         <xsl:value-of select="@atLeast"/>
+         <xsl:text> - </xsl:text>
+         <xsl:value-of select="@atMost"/>
          <xsl:choose>
             <xsl:when test="@unit = 'line'">
                <xsl:text> line</xsl:text>

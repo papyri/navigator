@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: teinum.xsl 1447 2008-08-07 12:57:55Z zau $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="1.0">  
   <!-- latinnum span added in htm-teinum.xsl -->
   
@@ -19,6 +19,7 @@
       
          <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
             <xsl:apply-templates/>
+            <!--<xsl:if test="@rend='tick'">-->
             <xsl:if test="@rend='fraction'">
                <xsl:text>´</xsl:text>
             </xsl:if>
