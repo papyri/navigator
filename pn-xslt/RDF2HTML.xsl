@@ -52,6 +52,7 @@
   <xsl:import href="teisicandcorr.xsl"/>
   <xsl:import href="teispace.xsl"/>
   <xsl:import href="teisupplied.xsl"/>
+  <xsl:import href="teisurplus.xsl"/>
   <xsl:import href="teiunclear.xsl"/>
   
   <!-- html related stylesheets for named templates -->
