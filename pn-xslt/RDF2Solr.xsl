@@ -37,14 +37,17 @@
   <xsl:import href="teimilestone.xsl"/>
   <xsl:import href="teinum.xsl"/>
   <xsl:import href="teiorig.xsl"/>
+  <xsl:import href="teiorigandreg.xsl"/>
   <xsl:import href="teiq.xsl"/>
   <xsl:import href="teiseg.xsl"/>
   <xsl:import href="teisicandcorr.xsl"/>
   <xsl:import href="teispace.xsl"/>
   <xsl:import href="teisupplied.xsl"/>
+  <xsl:import href="teisurplus.xsl"/>
   <xsl:import href="teiunclear.xsl"/>
   
   <xsl:import href="txt-tpl-apparatus.xsl"/>
+  <xsl:import href="txt-tpl-linenumberingtab.xsl"/>
   
   <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
