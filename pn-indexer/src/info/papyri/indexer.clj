@@ -1,4 +1,6 @@
 (ns info.papyri.indexer
+  (:gen-class
+   :name info.papyri.indexer)
   (:use clojure.contrib.math)
   (:import
     (clojure.lang ISeq)
@@ -302,38 +304,16 @@
       
 (defn get-lemmas
   [text]
-  (apply str (interpose " "  
-    (list* (for [word (.split text "\\s+")]
-      (apply str (interpose " " (.get @morphs (Normalizer/normalize 
-        (.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC)))))))))
-        
-(defn load-morphs 
-  [file]
-  (let [form (StringBuilder.)
-        lemma (StringBuilder.)
-        current (StringBuilder.)
-        handler (proxy [DefaultHandler] []
-          (startElement [uri local qname atts]
-            (doto current (.delete 0 (.length current)))
-            (doto current (.append qname))
-            (when (= qname "lemma")
-              (when (> (.length lemma) 0)
-                (doto lemma (.delete 0 (.length lemma)))))
-            (when (= qname "form")
-              (when (> (.length form) 0)
-                (doto form (.delete 0 (.length form))))))
-          (characters [ch start length]
-            (when (= (.toString current) "lemma")
-              (doto lemma (.append ch start length)))
-            (when (= (.toString current) "form")
-              (doto form (.append ch start length))))
-          (endElement [uri local qname]
-            (when (= qname "analysis")
-              (dosync (.put @morphs (.trim (.toString form)) 
-                (conj (set (.get @morphs (.trim (.toString form)))) (.trim (.toString lemma))))))))]
-    (.. SAXParserFactory newInstance newSAXParser
-                    (parse (InputSource. (FileInputStream. file)) 
-			   handler))))
+  (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/")
+	sq (SolrQuery.)
+	query (str "form:" (apply str (interpose " form:"
+				    (list* (for [word (.split text "\\s+")]
+					     (Normalizer/normalize 
+					      (.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC))))))
+	rs (.query solr sq)]
+    (apply str (interpose " "
+			  (list* (for [doc (.getResults rs)]
+				   (.getFieldValue doc "lemma")))))))
 
 (defn generate-html
   []
@@ -384,7 +364,7 @@
   []
   (.start (Thread. 
 	   (fn []
-	     (let [solr (StreamingUpdateSolrServer. solrurl 5000 5)]
+	     (let [solr (StreamingUpdateSolrServer. (str solrurl "pn-search-offline/") 5000 5)]
 	       (.setRequestWriter solr (BinaryRequestWriter.))
 	       (while (= (count @documents) 0)
 		 (Thread/sleep 30000))
@@ -402,15 +382,20 @@
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "texttemplates")
-  (println "Queueing DDbDP...")
-  (queue-collections "http://papyri.info/ddbdp" ())
-  (println (str "Queued " (count @html) " documents."))
-  (println "Queueing HGV...")
-  (queue-collections "http://papyri.info/hgv" '("ddbdp"))
-  (println (str "Queued " (count @html) " documents."))
-  (println "Queueing APIS...")
-  (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
-  (println (str "Queued " (count @html) " documents."))
+
+  (if (> (count args) 0)
+    (for [arg args]
+      (queue-collections arg ()))
+    (do
+      (println "Queueing DDbDP...")
+      (queue-collections "http://papyri.info/ddbdp" ())
+      (println (str "Queued " (count @html) " documents."))
+      (println "Queueing HGV...")
+      (queue-collections "http://papyri.info/hgv" '("ddbdp"))
+      (println (str "Queued " (count @html) " documents."))
+      (println "Queueing APIS...")
+      (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
+      (println (str "Queued " (count @html) " documents."))))
 
   (dosync (ref-set text @html))
   
@@ -421,19 +406,23 @@
   ;; Generate text
   (println "Generating text...")
   (generate-text)
-
-  (println "Loading morphs...")
-  (let [files '("/data/papyri.info/svn/pn/pn-lemmas/greek.morph.unicode.xml"
-		"/data/papyri.info/svn/pn/pn-lemmas/latin.morph.xml")
-	pool (Executors/newFixedThreadPool (count files))
-          tasks (map (fn [file]
-            (fn [] 
-	      (load-morphs file)))
-		     files)]
-     (doseq [future (.invokeAll pool tasks)]
-        (.get future))
-        (doto pool
-          (.shutdown)))
+ 
+  ;; Copy identical files
+  (println (str "Making " (count @links) " copies..."))
+  (let [pool (Executors/newFixedThreadPool nthreads)
+        tasks (map (fn [x]
+		     (fn []
+		       (try
+			 (copy (first x) (second x))
+		       (catch Exception e
+			 ;(.printStackTrace e)
+			 (println (str "Error copying file " (first x) " to " (second x)))))))
+		   @links)]
+   (doseq [future (.invokeAll pool tasks)]
+     (.get future))
+   (doto pool
+      (.shutdown))
+    (dosync (ref-set links nil)))
   
   ;; Start Solr indexing thread
   (index-solr)
@@ -475,10 +464,9 @@
     (index-solr))
 
   (dosync (ref-set html nil)
-	  (ref-set morphs nil)
 	  (ref-set text nil)
 	  (ref-set solrtemplates nil))
-  (let [solr (CommonsHttpSolrServer. solrurl)]
+  (let [solr (CommonsHttpSolrServer. (str solrurl "pn-search-offline/"))]
     (doto solr 
       (.commit)
       (.optimize))))

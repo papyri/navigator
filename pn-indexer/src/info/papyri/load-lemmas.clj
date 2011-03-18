@@ -20,7 +20,7 @@
     (org.xml.sax InputSource)
     (org.xml.sax.helpers DefaultHandler)))
 
-(def solrurl "http://localhost:8080/solr/morph-search/")
+(def solrurl "http://localhost:8082/solr/morph-search/")
 (def documents (ref (ConcurrentLinkedQueue.)))
 (def *current*)
 (def *doc*)
