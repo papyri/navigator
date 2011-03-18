@@ -29,7 +29,7 @@
     (org.xml.sax.helpers DefaultHandler)))
       
 (def filepath "/data/papyri.info/idp.data")
-(def xsltpath "/data/papyri.info/svn/pn/pn-xslt")
+(def xsltpath "/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8082/solr/")
 (def numbersurl "http://localhost:8090/sparql?query=")
