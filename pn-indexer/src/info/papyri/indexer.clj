@@ -472,4 +472,4 @@
       (.optimize))))
 
   
-(-main)
+(-main *Command-line-args*)

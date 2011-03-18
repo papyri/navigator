@@ -48,7 +48,7 @@ public class Search extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    solrUrl = config.getInitParameter("solrUrl");
+    solrUrl = config.getInitParameter("solrUrl") + "pn-search/";;
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     home = config.getInitParameter("home");
