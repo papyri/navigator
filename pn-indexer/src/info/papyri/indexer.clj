@@ -379,13 +379,11 @@
 		 (index-solr))))))
 
 (defn -main [& args]
-  (println args)
-
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "texttemplates")
 
-  (if (nil? args)
+  (if (nil? (first args))
     (do
       (println "Queueing DDbDP...")
       (queue-collections "http://papyri.info/ddbdp" ())
