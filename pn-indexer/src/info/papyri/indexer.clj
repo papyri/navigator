@@ -305,17 +305,18 @@
       
 (defn get-lemmas
   [text]
+  (when (> (.length text) 0)
   (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))
 	sq (SolrQuery.)
 	query (str "form:" (apply str (interpose " form:"
 				    (list* (for [word (.split text "\\s+")]
-					     (Normalizer/normalize 
-					      (.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC))))))]
+					     (.replaceAll (Normalizer/normalize 
+					      (.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC) "σ$" "ς"))))))]
 		(.setQuery sq query)
 		(def rs (.query solr sq))
     (apply str (interpose " "
 			  (list* (for [doc (.getResults rs)]
-				   (.getFieldValue doc "lemma")))))))
+				   (.getFieldValue doc "lemma"))))))))
 
 (defn generate-html
   []

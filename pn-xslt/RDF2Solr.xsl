@@ -84,7 +84,7 @@
                     </xsl:when>
                     <xsl:otherwise><field name="identifier"><xsl:value-of select="."/></field></xsl:otherwise>
                   </xsl:choose>
-                  <xsl:value-of select="."/></xsl:otherwise>
+                 </xsl:otherwise>
               </xsl:choose>
             </xsl:for-each>
             <xsl:for-each select="$relations">
