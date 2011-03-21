@@ -380,7 +380,7 @@
 	       (when (> (count @documents) 0)
 		 (index-solr))))))
 
-(defn -main [& args]
+(defn -index [& args]
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "texttemplates")
@@ -473,5 +473,8 @@
       (.commit)
       (.optimize))))
 
+(-main []
+       (when (= (first *command-line-args*) "index")
+	 (-index (rest *command-line-args*))
+       ))
   
-(-main *command-line-args*)
