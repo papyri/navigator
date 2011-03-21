@@ -310,8 +310,9 @@
 	query (str "form:" (apply str (interpose " form:"
 				    (list* (for [word (.split text "\\s+")]
 					     (Normalizer/normalize 
-					      (.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC))))))
-	rs (.query solr sq)]
+					      (.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC))))))]
+		(.setQuery sq query)
+		(def rs (.query solr sq))
     (apply str (interpose " "
 			  (list* (for [doc (.getResults rs)]
 				   (.getFieldValue doc "lemma")))))))
