@@ -10,6 +10,12 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,8 +36,14 @@ import javax.servlet.ServletConfig;
 public class Sync extends HttpServlet {
 
     private File gitDir;
+    /*
+     * success==false means that the repos could not be synchronized for some
+     * reason, perhaps a conflict, and that human intervention is called for.
+     */
     private boolean success = true;
     private String head = "";
+    private String dbUser;
+    private String dbPass;
     private Date gitSync;
     private Date canonicalSync;
 
@@ -39,6 +51,13 @@ public class Sync extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
       super.init(config);
       gitDir = new File(config.getInitParameter("gitDir"));
+      dbUser = config.getInitParameter("dbUser");
+      dbPass = config.getInitParameter("dbPass");
+      try {
+        head = getLastSync();
+      } catch (Exception e) {
+        success = false;
+      }
     }
    
     /** 
@@ -70,11 +89,9 @@ public class Sync extends HttpServlet {
 
     private void executeSync() {
       try {
-        head = getHead();
-        String oldHead = head;
         pull("canonical");
         pull("github");
-        List diffs = getDiffs(oldHead);
+        List diffs = getDiffs(getLastSync());
       } catch (Exception e) {
         if (success) success = false;
       }
@@ -84,6 +101,41 @@ public class Sync extends HttpServlet {
       // on failure, git reset to previous SHA
       // get list of files affected by pull: git diff --name-only SHA1 SHA2
       // execute indexing on file list
+    }
+
+    private String getLastSync() throws Exception {
+      String result = null;
+      Connection connect = null;
+      Class.forName("com.mysql.jdbc.Driver");
+      try {
+        connect = DriverManager.getConnection(
+                "jdbc:mysql://localhost/pn?"
+                + "user="+dbUser+"&password="+dbPass);
+        Statement st = connect.createStatement();
+        ResultSet rs = st.executeQuery("SELECT hash FROM sync_history WHERE date = (SELECT MAX(date) FROM sync_history)");
+        if (!rs.next()) {
+          result = getHead();
+        } else {
+          result = rs.getString("hash");
+        }
+      } finally {
+        connect.close();
+      }
+      return result;
+    }
+
+    private void storeHead() throws Exception {
+      Connection connect = null;
+      Class.forName("com.mysql.jdbc.Driver");
+      try {
+        connect = DriverManager.getConnection(
+                "jdbc:mysql://localhost/pn?"
+                + "user="+dbUser+"&password="+dbPass);
+        Statement st = connect.createStatement();
+        st.executeUpdate("INSERT INTO sync_history (hash) VALUES ("+head+")");
+      } finally {
+        connect.close();
+      }
     }
 
     private String getHead() throws Exception {
@@ -110,6 +162,7 @@ public class Sync extends HttpServlet {
         pb.directory(gitDir);
         pb.start().waitFor();
         head = getHead();
+        storeHead();
       } catch (Exception e) {
         success = false;
         reset(head);
@@ -136,7 +189,6 @@ public class Sync extends HttpServlet {
         }
       } catch (Exception e) {
         success = false;
-        reset(head);
         throw e;
       }
       return diffs;
