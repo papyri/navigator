@@ -28,7 +28,6 @@
   <xsl:import href="txt-teispace.xsl"/>
   <xsl:import href="txt-teisupplied.xsl"/>
   <xsl:import href="txt-teiref.xsl"/>
-  
   <xsl:import href="teiabbrandexpan.xsl"/>
   <xsl:import href="teiaddanddel.xsl"/>
   <xsl:import href="teichoice.xsl"/>

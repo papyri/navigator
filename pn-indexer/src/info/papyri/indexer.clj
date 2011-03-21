@@ -18,7 +18,7 @@
     (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
     (net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
     (net.sf.saxon.trans CompilerInfo XPathException)
-    (org.apache.solr.client.solrj SolrServer)
+    (org.apache.solr.client.solrj SolrServer SolrQuery)
     (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
@@ -305,7 +305,7 @@
       
 (defn get-lemmas
   [text]
-  (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/")
+  (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))
 	sq (SolrQuery.)
 	query (str "form:" (apply str (interpose " form:"
 				    (list* (for [word (.split text "\\s+")]
@@ -379,14 +379,13 @@
 		 (index-solr))))))
 
 (defn -main [& args]
+  (println args)
 
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "texttemplates")
 
-  (if (> (count args) 0)
-    (for [arg args]
-      (queue-collections arg ()))
+  (if (nil? args)
     (do
       (println "Queueing DDbDP...")
       (queue-collections "http://papyri.info/ddbdp" ())
@@ -396,7 +395,9 @@
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
-      (println (str "Queued " (count @html) " documents."))))
+      (println (str "Queued " (count @html) " documents.")))
+    (for [arg args]
+      (queue-collections arg ())))
 
   (dosync (ref-set text @html))
   
@@ -473,4 +474,4 @@
       (.optimize))))
 
   
-(-main *Command-line-args*)
+(-main *command-line-args*)

@@ -41,7 +41,6 @@
   <!-- tei stylesheets that are also used by start-txt -->
   <xsl:import href="teiabbrandexpan.xsl"/>
   <xsl:import href="teicertainty.xsl"/>
-  <xsl:import href="teiaddanddel.xsl"/>
   <xsl:import href="teichoice.xsl"/>
   <xsl:import href="teihandshift.xsl"/>
   <xsl:import href="teiheader.xsl"/>

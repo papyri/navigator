@@ -26,7 +26,6 @@
   <xsl:include href="txt-teispace.xsl"/>
   <xsl:include href="txt-teisupplied.xsl"/>
   <xsl:include href="txt-teiref.xsl"/>
-  
   <xsl:include href="teiabbrandexpan.xsl"/>
   <xsl:include href="teiaddanddel.xsl"/>
   <xsl:include href="teicertainty.xsl"/>
