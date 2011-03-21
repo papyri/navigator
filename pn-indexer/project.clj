@@ -7,7 +7,7 @@
                  [org.apache.solr/solr-solrj "1.4.1"]
                  [com.hp.hpl.jena/jena "2.6.2"]
                  [com.hp.hpl.jena/iri "0.7"]
-                 [net.sf.saxon/saxon9he "9.2.0.2"]
+                 [net.sf.saxon/saxon-he "9.3.0.4"]
                  [com.ibm.icu/icu4j "3.4.4"]
                  [log4j/log4j "1.2.16"]
                  [org.slf4j/slf4j-api "1.5.6"]
