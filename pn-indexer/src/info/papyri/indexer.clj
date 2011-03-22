@@ -219,7 +219,7 @@
 (defn relation-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select {?a}
+            select ?a
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:relation ?a }" url))
 
@@ -234,7 +234,7 @@
 (defn replaces-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select {?a}
+            select ?a
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:replaces ?a }" url))
 
@@ -249,7 +249,7 @@
 (defn is-replaced-by-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select {?a}
+            select ?a
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:isReplacedBy ?a }" url))
                     
@@ -274,10 +274,11 @@
   (let [answerlist (ArrayList.)]
     (dotimes [_ (.getRowCount answer)]
       (when (.next answer)
-	(doto answerlist (.add (list
+	(doto answerlist (.add (let [ans (ArrayList.)]
 				(dotimes [n (.getNumberOfVariables answer)]
-				  (.getObject answer n)))))))
-    (seq answerlist)))           
+				  (.add ans (.getObject answer n)))
+				(seq ans))))))
+    (seq answerlist)))
 
 (defn queue-item
   [url]
@@ -434,7 +435,7 @@
       (println "Queueing APIS...")
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
       (println (str "Queued " (count @html) " documents.")))
-    (doseq [arg args] (queue-item arg))
+    (doseq [arg args] (queue-item arg)))
 
   (dosync (ref-set text @html))
   
