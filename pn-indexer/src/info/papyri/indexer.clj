@@ -69,11 +69,11 @@
     (catch Exception e
       (println (str (.getMessage e) " copying " in " to " out ".")))))
 
-(defmacro init-templates
+(defn init-templates
   "Initialize XSLT template pool."
     [xslt, nthreads, pool]
-  `(dosync (ref-set ~pool (ConcurrentLinkedQueue.) ))
-  `(dotimes [n nthreads]
+  (dosync (ref-set (load-string pool) (ConcurrentLinkedQueue.) ))
+  (dotimes [n nthreads]
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
             configuration (Configuration.)
             compiler-info (CompilerInfo.)]
@@ -84,7 +84,7 @@
           (doto compiler-info
             (.setErrorListener (StandardErrorListener.))
             (.setURIResolver (StandardURIResolver. configuration)))
-          (dosync (.add  (str "@" ~pool) (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
+          (dosync (.add (load-string (str "@" pool)) (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
             
 (defn substring-after
   [string1 string2]
@@ -380,7 +380,7 @@
 	       (when (> (count @documents) 0)
 		 (index-solr))))))
 
-(defn -index [& args]
+(defn -main [& args]
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "texttemplates")
@@ -473,8 +473,5 @@
       (.commit)
       (.optimize))))
 
-(defn -main [args]
-       (when (= (first args) "index")
-	 (-index (rest args))
-       ))
   
+(-main *command-line-args*)
