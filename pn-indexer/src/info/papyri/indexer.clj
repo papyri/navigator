@@ -283,11 +283,7 @@
   [url]
   (let [relations (answer-seq (execute-query (relation-query url)))
        replaces (answer-seq (execute-query (replaces-query url)))
-       is-replaced-by (answer-seq (execute-query (is-replaced-by-query url)))
-       exclusion (some (set (for [x (filter 
-				     (fn [s] (and (.startsWith (.toString (last s)) "http://papyri.info")
-						  (not (.contains (.toString (last s)) "/images/")))) relations)] 
-			      (substring-before (substring-after (.toString (last x)) "http://papyri.info/") "/"))) exclude)]
+       is-replaced-by (answer-seq (execute-query (is-replaced-by-query url)))]
 
     (.add @html (list (str "file:" (get-filename url))
 		      (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
@@ -438,8 +434,7 @@
       (println "Queueing APIS...")
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
       (println (str "Queued " (count @html) " documents.")))
-    (for [arg args]
-      (queue-item arg)))
+    (doseq [arg args] (queue-item arg))
 
   (dosync (ref-set text @html))
   
