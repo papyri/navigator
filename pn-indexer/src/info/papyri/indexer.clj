@@ -208,7 +208,7 @@
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:hasPart ?a }" url url))
             
-(defn relation-query
+(defn batch-relation-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             construct {?a dc:relation ?b}
@@ -216,7 +216,14 @@
             where { <%s> dc:hasPart ?a .
                     ?a dc:relation ?b}" url))
 
-(defn replaces-query
+(defn relation-query
+  [url]
+  (format  "prefix dc: <http://purl.org/dc/terms/> 
+            select {?a}
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:relation ?a }" url))
+
+(defn batch-replaces-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             construct {?a dc:replaces ?b}
@@ -224,13 +231,27 @@
             where { <%s> dc:hasPart ?a .
                     ?a dc:replaces ?b }" url))
 
-(defn is-replaced-by-query
+(defn replaces-query
+  [url]
+  (format  "prefix dc: <http://purl.org/dc/terms/> 
+            select {?a}
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:replaces ?a }" url))
+
+(defn batch-is-replaced-by-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             construct {?a dc:isReplacedBy ?b}
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:hasPart ?a .
                     ?a dc:isReplacedBy ?b }" url))
+
+(defn is-replaced-by-query
+  [url]
+  (format  "prefix dc: <http://purl.org/dc/terms/> 
+            select {?a}
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:isReplacedBy ?a }" url))
                     
 (defn execute-query
   [query]
@@ -253,15 +274,35 @@
   (let [answerlist (ArrayList.)]
     (dotimes [_ (.getRowCount answer)]
       (when (.next answer)
-	(doto answerlist (.add (list (.getObject answer 0) (.getObject answer 1) (.getObject answer 2))))))
+	(doto answerlist (.add (list
+				(dotimes [n (.getNumberOfVariables answer)]
+				  (.getObject answer n)))))))
     (seq answerlist)))           
- 
+
+(defn queue-item
+  [url]
+  (let [relations (answer-seq (execute-query (relation-query url)))
+       replaces (answer-seq (execute-query (replaces-query url)))
+       is-replaced-by (answer-seq (execute-query (is-replaced-by-query url)))
+       exclusion (some (set (for [x (filter 
+				     (fn [s] (and (.startsWith (.toString (last s)) "http://papyri.info")
+						  (not (.contains (.toString (last s)) "/images/")))) relations)] 
+			      (substring-before (substring-after (.toString (last x)) "http://papyri.info/") "/"))) exclude)]
+
+    (.add @html (list (str "file:" (get-filename url))
+		      (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
+		      (list "related" (apply str (interpose " " (for [x relations] (.toString (first x))))))
+		      (list "replaces" (apply str (interpose " " (for [x replaces] (.toString (first x)))))) 
+		      (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (.toString (first x))))))))))
+  
+       
+
 (defn queue-items
   [url exclude]
   (let [items (execute-query (has-part-query url))
-        relations (answer-seq (execute-query (relation-query url)))
-        replaces (answer-seq (execute-query (replaces-query url)))
-        is-replaced-by (answer-seq (execute-query (is-replaced-by-query url)))]
+        relations (answer-seq (execute-query (batch-relation-query url)))
+        replaces (answer-seq (execute-query (batch-replaces-query url)))
+        is-replaced-by (answer-seq (execute-query (batch-is-replaced-by-query url)))]
         (while (.next items)
           (let [item (.getObject items 2)
                 related (if (empty? relations) ()
@@ -398,7 +439,7 @@
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
       (println (str "Queued " (count @html) " documents.")))
     (for [arg args]
-      (queue-items arg ())))
+      (queue-item arg)))
 
   (dosync (ref-set text @html))
   
