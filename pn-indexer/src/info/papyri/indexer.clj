@@ -380,10 +380,11 @@
 	       (when (> (count @documents) 0)
 		 (index-solr))))))
 
-(defn -index [& args]
-  (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "htmltemplates")
-  (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "solrtemplates")
-  (init-templates (str xsltpath "/MakeText.xsl") nthreads "texttemplates")
+(defn -main [& args]
+  (println args)
+  (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
+  (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
+  (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
 
   (if (nil? (first args))
     (do
@@ -397,10 +398,12 @@
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
       (println (str "Queued " (count @html) " documents.")))
     (for [arg args]
-      (queue-collections arg ())))
+      (queue-items arg ())))
 
   (dosync (ref-set text @html))
   
+  (println (str "Queued " (count @html) " documents."))
+ 
   ;; Generate HTML
   (println "Generating HTML...")
   (generate-html)
@@ -473,5 +476,3 @@
       (.commit)
       (.optimize))))
 
-(defn -main []
-  (-index *command-line-args*))
