@@ -466,8 +466,9 @@
       (.shutdown))
     (dosync (ref-set links nil)))
   
-  ;; Start Solr indexing thread
-  (index-solr)
+  ;; Start Solr indexing thread if we're doing the lot
+  (when (nil? (first args))
+    (index-solr))
   
   ;; Index docs queued in @text
   (println "Indexing text...")
@@ -508,7 +509,7 @@
   (dosync (ref-set html nil)
 	  (ref-set text nil)
 	  (ref-set solrtemplates nil))
-  (try ;; May fail if index-solr thread is still running
+  
     (let [solr (CommonsHttpSolrServer. (str solrurl "pn-search-offline/"))]
       (doto solr 
 	(.commit)
