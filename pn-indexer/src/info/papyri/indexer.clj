@@ -69,11 +69,11 @@
     (catch Exception e
       (println (str (.getMessage e) " copying " in " to " out ".")))))
 
-(defn init-templates
+(defmacro init-templates
   "Initialize XSLT template pool."
     [xslt, nthreads, pool]
-  (dosync (ref-set (load-string pool) (ConcurrentLinkedQueue.) ))
-  (dotimes [n nthreads]
+  `(dosync (ref-set ~pool (ConcurrentLinkedQueue.) ))
+  `(dotimes [n nthreads]
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
             configuration (Configuration.)
             compiler-info (CompilerInfo.)]
@@ -84,7 +84,7 @@
           (doto compiler-info
             (.setErrorListener (StandardErrorListener.))
             (.setURIResolver (StandardURIResolver. configuration)))
-          (dosync (.add (load-string (str "@" pool)) (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
+          (dosync (.add  (str "@" ~pool) (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
             
 (defn substring-after
   [string1 string2]
@@ -473,8 +473,8 @@
       (.commit)
       (.optimize))))
 
-(-main []
-       (when (= (first *command-line-args*) "index")
-	 (-index (rest *command-line-args*))
+(defn -main [args]
+       (when (= (first args) "index")
+	 (-index (rest args))
        ))
   
