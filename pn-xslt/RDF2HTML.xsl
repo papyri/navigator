@@ -335,7 +335,7 @@
                       <h4 style="text-align:center" id="titledate"></h4>
                     </xsl:if>
                     <xsl:if test="$ddbdp">
-                      <h4><a href="/editor/publications/create_from_identifier/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}">edit this document</a></h4>
+                      <h4 style="text-align:center"><a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}">edit this document</a></h4>
                     </xsl:if>
                     <div id="controls" class="ui-widget">
                       <xsl:if test="$hgv or $apis">

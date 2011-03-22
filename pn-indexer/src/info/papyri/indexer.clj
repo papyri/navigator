@@ -508,8 +508,9 @@
   (dosync (ref-set html nil)
 	  (ref-set text nil)
 	  (ref-set solrtemplates nil))
-  (let [solr (CommonsHttpSolrServer. (str solrurl "pn-search-offline/"))]
-    (doto solr 
-      (.commit)
-      (.optimize))))
+  (try ;; May fail if index-solr thread is still running
+    (let [solr (CommonsHttpSolrServer. (str solrurl "pn-search-offline/"))]
+      (doto solr 
+	(.commit)
+	(.optimize))))
 
