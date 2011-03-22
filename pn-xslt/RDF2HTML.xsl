@@ -334,6 +334,9 @@
                     <xsl:if test="$hgv or $apis">
                       <h4 style="text-align:center" id="titledate"></h4>
                     </xsl:if>
+                    <xsl:if test="$ddbdp">
+                      <h4><a href="/editor/publications/create_from_identifier/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}">edit this document</a></h4>
+                    </xsl:if>
                     <div id="controls" class="ui-widget">
                       <xsl:if test="$hgv or $apis">
                         <div id="metadatacontrols" class="ui-widget-content ui-corner-all">
@@ -388,6 +391,14 @@
                         <div class="transcription data">
                           <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
                           <xsl:apply-templates select="/t:TEI"/>
+                          <div id="history">
+                            <h3>History</h3>
+                            <ul style="display:none">
+                              <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change">
+                                <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
+                              </xsl:for-each>
+                            </ul>
+                          </div>
                           <p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a> © Duke Databank of Documentary Papyri.  
                             This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
                         </div>
@@ -515,6 +526,9 @@
                   result += $(".mdprov:first").text();
                 }
                 return result;
+              });
+              $("#history").click( function() {
+                $("#history>ul").toggle("blind");
               });
             </script>
           </body>
@@ -794,8 +808,8 @@
     <xsl:param name="links"/>
     <xsl:if test="$collection = 'hgv'">HGV </xsl:if><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
     <xsl:for-each select="$relations">
+      <xsl:if test="$relations[contains(., 'hgv/')]"> = HGV </xsl:if>
       <xsl:if test="contains(., 'hgv/') and doc-available(pi:get-filename(., 'xml'))">
-        <xsl:if test="position() = 1"> = HGV </xsl:if>
         <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
           <xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each><xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
       </xsl:if>
