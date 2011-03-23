@@ -31,8 +31,6 @@ public class FileUtils {
   }
 
   private char[] buffer = new char[8192];
-  private StringBuilder pathname = new StringBuilder();
-
   /**
    * Returns the HTML <code>java.io.File</code> for the given collection
    * and item.
@@ -41,7 +39,7 @@ public class FileUtils {
    * @return the HTML file
    */
   public File getHtmlFile(String collection, String item) {
-    if (pathname.length() > 0) pathname.delete(0, pathname.length());
+    StringBuilder pathname = new StringBuilder();
     pathname.append(htmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
@@ -131,7 +129,7 @@ public class FileUtils {
    * @return the text file
    */
   public File getTextFile(String collection, String item) {
-    if (pathname.length() > 0) pathname.delete(0, pathname.length());
+    StringBuilder pathname = new StringBuilder();
     pathname.append(htmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
@@ -191,7 +189,7 @@ public class FileUtils {
    * @return the XML file
    */
   public File getXmlFile(String collection, String item) {
-    if (pathname.length() > 0) pathname.delete(0, pathname.length());
+    StringBuilder pathname = new StringBuilder();
     pathname.append(xmlPath);
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {

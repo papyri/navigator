@@ -196,7 +196,8 @@
 				  (.setParameter (first param) (second param)))))
 	(.transform transformer (StreamSource. (.openStream (URL. url))) out)
 	(catch Exception e
-	  (println (str (.getMessage e) " transforming " url ".")))
+	  (println (str (.getMessage e) " transforming " url "."))
+	  (.printStackTrace e)
 	(finally
 	 (.add pool xslt)))))
     
@@ -348,8 +349,12 @@
 	sq (SolrQuery.)
 	query (str "form:" (apply str (interpose " form:"
 				    (list* (for [word (.split text "\\s+")]
-					     (.replaceAll (Normalizer/normalize 
-					      (.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC) "σ$" "ς"))))))]
+					     (.replaceAll
+					      (.replaceAll
+					       (Normalizer/normalize 
+						(.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC)
+					       "σ$" "ς")
+					      "=\":" ""))))))]
 		(.setQuery sq query)
 		(def rs (.query solr sq))
     (apply str (interpose " "
