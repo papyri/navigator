@@ -12,10 +12,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -141,15 +141,26 @@ public class Search extends HttpServlet {
     sq.setRows(100);
     QueryResponse rs = solr.query(sq);
     SolrDocumentList forms = rs.getResults();
-    StringBuilder q = new StringBuilder();
+    Set<String> formSet = new HashSet<String>();
     if (forms.size() > 0) {
       for (int i = 0; i < forms.size(); i++) {
-        q.append(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")));
-        if (i < forms.size() - 1) q.append(" OR ");
+        formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", ""));
       }
     }
-    return q.toString().replaceAll("[_^]", "");
+    return interpose(formSet, " OR ");
   }
+
+  private String interpose(Collection coll, String sep) {
+    StringBuilder result = new StringBuilder();
+    for (Iterator<String> i = coll.iterator(); i.hasNext();) {
+      result.append(i.next());
+      if (i.hasNext()) {
+        result.append(sep);
+      }
+    }
+    return result.toString();
+  }
+
 
   private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
     SolrServer solr = new CommonsHttpSolrServer(solrUrl + PNSearch);
