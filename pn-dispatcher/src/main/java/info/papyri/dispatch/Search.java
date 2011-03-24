@@ -148,7 +148,7 @@ public class Search extends HttpServlet {
         if (i < forms.size() - 1) q.append(" OR ");
       }
     }
-    return q.toString().replaceAll("\\^_", "");
+    return q.toString().replaceAll("\\\\^_", "");
   }
 
   private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
@@ -218,6 +218,7 @@ public class Search extends HttpServlet {
       if (field != null) {
         if ("transcription_l".equals(field)) {
           query = expandLemmas(query);
+          field = "transcription_ia";
         }
         q = field + ":(" + query + ")";
       } else {
