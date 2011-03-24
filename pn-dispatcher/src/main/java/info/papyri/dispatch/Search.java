@@ -143,12 +143,12 @@ public class Search extends HttpServlet {
     SolrDocumentList forms = rs.getResults();
     StringBuilder q = new StringBuilder();
     if (forms.size() > 0) {
-      for (SolrDocument form : forms) {
-        q.append(FileUtils.stripDiacriticals((String)form.getFieldValue("form")));
-        q.append(" ");
+      for (int i = 0; i < forms.size(); i++) {
+        q.append(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")));
+        if (i < forms.size() - 1) q.append(" OR ");
       }
     }
-    return q.toString();
+    return q.toString().replaceAll("\\^_", "");
   }
 
   private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
@@ -226,7 +226,7 @@ public class Search extends HttpServlet {
             q = FileUtils.stripDiacriticals(query);
           } else {
             q = FileUtils.substringBefore(query, "transcription_l", false)
-                    + "transcription_l:("
+                    + "transcription_ia:("
                     + FileUtils.substringBefore(FileUtils.substringAfter(query, "transcription_l:(", false), ")", false)
                     + FileUtils.substringAfter(FileUtils.substringAfter(query, "transcription_l:(", false), ")", false);
             q = query;
