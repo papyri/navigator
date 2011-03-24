@@ -471,10 +471,14 @@ public class FileUtils {
    * @return the remainder (or the input string if no match)
    */
   public static String substringAfter(String in, String find) {
+    return substringAfter(in, find, true);
+  }
+
+  public static String substringAfter(String in, String find, boolean returnInput) {
     if (in.contains(find)) {
       return in.substring(in.indexOf(find) + find.length());
     } else {
-      return in;
+      if (returnInput) return in; else return "";
     }
   }
   
@@ -492,6 +496,14 @@ public class FileUtils {
       return in.substring(0, in.indexOf(find));
     } else {
       return in;
+    }
+  }
+
+  public static String substringBefore(String in, String find, boolean returnInput) {
+    if (in.contains(find)) {
+      return in.substring(0, in.indexOf(find));
+    } else {
+      if (returnInput) return in; else return "";
     }
   }
 

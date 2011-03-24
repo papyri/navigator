@@ -808,7 +808,7 @@
     <xsl:param name="links"/>
     <xsl:if test="$collection = 'hgv'">HGV </xsl:if><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
     <xsl:for-each select="$relations">
-      <xsl:if test="$relations[contains(., 'hgv/')]"> = HGV </xsl:if>
+      <xsl:if test="count($relations[contains(., 'hgv/')]) gt 0"> = HGV </xsl:if>
       <xsl:if test="contains(., 'hgv/') and doc-available(pi:get-filename(., 'xml'))">
         <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
           <xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each><xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>

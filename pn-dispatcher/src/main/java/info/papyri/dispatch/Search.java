@@ -44,11 +44,13 @@ public class Search extends HttpServlet {
   private String htmlPath = "";
   private String home = "";
   private FileUtils util;
+  private static String PNSearch = "pn-search/";
+  private static String morphSearch = "morph-search/";
 
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    solrUrl = config.getInitParameter("solrUrl") + "pn-search/";;
+    solrUrl = config.getInitParameter("solrUrl");;
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     home = config.getInitParameter("home");
@@ -126,8 +128,31 @@ public class Search extends HttpServlet {
     }
   }
 
+  private String expandLemmas(String query) throws MalformedURLException, SolrServerException, ServletException {
+    SolrServer solr = new CommonsHttpSolrServer(solrUrl + morphSearch);
+    StringBuilder exp = new StringBuilder();
+    SolrQuery sq = new SolrQuery();
+    String[] lemmas = query.split("\\s+");
+    for (String lemma : lemmas) {
+      exp.append(" lemma:");
+      exp.append(lemma);
+    }
+    sq.setQuery(exp.toString());
+    sq.setRows(100);
+    QueryResponse rs = solr.query(sq);
+    SolrDocumentList forms = rs.getResults();
+    StringBuilder q = new StringBuilder();
+    if (forms.size() > 0) {
+      for (SolrDocument form : forms) {
+        q.append(FileUtils.stripDiacriticals((String)form.getFieldValue("form")));
+        q.append(" ");
+      }
+    }
+    return q.toString();
+  }
+
   private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
-    SolrServer solr = new CommonsHttpSolrServer(solrUrl);
+    SolrServer solr = new CommonsHttpSolrServer(solrUrl + PNSearch);
     String q = request.getParameter("q");
     if (q == null) {
       String query = request.getParameter("keyword");
@@ -189,13 +214,21 @@ public class Search extends HttpServlet {
           }
         }
       }
+
       if (field != null) {
+        if ("transcription_l".equals(field)) {
+          query = expandLemmas(query);
+        }
         q = field + ":(" + query + ")";
       } else {
         if (query != null) {
           if (!query.contains("transcription_l")) {
             q = FileUtils.stripDiacriticals(query);
           } else {
+            q = FileUtils.substringBefore(query, "transcription_l", false)
+                    + "transcription_l:("
+                    + FileUtils.substringBefore(FileUtils.substringAfter(query, "transcription_l:(", false), ")", false)
+                    + FileUtils.substringAfter(FileUtils.substringAfter(query, "transcription_l:(", false), ")", false);
             q = query;
           }
         }
