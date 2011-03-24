@@ -51,7 +51,6 @@
     <field name="display_date" type="string" indexed="false" stored="true"/>
     <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="transcription" type="text" indexed="true" stored="false"/>
-    <field name="transcription_l" type="text" indexed="true" stored="false"/>
     <field name="transcription_id" type="text" indexed="true" stored="false"/>
     <field name="transcription_ic" type="text" indexed="true" stored="false"/>
     <field name="transcription_ia" type="text" indexed="true" stored="false"/>
