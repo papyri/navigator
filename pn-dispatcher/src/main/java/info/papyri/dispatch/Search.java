@@ -148,7 +148,7 @@ public class Search extends HttpServlet {
         if (i < forms.size() - 1) q.append(" OR ");
       }
     }
-    return q.toString().replaceAll("\\\\^_", "");
+    return q.toString().replaceAll("[_^]", "");
   }
 
   private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
