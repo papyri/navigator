@@ -341,25 +341,6 @@
           (queue-collections (.toString (.getObject items 2)) exclude)
           (while (.next items)
             (queue-collections (.toString (.getObject items 2)) exclude)))))))
-      
-(defn get-lemmas
-  [text]
-  (when (> (.length text) 0)
-  (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))
-	sq (SolrQuery.)
-	query (str "form:" (apply str (interpose " form:"
-				    (list* (for [word (.split text "\\s+")]
-					     (.replaceAll
-					      (.replaceAll
-					       (Normalizer/normalize 
-						(.replace (Normalizer/normalize word Normalizer$Form/NFD) "\u0300" "\u0301") Normalizer$Form/NFC)
-					       "σ$" "ς")
-					      "=\":" ""))))))]
-		(.setQuery sq query)
-		(def rs (.query solr sq))
-    (apply str (interpose " "
-			  (list* (for [doc (.getResults rs)]
-				   (.getFieldValue doc "lemma"))))))))
 
 (defn generate-html
   []
@@ -501,8 +482,6 @@
 								       (.addField solrdoc (.toString current) (.toString chars))
 								       (doto current (.delete 0 (.length current)))))
 							 (endDocument []
-								      (when (not (nil? (.getField solrdoc "transcription")))
-									(.addField solrdoc "transcription_l" (get-lemmas (.getFieldValue solrdoc "transcription"))))
 								      (.add @documents solrdoc))))) @solrtemplates)))) @text)]
 		     (doseq [future (.invokeAll pool tasks)]
 		       (.get future))
