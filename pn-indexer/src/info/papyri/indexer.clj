@@ -434,23 +434,6 @@
   ;; Generate text
   (println "Generating text...")
   (generate-text)
- 
-  ;; Copy identical files
-  (println (str "Making " (count @links) " copies..."))
-  (let [pool (Executors/newFixedThreadPool nthreads)
-        tasks (map (fn [x]
-		     (fn []
-		       (try
-			 (copy (first x) (second x))
-		       (catch Exception e
-			 ;(.printStackTrace e)
-			 (println (str "Error copying file " (first x) " to " (second x)))))))
-		   @links)]
-   (doseq [future (.invokeAll pool tasks)]
-     (.get future))
-   (doto pool
-      (.shutdown))
-    (dosync (ref-set links nil)))
   
   ;; Start Solr indexing thread if we're doing the lot
   (when (nil? (first args))
