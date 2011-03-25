@@ -812,8 +812,8 @@
       <xsl:if test="contains(., 'hgv/') and doc-available(pi:get-filename(., 'xml'))">
         <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
           <xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each><xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
+        <xsl:if test="position() != last()"> = </xsl:if>
       </xsl:if>
-      <xsl:if test="position() != last()"> = </xsl:if>
     </xsl:for-each>
     <xsl:for-each-group select="$relations[contains(., 'hgv/')]" group-by="replace(., '[a-z]', '')"><xsl:if test="contains(., 'hgv')">
       = <xsl:choose>
