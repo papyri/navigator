@@ -279,6 +279,10 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
     "Verdana", "Tahoma";
 }
    
+*[lang="cop"] {
+    font-family: "Antinoou", "IFAO-Grec Unicode", "New Athena Unicode", "Times New Roman";
+}
+
 div.textpart {
 font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
     "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
