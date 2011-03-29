@@ -334,9 +334,6 @@
                     <xsl:if test="$hgv or $apis">
                       <h4 style="text-align:center" id="titledate"></h4>
                     </xsl:if>
-                    <xsl:if test="$ddbdp">
-                      <h4 style="text-align:center"><a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}">edit this document</a></h4>
-                    </xsl:if>
                     <div id="controls" class="ui-widget">
                       <xsl:if test="$hgv or $apis">
                         <div id="metadatacontrols" class="ui-widget-content ui-corner-all">
@@ -361,6 +358,11 @@
                           <xsl:if test="$translation">
                             <label for="tslt">translation</label><input type="checkbox" name="translation" id="tslt" checked="checked"/>
                           </xsl:if>
+                        </div>
+                      </xsl:if>
+                      <xsl:if test="$ddbdp">
+                        <div id="editthis" class="ui-widget-content ui-corner-all">
+                          <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}">open in editor</a>
                         </div>
                       </xsl:if>
                     </div>
@@ -808,8 +810,8 @@
     <xsl:param name="links"/>
     <xsl:if test="$collection = 'hgv'">HGV </xsl:if><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
     <xsl:if test="count($relations[contains(., 'hgv/')]) gt 0"> = HGV </xsl:if>
-    <xsl:for-each select="$relations">
-      <xsl:if test="contains(., 'hgv/') and doc-available(pi:get-filename(., 'xml'))">
+    <xsl:for-each select="$relations[contains(., 'hgv/')]">
+      <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
         <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
           <xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each><xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
         <xsl:if test="position() != last()"> = </xsl:if>
