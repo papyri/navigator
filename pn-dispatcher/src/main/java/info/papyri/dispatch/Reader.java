@@ -169,6 +169,8 @@ public class Reader extends HttpServlet {
         result = (File)util.getClass().getMethod("get"+type+"File", String.class).invoke(util, uri);
       }
     } catch (Exception e) {
+      e.printStackTrace();
+      System.out.println(sparql);
       return null;
     }
     return result;
