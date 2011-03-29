@@ -212,6 +212,11 @@ font-weight: bold;
 margin-left: -0.25em;
 }
 
+div#editthis {
+height: 32px;
+font-size:larger;
+}
+
 div#tabs {
 clear: both;
 float: left;
@@ -301,6 +306,15 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
     "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
     "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
     "Verdana", "Tahoma";
+}
+
+div#history {
+margin: 10px;
+}
+
+div#history h3:hover {
+background:#f9e4a0;
+cursor:pointer;
 }
 
 span.textpartnumber {

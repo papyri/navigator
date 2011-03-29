@@ -197,7 +197,7 @@
 	(.transform transformer (StreamSource. (.openStream (URL. url))) out)
 	(catch Exception e
 	  (println (str (.getMessage e) " transforming " url "."))
-	  (.printStackTrace e)
+	  (.printStackTrace e))
 	(finally
 	 (.add pool xslt)))))
     
