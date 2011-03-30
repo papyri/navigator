@@ -77,19 +77,19 @@ public class Reader extends HttpServlet {
           response.setContentType("application/xml;charset=UTF-8");
           file = util.getXmlFile(collection, item.replace("/source", ""));
           if (!file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Xml");
+            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Xml");
           }
         } else if (page.endsWith("text")) {
           response.setContentType("text/plain;charset=UTF-8");
           file = util.getTextFile(collection, item.replace("/text", ""));
           if (!file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Text");
+            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Text");
           }
         } else {
           response.setContentType("text/html;charset=UTF-8");
           file = util.getHtmlFile(collection, item);
           if (!file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Html");
+            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Html");
           }
         }
 
@@ -149,10 +149,12 @@ public class Reader extends HttpServlet {
     String sparql = "prefix dc: <http://purl.org/dc/terms/> "
                   + "select ?related "
                   + "from <rmi://localhost/papyri.info#pi> "
-                  + "where { <http://papyri.info/" + page +"> dc:relation ?related . "
-                  + "filter regex(string(?related), \"^http://papyri.info/(ddbdp|hgv)\") }";
+                  + "where { <" + page +"> dc:relation ?related . "
+                  + "optional { ?related dc:isReplacedBy ?orig } . "
+                  + "filter (!bound(?orig)) . "
+                  + "filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }";
     try {
-      URL m = new URL(mulgara + path + "?" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
+      URL m = new URL(mulgara + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
       HttpURLConnection http = (HttpURLConnection)m.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();
@@ -160,13 +162,13 @@ public class Reader extends HttpServlet {
       Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
       String uri = "";
       while (i.hasNext()) {
-        uri = i.next().path("related").path("value").getValueAsText();
+        uri = FileUtils.substringBefore(i.next().path("related").path("value").getValueAsText(), "/source");
         if (uri.contains("ddbdp/")) {
-          result = (File)util.getClass().getMethod("get"+type+"File", String.class).invoke(util, uri);
+          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, uri);
         }
       }
       if (uri.contains("hgv/")) {
-        result = (File)util.getClass().getMethod("get"+type+"File", String.class).invoke(util, uri);
+        result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, uri);
       }
     } catch (Exception e) {
       e.printStackTrace();
