@@ -166,10 +166,12 @@ public class Reader extends HttpServlet {
         if (uri.contains("ddbdp/")) {
           result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, uri);
         }
+        if (uri.contains("hgv/")) {
+          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, uri);
+        }
+        if (result.exists()) break;
       }
-      if (uri.contains("hgv/")) {
-        result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, uri);
-      }
+      
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println(sparql);
