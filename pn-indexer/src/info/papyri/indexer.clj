@@ -5,12 +5,12 @@
   (:import
     (clojure.lang ISeq)
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
-    (java.io File FileInputStream FileOutputStream FileReader StringWriter)
+    (java.io File FileInputStream FileOutputStream FileReader StringWriter FileWriter)
     (java.net URI URL URLEncoder URLDecoder)
     (java.nio.charset Charset)
     (java.text Normalizer Normalizer$Form)
     (java.util ArrayList TreeMap)
-    (java.util.concurrent Executors ConcurrentLinkedQueue)
+    (java.util.concurrent Executors ConcurrentLinkedQueue ConcurrentSkipListSet)
     (javax.xml.parsers SAXParserFactory)
     (javax.xml.transform Result )
     (javax.xml.transform.sax SAXResult)
@@ -47,7 +47,7 @@
 (def texttemplates (ref (ConcurrentLinkedQueue.)))
 (def links (ref (ConcurrentLinkedQueue.)))
 (def documents (ref (ConcurrentLinkedQueue.)))
-(def morphs (ref (TreeMap.)))
+(def words (ref (ConcurrentSkipListSet.)))
 
 (defn copy
   "Performs a file copy from the source to the destination, making directories if necessary."
@@ -404,6 +404,17 @@
 	       (when (> (count @documents) 0)
 		 (index-solr))))))
 
+(defn add-words [words]
+  (let [word-arr (.split words)]
+    (for [word word-arr]
+      (.add @words word))))
+
+(def print-words []
+     (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
+       (for [word @words]
+	 (.write out (str word "\n")))))
+       
+
 (defn -main [& args]
   (println args)
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
@@ -465,6 +476,8 @@
 								       (.addField solrdoc (.toString current) (.toString chars))
 								       (doto current (.delete 0 (.length current)))))
 							 (endDocument []
+								      (when (not (nil? (.getField solrdoc "transcription")))
+									(.addField solrdoc "transcription_l" (get-lemmas (.getFieldValue solrdoc "transcription"))))
 								      (.add @documents solrdoc))))) @solrtemplates)))) @text)]
 		     (doseq [future (.invokeAll pool tasks)]
 		       (.get future))
