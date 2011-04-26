@@ -2,7 +2,15 @@
 ;; Then load the RDF data into a triplestore
 
 (ns info.papyri.map
-  (:gen-class)
+  (:gen-class
+   :name info.papyri.map
+   :methods [#^{:static true} [deleteGraph [] void]
+            #^{:static true} [deleteUri [String] void]
+            #^{:static true} [loadFile [String] void]
+            #^{:static true} [insertInferences [String] void]
+            #^{:static true} [mapFiles [java.util.List] void]
+            #^{:static true} [mapAll [java.util.List] void]
+            ])
   (:import (java.io BufferedReader ByteArrayInputStream ByteArrayOutputStream File FileInputStream FileOutputStream FileReader StringWriter)
            (java.net URI)
            (java.nio.charset Charset)
@@ -127,12 +135,11 @@
       (.close conn)))
     
 (defn -insertInferences
-  [args]
-  (if (> (count args) 0)
+  [url]
+  (if (not (nil? url) 0)
     (let [factory (ConnectionFactory.)
     conn (.newConnection factory server)
-    interpreter (SparqlInterpreter.)
-    url (first args)]
+    interpreter (SparqlInterpreter.)]
       (.execute conn (CreateGraph. graph))
       (.execute
        (Insertion. graph,
@@ -210,7 +217,7 @@
     (if (.contains xsl "ddbdp-rdf") 
       (dosync (ref-set param '("root" idproot)))
       (dosync (ref-set param '("DDB-root" ddbroot)))))
-  (let [factory (ConnectionFactory.)
+      (let [factory (ConnectionFactory.)
         conn (.newConnection factory server)
         create (CreateGraph. graph)]
       (.execute conn create)
@@ -231,11 +238,16 @@
 
 (defn -mapAll
   [args]
-  (-mapFiles (file-seq (File. (first args))))
-  )
+  (if (> (count args) 0) 
+    (-mapFiles (file-seq (File. (first args))))
+    (do 
+      (-mapFiles (file-seq (File. (str idproot "/DDB_EpiDoc_XML"))))
+      (-mapFiles (file-seq (File. (str idproot "/HGV_meta_EpiDoc"))))
+      (-mapFiles (file-seq (File. (str idproot "/APIS"))))
+      (-mapFiles (file-seq (File. (str idproot "/HGV_trans_EpiDoc")))))))
 
 (defn -main
-  [args]
+  [& args]
   (if (> (count args) 0)
     (let [function (first args)]
       (cond (= function "map-all") (-mapAll (rest args))
