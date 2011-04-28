@@ -28,6 +28,7 @@
            
 (def templates (ref nil))
 (def buffer (ref nil))
+(def flushing (ref false))
 (def output (ref nil))
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
@@ -44,6 +45,7 @@
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
 
 (defn flush-buffer [n]
+  (dosync (ref-set flushing true))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 500)
         factory (ConnectionFactory.)
@@ -60,7 +62,8 @@
       (.append "</rdf:RDF>"))
     (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
     (doto conn
-      (.close))))
+      (.close)))
+  (dosync (ref-set flushing false)))
 
 (defn transform
   [file]
@@ -229,7 +232,8 @@
     (fn []
       (transform x)
       (if (> (count @buffer) 500)
-        (flush-buffer nil))))
+        (when (not @flushing)
+          (flush-buffer nil)))))
     (filter #(.endsWith (.getName %) ".xml") files))]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
