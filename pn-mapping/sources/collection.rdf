@@ -84,6 +84,9 @@
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0020"/>
         <dcterms:bibliographicCitation>O.Claud.</dcterms:bibliographicCitation>
     </rdf:Description>
+    <rdf:Description rdf:about="http://papyri.info/ddbdp/o.cret.chers">
+        <dcterms:bibliographicCitation>O.Cret.Chers.</dcterms:bibliographicCitation>
+    </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.deiss">
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0021"/>
         <dcterms:bibliographicCitation>O.Deiss.</dcterms:bibliographicCitation>
@@ -375,6 +378,9 @@
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.charite">
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0093"/>
         <dcterms:bibliographicCitation>P.Charite</dcterms:bibliographicCitation>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://papyri.info/ddbdp/p.clackson">
+        <dcterms:bibliographicCitation>P.Clackson</dcterms:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.col">
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0094"/>
