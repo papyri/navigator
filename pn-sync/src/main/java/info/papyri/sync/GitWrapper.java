@@ -73,7 +73,7 @@ public class GitWrapper {
     }
 
     // get current HEAD's SHA : git rev-parse HEAD
-    // run local pull from canonical, then git pull from github ârecord time stamps, success :: RESTful: return 200 for success, 500 for failure/conflict
+    // run local pull from canonical, then git pull from githubâ€š record time stamps, success :: RESTful: return 200 for success, 500 for failure/conflict
     // on failure, git reset to previous SHA
     // get list of files affected by pull: git diff --name-only SHA1 SHA2
     // execute indexing on file list

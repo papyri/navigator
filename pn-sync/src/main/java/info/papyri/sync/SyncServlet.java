@@ -7,6 +7,10 @@ package info.papyri.sync;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import static java.util.concurrent.TimeUnit.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,13 +28,18 @@ public class SyncServlet extends HttpServlet {
 
   private GitWrapper git;
     
+    private static final ScheduledExecutorService scheduler = 
+       Executors.newScheduledThreadPool(1);
     
-    
+    private void schedulePublish(String gitDir) {
+      scheduler.scheduleAtFixedRate(new Publisher(gitDir), 1, 1, HOURS);
+    }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
       super.init(config);
       git = GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
+      schedulePublish(config.getInitParameter("gitDir"));
     }
    
     /** 

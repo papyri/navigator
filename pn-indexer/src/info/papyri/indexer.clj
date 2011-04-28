@@ -1,6 +1,8 @@
 (ns info.papyri.indexer
   (:gen-class
-   :name info.papyri.indexer)
+   :name info.papyri.indexer
+   :methods [#^{:static true} [index [java.util.List] void]
+             #^{:static true} [loadLemmas [] void]])
   (:use clojure.contrib.math)
   (:import
     (clojure.lang ISeq)
@@ -38,7 +40,6 @@
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def nthreads 10)
 (def nserver "dev.papyri.info")
-(def conn (.newConnection (ConnectionFactory.) server))
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
 (def html (ref (ConcurrentLinkedQueue.)))
@@ -260,7 +261,7 @@
 (defn execute-query
   [query]
   (let [interpreter (SparqlInterpreter.)]
-    (.execute (.parseQuery interpreter query) conn)))
+    (.execute (.parseQuery interpreter query) (.newConnection (ConnectionFactory.) server))))
 
 (defn get-model
   [answer]
@@ -412,7 +413,7 @@
     (for [word word-arr]
       (.add @words word))))
 
-(def print-words []
+(defn print-words []
      (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
        (for [word @words]
 	 (.write out (str word "\n")))))
@@ -445,7 +446,7 @@
                    (parse (InputSource. (FileInputStream. file)) 
 			   handler))))
 			   
-(defn -loadMorphs []
+(defn -loadLemmas []
   (binding [*current* nil
 	    *doc* nil
 	    *index* 0]
@@ -453,9 +454,9 @@
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
     (let [solr (CommonsHttpSolrServer. solrurl)]
-      (.commit solr)))
+      (.commit solr))))
 	 
-(def -index [& args]
+(defn -index [& args]
   (println args)
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
