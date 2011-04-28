@@ -45,7 +45,6 @@
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
 
 (defn flush-buffer [n]
-  (dosync (ref-set flushing true))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 500)
         factory (ConnectionFactory.)
@@ -62,8 +61,7 @@
       (.append "</rdf:RDF>"))
     (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
     (doto conn
-      (.close)))
-  (dosync (ref-set flushing false)))
+      (.close))))
 
 (defn transform
   [file]
@@ -213,11 +211,12 @@
       (.execute (Insertion. graph, (.parseQuery interpreter images)) conn)
       (.execute (Insertion. graph, (.parseQuery interpreter transitive-rels)) conn)
       (.close conn))))
-    
-(defn -mapFiles
-  [files]
+      
+(defn load-map 
+  [file]
   (def nthreads 5)
-  (let [xsl (choose-xslt (first files))]
+  (let [xsl (choose-xslt file)
+        files (file-seq (File. file))]
     (init-templates xsl 5)
     (if (.contains xsl "ddbdp-rdf") 
       (dosync (ref-set param '("root" idproot)))
@@ -232,8 +231,7 @@
     (fn []
       (transform x)
       (if (> (count @buffer) 500)
-        (when (not @flushing)
-          (flush-buffer nil)))))
+        (flush-buffer nil))))
     (filter #(.endsWith (.getName %) ".xml") files))]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
@@ -241,16 +239,22 @@
       (.shutdown)))
   (flush-buffer (count @buffer))
   )
+    
+(defn -mapFiles
+  [files]
+  (for [file files]
+    (load-map file))
+  )
 
 (defn -mapAll
   [args]
   (if (> (count args) 0) 
-    (-mapFiles (file-seq (File. (first args))))
+    (load-map (File. (first args)))
     (do 
-      (-mapFiles (file-seq (File. (str idproot "/DDB_EpiDoc_XML"))))
-      (-mapFiles (file-seq (File. (str idproot "/HGV_meta_EpiDoc"))))
-      (-mapFiles (file-seq (File. (str idproot "/APIS"))))
-      (-mapFiles (file-seq (File. (str idproot "/HGV_trans_EpiDoc")))))))
+      (load-map (File. (str idproot "/DDB_EpiDoc_XML")))
+      (load-map (File. (str idproot "/HGV_meta_EpiDoc")))
+      (load-map (File. (str idproot "/APIS")))
+      (load-map (File. (str idproot "/HGV_trans_EpiDoc"))))))
 
 (defn -main
   [& args]
