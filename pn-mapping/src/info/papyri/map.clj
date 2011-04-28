@@ -66,17 +66,19 @@
   [file]
   (let [xslt (.poll @templates)
         transformer (.newTransformer xslt)
+        stream (FileInputStream. file)
         out (StringWriter.)
         outstr (StreamResult. out)]
     (try
       (if (not (nil? @param))
         (doto transformer
           (.setParameter (first @param) (second @param))))
-      (.transform transformer (StreamSource. (FileInputStream. file)) outstr)
+      (.transform transformer (StreamSource. stream) outstr)
       ;; (println (.toString out))
       (.add @buffer (.toString out))
       (catch Exception e 
-        (.println *err* (str (.getMessage e) " processing file " file))))
+        (.println *err* (str (.getMessage e) " processing file " file)))
+      (finally (.close stream)))
     (.add @templates xslt)))
 
 (defn init-templates
