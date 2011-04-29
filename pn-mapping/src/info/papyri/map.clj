@@ -26,7 +26,7 @@
            (org.mulgara.sparql SparqlInterpreter)
            (org.mulgara.itql TqlInterpreter)))
            
-(def templates (ref nil))
+(def pxslt (ref nil))
 (def buffer (ref nil))
 (def flushing (ref false))
 (def output (ref nil))
@@ -65,37 +65,31 @@
 
 (defn transform
   [file]
-  (let [xslt (.poll @templates)
-        transformer (.newTransformer xslt)
-        stream (FileInputStream. file)
+  (let [transformer (.newTransformer @pxslt)
         out (StringWriter.)
         outstr (StreamResult. out)]
     (try
       (if (not (nil? @param))
         (doto transformer
           (.setParameter (first @param) (second @param))))
-      (.transform transformer (StreamSource. stream) outstr)
+      (.transform transformer (StreamSource. (FileInputStream. file)) outstr)
       ;; (println (.toString out))
       (.add @buffer (.toString out))
       (catch Exception e 
-        (.println *err* (str (.getMessage e) " processing file " file)))
-      (finally (.close stream)))
-    (.add @templates xslt)))
+        (.println *err* (str (.getMessage e) " processing file " file))))))
 
-(defn init-templates
-    [xslt, nthreads]
-  (dosync (ref-set templates (ConcurrentLinkedQueue.) ))
+(defn init-xslt
+    [xslt]
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
-  (dotimes [n nthreads]
-    (let [xsl-src (StreamSource. (FileInputStream. xslt))
-            configuration (Configuration.)
-            compiler-info (CompilerInfo.)]
-          (doto xsl-src 
-            (.setSystemId xslt))
-          (doto compiler-info
-            (.setErrorListener (StandardErrorListener.))
-            (.setURIResolver (StandardURIResolver. configuration)))
-          (dosync (.add @templates (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
+  (let [xsl-src (StreamSource. (FileInputStream. xslt))
+        configuration (Configuration.)
+        compiler-info (CompilerInfo.)]
+        (doto xsl-src 
+          (.setSystemId xslt))
+        (doto compiler-info
+          (.setErrorListener (StandardErrorListener.))
+          (.setURIResolver (StandardURIResolver. configuration)))
+        (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info)))))
           
 (defn choose-xslt
   [file]
@@ -215,9 +209,8 @@
 (defn load-map 
   [file]
   (def nthreads 5)
-  (let [xsl (choose-xslt file)
-        files (file-seq (File. file))]
-    (init-templates xsl 5)
+  (let [xsl (choose-xslt file)]
+    (init-xslt xsl)
     (if (.contains xsl "ddbdp-rdf") 
       (dosync (ref-set param '("root" idproot)))
       (dosync (ref-set param '("DDB-root" ddbroot)))))
@@ -227,6 +220,7 @@
       (.execute conn create)
       (.close conn))
   (let [pool (Executors/newFixedThreadPool nthreads)
+        files (file-seq (File. file))
         tasks (map (fn [x]
     (fn []
       (transform x)
@@ -249,12 +243,12 @@
 (defn -mapAll
   [args]
   (if (> (count args) 0) 
-    (load-map (File. (first args)))
+    (load-map (first args)))
     (do 
-      (load-map (File. (str idproot "/DDB_EpiDoc_XML")))
-      (load-map (File. (str idproot "/HGV_meta_EpiDoc")))
-      (load-map (File. (str idproot "/APIS")))
-      (load-map (File. (str idproot "/HGV_trans_EpiDoc"))))))
+      (load-map idproot "/DDB_EpiDoc_XML")))
+      (load-map idproot "/HGV_meta_EpiDoc")))
+      (load-map idproot "/APIS")))
+      (load-map idproot "/HGV_trans_EpiDoc"))))))
 
 (defn -main
   [& args]
