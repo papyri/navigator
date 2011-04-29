@@ -18,8 +18,8 @@
            (javax.activation MimeType)
            (javax.xml.transform Templates Transformer)
            (javax.xml.transform.stream StreamSource StreamResult)
-           (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
-           (net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
+           (net.sf.saxon Configuration FeatureKeys StandardErrorListener StandardURIResolver PreparedStylesheet TransformerFactoryImpl)
+           ;;(net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
            (net.sf.saxon.trans CompilerInfo XPathException)
            (org.mulgara.connection Connection ConnectionFactory)
            (org.mulgara.query.operation Command CreateGraph Insertion Load Deletion DropGraph)
@@ -242,13 +242,18 @@
 
 (defn -mapAll
   [args]
+  (println args)
   (if (> (count args) 0) 
     (load-map (first args)))
     (do 
-      (load-map idproot "/DDB_EpiDoc_XML")))
-      (load-map idproot "/HGV_meta_EpiDoc")))
-      (load-map idproot "/APIS")))
-      (load-map idproot "/HGV_trans_EpiDoc"))))))
+      (println "Processing DDB_EpiDoc_XML")
+      (load-map (str idproot "/DDB_EpiDoc_XML"))
+      (println "Processing HGV_meta_EpiDoc")
+      (load-map (str idproot "/HGV_meta_EpiDoc"))
+      (println "Processing APIS")
+      (load-map (str idproot "/APIS"))
+      (println "Processing HGV_trans_EpiDoc")
+      (load-map (str idproot "/HGV_trans_EpiDoc"))))
 
 (defn -main
   [& args]
