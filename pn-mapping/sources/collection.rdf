@@ -813,6 +813,9 @@
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0200"/>
         <dcterms:bibliographicCitation>P.Sarap.</dcterms:bibliographicCitation>
     </rdf:Description>
+    <rdf:Description rdf:about="http://papyri.info/ddbdp/p.schoyen">
+        <dcterms:bibliographicCitation>P.Schoyen</dcterms:bibliographicCitation>
+    </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.sel.warga">
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0201"/>
         <dcterms:bibliographicCitation>P.Sel.Warga</dcterms:bibliographicCitation>
