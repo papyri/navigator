@@ -19,7 +19,7 @@
             <xsl:for-each select="distinct-values(//tei:text/tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-in']/@n)">
                 <xsl:for-each select="tokenize(., '\|')">
                 <xsl:variable name="ddb-reprint-seq" select="tokenize(., ';')"/>
-                <xsl:if test="matches(., '(\w|\.);\d*;.+')">
+                <xsl:if test="matches(., '(\w|\.)+;(\d|\.)*;.+')">
                     <dcterms:isReplacedBy rdf:resource="http://papyri.info/ddbdp/{$ddb-reprint-seq[1]};{$ddb-reprint-seq[2]};{encode-for-uri($ddb-reprint-seq[3])}/source"/>
                 </xsl:if>
             </xsl:for-each>
@@ -27,7 +27,7 @@
           <xsl:for-each select="//tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-from']">
             <xsl:for-each select="tokenize(@n, '\|')">
                 <xsl:variable name="ddb-reprint-seq" select="tokenize(., ';')"/>
-                <xsl:if test="matches(., '(\w|\.);\d*;.+')">    
+                <xsl:if test="matches(., '(\w|\.)+;(\d|\.)*;.+')">    
                     <dcterms:replaces rdf:resource="http://papyri.info/ddbdp/{$ddb-reprint-seq[1]};{$ddb-reprint-seq[2]};{encode-for-uri($ddb-reprint-seq[3])}/source"/>
                 </xsl:if>
             </xsl:for-each>
