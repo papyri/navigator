@@ -22,6 +22,7 @@
            ;;(net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
            (net.sf.saxon.trans CompilerInfo XPathException)
            (org.mulgara.connection Connection ConnectionFactory)
+           (org.mulgara.query Answer Query)
            (org.mulgara.query.operation Command CreateGraph Insertion Load Deletion DropGraph)
            (org.mulgara.sparql SparqlInterpreter)
            (org.mulgara.itql TqlInterpreter)))
@@ -43,6 +44,10 @@
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
+     
+(defn substring-before
+  [string1 string2]
+  (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
   (let [rdf (StringBuffer.)
@@ -97,6 +102,28 @@
     (.contains (str file) "HGV_meta_EpiDoc") (xslts "HGV_meta_EpiDoc")
     (.contains (str file) "APIS") (xslts "APIS")
     (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")))
+    
+(defn format-url-query
+  [filename] 
+  (format 
+    "prefix dc: <http://purl.org/dc/terms/> 
+    select ?uri
+    from <rmi://localhost/papyri.info#pi>
+    where {?uri dc:identifier \"%s\"}"))
+    
+(defn execute-query
+  [query]
+  (let [interpreter (SparqlInterpreter.)]
+    (.execute (.parseQuery interpreter query) (.newConnection (ConnectionFactory.) server))))
+    
+(defn get-filename 
+  [file]
+  (substring-before (.substring (inc (.lastIndexOf file "/"))) ".xml"))
+    
+(defn url-from-file
+  [file]
+  (let [answer (execute-query (format-url-query (get-filename file)))]
+    (.toString (.getObject answer 0))))
           
 (defn -deleteGraph
   []
@@ -133,7 +160,7 @@
     
 (defn -insertInferences
   [url]
-  (if (not (nil? url) 0)
+  (if (not (nil? url))
     (let [factory (ConnectionFactory.)
     conn (.newConnection factory server)
     interpreter (SparqlInterpreter.)]
@@ -192,12 +219,20 @@
       ?i dc:relation ?r2 .
       FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\")) 
       FILTER  regex(str(?r2), \"^http://papyri.info/images\")}")
-      (def transitive-rels "prefix dc: <http://purl.org/dc/terms/>
-      construct{?s dc:relation ?o2}
-      from <rmi://localhost/papyri.info#pi>
-      where { ?s dc:relation ?o1 .
-              ?o1 dc:relation ?o2 
-              filter (!sameTerm(?s, ?o2))}")
+      (def transitive-rels 
+        (if (nil? url) (str "prefix dc: <http://purl.org/dc/terms/>
+                             construct{?s dc:relation ?o2}
+                             from <rmi://localhost/papyri.info#pi>
+                             where { ?s dc:relation ?o1 .
+                                     ?o1 dc:relation ?o2 
+                             filter (!sameTerm(?s, ?o2))}")
+                        (str "prefix dc: <http://purl.org/dc/terms/>
+                              construct{<" url "> dc:relation ?o2}
+                              from <rmi://localhost/papyri.info#pi>
+                              where { <" url "> dc:relation ?o1 .
+                                      ?o1 dc:relation ?o2 
+                              filter (!sameTerm(<" url ">, ?o2))}")
+                        ))
       (.execute conn (CreateGraph. graph))
       (.execute (Insertion. graph, (.parseQuery interpreter hasPart)) conn)
       (.execute (Insertion. graph, (.parseQuery interpreter relation)) conn)
@@ -261,10 +296,11 @@
     (let [function (first args)]
       (cond (= function "map-all") (-mapAll (rest args))
             (= function "map-files") (-mapFiles (rest args))
-            (= function "load-file") (-loadFile (rest args))
+            (= function "load-file") (-loadFile (second args))
             (= function "delete-graph") (-deleteGraph)
-            (= function "delete-uri") (-deleteUri (rest args))
-            (= function "insert-inferences") (-insertInferences (rest args))
+            (= function "delete-uri") (-deleteUri (second args))
+            (= function "insert-inferences") (for [file (rest args)] 
+                (-insertInferences (url-from-file file)))
             (= function "help") (print help)))
     ((print help))))
     
