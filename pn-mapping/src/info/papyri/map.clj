@@ -299,8 +299,10 @@
             (= function "load-file") (-loadFile (second args))
             (= function "delete-graph") (-deleteGraph)
             (= function "delete-uri") (-deleteUri (second args))
-            (= function "insert-inferences") (for [file (rest args)] 
+            (= function "insert-inferences") (if (> (count args) 1)
+              (for [file (rest args)] 
                 (-insertInferences (url-from-file file)))
+              (-insertInferences))
             (= function "help") (print help)))
     ((print help))))
     
