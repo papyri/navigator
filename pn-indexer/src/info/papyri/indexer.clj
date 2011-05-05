@@ -260,36 +260,25 @@
                     
 (defn execute-query
   [query]
-  (let [interpreter (SparqlInterpreter.)]
-    (.execute (.parseQuery interpreter query) (.newConnection (ConnectionFactory.) server))))
-
-(defn get-model
-  [answer]
-  (let [model (ModelFactory/createDefaultModel)]
-    (while (.next answer)
-      (doto model
-	(.add (ResourceFactory/createStatement
-	       (ResourceFactory/createResource (.toString (.getObject answer 0)))
-	       (ResourceFactory/createProperty (.toString (.getObject answer 1)))
-	       (ResourceFactory/createResource (.toString (.getObject answer 2)))))))
-    model))
-
-(defn answer-seq
-  [answer]
-  (let [answerlist (ArrayList.)]
+  (let [interpreter (SparqlInterpreter.)
+        answerlist (ArrayList.)
+        conn (.newConnection (ConnectionFactory.) server)
+        answer (.execute (.parseQuery interpreter query) conn)]
+    (.execute (.parseQuery interpreter query) (.newConnection (ConnectionFactory.) server))
     (dotimes [_ (.getRowCount answer)]
       (when (.next answer)
-	(doto answerlist (.add (let [ans (ArrayList.)]
-				(dotimes [n (.getNumberOfVariables answer)]
-				  (.add ans (.getObject answer n)))
-				(seq ans))))))
+        (doto answerlist (.add (let [ans (ArrayList.)]
+          (dotimes [n (.getNumberOfVariables answer)]
+            (.add ans (.getObject answer n)))
+          (seq ans))))))
+    (doto conn (.close))
     (seq answerlist)))
 
 (defn queue-item
   [url]
-  (let [relations (answer-seq (execute-query (relation-query url)))
-       replaces (answer-seq (execute-query (replaces-query url)))
-       is-replaced-by (answer-seq (execute-query (is-replaced-by-query url)))]
+  (let [relations (execute-query (relation-query url))
+       replaces (execute-query (replaces-query url))
+       is-replaced-by (execute-query (is-replaced-by-query url))]
 
     (.add @html (list (str "file:" (get-filename url))
 		      (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
@@ -302,9 +291,9 @@
 (defn queue-items
   [url exclude]
   (let [items (execute-query (has-part-query url))
-        relations (answer-seq (execute-query (batch-relation-query url)))
-        replaces (answer-seq (execute-query (batch-replaces-query url)))
-        is-replaced-by (answer-seq (execute-query (batch-is-replaced-by-query url)))]
+        relations (execute-query (batch-relation-query url))
+        replaces (execute-query (batch-replaces-query url))
+        is-replaced-by (execute-query (batch-is-replaced-by-query url))]
         (while (.next items)
           (let [item (.getObject items 2)
                 related (if (empty? relations) ()
@@ -411,7 +400,7 @@
 (defn add-words [words]
   (let [word-arr (.split words)]
     (for [word word-arr]
-      (.add @words word))))
+      (.add @words (.replaceAll word "(\)"))))
 
 (defn print-words []
      (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
