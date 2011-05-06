@@ -277,7 +277,6 @@
 
 (defn -mapAll
   [args]
-  (println args)
   (if (> (count args) 0) 
     (load-map (first args)))
     (do 
@@ -288,7 +287,12 @@
       (println "Processing APIS")
       (load-map (str idproot "/APIS"))
       (println "Processing HGV_trans_EpiDoc")
-      (load-map (str idproot "/HGV_trans_EpiDoc"))))
+      (load-map (str idproot "/HGV_trans_EpiDoc")))
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
+  (-insertInferences nil)
+  )
 
 (defn -main
   [& args]
@@ -302,7 +306,7 @@
             (= function "insert-inferences") (if (> (count args) 1)
               (for [file (rest args)] 
                 (-insertInferences (url-from-file file)))
-              (-insertInferences))
+              (-insertInferences nil))
             (= function "help") (print help)))
     ((print help))))
     
