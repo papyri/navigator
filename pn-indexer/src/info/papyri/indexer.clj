@@ -294,7 +294,7 @@
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
         is-replaced-by (execute-query (batch-is-replaced-by-query url))]
-        (for [item items]
+        (doseq [item items]
              (let  [related (if (empty? relations) ()
           (filter (fn [x] (= (first x) (last item))) relations))
                     reprint-from (if (empty? replaces) ()
@@ -329,7 +329,7 @@
     (when (> (count items) 0)
       (if (.endsWith (last (first items)) "/source")
         (queue-items url exclude)
-        (for [item items]
+        (doseq [item items]
           (queue-collections (last item) exclude))))))
 
 (defn generate-html
