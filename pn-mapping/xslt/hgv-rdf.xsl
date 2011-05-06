@@ -13,7 +13,7 @@
         <xsl:variable name="id">http://papyri.info/hgv/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type='filename']"/>/source</xsl:variable>
         <xsl:variable name="bibl" select="//tei:div[@type='bibliography']//tei:bibl[@type='publication' and @subtype='principal']"/>
         <xsl:variable name="title" select="replace(normalize-unicode(replace($bibl/tei:title[@level='s'],'\s','_'), 'NFD'), '[^._a-zA-Z]', '')"/>
-        <xsl:variable name="cite_uri">http://papyri.info/hgv/<xsl:value-of select="$title"/><xsl:if test="$bibl//tei:biblScope[@type='volume']">_<xsl:value-of select="normalize-space($bibl//tei:biblScope[@type='volume'])"/></xsl:if><xsl:if test="$bibl//tei:biblScope[@type='numbers']">_<xsl:value-of select="normalize-space($bibl//tei:biblScope[@type='numbers'])"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope[@type='parts']">_<xsl:value-of select="encode-for-uri(normalize-space(.))"/></xsl:for-each></xsl:variable>
+        <xsl:variable name="cite_uri">http://papyri.info/hgv/<xsl:value-of select="$title"/><xsl:if test="$bibl//tei:biblScope[@type='volume']">_<xsl:value-of select="normalize-space($bibl//tei:biblScope[@type='volume'])"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope">_<xsl:value-of select="encode-for-uri(normalize-space(.))"/></xsl:for-each></xsl:variable>
         <xsl:variable name="ddb" select="tokenize(normalize-space(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']), ';')"></xsl:variable>
         <xsl:variable name="ddb-doc-uri">
             <xsl:choose>
@@ -28,7 +28,7 @@
             </xsl:for-each>
             <dcterms:identifier>
                 <rdf:Description>
-                    <xsl:attribute name="rdf:about">http://papyri.info/hgv/<xsl:value-of select="$title"/><xsl:if test="$bibl//tei:biblScope[@type='volume'][not(matches(., '\s+'))]">_<xsl:value-of select="normalize-space($bibl//tei:biblScope[@type='volume'])"/></xsl:if><xsl:if test="$bibl//tei:biblScope[@type='numbers']">_<xsl:value-of select="normalize-space($bibl//tei:biblScope[@type='numbers'])"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope[@type='parts']">_<xsl:value-of select="encode-for-uri(normalize-space(.))"/></xsl:for-each></xsl:attribute>
+                    <xsl:attribute name="rdf:about">http://papyri.info/hgv/<xsl:value-of select="$title"/><xsl:if test="$bibl//tei:biblScope[@type='volume'][not(matches(., '\s+'))]">_<xsl:value-of select="normalize-space($bibl//tei:biblScope[@type='volume'])"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope">_<xsl:value-of select="encode-for-uri(normalize-space(.))"/></xsl:for-each></xsl:attribute>
                     <dcterms:identifier rdf:resource="{$id}"/>
                 </rdf:Description>
             </dcterms:identifier>
