@@ -302,7 +302,7 @@
             (= function "insert-inferences") (if (> (count args) 1)
               (for [file (rest args)] 
                 (-insertInferences (url-from-file file)))
-              (-insertInferences))
+              (-insertInferences nil))
             (= function "help") (print help)))
     ((print help))))
     
