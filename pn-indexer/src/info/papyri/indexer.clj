@@ -395,7 +395,7 @@
      (index-solr))))))
 
 (defn add-words [words]
-  (let [word-arr (.split words)]
+  (let [word-arr (.split words "\\s+")]
     (for [word word-arr]
       (.add @words word))))
 
