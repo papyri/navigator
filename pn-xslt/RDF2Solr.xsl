@@ -196,7 +196,9 @@
   
   <xsl:template name="metadata">
     <xsl:param name="docs"/>
-    <field name="display_place"><xsl:value-of select="normalize-space(string-join($docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/></field>
+    <field name="display_place">
+      <xsl:value-of select="normalize-space(string-join($docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/>
+    </field>
     <field name="display_date"><xsl:value-of select="pi:get-date-range($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate/(@when|@notBefore|@notAfter))"/></field>
     <field name="metadata">
       <!-- Title -->
@@ -239,10 +241,14 @@
         <xsl:variable name="doc" select="$docs[/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:p][1]"/>
         <field name="place"><xsl:value-of select="normalize-space($doc/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:p[1])"/></field>
       </xsl:when>
+      <!-- edited thill 2011.05.11 for multiple possible findspots -->
       <xsl:when test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace">
-        <xsl:variable name="doc" select="$docs[/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace][1]"/>
-        <field name="place"><xsl:value-of select="normalize-space($doc/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace)"/></field>
+        <xsl:variable name="doc" select="$docs[/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace][1]"/>        
+          <xsl:for-each select="$doc/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace">
+            <field name="place"><xsl:value-of select="normalize-space(.)"></xsl:value-of></field>
+          </xsl:for-each>        
       </xsl:when>
+      <!-- end thill 2011.05.11 -->
     </xsl:choose>
     <!-- Dates -->
     <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate">
