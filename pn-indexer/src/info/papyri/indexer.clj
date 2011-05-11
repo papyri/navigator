@@ -392,7 +392,7 @@
        (.add solr docs))))
          (Thread/sleep 30000)
          (when (> (count @documents) 0)
-     (index-solr))))))
+     (index-solr solr))))))
 
 (defn add-words [words]
   (let [word-arr (.split words "\\s+")]
@@ -423,11 +423,11 @@
       (do
         (dosync (.add @documents *doc*))
         (when (> (count @documents) 5000)
-          (index-solr))))
+          (index-solr (str solrurl "morph-search/")))))
           (set! *current* "analysis")
           (.delete value 0 (.length value)))
     (endDocument []
-           (index-solr)))]
+           (index-solr (str solrurl "morph-search/"))))]
    (.. SAXParserFactory newInstance newSAXParser
                    (parse (InputSource. (FileInputStream. file)) 
          handler))))
