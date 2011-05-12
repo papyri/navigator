@@ -223,6 +223,8 @@
       <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:textLang, ' '))"/><xsl:text> </xsl:text>
       <!-- Date -->
       <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate, ' '))"/><xsl:text> </xsl:text>
+      <!-- Commentary -->
+      <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:text/t:body/t:div[@type='commentary']/t:p, ' '))"/><xsl:text> </xsl:text>
       <!-- Notes (general|lines|palaeography|recto/verso|conservation|preservation) -->
       <xsl:value-of select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:note, ' '))"/><xsl:text> </xsl:text>
       <!-- Print Illustrations -->
