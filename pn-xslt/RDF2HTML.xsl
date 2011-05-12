@@ -452,14 +452,16 @@
                         </xsl:if>
                       </div>
                       <xsl:if test="$apis">
-                        <xsl:for-each select="$relations[contains(., '/apis/')]">
-                          <xsl:choose>
-                            <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
-                              <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/>
-                            </xsl:when>
-                            <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                          </xsl:choose>
-                        </xsl:for-each>
+                        <div class="text">
+                          <xsl:for-each select="$relations[contains(., '/apis/')]">
+                            <xsl:choose>
+                              <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                                <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/>
+                              </xsl:when>
+                              <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:for-each>
+                        </div>
                       </xsl:if>
                     </xsl:if>
                     <xsl:if test="$collection = 'apis'">
