@@ -10,7 +10,6 @@
   xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" version="2.0">
   
   <xsl:import href="global-varsandparams.xsl"/>
-  
   <xsl:import href="txt-teiab.xsl"/>
   <xsl:import href="txt-teiapp.xsl"/>
   <xsl:import href="txt-teidiv.xsl"/>
@@ -44,10 +43,8 @@
   <xsl:import href="teisupplied.xsl"/>
   <xsl:import href="teisurplus.xsl"/>
   <xsl:import href="teiunclear.xsl"/>
-  
   <xsl:import href="txt-tpl-apparatus.xsl"/>
   <xsl:import href="txt-tpl-linenumberingtab.xsl"/>
-  
   <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
@@ -58,6 +55,7 @@
   <xsl:param name="related"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
+  
   <xsl:variable name="outbase"/>
   
   <xsl:include href="pi-functions.xsl"/>
@@ -197,7 +195,26 @@
   <xsl:template name="metadata">
     <xsl:param name="docs"/>
     <field name="display_place">
-      <xsl:value-of select="normalize-space(string-join($docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/>
+      <!-- edited thill 2011.05.12 to reflect multiple possible findspots -->
+      <xsl:variable name="node-count" select="count($docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']))"></xsl:variable>
+      <xsl:for-each select="$docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot'])">        
+        <xsl:variable name="separator">
+          <xsl:choose>
+            <xsl:when test="$node-count > 1 and position() &lt; $node-count">
+              <xsl:choose>
+                <xsl:when test="position() = $node-count - 1"><xsl:value-of> or </xsl:value-of></xsl:when>
+                <xsl:otherwise><xsl:value-of>, </xsl:value-of></xsl:otherwise>                
+              </xsl:choose> 
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of></xsl:value-of>
+            </xsl:otherwise>
+          </xsl:choose>   
+        </xsl:variable>
+        <xsl:value-of select="normalize-space(.)"></xsl:value-of>
+        <xsl:value-of select="$separator"></xsl:value-of>
+      </xsl:for-each>
+      <!-- end thill 2011.05.12 -->
     </field>
     <field name="display_date"><xsl:value-of select="pi:get-date-range($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate/(@when|@notBefore|@notAfter))"/></field>
     <field name="metadata">
