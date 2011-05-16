@@ -362,7 +362,7 @@
                       </xsl:if>
                       <xsl:if test="$ddbdp">
                         <div id="editthis" class="ui-widget-content ui-corner-all">
-                          <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}">open in editor</a>
+                          <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
                         </div>
                       </xsl:if>
                     </div>

@@ -124,6 +124,10 @@
                 <xsl:if test="string-length(normalize-space(.)) &gt; 0"><xsl:text>^</xsl:text><xsl:value-of select="normalize-space(.)"/><xsl:text>^ </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
+            <xsl:variable name="languages" select="distinct-values(//t:div[@type='edition']/descendant-or-self::*/@xml:lang)"/>
+            <xsl:for-each select="//t:langUsage/t:language">
+              <xsl:if test="index-of($languages, string(@ident))"><field name="language"><xsl:value-of select="."/></field></xsl:if>
+            </xsl:for-each>
             <xsl:if test="$hgv or $apis">
               <xsl:call-template name="metadata">
                 <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"/>
