@@ -28,7 +28,7 @@
             </xsl:for-each>
             <dcterms:identifier>
                 <rdf:Description>
-                    <xsl:attribute name="rdf:about">http://papyri.info/hgv/<xsl:value-of select="$title"/><xsl:if test="$bibl//tei:biblScope[@type='volume'][not(matches(., '\s+'))]">_<xsl:value-of select="normalize-space($bibl//tei:biblScope[@type='volume'])"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope">_<xsl:value-of select="encode-for-uri(normalize-space(.))"/></xsl:for-each></xsl:attribute>
+                    <xsl:attribute name="rdf:about"><xsl:value-of select="$cite_uri"/></xsl:attribute>
                     <dcterms:identifier rdf:resource="{$id}"/>
                 </rdf:Description>
             </dcterms:identifier>
