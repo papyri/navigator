@@ -46,7 +46,7 @@ div.content {
 background: #f8f6f4;
 border: thin solid #426a30;
 float: left;
-margin-left: 160px;
+margin-left: 1em;
 margin-right: 1em;
 padding: .5em;
 min-width: 900px;
@@ -104,10 +104,11 @@ div#help {
 /* Left-hand Navigation */
 div.nav {
 position: absolute;
-left: 0;
-width: 150px;
+left: 300px;
+top: 20px;
 }
 ul.nav {
+display: inline;
 background-image: url(../images/navbg.png);
 background-position: bottom;
 background-repeat: repeat-x;
@@ -116,9 +117,10 @@ color: black;
 font-size: 93%;
 line-height: 22px;
 margin-left: 15px;
-padding: .2em;
+padding: .5em;
 }
 ul.nav li {
+display: inline;
 padding-left: 0.2em;
 padding-right: 0.2em;
 }
