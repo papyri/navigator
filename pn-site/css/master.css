@@ -406,3 +406,179 @@ table#resources p {
 div#related h4 {
   font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 }
+
+/* FOOTER STYLES */
+
+/* footer general layout */
+
+ #footer{
+     
+     background-color: #888;
+     font-family: Verdana, Helvetica, sans-serif;
+     font-size: 80%;
+     color: #fff;
+     padding-top: 10px;
+     padding-bottom: 10px;
+     position: relative;
+     min-width: 900px;
+     margin-left: 1em;
+     margin-right: 1em;
+     margin-top: -2px;
+     border: thin solid #426A30;
+     padding: 0.5em;
+     margin-top: 1em;
+     margin-left: 1em;
+     margin-right: 1em;
+     opacity: 0.8;
+     padding: .5em;
+ }
+
+
+#footer-left-col{
+    
+    width: 57%;
+    position: relative;
+    float: left;
+    padding-left: 3%
+
+}
+
+#footer-right-col{
+    
+    position: relative;
+    float: right;
+    width: 33%;
+    padding-left: 5%;
+    padding-right: 2%;
+    border-left: thin solid #fff;
+    font-size: 80%;
+    text-align: right;
+}
+
+.spacer{
+    
+   width: 100%;
+   clear: both; 
+   height: 1px;
+    
+}
+
+#footer p{
+    
+    margin-bottom: 0.5em;
+    
+}
+
+/* styles for all footer navigation */
+
+#footer ul.nav{
+    
+    list-style-type: none;
+    position: relative;
+    width: 80%;
+    color: #fff;
+
+}
+
+#footer ul.nav li{
+    
+   display: block;
+    
+}
+
+#footer a:link, #footer a:visited, #footer a:hover, #footer a:active{ 
+
+    color: white;
+    
+}
+
+#footer a:link, #footer a:visited{
+    
+    text-decoration: none;
+    
+}
+
+#footer a:hover, #footer a:active{
+    
+    text-decoration: underline;
+    
+}
+
+#footer ul.nav li:before{
+    
+    content: "| ";
+    
+}
+
+/* styles for left-hand column and navigation */
+
+#footer-left-col #secondary-nav{
+    
+    width: 100%;
+    position: absolute;
+    /* this value should be lowered if it is likely
+     * that the navigation menu will wrap to a second line */
+    top: 1.6em;
+    
+}
+
+#secondary-nav ul.nav li:first-child:before{
+    
+    content: "";
+    
+}
+
+#footer-left-col #secondary-nav ul.nav{
+    
+    margin-left: 30px;
+    
+}
+
+
+#footer-left-col #secondary-nav ul.nav li{
+    
+    float: left;  
+    margin-bottom: 5px;
+    margin-right: 6px;
+    
+}
+
+/* styles for right-hand column and navigation */
+
+#footer-right-col p:first-child{
+    
+    font-weight: bold; 
+    
+}
+
+
+#footer-right-col #about-nav li, #footer #about-nav #about-hdr{
+    
+    float: right;
+}
+
+
+#about-nav ul.nav li.last-child:before{
+    
+    content: "";
+    
+}
+
+#about-hdr{
+    
+    margin-right: 5px;
+    line-height: 22px;
+    font-size: inherit;
+    font-family: inherit;
+    
+}
+
+#about-nav ul.nav li{
+    
+    margin-left: 3px;
+}
+
+/* END FOOTER STYLES  */
+
+
+
