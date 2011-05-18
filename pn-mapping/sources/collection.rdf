@@ -371,6 +371,9 @@
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0091"/>
         <dcterms:bibliographicCitation>P.Cair.Preis.</dcterms:bibliographicCitation>
     </rdf:Description>
+    <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.salem">
+        <dcterms:bibliographicCitation>P.Cair.Salem</dcterms:bibliographicCitation>
+    </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.zen">
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0092"/>
         <dcterms:bibliographicCitation>P.Cair.Zen.</dcterms:bibliographicCitation>
