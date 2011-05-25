@@ -34,7 +34,7 @@
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def param (ref nil))
-;; NOTE hard-coded flie and directory locations
+;; NOTE hard-coded file and directory locations
 (def xslts {"DDB_EpiDoc_XML" "/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
       "HGV_meta_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
