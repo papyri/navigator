@@ -34,7 +34,7 @@
 (def filepath "/data/papyri.info/idp.data")
 (def xsltpath "/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/data/papyri.info/pn/idp.html")
-(def solrurl "http://localhost:8082/solr/")
+(def solrurl "http://localhost:8983/solr/")
 (def numbersurl "http://localhost:8090/sparql?query=")
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
@@ -531,4 +531,3 @@
       (-index args))
     (-index))
   )
-

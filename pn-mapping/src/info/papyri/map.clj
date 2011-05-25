@@ -243,7 +243,7 @@
       
 (defn load-map 
   [file]
-  (def nthreads 5)
+  (def nthreads 10)
   (let [xsl (choose-xslt file)]
     (init-xslt xsl)
     (if (.contains xsl "ddbdp-rdf") 
@@ -254,6 +254,7 @@
         create (CreateGraph. graph)]
       (.execute conn create)
       (.close conn))
+      (.. System out (println "connection completed"))
   (let [pool (Executors/newFixedThreadPool nthreads)
         files (file-seq (File. file))
         tasks (map (fn [x]
