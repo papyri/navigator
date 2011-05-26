@@ -264,7 +264,6 @@
         answerlist (ArrayList.)
         conn (.newConnection (ConnectionFactory.) server)
         answer (.execute (.parseQuery interpreter query) conn)]
-    (.execute (.parseQuery interpreter query) (.newConnection (ConnectionFactory.) server))
     (dotimes [_ (.getRowCount answer)]
       (when (.next answer)
         (doto answerlist (.add (let [ans (ArrayList.)]
@@ -290,6 +289,7 @@
 
 (defn queue-items
   [url exclude]
+  (println url)
   (let [items (execute-query (has-part-query url))
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
@@ -527,8 +527,7 @@
 (defn -main [& args]
   (if (> (count args) 0)
     (if (= (first args) "load-lemmas")
-      (-loadLemmas)
-      (-index args))
+      (-loadLemmas))
     (-index))
   )
 
