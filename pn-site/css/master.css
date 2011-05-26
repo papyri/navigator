@@ -3,13 +3,17 @@
 @import url("jquery.bubblepopup.v2.1.5.css");
 
 html {
-background: #E4E5E0 url(../images/bodybg.jpg) no-repeat top left;
+background: #E4E5E0;
 }
 body {
 color: #3c2217;
 font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 font-size: 108%;
 min-height: 100%;
+}
+
+div#hd {
+  background: #E4E5E0 url(../images/header-master.png) no-repeat top left;
 }
 
 #hd h1 {
