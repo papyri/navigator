@@ -309,12 +309,12 @@
   
   <xsl:template name="tpl-apparatus">
     <!-- An apparatus is only created if one of the following is true -->
-    <xsl:if test=".//t:choice[child::t:sic and child::t:corr] | .//t:subst | .//t:app |        
+    <xsl:if test=".//t:choice[(child::t:sic and child::t:corr) or (child::t:orig and child::t:reg)] | .//t:subst | .//t:app |        
       .//t:hi[@rend = 'diaeresis' or @rend = 'varia' or @rend = 'oxia' or @rend = 'dasia' or @rend = 'psili' or @rend = 'perispomeni'] |
       .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
     
       <!-- An entry is created for-each of the following instances -->
-      <xsl:for-each select=".//t:choice[child::t:sic and child::t:corr] | .//t:subst | .//t:app |
+      <xsl:for-each select=".//t:choice[(child::t:sic and child::t:corr) or (child::t:orig and child::t:reg)] | .//t:subst | .//t:app |
         .//t:hi[@rend = 'diaeresis' or @rend = 'varia' or @rend = 'oxia' or @rend = 'dasia' or @rend = 'psili' or @rend = 'perispomeni'] |
         .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
         
@@ -333,6 +333,10 @@
       <!-- choice -->
       <xsl:when test="local-name() = 'choice' and child::t:sic and child::t:corr">
         <xsl:apply-templates select="t:sic/node()"/>
+      </xsl:when>
+      
+      <xsl:when test="local-name() = 'choice' and child::t:reg and child::t:orig">
+        <xsl:apply-templates select="t:orig/node()"/>
       </xsl:when>
       
       <!-- subst -->
