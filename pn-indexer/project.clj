@@ -1,5 +1,6 @@
 (defproject pn-indexer "1.0"
   :repositories {"papyri.info" "http://dev.papyri.info/maven"}
+  :jvm-opts ["-Xmx1g"]
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [ant/ant-launcher "1.6.2"]
