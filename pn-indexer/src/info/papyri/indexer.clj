@@ -39,7 +39,7 @@
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def nthreads 10)
-(def nserver "dev.papyri.info")
+(def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
 (def html (ref (ConcurrentLinkedQueue.)))
@@ -283,13 +283,13 @@
           (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
           (list "related" (apply str (interpose " " (for [x relations] (first x)))))
           (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
-          (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (first x)))))))))
+          (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (first x)))))
+          (list "server" nserver)))))
   
        
 
 (defn queue-items
   [url exclude]
-  (println url)
   (let [items (execute-query (has-part-query url))
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
@@ -306,10 +306,11 @@
                (substring-before (substring-after (last x) "http://papyri.info/") "/"))) exclude)]
       (if (nil? exclusion)
         (.add @html (list (str "file:" (get-filename (last item)))
-        (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
-        (list "related" (apply str (interpose " " (for [x related] (last x)))))
-        (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
-        (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))))
+          (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
+          (list "related" (apply str (interpose " " (for [x related] (last x)))))
+          (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
+          (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
+          (list "server" nserver)))
         (do (.add @links (list (get-html-filename (.toString (last (reduce (fn [x y] (if (.contains (last x) exclusion) x y)) related))))
              (get-html-filename (.toString (last item)))))
       (.add @links (list (get-txt-filename (.toString (last (reduce (fn [x y] (if (.contains (last x) exclusion) x y)) related))))
@@ -324,7 +325,10 @@
   (.add @html (list url (list "collection" (if (.contains (substring-after url "http://papyri.info/") "/")
         (substring-before (substring-after url "http://papyri.info/") "/")
         (substring-after url "http://papyri.info/")))
-        (list "related" "") (list "replaces" "") (list "isReplacedBy" "")))
+        (list "related" "") 
+        (list "replaces" "") 
+        (list "isReplacedBy" "")
+        (list "server" nserver)))
   (let [items (execute-query (has-part-query url))]
     (when (> (count items) 0)
       (if (.endsWith (last (first items)) "/source")
@@ -342,7 +346,7 @@
           (transform (if (.startsWith (first x) "http")
             (str (.replace (first x) "papyri.info" nserver) "/rdf")
             (first x))
-          (list (second x) (nth x 2) (nth x 3) (nth x 4))
+          (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5))
           (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
            (catch Exception e
        (.printStackTrace e)
@@ -439,7 +443,7 @@
     (index-solr (str solrurl "morph-search/"))
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
-    (let [solr (CommonsHttpSolrServer. solrurl)]
+    (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))]
       (.commit solr))))
    
 (defn -index [& args]
