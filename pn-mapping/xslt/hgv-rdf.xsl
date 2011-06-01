@@ -65,7 +65,7 @@
           <xsl:for-each select="//tei:idno[@type = 'TM']">
             <dcterms:relation rdf:resource="http://www.trismegistos.org/tm/detail.php?quick={.}"/>
           </xsl:for-each>
-            <xsl:for-each select="//tei:text/tei:body/tei:div[@type='figure']//tei:graphic[starts-with(@url, 'http://wwwapp.cc.columbia.edu')]">
+            <xsl:for-each select="//tei:text/tei:body/tei:div[@type='figure']//tei:graphic[contains(@url, 'columbia.edu')]">
                 <dcterms:relation>
                     <rdf:Description rdf:about="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source">
                         <dcterms:relation rdf:resource="{$id}"/>
