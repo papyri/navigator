@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +16,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.text.DateFormat;
 
@@ -168,5 +168,25 @@ public class GitWrapper {
       throw e;
     }
     return diffs;
+  }
+  
+  public static List<String> getDiffsSince(String date) throws Exception {
+    Connection connect = null;
+    Class.forName("com.mysql.jdbc.Driver");
+    try {
+      connect = DriverManager.getConnection(
+              "jdbc:mysql://localhost/pn?"
+              + "user=" + git.dbUser + "&password=" + git.dbPass);
+      PreparedStatement st = connect.prepareStatement("SELECT hash FROM sync_history WHERE date > ? ORDER BY date LIMIT 1");
+      st.setDate(0, Date.valueOf(date));
+      ResultSet rs = st.executeQuery();
+      if (!rs.next()) {
+        return getDiffs(getHead());
+      } else {
+        return getDiffs(rs.getString("hash"));
+      }
+    } finally {
+      connect.close();
+    }
   }
 }

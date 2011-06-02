@@ -34,7 +34,7 @@
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def param (ref nil))
-;; NOTE hard-coded flie and directory locations
+;; NOTE hard-coded file and directory locations
 (def xslts {"DDB_EpiDoc_XML" "/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
       "HGV_meta_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
@@ -283,11 +283,11 @@
       (println "Processing DDB_EpiDoc_XML")
       (load-map (str idproot "/DDB_EpiDoc_XML"))
       (println "Processing HGV_meta_EpiDoc")
-      (load-map (str idproot "/HGV_meta_EpiDoc"))
+      (load-map (str ddbroot "/HGV_meta_EpiDoc"))
       (println "Processing APIS")
-      (load-map (str idproot "/APIS"))
+      (load-map (str ddbroot "/APIS"))
       (println "Processing HGV_trans_EpiDoc")
-      (load-map (str idproot "/HGV_trans_EpiDoc")))
+      (load-map (str ddbroot "/HGV_trans_EpiDoc")))
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")

@@ -71,6 +71,7 @@
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
   <xsl:param name="isReplacedBy"/>
+  <xsl:param name="server">papyri.info</xsl:param>
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
@@ -98,7 +99,7 @@
           filter regex(str(?b), "^http:")}
         </xsl:variable>
         <xsl:variable name="hgvdoc">
-          <xsl:if test="$hgv"><xsl:copy-of select="doc(concat('http://papyri.info/mulgara/sparql?query=', encode-for-uri($query)))"/></xsl:if>
+          <xsl:if test="$hgv"><xsl:copy-of select="doc(concat('http://',$server, '/mulgara/sparql?query=', encode-for-uri($query)))"/></xsl:if>
         </xsl:variable>
         <xsl:variable name="children" select="if ($hgv) then pi:get-toc($hgvdoc//sl:result) else pi:get-toc(//dc:hasPart) "/>
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
