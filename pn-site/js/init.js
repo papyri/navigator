@@ -3,13 +3,13 @@ function init() {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
         jQuery(this).hide();
     });
-    jQuery("ul.nav li").not($("#footer ul.nav li")).hover(function() {
-        jQuery(this).css('background-color', '#445B88');
-        jQuery(this).find("a").css('color', 'white')
-    },
-    function() {
-        jQuery(this).css('background-color', 'transparent');
-        jQuery(this).find("a").css('color', 'black')
+    jQuery("ul.nav a").not($("#footer ul.nav li")).hover(function() {
+            jQuery(this).css('background-color', '#445B88');
+            jQuery(this).css('color', 'white')
+        },
+        function() {
+            jQuery(this).css('background-color', 'transparent');
+            jQuery(this).css('color', 'black')
     });
     jQuery("div.controls input").each(function() {
         if (!this.checked) {

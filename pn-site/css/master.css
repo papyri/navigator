@@ -3,7 +3,7 @@
 @import url("jquery.bubblepopup.v2.1.5.css");
 
 html {
-background: #E4E5E0;
+background: #ccc;
 }
 body {
 color: #3c2217;
@@ -13,14 +13,19 @@ min-height: 100%;
 }
 
 div#hd {
-  background: #E4E5E0 url(../images/header-master.png) no-repeat top left;
+background: url("/images/header.jpg");
+-moz-border-radius: 30px;
+-webkit-border-radius: 30px;
+-khtml-border-radius: 30px;
+border-radius: 30px;
 }
 
 #hd h1 {
-color: #3c2217;
+color: black;
 font-family: Georgia, serif;
-margin-left: 0.25em;
+margin-left: 0.5em;
 margin-bottom: 0;
+padding:0.1em;
 }
 div#bd {
 min-height: 8em;
@@ -35,25 +40,11 @@ width: 100%;
 text-align: center;
 }
 
-div.footer {
-background: #f8f6f4;
-border: thin solid #426a30;
-margin-top: 1em;
-margin-left: 1em;
-margin-right: 1em;
-opacity: 0.8;
-padding: .5em;
-text-align: center;
-}
-
 div.content {
 background: #f8f6f4;
-border: thin solid #426a30;
 float: left;
-margin-left: 1em;
-margin-right: 1em;
-padding: .5em;
-min-width: 900px;
+margin-top: 30px;
+padding: 1em;
 }
 
 div.content h2 {
@@ -109,7 +100,7 @@ div#help {
 div.nav {
 position: absolute;
 left: 300px;
-top: 20px;
+top: 25px;
 }
 ul.nav {
 display: inline;
@@ -121,12 +112,19 @@ color: black;
 font-size: 93%;
 line-height: 22px;
 margin-left: 15px;
-padding: .5em;
+padding: .7em;
 }
 ul.nav li {
 display: inline;
 padding-left: 0.2em;
 padding-right: 0.2em;
+}
+
+ul.nav ul {
+background:white;
+border: thin solid silver;
+display: inline;
+padding: 0.4em;
 }
 div.nav a {
 color: black;
@@ -424,15 +422,7 @@ div#related h4 {
      padding-top: 10px;
      padding-bottom: 10px;
      position: relative;
-     min-width: 900px;
-     margin-left: 1em;
-     margin-right: 1em;
-     margin-top: -2px;
-     border: thin solid #426A30;
      padding: 0.5em;
-     margin-top: 1em;
-     margin-left: 1em;
-     margin-right: 1em;
      opacity: 0.8;
      padding: .5em;
  }
