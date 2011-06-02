@@ -39,7 +39,7 @@
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def nthreads 10)
-(def nserver "dev.papyri.info")
+(def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
 (def html (ref (ConcurrentLinkedQueue.)))
