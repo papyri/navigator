@@ -38,6 +38,7 @@
             <xsl:otherwise>/</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
+        <xsl:if test="not(doc-available($ddb-doc-uri))"><xsl:message><xsl:value-of select="$ddb-doc-uri"/> not available.</xsl:message></xsl:if>
         <xsl:if test="doc-available($ddb-doc-uri)">
           <xsl:variable name="ddb-doc" select="doc($ddb-doc-uri)"/>
           <dcterms:relation>
