@@ -190,7 +190,7 @@
              "filter (!sameTerm(<" url ">, ?o2))}"))) conn)
       (.close conn))
     (let [factory (ConnectionFactory.)
-    conn (.newConnection factory server)
+          conn (.newConnection factory server)
     interpreter (SparqlInterpreter.)]
       (def hasPart (str "prefix dc: <http://purl.org/dc/terms/> "
       "construct{?s dc:hasPart ?o} "
@@ -247,8 +247,8 @@
   (let [xsl (choose-xslt file)]
     (init-xslt xsl)
     (if (.contains xsl "ddbdp-rdf") 
-      (dosync (ref-set param '("root" idproot)))
-      (dosync (ref-set param '("DDB-root" ddbroot)))))
+      (dosync (ref-set param (list "root" idproot)))
+      (dosync (ref-set param (list "DDB-root" ddbroot)))))
       (let [factory (ConnectionFactory.)
         conn (.newConnection factory server)
         create (CreateGraph. graph)]
