@@ -38,7 +38,7 @@
 (def numbersurl "http://localhost:8090/sparql?query=")
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
-(def nthreads 5)
+(def nthreads 10)
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
