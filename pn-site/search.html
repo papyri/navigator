@@ -213,6 +213,14 @@
       * simply the betacode setting. However, the ideal behaviour and interactions amongst
       * these settings are not yet decided upon.
       *
+      * Expansion of functionality would involve: 
+      * (1) defining a new search_setting object corresponding to the relevant search setting 
+      * in initSearchCookies
+      * (2) Ensuring that a cookie for this search setting is set in cookifySearchSettings
+      * retrieveSearchSettings should then be able to take care of everything else automatically -
+      * though note it will only work for form elements with a "checked" attribute
+      * 
+      *
       * @author thill
       * @version 2011.06.02
       *
