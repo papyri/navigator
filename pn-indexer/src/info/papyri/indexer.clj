@@ -38,7 +38,7 @@
 (def numbersurl "http://localhost:8090/sparql?query=")
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
-(def nthreads 10)
+(def nthreads 5)
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
@@ -195,15 +195,15 @@
     (let [xslt (.poll pool)
     transformer (.newTransformer xslt)]
       (try
-  (when (not (== 0 (count params)))
-    (doseq [param params] (doto transformer
-          (.setParameter (first param) (second param)))))
-  (.transform transformer (StreamSource. (.openStream (URL. url))) out)
-  (catch Exception e
-    (println (str (.getMessage e) " transforming " url "."))
-    (.printStackTrace e))
-  (finally
-   (.add pool xslt)))))
+        (when (not (== 0 (count params)))
+          (doseq [param params] (doto transformer
+            (.setParameter (first param) (second param)))))
+        (.transform transformer (StreamSource. (.openStream (URL. url))) out)
+        (catch Exception e
+          (println (str (.getMessage e) " transforming " url "."))
+          (.printStackTrace e))
+        (finally
+          (.add pool xslt)))))
     
     
 (defn has-part-query
@@ -476,7 +476,7 @@
   ;; Generate text
   (println "Generating text...")
   (generate-text)
-  
+ 
   ;; Start Solr indexing thread if we're doing the lot
   (when (nil? (first args))
     (index-solr (str solrurl "pn-search-offline/")))

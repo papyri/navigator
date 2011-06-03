@@ -190,7 +190,7 @@
              "filter (!sameTerm(<" url ">, ?o2))}"))) conn)
       (.close conn))
     (let [factory (ConnectionFactory.)
-    conn (.newConnection factory server)
+          conn (.newConnection factory server)
     interpreter (SparqlInterpreter.)]
       (def hasPart (str "prefix dc: <http://purl.org/dc/terms/> "
       "construct{?s dc:hasPart ?o} "
@@ -247,8 +247,8 @@
   (let [xsl (choose-xslt file)]
     (init-xslt xsl)
     (if (.contains xsl "ddbdp-rdf") 
-      (dosync (ref-set param '("root" idproot)))
-      (dosync (ref-set param '("DDB-root" ddbroot)))))
+      (dosync (ref-set param (list "root" idproot)))
+      (dosync (ref-set param (list "DDB-root" ddbroot)))))
       (let [factory (ConnectionFactory.)
         conn (.newConnection factory server)
         create (CreateGraph. graph)]
@@ -284,11 +284,11 @@
       (println "Processing DDB_EpiDoc_XML")
       (load-map (str idproot "/DDB_EpiDoc_XML"))
       (println "Processing HGV_meta_EpiDoc")
-      (load-map (str idproot "/HGV_meta_EpiDoc"))
+      (load-map (str ddbroot "/HGV_meta_EpiDoc"))
       (println "Processing APIS")
-      (load-map (str idproot "/APIS"))
+      (load-map (str ddbroot "/APIS"))
       (println "Processing HGV_trans_EpiDoc")
-      (load-map (str idproot "/HGV_trans_EpiDoc")))
+      (load-map (str ddbroot "/HGV_trans_EpiDoc")))
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
