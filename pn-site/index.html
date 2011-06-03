@@ -4,11 +4,11 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Papyri.info</title>
-  <link rel="stylesheet" href="css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="js/init.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
 
     var _gaq = _gaq || [];
@@ -22,6 +22,7 @@
     })();
 
   </script>
+
 </head>
 
 <body onload="init()">
@@ -34,19 +35,21 @@
         <!-- left nav -->
         <form method="get" accept-charset="utf-8">
           <ul class="nav">
-            <li>
-              <a href="/">Home</a>
-            </li>
-            <li>
-              <a href="/ddbdp/">Browse DDbDP</a>
-            </li>
-            <li>
-              <a href="/hgv/">Browse HGV</a>
-            </li>
-            <li>
-              <a href="/apis/">Browse APIS</a>
-            </li>
-            <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
+            <li>Browse:
+              <ul>
+                <li>
+                  <a href="/ddbdp/">DDbDP</a>
+                </li>
+                <li>
+                  <a href="/hgv/">HGV</a>
+                </li>
+                <li>
+                  <a href="/apis/">APIS</a>
+                </li>
+                <li>
+                  <a href="/apis/">TM</a>
+                </li>
+              </ul>
             </li>
             <li>
               <a href="/search">Search</a>
@@ -55,7 +58,7 @@
         </form>
       </div>
       <div id="main">
-        <div class="content ui-corner-all">
+        <div class="content">
           <p><span class="papyriDotInfo">Papyri.info</span> is
                     dedicated to the study of ancient papyrological documents.&nbsp; It offers links to
                     papyrological resources, a customized search engine (called the <em>Papyrological
@@ -100,8 +103,41 @@
       </div>
 
     </div>
-    <div class="footer ui-corner-all">
-      papyri.info is produced by <a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> and the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.
+    <div id="footer">
+      <div id="footer-left-col">
+        <div id="secondary-nav">
+          <ul class="nav">
+            <li><a href="/" title="Project Home">Home</a></li>
+            <li><a href="#" title="Site help">Help</a></li>
+            <!-- following two links SoSOL only -->
+            <!-- <li><a href="">Leiden<sup>+</sup> Text Help</a></li> -->
+            <!-- <li><a href="">Leiden<sup>+</sup> Translation Help</a></li> -->
+            <!-- insert link for SoSOL admin email here -->
+            <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
+            <li><a href="/resources.html" title="Papyrological tools and resources">Resources</a></li>
+            <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
+            <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
+          </ul>
+        </div>
+        <div class="spacer"></div>
+      </div>
+      <div id="footer-right-col">
+        <p>Produced by</p>
+        <p><a href="http://dlib.nyu.edu/dlts/">NYU Digital Technology Services</a> &amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
+          Ancient World</a></p>
+        <div id="about-nav"> 
+          <ul class="nav">
+            <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
+            <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
+              der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
+            <li><a href="http://idp.atlantides.org/trac/idp/wiki/DDBDP" title="Duke Databank of Documentary Papyri - Home">DDbDp</a></li>
+            <li><a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/about.html">APIS</a></li>
+            <li class="last-child"><a href="/about.html" title="Advanced Papyrological Information System">Papyri.info</a></li>    
+          </ul>
+          <h3 id="about-hdr">About:</h3>
+        </div>
+      </div>
+      <div class="spacer"></div>
     </div>
   </div>
   <script type="text/javascript" charset="utf-8">
