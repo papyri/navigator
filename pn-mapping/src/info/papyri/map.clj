@@ -310,5 +310,3 @@
               (-insertInferences nil))
             (= function "help") (print help)))
     ((print help))))
-    
-  
