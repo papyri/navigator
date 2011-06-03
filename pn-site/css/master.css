@@ -3,7 +3,7 @@
 @import url("jquery.bubblepopup.v2.1.5.css");
 
 html {
-background: #E4E5E0 url(../images/bodybg.jpg) no-repeat top left;
+background: #ccc;
 }
 body {
 color: #3c2217;
@@ -12,11 +12,20 @@ font-size: 108%;
 min-height: 100%;
 }
 
+div#hd {
+background: url("/images/header.jpg");
+-moz-border-radius: 30px;
+-webkit-border-radius: 30px;
+-khtml-border-radius: 30px;
+border-radius: 30px;
+}
+
 #hd h1 {
-color: #3c2217;
+color: black;
 font-family: Georgia, serif;
-margin-left: 0.25em;
+margin-left: 0.5em;
 margin-bottom: 0;
+padding:0.1em;
 }
 div#bd {
 min-height: 8em;
@@ -31,25 +40,11 @@ width: 100%;
 text-align: center;
 }
 
-div.footer {
-background: #f8f6f4;
-border: thin solid #426a30;
-margin-top: 1em;
-margin-left: 1em;
-margin-right: 1em;
-opacity: 0.8;
-padding: .5em;
-text-align: center;
-}
-
 div.content {
 background: #f8f6f4;
-border: thin solid #426a30;
 float: left;
-margin-left: 160px;
-margin-right: 1em;
-padding: .5em;
-min-width: 900px;
+margin-top: 30px;
+padding: 1em;
 }
 
 div.content h2 {
@@ -104,10 +99,11 @@ div#help {
 /* Left-hand Navigation */
 div.nav {
 position: absolute;
-left: 0;
-width: 150px;
+left: 300px;
+top: 25px;
 }
 ul.nav {
+display: inline;
 background-image: url(../images/navbg.png);
 background-position: bottom;
 background-repeat: repeat-x;
@@ -116,11 +112,19 @@ color: black;
 font-size: 93%;
 line-height: 22px;
 margin-left: 15px;
-padding: .2em;
+padding: .7em;
 }
 ul.nav li {
+display: inline;
 padding-left: 0.2em;
 padding-right: 0.2em;
+}
+
+ul.nav ul {
+background:white;
+border: thin solid silver;
+display: inline;
+padding: 0.4em;
 }
 div.nav a {
 color: black;
@@ -404,3 +408,173 @@ table#resources p {
 div#related h4 {
   font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 }
+
+/* FOOTER STYLES */
+
+/* footer general layout */
+
+ #footer{
+     
+     background-color: #888;
+     font-family: Verdana, Helvetica, sans-serif;
+     font-size: 80%;
+     color: #fff;
+     padding-top: 10px;
+     padding-bottom: 10px;
+     position: relative;
+     padding: 0.5em;
+     opacity: 0.8;
+     padding: .5em;
+ }
+
+
+#footer-left-col{
+    
+    width: 57%;
+    position: relative;
+    float: left;
+    padding-left: 3%
+
+}
+
+#footer-right-col{
+    
+    position: relative;
+    float: right;
+    width: 33%;
+    padding-left: 5%;
+    padding-right: 2%;
+    border-left: thin solid #fff;
+    font-size: 80%;
+    text-align: right;
+}
+
+.spacer{
+    
+   width: 100%;
+   clear: both; 
+   height: 1px;
+    
+}
+
+#footer p{
+    
+    margin-bottom: 0.5em;
+    
+}
+
+/* styles for all footer navigation */
+
+#footer ul.nav{
+    
+    list-style-type: none;
+    position: relative;
+    width: 80%;
+    color: #fff;
+    background-image: none;
+    border: none;
+
+}
+
+#footer ul.nav li{
+    
+   display: block;
+    
+}
+
+#footer a:link, #footer a:visited, #footer a:hover, #footer a:active{ 
+
+    color: white;
+    
+}
+
+#footer a:link, #footer a:visited{
+    
+    text-decoration: none;
+    
+}
+
+#footer a:hover, #footer a:active{
+    
+    text-decoration: underline;
+    
+}
+
+#footer ul.nav li:before{
+    
+    content: "| ";
+    
+}
+
+/* styles for left-hand column and navigation */
+
+#footer-left-col #secondary-nav{
+    
+    width: 100%;
+    position: absolute;
+    /* this value should be lowered if it is likely
+     * that the navigation menu will wrap to a second line */
+    top: 1.6em;
+    
+}
+
+#secondary-nav ul.nav li:first-child:before{
+    
+    content: "";
+    
+}
+
+#footer-left-col #secondary-nav ul.nav{
+    
+    margin-left: 30px;
+    
+}
+
+
+#footer-left-col #secondary-nav ul.nav li{
+    
+    float: left;  
+    margin-bottom: 5px;
+    margin-right: 6px;
+    
+}
+
+/* styles for right-hand column and navigation */
+
+#footer-right-col p:first-child{
+    
+    font-weight: bold; 
+    
+}
+
+
+#footer-right-col #about-nav li, #footer #about-nav #about-hdr{
+    
+    float: right;
+}
+
+
+#about-nav ul.nav li.last-child:before{
+    
+    content: "";
+    
+}
+
+#about-hdr{
+    
+    margin-right: 5px;
+    line-height: 22px;
+    font-size: inherit;
+    font-family: inherit;
+    
+}
+
+#about-nav ul.nav li{
+    
+    margin-left: 3px;
+}
+
+/* END FOOTER STYLES  */
+
+
+
