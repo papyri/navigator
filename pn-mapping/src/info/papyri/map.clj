@@ -254,7 +254,6 @@
         create (CreateGraph. graph)]
       (.execute conn create)
       (.close conn))
-      (.. System out (println "connection completed"))
   (let [pool (Executors/newFixedThreadPool nthreads)
         files (file-seq (File. file))
         tasks (map (fn [x]
