@@ -40,6 +40,9 @@
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0009"/>
         <dcterms:bibliographicCitation>CPR</dcterms:bibliographicCitation>
     </rdf:Description>
+    <rdf:Description rdf:about="http://papyri.info/ddbdp/o.abumina">
+        <dcterms:bibliographicCitation>O.AbuMina</dcterms:bibliographicCitation>
+    </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.amst">
         <dcterms:identifier rdf:resource="Perseus:text:1999.05.0010"/>
         <dcterms:bibliographicCitation>O.Amst.</dcterms:bibliographicCitation>
