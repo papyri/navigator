@@ -11,6 +11,7 @@
     <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
@@ -203,8 +204,62 @@
           apis.append('<option value="' + val + '">'+ val + '</option');
         })
       });
+            
+      /**
+      * The following are functions to store search settings in cookies.
+      *
+      * As matters stand this might seem like an over-engineered solution. However, it can
+      * be very easily expanded to accomodate the other search settings on the form, rather than
+      * simply the betacode setting. However, the ideal behaviour and interactions amongst
+      * these settings are not yet decided upon.
+      *
+      * @author thill
+      * @version 2011.06.02
+      *
+      */
+      
+      
+      function initSearchCookies(){
+      	
+      		search_settings = {};
+      		search_settings.betacode = {};
+      		search_settings.betacode.name = "beta_on";
+      		search_settings.betacode.element = "#betaYes";      
+
+      }
+      
+      
+      function cookifySearchSettings(){
+
+      	jQuery.cookie(search_settings.betacode.name, jQuery("input[name='beta']").attr("checked").toString());
+      
+      }
+      
+      function retrieveSearchSettings(){
+      
+      	jQuery.each(search_settings, function(setting, setting_values){
+      	
+      		var cookie_name = setting_values["name"];
+      		var element = setting_values["element"];
+      		if(jQuery.cookie(cookie_name) && jQuery.cookie(cookie_name) != jQuery(element).attr("checked").toString()){
+      		
+      			jQuery(element).trigger("click");
+      			jQuery(element + "-label").trigger("click");
+      			
+      		}
+
+      	});
+         
+      }
+      
+      /* end search-setting cookie funcs */
+      
       var help = false;
       function init() {
+      
+        initSearchCookies();
+      	retrieveSearchSettings();
+      
         jQuery("li.dialog").each(function(i) {
           jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
           jQuery(this).hide();
@@ -221,7 +276,9 @@
               jQuery(this).css('background-color', 'transparent');
               jQuery(this).find("a").css('color', 'black')
           });
+          jQuery("#search").click(cookifySearchSettings);
       }
+      
       function toggleHelp() {
         if(!help) {
           help = true;
