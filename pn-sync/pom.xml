@@ -13,6 +13,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+      <repository>
+        <name>papyri.info</name>
+        <id>papyri.info</id>
+        <url>http://dev.papyri.info/maven/</url>
+      </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -181,7 +189,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>pn-sync</finalName>
+        <finalName>sync</finalName>
     </build>
 
 </project>
