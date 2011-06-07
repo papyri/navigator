@@ -80,6 +80,7 @@ public class GitWrapper {
       if (git.success) {
         git.success = false;
       }
+      e.printStackTrace();
     }
 
     // get current HEAD's SHA : git rev-parse HEAD

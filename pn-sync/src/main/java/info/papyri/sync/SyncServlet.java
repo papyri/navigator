@@ -68,10 +68,17 @@ public class SyncServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         if (request.getParameterMap().containsKey("since")) {
           try {
+            StringBuilder result = new StringBuilder();
+            result.append("{ \"updates\":[");
             List<String> diffs = git.getDiffsSince(request.getParameter("since"));
-            for (String diff : diffs) {
-              
+            for (int i = 0; i < diffs.size(); i++) {
+              result.append("\"");
+              result.append(diffs.get(i));
+              result.append("\"");
+              if (i < (diffs.size() - 1)) result.append(",");
             }
+            result.append("]}");
+            out.println(result.toString());
           } catch (Exception e) {
             out.println("{ \"error\": \"" + e.getMessage() + "\"}");
           }
