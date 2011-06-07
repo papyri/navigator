@@ -243,7 +243,7 @@
       
 (defn load-map 
   [file]
-  (def nthreads 5)
+  (def nthreads 10)
   (let [xsl (choose-xslt file)]
     (init-xslt xsl)
     (if (.contains xsl "ddbdp-rdf") 
@@ -309,5 +309,3 @@
               (-insertInferences nil))
             (= function "help") (print help)))
     ((print help))))
-    
-  
