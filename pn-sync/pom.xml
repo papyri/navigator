@@ -16,7 +16,7 @@
     <repositories>
       <repository>
         <name>papyri.info</name>
-        <id>dev-dl-pa</id>
+        <id>papyri.info</id>
         <url>http://dev.papyri.info/maven/</url>
       </repository>
     </repositories>
