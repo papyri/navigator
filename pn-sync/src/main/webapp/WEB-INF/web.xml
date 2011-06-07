@@ -10,15 +10,19 @@
         <init-param>
             <param-name>gitDir</param-name>
             <param-value>/data/papyri.info/idp.data</param-value>
+        </init-param>
+        <init-param>
             <param-name>dbUser</param-name>
             <param-value>pn</param-value>
+        </init-param>
+        <init-param>
             <param-name>dbPass</param-name>
-            <param-value>p4pyr!</param-value>
+            <param-value>p4pyr!</param-value>  
         </init-param>
      </servlet>
      <servlet-mapping>
         <servlet-name>Sync</servlet-name>
-        <url-pattern>/sync</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -26,3 +30,4 @@
         </session-timeout>
     </session-config>
 </web-app>
+
