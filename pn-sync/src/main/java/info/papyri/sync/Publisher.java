@@ -53,15 +53,18 @@ public class Publisher implements Runnable {
         List<String> files = new ArrayList<String>();
         for (String diff : diffs) {
           files.add(base + File.separator + diff);
+          System.out.println(base + File.separator + diff);
         }
-        status = MAPPING;
-        map.mapFiles(files);
-        status = INFERENCING;
-        for (String file : files) {
-          map.insertInferences(file);
+        if (files.size() > 0) {
+          status = MAPPING;
+          map.mapFiles(files);
+          status = INFERENCING;
+          for (String file : files) {
+            map.insertInferences(file);
+          }
+          status = PUBLISHING;
+          indexer.index(files);
         }
-        status = PUBLISHING;
-        indexer.index(files);
         status = IDLE;
         started = null;
       } catch (Exception e) {
