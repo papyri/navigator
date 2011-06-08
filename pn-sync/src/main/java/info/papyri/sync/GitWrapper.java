@@ -149,7 +149,7 @@ public class GitWrapper {
       pb.directory(git.gitDir);
       pb.start().waitFor();
       git.head = getHead();
-      storeHead();
+      if (!git.head.equals(getLastSync())) storeHead();
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
