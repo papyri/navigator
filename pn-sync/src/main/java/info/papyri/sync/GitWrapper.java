@@ -119,7 +119,7 @@ public class GitWrapper {
               "jdbc:mysql://localhost/pn?"
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       Statement st = connect.createStatement();
-      st.executeUpdate("INSERT INTO sync_history (hash) VALUES ('" + git.head + "')");
+      st.executeUpdate("INSERT INTO sync_history (hash, date) VALUES ('" + git.head + "', NOW())");
     } finally {
       connect.close();
     }
@@ -145,7 +145,7 @@ public class GitWrapper {
 
   private void pull(String repo) throws Exception {
     try {
-      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo);
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, "master");
       pb.directory(git.gitDir);
       pb.start().waitFor();
       git.head = getHead();
@@ -193,7 +193,7 @@ public class GitWrapper {
               "jdbc:mysql://localhost/pn?"
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       PreparedStatement st = connect.prepareStatement("SELECT hash FROM sync_history WHERE date > ? ORDER BY date LIMIT 1");
-      st.setDate(q, Date.valueOf(date));
+      st.setDate(1, Date.valueOf(date));
       ResultSet rs = st.executeQuery();
       if (!rs.next()) {
         return getDiffs(getHead());
