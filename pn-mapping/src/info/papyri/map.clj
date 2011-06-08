@@ -274,14 +274,11 @@
 (defn -mapFiles
   [files]
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
-  (let [xsl (choose-xslt file)]
-    (init-xslt xsl)
-    (if (.contains xsl "ddbdp-rdf") 
-      (dosync (ref-set param (list "root" idproot)))
-      (dosync (ref-set param (list "DDB-root" ddbroot)))))
-  (for [file files]
-    (transform x))
-  (flush-buffer (count @buffer)))
+  (doseq [file files]
+     (let [xsl (choose-xslt file)]
+       (init-xslt xsl))
+     (transform file))
+   (flush-buffer (count @buffer)))
 
 (defn -mapAll
   [args]
@@ -299,8 +296,7 @@
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
-  (-insertInferences nil)
-  )
+  (-insertInferences nil))
 
 (defn -main
   [& args]
