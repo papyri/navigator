@@ -70,6 +70,7 @@
     <xsl:variable name="image" select="contains($related, 'info:fedora/ldpd')"/>
     <add>
       <doc>
+        <field name="collection"><xsl:value-of select="$collection"></xsl:value-of></field>
         <xsl:choose>
           <xsl:when test="$collection = 'ddbdp'">
             <field name="id">http://papyri.info/ddbdp/<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']"/></field>
@@ -187,7 +188,7 @@
             <xsl:call-template name="translation">
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
-            <field name="series">zzz<xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
+            <field name="series"><xsl:value-of select="substring-before(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], '.')"/></field>
             <field name="volume">0</field>
             <field name="item"><xsl:value-of select="replace(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid'], 'apis.'), '\D', '')"/></field>
           </xsl:when>

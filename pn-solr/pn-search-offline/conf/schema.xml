@@ -46,17 +46,18 @@
   </types>
 
   <fields>
+    <field name="collection" type="string" indexed="true" stored="true" required="true"/>
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="display_place" type="string" indexed="false" stored="true"/>
     <field name="display_date" type="string" indexed="false" stored="true"/>
-    <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="identifier" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="transcription" type="text" indexed="true" stored="false"/>
     <field name="transcription_id" type="text" indexed="true" stored="false"/>
     <field name="transcription_ic" type="text" indexed="true" stored="false"/>
     <field name="transcription_ia" type="text" indexed="true" stored="false"/>
     <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
     <field name="translation" type="text" indexed="true" stored="false" multiValued="true"/>
-    <field name="has_translation" type="boolean" indexed="true" stored="false"/>
+    <field name="has_translation" type="boolean" indexed="true" stored="true"/>
     <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
@@ -65,9 +66,9 @@
     <field name="invnum" type="text" indexed="true" stored="true"/>
     <field name="language" type="text" indexed="true" stored="true" multiValued="true"/>
     <field name="all" type="text" indexed="true" stored="false" multiValued="true"/>
-    <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
-    <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
-    <field name="item" type="long" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
+    <field name="series" type="string" indexed="true" stored="true" multiValued="false" required="true"/>
+    <field name="volume" type="int" indexed="true" stored="true" multiValued="false" required="true" default="0"/>
+    <field name="item" type="long" indexed="true" stored="true" multiValued="false" required="true" default="0"/>
   </fields>
 
   <uniqueKey>id</uniqueKey>
