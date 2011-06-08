@@ -193,7 +193,7 @@ public class GitWrapper {
               "jdbc:mysql://localhost/pn?"
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       PreparedStatement st = connect.prepareStatement("SELECT hash FROM sync_history WHERE date > ? ORDER BY date LIMIT 1");
-      st.setDate(0, Date.valueOf(date));
+      st.setDate(q, Date.valueOf(date));
       ResultSet rs = st.executeQuery();
       if (!rs.next()) {
         return getDiffs(getHead());
