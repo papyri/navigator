@@ -81,6 +81,7 @@ public class SyncServlet extends HttpServlet {
             out.println(result.toString());
           } catch (Exception e) {
             out.println("{ \"error\": \"" + e.getMessage() + "\"}");
+            e.printStackTrace();
           }
         }
       }
