@@ -1,4 +1,4 @@
-(defproject pn-mapping "1.0.0"
+(defproject pn-mapping "1.0-SNAPSHOT"
   :description "Loads triple data into the papyri.info numbers server"
   :repositories {"papyri.info" "http://dev.papyri.info/maven"}
   :dependencies [[org.clojure/clojure "1.2.0"]
