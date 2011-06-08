@@ -119,7 +119,7 @@ public class GitWrapper {
               "jdbc:mysql://localhost/pn?"
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       Statement st = connect.createStatement();
-      st.executeUpdate("INSERT INTO sync_history (hash) VALUES (" + git.head + ")");
+      st.executeUpdate("INSERT INTO sync_history (hash) VALUES ('" + git.head + "')");
     } finally {
       connect.close();
     }
