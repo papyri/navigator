@@ -49,7 +49,7 @@ public class Publisher implements Runnable {
       started = new Date();
       try {
         GitWrapper.executeSync();
-        List<String> diffs = GitWrapper.getDiffs(GitWrapper.getLastSync());
+        List<String> diffs = GitWrapper.getDiffs(GitWrapper.getPreviousSync());
         List<String> files = new ArrayList<String>();
         for (String diff : diffs) {
           files.add(base + File.separator + diff);

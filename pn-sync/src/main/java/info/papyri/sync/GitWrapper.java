@@ -76,6 +76,8 @@ public class GitWrapper {
     try {
       git.pull("canonical");
       git.pull("github");
+      git.push("canonical");
+      git.push("github");
     } catch (Exception e) {
       if (git.success) {
         git.success = false;
@@ -88,6 +90,29 @@ public class GitWrapper {
     // on failure, git reset to previous SHA
     // get list of files affected by pull: git diff --name-only SHA1 SHA2
     // execute indexing on file list
+  }
+  
+  public static String getPreviousSync() throws Exception {
+    String result = null;
+    Connection connect = null;
+    Class.forName("com.mysql.jdbc.Driver");
+    try {
+      connect = DriverManager.getConnection(
+              "jdbc:mysql://localhost/pn?"
+              + "user=" + git.dbUser + "&password=" + git.dbPass);
+      Statement st = connect.createStatement();
+      ResultSet rs = st.executeQuery("SELECT hash FROM sync_history ORDER BY date DESC LIMIT 2");
+      if (rs.next()) {
+        if (!rs.isAfterLast() || !rs.next()) {
+          result = getHead();
+        } else {
+          result = rs.getString("hash");
+        }
+      }
+    } finally {
+      connect.close();
+    }
+    return result;
   }
 
   public static String getLastSync() throws Exception {
@@ -150,6 +175,18 @@ public class GitWrapper {
       pb.start().waitFor();
       git.head = getHead();
       if (!git.head.equals(getLastSync())) storeHead();
+    } catch (Exception e) {
+      git.success = false;
+      git.reset(git.head);
+      throw e;
+    }
+  }
+  
+  private void push(String repo) throws Exception {
+    try {
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo);
+      pb.directory(git.gitDir);
+      pb.start().waitFor();
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
