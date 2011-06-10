@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.List;
 import static java.util.concurrent.TimeUnit.*;
 
 import javax.servlet.ServletException;
@@ -35,7 +36,7 @@ public class SyncServlet extends HttpServlet {
     super.init(config);
     git = GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
-    scheduler.scheduleAtFixedRate(publisher, 1, 1, HOURS);
+    scheduler.scheduleWithFixedDelay(publisher, 10, 60, MINUTES);
   }
 
   /** 
@@ -62,6 +63,27 @@ public class SyncServlet extends HttpServlet {
       if ("check".equals(action)) {
         response.setContentType("text/plain;charset=UTF-8");
         out.println(publisher.getSuccess());
+      }
+      if ("updates".equals(action)) {
+        response.setContentType("application/json;charset=UTF-8");
+        if (request.getParameterMap().containsKey("since")) {
+          try {
+            StringBuilder result = new StringBuilder();
+            result.append("{ \"updates\":[");
+            List<String> diffs = git.getDiffsSince(request.getParameter("since"));
+            for (int i = 0; i < diffs.size(); i++) {
+              result.append("\"");
+              result.append(diffs.get(i));
+              result.append("\"");
+              if (i < (diffs.size() - 1)) result.append(",");
+            }
+            result.append("]}");
+            out.println(result.toString());
+          } catch (Exception e) {
+            out.println("{ \"error\": \"" + e.getMessage() + "\"}");
+            e.printStackTrace();
+          }
+        }
       }
     } finally {
       out.close();

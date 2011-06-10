@@ -27,6 +27,7 @@
            (org.mulgara.sparql SparqlInterpreter)
            (org.mulgara.itql TqlInterpreter)))
            
+(def xsl (ref nil))
 (def pxslt (ref nil))
 (def buffer (ref nil))
 (def flushing (ref false))
@@ -85,8 +86,12 @@
 
 (defn init-xslt
     [xslt]
-  (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
-  (let [xsl-src (StreamSource. (FileInputStream. xslt))
+  (when (not= xslt @xsl)
+    (dosync (ref-set xsl xslt))
+    (if (.contains xslt "ddbdp-rdf") 
+      (dosync (ref-set param (list "root" idproot)))
+      (dosync (ref-set param (list "DDB-root" ddbroot))))
+    (let [xsl-src (StreamSource. (FileInputStream. xslt))
         configuration (Configuration.)
         compiler-info (CompilerInfo.)]
         (doto xsl-src 
@@ -94,7 +99,7 @@
         (doto compiler-info
           (.setErrorListener (StandardErrorListener.))
           (.setURIResolver (StandardURIResolver. configuration)))
-        (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info)))))
+        (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
           
 (defn choose-xslt
   [file]
@@ -243,37 +248,37 @@
       
 (defn load-map 
   [file]
-  (def nthreads 10)
+  (def nthreads 5)
+  (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
   (let [xsl (choose-xslt file)]
-    (init-xslt xsl)
-    (if (.contains xsl "ddbdp-rdf") 
-      (dosync (ref-set param (list "root" idproot)))
-      (dosync (ref-set param (list "DDB-root" ddbroot)))))
-      (let [factory (ConnectionFactory.)
-        conn (.newConnection factory server)
-        create (CreateGraph. graph)]
-      (.execute conn create)
-      (.close conn))
+    (init-xslt xsl))
+  (let [factory (ConnectionFactory.)
+      conn (.newConnection factory server)
+      create (CreateGraph. graph)]
+    (.execute conn create)
+    (.close conn))
   (let [pool (Executors/newFixedThreadPool nthreads)
-        files (file-seq (File. file))
-        tasks (map (fn [x]
-    (fn []
-      (transform x)
-      (if (> (count @buffer) 500)
-        (flush-buffer nil))))
-    (filter #(.endsWith (.getName %) ".xml") files))]
-    (doseq [future (.invokeAll pool tasks)]
-      (.get future))
-    (doto pool
-      (.shutdown)))
-  (flush-buffer (count @buffer))
-  )
+      files (file-seq (File. file))
+      tasks (map (fn [x]
+        (fn []
+          (transform x)
+          (if (> (count @buffer) 500)
+          (flush-buffer nil))))
+        (filter #(.endsWith (.getName %) ".xml") files))]
+      (doseq [future (.invokeAll pool tasks)]
+        (.get future))
+      (doto pool
+        (.shutdown)))
+  (flush-buffer (count @buffer)))
     
 (defn -mapFiles
   [files]
-  (for [file files]
-    (load-map file))
-  )
+  (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
+  (doseq [file files]
+     (let [xsl (choose-xslt file)]
+       (init-xslt xsl))
+     (transform file))
+   (flush-buffer (count @buffer)))
 
 (defn -mapAll
   [args]
@@ -291,8 +296,7 @@
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
-  (-insertInferences nil)
-  )
+  (-insertInferences nil))
 
 (defn -main
   [& args]
