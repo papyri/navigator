@@ -74,7 +74,7 @@ public class SyncServlet extends HttpServlet {
             List<String> diffs = git.getDiffsSince(request.getParameter("since"));
             for (int i = 0; i < diffs.size(); i++) {
               result.append("\"");
-              result.append(diffs.get(i));
+              result.append(git.filenameToUri(diffs.get(i)));
               result.append("\"");
               if (i < (diffs.size() - 1)) result.append(",");
             }

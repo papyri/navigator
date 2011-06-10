@@ -217,7 +217,7 @@ public class GitWrapper {
     }
     List<String> result = new ArrayList<String>();
     for (String diff : diffs) {
-      result.add(filenameToUri(diff));
+      result.add(diff);
     }
     return result;
   }

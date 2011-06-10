@@ -55,7 +55,7 @@ public class Publisher implements Runnable {
       started = new Date();
       lastrun = started;
       try {
-        String head = GitWrapper.getHead();
+        String head = GitWrapper.getLastSync();
         System.out.println("Syncing at " + new Date());
         GitWrapper.executeSync();
         System.out.println(head + " = " + GitWrapper.getHead() + "?");
