@@ -219,13 +219,11 @@ public class CollectionBrowser extends HttpServlet {
           
              if("collection".equals(field) && pathBitsMap.size() > 1){
                 
-                //out.println(field + " : " + value);
                 sq.addFilterQuery(field + ":" + value);   
                 
             }
             else{
                 
-                //out.println(field + ":" + value);
                 query += " +" + field + ":" + value;
                 
                 
@@ -285,8 +283,8 @@ public class CollectionBrowser extends HttpServlet {
      * depending on their level in the hierarchy.
      * 
      * 
-     * @param level The current level in the hierarchy
-     * @param queryResponse The response returned by the query to the solr server
+     * @param pathBitsMap Map of levels in collections hierarchy to values for these
+     * @param queryResponse The response previously returned by the query to the solr server
      * @return  An ArrayList of Records
      */
     
@@ -299,25 +297,38 @@ public class CollectionBrowser extends HttpServlet {
         return recordsReturned;       
         
     }
+    /**
+     * Determines whether the next level of specificity in the browse consists of individual documents,
+     * or collections of documents (e.g., series or volumes of documents)
+     * 
+     * @param pathBitsMap Map of levels in collections hierarchy to values for these
+     * @param queryResponse The response previously returned by the query to the Solr server
+     * @return true if the next level is a collection of documents, false otherwise
+     */
     
     Boolean isNextLevelCollection(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
         
         String facetField = SOLR_FIELDS.get(pathBitsMap.size()).name();
         
-        System.out.println("checkpoint1");
         if(queryResponse.getFacetField(facetField)== null) return false;
-                System.out.println("checkpoint2");
 
         if(queryResponse.getFacetField(facetField).getValues().size() == 1) return false;
-                System.out.println("checkpoint3");
 
         if(pathBitsMap.size() >= SOLR_FIELDS.indexOf(SolrField.item)) return false;
-                System.out.println("checkpoint4");
 
         return true;
         
         
     }
+    
+    /**
+     * Assembles the items returned by the Solr query into an ArrayList of DocumentCollectionRecords.
+     * 
+     * 
+     * @param pathBitsMap Map of levels in collections hierarchy to values for these
+     * @param queryResponse The response previously returned by the query to the Solr server
+     * @return an ArrayList of DocumentCollectionRecord objects
+     */
     
     private ArrayList<Record> buildCollectionsList(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
            
@@ -339,7 +350,16 @@ public class CollectionBrowser extends HttpServlet {
         
     }
     
-    private ArrayList<Record> buildDocumentList(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
+   /**
+     * Assembles the items returned by the Solr query into an ArrayList of DocumentRecords.
+     * 
+     * 
+     * @param pathBitsMap Map of levels in collections hierarchy to values for these
+     * @param queryResponse The response previously returned by the query to the Solr server
+     * @return an ArrayList of DocumentRecord objects
+     */
+    
+    ArrayList<Record> buildDocumentList(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
         
         ArrayList<String> collectionInfo = getCollectionInfo(pathBitsMap);
         DocumentCollectionRecord dcr = collectionInfo.size() > 2 ? new DocumentCollectionRecord(collectionInfo.get(0), collectionInfo.get(1), collectionInfo.get(2)) : new DocumentCollectionRecord(collectionInfo.get(0), collectionInfo.get(1));
@@ -349,18 +369,27 @@ public class CollectionBrowser extends HttpServlet {
         for(SolrDocument doc : queryResponse.getResults()){
        
             Record record;
-               
-            String item_id = (String) doc.getFieldValue(SolrField.item.name()).toString();
-            String url = (String) doc.getFieldValue(SolrField.identifier.name()).toString();
-            String place = (String) doc.getFieldValue(SolrField.display_place.name());
-            String date = (String) doc.getFieldValue(SolrField.display_date.name());
-            String language = (String) doc.getFieldValue(SolrField.language.name()).toString();
-            Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
-                
-            record = new DocumentRecord(dcr, item_id, url, place, date, language, hasTranslation);
-                
+            
+            try{
+            
+                String item_id = (String) doc.getFieldValue(SolrField.item.name()).toString();
+                String url = (String) doc.getFieldValue(SolrField.identifier.name()).toString();
+                String place = (String) doc.getFieldValue(SolrField.display_place.name());
+                String date = (String) doc.getFieldValue(SolrField.display_date.name());
+                String language = (String) doc.getFieldValue(SolrField.language.name()).toString();
+                Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
+                record = new DocumentRecord(dcr, item_id, url, place, date, language, hasTranslation);
 
-            documentList.add(record);
+                documentList.add(record);
+            
+            } catch (NullPointerException npe){
+                
+                // exception catch needed for docs with missing fields. need a better way to deal with this?
+                
+                System.out.println("Missing document " + doc.toString() + ": " + npe.getMessage());
+                
+                
+            }
             
             
         }
@@ -370,6 +399,17 @@ public class CollectionBrowser extends HttpServlet {
         
           
     }
+    
+    /**
+     * Converts the value set of the pathBitsMap map into an ArrayList.
+     * 
+     * Note that this is a workaround; although LinkedHashMaps are ordered, there is no .get(n) method
+     * for them. This helper function is accordingly required so that the value set can be iterated through 
+     * in order
+     * 
+     * @param pathBitsMap
+     * @return an ArrayList<String> of the pathBitsMap value set
+     */
     
     private ArrayList<String> getCollectionInfo(LinkedHashMap<SolrField, String> pathBitsMap){
         
@@ -438,6 +478,15 @@ public class CollectionBrowser extends HttpServlet {
         public String getHtmlCloseTags();
         
     }
+    
+    /**
+     * DocumentCollectionRecords are records of all information necessary to identify a <i>collection</i>
+     * of documents.
+     * 
+     * Minimally, this will be collections and series. Maximally this will be collection, series, and volume.
+     * 
+     * 
+     */
     
     private class DocumentCollectionRecord implements Record {
         
