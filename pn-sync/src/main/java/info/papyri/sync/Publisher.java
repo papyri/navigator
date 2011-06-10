@@ -27,6 +27,7 @@ public class Publisher implements Runnable {
   public static String PUBLISHING = "Publishing new files.";
   private String status = IDLE;
   private Date started;
+  private Date lastrun;
   
   public Publisher (String base) {
     this.base = base;
@@ -43,14 +44,21 @@ public class Publisher implements Runnable {
   public Date getTimestamp() {
     return this.started;
   }
+  
+  public Date getLastRun() {
+    return this.lastrun;
+  }
 
   @Override
   public void run() {
     if (success && status == IDLE) {
       started = new Date();
+      lastrun = started;
       try {
         String head = GitWrapper.getHead();
+        System.out.println("Syncing at " + new Date());
         GitWrapper.executeSync();
+        System.out.println(head + " = " + GitWrapper.getHead() + "?");
         if (!head.equals(GitWrapper.getHead())) {
           List<String> diffs = GitWrapper.getDiffs(head);
           List<String> files = new ArrayList<String>();

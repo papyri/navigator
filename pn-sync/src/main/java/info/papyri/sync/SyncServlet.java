@@ -58,6 +58,7 @@ public class SyncServlet extends HttpServlet {
         out.println("  \"success\": " + publisher.getSuccess() + ",");
         out.println("  \"status\": \"" + publisher.status() + "\"");
         out.println("  \"started\": \"" + publisher.getTimestamp() + "\"");
+        out.println("  \"last\": \"" + publisher.getLastRun() + "\"");
         out.println("}");
       }
       if ("check".equals(action)) {
