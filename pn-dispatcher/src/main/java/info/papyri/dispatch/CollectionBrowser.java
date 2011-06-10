@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -24,6 +25,8 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.FacetField.Count;
 
 /**
  *
@@ -34,7 +37,6 @@ public class CollectionBrowser extends HttpServlet {
     
     PrintWriter out;    // debugging only 
     private String home = "";
-    private String solrUrl;
     private URL browseURL;
     enum SolrField{
         
@@ -51,16 +53,17 @@ public class CollectionBrowser extends HttpServlet {
         
     }
  
-    private static String BROWSE_SERVLET = "/browse";
-    private static String PN_SEARCH = "pn-search/";
-    private static SolrField[] SOLR_FIELDS = {SolrField.collection, SolrField.series, SolrField.volume, SolrField.item};
+    static String SOLR_URL;
+    static String BROWSE_SERVLET = "/browse";
+    static String PN_SEARCH = "pn-search/";
+    static ArrayList<SolrField> SOLR_FIELDS = new ArrayList<SolrField>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume, SolrField.item));
 
     @Override
     public void init(ServletConfig config) throws ServletException{
         
         super.init(config);
 
-        solrUrl = config.getInitParameter("solrUrl");
+        SOLR_URL = config.getInitParameter("solrUrl");
         try {
             
             browseURL = new URL("file://" + home + "/" + "browse.html");
@@ -92,7 +95,7 @@ public class CollectionBrowser extends HttpServlet {
             out.println("<title>Servlet CollectionBrowser</title>");  
             out.println("</head>");
             out.println("<body>");     
-            out.println("<h1> " + request.getParameter("coll") + " </h1>");
+            out.println("<h1> " + request.getQueryString() + " </h1>");
 
             
         }catch(Exception e){
@@ -181,9 +184,10 @@ public class CollectionBrowser extends HttpServlet {
         LinkedHashMap<SolrField, String> pathBitsMap = new LinkedHashMap<SolrField, String>();
         String pathInfo = request.getParameter("coll");
         String[] pathBits = pathInfo.split("/");
+        
         for(int i = 0; i < pathBits.length; i++){
-            
-            pathBitsMap.put(SOLR_FIELDS[i], pathBits[i]);
+
+            pathBitsMap.put(SOLR_FIELDS.get(i), pathBits[i]);
             
             
         }
@@ -201,10 +205,10 @@ public class CollectionBrowser extends HttpServlet {
      * @return The SolrQuery object
      */
     
-    private SolrQuery buildSolrQuery(LinkedHashMap<SolrField, String> pathBitsMap){
+    SolrQuery buildSolrQuery(LinkedHashMap<SolrField, String> pathBitsMap){
                 
         SolrQuery sq = new SolrQuery();
-        sq.setFacet(true);
+        sq.setRows(100);
 
         String query = "";
         
@@ -215,13 +219,13 @@ public class CollectionBrowser extends HttpServlet {
           
              if("collection".equals(field) && pathBitsMap.size() > 1){
                 
-                out.println(field + " : " + value);
+                //out.println(field + " : " + value);
                 sq.addFilterQuery(field + ":" + value);   
                 
             }
             else{
                 
-                out.println(field + ":" + value);
+                //out.println(field + ":" + value);
                 query += " +" + field + ":" + value;
                 
                 
@@ -230,9 +234,15 @@ public class CollectionBrowser extends HttpServlet {
         
         }
         if(!query.isEmpty())sq.setQuery(query);
-        String nextFieldDown = SOLR_FIELDS[pathBitsMap.size()].name();    // one test - make sure this never hits outOfIndex error
-        sq.addFacetField(nextFieldDown);  
-        out.println("<p>" + sq.toString()    + "</p>");
+        if(pathBitsMap.size() < SOLR_FIELDS.indexOf(SolrField.item)){
+            
+            sq.setFacet(true);
+            sq.setFacetLimit(-1);
+            sq.addFacetField(SOLR_FIELDS.get(pathBitsMap.size()).name()); 
+            sq.setFacetMinCount(1);
+
+        }
+        //out.println("<p>" + sq.toString()    + "</p>");
         return sq;
         
     }
@@ -249,14 +259,14 @@ public class CollectionBrowser extends HttpServlet {
     private ArrayList<Record> runQuery(LinkedHashMap<SolrField, String> pathBitsMap) throws MalformedURLException{
         
         
-          SolrServer solrServer = new CommonsHttpSolrServer(solrUrl + PN_SEARCH);
+          SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
           SolrQuery sq = buildSolrQuery(pathBitsMap);
 
           
           try{
           
               QueryResponse queryResponse = solrServer.query(sq);
-              return processSolrResponse(pathBitsMap.size(), queryResponse);
+              return processSolrResponse(pathBitsMap, queryResponse);
               
               
           }
@@ -280,53 +290,99 @@ public class CollectionBrowser extends HttpServlet {
      * @return  An ArrayList of Records
      */
     
-    private ArrayList<Record> processSolrResponse(int level, QueryResponse queryResponse){
+    private ArrayList<Record> processSolrResponse(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
+
+        Boolean nextLevelIsCollection = isNextLevelCollection(pathBitsMap, queryResponse);
         
-        Boolean nextLevelIsCollection = queryResponse.getFacetFields().get(0).getValueCount() > 1;
-        ArrayList<Record> recordsReturned = new ArrayList<Record>();
+        ArrayList<Record> recordsReturned = nextLevelIsCollection ? buildCollectionsList(pathBitsMap, queryResponse) : buildDocumentList(pathBitsMap, queryResponse);
+        
+        return recordsReturned;       
+        
+    }
+    
+    Boolean isNextLevelCollection(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
+        
+        String facetField = SOLR_FIELDS.get(pathBitsMap.size()).name();
+        
+        System.out.println("checkpoint1");
+        if(queryResponse.getFacetField(facetField)== null) return false;
+                System.out.println("checkpoint2");
+
+        if(queryResponse.getFacetField(facetField).getValues().size() == 1) return false;
+                System.out.println("checkpoint3");
+
+        if(pathBitsMap.size() >= SOLR_FIELDS.indexOf(SolrField.item)) return false;
+                System.out.println("checkpoint4");
+
+        return true;
+        
+        
+    }
+    
+    private ArrayList<Record> buildCollectionsList(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
+           
+       ArrayList<String> collectionInfo = getCollectionInfo(pathBitsMap);
+ 
+       ArrayList<Record> collectionsList = new ArrayList<Record>();
+              
+       Iterator<Count> fit = queryResponse.getFacetField(SOLR_FIELDS.get(pathBitsMap.size()).name()).getValues().iterator();
+       
+       while(fit.hasNext()){
+           
+           Count facetCount = fit.next();
+           String facetValueName = facetCount.getName();
+           Record coll = collectionInfo.size() > 1 ? new DocumentCollectionRecord(collectionInfo.get(0), collectionInfo.get(1), facetValueName) : new DocumentCollectionRecord(collectionInfo.get(0), facetValueName);
+           collectionsList.add(coll);
+       }
+       
+       return collectionsList;
+        
+    }
+    
+    private ArrayList<Record> buildDocumentList(LinkedHashMap<SolrField, String> pathBitsMap, QueryResponse queryResponse){
+        
+        ArrayList<String> collectionInfo = getCollectionInfo(pathBitsMap);
+        DocumentCollectionRecord dcr = collectionInfo.size() > 2 ? new DocumentCollectionRecord(collectionInfo.get(0), collectionInfo.get(1), collectionInfo.get(2)) : new DocumentCollectionRecord(collectionInfo.get(0), collectionInfo.get(1));
+        
+        ArrayList<Record> documentList = new ArrayList<Record>();
         
         for(SolrDocument doc : queryResponse.getResults()){
        
             Record record;
-            
-            String[] levels = new String[3];
+               
+            String item_id = (String) doc.getFieldValue(SolrField.item.name()).toString();
+            String url = (String) doc.getFieldValue(SolrField.identifier.name()).toString();
+            String place = (String) doc.getFieldValue(SolrField.display_place.name());
+            String date = (String) doc.getFieldValue(SolrField.display_date.name());
+            String language = (String) doc.getFieldValue(SolrField.language.name()).toString();
+            Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
                 
-            for(int i = 0; i <= level; i++){
-                    
-                  levels[i] = (String) doc.getFieldValue(SOLR_FIELDS[i].name());
-                   
-            }
-            
-            DocumentCollectionRecord documentGroupRecord = new DocumentCollectionRecord(levels[0], levels[1], levels[2]);
-            
-            if(!nextLevelIsCollection){
+            record = new DocumentRecord(dcr, item_id, url, place, date, language, hasTranslation);
                 
 
-                record = documentGroupRecord; 
-                
-                
-            }
-            else{
-                
-                String item_id = (String) doc.getFieldValue(SolrField.item.name());
-                String url = (String) doc.getFieldValue(SolrField.identifier.name());
-                String place = (String) doc.getFieldValue(SolrField.display_place.name());
-                String date = (String) doc.getFieldValue(SolrField.display_date.name());
-                String language = (String) doc.getFieldValue(SolrField.language.name());
-                Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
-                
-                record = new DocumentRecord(documentGroupRecord, item_id, url, place, date, language, hasTranslation);
-                
-                
-            }
-            
-            recordsReturned.add(record);
+            documentList.add(record);
             
             
         }
         
-        return recordsReturned;
         
+        return documentList;      
+        
+          
+    }
+    
+    private ArrayList<String> getCollectionInfo(LinkedHashMap<SolrField, String> pathBitsMap){
+        
+        
+        ArrayList<String> collectionBits = new ArrayList<String>();
+        
+        for(Map.Entry<SolrField, String> entry : pathBitsMap.entrySet()){
+            
+            collectionBits.add(entry.getValue());
+            
+        }
+        
+        return collectionBits;
         
     }
     
@@ -397,12 +453,19 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
+        public DocumentCollectionRecord(String collection, String series){
+            
+            this(collection, series, null);
+            
+            
+        }
+        
         
         @Override
         public String getHTML(){
             
             String href = assembleLink();
-            String html = "<li><a href='" + href + "'>" + series + " " + volume + "</li>";
+            String html = "<li><a href='" + href + "'>" + series + " " + (volume == null ? "" : volume) + "</li>";
             return html;
             
             
@@ -413,8 +476,8 @@ public class CollectionBrowser extends HttpServlet {
             
             String href = BROWSE_SERVLET + "/" + collection;
             
-            String seriesIdent = series.isEmpty() ? "" : "/" + series;
-            String volumeIdent = volume.isEmpty() ? "" : "/" + volume;
+            String seriesIdent = "/" + series;
+            String volumeIdent = volume == null ? "" : "/" + volume;
             
             href += seriesIdent + volumeIdent;
             return href;
@@ -437,7 +500,7 @@ public class CollectionBrowser extends HttpServlet {
         }
         
         public String getSeries(){ return series; }
-        public String getVolume(){ return volume; }
+        public String getVolume(){ return (volume == null) ? "" : volume; }
         
     }
     
