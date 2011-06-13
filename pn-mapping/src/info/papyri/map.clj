@@ -51,6 +51,7 @@
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
+  (println (str "Loading " n " records to " server))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 500)
         factory (ConnectionFactory.)
@@ -274,11 +275,13 @@
 (defn -mapFiles
   [files]
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
-  (doseq [file files]
-     (let [xsl (choose-xslt file)]
-       (init-xslt xsl))
-     (transform file))
-   (flush-buffer (count @buffer)))
+  (when (> (.size files) 0)
+    (doseq [file files]
+       (let [xsl (choose-xslt file)]
+         (init-xslt xsl))
+       (transform file))
+    (flush-buffer (count @buffer))))
+   
 
 (defn -mapAll
   [args]

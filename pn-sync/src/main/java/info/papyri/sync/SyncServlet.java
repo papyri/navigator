@@ -37,6 +37,7 @@ public class SyncServlet extends HttpServlet {
     git = GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
     scheduler.scheduleWithFixedDelay(publisher, 10, 60, MINUTES);
+    System.out.println("Syncing scheduled.");
   }
 
   /** 
