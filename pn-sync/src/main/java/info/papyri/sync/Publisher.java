@@ -80,7 +80,7 @@ public class Publisher implements Runnable {
             for (String diff : diffs) {
               urls.add(GitWrapper.filenameToUri(diff));
             }
-            indexer.index(files);
+            indexer.index(urls);
           }
         }
         status = IDLE;
