@@ -86,6 +86,7 @@ public class Publisher implements Runnable {
         status = IDLE;
         started = null;
       } catch (Exception e) {
+        e.printStackTrace();
         success = false;
       }
     }
