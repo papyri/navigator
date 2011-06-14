@@ -35,7 +35,7 @@ public class GitWrapper {
   private static GitWrapper git;
   private static String graph = "rmi://localhost/papyri.info#pi";
   private static String path = "/sparql/";
-  private static String mulgara = "http://localhost/mulgara";
+  private static String mulgara = "http://localhost:8090";
   
   public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
     git = new GitWrapper();

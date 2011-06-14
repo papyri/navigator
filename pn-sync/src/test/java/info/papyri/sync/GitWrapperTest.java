@@ -71,10 +71,10 @@ public class GitWrapperTest {
   
   @Test
   public void testIndexing() {
-    System.out.println("Testing Mapping");
+    System.out.println("Testing Indexing");
     List<String> l = new ArrayList<String>();
-    l.add(GitWrapper.filenameToUri("/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml"));
-    l.add(GitWrapper.filenameToUri("/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.3.xml"));
+    l.add("http://papyri.info/ddbdp/bgu;1;2/source");
+    l.add("http://papyri.info/ddbdp/bgu;1;3/source");
     try {
       indexer.index(l);
     } catch (Exception e) {
