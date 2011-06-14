@@ -76,6 +76,10 @@ public class Publisher implements Runnable {
             }
             status = PUBLISHING;
             System.out.println("Publishing files starting at " + new Date());
+            List<String> urls = new ArrayList<String>();
+            for (String diff : diffs) {
+              urls.add(GitWrapper.filenameToUri(diff));
+            }
             indexer.index(files);
           }
         }

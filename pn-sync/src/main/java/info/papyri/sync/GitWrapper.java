@@ -35,7 +35,7 @@ public class GitWrapper {
   private static GitWrapper git;
   private static String graph = "rmi://localhost/papyri.info#pi";
   private static String path = "/sparql/";
-  private static String mulgara = "http://papyri.info/mulgara";
+  private static String mulgara = "http://localhost/mulgara";
   
   public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
     git = new GitWrapper();
@@ -252,10 +252,9 @@ public class GitWrapper {
       try {
         URL m = new URL(mulgara + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
         JsonNode root = getDDbDPJson(m);
-        String uri = root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText();
-        result.append(uri.substring(0, uri.lastIndexOf("/")));
+        result.append(root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText());
       } catch (Exception e) {
-
+        e.printStackTrace();
       }
     } else {
       result.append("http://papyri.info/");
@@ -267,7 +266,9 @@ public class GitWrapper {
         result.append("apis/");
         result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
       }
+      result.append("/source");
     }
+    System.out.println(result);
     return result.toString();
   }
   
