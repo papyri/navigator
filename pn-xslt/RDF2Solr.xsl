@@ -260,10 +260,10 @@
         <xsl:when
           test="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']">
           <!-- IFF HGV document -->
-          <field name="hgv_identifier"><xsl:value-of select="normalize-space(string-join(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt[@type='filename'], ' '))"></xsl:value-of></field>
+          <field name="hgv_identifier"><xsl:value-of select="normalize-space(string-join(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], ' '))"></xsl:value-of></field>
           <xsl:variable name="hgv_series">
             <xsl:value-of
-              select="normalize-space(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:title[@level = 's'])"
+              select="replace(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:title[@level = 's'], '\s', '')"
             />
           </xsl:variable>
           <xsl:variable name="hgv_volume">
@@ -363,8 +363,7 @@
           </xsl:if>
         </xsl:when>
 
-        <xsl:otherwise>
-
+        <xsl:when test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']">
           <!-- APIS document -->
           <xsl:variable name="apis_series">
             <xsl:value-of
@@ -389,7 +388,7 @@
             <field name="volume">0</field>
             <field name="item"><xsl:value-of select="replace($apis_item, '\D', '')"/></field>
           </xsl:if>
-        </xsl:otherwise>
+        </xsl:when>
       </xsl:choose>
     </xsl:for-each>
 
