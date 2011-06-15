@@ -289,7 +289,6 @@
 
 (defn queue-items
   [url exclude]
-  (println url)
   (let [items (execute-query (has-part-query url))
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
