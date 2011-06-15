@@ -51,23 +51,28 @@
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
+  (println (str "Loading " n " records to " server))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 500)
         factory (ConnectionFactory.)
         conn (.newConnection factory server)]
-    (doto rdf
-      (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
-      xmlns:dcterms=\"http://purl.org/dc/terms/\" 
-      xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"))
-    (dotimes [n times]
-      (let [string (.poll @buffer)]
-        (if (not (nil? string))
-          (.append rdf string))))
-    (doto rdf
-      (.append "</rdf:RDF>"))
-    (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
-    (doto conn
-      (.close))))
+    (try
+      (doto rdf
+        (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
+        xmlns:dcterms=\"http://purl.org/dc/terms/\" 
+        xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"))
+      (dotimes [n times]
+        (let [string (.poll @buffer)]
+          (if (not (nil? string))
+            (.append rdf string))))
+      (doto rdf
+        (.append "</rdf:RDF>"))
+      (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
+      (catch Exception e
+        (.println *err* (str (.getMessage e) " talking to Mulgara.")))
+      (finally
+        (doto conn
+          (.close))))))
 
 (defn transform
   [file]
@@ -273,12 +278,15 @@
     
 (defn -mapFiles
   [files]
+  (println (str "Mapping " (.size files) " files."))
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
-  (doseq [file files]
-     (let [xsl (choose-xslt file)]
-       (init-xslt xsl))
-     (transform file))
-   (flush-buffer (count @buffer)))
+  (when (> (.size files) 0)
+    (doseq [file files]
+       (let [xsl (choose-xslt file)]
+         (init-xslt xsl))
+       (transform file))
+    (flush-buffer (count @buffer))))
+   
 
 (defn -mapAll
   [args]

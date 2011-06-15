@@ -37,6 +37,7 @@ public class SyncServlet extends HttpServlet {
     git = GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
     scheduler.scheduleWithFixedDelay(publisher, 10, 60, MINUTES);
+    System.out.println("Syncing scheduled.");
   }
 
   /** 
@@ -74,7 +75,7 @@ public class SyncServlet extends HttpServlet {
             List<String> diffs = git.getDiffsSince(request.getParameter("since"));
             for (int i = 0; i < diffs.size(); i++) {
               result.append("\"");
-              result.append(diffs.get(i));
+              result.append(git.filenameToUri(diffs.get(i)));
               result.append("\"");
               if (i < (diffs.size() - 1)) result.append(",");
             }

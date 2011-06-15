@@ -55,7 +55,7 @@ public class Publisher implements Runnable {
       started = new Date();
       lastrun = started;
       try {
-        String head = GitWrapper.getHead();
+        String head = GitWrapper.getLastSync();
         System.out.println("Syncing at " + new Date());
         GitWrapper.executeSync();
         System.out.println(head + " = " + GitWrapper.getHead() + "?");
@@ -76,12 +76,17 @@ public class Publisher implements Runnable {
             }
             status = PUBLISHING;
             System.out.println("Publishing files starting at " + new Date());
-            indexer.index(files);
+            List<String> urls = new ArrayList<String>();
+            for (String diff : diffs) {
+              urls.add(GitWrapper.filenameToUri(diff));
+            }
+            indexer.index(urls);
           }
         }
         status = IDLE;
         started = null;
       } catch (Exception e) {
+        e.printStackTrace();
         success = false;
       }
     }
