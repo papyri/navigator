@@ -68,6 +68,7 @@
     <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
     <field name="item" type="long" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
+    <field name="item_letter" type="string" stored="false" indexed="true" multiValued="false" required="true" default="a"/>
     <field name="ddbdp_series" type="string" indexed="true" stored="true" default="0" multiValued="true"/>
     <field name="hgv_series" type="string" indexed="true" stored="true" default="0" multiValued="true"/>
     <field name="apis_series" type="string" indexed="true" stored="true" default="0" multiValued="true"/>
