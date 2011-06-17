@@ -7,6 +7,9 @@ package info.papyri.sync;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -16,8 +19,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.text.DateFormat;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.JsonNode;
 
 /**
  *
@@ -26,6 +33,9 @@ import java.text.DateFormat;
 public class GitWrapper {
   
   private static GitWrapper git;
+  private static String graph = "rmi://localhost/papyri.info#pi";
+  private static String path = "/sparql/";
+  private static String mulgara = "http://papyri.info/mulgara";
   
   public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
     git = new GitWrapper();
@@ -70,6 +80,7 @@ public class GitWrapper {
       if (git.success) {
         git.success = false;
       }
+      e.printStackTrace();
     }
 
     // get current HEAD's SHA : git rev-parse HEAD
@@ -108,7 +119,7 @@ public class GitWrapper {
               "jdbc:mysql://localhost/pn?"
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       Statement st = connect.createStatement();
-      st.executeUpdate("INSERT INTO sync_history (hash) VALUES (" + git.head + ")");
+      st.executeUpdate("INSERT INTO sync_history (hash) VALUES ('" + git.head + "')");
     } finally {
       connect.close();
     }
@@ -167,7 +178,11 @@ public class GitWrapper {
       git.success = false;
       throw e;
     }
-    return diffs;
+    List<String> result = new ArrayList<String>();
+    for (String diff : diffs) {
+      result.add(filenameToUri(diff));
+    }
+    return result;
   }
   
   public static List<String> getDiffsSince(String date) throws Exception {
@@ -188,5 +203,42 @@ public class GitWrapper {
     } finally {
       connect.close();
     }
+  }
+  
+  public static String filenameToUri(String file) {
+    StringBuilder result = new StringBuilder();
+    if (file.contains("DDB")) {
+      String sparql = "prefix dc: <http://purl.org/dc/terms/> "
+                  + "select ?id "
+                  + "from <rmi://localhost/papyri.info#pi> "
+                  + "where { ?id dc:identifier \"" + file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")) + "\" }";
+      try {
+        URL m = new URL(mulgara + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
+        JsonNode root = getDDbDPJson(m);
+        String uri = root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText();
+        result.append(uri.substring(0, uri.lastIndexOf("/")));
+      } catch (Exception e) {
+
+      }
+    } else {
+      result.append("http://papyri.info/");
+      if (file.contains("HGV_meta")) {
+        result.append("hgv/");
+        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+      }
+      if (file.contains("APIS")) {
+        result.append("apis/");
+        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+      }
+    }
+    return result.toString();
+  }
+  
+  private static JsonNode getDDbDPJson(URL q) throws java.io.IOException {
+      HttpURLConnection http = (HttpURLConnection)q.openConnection();
+      http.setConnectTimeout(2000);
+      ObjectMapper o = new ObjectMapper();
+      JsonNode result = o.readValue(http.getInputStream(), JsonNode.class);
+      return result;
   }
 }
