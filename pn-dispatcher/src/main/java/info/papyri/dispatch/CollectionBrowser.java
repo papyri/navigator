@@ -563,7 +563,7 @@ public class CollectionBrowser extends HttpServlet {
             
             int numPages = (int) Math.ceil(totalResultSetSize / docsPerPage);
 
-            html.append("<div id=\"pagination\" style=\"width:" + String.valueOf((numPages * 70) + 10) + "px;\">");
+            html.append("<div id=\"pagination\">");
                     
             // pagination
             
