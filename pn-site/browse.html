@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD  HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+      PN Search
+    </title>
+    <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+      body{
+      
+        font: 13px/1.231 arial,helvetica,clean,sans-serif
+      
+      }
+      #pagination{
+      
+        position: relative;
+        margin-right: auto;
+        margin-left: auto;
+      
+      }
+      #pagination .page{
+      
+        width: 30px;
+        min-width: 30px;
+        height: 25px;
+        background-color: #aaa;
+        border: 1px solid black;
+        color: #fff;
+        float: left;
+        margin-right: 15px;
+        margin-left: 15px;
+        text-align: center;
+      
+      }
+      table{
+      
+        margin-top: 2em;
+        margin-bottom: 2em;
+      }
+      .tablehead{
+      
+        font-weight: bold;
+      
+      }
+      .tablehead td{
+        
+        text-align: center;
+        padding-bottom: 10px;
+
+      }
+      td{
+      
+        padding-left: 10px;
+        padding-right: 10px;
+      
+      }
+      .ddbdp-ids, .hgv-ids, .apis-ids, .has-translation{
+      
+        text-align: center;
+      
+      }
+      .content{
+      
+        width: 100%;
+        left: 5%;
+        margin-right: auto;
+        margin-left: auto;
+      
+      }
+      
+    </style>
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-19774706-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+  </head>
+  <body onload="init()">
+    <div id="d" class="page">
+      <div id="hd">
+        <h1>
+          Papyri.info
+        </h1>
+      </div>
+      <div id="bd">
+        <div class="nav">
+          <!-- left nav -->
+          <form method="get" accept-charset="utf-8">
+            <ul class="nav ui-corner-all">
+              <li>
+                <a href="/">Home</a>
+              </li>
+              <li>
+                <a href="/browse/ddbdp/">Browse DDbDP</a>
+              </li>
+              <li>
+                <a href="/browse/hgv/">Browse HGV</a>
+              </li>
+              <li>
+                <a href="/browse/apis/">Browse APIS</a>
+              </li>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              </li>
+              <li>
+                <a href="/search">Search</a>
+              </li>
+            </ul>
+          </form>
+        </div>
+        <div id="main">
+          <div class="content ui-corner-all search">
+            <!-- Browse results -->
+          </div>
+        </div>
+      </div>
+      <div class="footer ui-corner-all">
+        papyri.info is produced by <a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> and the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.
+      </div>
+    </div>
+    <script type="text/javascript" charset="utf-8">
+      jQuery("a.button").button();
+      jQuery("#tmgo").button();
+      jQuery("#phrase,#substring,#proximity").button();
+      jQuery("#betaYes,#caps,#marks,#lemmas").button();
+      jQuery("#imagesfirst,#translationsfirst").button();
+      jQuery("#togglehelp,#search,#newsearch").button();
+      jQuery("#newsearch").click(function(){
+        jQuery("#hidesearch").show();
+        jQuery(this).hide();
+      });
+      jQuery("#showeg").click(function() {
+        jQuery("#examples").dialog({
+          position:["right","top"]
+        });
+        jQuery("#examples").show();
+      });
+      jQuery.getJSON("/ddbdp/json", function(data) {
+        var series = jQuery("#ddbseries");
+        jQuery.each(data.results.bindings, function(i, row) {
+          var val = row.object.value.substr(row.object.value.lastIndexOf("/") + 1);
+          series.append('<option value="' + val + '">'+ val + '</option');
+        })
+      });
+      //jQuery.getJSON("/hgv/json", function(data) {
+      //  var series = jQuery("#hgvseries");
+      //  jQuery.each(data.results.bindings, function(i, row) {
+      //    var val = row.object.value.substr(row.object.value.lastIndexOf("/") + 1);
+      //    series.append('<option value="' + val + '">'+ val + '</option');
+      //  })
+      //});
+      jQuery.getJSON("/apis/json", function(data) {
+        var apis = jQuery("#apiscol");
+        jQuery.each(data.results.bindings, function(i, row) {
+          var val = row.object.value.substr(row.object.value.lastIndexOf("/") + 1);
+          apis.append('<option value="' + val + '">'+ val + '</option');
+        })
+      });
+            
+      /**
+      * The following are functions to store search settings in cookies.
+      *
+      * As matters stand this might seem like an over-engineered solution. However, it can
+      * be very easily expanded to accomodate the other search settings on the form, rather than
+      * simply the betacode setting. However, the ideal behaviour and interactions amongst
+      * these settings are not yet decided upon.
+      *
+      * Expansion of functionality would involve: 
+      * (1) defining a new search_setting object corresponding to the relevant search setting 
+      * in initSearchCookies
+      * (2) Ensuring that a cookie for this search setting is set in cookifySearchSettings
+      * retrieveSearchSettings should then be able to take care of everything else automatically -
+      * though note it will only work for form elements with a "checked" attribute
+      * 
+      *
+      * @author thill
+      * @version 2011.06.02
+      *
+      */
+      
+      
+      function initSearchCookies(){
+      	
+      		search_settings = {};
+      		search_settings.betacode = {};
+      		search_settings.betacode.name = "beta_on";
+      		search_settings.betacode.element = "#betaYes";      
+
+      }
+      
+      
+      function cookifySearchSettings(){
+
+      	jQuery.cookie(search_settings.betacode.name, jQuery("input[name='beta']").attr("checked").toString());
+      
+      }
+      
+      function retrieveSearchSettings(){
+      
+      	jQuery.each(search_settings, function(setting, setting_values){
+      	
+      		var cookie_name = setting_values["name"];
+      		var element = setting_values["element"];
+      		if(jQuery.cookie(cookie_name) && jQuery.cookie(cookie_name) != jQuery(element).attr("checked").toString()){
+      		
+      			jQuery(element).trigger("click");
+      			jQuery(element + "-label").trigger("click");
+      			
+      		}
+
+      	});
+         
+      }
+      
+      /* end search-setting cookie funcs */
+      
+      var help = false;
+      function init() {
+      
+        initSearchCookies();
+      	retrieveSearchSettings();
+      
+        jQuery("li.dialog").each(function(i) {
+          jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
+          jQuery(this).hide();
+        });
+        jQuery("#togglehelp-label").CreateBubblePopup({
+          innerHtml: "Click to turn contextual help for the search form on and off.",
+          position: "left"
+        });
+        jQuery("ul.nav li").not(".dialog").hover(function() {
+              jQuery(this).css('background-color', '#445B88');
+              jQuery(this).find("a").css('color', 'white')
+          },
+          function() {
+              jQuery(this).css('background-color', 'transparent');
+              jQuery(this).find("a").css('color', 'black')
+          });
+          jQuery("#search").click(cookifySearchSettings);
+      }
+      
+      function toggleHelp() {
+        if(!help) {
+          help = true;
+          jQuery("#help div").each(function() {
+            var helptext = this.innerHTML;
+            //alert("#" + this.id.substring(0, this.id.indexOf("-")) + "-span");
+            var label = jQuery("#" + this.id.substring(0, this.id.indexOf("-")) + "-label");
+            label.CreateBubblePopup(
+                  {
+                     innerHtml: helptext, 
+                     innerHtmlStyle: {
+                       'text-align':'left'
+                       },
+                     width: 350,
+                     position: label.offset().left > 600? "left" : "right",
+                     closingDelay: 2000
+                  });
+          });
+        } else {
+          help = false;
+          jQuery("#help div").each(function() {
+            jQuery("#" + this.id.substring(0, this.id.indexOf("-")) + "-label").RemoveBubblePopup();
+          });
+        }
+      }
+      function setupSearch(opts) {
+        resetSearch();
+        for (var property in opts) {
+          var elt = jQuery("#" + property);
+          if (opts[property] == true || opts[property] == false) {
+            if (elt[0].checked != opts[property]) {
+              jQuery("#" + property + ",#" + property + "-label").trigger("click");
+            }
+          }
+          else if (isNaN(opts[property])) {
+            elt[0].value = opts[property];
+          } else {
+            if (elt.is("select")) {
+              elt[0].selectedIndex = opts[property];
+            } else {
+              elt[0].value = opts[property];
+            }
+          }
+        }
+      }
+      function resetSearch() {
+        if (jQuery("#phrase")[0].checked){
+          jQuery("#phrase,#phrase-label").trigger("click");
+        }
+        if (!jQuery("#substring")[0].checked){
+          jQuery("#substring,#substring-label").trigger("click");
+        }
+        if (jQuery("#proximity")[0].checked){
+          jQuery("#proximity,#proximity-label").trigger("click");
+        }
+        jQuery("#keyword")[0].value = "";
+        jQuery("#target")[0].selectedIndex = 1;
+        if (jQuery("#betaYes")[0].checked){
+          jQuery("#betaYes,#betaYes-label").trigger("click");
+        }
+        if (!jQuery("#caps")[0].checked){
+          jQuery("#caps,#caps-label").trigger("click");
+        }
+        if (!jQuery("#marks")[0].checked){
+          jQuery("#marks,#marks-label").trigger("click");
+        }
+        if (jQuery("#lemmas")[0].checked){
+          jQuery("#lemmas,#lemmas-label").trigger("click");
+        }
+      }
+      jQuery("#lemma_eg").click(function() {
+        setupSearch(
+          {keyword:"λύω",
+           lemmas:true,
+           phrase:true})
+      });
+      jQuery("#lemma_plus_eg").click(function() {
+        setupSearch(
+          {keyword:"transcription_l:λύω φιλωτας",
+           phrase:true})
+      });
+      jQuery("#substring_anchor_eg").click(function() {
+        setupSearch(
+          {keyword:"^στρατηγ",
+           substring:true})
+      });
+      jQuery("#substring_anchor_beta_eg").click(function() {
+        setupSearch(
+          {keyword:"^strathg",
+           substring:true,
+           betaYes:true})
+      });
+      jQuery("#substring_eg").click(function() {
+        setupSearch(
+          {keyword:"στρατηγ",
+           substring:true})
+      });
+      jQuery("#substring_anchors_eg").click(function() {
+        setupSearch(
+          {keyword:"^των^",
+           substring:true})
+      });
+      jQuery("#substring_end_anchor_eg").click(function() {
+        setupSearch(
+          {keyword:"των^",
+           substring:true})
+      });
+      jQuery("#substring_anchor_multi_eg").click(function() {
+        setupSearch(
+          {keyword:"\"men^ ^ka\"",
+           substring:true,
+           betaYes:true})
+      });
+      jQuery("#phrase_eg").click(function() {
+        setupSearch(
+          {keyword:"στρατηγ*",
+           phrase:true})
+      });
+      jQuery("#phrase_beta_eg").click(function() {
+        setupSearch(
+          {keyword:"epi*men",
+           phrase:true,
+           betaYes:true})
+      });
+      jQuery("#phrase_multi_eg").click(function() {
+        setupSearch(
+          {keyword:"\"αναγκαιας χρειας\"",
+           phrase:true})
+      });
+      jQuery("#substring_boolean_eg").click(function() {
+        setupSearch(
+          {keyword:"^καισ NOT ^καισαρ",
+           substring:true})
+      });
+      jQuery("#phrase_boolean_eg").click(function() {
+        setupSearch(
+          {keyword:"στρατηγου OR στρατηγω",
+           phrase:true})
+      });
+      jQuery("#substring_and_eg").click(function() {
+        setupSearch(
+          {keyword:"^καισ ^σεβαστ",
+           substring:true})
+      });
+      jQuery("#proximity_eg").click(function() {
+        setupSearch(
+          {keyword:"αναγκαιας χρειας",
+           proximity:true,
+           within:"3"})
+      });
+    </script>
+  </body>
+</html>
