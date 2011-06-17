@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD  HTML 4.01//EN">
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -12,6 +12,70 @@
     <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+      body{
+      
+        font: 13px/1.231 arial,helvetica,clean,sans-serif
+      
+      }
+      #pagination{
+      
+        position: relative;
+        margin-right: auto;
+        margin-left: auto;
+      
+      }
+      #pagination .page{
+      
+        width: 30px;
+        min-width: 30px;
+        height: 25px;
+        background-color: #aaa;
+        border: 1px solid black;
+        color: #fff;
+        float: left;
+        margin-right: 15px;
+        margin-left: 15px;
+        text-align: center;
+      
+      }
+      table{
+      
+        margin-top: 2em;
+        margin-bottom: 2em;
+      }
+      .tablehead{
+      
+        font-weight: bold;
+      
+      }
+      .tablehead td{
+        
+        text-align: center;
+        padding-bottom: 10px;
+
+      }
+      td{
+      
+        padding-left: 10px;
+        padding-right: 10px;
+      
+      }
+      .ddbdp-ids, .hgv-ids, .apis-ids, .has-translation{
+      
+        text-align: center;
+      
+      }
+      .content{
+      
+        width: 100%;
+        left: 5%;
+        margin-right: auto;
+        margin-left: auto;
+      
+      }
+      
+    </style>
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
@@ -60,146 +124,14 @@
         </div>
         <div id="main">
           <div class="content ui-corner-all search">
-            <!-- Search form -->
-            <form action="/search" method="post" accept-charset="UTF-8" name="searchform">
-              <div>
-                <p><input type="radio" name="type" value="phrase" id="phrase" onchange="if(this.checked){this.form.target.selectedIndex=0}"> <label for="phrase" id="phrase-label">phrase search</label> <input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"> <label for="substring" id="substring-label">substring search</label> <input type="radio" name="type" value="proximity" id="proximity"> <label for="proximity" id="proximity-label">find within</label> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"> words</p>
-                <p><input type="text" name="keyword" value="" id="keyword" size="80"> in <select name="target" id="target" onchange="if(this.selectedIndex!=1 && this.form.substring.checked){jQuery('#phrase,#phrase-label').trigger('click')}" size="1">
-                  <option value="all">
-                    All
-                  </option>
-                  <option value="text" selected>
-                    Text
-                  </option>
-                  <option value="metadata">
-                    Metadata
-                  </option>
-                  <option value="translation">
-                    Translations
-                  </option>
-                </select></p>
-                <div id="search-options"><p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text in Beta Code</label> <input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label> <input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label> <input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.target.selectedIndex=1;jQuery('#phrase,#phrase-label').trigger('click');}"> <label for="lemmas" id="lemmas-label">lemmatized search</label></p></div>
-              </div>
-              <div>
-                <p><label for="provenance">Provenance:</label> <input type="text" name="provenance" value="" id="provenance"></p>
-                <p>Date <label for="date_start">on or after</label> <input type="text/submit/hidden/button" name="date_start" value="" id="date_start"> <select name="start_era" id="start_era" onchange="" size="1">
-                  <option value="bce">
-                    BCE
-                  </option>
-                  <option value="ce">
-                    CE
-                  </option>
-                </select> <label for="date_end">on or before</label> <input type="text" name="date_end" value="" id="date_end"> <select name="end_era" id="end_era" onchange="" size="1">
-                  <option value="bce">
-                    BCE
-                  </option>
-                  <option value="ce">
-                    CE
-                  </option>
-                </select></p>
-                <p><label for="ddbseries">DDbDP Series:</label> <select name="ddbseries" id="ddbseries" onchange="" size="1"><option value="">All</option>
-                </select>  <!-- <label for="hgvseries">HGV Series:</label> <select name="hgvseries" id="hgvseries" onchange="" size="1"><option value="">All</option>
-                  </select> --><label for="volume">Volume:</label> <input type="text" name="volume" id="volume" size="3"></p>
-                <p><label for="apiscol">APIS collection:</label> <select name="apiscol" id="apiscol" onchange="" size="1"><option value="">All</option>
-                </select> <label for="invnum"><strong>Inventory Number <span class="pn-note">(APIS only)</span></strong></label> <input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span></p>
-                <p id="sort-options">Show records with <label for="imagesfirst" id="imagesfirst-label">images first</label><input type="checkbox" name="imagesfirst" value="yes" id="imagesfirst"> <label for="translationsfirst" id="translationsfirst-label">translations first</label><input type="checkbox" name="translationsfirst" value="" id="translationsfirst"></p>
-              </div>
-              <p style="text-align:center;font-size:123.1%">
-                <a href="#" class="button" id="showeg">Examples</a>
-                <input type="checkbox" id="togglehelp" onchange="toggleHelp()" autocomplete="off"><label for="togglehelp" id="togglehelp-label">Help</label>
-                <input type="submit" value="Search" id="search" style="height:52px">
-              </p>
-            </form><!-- Search form end -->
-          </div>
-          <div id="help">
-            <div id="phrase-help">Phrase search uses the query syntax built in to the Lucene search engine.  For example, you can do wildcard searches using * for multiple missing characters and ? for a single missing character (e.g. Καισ*).  Phrase searches can ignore or use diacritics and capitalization.  Wildcards cannot appear at the beginning of a word. For more details, see <a href="http://lucene.apache.org/java/3_0_2/queryparsersyntax.html">Lucene query syntax</a>.</div>
-            <div id="substring-help">Substring searches look for text occurring anywhere in a word, even in the middle.  Use the ^ character to mark a word-boundary (e.g. "^και^ ^υπο"). Terms must be at least 3 characters long (carets included). To search for one term followed by another, enclose the whole search string in quotes.  Substring searches do not take diacritics or capitalization into account.</div>
-            <div id="proximity-help">Proximity searches look for terms near to one another, within the specified number of words.</div>
-            <div id="betaYes-help">Beta code allows you to search for Greek characters using a non-Greek character set. The following Roman alphabet characters represent the Greek equivalences:
-              <ul>
-                <li>η (eta) = h</li>
-                <li>θ (theta) = q</li>
-                <li>ξ (xi) = c</li>
-                <li>χ (chi) = x</li>
-                <li>ψ (psi) = y</li>
-                <li>ω (omega) = w</li>
-                <li>σ (medial sigma) = s1</li>
-              </ul>
-            <b>Use s1 for medial sigma at the end of a search term (e.g. ^kais1 (= ^καισ) rather than ^kais (= ^καις).  You cannot use beta code to search for Latin terms</b>.</div>
-            <div id="lemmas-help">Lemmatized Search searches for all forms of the entered dictionary headword (Greek only for now). For words that have lemmas identical to other words (like δέω, e.g.), you may append a number corresponding to the article's order in LSJ. If you do not append a number, the search will be done on all forms of all corresponding lemmas.</div>
-          </div>
-          <div id="examples" style="display:none;text-align:left">
-            <h3>Lemmatized searches</h3>
-            <ul>
-              <li><a href="#" class="eg" id="lemma_eg">find all forms of λύω</a></li>
-              <li><a href="#" class="eg" id="lemma_plus_eg">find all forms of λύω + Φιλώτας</a></li>
-            </ul>
-            <h3>Substring Searches</h3>
-            <ul>
-              <li><a href="#" class="eg" id="substring_anchor_eg">^στρατηγ / finds e.g. στρατηγo but not επιστρατηγο</a></li>
-              <li><a href="#" class="eg" id="substring_anchor_beta_eg">^strathg / finds e.g. στρατηγo but not επιστρατηγο (search text is in Beta Code)</a></li>
-              <li><a href="#" class="eg" id="substring_eg">στρατηγ / finds e.g. στρατηγo and επιστρατηγο</a></li>
-              <li><a href="#" class="eg" id="substring_anchors_eg">^των^ / finds only των</a></li>
-              <li><a href="#" class="eg" id="substring_end_anchor_eg">των^ / finds e.g. ὑπαρχόντων but not τῶνδε</a></li>
-              <li><a href="#" class="eg" id="substring_anchor_multi_eg">"men^ ^ka" / finds e.g. ἀπέχομεν καὶ</a></li>
-            </ul>
-            <h3>Phrase searches</h3>
-            <ul>
-              <li><a href="#" class="eg" id="phrase_eg">στρατηγ* / finds e.g. στρατηγo but not επιστρατηγο</a></li>
-              <li><a href="#" class="eg" id="phrase_beta_eg">epi*men / finds e.g. ἐπιδεδώκαμεν (search text is in Beta Code)</a></li>
-              <li><a href="#" class="eg" id="phrase_multi_eg">"αναγκαιας χρειας" / finds e.g. ἀναγκαία̣ς χ[ρ]είας</a></li>
-            </ul>
-            <h3>Boolean searches</h3>
-            <ul>
-              <li><a href="#" class="eg" id="substring_boolean_eg">^καισ NOT ^καισαρ</a></li>
-              <li><a href="#" class="eg" id="phrase_boolean_eg">στρατηγου OR στρατηγω</a></li>
-              <li><a href="#" class="eg" id="substring_and_eg">^καισ ^σεβαστ (AND is the default)</a></li>
-            </ul>
-            <h3>Proximity searches</h3>
-            <ul>
-              <li><a href="#" class="eg" id="proximity_eg">αναγκαιας χρειας / finds e.g. ἀναγκαίας μου χρείας</a></li>
-            </ul>
+            <!-- Browse results -->
           </div>
         </div>
       </div>
-  <div id="footer">
-      <div id="footer-left-col">
-        <div id="secondary-nav">
-          <ul class="nav">
-            <li><a href="/" title="Project Home">Home</a></li>
-            <li><a href="#" title="Site help">Help</a></li>
-            <!-- following two links SoSOL only -->
-            <!-- <li><a href="">Leiden<sup>+</sup> Text Help</a></li> -->
-            <!-- <li><a href="">Leiden<sup>+</sup> Translation Help</a></li> -->
-            <!-- insert link for SoSOL admin email here -->
-            <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
-            <li><a href="/resources.html" title="Papyrological tools and resources">Resources</a></li>
-            <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
-            <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
-          </ul>
-        </div>
-        <div class="spacer"></div>
+      <div class="footer ui-corner-all">
+        papyri.info is produced by <a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> and the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.
       </div>
-      <div id="footer-right-col">
-        <p>Produced by</p>
-        <p><a href="http://dlib.nyu.edu/dlts/">NYU Digital Technology Services</a> &amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
-          Ancient World</a></p>
-        <div id="about-nav"> 
-          <ul class="nav">
-            <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
-            <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
-              der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
-            <li><a href="http://idp.atlantides.org/trac/idp/wiki/DDBDP" title="Duke Databank of Documentary Papyri - Home">DDbDp</a></li>
-            <li><a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/about.html">APIS</a></li>
-            <li class="last-child"><a href="/about.html" title="Advanced Papyrological Information System">Papyri.info</a></li>    
-          </ul>
-          <h3 id="about-hdr">About:</h3>
-        </div>
-      </div>
-      <div class="spacer"></div>
     </div>
-  </div>
-
     <script type="text/javascript" charset="utf-8">
       jQuery("a.button").button();
       jQuery("#tmgo").button();
@@ -310,7 +242,7 @@
           innerHtml: "Click to turn contextual help for the search form on and off.",
           position: "left"
         });
-        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).hover(function() {
+        jQuery("ul.nav li").not(".dialog").hover(function() {
               jQuery(this).css('background-color', '#445B88');
               jQuery(this).find("a").css('color', 'white')
           },
