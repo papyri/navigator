@@ -307,6 +307,7 @@
                 <xsl:otherwise>0</xsl:otherwise>
               </xsl:choose>
             </field>
+            <field name="item_letter"><xsl:value-of select="replace($hgv_item, '\d', '')"/></field>
           </xsl:if>
         </xsl:when>
         <xsl:when
@@ -360,6 +361,7 @@
                 <xsl:otherwise><xsl:value-of select="replace($ddbdp_item, '\D', '')"/></xsl:otherwise>
               </xsl:choose>
             </field>
+            <field name="item_letter"><xsl:value-of select="replace($ddbdp_item, '\d', '')"></xsl:value-of></field>
           </xsl:if>
         </xsl:when>
 
@@ -387,6 +389,7 @@
             </field>
             <field name="volume">0</field>
             <field name="item"><xsl:value-of select="replace($apis_item, '\D', '')"/></field>
+            <field name="item"><xsl:value-of select="replace($apis_item, '\d', '')"></xsl:value-of></field>
           </xsl:if>
         </xsl:when>
       </xsl:choose>
