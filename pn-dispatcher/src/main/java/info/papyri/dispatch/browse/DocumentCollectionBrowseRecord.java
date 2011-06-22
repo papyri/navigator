@@ -14,19 +14,23 @@ package info.papyri.dispatch.browse;
         private String collection;
         private String series;
         private String volume;
+        private Boolean isDocumentParent;
     
         public DocumentCollectionBrowseRecord(String collection, String series, String volume){
             
             this.collection = collection;
             this.series = series;
             this.volume = volume;
+            this.isDocumentParent = true;
             
         }
         
-        public DocumentCollectionBrowseRecord(String collection, String series){
+        public DocumentCollectionBrowseRecord(String collection, String series, Boolean isParent){
             
-            this(collection, series, null);
-            
+            this.collection = collection;
+            this.series = series;
+            this.isDocumentParent = isParent;
+            this.volume = null;
             
         }
         
@@ -48,10 +52,11 @@ package info.papyri.dispatch.browse;
             
             String href = CollectionBrowser.BROWSE_SERVLET + "/" + collection;
             
-            String seriesIdent = "/" + series;
+            String seriesIdent = "/" + series.replaceAll("_", "");
             String volumeIdent = volume == null ? "" : "/" + volume;
             href += seriesIdent + volumeIdent;
             href = href.replaceAll("\\s", "");
+            if(this.isDocumentParent) href += "/documents/page1";
             return href;
             
         }

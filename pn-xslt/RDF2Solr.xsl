@@ -260,15 +260,17 @@
         <xsl:when
           test="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']">
           <!-- IFF HGV document -->
-          <field name="hgv_identifier"><xsl:value-of select="normalize-space(string-join(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], ' '))"></xsl:value-of></field>
+          <xsl:for-each select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
+            <field name="hgv_identifier"><xsl:value-of select="normalize-space(.)"></xsl:value-of></field>
+          </xsl:for-each>
           <xsl:variable name="hgv_series">
             <xsl:value-of
-              select="replace(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:title[@level = 's'], '\s', '')"
+              select="replace(normalize-space(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:title[@level = 's']), '\s', '_')"
             />
           </xsl:variable>
           <xsl:variable name="hgv_volume">
             <xsl:variable name="hgv_volprep"
-              select="normalize-space(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'volume'])"/>
+              select="replace(normalize-space(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'volume']), '\s', '_')"/>
             <xsl:choose>
               <xsl:when test="string-length($hgv_volprep) = 0">0</xsl:when>
               <xsl:otherwise>
