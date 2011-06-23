@@ -21,6 +21,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.codehaus.jackson.JsonNode;
 
 
@@ -53,7 +54,7 @@ public class CollectionBrowserTest extends TestCase {
 
     public void testProcessSparqlQuery(){
         
-        ArrayList<BooleanPathBits> bpis = this.generateTestBits();
+        /*ArrayList<BooleanPathBits> bpis = this.generateTestBits();
         Iterator<BooleanPathBits> bpit = bpis.iterator();
         while(bpit.hasNext()){
         
@@ -62,10 +63,10 @@ public class CollectionBrowserTest extends TestCase {
             COLLECTION_BROWSER.setPathBits(bits);
             COLLECTION_BROWSER.setCollectionPrefix();
             String sparQuery = COLLECTION_BROWSER.buildSparqlQuery();
-            COLLECTION_BROWSER.processSparqlQuery(sparQuery);     
+            COLLECTION_BROWSER.runSparqlQuery(sparQuery);     
             
         }
-        
+        */
     }
     
     public void testParseUriToCollectionRecord(){
@@ -110,6 +111,22 @@ public class CollectionBrowserTest extends TestCase {
     public void testBuildSolrQuery(){
         
         
+        /*ArrayList<BooleanPathBits> bpis = generateTestBits();
+        Iterator<BooleanPathBits> bpit = bpis.iterator();
+        while(bpit.hasNext()){
+            
+            BooleanPathBits bp = bpit.next();
+            COLLECTION_BROWSER.setPathBits(bp.getPathBits());
+            COLLECTION_BROWSER.setCollectionPrefix();
+            SolrQuery sq = COLLECTION_BROWSER.buildSolrQuery();
+            System.out.println(sq.toString());
+            QueryResponse results = COLLECTION_BROWSER.runSolrQuery(sq);
+        } */
+        
+    }
+    
+    public void testGetDisplayId(){
+        
         ArrayList<BooleanPathBits> bpis = generateTestBits();
         Iterator<BooleanPathBits> bpit = bpis.iterator();
         while(bpit.hasNext()){
@@ -120,8 +137,16 @@ public class CollectionBrowserTest extends TestCase {
             SolrQuery sq = COLLECTION_BROWSER.buildSolrQuery();
             System.out.println(sq.toString());
             QueryResponse results = COLLECTION_BROWSER.runSolrQuery(sq);
-        }
-        
+            ArrayList<String> previousIds = new ArrayList<String>();
+            for(SolrDocument doc : results.getResults()){
+                
+                String id = COLLECTION_BROWSER.getDisplayId(doc, previousIds);
+                previousIds.add(id);
+                
+            }
+            
+            
+        }  
         
     }
         
@@ -129,13 +154,13 @@ public class CollectionBrowserTest extends TestCase {
         
         ArrayList<BooleanPathBits>  testPathBits = new ArrayList<BooleanPathBits>();
         
-       /*LinkedHashMap<CollectionBrowser.SolrField, String> testBits0 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits0.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits0.put(CollectionBrowser.SolrField.series, "bgu");
+       LinkedHashMap<CollectionBrowser.SolrField, String> testBits0 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
+        testBits0.put(CollectionBrowser.SolrField.collection, "hgv");
+        testBits0.put(CollectionBrowser.SolrField.series, "P.Bour.");
         BooleanPathBits bpb0 = new BooleanPathBits(testBits0, false);
         testPathBits.add(bpb0); 
         
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits1 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
+       /* LinkedHashMap<CollectionBrowser.SolrField, String> testBits1 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
         testBits1.put(CollectionBrowser.SolrField.collection, "ddbdp");
         testBits1.put(CollectionBrowser.SolrField.series, "bgu");
         testBits1.put(CollectionBrowser.SolrField.volume, "1");

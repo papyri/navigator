@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -31,8 +32,21 @@ import org.codehaus.jackson.map.ObjectMapper;
 /**
  * Servlet enabling collection-browsing functionality
  * 
+ * Note that the nomenclature throughout this code is distinctive in the following ways:
+ * (i) The entities to be displayed are thought of as consisting of either <i>documents</i>, 
+ * or <i>collections</i> of documents - and note that the latter may have intermediate collections
+ * between them and the documents that comprise them. The former are modelled using the
+ * <code>DocumentBrowseRecord</code> and <code>DocumentCollectionBrowseRecord</code>s respectively.
+ * (ii) To reflect this hierarchical relationship, the standard generational parent -> child 
+ * metaphor is used. Collections, then, may be parents of other collections, or of documents; 
+ * they may also be children of other collections; and all documents are children of collections.
+ * (iii) Perhaps confusingly, the term <i>collection</i> is also used to refer to the top 
+ * level of this hierarchy - i.e., to the ddbdp, hgv, or apis collections. The hierarchy
+ * as a whole runs collection -> series -> volume -> item
  * 
  * @author thill
+ * @see DocumentBrowseRecord
+ * @see DocumentCollectionBrowseRecord
  */
 @WebServlet(name = "CollectionBrowser", urlPatterns = {"/browse"})
 public class CollectionBrowser extends HttpServlet {
@@ -42,18 +56,21 @@ public class CollectionBrowser extends HttpServlet {
     /* HTML output is by injection; the browseURL member provides the html page for this */
     private URL browseURL;
     /* some Solr fields are collection (ddbdp | hgv | apis) specific; this member, when set
-     * provides the prefix that needs to be added to access these fields
+     * provides the prefix that needs to be prepended to access these fields
      */
     private String collectionPrefix;
 
     /* for pagination: current page, or 0 if browsing at collection, series, or volume level */
-    private int page = 0;
+    private int page = 1;
     private int docsPerPage = 50;
     private int totalResultSetSize;
 
     /* holds information given in request url*/
-    private LinkedHashMap<SolrField, String> pathBits;
-     
+    private LinkedHashMap<SolrField, String> pathParts;
+    
+    /* names of fields indexed in solr. note that some may have the collectionPrefix prepended to 
+     * them in actual use
+     */
     enum SolrField{
         
         collection,
@@ -71,10 +88,13 @@ public class CollectionBrowser extends HttpServlet {
     }
  
     private static String SPARQL_GRAPH = "<rmi://localhost/papyri.info#pi>";
-    static String SOLR_URL;
+    static String SOLR_URL = "http://localhost:8082/solr/";
     static String SPARQL_URL;
     static String BROWSE_SERVLET = "/browse";
     static String PN_SEARCH = "pn-search/";
+    /* an ordered list of the classification hierarchy: collection (ddbdp | hgv | apis), series, volume, and item identifer.
+     * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
+     */
     static ArrayList<SolrField> SOLR_FIELDS = new ArrayList<SolrField>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume, SolrField.item));
     static ArrayList<String> COLLECTIONS = new ArrayList<String>(Arrays.asList("ddbdp", "hgv", "apis"));
     
@@ -115,7 +135,7 @@ public class CollectionBrowser extends HttpServlet {
             if(page == 0){
                 
                 String sparqlQuery = buildSparqlQuery();
-                JsonNode resultNode = processSparqlQuery(sparqlQuery);
+                JsonNode resultNode = runSparqlQuery(sparqlQuery);
                 records = buildCollectionList(resultNode);
                 
             }
@@ -158,27 +178,39 @@ public class CollectionBrowser extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
+    
+    /**
+     * Parses the request URL into (i) the <code>pathBits</code> member, for retrieval
+     * and (ii) if necessary, the <code>page</code> member, for pagination.
+     * 
+     * The request parameter will be of the form /[collection]/[series]?/[volume]?/[documents/page[\d+]]?,
+     * with documents/page[\d+] being present iff the page is a list of documents (rather than, e.g., 
+     * series or volumes)
+     * 
+     * @param request the HttpServletRequest made to the servlet
+     *
+     */
 
     
     private void parseRequest (HttpServletRequest request){
-        
+                
         String docPath = "documents";
         String queryParam = request.getParameter("q");
         int docIndex = queryParam.indexOf(docPath);
         String pathInfo = (docIndex == -1 ? queryParam : queryParam.substring(0, docIndex -1));
-        pathBits = new LinkedHashMap<SolrField, String>();
+        pathParts = new LinkedHashMap<SolrField, String>();
         String[] pathParts = pathInfo.split("/");
         
         for(int i = 0; i < pathParts.length; i++){
 
-            pathBits.put(SOLR_FIELDS.get(i), pathParts[i]);
+            this.pathParts.put(SOLR_FIELDS.get(i), pathParts[i]);
             
         }
         
         if(docIndex != -1){
               
-            String pageBit = queryParam.substring(docIndex + docPath.length() + 1, queryParam.length());
-            page = Integer.valueOf(pageBit.replaceAll("[^\\d]", ""));
+            String pageNumber = queryParam.substring(docIndex + docPath.length() + 1, queryParam.length());
+            page = Integer.valueOf(pageNumber.replaceAll("[^\\d]", ""));
             
         }
         else{
@@ -189,15 +221,31 @@ public class CollectionBrowser extends HttpServlet {
            
     }
     
+    /**
+     * Sets the collectionPrefix member.
+     * 
+     * Defaults to ddbdp_
+     * 
+     * @see #collectionPrefix
+     * 
+     */
+    
     void setCollectionPrefix(){
         
-        String collection = pathBits.get(SolrField.collection);
+        String collection = pathParts.get(SolrField.collection);
         
         if(!COLLECTIONS.contains(collection)) collection = "ddbdp";
         
         collectionPrefix = collection + "_";
               
     }
+    
+    /**
+     * Builds a SPARQL query based on the information contained in the <code>pathParths</code> member.
+     * 
+     * @return String A String that can act as a SPARQL query
+     * 
+     */ 
     
     String buildSparqlQuery(){
         
@@ -208,22 +256,21 @@ public class CollectionBrowser extends HttpServlet {
        
         // extract info from pathbits
         
-        // delimiter rules: ddbdp - collection/series series;volume 
-        //                  hgv -   collection/series series_volume 
-        //                  apis -  collection/series [no volume] 
+        // delimiter form: collection/series;volume 
+
       
-        String collection = pathBits.get(SolrField.collection);
+        String collection = pathParts.get(SolrField.collection);
         String subj = collection;
-        if(pathBits.get(SolrField.series) != null){
+        if(pathParts.get(SolrField.series) != null){
             
-            subj += "/" + pathBits.get(SolrField.series);
+            subj += "/" + pathParts.get(SolrField.series);
             
             
             
         }
-        if(pathBits.get(SolrField.volume) != null){
+        if(pathParts.get(SolrField.volume) != null){
             
-            subj += ";" + pathBits.get(SolrField.volume);
+            subj += ";" + pathParts.get(SolrField.volume);
             
         }
         
@@ -234,7 +281,14 @@ public class CollectionBrowser extends HttpServlet {
         
     }
     
-    JsonNode processSparqlQuery(String sparqlQuery){
+    /**
+     * Runs the SPARQL query and returns the result as JSON
+     * 
+     * @return The root JSON node returned by Mulgara
+     * 
+     */ 
+    
+    JsonNode runSparqlQuery(String sparqlQuery){
         
         try{
               
@@ -255,6 +309,21 @@ public class CollectionBrowser extends HttpServlet {
           
         
     }
+    
+    /**
+     * Parses the root JsonNode into a list of <code>DocumentCollectionBrowseRecord</code>s.
+     * 
+     * Note that the returned type is a list of <code>BrowseRecord</code>s (the supertype), rather than
+     * <code>DocumentCollectionBrowseRecord</code>s. This is for polymorphic functioning for HTML display 
+     * in the <code>processRequest</code> method
+     * 
+     * @param resultNode The root JsonNode returned by Mulgara
+     * @return An ArrayList of <code>BrowseRecord</code> objects
+     * @see #processRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
+     * @see BrowseRecord
+     * @see DocumentCollectionBrowseRecord
+     * 
+     */
     
     ArrayList<BrowseRecord> buildCollectionList(JsonNode resultNode){
         
@@ -279,6 +348,23 @@ public class CollectionBrowser extends HttpServlet {
         
         return records;
     }
+    
+    /**
+     * Parses the URI identifiers returned by Mulgara into a <code>DocumentCollectionBrowseRecord</code> 
+     * 
+     * Note the conceptualisation at work here: the page currently in the process of being displayed is viewed as
+     * being the 'parent'; the document collections being displayed <i>on</i> that page are the "children"; and any
+     * children these might have are the "grandchildren". The currently displayed entity, in other words, has an
+     * <http://purl.org/dc/terms/hasPart> relation to the currently displayed children, as do the children with their 
+     * grandchildren.
+     * 
+     * @param child A URI returned from Mulgara and representing a document collection
+     * @param grandchild A URI returned from Mulgara, representing a document collection or document 
+     * descended from <code>child</code>
+     * @return DocumentCollectionBrowseRecord The DocumentCollectionBrowseRecord derived from <code>child</code>
+     * and <code>grandchild</code>
+     * 
+     */
     
     DocumentCollectionBrowseRecord parseUriToCollectionRecord(String child, String grandchild){
 
@@ -309,7 +395,7 @@ public class CollectionBrowser extends HttpServlet {
         
         // first, we remove from the child string everything already specified in the url
         
-        ArrayList<String> pathInfo = this.getCollectionInfo(pathBits);
+        ArrayList<String> pathInfo = this.getCollectionInfo();
         Iterator<String> piits = pathInfo.iterator();
         String significantChildSubstring = child;
         while(piits.hasNext()){
@@ -323,7 +409,7 @@ public class CollectionBrowser extends HttpServlet {
         
         if(significantChildSubstring.startsWith("/")) significantChildSubstring = significantChildSubstring.substring(1);
         
-        if(pathBits.size() == SOLR_FIELDS.indexOf(SolrField.series)){
+        if(pathParts.size() == SOLR_FIELDS.indexOf(SolrField.series)){
              
              return new DocumentCollectionBrowseRecord(collection, significantChildSubstring, grandchildIsDocument);
 
@@ -332,27 +418,33 @@ public class CollectionBrowser extends HttpServlet {
         else{
             
             
-             return new DocumentCollectionBrowseRecord(collection, pathBits.get(SolrField.series), significantChildSubstring);
+             return new DocumentCollectionBrowseRecord(collection, pathParts.get(SolrField.series), significantChildSubstring);
 
             
         }
 
         
     }
-        
+    /**
+     * Creates a SolrQuery object based on the values stored in <code>pathParts</code>
+     * 
+     * @return SolrQuery The SolrQuery object
+     * @see #pathParts
+     */
     SolrQuery buildSolrQuery(){
         
         SolrQuery sq = new SolrQuery();
         sq.setStart((page - 1) * docsPerPage);
         sq.setRows(docsPerPage);
         String query = "";
-        for(Map.Entry<SolrField, String> entry : pathBits.entrySet()){
+        for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
         
             SolrField field = entry.getKey();
             String value = entry.getValue();
             
             if(field.equals(SolrField.collection)){
                 
+                // optimization - filter queries are cached
                 sq.addFilterQuery(field.name() + ":" + value);
                 
             }
@@ -365,11 +457,19 @@ public class CollectionBrowser extends HttpServlet {
         
         }
         if(!query.isEmpty()) sq.setQuery(query);
-        sq.addSortField(SolrField.item.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(collectionPrefix + SolrField.item.name(), SolrQuery.ORDER.asc);
         sq.addSortField(collectionPrefix + SolrField.series.name(), SolrQuery.ORDER.asc);
         sq.addSortField(collectionPrefix + SolrField.volume.name(), SolrQuery.ORDER.asc);
         return sq;
     }
+    
+    /**
+     * Queries the Solr server and returns the response
+     * 
+     * @param sq A SolrQuery object
+     * @return QueryResponse The resposne returned from the server
+     * 
+     */
     
       QueryResponse runSolrQuery(SolrQuery sq){
         
@@ -394,56 +494,60 @@ public class CollectionBrowser extends HttpServlet {
        
         
     }
+      
+    /**
+       * Parses the response returned by the Solr server into a list of <code>DocumentBrowseRecord</code>s.
+       * 
+       * Note that the returned type is a list of <code>BrowseRecord</code>s (the supertype), rather than
+       * <code>DocumentBrowseRecord</code>s. This is for polymorphic functioning for HTML display 
+       * in the <code>processRequest</code> method
+       * 
+       * @param qr The QueryResponse returned by the Solr server
+       * @return ArrayList<BrowseRecord> A list of the <code>DocumentBrowseRecord</code>s
+       * @see BrowseRecord
+       * @see DocumentBrowseRecord
+       */  
     
     ArrayList<BrowseRecord> parseSolrResponseIntoDocuments(QueryResponse qr){
         
         ArrayList<BrowseRecord> records = new ArrayList<BrowseRecord>();
                 
-        ArrayList<String> collectionInfo = getCollectionInfo(pathBits);
+        ArrayList<String> collectionInfo = getCollectionInfo();
         DocumentCollectionBrowseRecord dcr = collectionInfo.size() > 2 ? new DocumentCollectionBrowseRecord(collectionInfo.get(0), collectionInfo.get(1), collectionInfo.get(2)) : new DocumentCollectionBrowseRecord(collectionInfo.get(0), collectionInfo.get(1), true);
-   
+        // previousIds stores identifiers already found; needed when a single document has multiple ids which should all be displayed in the list
+        ArrayList<String> previousIds = new ArrayList<String>();
+        
         for(SolrDocument doc : qr.getResults()){
                    
-            try{
-                
                 DocumentBrowseRecord record;
-                ArrayList<String> itemIds = getDisplayIds(doc);
-                String ddbdpDids = this.convertIdArraysToStrings(doc, "ddbdp");
-                String hgvDids = this.convertIdArraysToStrings(doc, "hgv");
-                String apisDids = this.convertIdArraysToStrings(doc, "apis");
-                String itemId = (String) doc.getFieldValue(SolrField.item.name());
+                String itemId = getDisplayId(doc, previousIds);
+                if(itemId.equals("-1")) continue;
+                previousIds.add(itemId);
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
                 String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());
-                Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()).equals(null);
+                Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
                 Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
  
-                if(pathBits.get(SolrField.collection).equals("hgv")){
+                if(pathParts.get(SolrField.collection).equals("hgv")){
+                   
+                   // HGV records require special treatment, as the link to their records cannot be derived from the path
+                   // to the collections that hold them. they thus have a distinct hgv_identifier field
+                   // TODO: should this be a subclass?
                     
                    ArrayList<String> hgvIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.hgv_identifier.name()).toString().replaceAll("[\\]\\[]", "").split(","))); 
                    
                    String hgvId = hgvIds.get(0);
-                   record = new DocumentBrowseRecord(dcr, itemIds, itemId, ddbdpDids, hgvDids, apisDids, place, date, language, hasTranslation, hgvId);
+                   record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasTranslation, hgvId);
                    records.add(record);
                 }
                  else{
                     
-                    record = new DocumentBrowseRecord(dcr, itemIds, itemId, ddbdpDids, hgvDids, apisDids, place, date, language, hasTranslation);
+                    record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasTranslation);
                     records.add(record);
                  }
-                    
-                
-            
-                } catch (NullPointerException npe){
-                
-                // exception catch needed for docs with missing fields. need a better way to deal with this?
-                
-                    System.out.println("Missing document " + doc.toString() + ": " + npe.getMessage());
-                
-                
-                }
             
         }
         
@@ -451,32 +555,53 @@ public class CollectionBrowser extends HttpServlet {
         
     }
     
-    private String convertIdArraysToStrings(SolrDocument doc, String collection){
+    // TODO: need to ensure we get the id relevant to the collection currently being viewed
+    
+    String getDisplayId(SolrDocument doc, ArrayList<String> previousIds){
+
+        String id = "";
+        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        if(itemIds.size() == 1) return itemIds.get(0);
         
-        String fieldName = collection + "_" + SolrField.item.name();
-        String fieldValue = doc.getFieldValue(fieldName).toString();
-        if(fieldValue == null || fieldValue.equals("0")) return "None";
-        fieldValue = fieldValue.replaceAll("[\\[\\]]", "");
-        ArrayList<String> allIds = new ArrayList<String>(Arrays.asList(fieldValue.split(",")));
-        ArrayList<String> trimmedIds = new ArrayList<String>();
-        Iterator<String> ait = allIds.iterator();
-        while(ait.hasNext()){
-            
-            String id = ait.next().replaceAll("[\\s]", "");
-            if(!trimmedIds.contains(id)) trimmedIds.add(id);
+        // if more than one id, need to work out which one corresponds to the collection/series/volume we're currently looking at.
+        // but these are all multivalued fields.
+        // however, the indexing order is constant - that is to say, the id value at one position will correspond to the 
+        // collection information at that same index point
+        // so we retrieve by making an inverse hashmap
+        // the keys to which are the collection information, and the values of which are the ids
+                        
+        HashMap<String, String> collsToIds = new HashMap<String, String>();
+        ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.volume.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.series.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        for(int i = 0; i < series.size(); i++){
+            String itemValue = itemIds.get(i).trim().replaceAll("_", "");
+            if(previousIds.contains(itemValue)) continue;
+            String strSeries = series.get(i).trim().replaceAll("_", "");
+            // bodge for apis, which will only ever record a single apis_volume value (of 0) for each record
+            String strVolume = i > (volumes.size() - 1) ? "0" : volumes.get(i).trim().replaceAll("_", "");
+            String key = strSeries + "|" + strVolume;
+            System.out.println("Key is " + key);
+            collsToIds.put(key, itemValue);
             
         }
-        
-        return trimmedIds.toString().replaceAll("[\\[\\]]", "");
-        
-    }
-    
-    private ArrayList<String> getDisplayIds(SolrDocument doc){
-
-        ArrayList<String> ids = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-        
-        return ids;
-        
+        if(collsToIds.size() == 0) return "-1";  
+        String currentKey = pathParts.get(SolrField.series) + "|" + (pathParts.get(SolrField.volume) == null ? "0" : pathParts.get(SolrField.volume));
+        String possId = collsToIds.get(currentKey);
+        if(possId == null){
+            
+            System.out.println("No match found with key: " + currentKey + " on item " + itemIds.toString() + " " + volumes.toString() + " " + series.toString());
+            for(Map.Entry<String, String> entry : collsToIds.entrySet()){
+                
+                System.out.println(entry.getKey());
+                
+                
+            }
+            System.out.println("============");
+            possId = "-1";
+            
+            
+        }
+        return possId;
     } 
     
     void displayBrowseResult(HttpServletResponse response, String html){
@@ -514,18 +639,18 @@ public class CollectionBrowser extends HttpServlet {
      * 
      * Note that this is a workaround; although LinkedHashMaps are ordered, there is no .get(n) method
      * for them. This helper function is accordingly required so that the value set can be iterated through 
-     * in order
+     * sequentially
      * 
      * @param pathBitsMap
      * @return an ArrayList<String> of the pathBitsMap value set
      */
     
-    private ArrayList<String> getCollectionInfo(LinkedHashMap<SolrField, String> pathBitsMap){
+    private ArrayList<String> getCollectionInfo(){
         
         
         ArrayList<String> collectionBits = new ArrayList<String>();
         
-        for(Map.Entry<SolrField, String> entry : pathBitsMap.entrySet()){
+        for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
             
             collectionBits.add(entry.getValue());
             
@@ -535,13 +660,31 @@ public class CollectionBrowser extends HttpServlet {
         
     }
     
+    
+    /**
+     * Generates the HTML necessary for display
+     * 
+     * 
+     * @param records The list of records to be displayed
+     * @return String A String of html
+     */
     String buildHTML(ArrayList<BrowseRecord> records){
         
-        StringBuffer html = new StringBuffer("<h2>" + pathBits.get(SolrField.collection) + "</h2>");
+        StringBuffer html = new StringBuffer("<h2>" + pathParts.get(SolrField.collection) + "</h2>");
         html = page != 0 ?  buildDocumentsHTML(html, records) : buildCollectionsHTML(html, records);
         return html.toString();
         
     }
+    
+    /**
+     * Generates the HTML for display of document collections
+     * 
+     * 
+     * @param html A <code>StringBuffer</code> to store the HTML, and with opening tags already in place
+     * @param records The <code>ArrayList</code> of <code>BrowseRecord</code>s to be displayed
+     * @return A <code>StringBuffer</code> holding the generated HTML
+     * @see DocumentCollectionBrowseRecord#getHTML() 
+     */
     
     private StringBuffer buildCollectionsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
        
@@ -573,6 +716,16 @@ public class CollectionBrowser extends HttpServlet {
         
     }
     
+    /**
+     * Generates the HTML for the display of document summries.
+     * 
+     * 
+     * @param html A <code>StringBuffer</code> to store the HTML, and with opening tags already in place
+     * @param records The <code>ArrayList</code> of <code>BrowseRecord</code>s to be displayed
+     * @return A <code>StringBuffer</code> holding the generated HTML
+     * @see DocumentBrowseRecord#getHTML() 
+     */
+    
     private StringBuffer buildDocumentsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
         
         html.append("<table>");
@@ -596,7 +749,7 @@ public class CollectionBrowser extends HttpServlet {
             // pagination
             
             String pathBase = BROWSE_SERVLET + "/";
-            for(Map.Entry<SolrField, String> entry : pathBits.entrySet()){
+            for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
             
                 pathBase += entry.getValue() + "/";
             
@@ -640,7 +793,7 @@ public class CollectionBrowser extends HttpServlet {
     
     void setPathBits(LinkedHashMap<SolrField, String> bits){
         
-        pathBits = bits;
+        pathParts = bits;
     }
     
 

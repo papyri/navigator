@@ -11,25 +11,47 @@ package info.papyri.dispatch.browse;
     
     public class DocumentCollectionBrowseRecord extends BrowseRecord{
         
+        /* (ddbdp | hgv | apis) */
         private String collection;
         private String series;
         private String volume;
+        /* True if the immediate children of this record are documents; false if they are other collections */
         private Boolean isDocumentParent;
     
+        /**
+         * Constructor for cases in which the volume is known
+         * 
+         * Note that if a volume is known, the collection's children must be documents and not collections;
+         * i.e., <code>isDocumentParent</code> is <code>true</code>
+         * 
+         * @param collection
+         * @param series
+         * @param volume 
+         */
+        
         public DocumentCollectionBrowseRecord(String collection, String series, String volume){
             
             this.collection = collection;
-            this.series = series;
-            this.volume = volume;
+            this.series = trimUnderscores(series);
+            this.volume = trimUnderscores(volume);
             this.isDocumentParent = true;
             
         }
         
-        public DocumentCollectionBrowseRecord(String collection, String series, Boolean isParent){
+ 
+        /**
+         * Constructor for cases in which the volume is either unknown, or there is no volume in
+         * the classification hierarchy
+         * 
+         * @param collection
+         * @param series
+         * @param isParent 
+         */
+        public DocumentCollectionBrowseRecord(String collection, String series, Boolean isDocumentParent){
             
             this.collection = collection;
-            this.series = series;
-            this.isDocumentParent = isParent;
+            this.series = isDocumentParent ? trimUnderscores(series) :  series;
+            this.isDocumentParent = isDocumentParent;
             this.volume = null;
             
         }
@@ -40,27 +62,60 @@ package info.papyri.dispatch.browse;
             
             String href = assembleLink();
             String displayString = series + (volume == null ? "" : " " + volume);
-            if(displayString.equals("0")) return "";    // TODO: Work out why zero-records result and fix bodge if necessary
-            String html = "<li><a href='" + href + "'>" + series + " " + (volume == null ? "" : volume) + "</li>";
+            displayString = displayString.replaceAll("_", " ");
+            String html = "<li><a href='" + href + "'>" + displayString + "</li>";
             return html;
             
             
         }
+        
+        /**
+         * Assembles the anchor tag to the next level down in the hierarchy
+         * 
+         * @return An anchor tag
+         */
+        
         
         @Override
         public String assembleLink(){
             
             String href = CollectionBrowser.BROWSE_SERVLET + "/" + collection;
             
-            String seriesIdent = "/" + series.replaceAll("_", "");
+            String seriesIdent = "/" + series;
             String volumeIdent = volume == null ? "" : "/" + volume;
             href += seriesIdent + volumeIdent;
-            href = href.replaceAll("\\s", "");
             if(this.isDocumentParent) href += "/documents/page1";
             return href;
             
         }
         
+        /**
+         * HGV collection identifiers often substitute underscores for whitespace,
+         * leading to problems in parsing. This fixes that.
+         * 
+         * @param scored The potentially problematic identifier
+         * @return The identifier, with underscores removed
+         */
+        
+        private String trimUnderscores(String scored){
+            
+            // trim leading underscores
+            while(scored.indexOf("_") == 0){
+                
+                scored = scored.substring(1);
+                
+            }
+            // trim trailing underscores
+            while(scored.indexOf("_") == scored.length() - 1){
+                
+                scored = scored.substring(0, scored.length() - 1);
+                
+            }
+            
+            return scored;
+            
+            
+        }
         
         public String getCollection() { return collection; }
         public String getSeries(){ return series; }
