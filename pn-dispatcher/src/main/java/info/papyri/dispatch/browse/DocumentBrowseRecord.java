@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- *
+ * Stores and displays 
  * @author thill
  */
 
@@ -20,34 +20,30 @@ import java.util.Iterator;
         private String date;
         private String language;        
         private String hasTranslation;
+        private String hasImage;
         private String hgv_identifier;
-        private String ddbdpIds;
-        private String hgvIds;
-        private String apisIds;
 
-    public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, ArrayList<String> itemIds, String itemId, String ddb, String hgv0, String apis, String place, String date, String lang, Boolean hasTrans, String hgv){
+    public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasTrans, Boolean hasImg, String hgv){
             
             // TODO: this will have to be changed depending on what users want to see in the records
             
             this.documentGroupRecord = dgr;
-            this.documentIds = itemIds;
-            this.ddbdpIds = ddb;
-            this.hgvIds = hgv0;
-            this.apisIds = apis;
+            this.displayId = itemId;
             this.place = place;
             this.date = date;
             this.language = lang;
             this.hasTranslation = hasTrans ? "Yes" : "No";
+            this.hasTranslation = hasImg ? "Yes" : "No";
             this.hgv_identifier = hgv;
-            determineDisplayId(itemId);
+           
             
         }
         
-        public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, ArrayList<String> itemIds, String itemId, String ddb, String hgv, String apis, String place, String date, String lang, Boolean hasTrans){
+        public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans){
             
             // TODO: this will have to be changed depending on what users want to see in the records
             
-            this(dgr, itemIds, itemId, ddb, hgv, apis, place, date, lang, hasTrans, "");
+            this(dgr, itemId, place, date, lang, hasTrans, hasImg, "");
             
             
         }
@@ -82,17 +78,15 @@ import java.util.Iterator;
         @Override
         public String getHTML(){
             
-            if(this.displayId.equals("0")) return ""; //TODO: Work out why zero-records occur and fix this bodge if necessary
             String displayName = this.documentGroupRecord.getSeries() + " " + this.documentGroupRecord.getVolume() + " " + this.displayId;
+            displayName = displayName.replaceAll("_", " ");
             String anchor = "<a href='" + this.assembleLink() + "'>" + displayName + "</a>";
             String html = "<tr class=\"identifier\"><td>" + anchor + "</td>";
             html += "<td class=\"display-place\">" + place + "</td>";
             html += "<td class=\"display-date\">" + date + "</td>";
-            html += "<td class=\"ddbdp-ids\">" + ((ddbdpIds.length() > 0) ? ddbdpIds : "None") + "</td>";
-            html += "<td class=\"hgv-ids\">" + ((hgvIds.length() > 0) ? hgvIds : "None") + "</td>";
-            html += "<td class=\"apis-ids\">" + ((apisIds.length() > 0) ? apisIds : "None") + "</td>";
             html += "<td class=\"language\">" + language + "</td>";
             html += "<td class=\"has-translation\">" + hasTranslation + "</td>";
+            html += "<td class=\"has-images\">" + hasImage + "</td>";
             html += "</tr>";
             return html;
             
@@ -149,10 +143,20 @@ import java.util.Iterator;
             if(thisId.isEmpty()) thisId = "0";
             if(thatId.isEmpty()) thatId = "0";
 
-            int thisIdNo = Integer.parseInt(thisId);
-            int thatIdNo = Integer.parseInt(thatId);
+            long thisIdNo = Long.parseLong(thisId);
+            long thatIdNo = Long.parseLong(thatId);
             
-            return thisIdNo - thatIdNo;
+            if(thisIdNo > thatIdNo){
+                
+                return 1;
+                
+            }
+            else if(thisIdNo < thatIdNo){
+                
+                return -1;
+                
+            }
+            return 0;
             
         }
         

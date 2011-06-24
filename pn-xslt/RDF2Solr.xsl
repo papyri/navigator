@@ -290,7 +290,10 @@
             <xsl:value-of select="$hgv_volume"/>
           </field>
           <field name="hgv_item">
-            <xsl:value-of select="replace($hgv_item, '\D', '')"/>
+            <xsl:choose>
+              <xsl:when test="string-length(replace($hgv_item, '\D', '')) > 0"> <xsl:value-of select="replace($hgv_item, '\D', '')"/></xsl:when>
+              <xsl:otherwise>0</xsl:otherwise>
+            </xsl:choose>
           </field>
           <xsl:if test="string-length($hgv_item_letter) > 0">
             <field name="hgv_item_letter"><xsl:value-of select="$hgv_item_letter"></xsl:value-of></field>
@@ -395,7 +398,11 @@
             <xsl:value-of select="$apis_series"/>
           </field>
           <field name="apis_item">
-            <xsl:value-of select="replace($apis_item, '\D', '')"/>
+            <xsl:choose>
+              <xsl:when test="string-length(replace($apis_item, '\D', '')) > 0"><xsl:value-of select="replace($apis_item, '\D', '')"/></xsl:when>
+              <xsl:otherwise>0</xsl:otherwise>
+            </xsl:choose>
+            
           </field>
           <xsl:if test="string-length($apis_item_letter) > 0">
             <field name="apis_item_letter"><xsl:value-of select="$apis_item_letter"></xsl:value-of></field>

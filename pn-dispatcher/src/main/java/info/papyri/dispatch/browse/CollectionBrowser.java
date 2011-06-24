@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class CollectionBrowser extends HttpServlet {
     /* for pagination: current page, or 0 if browsing at collection, series, or volume level */
     private int page = 1;
     private int docsPerPage = 50;
-    private int totalResultSetSize;
+    private long totalResultSetSize;
 
     /* holds information given in request url*/
     private LinkedHashMap<SolrField, String> pathParts;
@@ -82,7 +83,8 @@ public class CollectionBrowser extends HttpServlet {
         display_date,
         has_translation,
         language,
-        hgv_identifier
+        hgv_identifier,
+        images
         
         
     }
@@ -190,7 +192,6 @@ public class CollectionBrowser extends HttpServlet {
      * @param request the HttpServletRequest made to the servlet
      *
      */
-
     
     private void parseRequest (HttpServletRequest request){
                 
@@ -346,6 +347,7 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
+        Collections.sort(records);
         return records;
     }
     
@@ -458,8 +460,6 @@ public class CollectionBrowser extends HttpServlet {
         }
         if(!query.isEmpty()) sq.setQuery(query);
         sq.addSortField(collectionPrefix + SolrField.item.name(), SolrQuery.ORDER.asc);
-        sq.addSortField(collectionPrefix + SolrField.series.name(), SolrQuery.ORDER.asc);
-        sq.addSortField(collectionPrefix + SolrField.volume.name(), SolrQuery.ORDER.asc);
         return sq;
     }
     
@@ -477,7 +477,7 @@ public class CollectionBrowser extends HttpServlet {
         
             SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
             QueryResponse qr = solrServer.query(sq);
-            totalResultSetSize = qr.getResults().size();
+            totalResultSetSize = qr.getResults().getNumFound();
             return qr;
             
         }
@@ -530,8 +530,8 @@ public class CollectionBrowser extends HttpServlet {
                 Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
                 Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
- 
-                if(pathParts.get(SolrField.collection).equals("hgv")){
+                Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
+                if(pathParts.get(SolrField.collection).equals("hgv")){ 
                    
                    // HGV records require special treatment, as the link to their records cannot be derived from the path
                    // to the collections that hold them. they thus have a distinct hgv_identifier field
@@ -540,28 +540,47 @@ public class CollectionBrowser extends HttpServlet {
                    ArrayList<String> hgvIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.hgv_identifier.name()).toString().replaceAll("[\\]\\[]", "").split(","))); 
                    
                    String hgvId = hgvIds.get(0);
-                   record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasTranslation, hgvId);
+                   record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasTranslation, hasImages, hgvId);
                    records.add(record);
                 }
                  else{
                     
-                    record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasTranslation);
+                    record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasImages, hasTranslation);
                     records.add(record);
                  }
             
         }
-        
+        Collections.sort(records);
         return records;          
         
     }
     
-    // TODO: need to ensure we get the id relevant to the collection currently being viewed
+    /**
+     * Determines the appropriate item-level id to display.
+     * 
+     * This method is necessary because many items have more than one item-level id. This method ensures
+     * two things: 
+     * (i) that the id displayed is that relevant to the collection currently being viewed.
+     * (ii) that items with more than one id *within* a collection display these ids correctly (i.e., non-
+     * repetitively)
+     * (iii) that items that are ontologically separate in other collections, but that have only one id
+     * within the currently-viewed collection, are displayed only once
+     * 
+     * @param doc The Solr document
+     * @param previousIds A list of ids previously used in display of the collection
+     * @return A String representing the display id, or "-1" if the id and record should not be displayed
+     */
     
     String getDisplayId(SolrDocument doc, ArrayList<String> previousIds){
 
         String id = "";
         ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
-        if(itemIds.size() == 1) return itemIds.get(0);
+        if(itemIds.size() == 1){
+            
+            if(!previousIds.contains(itemIds.get(0))) return itemIds.get(0);
+            return "-1";
+        
+        }
         
         // if more than one id, need to work out which one corresponds to the collection/series/volume we're currently looking at.
         // but these are all multivalued fields.
@@ -571,8 +590,11 @@ public class CollectionBrowser extends HttpServlet {
         // the keys to which are the collection information, and the values of which are the ids
                         
         HashMap<String, String> collsToIds = new HashMap<String, String>();
+        
         ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.volume.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
         ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.series.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+       
+        // populating the HashMap
         for(int i = 0; i < series.size(); i++){
             String itemValue = itemIds.get(i).trim().replaceAll("_", "");
             if(previousIds.contains(itemValue)) continue;
@@ -580,28 +602,16 @@ public class CollectionBrowser extends HttpServlet {
             // bodge for apis, which will only ever record a single apis_volume value (of 0) for each record
             String strVolume = i > (volumes.size() - 1) ? "0" : volumes.get(i).trim().replaceAll("_", "");
             String key = strSeries + "|" + strVolume;
-            System.out.println("Key is " + key);
             collsToIds.put(key, itemValue);
             
         }
+        
         if(collsToIds.size() == 0) return "-1";  
         String currentKey = pathParts.get(SolrField.series) + "|" + (pathParts.get(SolrField.volume) == null ? "0" : pathParts.get(SolrField.volume));
         String possId = collsToIds.get(currentKey);
-        if(possId == null){
-            
-            System.out.println("No match found with key: " + currentKey + " on item " + itemIds.toString() + " " + volumes.toString() + " " + series.toString());
-            for(Map.Entry<String, String> entry : collsToIds.entrySet()){
-                
-                System.out.println(entry.getKey());
-                
-                
-            }
-            System.out.println("============");
-            possId = "-1";
-            
-            
-        }
+        if(possId == null) possId = "-1";
         return possId;
+        
     } 
     
     void displayBrowseResult(HttpServletResponse response, String html){
@@ -717,8 +727,10 @@ public class CollectionBrowser extends HttpServlet {
     }
     
     /**
-     * Generates the HTML for the display of document summries.
+     * Generates the HTML for the display of document summaries.
      * 
+     * Note a dependency here - the html table code here must line up with the html <tr>
+     * output of  <code>DocumentBrowseRecord</code>.
      * 
      * @param html A <code>StringBuffer</code> to store the HTML, and with opening tags already in place
      * @param records The <code>ArrayList</code> of <code>BrowseRecord</code>s to be displayed
@@ -729,7 +741,7 @@ public class CollectionBrowser extends HttpServlet {
     private StringBuffer buildDocumentsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
         
         html.append("<table>");
-        html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>All DDbDP IDs</td><td>All HGV IDs</td><td>All APIS IDs</td><td>Languages</td><td>Has translation</td></tr>");
+        html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Has translation</td><td>Has images</td></tr>");
         Iterator<BrowseRecord> rit = records.iterator();
         
         while(rit.hasNext()){
