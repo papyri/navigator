@@ -62,32 +62,12 @@ public class CollectionBrowser extends HttpServlet {
     private String collectionPrefix;
 
     /* for pagination: current page, or 0 if browsing at collection, series, or volume level */
-    private int page = 1;
+    private int page = 0;
     private int docsPerPage = 50;
     private long totalResultSetSize;
 
     /* holds information given in request url*/
     private LinkedHashMap<SolrField, String> pathParts;
-    
-    /* names of fields indexed in solr. note that some may have the collectionPrefix prepended to 
-     * them in actual use
-     */
-    enum SolrField{
-        
-        collection,
-        series,
-        identifier,
-        volume,
-        item,
-        display_place,
-        display_date,
-        has_translation,
-        language,
-        hgv_identifier,
-        images
-        
-        
-    }
  
     private static String SPARQL_GRAPH = "<rmi://localhost/papyri.info#pi>";
     static String SOLR_URL = "http://localhost:8082/solr/";
@@ -540,7 +520,7 @@ public class CollectionBrowser extends HttpServlet {
                    ArrayList<String> hgvIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.hgv_identifier.name()).toString().replaceAll("[\\]\\[]", "").split(","))); 
                    
                    String hgvId = hgvIds.get(0);
-                   record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasTranslation, hasImages, hgvId);
+                   record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasImages, hasTranslation, hgvId);
                    records.add(record);
                 }
                  else{

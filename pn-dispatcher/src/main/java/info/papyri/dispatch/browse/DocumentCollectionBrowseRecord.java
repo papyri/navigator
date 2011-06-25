@@ -125,6 +125,9 @@ package info.papyri.dispatch.browse;
         public int compareTo(Object o) {
             
             DocumentCollectionBrowseRecord comparandum = (DocumentCollectionBrowseRecord)o;
+            
+            if(this.series.compareToIgnoreCase(comparandum.getSeries()) != 0) return this.series.compareToIgnoreCase(comparandum.getSeries());
+            
             if(this.getVolume().equals("0")) return 0;
             String thisVolume = this.getVolume() != null ? this.getVolume() : "";
             String thatVolume = comparandum.getVolume() != null ? comparandum.getVolume() : "";

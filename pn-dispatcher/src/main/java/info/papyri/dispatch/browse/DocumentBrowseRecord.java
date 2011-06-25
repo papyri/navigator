@@ -23,7 +23,7 @@ import java.util.Iterator;
         private String hasImage;
         private String hgv_identifier;
 
-    public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasTrans, Boolean hasImg, String hgv){
+    public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans,String hgv){
             
             // TODO: this will have to be changed depending on what users want to see in the records
             
@@ -33,7 +33,7 @@ import java.util.Iterator;
             this.date = date;
             this.language = lang;
             this.hasTranslation = hasTrans ? "Yes" : "No";
-            this.hasTranslation = hasImg ? "Yes" : "No";
+            this.hasImage = hasImg ? "Yes" : "No";
             this.hgv_identifier = hgv;
            
             
@@ -43,7 +43,7 @@ import java.util.Iterator;
             
             // TODO: this will have to be changed depending on what users want to see in the records
             
-            this(dgr, itemId, place, date, lang, hasTrans, hasImg, "");
+            this(dgr, itemId, place, date, lang, hasImg, hasTrans, "");
             
             
         }

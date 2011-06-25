@@ -338,7 +338,7 @@
           </xsl:variable>
           <xsl:variable name="ddbdp_item">
             <xsl:choose>
-              <xsl:when test="string-length($sort[3]) = 0">0</xsl:when>
+              <xsl:when test="string-length(replace(normalize-space($sort[3]), '\D', '')) = 0">0</xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="replace(normalize-space($sort[3]), '\D', '')"/>
               </xsl:otherwise>
@@ -373,7 +373,7 @@
             </field>
             <field name="item">
               <xsl:choose>
-                <xsl:when test="string-length(replace($ddbdp_item, '\D', '')) = 0">0</xsl:when>
+                <xsl:when test="string-length(replace($ddbdp_item, '\D', '')) &gt; 0">0</xsl:when>
                 <xsl:otherwise><xsl:value-of select="replace($ddbdp_item, '\D', '')"/></xsl:otherwise>
               </xsl:choose>
             </field>
@@ -412,7 +412,12 @@
               <xsl:value-of select="$apis_series"/>
             </field>
             <field name="volume">0</field>
-            <field name="item"><xsl:value-of select="replace($apis_item, '\D', '')"/></field>
+            <field name="item">
+                         <xsl:choose>
+              <xsl:when test="string-length(replace($apis_item, '\D', '')) &gt; 0"><xsl:value-of select="replace($apis_item, '\D', '')"/></xsl:when>
+              <xsl:otherwise>0</xsl:otherwise>
+            </xsl:choose>
+            </field>
           </xsl:if>
         </xsl:when>
       </xsl:choose>
