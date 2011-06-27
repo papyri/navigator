@@ -13,9 +13,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -406,15 +408,9 @@ public class CollectionBrowser extends HttpServlet {
             try{
                 Record record;
                 ArrayList<String> itemIds = getDisplayIds(doc);
-                String ddbdpField = "ddbdp_" + SolrField.item.name();
-                String hgvField = "hgv_" + SolrField.item.name();
-                String apisField = "apis_" + SolrField.item.name();
-                Boolean ddbdpIsNull = doc.getFieldValue(ddbdpField) == null || doc.getFieldValue(ddbdpField).equals("0");
-                Boolean hgvIsNull = doc.getFieldValue(hgvField) == null || doc.getFieldValue(hgvField).equals("0");
-                Boolean apisIsNull = (doc.getFieldValue(apisField) == null) || (doc.getFieldValue(apisField).equals("0"));
-                String ddbdpDids = ddbdpIsNull ? "None" : (String) doc.getFieldValue(ddbdpField).toString().replaceAll("[\\[\\]]", "");
-                String hgvDids = hgvIsNull ? "None" : (String) doc.getFieldValue(hgvField).toString().replaceAll("[\\[\\]]", "");
-                String apisDids = apisIsNull ? "None" : (String) doc.getFieldValue(apisField).toString().replaceAll("[\\[\\]]", "");
+                String ddbdpDids = this.convertIdArraysToStrings(doc, "ddbdp");
+                String hgvDids = this.convertIdArraysToStrings(doc, "hgv");
+                String apisDids = this.convertIdArraysToStrings(doc, "apis");
                 String itemId = (String) doc.getFieldValue(SolrField.item.name());
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
@@ -454,6 +450,26 @@ public class CollectionBrowser extends HttpServlet {
         }
         
         return documentList;      
+        
+    }
+    
+    private String convertIdArraysToStrings(SolrDocument doc, String collection){
+        
+        String fieldName = collection + "_" + SolrField.item.name();
+        String fieldValue = doc.getFieldValue(fieldName).toString();
+        if(fieldValue == null || fieldValue.equals("0")) return "None";
+        fieldValue = fieldValue.replaceAll("[\\[\\]]", "");
+        ArrayList<String> allIds = new ArrayList<String>(Arrays.asList(fieldValue.split(",")));
+        ArrayList<String> trimmedIds = new ArrayList<String>();
+        Iterator<String> ait = allIds.iterator();
+        while(ait.hasNext()){
+            
+            String id = ait.next().replaceAll("[\\s]", "");
+            if(!trimmedIds.contains(id)) trimmedIds.add(id);
+            
+        }
+        
+        return trimmedIds.toString().replaceAll("[\\[\\]]", "");
         
     }
     
@@ -547,7 +563,7 @@ public class CollectionBrowser extends HttpServlet {
             
             int numPages = (int) Math.ceil(totalResultSetSize / docsPerPage);
 
-            html.append("<div id=\"pagination\" style=\"width:" + String.valueOf((numPages * 70) + 10) + "px;\">");
+            html.append("<div id=\"pagination\">");
                     
             // pagination
             
@@ -669,6 +685,8 @@ public class CollectionBrowser extends HttpServlet {
         public String getHTML(){
             
             String href = assembleLink();
+            String displayString = series + (volume == null ? "" : " " + volume);
+            if(displayString.equals("0")) return "";    // TODO: Work out why zero-records result and fix bodge if necessary
             String html = "<li><a href='" + href + "'>" + series + " " + (volume == null ? "" : volume) + "</li>";
             return html;
             
@@ -788,6 +806,7 @@ public class CollectionBrowser extends HttpServlet {
         @Override
         public String getHTML(){
             
+            if(this.displayId.equals("0")) return ""; //TODO: Work out why zero-records occur and fix this bodge if necessary
             String displayName = this.documentGroupRecord.getSeries() + " " + this.documentGroupRecord.getVolume() + " " + this.displayId;
             String anchor = "<a href='" + this.assembleLink() + "'>" + displayName + "</a>";
             String html = "<tr class=\"identifier\"><td>" + anchor + "</td>";

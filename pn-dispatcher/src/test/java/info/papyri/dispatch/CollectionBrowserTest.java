@@ -50,7 +50,7 @@ public class CollectionBrowserTest extends TestCase {
 
     public void testIsCurrentlyDisplayingDocuments() throws MalformedURLException, SolrServerException{
         
-        /*ArrayList<BooleanPathBits> bpis = this.generateDisplayingDocumentBits();
+        ArrayList<BooleanPathBits> bpis = this.generateDisplayingDocumentBits();
         Iterator<BooleanPathBits> bpit = bpis.iterator();
         while(bpit.hasNext()){
             
@@ -65,192 +65,26 @@ public class CollectionBrowserTest extends TestCase {
             QueryResponse qr = solrServer.query(sq);
             assertEquals(bpBool, COLLECTION_BROWSER.isCurrentlyDisplayingDocuments(qr));
                
-        }*/
+        }
         
     }
-    
-   public void testBuildCollectionList() throws MalformedURLException, SolrServerException{
         
-        ArrayList<BooleanPathBits> bpis = this.generateDisplayingCollectionsBits();
-        Iterator<BooleanPathBits> bpit = bpis.iterator();
-        while(bpit.hasNext()){
-            
-            BooleanPathBits bps = bpit.next();
-            LinkedHashMap<CollectionBrowser.SolrField, String> bits = bps.getPathBits();
-            COLLECTION_BROWSER.setPathBits(bits);
-            COLLECTION_BROWSER.setCollectionPrefix();
-            SolrQuery sq = COLLECTION_BROWSER.buildSolrQuery();
-            System.out.println("Query is " + sq.toString());
-            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8082/solr/" + CollectionBrowser.PN_SEARCH);
-            QueryResponse qr = solrServer.query(sq);
-            COLLECTION_BROWSER.processSolrResponse(qr);  
-            String html = COLLECTION_BROWSER.buildHTML(COLLECTION_BROWSER.processSolrResponse(qr));
-               
-        } 
-   
-    }
-    
-    public void testBuildDocumentList() throws MalformedURLException, SolrServerException{
-        
-        ArrayList<BooleanPathBits> bpis = this.generateDisplayingDocumentBits();
-        Iterator<BooleanPathBits> bpit = bpis.iterator();
-        while(bpit.hasNext()){
-            
-            BooleanPathBits bps = bpit.next();
-            LinkedHashMap<CollectionBrowser.SolrField, String> bits = bps.getPathBits();
-            Boolean bpBool = bps.getBooleanValue();
-            COLLECTION_BROWSER.setPathBits(bits);
-            COLLECTION_BROWSER.setCollectionPrefix();
-            SolrQuery sq = COLLECTION_BROWSER.buildSolrQuery();
-            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8082/solr/" + CollectionBrowser.PN_SEARCH);
-            QueryResponse qr = solrServer.query(sq);
-            COLLECTION_BROWSER.processSolrResponse(qr);
-            if(COLLECTION_BROWSER.isCurrentlyDisplayingDocuments(qr)){
-                
-               String html = COLLECTION_BROWSER.buildHTML(COLLECTION_BROWSER.processSolrResponse(qr));
-                
-            }
-
-               
-        } 
-   
-    }
-    
-        public void testDisambiguation() throws MalformedURLException, SolrServerException{
-        
-        /*ArrayList<BooleanPathBits> bpis = this.generateDisambiguationBits();
-        Iterator<BooleanPathBits> bpit = bpis.iterator();
-        while(bpit.hasNext()){
-            
-            BooleanPathBits bps = bpit.next();
-            LinkedHashMap<CollectionBrowser.SolrField, String> bits = bps.getPathBits();
-            Boolean bpBool = bps.getBooleanValue();
-            COLLECTION_BROWSER.setPathBits(bits);
-            COLLECTION_BROWSER.setCollectionPrefix();
-            SolrQuery sq = COLLECTION_BROWSER.buildSolrQuery();
-            System.out.println("Query is " + sq.toString());
-            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8082/solr/" + CollectionBrowser.PN_SEARCH);
-            QueryResponse qr = solrServer.query(sq);
-            COLLECTION_BROWSER.processSolrResponse(qr);
-                
-            COLLECTION_BROWSER.buildDocumentList(qr);
-                
-
-               
-        } */
-   
-    }
-    
-    
     private ArrayList<BooleanPathBits> generateDisplayingDocumentBits(){
-        
-        ArrayList<BooleanPathBits>  testPathBits = new ArrayList<BooleanPathBits>();
-        
-       /* LinkedHashMap<CollectionBrowser.SolrField, String> testBits0 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits0.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits0.put(CollectionBrowser.SolrField.series, "bgu");
-        BooleanPathBits bpb0 = new BooleanPathBits(testBits0, false);
-        testPathBits.add(bpb0);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits1 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits1.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits1.put(CollectionBrowser.SolrField.series, "bgu");
-        testBits1.put(CollectionBrowser.SolrField.volume, "1");
-        BooleanPathBits bpb1 = new BooleanPathBits(testBits1, true);
-        testPathBits.add(bpb1); 
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits2 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits2.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits2.put(CollectionBrowser.SolrField.series, "c.ep.lat");
-        BooleanPathBits bpb2 = new BooleanPathBits(testBits2, true);
-        testPathBits.add(bpb2);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits3 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits3.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        BooleanPathBits bpb3 = new BooleanPathBits(testBits3, false);
-        testPathBits.add(bpb3); */
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits4 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits4.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits4.put(CollectionBrowser.SolrField.series, "bgu");
-        testBits4.put(CollectionBrowser.SolrField.volume, "1");
-        BooleanPathBits bpb4 = new BooleanPathBits(testBits4, false);
-        testPathBits.add(bpb4); /*
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits5 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits5.put(CollectionBrowser.SolrField.collection, "apis");
-        BooleanPathBits bpb5 = new BooleanPathBits(testBits5, false);
-        testPathBits.add(bpb5);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits6 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits6.put(CollectionBrowser.SolrField.collection, "apis");
-        testBits6.put(CollectionBrowser.SolrField.series, "britmus");
-        BooleanPathBits bpb6 = new BooleanPathBits(testBits6, true);
-        testPathBits.add(bpb6);*/
-        
-        return testPathBits;
-        
-    }
-    
-    
-        private ArrayList<BooleanPathBits> generateDisplayingCollectionsBits(){
-        
-        ArrayList<BooleanPathBits>  testPathBits = new ArrayList<BooleanPathBits>();
-        
-       /* LinkedHashMap<CollectionBrowser.SolrField, String> testBits0 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits0.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits0.put(CollectionBrowser.SolrField.series, "bgu");
-        BooleanPathBits bpb0 = new BooleanPathBits(testBits0, false);
-        testPathBits.add(bpb0);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits1 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits1.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits1.put(CollectionBrowser.SolrField.series, "bgu");
-        testBits1.put(CollectionBrowser.SolrField.volume, "1");
-        BooleanPathBits bpb1 = new BooleanPathBits(testBits1, true);
-        testPathBits.add(bpb1); 
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits2 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits2.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        testBits2.put(CollectionBrowser.SolrField.series, "c.ep.lat");
-        BooleanPathBits bpb2 = new BooleanPathBits(testBits2, true);
-        testPathBits.add(bpb2);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits3 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits3.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        BooleanPathBits bpb3 = new BooleanPathBits(testBits3, false);
-        testPathBits.add(bpb3); */
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits4 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits4.put(CollectionBrowser.SolrField.collection, "ddbdp");
-        BooleanPathBits bpb4 = new BooleanPathBits(testBits4, false);
-        testPathBits.add(bpb4); /*
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits5 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits5.put(CollectionBrowser.SolrField.collection, "apis");
-        BooleanPathBits bpb5 = new BooleanPathBits(testBits5, false);
-        testPathBits.add(bpb5);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits6 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits6.put(CollectionBrowser.SolrField.collection, "apis");
-        testBits6.put(CollectionBrowser.SolrField.series, "britmus");
-        BooleanPathBits bpb6 = new BooleanPathBits(testBits6, true);
-        testPathBits.add(bpb6);*/
-        
-        return testPathBits;
-        
-    }
-        
-    private ArrayList<BooleanPathBits> generateNextLevelPathBits(){
         
         ArrayList<BooleanPathBits>  testPathBits = new ArrayList<BooleanPathBits>();
         
         LinkedHashMap<CollectionBrowser.SolrField, String> testBits0 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
         testBits0.put(CollectionBrowser.SolrField.collection, "ddbdp");
         testBits0.put(CollectionBrowser.SolrField.series, "bgu");
-        BooleanPathBits bpb0 = new BooleanPathBits(testBits0, true);
+        BooleanPathBits bpb0 = new BooleanPathBits(testBits0, false);
         testPathBits.add(bpb0);
-       
+        
+        LinkedHashMap<CollectionBrowser.SolrField, String> testBits1 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
+        testBits1.put(CollectionBrowser.SolrField.collection, "ddbdp");
+        testBits1.put(CollectionBrowser.SolrField.series, "bgu");
+        testBits1.put(CollectionBrowser.SolrField.volume, "1");
+        BooleanPathBits bpb1 = new BooleanPathBits(testBits1, true);
+        testPathBits.add(bpb1); 
         
         LinkedHashMap<CollectionBrowser.SolrField, String> testBits2 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
         testBits2.put(CollectionBrowser.SolrField.collection, "ddbdp");
@@ -261,12 +95,7 @@ public class CollectionBrowserTest extends TestCase {
         LinkedHashMap<CollectionBrowser.SolrField, String> testBits3 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
         testBits3.put(CollectionBrowser.SolrField.collection, "ddbdp");
         BooleanPathBits bpb3 = new BooleanPathBits(testBits3, false);
-        testPathBits.add(bpb3);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits4 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits4.put(CollectionBrowser.SolrField.collection, "hgv");
-        BooleanPathBits bpb4 = new BooleanPathBits(testBits4, false);
-        testPathBits.add(bpb4); 
+        testPathBits.add(bpb3); 
         
         LinkedHashMap<CollectionBrowser.SolrField, String> testBits5 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
         testBits5.put(CollectionBrowser.SolrField.collection, "apis");
@@ -275,34 +104,16 @@ public class CollectionBrowserTest extends TestCase {
         
         LinkedHashMap<CollectionBrowser.SolrField, String> testBits6 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
         testBits6.put(CollectionBrowser.SolrField.collection, "apis");
-        BooleanPathBits bpb6 = new BooleanPathBits(testBits6, false);
+        testBits6.put(CollectionBrowser.SolrField.series, "britmus");
+        BooleanPathBits bpb6 = new BooleanPathBits(testBits6, true);
         testPathBits.add(bpb6);
         
         return testPathBits;
         
     }
     
-    private ArrayList<BooleanPathBits> generateDisambiguationBits(){
-        
-        ArrayList<BooleanPathBits>  testPathBits = new ArrayList<BooleanPathBits>();
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits0 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits0.put(CollectionBrowser.SolrField.collection, "apis");
-        testBits0.put(CollectionBrowser.SolrField.series, "wisconsin");
-        BooleanPathBits bpb0 = new BooleanPathBits(testBits0, true);
-        testPathBits.add(bpb0);
-        
-        LinkedHashMap<CollectionBrowser.SolrField, String> testBits1 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits1.put(CollectionBrowser.SolrField.collection, "apis");
-        testBits1.put(CollectionBrowser.SolrField.series, "lund");
-        BooleanPathBits bpb1 = new BooleanPathBits(testBits1, true);
-        testPathBits.add(bpb1);
-        
-        return testPathBits;
-        
-    }
     
-    
+      
     private class BooleanPathBits{
     
         private LinkedHashMap<CollectionBrowser.SolrField, String> pathBits;
