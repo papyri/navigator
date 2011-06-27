@@ -1,7 +1,9 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
+import java.util.Iterator;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.FacetField.Count;
 
 /**
  *
@@ -9,22 +11,33 @@ import org.apache.solr.client.solrj.SolrQuery;
  */
 public class HasImagesFacet extends Facet {
 
-    public HasImagesFacet(){
+    public HasImagesFacet(String formName){
     
-        super(SolrField.images, FacetBrowser.FacetMapping.IMG);
+        super(SolrField.images, formName);
     
-    }
-    
-    @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String generateHTML() {
+    public String generateWidget() {
         
-        StringBuffer html = new StringBuffer("<h2>Images Facet here</h2>");
+        StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
+        html.append("<span class=\"option-label\">Has Images</span>");
+        html.append("<select name=\"" + formName + "\">");
         
+        Iterator<Count> vcit = valuesAndCounts.iterator();
+        
+        while(vcit.hasNext()){
+            
+            Count valueAndCount = vcit.next();
+            String value = valueAndCount.getName();
+            if(value == null) value = "false";
+            String count = String.valueOf(valueAndCount.getCount());
+            html.append("<option>" + value + " (" + count + ")</option>");
+            
+        }
+        
+        html.append("</select>");
+        html.append("</div><!-- closing .facet-widget -->");
         return html.toString();
         
         

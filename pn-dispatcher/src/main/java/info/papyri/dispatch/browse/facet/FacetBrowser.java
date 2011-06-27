@@ -1,15 +1,22 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
+import info.papyri.dispatch.browse.DocumentCollectionBrowseRecord;
+import info.papyri.dispatch.browse.FieldNotFoundException;
 import info.papyri.dispatch.browse.SolrField;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -48,11 +55,12 @@ public class FacetBrowser extends HttpServlet {
     static String SOLR_URL = "http://localhost:8082/solr/";
     static String PN_SEARCH = "pn-search/";
     
+    
     public enum FacetMapping{
         
-        IMG(new HasImagesFacet()),
-        TRANS(new HasTranslationFacet()),
-        LANG(new LanguageFacet());
+        IMG(new HasImagesFacet("IMG")),
+        TRANS(new HasTranslationFacet("TRANS")),
+        LANG(new LanguageFacet("LANG"));
         
         private Facet facet;
 
@@ -68,7 +76,31 @@ public class FacetBrowser extends HttpServlet {
     }
     
     ArrayList<FacetMapping> facets = new ArrayList<FacetMapping>(Arrays.asList(FacetMapping.IMG, FacetMapping.TRANS, FacetMapping.LANG));
+    private ArrayList<DocumentBrowseRecord> returnedRecords = new ArrayList<DocumentBrowseRecord>();
+    private Boolean constraintsPresent;
+    private String home;
+    private URL facetURL;
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException{
+        
+        super.init(config);
 
+        SOLR_URL = config.getInitParameter("solrUrl");
+        home = config.getInitParameter("home");
+        constraintsPresent = false;
+        try {
+            
+            facetURL = new URL("file://" + home + "/" + "facetbrowse.html");
+            
+        } catch (MalformedURLException e) {
+      
+            throw new ServletException(e);
+   
+        }
+        
+    } 
+    
     
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -80,27 +112,21 @@ public class FacetBrowser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FacetBrowser</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            parseRequestToFacets(request);
-            out.println("<h1>Servlet FacetBrowser at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-             
-        } finally {            
-            out.close();
-        }
+        request.setCharacterEncoding("UTF-8");       
+        parseRequestToFacets(request);
+        SolrQuery solrQuery = this.buildFacetQuery();
+        QueryResponse queryResponse = this.runFacetQuery(solrQuery);
+        populateFacets(queryResponse);
+        returnedRecords = retrieveRecords(queryResponse);
+        String html = this.assembleHTML();
+        displayBrowseResult(response, html);  
+     
     }
 
     private void parseRequestToFacets(HttpServletRequest request){
         
         Map<String, String[]> params = request.getParameterMap();
-        
+        constraintsPresent = false;
         Iterator<FacetMapping> fmit = facets.iterator();
         
         while(fmit.hasNext()){
@@ -108,14 +134,23 @@ public class FacetBrowser extends HttpServlet {
             FacetMapping facetMapping = fmit.next();
             
             if(params.containsKey(facetMapping.name())){
-                
+                constraintsPresent = true;
                 String[] paramValues = params.get(facetMapping.name());
                 Facet facet = facetMapping.facet();
                 
                 for(int i = 0; i < paramValues.length; i++){
                     
-                    facet.addConstraint(paramValues[i]);
+                    try{
                     
+                        String param = java.net.URLDecoder.decode(paramValues[i], "UTF-8");
+                        facet.addConstraint(param);
+                    
+                    }
+                    catch(UnsupportedEncodingException uee){
+                        
+                        System.out.println("UnsupportedEncodingException: " + uee.getMessage());
+                        
+                    }
                 }
                 
             }
@@ -123,28 +158,70 @@ public class FacetBrowser extends HttpServlet {
         }
         
         // might need to add other functionality here
+               
+    }
+    
+    private SolrQuery buildFacetQuery(){
+        
+        SolrQuery sq = new SolrQuery();
+        sq.setFacetMissing(true);
+        sq.setFacetMinCount(1); 
+        
+        // iterate through facets, adding to solr query
+        Iterator<FacetMapping> fmit = facets.iterator();
+        while(fmit.hasNext()){
+            
+            FacetMapping facetMapping = fmit.next();
+            Facet facet = facetMapping.facet();
+            sq = facet.buildQueryContribution(sq);
+            
+            
+        }
+        
+        sq.setQuery("*:*");
+        
+        return sq;
         
         
     }
     
-    private QueryResponse runFacetQuery() throws MalformedURLException, SolrServerException{
+    private QueryResponse runFacetQuery(SolrQuery sq){
         
-        SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
-        SolrQuery sq = new SolrQuery();
-        
-        // iterate through facets, adding to solr query
-        
-        sq.setQuery("*:*");
-        
-        QueryResponse queryResponse = solrServer.query(sq);
-        
-        return queryResponse;
+        try{
+            
+          SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
+          QueryResponse qr = solrServer.query(sq);
+          return qr;
+            
+            
+        }
+        catch(MalformedURLException murle){
+            
+            System.out.println("MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage());
+            return null;
+            
+            
+        }
+        catch(SolrServerException sse){
+            
+           System.out.println("SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage());
+           return null;
+            
+            
+        }
         
         
     }
     
     private void populateFacets(QueryResponse queryResponse){
         
+        Iterator<FacetMapping> fmit = facets.iterator();
+        while(fmit.hasNext()){
+            
+            Facet facet = fmit.next().facet();
+            facet.setWidgetValues(queryResponse);
+            
+        }
         
         
     }
@@ -155,25 +232,175 @@ public class FacetBrowser extends HttpServlet {
         
         for(SolrDocument doc : queryResponse.getResults()){
             
+           try{ 
             
-            // parse results into records
-            
-            
+                DocumentCollectionBrowseRecord collectionInfo = getDisplayCollectionInfo(doc);
+                String displayId = getDisplayId(collectionInfo, doc);
+                Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
+                String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
+                Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
+                String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());
+                Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
+                String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
+                Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
+                Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;            
+               
+                DocumentBrowseRecord record;
+                
+                if("hgv".equals(collectionInfo.getCollection())){
+                    
+                   ArrayList<String> hgvIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.hgv_identifier.name()).toString().replaceAll("[\\]\\[]", "").split(","))); 
+                   String hgvId = hgvIds.get(0);
+                   record = new DocumentBrowseRecord(collectionInfo, displayId, place, date, language, hasImages, hasTranslation, hgvId);
+                   records.add(record);
+                }
+                else{
+                    
+                    record = new DocumentBrowseRecord(collectionInfo, displayId, place, date, language, hasImages, hasTranslation);
+                    records.add(record);
+                }
+                
+                
+           }
+           catch (FieldNotFoundException fnfe){
+               
+               System.out.println(fnfe.getError());
+               continue;
+           }
         }
         
+        // need to add code for  - retrieving all ids; getting which one to display as head id; retrieving url; parsing into Record
+        
         return records;
+        
+    }
+
+    private DocumentCollectionBrowseRecord getDisplayCollectionInfo(SolrDocument doc) throws FieldNotFoundException{
+        
+        // TODO: this is just a bodge, pending feedback on what the preferred ids are
+        
+        ArrayList<String> collections = new ArrayList<String>(Arrays.asList(doc.getFieldValue("collection").toString().replaceAll("[\\[\\]]", "").split(",")));           
+        if(collections.size() == 0) throw new FieldNotFoundException("collection");
+        String collection = collections.contains("ddbdp") ? "ddbdp" : (collections.contains("hgv")? "hgv" : "apis");
+        String collectionPrefix = collection + "_";
+        ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.series.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+        ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+        String errInfo = collections.toString() + "|" + volumes.toString() + "|" + itemIds.toString();
+        if(series.size() == 0) throw new FieldNotFoundException(collectionPrefix + "series", errInfo);    
+        if(itemIds.size() == 0) throw new FieldNotFoundException(collectionPrefix + "item", errInfo);
+
+        if(volumes.size() > 0){
+            
+            return new DocumentCollectionBrowseRecord(collection, series.get(0), volumes.get(0));
+            
+        }
+        else{
+            
+            return new DocumentCollectionBrowseRecord(collection, series.get(0), false);
+            
+        }
+         
+    }
+    
+    private String getDisplayId(DocumentCollectionBrowseRecord collectionInfo, SolrDocument doc){
+        
+        // TODO: just a bodge; see getDisplayCollectionInfo above
+        
+        String displayId = "";
+        String collectionPrefix = collectionInfo.getCollection() + "_";
+        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));     
+        return itemIds.get(0);
         
     }
     
     private String assembleHTML(){
         
-        StringBuffer html = new StringBuffer();
-        
-        
+        StringBuffer html = new StringBuffer("<div id=\"facet-wrapper\">");
+        html = assembleWidgetHTML(html);
+        html = assembleRecordsHTML(html);
+        html.append("</div><!-- closing #facet-wrapper -->");
         return html.toString();
         
     }
     
+    private StringBuffer assembleRecordsHTML(StringBuffer html){
+        
+        html.append("<div id=\"facet-records-wrapper\">");
+        if(!constraintsPresent){
+            
+            html.append("<h2>Please select values from the left-hand column to return results</h2>");
+            
+        }
+        else{
+            
+            html.append("<table>");
+            html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Has translation</td><td>Has images</td></tr>");
+            Iterator<DocumentBrowseRecord> rit = returnedRecords.iterator();
+            
+            while(rit.hasNext()){
+            
+                DocumentBrowseRecord dbr = rit.next();
+                html.append(dbr.getHTML());
+                  
+            }
+            html.append("</table>");
+            
+        }
+        
+        html.append("</div><!-- closing #facet-records-wrapper -->");
+        return html;
+          
+    }
+    
+    private StringBuffer assembleWidgetHTML(StringBuffer html){
+        
+        //TODO: Add bracketing html code - form elements!
+        html.append("<div id=\"facet-widgets-wrapper\">");
+        html.append("<form name=\"facets\" method=\"get\" action=\"/dispatch/facetted/\"> ");
+        Iterator<FacetMapping> fmit = facets.iterator();
+        while(fmit.hasNext()){
+            
+            Facet facet = fmit.next().facet();
+            html.append(facet.generateWidget());
+            
+        }
+        html.append("<input type=\"submit\" name=\"submit\" value=\"submit\"/>");
+        html.append("</form>");
+        html.append("</div><!-- closing #facet-widgets-wrapper -->");
+        return html;
+        
+    }
+    
+    void displayBrowseResult(HttpServletResponse response, String html){
+        
+        BufferedReader reader = null;
+        try{
+        
+            PrintWriter out = response.getWriter();
+            reader = new BufferedReader(new InputStreamReader(facetURL.openStream()));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+              
+                out.println(line);
+
+                if (line.contains("<!-- Facet browse results -->")) {
+            
+                    out.println(html);
+                
+                
+                }
+          
+            } 
+        
+        }
+        catch(Exception e){
+            
+            
+            
+        }
+        
+    }
     
     
     

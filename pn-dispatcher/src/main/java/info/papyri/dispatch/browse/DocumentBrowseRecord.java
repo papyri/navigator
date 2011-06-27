@@ -14,7 +14,6 @@ import java.util.Iterator;
     public class DocumentBrowseRecord extends BrowseRecord implements Comparable{
         
         private DocumentCollectionBrowseRecord documentGroupRecord;
-        private ArrayList<String> documentIds;
         private String displayId;
         private String place;
         private String date;
@@ -23,7 +22,7 @@ import java.util.Iterator;
         private String hasImage;
         private String hgv_identifier;
 
-    public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans,String hgv){
+    public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans, String hgv){
             
             // TODO: this will have to be changed depending on what users want to see in the records
             
@@ -39,41 +38,15 @@ import java.util.Iterator;
             
         }
         
-        public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans){
+   public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans){
             
             // TODO: this will have to be changed depending on what users want to see in the records
             
             this(dgr, itemId, place, date, lang, hasImg, hasTrans, "");
             
             
-        }
+    }
         
-        private void determineDisplayId(String itemId){
-            
-            if(this.documentIds.size() == 1){
-                
-                this.displayId = documentIds.remove(0);
-                return;
-                
-            }
-            Collections.sort(this.documentIds);
-            Iterator<String> dit = documentIds.iterator();
-            int i;
-            for(i = 0; i < documentIds.size(); i++){
-                
-               if(itemId.matches(".*" + documentIds.get(i) + ".*")){
-                    
-                    this.displayId = documentIds.get(i);
-                    break;
-                    
-                }
-                
-                
-            }
-            
-            this.documentIds.remove(i);
-            
-        }
         
         @Override
         public String getHTML(){
