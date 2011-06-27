@@ -19,6 +19,7 @@
             <param-name>dbPass</param-name>
             <param-value>p4pyr!</param-value>  
         </init-param>
+        <load-on-startup>0</load-on-startup>
      </servlet>
      <servlet-mapping>
         <servlet-name>Sync</servlet-name>
@@ -30,3 +31,4 @@
         </session-timeout>
     </session-config>
 </web-app>
+

@@ -35,7 +35,7 @@ public class GitWrapper {
   private static GitWrapper git;
   private static String graph = "rmi://localhost/papyri.info#pi";
   private static String path = "/sparql/";
-  private static String mulgara = "http://papyri.info/mulgara";
+  private static String mulgara = "http://localhost:8090";
   
   public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
     git = new GitWrapper();
@@ -76,6 +76,8 @@ public class GitWrapper {
     try {
       git.pull("canonical");
       git.pull("github");
+      git.push("canonical");
+      git.push("github");
     } catch (Exception e) {
       if (git.success) {
         git.success = false;
@@ -88,6 +90,29 @@ public class GitWrapper {
     // on failure, git reset to previous SHA
     // get list of files affected by pull: git diff --name-only SHA1 SHA2
     // execute indexing on file list
+  }
+  
+  public static String getPreviousSync() throws Exception {
+    String result = null;
+    Connection connect = null;
+    Class.forName("com.mysql.jdbc.Driver");
+    try {
+      connect = DriverManager.getConnection(
+              "jdbc:mysql://localhost/pn?"
+              + "user=" + git.dbUser + "&password=" + git.dbPass);
+      Statement st = connect.createStatement();
+      ResultSet rs = st.executeQuery("SELECT hash FROM sync_history ORDER BY date DESC LIMIT 2");
+      if (rs.next()) {
+        if (!rs.isAfterLast() || !rs.next()) {
+          result = getHead();
+        } else {
+          result = rs.getString("hash");
+        }
+      }
+    } finally {
+      connect.close();
+    }
+    return result;
   }
 
   public static String getLastSync() throws Exception {
@@ -119,7 +144,7 @@ public class GitWrapper {
               "jdbc:mysql://localhost/pn?"
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       Statement st = connect.createStatement();
-      st.executeUpdate("INSERT INTO sync_history (hash) VALUES ('" + git.head + "')");
+      st.executeUpdate("INSERT INTO sync_history (hash, date) VALUES ('" + git.head + "', NOW())");
     } finally {
       connect.close();
     }
@@ -145,11 +170,23 @@ public class GitWrapper {
 
   private void pull(String repo) throws Exception {
     try {
-      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo);
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, "master");
       pb.directory(git.gitDir);
       pb.start().waitFor();
       git.head = getHead();
-      storeHead();
+      if (!git.head.equals(getLastSync())) storeHead();
+    } catch (Exception e) {
+      git.success = false;
+      git.reset(git.head);
+      throw e;
+    }
+  }
+  
+  private void push(String repo) throws Exception {
+    try {
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo);
+      pb.directory(git.gitDir);
+      pb.start().waitFor();
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
@@ -180,7 +217,7 @@ public class GitWrapper {
     }
     List<String> result = new ArrayList<String>();
     for (String diff : diffs) {
-      result.add(filenameToUri(diff));
+      result.add(diff);
     }
     return result;
   }
@@ -193,7 +230,7 @@ public class GitWrapper {
               "jdbc:mysql://localhost/pn?"
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       PreparedStatement st = connect.prepareStatement("SELECT hash FROM sync_history WHERE date > ? ORDER BY date LIMIT 1");
-      st.setDate(0, Date.valueOf(date));
+      st.setDate(1, Date.valueOf(date));
       ResultSet rs = st.executeQuery();
       if (!rs.next()) {
         return getDiffs(getHead());
@@ -215,10 +252,9 @@ public class GitWrapper {
       try {
         URL m = new URL(mulgara + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
         JsonNode root = getDDbDPJson(m);
-        String uri = root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText();
-        result.append(uri.substring(0, uri.lastIndexOf("/")));
+        result.append(root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText());
       } catch (Exception e) {
-
+        e.printStackTrace();
       }
     } else {
       result.append("http://papyri.info/");
@@ -230,7 +266,9 @@ public class GitWrapper {
         result.append("apis/");
         result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
       }
+      result.append("/source");
     }
+    System.out.println(result);
     return result.toString();
   }
   

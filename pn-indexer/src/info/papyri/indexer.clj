@@ -17,8 +17,7 @@
     (javax.xml.transform Result )
     (javax.xml.transform.sax SAXResult)
     (javax.xml.transform.stream StreamSource StreamResult)
-    (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
-    (net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
+    (net.sf.saxon Configuration FeatureKeys PreparedStylesheet StandardErrorListener StandardURIResolver TransformerFactoryImpl)
     (net.sf.saxon.trans CompilerInfo XPathException)
     (org.apache.solr.client.solrj SolrServer SolrQuery)
     (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
@@ -275,6 +274,7 @@
 
 (defn queue-item
   [url]
+  (println (get-filename url))
   (let [relations (execute-query (relation-query url))
        replaces (execute-query (replaces-query url))
        is-replaced-by (execute-query (is-replaced-by-query url))]
@@ -285,12 +285,9 @@
           (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
           (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (first x)))))
           (list "server" nserver)))))
-  
-       
 
 (defn queue-items
   [url exclude]
-  (println url)
   (let [items (execute-query (has-part-query url))
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
@@ -448,7 +445,6 @@
       (.commit solr))))
    
 (defn -index [& args]
-  (println args)
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
@@ -464,7 +460,7 @@
       (println "Queueing APIS...")
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
       (println (str "Queued " (count @html) " documents.")))
-    (doseq [arg args] (queue-item arg)))
+    (doseq [arg (first args)] (queue-item arg)))
 
   (dosync (ref-set text @html))
   
@@ -532,6 +528,7 @@
 (defn -main [& args]
   (if (> (count args) 0)
     (if (= (first args) "load-lemmas")
-      (-loadLemmas))
+      (-loadLemmas)
+      (-index args))
     (-index))
   )

@@ -341,6 +341,7 @@ public class Search extends HttpServlet {
     }
     sq.setRows(rows);
     sq.setQuery(q.replace("ς", "σ"));
+
     try {
       QueryResponse rs = solr.query(sq);
       SolrDocumentList docs = rs.getResults();

@@ -1,4 +1,4 @@
-(defproject pn-indexer "1.0"
+(defproject pn-indexer "1.0-SNAPSHOT"
   :repositories {"papyri.info" "http://dev.papyri.info/maven"}
   :jvm-opts ["-Xmx1g"]
   :dependencies [[org.clojure/clojure "1.2.0"]

@@ -27,6 +27,7 @@
            (org.mulgara.sparql SparqlInterpreter)
            (org.mulgara.itql TqlInterpreter)))
            
+(def xsl (ref nil))
 (def pxslt (ref nil))
 (def buffer (ref nil))
 (def flushing (ref false))
@@ -50,23 +51,28 @@
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
+  (println (str "Loading " n " records to " server))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 500)
         factory (ConnectionFactory.)
         conn (.newConnection factory server)]
-    (doto rdf
-      (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
-      xmlns:dcterms=\"http://purl.org/dc/terms/\" 
-      xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"))
-    (dotimes [n times]
-      (let [string (.poll @buffer)]
-        (if (not (nil? string))
-          (.append rdf string))))
-    (doto rdf
-      (.append "</rdf:RDF>"))
-    (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
-    (doto conn
-      (.close))))
+    (try
+      (doto rdf
+        (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
+        xmlns:dcterms=\"http://purl.org/dc/terms/\" 
+        xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"))
+      (dotimes [n times]
+        (let [string (.poll @buffer)]
+          (if (not (nil? string))
+            (.append rdf string))))
+      (doto rdf
+        (.append "</rdf:RDF>"))
+      (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
+      (catch Exception e
+        (.println *err* (str (.getMessage e) " talking to Mulgara.")))
+      (finally
+        (doto conn
+          (.close))))))
 
 (defn transform
   [file]
@@ -85,8 +91,12 @@
 
 (defn init-xslt
     [xslt]
-  (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
-  (let [xsl-src (StreamSource. (FileInputStream. xslt))
+  (when (not= xslt @xsl)
+    (dosync (ref-set xsl xslt))
+    (if (.contains xslt "ddbdp-rdf") 
+      (dosync (ref-set param (list "root" idproot)))
+      (dosync (ref-set param (list "DDB-root" ddbroot))))
+    (let [xsl-src (StreamSource. (FileInputStream. xslt))
         configuration (Configuration.)
         compiler-info (CompilerInfo.)]
         (doto xsl-src 
@@ -94,7 +104,7 @@
         (doto compiler-info
           (.setErrorListener (StandardErrorListener.))
           (.setURIResolver (StandardURIResolver. configuration)))
-        (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info)))))
+        (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
           
 (defn choose-xslt
   [file]
@@ -243,37 +253,40 @@
       
 (defn load-map 
   [file]
-  (def nthreads 10)
+  (def nthreads 5)
+  (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
   (let [xsl (choose-xslt file)]
-    (init-xslt xsl)
-    (if (.contains xsl "ddbdp-rdf") 
-      (dosync (ref-set param (list "root" idproot)))
-      (dosync (ref-set param (list "DDB-root" ddbroot)))))
-      (let [factory (ConnectionFactory.)
-        conn (.newConnection factory server)
-        create (CreateGraph. graph)]
-      (.execute conn create)
-      (.close conn))
+    (init-xslt xsl))
+  (let [factory (ConnectionFactory.)
+      conn (.newConnection factory server)
+      create (CreateGraph. graph)]
+    (.execute conn create)
+    (.close conn))
   (let [pool (Executors/newFixedThreadPool nthreads)
-        files (file-seq (File. file))
-        tasks (map (fn [x]
-    (fn []
-      (transform x)
-      (if (> (count @buffer) 500)
-        (flush-buffer nil))))
-    (filter #(.endsWith (.getName %) ".xml") files))]
-    (doseq [future (.invokeAll pool tasks)]
-      (.get future))
-    (doto pool
-      (.shutdown)))
-  (flush-buffer (count @buffer))
-  )
+      files (file-seq (File. file))
+      tasks (map (fn [x]
+        (fn []
+          (transform x)
+          (if (> (count @buffer) 500)
+          (flush-buffer nil))))
+        (filter #(.endsWith (.getName %) ".xml") files))]
+      (doseq [future (.invokeAll pool tasks)]
+        (.get future))
+      (doto pool
+        (.shutdown)))
+  (flush-buffer (count @buffer)))
     
 (defn -mapFiles
   [files]
-  (for [file files]
-    (load-map file))
-  )
+  (println (str "Mapping " (.size files) " files."))
+  (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
+  (when (> (.size files) 0)
+    (doseq [file files]
+       (let [xsl (choose-xslt file)]
+         (init-xslt xsl))
+       (transform file))
+    (flush-buffer (count @buffer))))
+   
 
 (defn -mapAll
   [args]
@@ -291,8 +304,7 @@
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
-  (-insertInferences nil)
-  )
+  (-insertInferences nil))
 
 (defn -main
   [& args]

@@ -4,7 +4,7 @@
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
         <init-param>
-            <param-name>mulgaraUrl</param-name>
+            <param-name>sparqlUrl</param-name>
             <param-value>http://localhost:8090</param-value>
         </init-param>
     </servlet>
@@ -45,9 +45,41 @@
         </init-param>
     </servlet>
     <servlet>
+    <servlet-name>FacetBrowser</servlet-name>    
+    <servlet-class>info.papyri.dispatch.browse.facet.FacetBrowser</servlet-class>
+            <init-param>
+            <param-name>home</param-name>
+            <param-value>/data/papyri.info/pn/home</param-value>
+        </init-param>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8082/solr/</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
         <servlet-name>ImageMetadata</servlet-name>
         <servlet-class>info.papyri.dispatch.ImageMetadata</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CollectionBrowser</servlet-name>
+        <servlet-class>info.papyri.dispatch.browse.CollectionBrowser</servlet-class>
+        <init-param>
+            <param-name>home</param-name>
+            <param-value>/data/papyri.info/pn/home</param-value>
+        </init-param>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8082/solr/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>mulgaraUrl</param-name>
+            <param-value>http://localhost:8090</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CollectionBrowser</servlet-name>
+        <url-pattern>/browse/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
@@ -63,6 +95,10 @@
     <servlet-mapping>
         <servlet-name>ImageMetadata</servlet-name>
         <url-pattern>/images</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FacetBrowser</servlet-name>
+        <url-pattern>/facetted/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
