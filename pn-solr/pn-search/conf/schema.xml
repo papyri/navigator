@@ -57,7 +57,7 @@
         <field name="transcription_ia" type="text" indexed="true" stored="false"/>
         <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
         <field name="translation" type="text" indexed="true" stored="false" multiValued="true"/>
-        <field name="has_translation" type="boolean" indexed="true" stored="false"/>
+        <field name="has_translation" type="boolean" indexed="true" stored="true"/>
         <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
         <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
         <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
@@ -65,6 +65,7 @@
         <field name="images" type="boolean" indexed="true" stored="true"/>
         <field name="invnum" type="text" indexed="true" stored="true"/>
         <field name="language" type="text" indexed="true" stored="true" multiValued="true"/>
+        <field name="facet_language" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="all" type="text" indexed="true" stored="false" multiValued="true"/>
         <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
         <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
@@ -82,8 +83,10 @@
         <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
         <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
         <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0" multiValued="true"/>
+        <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="true"/>
         
       </fields>
+      <copyField source="language" dest="facet_language"></copyField>
 
   <uniqueKey>id</uniqueKey>
 
