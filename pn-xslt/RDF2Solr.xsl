@@ -407,6 +407,9 @@
           <xsl:if test="string-length($apis_item_letter) > 0">
             <field name="apis_item_letter"><xsl:value-of select="$apis_item_letter"></xsl:value-of></field>
           </xsl:if>
+          <field name="apis_inventory">
+            <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']"></xsl:value-of>           
+          </field>
           <xsl:if test="$alterity = 'self'">
             <field name="series">
               <xsl:value-of select="$apis_series"/>
