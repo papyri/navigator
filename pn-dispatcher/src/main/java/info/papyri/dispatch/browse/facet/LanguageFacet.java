@@ -13,7 +13,7 @@ public class LanguageFacet extends Facet{
 
     public LanguageFacet(String formName){
         
-        super(SolrField.language, formName);
+        super(SolrField.facet_language, formName);
         
     }
     
@@ -25,6 +25,7 @@ public class LanguageFacet extends Facet{
 
         html.append("<span class=\"option-label\">Languages</span>");
         html.append("<select name=\"" + formName + "\">");
+        html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");
         
         Iterator<Count> vcit = valuesAndCounts.iterator();
         

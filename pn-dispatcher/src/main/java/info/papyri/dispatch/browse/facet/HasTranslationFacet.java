@@ -9,7 +9,7 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
  *
  * @author thill
  */
-public class HasTranslationFacet extends Facet {
+public class HasTranslationFacet extends BooleanFacet {
     
     public HasTranslationFacet(String formName){
         
@@ -23,7 +23,7 @@ public class HasTranslationFacet extends Facet {
         StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
         html.append("<span class=\"option-label\">Has Translation</span>");
         html.append("<select name=\"" + formName + "\">");
-        
+        html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");  
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
         while(vcit.hasNext()){
@@ -38,7 +38,6 @@ public class HasTranslationFacet extends Facet {
         
         html.append("</select>");
         html.append("</div><!-- closing .facet-widget -->");
-
         return html.toString();
         
         

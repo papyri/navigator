@@ -9,7 +9,7 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
  *
  * @author thill
  */
-public class HasImagesFacet extends Facet {
+public class HasImagesFacet extends BooleanFacet {
 
     public HasImagesFacet(String formName){
     
@@ -23,7 +23,7 @@ public class HasImagesFacet extends Facet {
         StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
         html.append("<span class=\"option-label\">Has Images</span>");
         html.append("<select name=\"" + formName + "\">");
-        
+        html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
         while(vcit.hasNext()){

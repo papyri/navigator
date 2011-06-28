@@ -15,10 +15,11 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  */
 abstract public class Facet {
     
-    private ArrayList<String> facetConstraints = new ArrayList<String>();
+    ArrayList<String> facetConstraints = new ArrayList<String>();
     List<Count> valuesAndCounts;
     SolrField field;
     String formName;
+    static String defaultValue = "--- All values ---";
     
     public Facet(SolrField sf, String formName){
         
@@ -36,6 +37,7 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String fq = cit.next();
+            fq = field + ":" + fq;
             solrQuery.addFilterQuery(fq);
             
             
@@ -46,6 +48,24 @@ abstract public class Facet {
     }
     
     abstract public String generateWidget();
+    
+    public String getAsQueryString(){
+        
+        String queryString = "";
+        
+        Iterator<String> cit = facetConstraints.iterator();
+        while(cit.hasNext()){
+            
+            String value = cit.next();
+            queryString += formName + "=" + value;
+            if(cit.hasNext()) queryString += "&";
+            
+            
+        }
+        
+        return queryString;
+        
+    }
 
     public void setWidgetValues(QueryResponse queryResponse){
         
@@ -56,12 +76,10 @@ abstract public class Facet {
     
     public void addConstraint(String newValue){
         
-        newValue = newValue.trim();
-        // getting rid of counts
-        newValue = newValue.replaceAll("\\([\\d]+\\)$", "");
-        newValue = newValue.trim();
-        String filterQuery = field.name() + ":" + newValue;
-        if(!facetConstraints.contains(filterQuery)) facetConstraints.add(filterQuery);
+        if(newValue.equals(Facet.defaultValue)) return;
+        newValue = trimValue(newValue);
+        if(newValue.contains(" ")) newValue = "\"" + newValue + "\"";
+        if(!facetConstraints.contains(newValue)) facetConstraints.add(newValue);
         
         
     }
@@ -70,6 +88,15 @@ abstract public class Facet {
         
         return field;
         
+    }
+    
+    String trimValue(String valueWithCount){
+        
+        valueWithCount = valueWithCount.trim();
+        String valueWithoutCount = valueWithCount.replaceAll("\\([\\d]+\\)[\\s]*$", "");
+        valueWithoutCount = valueWithoutCount.trim();
+        return valueWithoutCount;
+   
     }
     
 }
