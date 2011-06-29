@@ -47,6 +47,14 @@
     <servlet>
     <servlet-name>FacetBrowser</servlet-name>    
     <servlet-class>info.papyri.dispatch.browse.facet.FacetBrowser</servlet-class>
+            <init-param>
+            <param-name>home</param-name>
+            <param-value>/data/papyri.info/pn/home</param-value>
+        </init-param>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8082/solr/</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>ImageMetadata</servlet-name>

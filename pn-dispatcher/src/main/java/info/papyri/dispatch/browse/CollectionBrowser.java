@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -52,25 +54,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 @WebServlet(name = "CollectionBrowser", urlPatterns = {"/browse"})
 public class CollectionBrowser extends HttpServlet {
     
-    /* site home page */
-    private String home;
-    /* HTML output is by injection; the browseURL member provides the html page for this */
-    private URL browseURL;
-    /* some Solr fields are collection (ddbdp | hgv | apis) specific; this member, when set
-     * provides the prefix that needs to be prepended to access these fields
-     */
-    private String collectionPrefix;
-
-    /* for pagination: current page, or 0 if browsing at collection, series, or volume level */
-    private int page = 0;
-    private int docsPerPage = 50;
-    private long totalResultSetSize;
-
-    /* holds information given in request url*/
-    private LinkedHashMap<SolrField, String> pathParts;
- 
-    private static String SPARQL_GRAPH = "<rmi://localhost/papyri.info#pi>";
-    static String SOLR_URL = "http://localhost:8082/solr/";
+    /** site home directory */
+    static String home;
+    /** HTML output is by injection; the browseURL member provides the html page for this */
+    static URL browseURL;
+    /** Pagination constant */
+    static int docsPerPage = 50;
+    static String SPARQL_GRAPH = "<rmi://localhost/papyri.info#pi>";
+    static String SOLR_URL;
     static String SPARQL_URL;
     static String BROWSE_SERVLET = "/browse";
     static String PN_SEARCH = "pn-search/";
@@ -112,123 +103,117 @@ public class CollectionBrowser extends HttpServlet {
         
             response.setContentType("text/html;charset=UTF-8");
             request.setCharacterEncoding("UTF-8");        
-            parseRequest(request); 
+            int page = getPageNumber(request);
+            LinkedHashMap<SolrField, String> pathParts = parseRequest(request);
             ArrayList<BrowseRecord> records = new ArrayList<BrowseRecord>();
+            long totalDocumentResults = 0;
             if(page == 0){
                 
-                String sparqlQuery = buildSparqlQuery();
+                String sparqlQuery = buildSparqlQuery(pathParts);
                 JsonNode resultNode = runSparqlQuery(sparqlQuery);
-                records = buildCollectionList(resultNode);
+                records = buildCollectionList(pathParts, resultNode);
                 
             }
             else{
                 
-                 setCollectionPrefix();
-                 SolrQuery sq = buildSolrQuery();
+                 SolrQuery sq = buildSolrQuery(pathParts, page);
                  QueryResponse qr = runSolrQuery(sq);
-                 records = parseSolrResponseIntoDocuments(qr); 
+                 records = parseSolrResponseIntoDocuments(pathParts, qr); 
+                 totalDocumentResults = getTotalResultsReturned(qr);
                 
             }
-            String html = this.buildHTML(records);
+            String html = this.buildHTML(pathParts, records, page, totalDocumentResults);
             displayBrowseResult(response, html);
 
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+    
+    /**
+     * Parses the request for the page number of the results requested
+     * 
+     * 
+     * @param request The HttpServletRequest object submitted to the servet
+     * @return The page number
      */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    
+    private int getPageNumber (HttpServletRequest request){
+        
+        String queryParam = request.getParameter("q");
+        Pattern pattern = Pattern.compile(".+page([\\d]+)$");
+        Matcher matcher = pattern.matcher(queryParam);
+        if(matcher.matches()) return Integer.valueOf(matcher.group(1));
+        return 0;
+        
     }
     
     /**
-     * Parses the request URL into (i) the <code>pathBits</code> member, for retrieval
-     * and (ii) if necessary, the <code>page</code> member, for pagination.
+     * Parses the request parameter into a data structure correlating the passed values to the relevant
+     * level of the collection hierarchy (collection -> series -> volume -> item).
      * 
      * The request parameter will be of the form /[collection]/[series]?/[volume]?/[documents/page[\d+]]?,
      * with documents/page[\d+] being present iff the page is a list of documents (rather than, e.g., 
      * series or volumes)
      * 
      * @param request the HttpServletRequest made to the servlet
+     * @return A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
      *
      */
     
-    private void parseRequest (HttpServletRequest request){
+    private LinkedHashMap<SolrField, String> parseRequest (HttpServletRequest request){
                 
         String docPath = "documents";
         String queryParam = request.getParameter("q");
         int docIndex = queryParam.indexOf(docPath);
         String pathInfo = (docIndex == -1 ? queryParam : queryParam.substring(0, docIndex -1));
-        pathParts = new LinkedHashMap<SolrField, String>();
+        LinkedHashMap<SolrField, String> pathComponents = new LinkedHashMap<SolrField, String>();
+        
         String[] pathParts = pathInfo.split("/");
         
         for(int i = 0; i < pathParts.length; i++){
 
-            this.pathParts.put(SOLR_FIELDS.get(i), pathParts[i]);
+            pathComponents.put(SOLR_FIELDS.get(i), pathParts[i]);
             
         }
         
-        if(docIndex != -1){
-              
-            String pageNumber = queryParam.substring(docIndex + docPath.length() + 1, queryParam.length());
-            page = Integer.valueOf(pageNumber.replaceAll("[^\\d]", ""));
-            
-        }
-        else{
-            
-            page = 0;
-            
-        }
+        return pathComponents;
            
     }
     
+    
     /**
-     * Sets the collectionPrefix member.
+     * Retrieves the name of the collection (ddbdp | hgv | apis) currently being browsed and
+     * modifies it so that it can be prepended to Solr field names for retrieval purposes.
      * 
-     * Defaults to ddbdp_
+     * This method is required because collection and document identifiers are collection-
+     * specific, and there Solr fields thus have names like ddbdp_series, apis_series,
+     * hgv_volume, etc.
      * 
-     * @see #collectionPrefix
-     * 
+     * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
+     * @return The value associated with the <code>collection</code> key of the <code>LinkedHashMap</code>,
+     * appended with a slash.
      */
     
-    void setCollectionPrefix(){
+    String getCollectionPrefix(LinkedHashMap<SolrField, String> pathParts){
         
         String collection = pathParts.get(SolrField.collection);
         
         if(!COLLECTIONS.contains(collection)) collection = "ddbdp";
         
-        collectionPrefix = collection + "_";
+       return collection + "_";
               
     }
     
     /**
      * Builds a SPARQL query based on the information contained in the <code>pathParths</code> member.
      * 
+     * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
      * @return String A String that can act as a SPARQL query
      * 
      */ 
     
-    String buildSparqlQuery(){
+    String buildSparqlQuery(LinkedHashMap<SolrField, String> pathParts){
         
         StringBuffer queryBuffer = new StringBuffer("PREFIX dc:<http://purl.org/dc/terms/> ");
         queryBuffer.append("PREFIX pyr: <http://papyri.info/> ");
@@ -238,8 +223,7 @@ public class CollectionBrowser extends HttpServlet {
         // extract info from pathbits
         
         // delimiter form: collection/series;volume 
-
-      
+    
         String collection = pathParts.get(SolrField.collection);
         String subj = collection;
         if(pathParts.get(SolrField.series) != null){
@@ -298,6 +282,8 @@ public class CollectionBrowser extends HttpServlet {
      * <code>DocumentCollectionBrowseRecord</code>s. This is for polymorphic functioning for HTML display 
      * in the <code>processRequest</code> method
      * 
+     * @param A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
      * @param resultNode The root JsonNode returned by Mulgara
      * @return An ArrayList of <code>BrowseRecord</code> objects
      * @see #processRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
@@ -306,7 +292,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    ArrayList<BrowseRecord> buildCollectionList(JsonNode resultNode){
+    ArrayList<BrowseRecord> buildCollectionList(LinkedHashMap<SolrField, String> pathParts, JsonNode resultNode){
         
         ArrayList<BrowseRecord> records = new ArrayList<BrowseRecord>();
         Iterator<JsonNode> rnit = resultNode.iterator();
@@ -319,7 +305,7 @@ public class CollectionBrowser extends HttpServlet {
  
             if(!childLog.contains(child)){
                 
-                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(child, grandchild);
+                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, grandchild);
                 records.add(dbr);
                 childLog.add(child);
                        
@@ -340,6 +326,8 @@ public class CollectionBrowser extends HttpServlet {
      * <http://purl.org/dc/terms/hasPart> relation to the currently displayed children, as do the children with their 
      * grandchildren.
      * 
+     * @param A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
      * @param child A URI returned from Mulgara and representing a document collection
      * @param grandchild A URI returned from Mulgara, representing a document collection or document 
      * descended from <code>child</code>
@@ -348,7 +336,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    DocumentCollectionBrowseRecord parseUriToCollectionRecord(String child, String grandchild){
+    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String grandchild){
 
         Boolean grandchildIsDocument = grandchild.matches(".*/source$");
         
@@ -377,7 +365,7 @@ public class CollectionBrowser extends HttpServlet {
         
         // first, we remove from the child string everything already specified in the url
         
-        ArrayList<String> pathInfo = this.getCollectionInfo();
+        ArrayList<String> pathInfo = this.getCollectionInfo(pathParts);
         Iterator<String> piits = pathInfo.iterator();
         String significantChildSubstring = child;
         while(piits.hasNext()){
@@ -408,12 +396,13 @@ public class CollectionBrowser extends HttpServlet {
         
     }
     /**
-     * Creates a SolrQuery object based on the values stored in <code>pathParts</code>
+     * Creates a SolrQuery object based on the values stored in the passed LinkedHashMap object.
      * 
+     * @param A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
      * @return SolrQuery The SolrQuery object
-     * @see #pathParts
      */
-    SolrQuery buildSolrQuery(){
+    SolrQuery buildSolrQuery(LinkedHashMap<SolrField, String> pathParts, int page){
         
         SolrQuery sq = new SolrQuery();
         sq.setStart((page - 1) * docsPerPage);
@@ -432,14 +421,14 @@ public class CollectionBrowser extends HttpServlet {
             }
             else{
                 
-                String collField = collectionPrefix + field.name();
+                String collField = getCollectionPrefix(pathParts) + field.name();
                 query += " +" + collField + ":" + value;
                 
             }
         
         }
         if(!query.isEmpty()) sq.setQuery(query);
-        sq.addSortField(collectionPrefix + SolrField.item.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(getCollectionPrefix(pathParts) + SolrField.item.name(), SolrQuery.ORDER.asc);
         return sq;
     }
     
@@ -447,7 +436,7 @@ public class CollectionBrowser extends HttpServlet {
      * Queries the Solr server and returns the response
      * 
      * @param sq A SolrQuery object
-     * @return QueryResponse The resposne returned from the server
+     * @return QueryResponse The response returned from the Solr server
      * 
      */
     
@@ -457,7 +446,6 @@ public class CollectionBrowser extends HttpServlet {
         
             SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
             QueryResponse qr = solrServer.query(sq);
-            totalResultSetSize = qr.getResults().getNumFound();
             return qr;
             
         }
@@ -476,6 +464,20 @@ public class CollectionBrowser extends HttpServlet {
     }
       
     /**
+       * Determines the total number of results matching the query in the Solr store.
+       * 
+       * @param qr The <code>QueryRespone</code> returned from the server
+       * @return The number of results contained in that <code>QueryResponse</code>.
+       */  
+      
+    long getTotalResultsReturned(QueryResponse qr){
+        
+        return qr.getResults().getNumFound();
+        
+        
+    }
+      
+    /**
        * Parses the response returned by the Solr server into a list of <code>DocumentBrowseRecord</code>s.
        * 
        * Note that the returned type is a list of <code>BrowseRecord</code>s (the supertype), rather than
@@ -488,11 +490,11 @@ public class CollectionBrowser extends HttpServlet {
        * @see DocumentBrowseRecord
        */  
     
-    ArrayList<BrowseRecord> parseSolrResponseIntoDocuments(QueryResponse qr){
+    ArrayList<BrowseRecord> parseSolrResponseIntoDocuments(LinkedHashMap<SolrField, String> pathParts, QueryResponse qr){
         
         ArrayList<BrowseRecord> records = new ArrayList<BrowseRecord>();
                 
-        ArrayList<String> collectionInfo = getCollectionInfo();
+        ArrayList<String> collectionInfo = getCollectionInfo(pathParts);
         DocumentCollectionBrowseRecord dcr = collectionInfo.size() > 2 ? new DocumentCollectionBrowseRecord(collectionInfo.get(0), collectionInfo.get(1), collectionInfo.get(2)) : new DocumentCollectionBrowseRecord(collectionInfo.get(0), collectionInfo.get(1), true);
         // previousIds stores identifiers already found; needed when a single document has multiple ids which should all be displayed in the list
         ArrayList<String> previousIds = new ArrayList<String>();
@@ -500,7 +502,7 @@ public class CollectionBrowser extends HttpServlet {
         for(SolrDocument doc : qr.getResults()){
                    
                 DocumentBrowseRecord record;
-                String itemId = getDisplayId(doc, previousIds);
+                String itemId = getDisplayId(pathParts, doc, previousIds);
                 if(itemId.equals("-1")) continue;
                 previousIds.add(itemId);
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
@@ -546,15 +548,17 @@ public class CollectionBrowser extends HttpServlet {
      * (iii) that items that are ontologically separate in other collections, but that have only one id
      * within the currently-viewed collection, are displayed only once
      * 
+     * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
      * @param doc The Solr document
      * @param previousIds A list of ids previously used in display of the collection
      * @return A String representing the display id, or "-1" if the id and record should not be displayed
      */
     
-    String getDisplayId(SolrDocument doc, ArrayList<String> previousIds){
+    String getDisplayId(LinkedHashMap<SolrField, String> pathParts, SolrDocument doc, ArrayList<String> previousIds){
 
         String id = "";
-        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.item.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
         if(itemIds.size() == 1){
             
             if(!previousIds.contains(itemIds.get(0))) return itemIds.get(0);
@@ -571,8 +575,8 @@ public class CollectionBrowser extends HttpServlet {
                         
         HashMap<String, String> collsToIds = new HashMap<String, String>();
         
-        ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.volume.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
-        ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.series.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.volume.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.series.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
        
         // populating the HashMap
         for(int i = 0; i < series.size(); i++){
@@ -593,6 +597,15 @@ public class CollectionBrowser extends HttpServlet {
         return possId;
         
     } 
+    
+    /**
+     * Injects the <code>Record</code> HTML into the browse page.
+     * 
+     * 
+     * @param response The <code>HttpResponse</code> object
+     * @param html The HTML code to be displayed.
+     * @see #browseURL;
+     */
     
     void displayBrowseResult(HttpServletResponse response, String html){
         
@@ -631,11 +644,12 @@ public class CollectionBrowser extends HttpServlet {
      * for them. This helper function is accordingly required so that the value set can be iterated through 
      * sequentially
      * 
-     * @param pathBitsMap
+     * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * of the collection hierarchy
      * @return an ArrayList<String> of the pathBitsMap value set
      */
     
-    private ArrayList<String> getCollectionInfo(){
+    private ArrayList<String> getCollectionInfo(LinkedHashMap<SolrField, String> pathParts){
         
         
         ArrayList<String> collectionBits = new ArrayList<String>();
@@ -652,16 +666,16 @@ public class CollectionBrowser extends HttpServlet {
     
     
     /**
-     * Generates the HTML necessary for display
+     * Generates the HTML necessary for display of the browse page.
      * 
      * 
      * @param records The list of records to be displayed
      * @return String A String of html
      */
-    String buildHTML(ArrayList<BrowseRecord> records){
+    String buildHTML(LinkedHashMap<SolrField, String> pathParts, ArrayList<BrowseRecord> records, int page, long totalResults){
         
         StringBuffer html = new StringBuffer("<h2>" + pathParts.get(SolrField.collection) + "</h2>");
-        html = page != 0 ?  buildDocumentsHTML(html, records) : buildCollectionsHTML(html, records);
+        html = page != 0 ?  buildDocumentsHTML(pathParts, html, records, totalResults) : buildCollectionsHTML(html, records);
         return html.toString();
         
     }
@@ -718,7 +732,7 @@ public class CollectionBrowser extends HttpServlet {
      * @see DocumentBrowseRecord#getHTML() 
      */
     
-    private StringBuffer buildDocumentsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
+    private StringBuffer buildDocumentsHTML(LinkedHashMap<SolrField, String> pathParts, StringBuffer html, ArrayList<BrowseRecord> records, long totalResultSetSize){
         
         html.append("<table>");
         html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Has translation</td><td>Has images</td></tr>");
@@ -765,6 +779,33 @@ public class CollectionBrowser extends HttpServlet {
         
     }
     
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /** 
+     * Handles the HTTP <code>GET</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /** 
+     * Handles the HTTP <code>POST</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+    
     
     /** 
      * Returns a short description of the servlet.
@@ -776,17 +817,6 @@ public class CollectionBrowser extends HttpServlet {
         return "Servlet for browsing collections above  individual document level";
         
     }// </editor-fold>
-
-    /**
-     * Testing only
-     * 
-     * 
-     */
-    
-    void setPathBits(LinkedHashMap<SolrField, String> bits){
-        
-        pathParts = bits;
-    }
     
 
     
