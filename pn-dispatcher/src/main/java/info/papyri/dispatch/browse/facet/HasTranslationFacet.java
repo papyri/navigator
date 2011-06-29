@@ -38,6 +38,7 @@ public class HasTranslationFacet extends BooleanFacet {
         
         html.append("</select>");
         html.append("</div><!-- closing .facet-widget -->");
+        html.append(generateHiddenFields());
         return html.toString();
         
         

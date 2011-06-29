@@ -39,8 +39,8 @@ public class LanguageFacet extends Facet{
         }
         
         html.append("</select>");
-        html.append(generateHiddenFields());
         html.append("</div><!-- closing .facet-widget -->");
+        html.append(generateHiddenFields());
 
         return html.toString();
         

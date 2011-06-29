@@ -94,7 +94,7 @@ public class FacetBrowser extends HttpServlet {
         long resultSize = queryResponse.getResults().getNumFound();
         populateFacets(paramsToFacets, queryResponse);
         ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
-        String html = this.assembleHTML(paramsToFacets, constraintsPresent, resultSize, returnedRecords, solrQuery);
+        String html = this.assembleHTML(paramsToFacets, constraintsPresent, resultSize, returnedRecords);
         displayBrowseResult(response, html);  
      
     }
@@ -395,13 +395,13 @@ public class FacetBrowser extends HttpServlet {
      * @return 
      */
     
-    private String assembleHTML(EnumMap<FacetParam, Facet> paramsToFacets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, SolrQuery solrQuery){
+    private String assembleHTML(EnumMap<FacetParam, Facet> paramsToFacets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords){
         
         StringBuffer html = new StringBuffer("<div id=\"facet-wrapper\">");
         assembleWidgetHTML(paramsToFacets, html);
         html.append("<div id=\"vals-and-records-wrapper\">");
         assemblePreviousValuesHTML(paramsToFacets,html);
-        assembleRecordsHTML(paramsToFacets, returnedRecords, constraintsPresent, resultsSize, html, solrQuery);
+        assembleRecordsHTML(paramsToFacets, returnedRecords, constraintsPresent, resultsSize, html);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
         html.append("</div><!-- closing #facet-wrapper -->");
         return html.toString();
@@ -450,10 +450,9 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    private StringBuffer assembleRecordsHTML(EnumMap<FacetParam, Facet> paramsToFacets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuffer html, SolrQuery sq){
+    private StringBuffer assembleRecordsHTML(EnumMap<FacetParam, Facet> paramsToFacets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuffer html){
         
         html.append("<div id=\"facet-records-wrapper\">");
-        html.append(sq.toString());
         if(!constraintsPresent){
             
             html.append("<h2>Please select values from the left-hand column to return results</h2>");
@@ -494,7 +493,6 @@ public class FacetBrowser extends HttpServlet {
     private StringBuffer assemblePreviousValuesHTML(EnumMap<FacetParam, Facet> paramsToFacets, StringBuffer html){
                 
         html.append("<div id=\"previous-values\">");
-        html.append("<form name=\"remove_facet\" method=\"get\" action=\"/dispatch/facetted/\">");
         
         for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
             
@@ -510,18 +508,23 @@ public class FacetBrowser extends HttpServlet {
             while(fvit.hasNext()){
                 
                 String facetValue = fvit.next();
+                facetValue = Facet.TRIM_QUOTES(facetValue);
                 String queryString = this.buildFilteredQueryString(paramsToFacets, param, facetValue);
-                html.append("<a href=\"" + FACET_PATH + "?" + queryString + "\" title =\"Remove facet value\">");
+                html.append("<div class=\"facet-constraint\">");
+                html.append("<div class=\"constraint-label\">");
                 html.append(displayName + ": " + facetValue);
-                html.append("</a>");
-                
+                html.append("</div><!-- closing .constraint-label -->");
+                html.append("<div class=\"constraint-closer\">");
+                html.append("<a href=\"" + FACET_PATH + ("".equals(queryString) ? "" : "?") + queryString + "\" title =\"Remove facet value\">X</a>");
+                html.append("</div><!-- closing .constraint-closer -->");
+                html.append("<div class=\"spacer\"></div>");
+                html.append("</div><!-- closing .facet-constraint -->");
             }
                      
         }
-        
-        html.append("</form>");
-        html.append("</div><!-- closing #previous-values -->");
+                
         html.append("<div class=\"spacer\"></div>");
+        html.append("</div><!-- closing #previous-values -->");
         return html;
         
     }
@@ -628,7 +631,7 @@ public class FacetBrowser extends HttpServlet {
             fullQueryString += "&";
             
         }
-        
+
         return fullQueryString;
         
     }
@@ -670,16 +673,15 @@ public class FacetBrowser extends HttpServlet {
             
         }
         
-        String fullQueryString = "";
+        String filteredQueryString = "";
         Iterator<String> qsit = queryStrings.iterator();
         while(qsit.hasNext()){
             
-            fullQueryString += qsit.next();
-            fullQueryString += "&";
+            filteredQueryString += qsit.next();
+            if(qsit.hasNext()) filteredQueryString += "&";
             
         }
-        
-        return fullQueryString;
+        return filteredQueryString;
         
     }
     

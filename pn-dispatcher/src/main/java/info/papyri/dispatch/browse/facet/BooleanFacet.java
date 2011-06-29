@@ -44,7 +44,7 @@ abstract public class BooleanFacet extends Facet{
         
         for(int i = 1; i <= facetConstraints.size(); i++){
             
-            String name = formName + String.valueOf(i);
+            String name = formName; // + String.valueOf(i);
             String value = facetConstraints.get(i - 1);
             if(value == null) value = "false";
             html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";

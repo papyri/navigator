@@ -1,6 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String fq = cit.next();
+            fq = fq.replaceAll("\\\\", "\\\\\\\\");   // slash-escape madness
             fq = field + ":" + fq;
             solrQuery.addFilterQuery(fq);
             
@@ -57,6 +59,7 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String value = cit.next();
+            value = TRIM_QUOTES(value);
             queryString += formName + "=" + value;
             if(cit.hasNext()) queryString += "&";
             
@@ -75,6 +78,8 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String value = cit.next();
+            value = TRIM_QUOTES(value);
+
             if(!value.equals(filterValue)){
                 
                 queryString += formName + "=" + value;
@@ -84,7 +89,7 @@ abstract public class Facet {
             
         }
         
-        if(queryString.substring(queryString.length() - 1).equals("&")) queryString = queryString.substring(0, queryString.length() -1);
+        if(!"".equals(queryString) && queryString.substring(queryString.length() - 1).equals("&")) queryString = queryString.substring(0, queryString.length() -1);
         return queryString;
         
     }
@@ -124,13 +129,31 @@ abstract public class Facet {
         
         for(int i = 1; i <= facetConstraints.size(); i++){
             
-            String name = formName + String.valueOf(i);
+            String name = formName; // + String.valueOf(i);
             String value = facetConstraints.get(i - 1);
+            value = TRIM_QUOTES(value);
             html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
             
         }
         
         return html;
+        
+    }
+    
+    String URLEncode(String unencodedString){
+        
+        try{
+            
+            String encodedString = java.net.URLEncoder.encode(unencodedString, "UTF-8");
+            return encodedString;
+            
+        }
+        catch(UnsupportedEncodingException uee){
+            
+            System.out.println(uee.getMessage());
+            return "UNSUPPORTED_ENCODING";
+            
+        }   
         
     }
     
@@ -141,6 +164,15 @@ abstract public class Facet {
         valueWithoutCount = valueWithoutCount.trim();
         return valueWithoutCount;
    
+    }
+    
+    static String TRIM_QUOTES(String valueWithQuotes){
+        
+        String valueNoOpenQuote = valueWithQuotes.replaceFirst("^\"", "");
+        String valueNoQuotes = valueNoOpenQuote.replaceFirst("\"$", "");
+        return valueNoQuotes;
+        
+        
     }
     
 }
