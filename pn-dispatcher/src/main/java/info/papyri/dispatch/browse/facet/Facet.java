@@ -66,6 +66,28 @@ abstract public class Facet {
         return queryString;
         
     }
+    
+    public String getAsFilteredQueryString(String filterValue){
+        
+        String queryString = "";
+        
+        Iterator<String> cit = facetConstraints.iterator();
+        while(cit.hasNext()){
+            
+            String value = cit.next();
+            if(!value.equals(filterValue)){
+                
+                queryString += formName + "=" + value;
+                queryString += "&";
+                
+            }
+            
+        }
+        
+        if(queryString.substring(queryString.length() - 1).equals("&")) queryString = queryString.substring(0, queryString.length() -1);
+        return queryString;
+        
+    }
 
     public void setWidgetValues(QueryResponse queryResponse){
         
@@ -87,6 +109,28 @@ abstract public class Facet {
     public SolrField getFacetField(){
         
         return field;
+        
+    }
+    
+    public ArrayList<String> getFacetConstraints(){
+        
+        return facetConstraints;
+        
+    }
+    
+    String generateHiddenFields(){
+        
+        String html = "";
+        
+        for(int i = 1; i <= facetConstraints.size(); i++){
+            
+            String name = formName + String.valueOf(i);
+            String value = facetConstraints.get(i - 1);
+            html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
+            
+        }
+        
+        return html;
         
     }
     
