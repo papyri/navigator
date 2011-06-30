@@ -86,7 +86,7 @@
         <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="true"/>
         
       </fields>
-      <copyField source="language" dest="facet_language"></copyField>
+      
 
   <uniqueKey>id</uniqueKey>
 
