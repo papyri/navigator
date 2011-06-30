@@ -98,14 +98,23 @@ abstract public class Facet {
     public void setWidgetValues(QueryResponse queryResponse){
         
         FacetField facetField = queryResponse.getFacetField(field.name());
-        valuesAndCounts = facetField.getValues();
+        valuesAndCounts = new ArrayList<Count>();
+        List<Count> unfiltered = facetField.getValues();
+        Iterator<Count> cit = unfiltered.iterator();
+        while(cit.hasNext()){
+            
+            Count count = cit.next();
+            
+            if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0) valuesAndCounts.add(count);
+            
+        }
           
     }  
     
     public void addConstraint(String newValue){
         
         if(newValue.equals(Facet.defaultValue)) return;
-        if(!facetConstraints.contains(newValue)) facetConstraints.add(newValue);
+        if(!facetConstraints.contains(newValue)) facetConstraints.add(trimValue(newValue));
         
         
     }

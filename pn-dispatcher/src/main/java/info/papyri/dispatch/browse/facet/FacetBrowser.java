@@ -49,7 +49,7 @@ public class FacetBrowser extends HttpServlet {
     static private URL FACET_URL;
     /** path to servlet */
     /* TODO: Get this squared up with urlPatterns, above */
-    static private String FACET_PATH = "/dispatch/facetted/";
+    static private String FACET_PATH = "/dispatch/faceted/";
     /** Number of records to show per page. Used in pagination */
     static private int documentsPerPage = 50;
     
@@ -86,6 +86,7 @@ public class FacetBrowser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        debug = "";
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         EnumMap<FacetParam, Facet> paramsToFacets = getFacetMap();
@@ -404,7 +405,6 @@ public class FacetBrowser extends HttpServlet {
         StringBuffer html = new StringBuffer("<div id=\"facet-wrapper\">");
         assembleWidgetHTML(paramsToFacets, html);
         html.append("<div id=\"vals-and-records-wrapper\">");
-        html.append("<h2>" + debug + "</h2>");
         if(constraintsPresent) assemblePreviousValuesHTML(paramsToFacets,html);
         assembleRecordsHTML(paramsToFacets, returnedRecords, constraintsPresent, resultsSize, html);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
@@ -426,7 +426,7 @@ public class FacetBrowser extends HttpServlet {
     private StringBuffer assembleWidgetHTML(EnumMap<FacetParam, Facet> paramsToFacets, StringBuffer html){
         
         html.append("<div id=\"facet-widgets-wrapper\">");
-        html.append("<form name=\"facets\" method=\"get\" action=\"/dispatch/facetted/\"> ");
+        html.append("<form name=\"facets\" method=\"get\" action=\"" + FACET_PATH + "\"> ");
         for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
             
             Facet facet = entry.getValue();

@@ -3,6 +3,8 @@ package info.papyri.dispatch.browse.facet;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.Iterator;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
  *
@@ -15,6 +17,13 @@ abstract public class BooleanFacet extends Facet{
         super(sf, formName);
         
     }
+    
+    public void setWidgetValues(QueryResponse queryResponse){
+        
+        FacetField facetField = queryResponse.getFacetField(field.name());
+        valuesAndCounts = facetField.getValues();
+          
+    }  
     
     @Override
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
