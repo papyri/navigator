@@ -38,7 +38,10 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String fq = cit.next();
-            fq = fq.replaceAll("\\\\", "\\\\\\\\");   // slash-escape madness
+            // slash-escape madness: java, solr, and java.regex all use backslash
+            // as an escape character
+            fq = fq.replaceAll("\\\\", "\\\\\\\\");
+            if(fq.contains(" ")) fq = "\"" + fq + "\"";
             fq = field + ":" + fq;
             solrQuery.addFilterQuery(fq);
             
@@ -59,7 +62,6 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String value = cit.next();
-            value = TRIM_QUOTES(value);
             queryString += formName + "=" + value;
             if(cit.hasNext()) queryString += "&";
             
@@ -78,7 +80,6 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String value = cit.next();
-            value = TRIM_QUOTES(value);
 
             if(!value.equals(filterValue)){
                 
@@ -104,8 +105,6 @@ abstract public class Facet {
     public void addConstraint(String newValue){
         
         if(newValue.equals(Facet.defaultValue)) return;
-        newValue = trimValue(newValue);
-        if(newValue.contains(" ")) newValue = "\"" + newValue + "\"";
         if(!facetConstraints.contains(newValue)) facetConstraints.add(newValue);
         
         
@@ -131,7 +130,6 @@ abstract public class Facet {
             
             String name = formName; // + String.valueOf(i);
             String value = facetConstraints.get(i - 1);
-            value = TRIM_QUOTES(value);
             html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
             
         }
@@ -166,13 +164,6 @@ abstract public class Facet {
    
     }
     
-    static String TRIM_QUOTES(String valueWithQuotes){
-        
-        String valueNoOpenQuote = valueWithQuotes.replaceFirst("^\"", "");
-        String valueNoQuotes = valueNoOpenQuote.replaceFirst("\"$", "");
-        return valueNoQuotes;
-        
-        
-    }
+
     
 }

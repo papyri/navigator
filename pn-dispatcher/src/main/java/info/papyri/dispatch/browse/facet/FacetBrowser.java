@@ -52,6 +52,8 @@ public class FacetBrowser extends HttpServlet {
     static private String FACET_PATH = "/dispatch/facetted/";
     /** Number of records to show per page. Used in pagination */
     static private int documentsPerPage = 50;
+    
+    String debug;
 
     
     @Override
@@ -85,7 +87,7 @@ public class FacetBrowser extends HttpServlet {
             throws ServletException, IOException {
         
         response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");   
+        request.setCharacterEncoding("UTF-8");
         EnumMap<FacetParam, Facet> paramsToFacets = getFacetMap();
         Boolean constraintsPresent = parseRequestToFacets(request, paramsToFacets);
         int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 0;
@@ -117,6 +119,7 @@ public class FacetBrowser extends HttpServlet {
         paramsToFacets.put(FacetParam.IMG, new HasImagesFacet(FacetParam.IMG.name()));
         paramsToFacets.put(FacetParam.LANG, new LanguageFacet(FacetParam.LANG.name()));
         paramsToFacets.put(FacetParam.TRANS, new HasTranslationFacet(FacetParam.TRANS.name()));
+        paramsToFacets.put(FacetParam.PLACE, new PlaceFacet(FacetParam.PLACE.name()));
         return paramsToFacets;
         
     }
@@ -150,6 +153,7 @@ public class FacetBrowser extends HttpServlet {
                      try{
                     
                          String param = java.net.URLDecoder.decode(paramValues[i], "UTF-8");
+                         debug += param + "!";
                          facet.addConstraint(param);
                     
                      }
@@ -400,7 +404,8 @@ public class FacetBrowser extends HttpServlet {
         StringBuffer html = new StringBuffer("<div id=\"facet-wrapper\">");
         assembleWidgetHTML(paramsToFacets, html);
         html.append("<div id=\"vals-and-records-wrapper\">");
-        assemblePreviousValuesHTML(paramsToFacets,html);
+        html.append("<h2>" + debug + "</h2>");
+        if(constraintsPresent) assemblePreviousValuesHTML(paramsToFacets,html);
         assembleRecordsHTML(paramsToFacets, returnedRecords, constraintsPresent, resultsSize, html);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
         html.append("</div><!-- closing #facet-wrapper -->");
@@ -420,7 +425,6 @@ public class FacetBrowser extends HttpServlet {
   
     private StringBuffer assembleWidgetHTML(EnumMap<FacetParam, Facet> paramsToFacets, StringBuffer html){
         
-        //TODO: Add bracketing html code - form elements!
         html.append("<div id=\"facet-widgets-wrapper\">");
         html.append("<form name=\"facets\" method=\"get\" action=\"/dispatch/facetted/\"> ");
         for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
@@ -508,7 +512,6 @@ public class FacetBrowser extends HttpServlet {
             while(fvit.hasNext()){
                 
                 String facetValue = fvit.next();
-                facetValue = Facet.TRIM_QUOTES(facetValue);
                 String queryString = this.buildFilteredQueryString(paramsToFacets, param, facetValue);
                 html.append("<div class=\"facet-constraint\">");
                 html.append("<div class=\"constraint-label\">");
