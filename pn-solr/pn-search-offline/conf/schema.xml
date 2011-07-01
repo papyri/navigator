@@ -47,7 +47,7 @@
   <fields>
     <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
-    <field name="display_place" type="string" indexed="false" stored="true"/>
+    <field name="display_place" type="string" indexed="true" stored="true"/>
     <field name="display_date" type="string" indexed="false" stored="true"/>
     <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="transcription" type="text" indexed="true" stored="false"/>
@@ -84,7 +84,7 @@
     <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0" multiValued="true"/>
     <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="true"/>
   </fields>
-  <copyField source="language" dest="facet_language"></copyField>
+  
   <uniqueKey>id</uniqueKey>
 
   <!-- field for the QueryParser to use when an explicit fieldname is absent -->

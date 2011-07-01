@@ -6,8 +6,9 @@ package info.papyri.dispatch.browse.facet;
  */
 public enum FacetParam {
     
+    LANG,
+    PLACE,
     IMG,
-    TRANS,
-    LANG
+    TRANS
     
 }

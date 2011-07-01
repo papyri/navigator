@@ -178,6 +178,9 @@
                 <field name="language">
                   <xsl:value-of select="."/>
                 </field>
+                <field name="facet_language">
+                  <xsl:value-of select="string(@ident)"></xsl:value-of>
+                </field>
               </xsl:if>
             </xsl:for-each>
             <xsl:call-template name="facetfields">
@@ -244,6 +247,9 @@
               select="/t:TEI/t:teiHeader/t:profileDesc/t:langUsage/t:language[@ident != 'en']">
               <field name="language">
                 <xsl:value-of select="normalize-space(.)"/>
+              </field>
+              <field name="facet_language">
+                <xsl:value-of select="@ident"></xsl:value-of>          
               </field>
             </xsl:for-each>
           </xsl:when>
