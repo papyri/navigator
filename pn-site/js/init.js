@@ -4,12 +4,12 @@ function init() {
         jQuery(this).hide();
     });
     jQuery("ul.nav a").not($("#footer ul.nav li a")).hover(function() {
-            jQuery(this).css('background-color', '#445B88');
-            jQuery(this).css('color', 'white')
-        },
-        function() {
-            jQuery(this).css('background-color', 'transparent');
-            jQuery(this).css('color', 'black')
+        jQuery(this).css('background-color', '#445B88');
+        jQuery(this).find("a").css('color', 'white')
+    },
+    function() {
+        jQuery(this).css('background-color', 'transparent');
+        jQuery(this).find("a").css('color', 'black')
     });
     jQuery("div.controls input").each(function() {
         if (!this.checked) {
