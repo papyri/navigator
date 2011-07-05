@@ -1,4 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?><solr persistent="true">
+<?xml version='1.0' encoding='UTF-8'?>
+<solr persistent="true">
 <cores adminPath="/admin/cores">
   <core name="morph-search" instanceDir="morph-search/"/>
   <core name="pn-search-offline" instanceDir="pn-search-offline/"/>
