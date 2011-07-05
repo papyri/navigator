@@ -53,6 +53,8 @@ public class FacetBrowser extends HttpServlet {
     /** Number of records to show per page. Used in pagination */
     static private int documentsPerPage = 50;
     
+    static String BASE;
+    
     String debug;
 
     
@@ -63,6 +65,7 @@ public class FacetBrowser extends HttpServlet {
 
         SOLR_URL = config.getInitParameter("solrUrl");
         home = config.getInitParameter("home");
+        BASE = config.getInitParameter("htmlPath");
         try {
             
             FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
@@ -503,7 +506,7 @@ public class FacetBrowser extends HttpServlet {
             FacetParam param = entry.getKey();
             Facet facet = entry.getValue();
             String fieldName = facet.getFacetField().name();
-            String displayName = fieldName.replace("_", " ").toUpperCase();
+            String displayName = facet.getDisplayName();
             
             ArrayList<String> facetValues = facet.getFacetConstraints();
             
@@ -512,10 +515,11 @@ public class FacetBrowser extends HttpServlet {
             while(fvit.hasNext()){
                 
                 String facetValue = fvit.next();
+                String displayFacetValue = facet.getDisplayValue(facetValue);
                 String queryString = this.buildFilteredQueryString(paramsToFacets, param, facetValue);
                 html.append("<div class=\"facet-constraint\">");
                 html.append("<div class=\"constraint-label\">");
-                html.append(displayName + ": " + facetValue);
+                html.append(displayName + ": " + displayFacetValue);
                 html.append("</div><!-- closing .constraint-label -->");
                 html.append("<div class=\"constraint-closer\">");
                 html.append("<a href=\"" + FACET_PATH + ("".equals(queryString) ? "" : "?") + queryString + "\" title =\"Remove facet value\">X</a>");

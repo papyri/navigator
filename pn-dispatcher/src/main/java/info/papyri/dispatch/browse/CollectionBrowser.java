@@ -65,6 +65,7 @@ public class CollectionBrowser extends HttpServlet {
     static String SPARQL_URL;
     static String BROWSE_SERVLET = "/browse";
     static String PN_SEARCH = "pn-search/";
+    static String BASE;
     /* an ordered list of the classification hierarchy: collection (ddbdp | hgv | apis), series, volume, and item identifer.
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
@@ -79,6 +80,7 @@ public class CollectionBrowser extends HttpServlet {
         SOLR_URL = config.getInitParameter("solrUrl");
         SPARQL_URL = config.getInitParameter("sparqlUrl");
         home = config.getInitParameter("home");
+        BASE = config.getInitParameter("htmlPath");
         try {
             
             browseURL = new URL("file://" + home + "/" + "browse.html");

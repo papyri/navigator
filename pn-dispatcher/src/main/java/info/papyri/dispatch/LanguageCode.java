@@ -17,7 +17,10 @@ public enum LanguageCode {
     grc_Latn("Ancient Greek in Latin script"),
     la_Grek("Latin in Greek script"),
     cop("Coptic"),
-    grc("Ancient Greek");
+    grc("Ancient Greek"),
+    egy_Copt("Egyptian\\Coptic"),
+    egy_Coptgrc("Greek(?) Egyptian\\Coptic(?)"),
+    ar_Arabegy_Copt("(A) Egyptian\\Coptic (B) Arabic; Egyptian\\Coptic (?)");
     
     private String expanded;
     

@@ -20,12 +20,14 @@ abstract public class Facet {
     List<Count> valuesAndCounts;
     SolrField field;
     String formName;
+    String displayName;
     static String defaultValue = "--- All values ---";
     
-    public Facet(SolrField sf, String formName){
+    public Facet(SolrField sf, String formName, String displayName){
         
         this.field = sf; 
         this.formName = formName;
+        this.displayName = displayName;
         
     }
     
@@ -105,7 +107,7 @@ abstract public class Facet {
             
             Count count = cit.next();
             
-            if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0) valuesAndCounts.add(count);
+            if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0 && !count.getName().equals("null")) valuesAndCounts.add(count);
             
         }
           
@@ -128,6 +130,18 @@ abstract public class Facet {
     public ArrayList<String> getFacetConstraints(){
         
         return facetConstraints;
+        
+    }
+    
+    public String getDisplayName(){
+        
+        return displayName;
+        
+    }
+    
+    public String getDisplayValue(String value){
+        
+        return value;
         
     }
     

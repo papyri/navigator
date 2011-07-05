@@ -13,7 +13,7 @@ public class HasTranslationFacet extends BooleanFacet {
     
     public HasTranslationFacet(String formName){
         
-        super(SolrField.has_translation, formName);
+        super(SolrField.has_translation, formName, "Has Translation");
         
     }
     
@@ -21,8 +21,10 @@ public class HasTranslationFacet extends BooleanFacet {
     public String generateWidget() {
         
         StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
-        html.append("<span class=\"option-label\">Has Translation</span>");
-        html.append("<select name=\"" + formName + "\">");
+        Boolean onlyOneValue = valuesAndCounts.size() == 1;
+        String disabled = onlyOneValue ? " disabled=\"true\"" : "";
+        html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
+        html.append("<select" + disabled + " name=\"" + formName + "\">");
         html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");  
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
@@ -32,8 +34,8 @@ public class HasTranslationFacet extends BooleanFacet {
             String value = valueAndCount.getName();
             if(value == null) value = "false";
             String count = String.valueOf(valueAndCount.getCount());
-            html.append("<option>" + value + " (" + count + ")</option>");
-            
+            String selected = onlyOneValue ? " selected=\"true\"" : "";
+            html.append("<option" + selected + " value=\"" + getDisplayValue(value) + "\">" + value + " (" + count + ")</option>");            
         }
         
         html.append("</select>");

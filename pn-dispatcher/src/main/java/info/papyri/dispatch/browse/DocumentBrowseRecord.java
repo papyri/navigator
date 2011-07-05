@@ -69,7 +69,7 @@ import java.util.Iterator;
         public String assembleLink(){
             
            String coll = documentGroupRecord.getCollection();
-           String url = "http://localhost/" + coll + "/";
+           String url = "/" + coll + "/";
            String item = "";
            
            if("ddbdp".equals(coll)){

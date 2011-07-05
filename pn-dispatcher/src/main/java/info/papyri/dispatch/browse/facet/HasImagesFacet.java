@@ -13,7 +13,7 @@ public class HasImagesFacet extends BooleanFacet {
 
     public HasImagesFacet(String formName){
     
-        super(SolrField.images, formName);
+        super(SolrField.images, formName, "Images Available");
     
     }
 
@@ -21,8 +21,10 @@ public class HasImagesFacet extends BooleanFacet {
     public String generateWidget() {
         
         StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
-        html.append("<span class=\"option-label\">Has Images</span>");
-        html.append("<select name=\"" + formName + "\">");
+        Boolean onlyOneValue = valuesAndCounts.size() == 1;
+        String disabled = onlyOneValue ? " disabled=\"true\"" : "";
+        html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
+        html.append("<select" + disabled + " name=\"" + formName + "\">");
         html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
@@ -31,9 +33,10 @@ public class HasImagesFacet extends BooleanFacet {
             Count valueAndCount = vcit.next();
             String value = valueAndCount.getName();
             if(value == null) value = "false";
+            String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
-            html.append("<option>" + value + " (" + count + ")</option>");
-            
+            String selected = onlyOneValue ? " selected=\"true\"" : "";
+            html.append("<option" + selected + " value =\"" + value + "\">" + displayValue + " (" + count + ")</option>");            
         }
         
         html.append("</select>");
