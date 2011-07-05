@@ -1,6 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,10 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String fq = cit.next();
+            // slash-escape madness: java, solr, and java.regex all use backslash
+            // as an escape character
+            fq = fq.replaceAll("\\\\", "\\\\\\\\");
+            if(fq.contains(" ")) fq = "\"" + fq + "\"";
             fq = field + ":" + fq;
             solrQuery.addFilterQuery(fq);
             
@@ -66,20 +71,50 @@ abstract public class Facet {
         return queryString;
         
     }
+    
+    public String getAsFilteredQueryString(String filterValue){
+        
+        String queryString = "";
+        
+        Iterator<String> cit = facetConstraints.iterator();
+        while(cit.hasNext()){
+            
+            String value = cit.next();
+
+            if(!value.equals(filterValue)){
+                
+                queryString += formName + "=" + value;
+                queryString += "&";
+                
+            }
+            
+        }
+        
+        if(!"".equals(queryString) && queryString.substring(queryString.length() - 1).equals("&")) queryString = queryString.substring(0, queryString.length() -1);
+        return queryString;
+        
+    }
 
     public void setWidgetValues(QueryResponse queryResponse){
         
         FacetField facetField = queryResponse.getFacetField(field.name());
-        valuesAndCounts = facetField.getValues();
+        valuesAndCounts = new ArrayList<Count>();
+        List<Count> unfiltered = facetField.getValues();
+        Iterator<Count> cit = unfiltered.iterator();
+        while(cit.hasNext()){
+            
+            Count count = cit.next();
+            
+            if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0) valuesAndCounts.add(count);
+            
+        }
           
     }  
     
     public void addConstraint(String newValue){
         
         if(newValue.equals(Facet.defaultValue)) return;
-        newValue = trimValue(newValue);
-        if(newValue.contains(" ")) newValue = "\"" + newValue + "\"";
-        if(!facetConstraints.contains(newValue)) facetConstraints.add(newValue);
+        if(!facetConstraints.contains(newValue)) facetConstraints.add(trimValue(newValue));
         
         
     }
@@ -87,6 +122,45 @@ abstract public class Facet {
     public SolrField getFacetField(){
         
         return field;
+        
+    }
+    
+    public ArrayList<String> getFacetConstraints(){
+        
+        return facetConstraints;
+        
+    }
+    
+    String generateHiddenFields(){
+        
+        String html = "";
+        
+        for(int i = 1; i <= facetConstraints.size(); i++){
+            
+            String name = formName; // + String.valueOf(i);
+            String value = facetConstraints.get(i - 1);
+            html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
+            
+        }
+        
+        return html;
+        
+    }
+    
+    String URLEncode(String unencodedString){
+        
+        try{
+            
+            String encodedString = java.net.URLEncoder.encode(unencodedString, "UTF-8");
+            return encodedString;
+            
+        }
+        catch(UnsupportedEncodingException uee){
+            
+            System.out.println(uee.getMessage());
+            return "UNSUPPORTED_ENCODING";
+            
+        }   
         
     }
     
@@ -98,5 +172,7 @@ abstract public class Facet {
         return valueWithoutCount;
    
     }
+    
+
     
 }
