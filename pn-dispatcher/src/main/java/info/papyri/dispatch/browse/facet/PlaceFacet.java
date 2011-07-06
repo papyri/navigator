@@ -1,29 +1,24 @@
 package info.papyri.dispatch.browse.facet;
 
-import info.papyri.dispatch.LanguageCode;
 import info.papyri.dispatch.browse.SolrField;
-import java.util.HashMap;
 import java.util.Iterator;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 
 /**
  *
  * @author thill
  */
-public class LanguageFacet extends Facet{
+public class PlaceFacet extends Facet {
     
-    
-    public LanguageFacet(String formName){
+    public PlaceFacet(String formName){
         
-        super(SolrField.facet_language, formName, "Language");
+        super(SolrField.display_place, formName, "Provenance");
         
     }
-    
 
     @Override
     public String generateWidget() {
-
+        
         StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
@@ -40,7 +35,8 @@ public class LanguageFacet extends Facet{
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
-            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");            
+            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");
+            
         }
         
         html.append("</select>");
@@ -48,28 +44,6 @@ public class LanguageFacet extends Facet{
         html.append(generateHiddenFields());
 
         return html.toString();
-        
-    }
-    
-    @Override
-    public String getDisplayValue(String languageCode){
-        
-        String displayValue = "";
-        
-        try{
-            
-            String swappedLanguageCode = languageCode.replaceAll("-", "_");
-            LanguageCode lang = LanguageCode.valueOf(swappedLanguageCode);
-            displayValue = lang.expanded();
-            
-        } 
-        catch(IllegalArgumentException iae){
-            
-            displayValue = languageCode;
-            
-        }
-      
-        return displayValue;
         
     }
     

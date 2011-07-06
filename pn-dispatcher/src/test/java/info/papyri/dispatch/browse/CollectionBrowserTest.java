@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.browse.CollectionBrowser;
@@ -23,8 +19,6 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.codehaus.jackson.JsonNode;
-
-
 
 /**
  *
@@ -127,7 +121,7 @@ public class CollectionBrowserTest extends TestCase {
     
     public void testGetDisplayId(){
         
-        ArrayList<BooleanPathBits> bpis = generateTestBits();
+     /*   ArrayList<BooleanPathBits> bpis = generateTestBits();
         Iterator<BooleanPathBits> bpit = bpis.iterator();
         while(bpit.hasNext()){
             
@@ -146,7 +140,7 @@ public class CollectionBrowserTest extends TestCase {
             }
             
             
-        }  
+        }  */
         
     }
         
@@ -154,9 +148,9 @@ public class CollectionBrowserTest extends TestCase {
         
         ArrayList<BooleanPathBits>  testPathBits = new ArrayList<BooleanPathBits>();
         
-       LinkedHashMap<CollectionBrowser.SolrField, String> testBits0 = new LinkedHashMap<CollectionBrowser.SolrField, String>();
-        testBits0.put(CollectionBrowser.SolrField.collection, "hgv");
-        testBits0.put(CollectionBrowser.SolrField.series, "P.Bour.");
+       LinkedHashMap<SolrField, String> testBits0 = new LinkedHashMap<SolrField, String>();
+        testBits0.put(SolrField.collection, "hgv");
+        testBits0.put(SolrField.series, "P.Bour.");
         BooleanPathBits bpb0 = new BooleanPathBits(testBits0, false);
         testPathBits.add(bpb0); 
         
@@ -204,17 +198,17 @@ public class CollectionBrowserTest extends TestCase {
       
     private class BooleanPathBits{
     
-        private LinkedHashMap<CollectionBrowser.SolrField, String> pathBits;
+        private LinkedHashMap<SolrField, String> pathBits;
         private Boolean isCollection;
     
-        public BooleanPathBits(LinkedHashMap<CollectionBrowser.SolrField, String> pathBits, Boolean isCollection){
+        public BooleanPathBits(LinkedHashMap<SolrField, String> pathBits, Boolean isCollection){
             
             this.pathBits = pathBits;
             this.isCollection = isCollection;
               
         }
         
-        public LinkedHashMap<CollectionBrowser.SolrField, String> getPathBits(){
+        public LinkedHashMap<SolrField, String> getPathBits(){
             
             return this.pathBits;
             
