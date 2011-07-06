@@ -40,7 +40,9 @@ text-align: center;
 div.content {
 background: #f8f6f4;
 float: left;
-padding: 2em 1em 3em 1em;
+padding: 2em 1.5% 3em 1.5%;
+width: 97%;
+
 }
 
 div.content h2 {
