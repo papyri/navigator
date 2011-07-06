@@ -697,7 +697,7 @@ public class CollectionBrowser extends HttpServlet {
     
     private StringBuffer buildCollectionsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
        
-        int numColumns = 5;
+        int numColumns = records.size() > 20 ? 5 : 1;
         int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
         int modulus = records.size() - initTotalPerColumn;
         
