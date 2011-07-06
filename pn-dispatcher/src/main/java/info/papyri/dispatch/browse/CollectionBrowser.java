@@ -615,7 +615,7 @@ public class CollectionBrowser extends HttpServlet {
         try{
         
             PrintWriter out = response.getWriter();
-           reader = new BufferedReader(new InputStreamReader(browseURL.openStream()));
+            reader = new BufferedReader(new InputStreamReader(browseURL.openStream()));
             String line = "";
             while ((line = reader.readLine()) != null) {
               
@@ -694,27 +694,28 @@ public class CollectionBrowser extends HttpServlet {
     
     private StringBuffer buildCollectionsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
        
-        String listHeader = "<ul style=\"margin-left:2em;float:left;\">";
-        int columnLength = 25;
+        int numColumns = 5;
+        int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
+        int modulus = records.size() - initTotalPerColumn;
         
-        html.append(listHeader);
-        
-        for(int i = 0; i < records.size(); i++){
+        for(int currentColumn = 0; currentColumn < numColumns; currentColumn++){
             
-            html.append(records.get(i).getHTML());
+           html.append("<ul class=\"collections-column\">");
+
+           int totalThisColumn = initTotalPerColumn;
             
-            if(i == (records.size() - 1)){
-                
-                html.append("</ul>");
-                
+           if(currentColumn < modulus) totalThisColumn++;
+           
+           if(totalThisColumn > records.size()) totalThisColumn = records.size();
+            
+           for(int i = 0; i < totalThisColumn; i++){
+            
+                html.append(records.remove(0).getHTML());
+               
+            
             }
-            else if((i + 1) % columnLength == 0){
-                
-                html.append("</ul>");
-                html.append(listHeader);
-                
-                
-            }
+           
+           html.append("</ul>");
             
         }
         
@@ -750,7 +751,9 @@ public class CollectionBrowser extends HttpServlet {
        
         if(totalResultSetSize > docsPerPage){
             
-            int numPages = (int) Math.ceil(totalResultSetSize / docsPerPage);
+            double rawTotal = (double)totalResultSetSize;
+            
+            long numPages = (long) Math.ceil(rawTotal / docsPerPage);
 
             html.append("<div id=\"pagination\">");
                     
@@ -773,6 +776,8 @@ public class CollectionBrowser extends HttpServlet {
                 html.append("</a></div>");   
                 
             }
+            
+            html.append("</div>");
        
             
         }
