@@ -295,6 +295,9 @@
           <field name="hgv_volume">
             <xsl:value-of select="$hgv_volume"/>
           </field>
+          <field name="hgv_full_identifier">
+            <xsl:value-of select="$hgv_item"></xsl:value-of>
+          </field>
           <field name="hgv_item">
             <xsl:choose>
               <xsl:when test="string-length(replace($hgv_item, '\D', '')) > 0"> <xsl:value-of select="replace($hgv_item, '\D', '')"/></xsl:when>
@@ -359,6 +362,9 @@
           <field name="ddbdp_volume">
             <xsl:value-of select="$ddbdp_volume"/>
           </field>
+          <field name="ddbdp_full_identifier">
+            <xsl:value-of select="normalize-space($sort[3])"></xsl:value-of>
+          </field>
           <field name="ddbdp_item">
             <xsl:value-of select="$ddbdp_item"/>
           </field>
@@ -402,6 +408,9 @@
            </xsl:variable>
           <field name="apis_series">
             <xsl:value-of select="$apis_series"/>
+          </field>
+          <field name="apis_full_identifier">
+            <xsl:value-of select="$apis_item"></xsl:value-of>
           </field>
           <field name="apis_item">
             <xsl:choose>

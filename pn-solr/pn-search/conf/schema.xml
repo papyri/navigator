@@ -82,6 +82,9 @@
         <field name="ddbdp_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
         <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
         <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
+        <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="hgv_full_identifier" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="apis_full_identifier" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0" multiValued="true"/>
         <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="true"/>
         
