@@ -6,13 +6,13 @@
         <a href="/">Home</a>
       </li>
       <li>
-        <a href="/ddbdp/">Browse DDbDP</a>
+        <a href="/browse/ddbdp/">Browse DDbDP</a>
       </li>
       <li>
-        <a href="/hgv/">Browse HGV</a>
+        <a href="/browse/hgv/">Browse HGV</a>
       </li>
       <li>
-        <a href="/apis/">Browse APIS</a>
+        <a href="/browse/apis/">Browse APIS</a>
       </li>
       <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> 
         <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>

@@ -3,7 +3,7 @@
 @import url("jquery.bubblepopup.v2.1.5.css");
 
 html {
-background: #E4E5E0 url(../images/bodybg.jpg) no-repeat top left;
+background: #ccc;
 }
 body {
 color: #3c2217;
@@ -12,11 +12,17 @@ font-size: 108%;
 min-height: 100%;
 }
 
+div#hd {
+background: url("/images/header.jpg");
+
+}
+
 #hd h1 {
-color: #3c2217;
+color: black;
 font-family: Georgia, serif;
-margin-left: 0.25em;
+margin-left: 0.5em;
 margin-bottom: 0;
+padding:0.1em;
 }
 div#bd {
 min-height: 8em;
@@ -31,25 +37,10 @@ width: 100%;
 text-align: center;
 }
 
-div.footer {
-background: #f8f6f4;
-border: thin solid #426a30;
-margin-top: 1em;
-margin-left: 1em;
-margin-right: 1em;
-opacity: 0.8;
-padding: .5em;
-text-align: center;
-}
-
 div.content {
 background: #f8f6f4;
-border: thin solid #426a30;
 float: left;
-margin-left: 160px;
-margin-right: 1em;
-padding: .5em;
-min-width: 900px;
+padding: 2em 1em 3em 1em;
 }
 
 div.content h2 {
@@ -104,10 +95,11 @@ div#help {
 /* Left-hand Navigation */
 div.nav {
 position: absolute;
-left: 0;
-width: 150px;
+left: 300px;
+top: 25px;
 }
 ul.nav {
+display: inline;
 background-image: url(../images/navbg.png);
 background-position: bottom;
 background-repeat: repeat-x;
@@ -116,11 +108,19 @@ color: black;
 font-size: 93%;
 line-height: 22px;
 margin-left: 15px;
-padding: .2em;
+padding: .7em;
 }
 ul.nav li {
+display: inline;
 padding-left: 0.2em;
 padding-right: 0.2em;
+}
+
+ul.nav ul {
+background:white;
+border: thin solid silver;
+display: inline;
+padding: 0.4em;
 }
 div.nav a {
 color: black;
@@ -404,6 +404,7 @@ table#resources p {
 div#related h4 {
   font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 }
+
 /* FOOTER STYLES */
 
 /* footer general layout */
@@ -420,7 +421,6 @@ div#related h4 {
      padding: 0.5em;
      opacity: 0.8;
      padding: .5em;
-     margin-top:1em;
  }
 
 
@@ -571,8 +571,6 @@ div#related h4 {
 }
 
 /* END FOOTER STYLES  */
-
-
 
 
 
