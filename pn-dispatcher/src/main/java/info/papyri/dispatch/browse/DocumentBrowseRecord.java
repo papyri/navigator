@@ -110,8 +110,8 @@ import java.util.Iterator;
             String thisId = this.displayId != null ? this.displayId : "";
             String thatId = comparandum.getDisplayId() != null ? comparandum.getDisplayId() : "";
 
-            thisId = this.displayId.replace("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
-            thatId = comparandum.getDisplayId().replace("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
+            thisId = this.displayId.replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
+            thatId = comparandum.getDisplayId().replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
 
             if(thisId.isEmpty()) thisId = "0";
             if(thatId.isEmpty()) thatId = "0";
@@ -129,7 +129,7 @@ import java.util.Iterator;
                 return -1;
                 
             }
-            return 0;
+            return this.displayId.compareToIgnoreCase(comparandum.getDisplayId());
             
         }
         

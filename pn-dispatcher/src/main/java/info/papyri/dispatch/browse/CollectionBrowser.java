@@ -409,6 +409,7 @@ public class CollectionBrowser extends HttpServlet {
         SolrQuery sq = new SolrQuery();
         sq.setStart((page - 1) * docsPerPage);
         sq.setRows(docsPerPage);
+        
         String query = "";
         for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
         
@@ -431,6 +432,8 @@ public class CollectionBrowser extends HttpServlet {
         }
         if(!query.isEmpty()) sq.setQuery(query);
         sq.addSortField(getCollectionPrefix(pathParts) + SolrField.item.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(getCollectionPrefix(pathParts) + SolrField.item_letter.name(), SolrQuery.ORDER.asc);
+        //sq.addSortField(getCollectionPrefix(pathParts) + SolrField.full_identifier, SolrQuery.ORDER.asc);
         return sq;
     }
     
@@ -446,7 +449,7 @@ public class CollectionBrowser extends HttpServlet {
         
         try{
         
-            SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
+            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8082/solr/" + PN_SEARCH);
             QueryResponse qr = solrServer.query(sq);
             return qr;
             
@@ -560,7 +563,7 @@ public class CollectionBrowser extends HttpServlet {
     String getDisplayId(LinkedHashMap<SolrField, String> pathParts, SolrDocument doc, ArrayList<String> previousIds){
 
         String id = "";
-        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.item.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.full_identifier.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
         if(itemIds.size() == 1){
             
             if(!previousIds.contains(itemIds.get(0))) return itemIds.get(0);
