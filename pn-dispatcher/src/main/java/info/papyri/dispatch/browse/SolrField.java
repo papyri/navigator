@@ -18,6 +18,7 @@ public enum SolrField {
         images,
         facet_language,
         full_identifier,
-        item_letter
+        item_letter,
+        transcription
     
 }

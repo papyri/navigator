@@ -122,7 +122,8 @@ public class FacetBrowser extends HttpServlet {
         EnumMap<FacetParam, Facet> paramsToFacets = new EnumMap<FacetParam, Facet>(FacetParam.class);
         paramsToFacets.put(FacetParam.IMG, new HasImagesFacet(FacetParam.IMG.name()));
         paramsToFacets.put(FacetParam.LANG, new LanguageFacet(FacetParam.LANG.name()));
-        paramsToFacets.put(FacetParam.TRANS, new HasTranslationFacet(FacetParam.TRANS.name()));
+        paramsToFacets.put(FacetParam.TRANSL, new HasTranslationFacet(FacetParam.TRANSL.name()));
+        paramsToFacets.put(FacetParam.TRANSC, new HasTranscriptionFacet(FacetParam.TRANSC.name()));
         paramsToFacets.put(FacetParam.PLACE, new PlaceFacet(FacetParam.PLACE.name()));
         return paramsToFacets;
         
@@ -436,7 +437,7 @@ public class FacetBrowser extends HttpServlet {
             html.append(facet.generateWidget());
             
         }
-        html.append("<input type=\"submit\" name=\"submit\" value=\"submit\"/>");
+        html.append("<input type=\"submit\"/>");
         html.append("</form>");
         html.append("</div><!-- closing #facet-widgets-wrapper -->");
         return html;

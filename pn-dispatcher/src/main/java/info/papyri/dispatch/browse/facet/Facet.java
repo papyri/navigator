@@ -105,8 +105,7 @@ abstract public class Facet {
         Iterator<Count> cit = unfiltered.iterator();
         while(cit.hasNext()){
             
-            Count count = cit.next();
-            
+            Count count = cit.next();            
             if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0 && !count.getName().equals("null")) valuesAndCounts.add(count);
             
         }

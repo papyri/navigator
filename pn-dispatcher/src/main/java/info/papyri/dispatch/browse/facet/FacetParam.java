@@ -9,6 +9,7 @@ public enum FacetParam {
     LANG,
     PLACE,
     IMG,
-    TRANS
+    TRANSL,
+    TRANSC
     
 }
