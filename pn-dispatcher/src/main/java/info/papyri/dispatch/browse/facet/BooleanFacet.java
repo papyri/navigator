@@ -10,7 +10,14 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
- *
+ * Extends the <code>Facet</code> class to deal specifically with Boolean fields.
+ * 
+ * This class reworks its superclass only very slightly. Because only two values are
+ * possible, some code can be simplified. In addition, however, the 'false' value may
+ * correspond to a number of values in relation to Solr - in particular, to null- 
+ * and additional checks have been added to cope appropriately with these.
+ * 
+ * 
  * @author thill
  */
 abstract public class BooleanFacet extends Facet{
@@ -50,6 +57,8 @@ abstract public class BooleanFacet extends Facet{
             String constraint = cit.next();
             
             String queryField = field.name();
+            // note the Solr syntax here, negating the condition as a whole,
+            // rather than specifying it to be false
             if(!"true".equals(constraint)) queryField = "-" + queryField;
             constraint = queryField + ":true";
             
@@ -64,10 +73,10 @@ abstract public class BooleanFacet extends Facet{
         
         String html = "";
         
-        for(int i = 1; i <= facetConstraints.size(); i++){
+        for(int i = 0; i < facetConstraints.size(); i++){
             
             String name = formName; 
-            String value = facetConstraints.get(i - 1);
+            String value = facetConstraints.get(i);
             if(value == null) value = "false";
             html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
             

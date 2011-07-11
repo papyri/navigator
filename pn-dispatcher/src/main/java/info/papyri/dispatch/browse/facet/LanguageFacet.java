@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 
 /**
+ * <code>Facet</code> for selection by language
  *
  * @author thill
  */
@@ -50,6 +51,15 @@ public class LanguageFacet extends Facet{
         return html.toString();
         
     }
+    
+    /**
+     * Transforms the BCP 47 language tagged used for internal representation into 
+     * a readily human-readable form
+     * 
+     * @param languageCode
+     * @return 
+     * @see LanguageCode
+     */
     
     @Override
     public String getDisplayValue(String languageCode){

@@ -5,7 +5,9 @@ import java.util.Iterator;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 
 /**
- *
+ * <code>Facet</code> for selection by provenance.
+ * 
+ * 
  * @author thill
  */
 public class PlaceFacet extends Facet {

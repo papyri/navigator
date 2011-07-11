@@ -1,7 +1,9 @@
 package info.papyri.dispatch.browse;
 
-    /* names of fields indexed in Solr. note that some may have the collectionPrefix prepended to 
-     * them in actual use
+    /* Names of fields indexed in Solr. Note that some may have the collectionPrefix prepended to 
+     * them in actual use.
+     * 
+     * @author: thill 
      */
 public enum SolrField {
    

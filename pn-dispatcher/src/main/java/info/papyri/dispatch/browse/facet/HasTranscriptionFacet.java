@@ -10,7 +10,15 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
- *
+ * <code>Facet</code> regarding whether or not a transcription is associated with a 
+ * record.
+ * 
+ * Note that, although this <code>Facet</code> is logically and in appearance a 
+ * <code>BooeleanFacet</code>, the transcription field is not in fact a Boolean one.
+ * This <code>Facet</code> accordingly tests whether or not the field has a value 
+ * associated with it at all, treating absence of a value as 'false' and presence as
+ * 'true'. It might thus be termed a 'pseudo-Boolean'.
+ * 
  * @author thill
  */
 public class HasTranscriptionFacet extends Facet {
@@ -20,6 +28,15 @@ public class HasTranscriptionFacet extends Facet {
         super(SolrField.transcription, formName, "Has Transcription");
         
     }
+    
+    /**
+     * Maps returned facet values to Boolean values - presence of any value evaluating 
+     * to <i>true</i>, and absence to <i>false</i> - and assigns these to <code>valuesAndCounts</code>
+     * 
+     * 
+     * @param queryResponse 
+     * @see Facet#valuesAndCounts
+     */
     
     @Override
     public void setWidgetValues(QueryResponse queryResponse){
@@ -58,17 +75,18 @@ public class HasTranscriptionFacet extends Facet {
           
     } 
     
-        public SolrQuery buildQueryContribution(SolrQuery solrQuery){
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         solrQuery.addFacetField(field.name());
         
         Iterator<String> cit = facetConstraints.iterator();
         
         while(cit.hasNext()){
-            
-            
-            
+                 
             String pseudoBoolean = cit.next();
+            // note the Solr query syntax here: the only way to check for
+            // absent fields is to perform a full-range check - negating this
+            // if necessary
             String fq = field + ":[* TO *]";
             
             if("false".equals(pseudoBoolean)) fq = "-" + fq;

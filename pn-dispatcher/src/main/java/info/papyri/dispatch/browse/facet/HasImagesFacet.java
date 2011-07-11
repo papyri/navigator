@@ -6,7 +6,9 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 
 /**
- *
+ * <code>BooleanFacet</code> regarding whether or not images are associated with a 
+ * record.
+ * 
  * @author thill
  */
 public class HasImagesFacet extends BooleanFacet {

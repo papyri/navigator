@@ -1,12 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package info.papyri.dispatch;
 
 /**
- *
+ * Maps BCP 47 language tags to expanded values for display
+ * 
+ * 
  * @author thill
+ * @see http://people.w3.org/rishida/utils/subtags/
  */
 public enum LanguageCode {
     
