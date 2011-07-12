@@ -138,7 +138,7 @@ public class FacetBrowser extends HttpServlet {
      * @return <code>True</code> if a constraint has been set upon any of the <code>Facet</code>s. <code>False</code> otherwise.
      */
 
-    private Boolean parseRequestToFacets(HttpServletRequest request, EnumMap<FacetParam, Facet> paramsToFacets){
+    Boolean parseRequestToFacets(HttpServletRequest request, EnumMap<FacetParam, Facet> paramsToFacets){
                 
         Map<String, String[]> requestParams = request.getParameterMap();
         Boolean constraintsPresent = false;
@@ -158,7 +158,6 @@ public class FacetBrowser extends HttpServlet {
                      try{
                     
                          String param = java.net.URLDecoder.decode(paramValues[i], "UTF-8");
-                         debug += param + "!";
                          facet.addConstraint(param);
                     
                      }
