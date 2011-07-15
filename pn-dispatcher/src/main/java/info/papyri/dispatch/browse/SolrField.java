@@ -21,6 +21,7 @@ public enum SolrField {
         facet_language,
         full_identifier,
         item_letter,
-        transcription
+        transcription,
+        date_category,
     
 }

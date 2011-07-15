@@ -14,6 +14,8 @@ public enum FacetParam {
     PLACE,
     IMG,
     TRANSL,
-    TRANSC
+    TRANSC,
+    DATE_START,
+    DATE_END
     
 }

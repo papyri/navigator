@@ -93,6 +93,7 @@ public class FacetBrowser extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         EnumMap<FacetParam, Facet> paramsToFacets = getFacetMap();
+        coordinateDateFacets(paramsToFacets);
         Boolean constraintsPresent = parseRequestToFacets(request, paramsToFacets);
         int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 0;
         SolrQuery solrQuery = this.buildFacetQuery(page, paramsToFacets);
@@ -125,7 +126,29 @@ public class FacetBrowser extends HttpServlet {
         paramsToFacets.put(FacetParam.TRANSL, new HasTranslationFacet(FacetParam.TRANSL.name()));
         paramsToFacets.put(FacetParam.TRANSC, new HasTranscriptionFacet(FacetParam.TRANSC.name()));
         paramsToFacets.put(FacetParam.PLACE, new PlaceFacet(FacetParam.PLACE.name()));
+        paramsToFacets.put(FacetParam.DATE_START, new DateStartFacet(FacetParam.DATE_START.name()));
+        paramsToFacets.put(FacetParam.DATE_END, new DateEndFacet(FacetParam.DATE_END.name()));
         return paramsToFacets;
+        
+    }
+    
+    private void coordinateDateFacets(EnumMap<FacetParam, Facet> paramsToFacets){
+        
+        DateQueryCoordinator dqc = new DateQueryCoordinator();
+        
+        FacetParam[] dateParams = { FacetParam.DATE_START, FacetParam.DATE_END };
+        
+        for(int i = 0; i < dateParams.length; i++){
+            
+            DateFacet dateFacet = (DateFacet) paramsToFacets.get(dateParams[i]);
+            
+            if(dateFacet != null){
+                
+                dateFacet.setDateQueryCoordinator(dqc);
+                
+            }
+            
+        }
         
     }
     
@@ -505,7 +528,6 @@ public class FacetBrowser extends HttpServlet {
             
             FacetParam param = entry.getKey();
             Facet facet = entry.getValue();
-            String fieldName = facet.getFacetField().name();
             String displayName = facet.getDisplayName();
             
             ArrayList<String> facetValues = facet.getFacetConstraints();
