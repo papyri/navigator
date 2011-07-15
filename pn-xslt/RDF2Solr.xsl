@@ -554,13 +554,19 @@
     <!-- Dates -->
     <xsl:for-each
       select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate">
-      <xsl:choose>
+           <xsl:choose>
         <xsl:when test="pi:iso-date-to-num(@notBefore) and pi:iso-date-to-num(@notAfter)">
           <field name="date_start">
             <xsl:value-of select="pi:iso-date-to-num(@notBefore)"/>
           </field>
           <field name="date_end">
             <xsl:value-of select="pi:iso-date-to-num(@notAfter)"/>
+          </field>
+          <field name="date_category">
+           <xsl:value-of select="pi:assign-date-category(@notBefore)"></xsl:value-of>
+          </field>
+          <field name="date_category">
+            <xsl:value-of select="pi:assign-date-category(@notAfter)"></xsl:value-of>
           </field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@when)">
@@ -570,6 +576,9 @@
           <field name="date_end">
             <xsl:value-of select="pi:iso-date-to-num(@when)"/>
           </field>
+          <field name="date_category">
+            <xsl:value-of select="pi:assign-date-category(@when)"></xsl:value-of>
+          </field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@notBefore)">
           <field name="date_start">
@@ -577,6 +586,9 @@
           </field>
           <field name="date_end">
             <xsl:value-of select="pi:iso-date-to-num(@notBefore)"/>
+          </field>
+          <field name="date_category">
+            <xsl:value-of select="pi:assign-date-category(@notBefore)"></xsl:value-of>
           </field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@notAfter)">
@@ -586,9 +598,16 @@
           <field name="date_end">
             <xsl:value-of select="pi:iso-date-to-num(@notAfter)"/>
           </field>
+          <field name="date_category">
+            <xsl:value-of select="pi:assign-date-category(@notAfter)"></xsl:value-of>
+          </field>
         </xsl:when>
       </xsl:choose>
     </xsl:for-each>
+    <!-- unknown date -->
+    <xsl:if test="count($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate) = 0">
+      <field name="unknown_date_flag">true</field>
+    </xsl:if>
     <!-- InvNum -->
     <xsl:if
       test="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']">
@@ -689,7 +708,44 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-
+  
+  <xsl:function name="pi:assign-date-category">
+    <!-- receives iso date and returns facetable date category -->
+    <xsl:param name="raw-date"/>
+    <xsl:variable name="era">
+      <xsl:choose>
+        <xsl:when test="starts-with($raw-date, '-')"><xsl:value-of select="'BCE'"></xsl:value-of></xsl:when>
+        <xsl:otherwise><xsl:value-of select="'CE'"></xsl:value-of></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="year">
+      <xsl:analyze-string select="$raw-date" regex="(-?\d{{4}})">
+        <xsl:matching-substring>
+          <xsl:value-of select="regex-group(0)"></xsl:value-of>
+        </xsl:matching-substring>
+      </xsl:analyze-string>
+    </xsl:variable>
+    <xsl:variable name="interval" select="50"></xsl:variable>
+    <xsl:variable name="category">
+      <xsl:choose>
+        <xsl:when test="(number($year) mod $interval) = 0">
+          <xsl:value-of select="abs(number($year)) div $interval"></xsl:value-of>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="(abs(number($year)) + ($interval - (abs(number($year)) mod $interval))) div $interval"></xsl:value-of>
+        </xsl:otherwise>
+      </xsl:choose>
+      </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="$era = 'BCE'">
+        <xsl:sequence select="concat('-', $category)"></xsl:sequence>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="$category"></xsl:sequence>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
   <xsl:function name="pi:get-date-range">
     <xsl:param name="date-seq"/>
     <xsl:variable name="min"

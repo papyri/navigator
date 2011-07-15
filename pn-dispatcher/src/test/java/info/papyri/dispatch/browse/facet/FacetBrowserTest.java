@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import org.apache.solr.client.solrj.SolrQuery;
 import java.util.HashMap;
 import java.util.EnumMap;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ public class FacetBrowserTest extends TestCase {
         paramsToFacets.put(FacetParam.LANG, new LanguageFacet(FacetParam.LANG.name()));
         paramsToFacets.put(FacetParam.TRANSL, new HasTranslationFacet(FacetParam.TRANSL.name()));
         paramsToFacets.put(FacetParam.TRANSC, new HasTranscriptionFacet(FacetParam.TRANSC.name()));
+        paramsToFacets.put(FacetParam.DATE_START, new DateStartFacet(FacetParam.DATE_START.name()));
         
     }
     
@@ -56,6 +58,8 @@ public class FacetBrowserTest extends TestCase {
         assert(paramsToFacets.get(FacetParam.LANG).facetConstraints.get(0).equals("grc"));
         
     }
+    
+  
 
     
 }

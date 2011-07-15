@@ -18,7 +18,6 @@
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
-
     <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
       <analyzer type="index">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -43,6 +42,7 @@
       </analyzer>
     </fieldType>
     
+
   </types>
   <fields>
     <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
@@ -60,7 +60,9 @@
     <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
+    <field name="date_category" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="metadata" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
     <field name="images" type="boolean" indexed="true" stored="true"/>
     <field name="invnum" type="text" indexed="true" stored="true"/>
     <field name="language" type="text" indexed="true" stored="true" multiValued="true"/>
