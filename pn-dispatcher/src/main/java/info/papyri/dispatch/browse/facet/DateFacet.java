@@ -7,7 +7,9 @@ package info.papyri.dispatch.browse.facet;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import org.apache.solr.client.solrj.response.FacetField.Count;
+import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
  *
@@ -34,6 +36,11 @@ abstract public class DateFacet extends Facet {
                 Count count1 = (Count)t;
                 Count count2 = (Count)t1;
                 
+                // value 'Unknown' should always sort first
+                if(count1.getName().equals("Unknown") && count2.getName().equals("Unknown")) return 0;
+                if(count1.getName().equals("Unknown")) return -1;
+                if(count2.getName().equals("Unknown")) return 1;
+                
                 if(Integer.valueOf(count1.getName()) < Integer.valueOf(count2.getName())) return -1;
                 if(Integer.valueOf(count1.getName()) > Integer.valueOf(count2.getName())) return 1;
                 return 0;
@@ -43,8 +50,23 @@ abstract public class DateFacet extends Facet {
     }
    
     @Override
-    public String getAsQueryString(){
+    public String getAsQueryString(ArrayList<String> previousQueryStrings){
         
+        if(dateQueryCoordinator.getUnknownDateFlag()){
+         
+            String[] dateFields = {FacetParam.DATE_START.name(), FacetParam.DATE_END.name()};
+            String unknownString = "=Unknown";
+            
+            for(int i = 0; i < dateFields.length; i++){
+                
+                String testString = dateFields[i] + unknownString;
+                if(previousQueryStrings.contains(testString)) return "";
+                
+            }
+            
+            return formName + unknownString;
+            
+        }
         String queryString = terminus == 0 ? "" : formName + "=" + String.valueOf(terminus); 
         return queryString;
         
@@ -61,6 +83,7 @@ abstract public class DateFacet extends Facet {
     @Override
     public String getDisplayValue(String dateCode){
         
+        if(dateCode.equals("Unknown")) return dateCode;
         int rawDate = Integer.valueOf(dateCode);
         
         String era;
@@ -88,11 +111,48 @@ abstract public class DateFacet extends Facet {
         
     }
     
+    public String generateWidget() {
+        
+        StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
+        html.append(generateHiddenFields());
+        Boolean onlyOneValue = valuesAndCounts.size() == 1;
+        String disabled = onlyOneValue ? " disabled=\"true\"" : "";
+        html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
+        html.append("<select" + disabled + " name=\"" + formName + "\">");
+        html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");
+        
+        Iterator<Count> vcit = valuesAndCounts.iterator();
+        
+        while(vcit.hasNext()){
+            
+            Count valueAndCount = vcit.next();
+            String value = valueAndCount.getName();
+            String displayValue = getDisplayValue(value);
+            String count = String.valueOf(valueAndCount.getCount());
+            String selected = onlyOneValue ? " selected=\"true\"" : "";
+            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");
+            if(value.equals("Unknown")){
+                
+                html.append("<optgroup label=\"-------------------\"></optgroup>");
+                
+            }
+            
+        }
+        
+        html.append("</select>");
+        html.append("</div><!-- closing .facet-widget -->");
+
+        return html.toString();
+        
+    }
+    
     
     @Override
     public ArrayList<String> getFacetConstraints(){
         
         ArrayList<String> constraints = new ArrayList<String>();
+        
+        if(dateQueryCoordinator.getUnknownDateFlag()) constraints.add("Unknown");
         
         if(terminus != 0) constraints.add(String.valueOf(terminus));
         
@@ -127,7 +187,6 @@ abstract public class DateFacet extends Facet {
         dateQueryCoordinator = dqc;
         
     }
-   
     
     
 }

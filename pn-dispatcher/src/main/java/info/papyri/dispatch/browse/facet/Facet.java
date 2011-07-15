@@ -141,7 +141,7 @@ abstract public class Facet {
      * @see FacetBrowser#buildFullQueryString(java.util.EnumMap) 
      */
     
-    public String getAsQueryString(){
+    public String getAsQueryString(ArrayList<String> previousQueryStrings){
         
         String queryString = "";
         

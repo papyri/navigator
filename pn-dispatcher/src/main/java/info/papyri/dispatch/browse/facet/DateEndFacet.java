@@ -36,6 +36,11 @@ public class DateEndFacet extends DateFacet{
    public void setWidgetValues(QueryResponse queryResponse){
         
         valuesAndCounts = new ArrayList<Count>();
+                
+        valuesAndCounts = dateQueryCoordinator.addUnknownCount((ArrayList<Count>)valuesAndCounts, queryResponse);
+        
+        if(dateQueryCoordinator.getUnknownDateFlag()) return;
+
         long totalCount = queryResponse.getResults().getNumFound();
         List<Count> counts = queryResponse.getFacetField(field.name()).getValues();
         Iterator<Count> cit = counts.iterator();
@@ -111,8 +116,16 @@ public class DateEndFacet extends DateFacet{
     @Override
     public void addConstraint(String newValue){
         
-        dateQueryCoordinator.setTerminusBeforeWhich(Integer.valueOf(newValue.trim()));
-        super.addConstraint(newValue);
+        String trimmedValue = newValue.trim();
+        dateQueryCoordinator.setUnknownDateFlag(Boolean.FALSE);
+        if(trimmedValue.equals("Unknown")){
+            
+            dateQueryCoordinator.setUnknownDateFlag(Boolean.TRUE);
+            trimmedValue = "0";
+            
+        }
+        dateQueryCoordinator.setTerminusBeforeWhich(Integer.valueOf(trimmedValue));
+        super.addConstraint(trimmedValue);
         
     }
 

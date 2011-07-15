@@ -33,6 +33,9 @@ public class DateStartFacet extends DateFacet {
     public void setWidgetValues(QueryResponse queryResponse){
         
         valuesAndCounts = new ArrayList<Count>();
+        
+        valuesAndCounts = dateQueryCoordinator.addUnknownCount((ArrayList<Count>)valuesAndCounts, queryResponse);
+        
         Map<String, Integer> facetQueries = queryResponse.getFacetQuery();
         int bottomLimit = dateQueryCoordinator.getLowestCategoryWithMembers(queryResponse);
         for(Map.Entry<String, Integer> entry : facetQueries.entrySet()){
@@ -64,8 +67,16 @@ public class DateStartFacet extends DateFacet {
     @Override
     public void addConstraint(String newValue){
         
-        dateQueryCoordinator.setTerminusAfterWhich(Integer.valueOf(newValue.trim()));
-        super.addConstraint(newValue);
+        String trimmedValue = newValue.trim();
+        dateQueryCoordinator.setUnknownDateFlag(Boolean.FALSE);
+        if(trimmedValue.equals("Unknown")){
+            
+            dateQueryCoordinator.setUnknownDateFlag(Boolean.TRUE);
+            trimmedValue = "0";
+            
+        }
+        dateQueryCoordinator.setTerminusAfterWhich(Integer.valueOf(trimmedValue));
+        super.addConstraint(trimmedValue);
         
     }
 
