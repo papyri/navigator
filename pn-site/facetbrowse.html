@@ -13,11 +13,7 @@
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <style type="text/css">
-      body{
-      
-        font: 13px/1.231 arial,helvetica,clean,sans-serif
-      
-      }
+
       #facet-wrapper{
       
         position: relative;
@@ -365,7 +361,7 @@
           innerHtml: "Click to turn contextual help for the search form on and off.",
           position: "left"
         });
-        jQuery("ul.nav li").not(".dialog").hover(function() {
+        jQuery("ul.nav li").not(".dialog").not("#footer ul.nav li").hover(function() {
               jQuery(this).css('background-color', '#445B88');
               jQuery(this).find("a").css('color', 'white')
           },
