@@ -51,7 +51,7 @@ import java.util.Iterator;
         @Override
         public String getHTML(){
             
-            String displayName = this.documentGroupRecord.getSeries() + " " + this.documentGroupRecord.getVolume() + " " + this.displayId;
+            String displayName = this.documentGroupRecord.getSeries() + " " + (this.documentGroupRecord.getVolume().equals("0") ? "" : this.documentGroupRecord.getVolume()) + " " + this.displayId;
             displayName = displayName.replaceAll("_", " ");
             String anchor = "<a href='" + this.assembleLink() + "'>" + displayName + "</a>";
             String html = "<tr class=\"identifier\"><td>" + anchor + "</td>";
