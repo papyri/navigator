@@ -23,6 +23,7 @@ public enum SolrField {
         item_letter,
         transcription,
         date_category,
-        unknown_date_flag
+        unknown_date_flag,
+        transcription_ngram_ia
     
 }
