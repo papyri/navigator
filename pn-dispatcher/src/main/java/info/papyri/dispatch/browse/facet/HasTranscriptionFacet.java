@@ -103,7 +103,7 @@ public class HasTranscriptionFacet extends Facet {
     @Override
     public String generateWidget() {
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
+        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getToolTipText() + "\">");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
@@ -126,6 +126,13 @@ public class HasTranscriptionFacet extends Facet {
         html.append(generateHiddenFields());
         return html.toString();
         
+        
+    }
+
+    @Override
+    String getToolTipText() {
+        
+        return "Indicates whether or not a transcription of the original text is available through the IDP interface.";
         
     }
     

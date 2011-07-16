@@ -128,6 +128,7 @@ public class FacetBrowser extends HttpServlet {
         paramsToFacets.put(FacetParam.PLACE, new PlaceFacet(FacetParam.PLACE.name()));
         paramsToFacets.put(FacetParam.DATE_START, new DateStartFacet(FacetParam.DATE_START.name()));
         paramsToFacets.put(FacetParam.DATE_END, new DateEndFacet(FacetParam.DATE_END.name()));
+        paramsToFacets.put(FacetParam.SUBSTRING, new SubStringFacet(FacetParam.SUBSTRING.name()));
         return paramsToFacets;
         
     }
@@ -486,6 +487,12 @@ public class FacetBrowser extends HttpServlet {
         if(!constraintsPresent){
             
             html.append("<h2>Please select values from the left-hand column to return results</h2>");
+            
+        }
+        else if(resultSize == 0){
+            
+            html.append("<h2>0 documents found matching criteria set.</h2>");
+            html.append("<p>To determine why this is, try setting your criteria one at a time to see how this affects the results returned.</p>");
             
         }
         else{

@@ -130,4 +130,12 @@ public class DateEndFacet extends DateFacet{
     }
 
     
+    @Override
+    public String getToolTipText(){
+        
+        return "Indicates the date at or before which the text was created. Note that totals are cumulative.";
+        
+        
+    }
+    
 }

@@ -103,7 +103,7 @@ abstract public class Facet {
     
      public String generateWidget() {
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
+        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getToolTipText() + "\">");
         html.append(generateHiddenFields());
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
@@ -272,6 +272,7 @@ abstract public class Facet {
         
     }
     
+    abstract String getToolTipText();
  
     
 }

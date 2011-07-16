@@ -10,12 +10,13 @@ package info.papyri.dispatch.browse.facet;
  */
 public enum FacetParam {
     
+    SUBSTRING,
     LANG,
     PLACE,
+    DATE_START,
+    DATE_END,
     IMG,
     TRANSL,
-    TRANSC,
-    DATE_START,
-    DATE_END
+    TRANSC
     
 }

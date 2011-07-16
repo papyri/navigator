@@ -54,4 +54,11 @@ public class LanguageFacet extends Facet{
         
     }
     
+    @Override
+    String getToolTipText() {
+        
+        return "The language the text is in.";
+        
+    }
+    
 }

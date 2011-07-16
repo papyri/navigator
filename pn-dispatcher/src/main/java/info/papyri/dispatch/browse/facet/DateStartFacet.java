@@ -80,5 +80,13 @@ public class DateStartFacet extends DateFacet {
         
     }
 
+    @Override
+    public String getToolTipText(){
+        
+        return "Indicates the date at or after which the text was created. Note that totals are cumulative.";
+        
+        
+    }        
+
     
 }

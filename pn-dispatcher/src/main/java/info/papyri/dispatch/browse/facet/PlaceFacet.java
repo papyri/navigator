@@ -17,6 +17,13 @@ public class PlaceFacet extends Facet {
         super(SolrField.display_place, formName, "Provenance");
         
     }
+    
+    @Override
+    String getToolTipText() {
+        
+        return "Indicates the place where the text was produced, as far as can be determined. Often this will correspond to the findspot of the document.";
+        
+    }
 
 
     

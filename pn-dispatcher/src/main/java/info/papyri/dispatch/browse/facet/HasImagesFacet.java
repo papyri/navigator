@@ -20,4 +20,12 @@ public class HasImagesFacet extends BooleanFacet {
     }
 
     
+    @Override
+    public String getToolTipText(){
+        
+        return "Indicates whether or not images of the artifact are accessible through IDP.";
+        
+        
+    } 
+    
 }

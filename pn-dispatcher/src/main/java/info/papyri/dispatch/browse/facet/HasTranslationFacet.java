@@ -19,6 +19,11 @@ public class HasTranslationFacet extends BooleanFacet {
         
     }
     
-
+    @Override
+    String getToolTipText() {
+        
+        return "Indicates whether or not a translation of the original text is available through the IDP interface.";
+        
+    }
     
 }

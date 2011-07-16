@@ -89,7 +89,7 @@ abstract public class BooleanFacet extends Facet{
     @Override
     public String generateWidget() {
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\">");
+        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getToolTipText() + "\">");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
