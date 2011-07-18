@@ -174,7 +174,6 @@ public class FacetBrowser extends HttpServlet {
                 
             if(requestParams.containsKey(facetParam.name())){
                     
-                constraintsPresent = true;
                 String[] paramValues = requestParams.get(facetParam.name());
                 
                  for(int i = 0; i < paramValues.length; i++){
@@ -182,7 +181,13 @@ public class FacetBrowser extends HttpServlet {
                      try{
                     
                          String param = java.net.URLDecoder.decode(paramValues[i], "UTF-8");
-                         facet.addConstraint(param);
+                        
+                         if(!param.equals("default") && !param.equals("")){
+                            
+                            constraintsPresent = true;
+                            facet.addConstraint(param);
+                            
+                         }
                     
                      }
                      catch(UnsupportedEncodingException uee){
@@ -430,7 +435,7 @@ public class FacetBrowser extends HttpServlet {
     private String assembleHTML(EnumMap<FacetParam, Facet> paramsToFacets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams){
         
         StringBuffer html = new StringBuffer("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(paramsToFacets, html);
+        assembleWidgetHTML(paramsToFacets, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\">");
         if(constraintsPresent) assemblePreviousValuesHTML(paramsToFacets,html, submittedParams);
         assembleRecordsHTML(paramsToFacets, returnedRecords, constraintsPresent, resultsSize, html);
@@ -450,14 +455,17 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#generateWidget() 
      */
   
-    private StringBuffer assembleWidgetHTML(EnumMap<FacetParam, Facet> paramsToFacets, StringBuffer html){
+    private StringBuffer assembleWidgetHTML(EnumMap<FacetParam, Facet> paramsToFacets, StringBuffer html, Map<String, String[]> submittedParams){
         
         html.append("<div id=\"facet-widgets-wrapper\">");
         html.append("<form name=\"facets\" method=\"get\" action=\"" + FACET_PATH + "\"> ");
         for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
             
             Facet facet = entry.getValue();
-            html.append(facet.generateWidget());
+            String testText = facet.generateWidget();
+            html.append(testText);
+            
+            
             
         }
         html.append("<input type=\"submit\"/>");
@@ -628,7 +636,11 @@ public class FacetBrowser extends HttpServlet {
         
         String fullQueryString = buildFullQueryString(paramsToFacets);
         
-        StringBuffer html = new StringBuffer("<div id=\"pagination\">");
+        double widthEach = 8;
+        double totalWidth = widthEach * numPages;
+        totalWidth = totalWidth > 100 ? 100 : totalWidth;
+        
+        StringBuffer html = new StringBuffer("<div id=\"pagination\" style=\"width:" + String.valueOf(totalWidth) + "%\">");
         
         for(long i = 1; i <= numPages; i++){
             
@@ -639,6 +651,7 @@ public class FacetBrowser extends HttpServlet {
             html.append("</div><!-- closing .page -->");
             
         }
+        html.append("<div class=\"spacer\"></div><!-- closing .spacer -->");
         html.append("</div><!-- closing #pagination -->");
         return html.toString();
         
@@ -729,6 +742,7 @@ public class FacetBrowser extends HttpServlet {
         return filteredQueryString;
         
     }
+    
     
     
     

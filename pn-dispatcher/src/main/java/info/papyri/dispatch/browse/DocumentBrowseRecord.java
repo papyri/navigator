@@ -54,7 +54,7 @@ import java.util.Iterator;
             String displayName = this.documentGroupRecord.getSeries() + " " + (this.documentGroupRecord.getVolume().equals("0") ? "" : this.documentGroupRecord.getVolume()) + " " + this.displayId;
             displayName = displayName.replaceAll("_", " ");
             String anchor = "<a href='" + this.assembleLink() + "'>" + displayName + "</a>";
-            String html = "<tr class=\"identifier\"><td>" + anchor + "</td>";
+            String html = "<tr><td class=\"identifier\">" + anchor + "</td>";
             html += "<td class=\"display-place\">" + place + "</td>";
             html += "<td class=\"display-date\">" + date + "</td>";
             html += "<td class=\"language\">" + language + "</td>";

@@ -74,6 +74,7 @@ abstract public class Facet {
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         solrQuery.addFacetField(field.name());
+        solrQuery.setFacetLimit(-1);
         
         Iterator<String> cit = facetConstraints.iterator();
         
@@ -107,9 +108,10 @@ abstract public class Facet {
         html.append(generateHiddenFields());
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
+        String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
         html.append("<select" + disabled + " name=\"" + formName + "\">");
-        html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");
+        html.append("<option " + defaultSelected +  " value=\"default\">" + Facet.defaultValue + "</option>");
         
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
@@ -118,6 +120,7 @@ abstract public class Facet {
             Count valueAndCount = vcit.next();
             String value = valueAndCount.getName();
             String displayValue = getDisplayValue(value);
+            if(displayValue.length() > 60) displayValue = displayValue.substring(0, 60);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
             html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");

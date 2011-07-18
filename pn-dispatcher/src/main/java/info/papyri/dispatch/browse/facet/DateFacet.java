@@ -117,9 +117,10 @@ abstract public class DateFacet extends Facet {
         html.append(generateHiddenFields());
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
+        String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
         html.append("<select" + disabled + " name=\"" + formName + "\">");
-        html.append("<option disabled=\"true\">" + Facet.defaultValue + "</option>");
+        html.append("<option " + defaultSelected + "  value=\"default\">" + Facet.defaultValue + "</option>");
         
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
@@ -168,6 +169,11 @@ abstract public class DateFacet extends Facet {
         if(terminus != 0){
             
             html += "<input type=\"hidden\" name=\"" + formName + "\" value=\"" + String.valueOf(terminus) + "\"/>";
+            
+        }
+        else if(dateQueryCoordinator.getUnknownDateFlag()){
+            
+            html += "<input type=\"hidden\" name=\"" + formName + "\" value=\"Unknown\"/>";
             
         }
         
