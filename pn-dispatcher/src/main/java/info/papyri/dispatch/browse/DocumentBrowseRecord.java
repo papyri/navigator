@@ -54,14 +54,24 @@ import java.util.Iterator;
             String displayName = this.documentGroupRecord.getSeries() + " " + (this.documentGroupRecord.getVolume().equals("0") ? "" : this.documentGroupRecord.getVolume()) + " " + this.displayId;
             displayName = displayName.replaceAll("_", " ");
             String anchor = "<a href='" + this.assembleLink() + "'>" + displayName + "</a>";
-            String html = "<tr><td class=\"identifier\">" + anchor + "</td>";
-            html += "<td class=\"display-place\">" + place + "</td>";
-            html += "<td class=\"display-date\">" + date + "</td>";
-            html += "<td class=\"language\">" + language + "</td>";
-            html += "<td class=\"has-translation\">" + hasTranslation + "</td>";
-            html += "<td class=\"has-images\">" + hasImage + "</td>";
-            html += "</tr>";
-            return html;
+            StringBuilder html = new StringBuilder("<tr><td class=\"identifier\">" + anchor + "</td>");
+            html.append("<td class=\"display-place\">");
+            html.append(place);
+            html.append("</td>");
+            html.append("<td class=\"display-date\">");
+            html.append(date);
+            html.append("</td>");
+            html.append("<td class=\"language\">");
+            html.append(language);
+            html.append("</td>");
+            html.append("<td class=\"has-translation\">");
+            html.append(hasTranslation);
+            html.append("</td>");
+            html.append("<td class=\"has-images\">");
+            html.append(hasImage);
+            html.append("</td>");
+            html.append("</tr>");
+            return html.toString();
             
         }
         
