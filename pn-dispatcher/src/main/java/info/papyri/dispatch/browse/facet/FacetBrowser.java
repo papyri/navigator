@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -92,112 +91,48 @@ public class FacetBrowser extends HttpServlet {
         debug = "";
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-        EnumMap<FacetParam, Facet> paramsToFacets = getFacetMap();
-        coordinateDateFacets(paramsToFacets);
-        Boolean constraintsPresent = parseRequestToFacets(request, paramsToFacets);
+        ArrayList<Facet> facets = getFacets();
+        Boolean constraintsPresent = parseRequestToFacets(request, facets);
         int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 0;
-        SolrQuery solrQuery = this.buildFacetQuery(page, paramsToFacets);
+        SolrQuery solrQuery = this.buildFacetQuery(page, facets);
         QueryResponse queryResponse = this.runFacetQuery(solrQuery);
         long resultSize = queryResponse.getResults().getNumFound();
-        populateFacets(paramsToFacets, queryResponse);
+        populateFacets(facets, queryResponse);
         ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
-        String html = this.assembleHTML(paramsToFacets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
         displayBrowseResult(response, html);  
      
     }
     
-    /**
-     * Builds a data-structure mapping the @name values used in the facet html form
-     * to the appropriate <code>Facet</code> model objects.
-     * 
-     * This EnumMap data-structure is used throughout the servlet code - typically 
-     * being iterated through to perform some operation on each of the <code>Facet</code>s.
-     * 
-     * @return An EnumMap of <code>FacetParams</code> to <code>Facets</code>.
-     * @see FacetParam
-     * @see Facet
-     */
-    
-    private EnumMap<FacetParam, Facet> getFacetMap(){
-        
-        EnumMap<FacetParam, Facet> paramsToFacets = new EnumMap<FacetParam, Facet>(FacetParam.class);
-        paramsToFacets.put(FacetParam.IMG, new HasImagesFacet(FacetParam.IMG.name()));
-        paramsToFacets.put(FacetParam.LANG, new LanguageFacet(FacetParam.LANG.name()));
-        paramsToFacets.put(FacetParam.TRANSL, new HasTranslationFacet(FacetParam.TRANSL.name()));
-        paramsToFacets.put(FacetParam.TRANSC, new HasTranscriptionFacet(FacetParam.TRANSC.name()));
-        paramsToFacets.put(FacetParam.PLACE, new PlaceFacet(FacetParam.PLACE.name()));
-        paramsToFacets.put(FacetParam.DATE_START, new DateStartFacet(FacetParam.DATE_START.name()));
-        paramsToFacets.put(FacetParam.DATE_END, new DateEndFacet(FacetParam.DATE_END.name()));
-        paramsToFacets.put(FacetParam.SUBSTRING, new SubStringFacet(FacetParam.SUBSTRING.name()));
-        return paramsToFacets;
-        
-    }
-    
-    private void coordinateDateFacets(EnumMap<FacetParam, Facet> paramsToFacets){
-        
-        DateQueryCoordinator dqc = new DateQueryCoordinator();
-        
-        FacetParam[] dateParams = { FacetParam.DATE_START, FacetParam.DATE_END };
-        
-        for(int i = 0; i < dateParams.length; i++){
-            
-            DateFacet dateFacet = (DateFacet) paramsToFacets.get(dateParams[i]);
-            
-            if(dateFacet != null){
-                
-                dateFacet.setDateQueryCoordinator(dqc);
-                
-            }
-            
-        }
-        
-    }
-    
-    /**
-     * Parse the request querystring and assigns the values it finds there to the appropriate
-     * <code>Facet</code> objects
-     * 
-     * @param request
-     * @param paramsToFacets
-     * @return <code>True</code> if a constraint has been set upon any of the <code>Facet</code>s. <code>False</code> otherwise.
-     */
 
-    Boolean parseRequestToFacets(HttpServletRequest request, EnumMap<FacetParam, Facet> paramsToFacets){
+    private ArrayList<Facet> getFacets(){
+        
+        
+        ArrayList<Facet> facets = new ArrayList<Facet>();
+        
+        facets.add(new SubStringFacet());
+        facets.add(new LanguageFacet());
+        facets.add(new PlaceFacet());
+        facets.add(new DateFacet());
+        facets.add(new HasImagesFacet());
+        facets.add(new HasTranscriptionFacet());
+        facets.add(new HasTranslationFacet());
+        
+        return facets;
+        
+    }
+  
+    Boolean parseRequestToFacets(HttpServletRequest request, ArrayList<Facet> facets){
                 
         Map<String, String[]> requestParams = request.getParameterMap();
         Boolean constraintsPresent = false;
                     
-        for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
+        Iterator<Facet> fit = facets.iterator();
+        
+        while(fit.hasNext()){
             
-            FacetParam facetParam = entry.getKey();
-            Facet facet = entry.getValue();
-                
-            if(requestParams.containsKey(facetParam.name())){
-                    
-                String[] paramValues = requestParams.get(facetParam.name());
-                
-                 for(int i = 0; i < paramValues.length; i++){
-                    
-                     try{
-                    
-                         String param = java.net.URLDecoder.decode(paramValues[i], "UTF-8");
-                        
-                         if(!param.equals("default") && !param.equals("")){
-                            
-                            constraintsPresent = true;
-                            facet.addConstraint(param);
-                            
-                         }
-                    
-                     }
-                     catch(UnsupportedEncodingException uee){
-                        
-                         System.out.println("UnsupportedEncodingException: " + uee.getMessage());
-                        
-                     }
-                }
-           }
-  
+            Facet facet = fit.next();
+            if(facet.addConstraints(requestParams)) constraintsPresent = true;
             
         }
         
@@ -215,7 +150,7 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#buildQueryContribution(org.apache.solr.client.solrj.SolrQuery) 
      */
     
-    SolrQuery buildFacetQuery(int pageNumber, EnumMap<FacetParam, Facet> paramsToFacets){
+    SolrQuery buildFacetQuery(int pageNumber, ArrayList<Facet> facets){
         
         SolrQuery sq = new SolrQuery();
         sq.setFacetMissing(true);
@@ -224,14 +159,14 @@ public class FacetBrowser extends HttpServlet {
         sq.setStart(pageNumber * documentsPerPage); 
         
         // iterate through facets, adding to solr query
-       for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
+        Iterator<Facet> fit = facets.iterator();
+        while(fit.hasNext()){
             
-            Facet facet = entry.getValue();
+            Facet facet = fit.next();
             sq = facet.buildQueryContribution(sq);
             
             
         }
-        
         // the Facets all add FilterQueries to the SolrQuery. We want all documents
         // that pass these filters.
         sq.setQuery("*:*");
@@ -287,12 +222,14 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#setWidgetValues(org.apache.solr.client.solrj.response.QueryResponse) 
      */
     
-    private void populateFacets(EnumMap<FacetParam, Facet> paramsToFacets, QueryResponse queryResponse){
+    private void populateFacets(ArrayList<Facet> facets, QueryResponse queryResponse){
         
-        for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
+        Iterator<Facet> fit = facets.iterator();
+        while(fit.hasNext()){
             
-            entry.getValue().setWidgetValues(queryResponse);
-            
+            Facet facet = fit.next();
+            facet.setWidgetValues(queryResponse);
+                      
         }
         
     }
@@ -432,13 +369,13 @@ public class FacetBrowser extends HttpServlet {
      * @return 
      */
     
-    private String assembleHTML(EnumMap<FacetParam, Facet> paramsToFacets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams){
+    private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams){
         
         StringBuffer html = new StringBuffer("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(paramsToFacets, html, submittedParams);
+        assembleWidgetHTML(facets, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\">");
-        if(constraintsPresent) assemblePreviousValuesHTML(paramsToFacets,html, submittedParams);
-        assembleRecordsHTML(paramsToFacets, returnedRecords, constraintsPresent, resultsSize, html);
+        if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
+        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
         html.append("</div><!-- closing #facet-wrapper -->");
         return html.toString();
@@ -455,17 +392,15 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#generateWidget() 
      */
   
-    private StringBuffer assembleWidgetHTML(EnumMap<FacetParam, Facet> paramsToFacets, StringBuffer html, Map<String, String[]> submittedParams){
+    private StringBuffer assembleWidgetHTML(ArrayList<Facet> facets, StringBuffer html, Map<String, String[]> submittedParams){
         
         html.append("<div id=\"facet-widgets-wrapper\">");
         html.append("<form name=\"facets\" method=\"get\" action=\"" + FACET_PATH + "\"> ");
-        for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
+        Iterator<Facet> fit = facets.iterator();
+        while(fit.hasNext()){
             
-            Facet facet = entry.getValue();
-            String testText = facet.generateWidget();
-            html.append(testText);
-            
-            
+            Facet facet = fit.next();
+            html.append(facet.generateWidget());
             
         }
         html.append("<input type=\"submit\"/>");
@@ -489,7 +424,7 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    private StringBuffer assembleRecordsHTML(EnumMap<FacetParam, Facet> paramsToFacets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuffer html){
+    private StringBuffer assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuffer html){
         
         html.append("<div id=\"facet-records-wrapper\">");
         if(!constraintsPresent){
@@ -516,7 +451,7 @@ public class FacetBrowser extends HttpServlet {
                   
             }
             html.append("</table>");
-            html.append(doPagination(paramsToFacets, resultSize));
+            html.append(doPagination(facets, resultSize));
         }
         
         html.append("</div><!-- closing #facet-records-wrapper -->");
@@ -535,37 +470,46 @@ public class FacetBrowser extends HttpServlet {
      * @see #buildFilteredQueryString(java.util.EnumMap, info.papyri.dispatch.browse.facet.FacetParam, java.lang.String) 
      */
     
-    private StringBuffer assemblePreviousValuesHTML(EnumMap<FacetParam, Facet> paramsToFacets, StringBuffer html, Map<String, String[]> submittedParams){
+    private StringBuffer assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuffer html, Map<String, String[]> submittedParams){
                 
         html.append("<div id=\"previous-values\">");
         
-        for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
+        Iterator<Facet> fit = facets.iterator();
+        
+        while(fit.hasNext()){
             
-            FacetParam param = entry.getKey();
+            Facet facet = fit.next();
             
-            if(submittedParams.containsKey(param.name())){
+            String[] params = facet.getFormNames();
             
-                Facet facet = entry.getValue();
-                String displayName = facet.getDisplayName();
+            for(int i = 0; i < params.length; i++){
             
-                ArrayList<String> facetValues = facet.getFacetConstraints();
-            
-                Iterator<String> fvit = facetValues.iterator();
-            
-                while(fvit.hasNext()){
+                String param = params[i];
                 
-                    String facetValue = fvit.next();
-                    String displayFacetValue = facet.getDisplayValue(facetValue);
-                    String queryString = this.buildFilteredQueryString(paramsToFacets, param, facetValue, submittedParams);
-                    html.append("<div class=\"facet-constraint\">");
-                    html.append("<div class=\"constraint-label\">");
-                    html.append(displayName + ": " + displayFacetValue);
-                    html.append("</div><!-- closing .constraint-label -->");
-                    html.append("<div class=\"constraint-closer\">");
-                    html.append("<a href=\"" + FACET_PATH + ("".equals(queryString) ? "" : "?") + queryString + "\" title =\"Remove facet value\">X</a>");
-                    html.append("</div><!-- closing .constraint-closer -->");
-                    html.append("<div class=\"spacer\"></div>");
-                    html.append("</div><!-- closing .facet-constraint -->");
+                if(submittedParams.containsKey(param)){
+
+                    String displayName = facet.getDisplayName(param);
+
+                    ArrayList<String> facetValues = facet.getFacetConstraints(param);
+
+                    Iterator<String> fvit = facetValues.iterator();
+
+                    while(fvit.hasNext()){
+
+                        String facetValue = fvit.next();
+                        String displayFacetValue = facet.getDisplayValue(facetValue);
+                        String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue);
+                        html.append("<div class=\"facet-constraint\">");
+                        html.append("<div class=\"constraint-label\">");
+                        html.append(displayName + ": " + displayFacetValue);
+                        html.append("</div><!-- closing .constraint-label -->");
+                        html.append("<div class=\"constraint-closer\">");
+                        html.append("<a href=\"" + FACET_PATH + ("".equals(queryString) ? "" : "?") + queryString + "\" title =\"Remove facet value\">X</a>");
+                        html.append("</div><!-- closing .constraint-closer -->");
+                        html.append("<div class=\"spacer\"></div>");
+                        html.append("</div><!-- closing .facet-constraint -->");
+                    }
+
                 }
             
             }
@@ -628,13 +572,13 @@ public class FacetBrowser extends HttpServlet {
      * @see #buildFullQueryString(java.util.EnumMap) 
      */
     
-    private String doPagination(EnumMap<FacetParam, Facet> paramsToFacets, long resultSize){
+    private String doPagination(ArrayList<Facet> facets, long resultSize){
         
         int numPages = (int)(Math.ceil(resultSize / documentsPerPage));
         
         if(numPages <= 1) return "";
         
-        String fullQueryString = buildFullQueryString(paramsToFacets);
+        String fullQueryString = buildFullQueryString(facets);
         
         double widthEach = 8;
         double totalWidth = widthEach * numPages;
@@ -666,13 +610,15 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#getAsQueryString() 
      */
     
-    private String buildFullQueryString(EnumMap<FacetParam, Facet> paramsToFacets){
+    private String buildFullQueryString(ArrayList<Facet> facets){
              
         ArrayList<String> queryStrings = new ArrayList<String>();
         
-        for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
+        Iterator<Facet> fit = facets.iterator();
+        while(fit.hasNext()){
             
-            String queryString = entry.getValue().getAsQueryString(queryStrings);
+            Facet facet = fit.next();
+            String queryString = facet.getAsQueryString();
             if(!"".equals(queryString)) queryStrings.add(queryString);
             
         }
@@ -704,28 +650,32 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#getAsFilteredQueryString(java.lang.String) 
      */
     
-    private String buildFilteredQueryString(EnumMap<FacetParam, Facet> paramsToFacets, FacetParam facetParam, String facetValue, Map<String, String[]> submittedParams){
+    private String buildFilteredQueryString(ArrayList<Facet> facets, Facet relFacet, String facetParam, String facetValue){
               
         ArrayList<String> queryStrings = new ArrayList<String>();
         
-        for(Map.Entry<FacetParam, Facet> entry : paramsToFacets.entrySet()){
+        Iterator<Facet> fit = facets.iterator();
+        
+        while(fit.hasNext()){
             
-            if(submittedParams.containsKey(entry.getKey().name())){
+            String queryString = "";
             
-                String queryString = "";
+            Facet facet = fit.next();
+            if(facet == relFacet){
+                
+                queryString = facet.getAsFilteredQueryString(facetParam, facetValue);
+                
+            }
+            else{
+                
+                queryString = facet.getAsQueryString();
+                
+            }
             
-                if(entry.getKey().equals(facetParam)){
-                
-                    queryString = entry.getValue().getAsFilteredQueryString(facetValue);
-                
-                }
-                else{
-                
-                    queryString = entry.getValue().getAsQueryString(queryStrings);
-                
-                }
             
-                if(!"".equals(queryString)) queryStrings.add(queryString);
+            if(!"".equals(queryString)){
+                
+                queryStrings.add(queryString);
                 
             }
             
@@ -742,9 +692,7 @@ public class FacetBrowser extends HttpServlet {
         return filteredQueryString;
         
     }
-    
-    
-    
+        
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 

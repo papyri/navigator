@@ -13,9 +13,9 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
  */
 public class PlaceFacet extends Facet {
     
-    public PlaceFacet(String formName){
+    public PlaceFacet(){
         
-        super(SolrField.display_place, formName, "Provenance");
+        super(SolrField.display_place, FacetParam.PLACE.name(), "Provenance");
         
     }
     

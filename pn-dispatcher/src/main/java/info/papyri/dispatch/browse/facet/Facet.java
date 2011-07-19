@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
@@ -109,7 +110,7 @@ abstract public class Facet {
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
-        html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
+        html.append("<span class=\"option-label\">" + getDisplayName(null) + "</span>");
         html.append("<select" + disabled + " name=\"" + formName + "\">");
         html.append("<option " + defaultSelected +  " value=\"default\">" + Facet.defaultValue + "</option>");
         
@@ -144,7 +145,7 @@ abstract public class Facet {
      * @see FacetBrowser#buildFullQueryString(java.util.EnumMap) 
      */
     
-    public String getAsQueryString(ArrayList<String> previousQueryStrings){
+    public String getAsQueryString(){
         
         String queryString = "";
         
@@ -169,12 +170,11 @@ abstract public class Facet {
      * Required for the anchor links that (from the user's perspective) 'remove' 
      * constraints from the faceted display.
      * 
-     * @param filterValue
      * @return 
      * @see FacetBrowser#assemblePreviousValuesHTML(java.util.EnumMap, java.lang.StringBuffer) 
      */
     
-    public String getAsFilteredQueryString(String filterValue){
+    public String getAsFilteredQueryString(String filterParam, String filterValue){
         
         String queryString = "";
         
@@ -243,7 +243,43 @@ abstract public class Facet {
         
     }
     
-    public void addConstraint(String newValue){
+    public Boolean addConstraints(Map<String, String[]> params){
+        
+        Boolean hasConstraint = false;
+        
+        if(params.containsKey(this.formName)){
+            
+            String[] values = params.get(this.formName);
+            
+            for(int i = 0; i < values.length; i++){
+                
+                try{
+                    
+                    String param = java.net.URLDecoder.decode(values[i], "UTF-8");
+
+                    if(param != null && !param.equals("default") && !param.equals("")){
+                            
+                         addConstraint(param);
+                         hasConstraint = true;   
+                    }
+                    
+                    
+                }
+                catch(UnsupportedEncodingException uee){
+                    
+                    System.out.println("UnsupportedEncodingException: " + uee.getMessage());
+                    
+                }
+                
+            }
+            
+        }
+        
+        return hasConstraint;
+        
+    }
+    
+     void addConstraint(String newValue){
         
         if(newValue.equals(Facet.defaultValue)) return;
         if(!facetConstraints.contains(newValue)) facetConstraints.add(newValue.trim());
@@ -257,13 +293,13 @@ abstract public class Facet {
         
     }
     
-    public ArrayList<String> getFacetConstraints(){
+    public ArrayList<String> getFacetConstraints(String facetParam){
         
         return facetConstraints;
         
     }
     
-    public String getDisplayName(){
+    public String getDisplayName(String facetParam){
         
         return displayName;
         
@@ -272,6 +308,15 @@ abstract public class Facet {
     public String getDisplayValue(String value){
         
         return value;
+        
+    }
+    
+    public String[] getFormNames(){
+        
+        String[] formNames = {formName};
+        
+        return formNames;
+        
         
     }
     

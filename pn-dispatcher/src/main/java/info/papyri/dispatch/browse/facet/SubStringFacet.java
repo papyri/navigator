@@ -3,6 +3,7 @@ package info.papyri.dispatch.browse.facet;
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.Iterator;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
@@ -16,9 +17,9 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  */
 public class SubStringFacet extends Facet{
     
-    public SubStringFacet(String formName){
+    public SubStringFacet(){
         
-        super(SolrField.transcription_ngram_ia, formName, "Substring Search<br>(ignores caps,<br/>ignores accents)");
+        super(SolrField.transcription_ngram_ia, FacetParam.SUBSTRING.name(), "Substring Search<br>(ignores caps,<br/>ignores accents)");
         
         
     }
