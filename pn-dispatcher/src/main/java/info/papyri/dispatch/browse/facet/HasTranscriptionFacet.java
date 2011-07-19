@@ -23,9 +23,9 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  */
 public class HasTranscriptionFacet extends Facet {
     
-    public HasTranscriptionFacet(String formName){
+    public HasTranscriptionFacet(){
         
-        super(SolrField.transcription, formName, "Has Transcription");
+        super(SolrField.transcription, FacetParam.TRANSC.name(), "Has Transcription");
         
     }
     
@@ -107,7 +107,7 @@ public class HasTranscriptionFacet extends Facet {
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
-        html.append("<span class=\"option-label\">" + getDisplayName() + "</span>");
+        html.append("<span class=\"option-label\">" + getDisplayName(null) + "</span>");
         html.append("<select" + disabled + " name=\"" + formName + "\">");
         html.append("<option " + defaultSelected + " value=\"default\">" + Facet.defaultValue + "</option>");  
         Iterator<Count> vcit = valuesAndCounts.iterator();

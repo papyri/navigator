@@ -1,9 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
-import java.util.Iterator;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.response.FacetField.Count;
 
 /**
  * <code>BooleanFacet</code> regarding whether or not images are associated with a 
@@ -13,9 +10,9 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
  */
 public class HasImagesFacet extends BooleanFacet {
 
-    public HasImagesFacet(String formName){
+    public HasImagesFacet(){
     
-        super(SolrField.images, formName, "Images Available");
+        super(SolrField.images, FacetParam.IMG.name(), "Images Available");
     
     }
 

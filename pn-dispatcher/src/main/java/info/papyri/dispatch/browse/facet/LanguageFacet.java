@@ -15,9 +15,9 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 public class LanguageFacet extends Facet{
     
     
-    public LanguageFacet(String formName){
+    public LanguageFacet(){
         
-        super(SolrField.facet_language, formName, "Language");
+        super(SolrField.facet_language, FacetParam.LANG.name(), "Language");
         
     }
     

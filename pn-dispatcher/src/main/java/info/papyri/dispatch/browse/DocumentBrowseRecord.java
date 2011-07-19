@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * Stores and displays 
  * @author thill
  */
 

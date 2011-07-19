@@ -13,9 +13,9 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
  */
 public class HasTranslationFacet extends BooleanFacet {
     
-    public HasTranslationFacet(String formName){
+    public HasTranslationFacet(){
         
-        super(SolrField.has_translation, formName, "Has Translation");
+        super(SolrField.has_translation, FacetParam.TRANSL.name(), "Has Translation");
         
     }
     
