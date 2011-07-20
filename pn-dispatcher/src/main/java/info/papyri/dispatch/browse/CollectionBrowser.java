@@ -505,11 +505,14 @@ public class CollectionBrowser extends HttpServlet {
         ArrayList<String> previousIds = new ArrayList<String>();
         
         for(SolrDocument doc : qr.getResults()){
+            
+            try{
                    
                 DocumentBrowseRecord record;
                 String itemId = getDisplayId(pathParts, doc, previousIds);
                 if(itemId.equals("-1")) continue;
                 previousIds.add(itemId);
+                URL url = new URL((String)doc.getFieldValue(SolrField.id.name()));
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
@@ -517,26 +520,21 @@ public class CollectionBrowser extends HttpServlet {
                 Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
                 Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
+                Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
+                String translationLanguages = noTranslationLanguages ? "No translation" : (String)doc.getFieldValue(SolrField.translation_language.name());
+                
                 Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
-                String invNum = (doc.getFieldValue(SolrField.invnum.name()) == null)? "" : (String)doc.getFieldValue(SolrField.invnum.name());
-                if(pathParts.get(SolrField.collection).equals("hgv")){ 
-                   
-                   // HGV records require special treatment, as the link to their records cannot be derived from the path
-                   // to the collections that hold them. they thus have a distinct hgv_identifier field
-                   // TODO: should this be a subclass?
-                    
-                   ArrayList<String> hgvIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.hgv_identifier.name()).toString().replaceAll("[\\]\\[]", "").split(","))); 
-                   
-                   String hgvId = hgvIds.get(0);
-                   record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasImages, hasTranslation, hgvId);
-                   records.add(record);
-                }
-                 else{
-                    
-                    record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasImages, hasTranslation);
-                    records.add(record);
-                 }
+                String invNum = (String)doc.getFieldValue(SolrField.invnum.name());
+                record = new DocumentBrowseRecord(dcr, itemId, url, place, date, language, hasImages, translationLanguages, invNum);
+                records.add(record);
+                
+            } catch(MalformedURLException mui){
+                
+                System.out.println("URL malformed or missing " + mui.getMessage());
+                
+            }
             
+                 
         }
         Collections.sort(records);
         return records;          

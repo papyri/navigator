@@ -1,8 +1,6 @@
 package info.papyri.dispatch.browse;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.net.URL;
 
 /**
  * @author thill
@@ -10,53 +8,41 @@ import java.util.Iterator;
 public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
   private DocumentCollectionBrowseRecord documentGroupRecord;
-  private String displayId;
+  private String itemId;
+  private URL url;
   private String place;
   private String date;
   private String language;
-  private String hasTranslation;
+  private String translationLanguages;
   private String hasImage;
-  private String hgv_identifier;
   private String invNum;
 
-  public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans, String hgv) {
+  public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, URL url, String place, String date, String lang, Boolean hasImg, String trans, String invNum) {
 
     // TODO: this will have to be changed depending on what users want to see in the records
 
     this.documentGroupRecord = dgr;
-    this.displayId = itemId;
+    this.itemId = itemId;
+    this.url = url;
     this.place = place;
     this.date = date;
     this.language = lang;
-    this.hasTranslation = hasTrans ? "Yes" : "No";
+    this.translationLanguages = trans;
     this.hasImage = hasImg ? "Yes" : "No";
-    this.hgv_identifier = hgv;
+    this.invNum = invNum;
 
   }
 
-  public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, String place, String date, String lang, Boolean hasImg, Boolean hasTrans) {
 
-    // TODO: this will have to be changed depending on what users want to see in the records
-
-    this(dgr, itemId, place, date, lang, hasImg, hasTrans, "");
-
-
-  }
 
   @Override
   public String getHTML() {
 
-    StringBuilder displayName = new StringBuilder();
-    displayName.append(this.documentGroupRecord.getSeries());
-    displayName.append(" ");
-    displayName.append(this.documentGroupRecord.getVolume().equals("0") ? "" : this.documentGroupRecord.getVolume());
-    displayName.append(" ");
-    displayName.append(this.displayId);
     StringBuilder anchor = new StringBuilder();
     anchor.append("<a href='");
-    anchor.append(this.assembleLink());
+    anchor.append(url);
     anchor.append("'>");
-    anchor.append(displayName.toString().replaceAll("_", " "));
+    anchor.append(getDisplayId());
     anchor.append("</a>");
     StringBuilder html = new StringBuilder("<tr><td class=\"identifier\">" + anchor + "</td>");
     html.append("<td class=\"display-place\">");
@@ -69,7 +55,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(language);
     html.append("</td>");
     html.append("<td class=\"has-translation\">");
-    html.append(hasTranslation);
+    html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");
     html.append(hasImage);
@@ -79,56 +65,33 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
   }
 
-  @Override
-  public String assembleLink() {
-
-    String coll = documentGroupRecord.getCollection();
-    StringBuilder url = new StringBuilder();
-    url.append("/");
-    url.append(coll);
-    url.append("/");
-    StringBuilder item = new StringBuilder();
-
-    if ("ddbdp".equals(coll)) {
-
-      item.append(documentGroupRecord.getSeries());
-      item.append(";");
-      item.append("0".equals(documentGroupRecord.getVolume()) ? "" : documentGroupRecord.getVolume());
-      item.append(";");
-      item.append(this.displayId);
-
-
-    } else if ("hgv".equals(coll)) {
-
-      item.append(this.hgv_identifier);
-
-
-    } else {    // if APIS
-
-      item.append(this.displayId);
-
-
-
-    }
-    url.append(item);
-    url.append("/");
-    return url.toString().replaceAll("\\s", "");
-
-  }
-
   public String getDisplayId() {
-    return this.displayId;
+      
+     if(documentGroupRecord.getCollection().toUpperCase().equals("APIS") && invNum != null){
+         
+         return invNum;
+     } 
+      
+    StringBuilder displayName = new StringBuilder();
+    displayName.append(this.documentGroupRecord.getSeries());
+    displayName.append(" ");
+    displayName.append(this.documentGroupRecord.getVolume().equals("0") ? "" : this.documentGroupRecord.getVolume());
+    displayName.append(" ");
+    displayName.append(this.itemId);
+    String rawName = displayName.toString();
+    return rawName.replaceAll("_", " ");
+  
   }
 
   @Override
   public int compareTo(Object o) {
 
     DocumentBrowseRecord comparandum = (DocumentBrowseRecord) o;
-    String thisId = this.displayId != null ? this.displayId : "";
+    String thisId = this.getDisplayId() != null ? this.getDisplayId() : "";
     String thatId = comparandum.getDisplayId() != null ? comparandum.getDisplayId() : "";
 
-    thisId = this.displayId.replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
-    thatId = comparandum.getDisplayId().replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
+    thisId = thisId.replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
+    thatId = thatId.replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
 
     if (thisId.isEmpty()) {
       thisId = "0";
@@ -149,7 +112,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       return -1;
 
     }
-    return this.displayId.compareToIgnoreCase(comparandum.getDisplayId());
+    return this.getDisplayId().compareToIgnoreCase(comparandum.getDisplayId());
 
   }
 }

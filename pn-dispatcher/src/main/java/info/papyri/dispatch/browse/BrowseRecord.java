@@ -20,18 +20,6 @@ package info.papyri.dispatch.browse;
          */
         abstract public String getHTML();
         
-        /**
-         * Returns the relative path to be associated with the Record
-         * 
-         * @return the relative path as a String
-         */
-        abstract public String assembleLink();
-        
-        /**
-         * Returns a tag or tags opening the appropriate html element(s) that wraps the list of <code>Record</code>s 
-         * 
-         * @return An html opening tag or tags
-         */
 
         
     }
