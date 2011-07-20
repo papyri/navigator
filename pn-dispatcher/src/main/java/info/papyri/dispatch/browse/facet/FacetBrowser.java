@@ -253,7 +253,7 @@ public class FacetBrowser extends HttpServlet {
            try{ 
             
                 DocumentCollectionBrowseRecord collectionInfo = getDisplayCollectionInfo(doc);
-                String displayId = getDisplayId(collectionInfo, doc);
+                String displayId = getDisplayId(doc);
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
@@ -337,23 +337,27 @@ public class FacetBrowser extends HttpServlet {
     
     /**
      * Determines the collection/series/volume-specific id number to be displayed for the passed
-     * <code>SolrDocument</code>, based on its associated <code>DocumentCollectionBrowseRecord</code>
+     * <code>SolrDocument</code>
      * 
-     * This method will need to be worked on; it's utterly dependent upon #getDisplayCollectionInfo, which is
-     * right now pretty arbitrary in its operations
      * 
-     * @param collectionInfo
      * @param doc
      * @return 
      */
     
-    private String getDisplayId(DocumentCollectionBrowseRecord collectionInfo, SolrDocument doc){
+    private String getDisplayId(SolrDocument doc){
         
-        // TODO: just a bodge; see getDisplayCollectionInfo above
         
-        String collectionPrefix = collectionInfo.getCollection() + "_";
-        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));     
-        return itemIds.get(0);
+        String id = (String) doc.getFieldValue("id");
+
+        if(id.contains("/apis/")){
+            
+            String invNum = (String) doc.getFieldValue("invnum");
+            if(invNum != null) return "APIS - " + invNum;
+            
+        }
+        
+        return id;
+        
         
     }
     

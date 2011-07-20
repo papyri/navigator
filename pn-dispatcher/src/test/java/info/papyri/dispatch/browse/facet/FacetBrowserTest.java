@@ -29,12 +29,7 @@ public class FacetBrowserTest extends TestCase {
         super.setUp();
         facetBrowser = new FacetBrowser();
         mockRequest = createStrictMock(HttpServletRequest.class);
-        paramsToFacets = new EnumMap<FacetParam, Facet>(FacetParam.class);
-        paramsToFacets.put(FacetParam.IMG, new HasImagesFacet(FacetParam.IMG.name()));
-        paramsToFacets.put(FacetParam.LANG, new LanguageFacet(FacetParam.LANG.name()));
-        paramsToFacets.put(FacetParam.TRANSL, new HasTranslationFacet(FacetParam.TRANSL.name()));
-        paramsToFacets.put(FacetParam.TRANSC, new HasTranscriptionFacet(FacetParam.TRANSC.name()));
-        paramsToFacets.put(FacetParam.DATE_START, new DateStartFacet(FacetParam.DATE_START.name()));
+
         
     }
     
@@ -49,17 +44,8 @@ public class FacetBrowserTest extends TestCase {
         paramMap.put("TRANSL", new String[]{"true"});
         paramMap.put("LANG", new String[]{"grc"});
         expect(mockRequest.getParameterMap()).andReturn(paramMap);
-        
-        replay(mockRequest);
-        assertTrue(facetBrowser.parseRequestToFacets(mockRequest, paramsToFacets));
-        verify(mockRequest);
 
-        assert(paramsToFacets.get(FacetParam.TRANSL).facetConstraints.get(0).equals("true"));
-        assert(paramsToFacets.get(FacetParam.LANG).facetConstraints.get(0).equals("grc"));
-        
     }
     
-  
-
     
 }

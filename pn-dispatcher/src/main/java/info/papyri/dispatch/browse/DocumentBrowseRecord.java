@@ -26,7 +26,7 @@ import java.util.Iterator;
             // TODO: this will have to be changed depending on what users want to see in the records
             
             this.documentGroupRecord = dgr;
-            this.displayId = itemId;
+            this.displayId = tidyDisplayId(itemId);
             this.place = place;
             this.date = date;
             this.language = lang;
@@ -101,6 +101,15 @@ import java.util.Iterator;
         }
         
         public String getDisplayId(){ return this.displayId; }
+        
+        private String tidyDisplayId(String rawId){
+            
+            String id = rawId.substring("http://papyri.info/".length());
+            id = id.replaceAll(";", ".");
+            id = id.replaceAll("\\.\\.", ".");
+            return id;
+            
+        }
 
         @Override
         public int compareTo(Object o) {
