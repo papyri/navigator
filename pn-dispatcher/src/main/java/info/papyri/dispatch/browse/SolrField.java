@@ -18,10 +18,12 @@ public enum SolrField {
         language,
         hgv_identifier,
         images,
+        invnum,
         facet_language,
         full_identifier,
         item_letter,
         transcription,
+        translations,
         date_category,
         unknown_date_flag,
         transcription_ngram_ia
