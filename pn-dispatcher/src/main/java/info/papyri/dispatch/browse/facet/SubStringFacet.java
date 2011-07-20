@@ -19,7 +19,7 @@ public class SubStringFacet extends Facet{
     
     public SubStringFacet(){
         
-        super(SolrField.transcription_ngram_ia, FacetParam.SUBSTRING.name(), "Substring Search<br>(ignores caps,<br/>ignores accents)");
+        super(SolrField.transcription_ngram_ia, FacetParam.SUBSTRING, "Substring Search<br>(ignores caps,<br/>ignores accents)");
         
         
     }
@@ -58,7 +58,7 @@ public class SubStringFacet extends Facet{
         StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getToolTipText() + "\">");
         html.append(generateHiddenFields());
         html.append("<span class=\"widget-label\">" + displayName + "</span>" );
-        html.append("<input type=\"text\" name=\"" + formName + "\" size=\"40\" maxlength=\"250\"></input>");
+        html.append("<input type=\"text\" name=\"" + formName.name() + "\" size=\"40\" maxlength=\"250\"></input>");
         html.append("</div><!-- closing .facet-widget -->");
         return html.toString();
         

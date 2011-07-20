@@ -22,7 +22,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  */
 abstract public class BooleanFacet extends Facet{
     
-    public BooleanFacet(SolrField sf, String formName, String displayName){
+    public BooleanFacet(SolrField sf, FacetParam formName, String displayName){
         
         super(sf, formName, displayName);
         
@@ -75,7 +75,7 @@ abstract public class BooleanFacet extends Facet{
         
         for(int i = 0; i < facetConstraints.size(); i++){
             
-            String name = formName; 
+            String name = formName.name(); 
             String value = facetConstraints.get(i);
             if(value == null) value = "false";
             html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
@@ -94,7 +94,7 @@ abstract public class BooleanFacet extends Facet{
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">" + getDisplayName(null) + "</span>");
-        html.append("<select" + disabled + " name=\"" + formName + "\">");
+        html.append("<select" + disabled + " name=\"" + formName.name() + "\">");
         html.append("<option " + defaultSelected + " value=\"default\">" + Facet.defaultValue + "</option>");
         Iterator<Count> vcit = valuesAndCounts.iterator();
         

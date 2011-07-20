@@ -42,7 +42,7 @@ abstract public class Facet {
      * 
      *  @see FacetParam
      */
-    String formName;
+    FacetParam formName;
     
     /** The label displayed to the user */
     String displayName;
@@ -55,7 +55,7 @@ abstract public class Facet {
      * @param formName
      * @param displayName 
      */
-    public Facet(SolrField sf, String formName, String displayName){
+    public Facet(SolrField sf, FacetParam formName, String displayName){
         
         this.field = sf; 
         this.formName = formName;
@@ -111,7 +111,7 @@ abstract public class Facet {
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">" + getDisplayName(null) + "</span>");
-        html.append("<select" + disabled + " name=\"" + formName + "\">");
+        html.append("<select" + disabled + " name=\"" + formName.name() + "\">");
         html.append("<option " + defaultSelected +  " value=\"default\">" + Facet.defaultValue + "</option>");
         
         Iterator<Count> vcit = valuesAndCounts.iterator();
@@ -153,7 +153,7 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String value = cit.next();
-            queryString += formName + "=" + value;
+            queryString += formName.name() + "=" + value;
             if(cit.hasNext()) queryString += "&";
             
             
@@ -233,7 +233,7 @@ abstract public class Facet {
         
         for(int i = 0; i < facetConstraints.size(); i++){
             
-            String name = formName; 
+            String name = formName.name(); 
             String value = facetConstraints.get(i);
             html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
             
@@ -313,7 +313,7 @@ abstract public class Facet {
     
     public String[] getFormNames(){
         
-        String[] formNames = {formName};
+        String[] formNames = {formName.name()};
         
         return formNames;
         

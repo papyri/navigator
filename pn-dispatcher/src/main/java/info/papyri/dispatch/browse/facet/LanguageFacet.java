@@ -17,7 +17,7 @@ public class LanguageFacet extends Facet{
     
     public LanguageFacet(){
         
-        super(SolrField.facet_language, FacetParam.LANG.name(), "Language");
+        super(SolrField.facet_language, FacetParam.LANG, "Language");
         
     }
     

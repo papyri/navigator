@@ -31,7 +31,7 @@ public class DateFacet extends Facet {
    
    public DateFacet(){
         
-        super(SolrField.date_category, "Date dummy", "Date dummy");
+        super(SolrField.date_category, FacetParam.DATE_START, "Date dummy");
         dateCountComparator = new Comparator() {
 
             @Override

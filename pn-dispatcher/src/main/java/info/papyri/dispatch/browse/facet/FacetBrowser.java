@@ -116,7 +116,7 @@ public class FacetBrowser extends HttpServlet {
         facets.add(new DateFacet());
         facets.add(new HasImagesFacet());
         facets.add(new HasTranscriptionFacet());
-        facets.add(new HasTranslationFacet());
+        facets.add(new TranslationFacet());
         
         return facets;
         
@@ -254,35 +254,31 @@ public class FacetBrowser extends HttpServlet {
             
                 DocumentCollectionBrowseRecord collectionInfo = getDisplayCollectionInfo(doc);
                 String displayId = getDisplayId(doc);
+                URL url = new URL((String) doc.getFieldValue(SolrField.id.name()));
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
                 String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());
                 Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
-                Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
+                Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
+                String translationLanguages = noTranslationLanguages ? "No translation" : (String)doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
                 Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;            
-                DocumentBrowseRecord record;
-                
-                if("hgv".equals(collectionInfo.getCollection())){
-                    
-                   ArrayList<String> hgvIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.hgv_identifier.name()).toString().replaceAll("[\\]\\[]", "").split(","))); 
-                   String hgvId = hgvIds.get(0);
-                   record = new DocumentBrowseRecord(collectionInfo, displayId, place, date, language, hasImages, hasTranslation, hgvId);
-                   records.add(record);
-                }
-                else{
-                    
-                    record = new DocumentBrowseRecord(collectionInfo, displayId, place, date, language, hasImages, hasTranslation);
-                    records.add(record);
-                }
-                
+                String invNum = (String)doc.getFieldValue(SolrField.invnum.name());
+                DocumentBrowseRecord record;           
+                record = new DocumentBrowseRecord(collectionInfo, displayId, url, place, date, language, hasImages, translationLanguages, invNum);
+                records.add(record);
                 
            }
            catch (FieldNotFoundException fnfe){
                
                System.out.println(fnfe.getError());
                continue;
+           }
+           catch (MalformedURLException mue){
+               
+               System.out.print("Malformed URL: " + mue.getMessage());
+               
            }
         }
         
@@ -348,14 +344,9 @@ public class FacetBrowser extends HttpServlet {
         
         String id = (String) doc.getFieldValue("id");
 
-        if(id.contains("/apis/")){
-            
-            String invNum = (String) doc.getFieldValue("invnum");
-            if(invNum != null) return "APIS - " + invNum;
-            
-        }
+        String idBits[] = id.split(";");
         
-        return id;
+        return idBits[idBits.length - 1];
         
         
     }
