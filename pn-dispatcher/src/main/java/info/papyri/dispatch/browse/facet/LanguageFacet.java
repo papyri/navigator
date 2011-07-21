@@ -2,10 +2,14 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.LanguageCode;
 import info.papyri.dispatch.browse.SolrField;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
-import org.apache.solr.client.solrj.SolrQuery;
+import java.util.List;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
+import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
  * <code>Facet</code> for selection by language
@@ -35,6 +39,7 @@ public class LanguageFacet extends Facet{
     @Override
     public String getDisplayValue(String languageCode){
         
+        languageCode = LanguageCode.filterModernLanguageCodes(languageCode);
         String displayValue = "";
         
         try{
@@ -53,6 +58,41 @@ public class LanguageFacet extends Facet{
         return displayValue;
         
     }
+    
+    public void setWidgetValues(QueryResponse queryResponse){
+        
+        FacetField facetField = queryResponse.getFacetField(field.name());
+        valuesAndCounts = new ArrayList<Count>();
+        List<Count> unfiltered = facetField.getValues();
+        Iterator<Count> cit = unfiltered.iterator();
+        while(cit.hasNext()){
+            
+            Count count = cit.next();            
+            if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0 && !count.getName().equals("null") && !LanguageCode.modernLanguageCodes.contains(count.getName())) valuesAndCounts.add(count);
+            
+        }
+        
+        Collections.sort(valuesAndCounts, new Comparator(){
+
+            @Override
+            public int compare(Object t, Object t1) {
+                
+                Count count1 = (Count) t;
+                Count count2 = (Count) t1;
+                
+                if(count1.getCount() < count2.getCount()) return 1;
+                if(count1.getCount() > count2.getCount()) return -1;
+                return 0;
+                 
+                
+            }
+        
+        
+        });
+        
+        
+          
+    } 
     
     @Override
     String getToolTipText() {

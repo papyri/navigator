@@ -53,8 +53,8 @@ public enum LanguageCode {
     xpr_Prti("Parthian");
     
     private String expanded;
-    private static ArrayList<String> modernLanguages = new ArrayList<String>(Arrays.asList("English", "German", "French"));
-    private static ArrayList<String> modernLanguageCodes = new ArrayList<String>(Arrays.asList("en", "de", "fr"));
+    public static ArrayList<String> modernLanguages = new ArrayList<String>(Arrays.asList("English", "German", "French"));
+    public static ArrayList<String> modernLanguageCodes = new ArrayList<String>(Arrays.asList("en", "de", "fr"));
     
     LanguageCode(String ex){
         
