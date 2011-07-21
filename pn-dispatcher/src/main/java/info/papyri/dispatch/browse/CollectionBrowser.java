@@ -217,10 +217,12 @@ public class CollectionBrowser extends HttpServlet {
     
     String buildSparqlQuery(LinkedHashMap<SolrField, String> pathParts){
         
-        StringBuffer queryBuffer = new StringBuffer("PREFIX dc:<http://purl.org/dc/terms/> ");
-        queryBuffer.append("PREFIX pyr: <http://papyri.info/> ");
-        queryBuffer.append("SELECT ?child ?grandchild ");
-        queryBuffer.append("FROM " + SPARQL_GRAPH + " ");
+        StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
+        queryBuilder.append("PREFIX pyr: <http://papyri.info/> ");
+        queryBuilder.append("SELECT ?child ?grandchild ");
+        queryBuilder.append("FROM ");
+        queryBuilder.append(SPARQL_GRAPH);
+        queryBuilder.append(" ");
        
         // extract info from pathbits
         
@@ -241,10 +243,12 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
-        queryBuffer.append("WHERE { <pyr:" + subj + "> dc:hasPart ?child . ");
-        queryBuffer.append("OPTIONAL { ?child dc:hasPart ?grandchild . } }");
+        queryBuilder.append("WHERE { <pyr:");
+        queryBuilder.append(subj);
+        queryBuilder.append("> dc:hasPart ?child . ");
+        queryBuilder.append("OPTIONAL { ?child dc:hasPart ?grandchild . } }");
         
-        return queryBuffer.toString();
+        return queryBuilder.toString();
         
     }
     
@@ -594,7 +598,7 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
-        if(collsToIds.size() == 0) return "-1";  
+        if(collsToIds.isEmpty()) return "-1";  
         String currentKey = pathParts.get(SolrField.series) + "|" + (pathParts.get(SolrField.volume) == null ? "0" : pathParts.get(SolrField.volume));
         String possId = collsToIds.get(currentKey);
         if(possId == null) possId = "-1";
@@ -678,7 +682,9 @@ public class CollectionBrowser extends HttpServlet {
      */
     String buildHTML(LinkedHashMap<SolrField, String> pathParts, ArrayList<BrowseRecord> records, int page, long totalResults){
         
-        StringBuffer html = new StringBuffer("<h2>" + pathParts.get(SolrField.collection) + "</h2>");
+        StringBuilder html = new StringBuilder("<h2>");
+        html.append(pathParts.get(SolrField.collection));
+        html.append("</h2>"); 
         html = page != 0 ?  buildDocumentsHTML(pathParts, html, records, totalResults) : buildCollectionsHTML(html, records);
         return html.toString();
         
@@ -694,7 +700,7 @@ public class CollectionBrowser extends HttpServlet {
      * @see DocumentCollectionBrowseRecord#getHTML() 
      */
     
-    private StringBuffer buildCollectionsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
+    private StringBuilder buildCollectionsHTML(StringBuilder html, ArrayList<BrowseRecord> records){
        
         int numColumns = records.size() > 20 ? 5 : 1;
         int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
@@ -737,7 +743,7 @@ public class CollectionBrowser extends HttpServlet {
      * @see DocumentBrowseRecord#getHTML() 
      */
     
-    private StringBuffer buildDocumentsHTML(LinkedHashMap<SolrField, String> pathParts, StringBuffer html, ArrayList<BrowseRecord> records, long totalResultSetSize){
+    private StringBuilder buildDocumentsHTML(LinkedHashMap<SolrField, String> pathParts, StringBuilder html, ArrayList<BrowseRecord> records, long totalResultSetSize){
         
         html.append("<table>");
         html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Has translation</td><td>Has images</td></tr>");
@@ -773,7 +779,10 @@ public class CollectionBrowser extends HttpServlet {
             for(int i = 1; i <= numPages; i++){
                 
                 html.append("<div class=\"page\">");
-                html.append("<a href=\"" + pathBase + String.valueOf(i) + "\">");
+                html.append("<a href=\"");
+                html.append(pathBase);
+                html.append(String.valueOf(i));
+                html.append("\">");
                 html.append(String.valueOf(i));
                 html.append("</a></div>");   
                 

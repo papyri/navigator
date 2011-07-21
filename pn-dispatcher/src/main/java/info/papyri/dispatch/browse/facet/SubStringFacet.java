@@ -53,17 +53,25 @@ public class SubStringFacet extends Facet{
         
     }
     
+    @Override
     public String generateWidget() {
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getToolTipText() + "\">");
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getToolTipText());
+        html.append("\">");
         html.append(generateHiddenFields());
-        html.append("<span class=\"widget-label\">" + displayName + "</span>" );
-        html.append("<input type=\"text\" name=\"" + formName.name() + "\" size=\"40\" maxlength=\"250\"></input>");
+        html.append("<span class=\"widget-label\">");
+        html.append(displayName);
+        html.append("</span>" );
+        html.append("<input type=\"text\" name=\"");
+        html.append(formName.name());
+        html.append("\" size=\"40\" maxlength=\"250\"></input>");
         html.append("</div><!-- closing .facet-widget -->");
         return html.toString();
         
     }
     
+    @Override
     public void addConstraint(String newValue){
         
         if(newValue.equals(Facet.defaultValue) || "".equals(newValue)) return;
@@ -72,9 +80,11 @@ public class SubStringFacet extends Facet{
     }
          
          
+    @Override
     public void setWidgetValues(QueryResponse queryResponse){}       
          
     
+    @Override
     public String getToolTipText(){
         
         return "Performs a substring search, as though using the standard Search page. Capitalisation and diacritcs are ignored.";

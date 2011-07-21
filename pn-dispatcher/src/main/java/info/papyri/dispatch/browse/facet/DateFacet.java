@@ -125,14 +125,14 @@ public class DateFacet extends Facet {
     @Override
     public String getAsFilteredQueryString(String filterParam, String filterValue){
         
-        String field = "";
+        String filterField = "";
         String terminus = "0";
         
         if(filterParam.equals(FacetParam.DATE_START.name())){
             
             if(!terminusBeforeWhich.equals("0")){
                 
-                field = FacetParam.DATE_END.name();
+                filterField = FacetParam.DATE_END.name();
                 terminus = terminusBeforeWhich;
                 
                 
@@ -143,7 +143,7 @@ public class DateFacet extends Facet {
             
             if(!terminusAfterWhich.equals("0")){
                 
-                field = FacetParam.DATE_START.name();
+                filterField = FacetParam.DATE_START.name();
                 terminus = terminusAfterWhich;
                 
             }
@@ -151,11 +151,11 @@ public class DateFacet extends Facet {
             
         }
         
-        if("".equals(field)) return "";
+        if("".equals(filterField)) return "";
         
         String value = terminusBeforeWhich.equals("Unknown") || terminusAfterWhich.equals("Unknown") ? "Unknown" : String.valueOf(terminus);
         
-        return field + "=" + value;
+        return filterField + "=" + value;
         
     }
     
@@ -325,13 +325,23 @@ public class DateFacet extends Facet {
     
     private String generateAfterWhichWidget(){
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getAfterWhichToolTipText() + "\">");
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getAfterWhichToolTipText());
+        html.append("\">");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">Date on or after</span>");
-        html.append("<select" + disabled + " name=\"" + FacetParam.DATE_START.name() + "\">");
-        html.append("<option " + defaultSelected + "  value=\"default\">" + Facet.defaultValue + "</option>");
+        html.append("<select");
+        html.append(disabled);
+        html.append(" name=\"");
+        html.append(FacetParam.DATE_START.name());
+        html.append("\">");
+        html.append("<option ");
+        html.append(defaultSelected);
+        html.append("  value=\"default\">");
+        html.append(Facet.defaultValue);
+        html.append("</option>");
         
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
@@ -342,7 +352,15 @@ public class DateFacet extends Facet {
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
-            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");
+            html.append("<option");
+            html.append(selected);
+            html.append(" value=\"");
+            html.append(value);
+            html.append("\">");
+            html.append(displayValue);
+            html.append(" (");
+            html.append(count);
+            html.append(")</option>");
             if(value.equals("Unknown")){
                 
                 html.append("<optgroup label=\"-------------------\"></optgroup>");
@@ -360,13 +378,23 @@ public class DateFacet extends Facet {
     
     private String generateBeforeWhichWidget(){
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getBeforeWhichToolTipText() + "\">");
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getBeforeWhichToolTipText());
+        html.append("\">");
         Boolean onlyOneValue = valuesAndCountsComplement.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">Date on or before</span>");
-        html.append("<select" + disabled + " name=\"" + FacetParam.DATE_END.name() + "\">");
-        html.append("<option " + defaultSelected + "  value=\"default\">" + Facet.defaultValue + "</option>");
+        html.append("<select");
+        html.append(disabled);
+        html.append(" name=\"");
+        html.append(FacetParam.DATE_END.name());
+        html.append("\">");
+        html.append("<option ");
+        html.append(defaultSelected);
+        html.append("  value=\"default\">");
+        html.append(Facet.defaultValue);
+        html.append("</option>");
         
         Iterator<Count> vcit = valuesAndCountsComplement.iterator();
         
@@ -377,7 +405,15 @@ public class DateFacet extends Facet {
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
-            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");
+            html.append("<option");
+            html.append(selected);
+            html.append(" value=\"");
+            html.append(value);
+            html.append("\">");
+            html.append(displayValue);
+            html.append(" (");
+            html.append(count);
+            html.append(")</option>");
             if(value.equals("Unknown")){
                 
                 html.append("<optgroup label=\"-------------------\"></optgroup>");

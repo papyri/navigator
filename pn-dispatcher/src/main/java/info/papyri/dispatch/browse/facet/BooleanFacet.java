@@ -89,13 +89,25 @@ abstract public class BooleanFacet extends Facet{
     @Override
     public String generateWidget() {
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getToolTipText() + "\">");
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getToolTipText());
+        html.append("\">");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
-        html.append("<span class=\"option-label\">" + getDisplayName(null) + "</span>");
-        html.append("<select" + disabled + " name=\"" + formName.name() + "\">");
-        html.append("<option " + defaultSelected + " value=\"default\">" + Facet.defaultValue + "</option>");
+        html.append("<span class=\"option-label\">");
+        html.append(getDisplayName(null));
+        html.append("</span>");
+        html.append("<select");
+        html.append(disabled);
+        html.append(" name=\"");
+        html.append(formName.name());
+        html.append("\">");
+        html.append("<option ");
+        html.append(defaultSelected);
+        html.append(" value=\"default\">");
+        html.append(Facet.defaultValue);
+        html.append("</option>");
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
         while(vcit.hasNext()){
@@ -106,7 +118,15 @@ abstract public class BooleanFacet extends Facet{
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
-            html.append("<option" + selected + " value =\"" + value + "\">" + displayValue + " (" + count + ")</option>");            
+            html.append("<option");
+            html.append(selected);
+            html.append(" value =\"");
+            html.append(value);
+            html.append("\">");
+            html.append(displayValue);
+            html.append(" (");
+            html.append(count);
+            html.append(")</option>");            
         }
         
         html.append("</select>");

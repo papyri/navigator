@@ -307,15 +307,15 @@ public class FacetBrowser extends HttpServlet {
         // TODO: this is just a bodge, pending feedback on what the preferred ids are
         
         ArrayList<String> collections = new ArrayList<String>(Arrays.asList(doc.getFieldValue("collection").toString().replaceAll("[\\[\\]]", "").split(",")));           
-        if(collections.size() == 0) throw new FieldNotFoundException("collection");
+        if(collections.isEmpty()) throw new FieldNotFoundException("collection");
         String collection = collections.contains("ddbdp") ? "ddbdp" : (collections.contains("hgv")? "hgv" : "apis");
         String collectionPrefix = collection + "_";
         ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.series.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
         ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
         ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
         String errInfo = collections.toString() + "|" + volumes.toString() + "|" + itemIds.toString();
-        if(series.size() == 0) throw new FieldNotFoundException(collectionPrefix + "series", errInfo);    
-        if(itemIds.size() == 0) throw new FieldNotFoundException(collectionPrefix + "item", errInfo);
+        if(series.isEmpty()) throw new FieldNotFoundException(collectionPrefix + "series", errInfo);    
+        if(itemIds.isEmpty()) throw new FieldNotFoundException(collectionPrefix + "item", errInfo);
 
         if(volumes.size() > 0){
             
@@ -365,7 +365,7 @@ public class FacetBrowser extends HttpServlet {
     
     private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams){
         
-        StringBuffer html = new StringBuffer("<div id=\"facet-wrapper\">");
+        StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
         assembleWidgetHTML(facets, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
@@ -386,10 +386,12 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#generateWidget() 
      */
   
-    private StringBuffer assembleWidgetHTML(ArrayList<Facet> facets, StringBuffer html, Map<String, String[]> submittedParams){
+    private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
         
         html.append("<div id=\"facet-widgets-wrapper\">");
-        html.append("<form name=\"facets\" method=\"get\" action=\"" + FACET_PATH + "\"> ");
+        html.append("<form name=\"facets\" method=\"get\" action=\"");
+        html.append(FACET_PATH);
+        html.append("\"> ");
         Iterator<Facet> fit = facets.iterator();
         while(fit.hasNext()){
             
@@ -418,7 +420,7 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    private StringBuffer assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuffer html){
+    private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html){
         
         html.append("<div id=\"facet-records-wrapper\">");
         if(!constraintsPresent){
@@ -464,7 +466,7 @@ public class FacetBrowser extends HttpServlet {
      * @see #buildFilteredQueryString(java.util.EnumMap, info.papyri.dispatch.browse.facet.FacetParam, java.lang.String) 
      */
     
-    private StringBuffer assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuffer html, Map<String, String[]> submittedParams){
+    private StringBuilder assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
                 
         html.append("<div id=\"previous-values\">");
         
@@ -495,10 +497,16 @@ public class FacetBrowser extends HttpServlet {
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue);
                         html.append("<div class=\"facet-constraint\">");
                         html.append("<div class=\"constraint-label\">");
-                        html.append(displayName + ": " + displayFacetValue);
+                        html.append(displayName);
+                        html.append(": ");
+                        html.append(displayFacetValue);
                         html.append("</div><!-- closing .constraint-label -->");
                         html.append("<div class=\"constraint-closer\">");
-                        html.append("<a href=\"" + FACET_PATH + ("".equals(queryString) ? "" : "?") + queryString + "\" title =\"Remove facet value\">X</a>");
+                        html.append("<a href=\"");
+                        html.append(FACET_PATH);
+                        html.append("".equals(queryString) ? "" : "?");
+                        html.append(queryString);
+                        html.append("\" title =\"Remove facet value\">X</a>");
                         html.append("</div><!-- closing .constraint-closer -->");
                         html.append("<div class=\"spacer\"></div>");
                         html.append("</div><!-- closing .facet-constraint -->");
@@ -578,12 +586,20 @@ public class FacetBrowser extends HttpServlet {
         double totalWidth = widthEach * numPages;
         totalWidth = totalWidth > 100 ? 100 : totalWidth;
         
-        StringBuffer html = new StringBuffer("<div id=\"pagination\" style=\"width:" + String.valueOf(totalWidth) + "%\">");
+        StringBuilder html = new StringBuilder("<div id=\"pagination\" style=\"width:");
+        html.append(String.valueOf(totalWidth));
+        html.append("%\">");
         
         for(long i = 1; i <= numPages; i++){
             
             html.append("<div class=\"page\">");
-            html.append("<a href=\"" + FACET_PATH + "?" + fullQueryString + "page=" + i + "\">");
+            html.append("<a href=\"");
+            html.append(FACET_PATH);
+            html.append("?");
+            html.append(fullQueryString);
+            html.append("page=");
+            html.append(i);
+            html.append("\">");
             html.append(String.valueOf(i));
             html.append("</a>");
             html.append("</div><!-- closing .page -->");
