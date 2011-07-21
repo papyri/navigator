@@ -100,9 +100,6 @@ public class FacetBrowser extends HttpServlet {
         populateFacets(facets, queryResponse);
         ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-        html += solrQuery.toString();
-        html += "<br/><br/>";
-        html += String.valueOf(queryResponse.getResults().getNumFound());
         displayBrowseResult(response, html);  
      
     }
