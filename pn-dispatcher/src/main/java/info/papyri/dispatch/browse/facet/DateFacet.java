@@ -60,7 +60,7 @@ public class DateFacet extends Facet {
         
         if(terminusAfterWhich.equals("Unknown") || terminusBeforeWhich.equals("Unknown")){
             
-            solrQuery.addFilterQuery(flagField + ":true");
+            solrQuery.addFilterQuery(flagField.name() + ":true");
             return solrQuery;
             
         }
@@ -317,14 +317,15 @@ public class DateFacet extends Facet {
         
         String afterWhichWidget = generateAfterWhichWidget();
         String beforeWhichWidget = generateBeforeWhichWidget();
-        return afterWhichWidget + beforeWhichWidget;
+        String hiddenFields =  generateHiddenFields();
+
+        return hiddenFields + afterWhichWidget + beforeWhichWidget;
         
     }
     
     private String generateAfterWhichWidget(){
         
         StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getAfterWhichToolTipText() + "\">");
-        html.append(generateHiddenFields());
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
@@ -488,27 +489,76 @@ public class DateFacet extends Facet {
         
         if(params.containsKey(FacetParam.DATE_START.name())){
             
-            String dateStart = params.get(FacetParam.DATE_START.name())[0];
+            String[] startValues = params.get(FacetParam.DATE_START.name());
             
-            if(dateStart != null && !dateStart.equals("") && !dateStart.equals("default")){
+            for(int i = 0; i < startValues.length; i++){
                 
-                hasConstraint = true;               
-                terminusAfterWhich = dateStart;
+                String dateStart = startValues[i];
+                
+                if(dateStart != null && !dateStart.equals("") && !dateStart.equals("default")){
+
+                
+                    if(terminusAfterWhich.equals("0")|| dateStart.equals("Unknown")){
+                               
+                            hasConstraint = true;               
+                           terminusAfterWhich = dateStart;
+                      
+                
+                    }
+                    else{
+                    
+                        if(Integer.valueOf(dateStart) > Integer.valueOf(terminusAfterWhich)){
+                               
+                                hasConstraint = true;               
+                                terminusAfterWhich = dateStart;
+   
+                       }
+                    
+                    }
+                    
+                }
                 
             }
-            
-        }
-        if(params.containsKey(FacetParam.DATE_END.name())){
-      
-           String dateEnd = params.get(FacetParam.DATE_END.name())[0];
+                
+           }
 
-           if(dateEnd != null && !dateEnd.equals("") && !dateEnd.equals("default")){
+        if(params.containsKey(FacetParam.DATE_END.name())){
             
-               hasConstraint = true;
-               terminusBeforeWhich = dateEnd;
-              
+           String[] endValues = params.get(FacetParam.DATE_END.name());
+           
+           for(int j = 0; j < endValues.length; j++){
+               
+               String dateEnd = endValues[j];
+               
+               if(dateEnd != null && !dateEnd.equals("") && !dateEnd.equals("default")){
+
+               
+                if(terminusBeforeWhich.equals("0") || dateEnd.equals("Unknown")){
+                    
+                
+                            hasConstraint = true;               
+                            terminusBeforeWhich = dateEnd;
+                            
+                     }
+                
+                else{
+                    
+                    if(Integer.valueOf(dateEnd) < Integer.valueOf(terminusBeforeWhich)){
+                        
+                
+                            hasConstraint = true;               
+                            terminusBeforeWhich = dateEnd;
+                            
+                        
+                        
+                    }
+                    
+                }              
+               
+               }
                
            }
+      
         }
         
         return hasConstraint;
