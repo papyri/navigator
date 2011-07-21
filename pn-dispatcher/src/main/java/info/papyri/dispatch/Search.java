@@ -400,7 +400,7 @@ public class Search extends HttpServlet {
       }
       out.println("</table>");
       if (docs.getNumFound() > rows) {
-        out.println("<p id=\"resultpages\">");
+        out.println("<div id=\"pagination\">");
         int pages = (int) Math.ceil((double)docs.getNumFound() / (double)rows);
         int p = 0;
         while (p < pages) {
@@ -410,11 +410,11 @@ public class Search extends HttpServlet {
             StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
             if ("yes".equals(request.getParameter("imagesfirst"))) plink.append("&imagesfirst=yes");
             if ("yes".equals(request.getParameter("translationsfirst"))) plink.append("&translationssfirst=yes");
-            out.print("<a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a> ");
+            out.print("<div class=\"page\"><a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a></div>");
           }
           p++;
         }
-        out.println("</p>");
+        out.println("</div>");
       }
     } catch (SolrServerException e) {
       out.println("<p>Unable to execute query.  Please try again.</p>");

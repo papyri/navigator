@@ -518,7 +518,6 @@ public class CollectionBrowser extends HttpServlet {
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
                 Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
                 Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
-                String invNum = (doc.getFieldValue(SolrField.invnum.name()) == null)? "" : (String)doc.getFieldValue(SolrField.invnum.name());
                 if(pathParts.get(SolrField.collection).equals("hgv")){ 
                    
                    // HGV records require special treatment, as the link to their records cannot be derived from the path

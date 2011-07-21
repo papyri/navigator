@@ -39,17 +39,15 @@
           <!-- left nav -->
           <form method="get" accept-charset="utf-8">
             <ul class="nav ui-corner-all">
+              <li>Browse: </li>
               <li>
-                <a href="/">Home</a>
+                <a href="/browse/ddbdp/">DDbDP</a>
               </li>
               <li>
-                <a href="/browse/ddbdp/">Browse DDbDP</a>
+                <a href="/browse/hgv/">HGV</a>
               </li>
               <li>
-                <a href="/browse/hgv/">Browse HGV</a>
-              </li>
-              <li>
-                <a href="/browse/apis/">Browse APIS</a>
+                <a href="/browse/apis/">APIS</a>
               </li>
               <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
@@ -60,7 +58,7 @@
           </form>
         </div>
         <div id="main">
-          <div class="content ui-corner-all search">
+          <div class="content search">
             <!-- Search form -->
             <form action="/search" method="post" accept-charset="UTF-8" name="searchform">
               <div id="search-form-wrapper">

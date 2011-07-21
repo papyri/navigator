@@ -8,17 +8,18 @@ background: #ccc;
 body {
 color: #3c2217;
 font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
-font-size: 108%;
+font-size: 100%;
 min-height: 100%;
 }
 
 div#hd {
 background: url("/images/header.jpg");
+/*background: #5C0303;*/
 
 }
 
 #hd h1 {
-color: black;
+color: #5C0303;
 font-family: Georgia, serif;
 margin-left: 0.5em;
 margin-bottom: 0;
@@ -39,9 +40,8 @@ text-align: center;
 
 div.content {
 background: #f8f6f4;
-float: left;
 padding: 2em 1.5% 3em 1.5%;
-width: 97%;
+width: 100%;
 
 }
 
@@ -96,21 +96,20 @@ div#help {
 
 /* Left-hand Navigation */
 div.nav {
+background:#EEE;
 position: absolute;
-left: 300px;
-top: 25px;
+left: 0px;
+top: 67px;
+width:100%;
+padding:5px;
 }
 ul.nav {
 display: inline;
-background-image: url(../images/navbg.png);
 background-position: bottom;
-background-repeat: repeat-x;
-border: thin solid #426a30;
 color: black;
 font-size: 93%;
 line-height: 22px;
-margin-left: 15px;
-padding: .7em;
+padding-left:2em;
 }
 ul.nav li {
 display: inline;
@@ -125,7 +124,7 @@ display: inline;
 padding: 0.4em;
 }
 div.nav a {
-color: black;
+color: #5C0303;
 text-decoration: none;
 }
 /* Images */
@@ -406,6 +405,76 @@ table#resources p {
 div#related h4 {
   font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 }
+
+/* Browse / Search results */
+#pagination{
+
+  position: relative;
+  margin-right: auto;
+  margin-left: auto;
+
+}
+#pagination .page{
+
+  width: 30px;
+  min-width: 30px;
+  height: 25px;
+  float: left;
+  margin-right: 15px;
+  margin-left: 15px;
+  text-align: center;
+
+}
+
+.search table{
+  background:white;
+  border:thin solid silver;
+  margin-bottom: 2em;
+  margin-left:auto;
+  margin-right:auto;
+  width:95%;
+}
+.tablehead{
+
+  font-weight: bold;
+
+}
+.tablehead td{
+  
+  text-align: center;
+  padding-bottom: 10px;
+
+}
+
+tr.result-record {
+  border-top:thin solid silver;
+}
+
+.search td{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+td.kwic {
+  padding-left: 1em;
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+.ddbdp-ids, .hgv-ids, .apis-ids, .has-translation{
+
+  text-align: center;
+
+}
+
+.collections-column{
+
+  width: 18%;
+  padding: 1%;
+  float: left;
+  margin-top: 1em;
+
+}
+
 
 /* FOOTER STYLES */
 
