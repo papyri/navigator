@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse;
 
+import info.papyri.dispatch.LanguageCode;
 import java.net.URL;
 
 /**
@@ -26,7 +27,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.url = url;
     this.place = place;
     this.date = date;
-    this.language = lang;
+    this.language = expandLanguageCode(lang);
     this.translationLanguages = trans;
     this.hasImage = hasImg ? "Yes" : "No";
     this.invNum = invNum;
@@ -81,6 +82,40 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     String rawName = displayName.toString();
     return rawName.replaceAll("_", " ");
   
+  }
+  
+  private String expandLanguageCode(String languageCodes){
+      
+      
+        String expandedCodes = "";
+        
+        String[] codes = languageCodes.split(", ");
+        
+        for(int i = 0; i < codes.length; i++){
+            
+            String code = codes[i];
+            String expandedCode;
+            
+            try{
+            
+                String swappedLanguageCode = code.replaceAll("-", "_");
+                LanguageCode lang = LanguageCode.valueOf(swappedLanguageCode);
+                expandedCode = lang.expanded();
+            
+            } 
+            catch(IllegalArgumentException iae){
+            
+                expandedCode = code;
+
+            }
+            
+            expandedCodes += expandedCode;
+            if(i < codes.length - 1) expandedCodes += ", ";
+            
+        }
+
+        return expandedCodes;
+           
   }
 
   @Override

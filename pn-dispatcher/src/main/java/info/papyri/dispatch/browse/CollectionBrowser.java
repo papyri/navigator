@@ -519,10 +519,8 @@ public class CollectionBrowser extends HttpServlet {
                 String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());
                 Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
-                Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
-                String translationLanguages = noTranslationLanguages ? "No translation" : (String)doc.getFieldValue(SolrField.translation_language.name());
-                
+                String translationLanguages = noTranslationLanguages ? "No translation" : doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");     
                 Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
                 String invNum = (String)doc.getFieldValue(SolrField.invnum.name());
                 record = new DocumentBrowseRecord(dcr, itemId, url, place, date, language, hasImages, translationLanguages, invNum);

@@ -100,6 +100,9 @@ public class FacetBrowser extends HttpServlet {
         populateFacets(facets, queryResponse);
         ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        html += solrQuery.toString();
+        html += "<br/><br/>";
+        html += String.valueOf(queryResponse.getResults().getNumFound());
         displayBrowseResult(response, html);  
      
     }
@@ -435,7 +438,7 @@ public class FacetBrowser extends HttpServlet {
         else{
             
             html.append("<table>");
-            html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Has translation</td><td>Has images</td></tr>");
+            html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translation</td><td>Has images</td></tr>");
             Iterator<DocumentBrowseRecord> rit = returnedRecords.iterator();
             
             while(rit.hasNext()){

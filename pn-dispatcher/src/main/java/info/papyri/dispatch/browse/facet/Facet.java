@@ -86,7 +86,7 @@ abstract public class Facet {
             // as an escape character
             fq = fq.replaceAll("\\\\", "\\\\\\\\");
             if(fq.contains(" ")) fq = "\"" + fq + "\"";
-            fq = field + ":" + fq;
+            fq = field.name() + ":" + fq;
             solrQuery.addFilterQuery(fq);
             
             
@@ -185,7 +185,7 @@ abstract public class Facet {
 
             if(!value.equals(filterValue)){
                 
-                queryString += formName + "=" + value;
+                queryString += formName.name() + "=" + value;
                 queryString += "&";
                 
             }
@@ -247,9 +247,9 @@ abstract public class Facet {
         
         Boolean hasConstraint = false;
         
-        if(params.containsKey(this.formName)){
+        if(params.containsKey(this.formName.name())){
             
-            String[] values = params.get(this.formName);
+            String[] values = params.get(formName.name());
             
             for(int i = 0; i < values.length; i++){
                 
