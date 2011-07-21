@@ -2,6 +2,9 @@ package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.LanguageCode;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author thill
@@ -27,8 +30,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.url = url;
     this.place = place;
     this.date = date;
-    this.language = expandLanguageCode(lang);
-    this.translationLanguages = trans;
+    this.language = tidyAncientLanguages(lang);
+    this.translationLanguages = expandLanguageCodes(trans);
     this.hasImage = hasImg ? "Yes" : "No";
     this.invNum = invNum;
 
@@ -84,16 +87,23 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   }
   
-  private String expandLanguageCode(String languageCodes){
+  private String expandLanguageCodes(String languageCodes){
       
       
         String expandedCodes = "";
         
-        String[] codes = languageCodes.split(", ");
+        String[] codes = languageCodes.split(",");
+        Collections.sort(Arrays.asList(codes));
+        
+        ArrayList<String> previousCodes = new ArrayList<String>();
         
         for(int i = 0; i < codes.length; i++){
             
-            String code = codes[i];
+            String code = codes[i].trim();
+            
+            if(previousCodes.contains(code)) continue;
+            previousCodes.add(code);
+            
             String expandedCode;
             
             try{
@@ -116,6 +126,28 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
         return expandedCodes;
            
+  }
+  
+  private String tidyAncientLanguages(String rawLanguages){
+      
+      String filteredLanguages = LanguageCode.filterModernLanguages(rawLanguages);
+      
+      String[] splitLanguages = filteredLanguages.split(",");
+      
+      Collections.sort(Arrays.asList(splitLanguages));
+      
+      String alphabetized = "";
+      
+      for(int i = 0; i < splitLanguages.length; i++){
+          
+          alphabetized += splitLanguages[i];
+          
+          if(i < splitLanguages.length - 1) alphabetized += ", ";
+          
+      }
+      
+      return alphabetized;
+      
   }
 
   @Override
