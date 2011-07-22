@@ -171,6 +171,9 @@
                 </xsl:if>
               </xsl:for-each>
             </field>
+            <xsl:if test="string-length($textnfd) > 0">
+              <field name="has_transcription">true</field>
+            </xsl:if>
             <xsl:variable name="languages"
               select="distinct-values(//t:div[@type='edition']/descendant-or-self::*/@xml:lang)"/>
             <xsl:for-each select="//t:langUsage/t:language">
@@ -200,7 +203,7 @@
               </xsl:call-template>
               <xsl:call-template name="translation">
                 <xsl:with-param name="docs"
-                  select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
+                  select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
                 />
               </xsl:call-template>
             </xsl:if>
@@ -625,6 +628,14 @@
       <field name="translation">
         <xsl:value-of select="."/>
       </field>
+      <xsl:variable name="trans_lang">
+        <!-- defaults to 'en' -->
+        <xsl:choose>
+          <xsl:when test="@xml:lang"><xsl:value-of select="@xml:lang"></xsl:value-of></xsl:when>
+          <xsl:otherwise>en</xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <field name="translation_language"><xsl:value-of select="$trans_lang"></xsl:value-of></field>
     </xsl:for-each>
     <xsl:if test="$docs//t:div[@type='translation']">
       <field name="has_translation">true</field>

@@ -15,7 +15,7 @@ public class PlaceFacet extends Facet {
     
     public PlaceFacet(){
         
-        super(SolrField.display_place, FacetParam.PLACE.name(), "Provenance");
+        super(SolrField.display_place, FacetParam.PLACE, "Provenance");
         
     }
     

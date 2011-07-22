@@ -31,7 +31,7 @@ public class DateFacet extends Facet {
    
    public DateFacet(){
         
-        super(SolrField.date_category, "Date dummy", "Date dummy");
+        super(SolrField.date_category, FacetParam.DATE_START, "Date dummy");
         dateCountComparator = new Comparator() {
 
             @Override
@@ -60,7 +60,7 @@ public class DateFacet extends Facet {
         
         if(terminusAfterWhich.equals("Unknown") || terminusBeforeWhich.equals("Unknown")){
             
-            solrQuery.addFilterQuery(flagField + ":true");
+            solrQuery.addFilterQuery(flagField.name() + ":true");
             return solrQuery;
             
         }
@@ -125,14 +125,14 @@ public class DateFacet extends Facet {
     @Override
     public String getAsFilteredQueryString(String filterParam, String filterValue){
         
-        String field = "";
+        String filterField = "";
         String terminus = "0";
         
         if(filterParam.equals(FacetParam.DATE_START.name())){
             
             if(!terminusBeforeWhich.equals("0")){
                 
-                field = FacetParam.DATE_END.name();
+                filterField = FacetParam.DATE_END.name();
                 terminus = terminusBeforeWhich;
                 
                 
@@ -143,7 +143,7 @@ public class DateFacet extends Facet {
             
             if(!terminusAfterWhich.equals("0")){
                 
-                field = FacetParam.DATE_START.name();
+                filterField = FacetParam.DATE_START.name();
                 terminus = terminusAfterWhich;
                 
             }
@@ -151,11 +151,11 @@ public class DateFacet extends Facet {
             
         }
         
-        if("".equals(field)) return "";
+        if("".equals(filterField)) return "";
         
         String value = terminusBeforeWhich.equals("Unknown") || terminusAfterWhich.equals("Unknown") ? "Unknown" : String.valueOf(terminus);
         
-        return field + "=" + value;
+        return filterField + "=" + value;
         
     }
     
@@ -317,20 +317,31 @@ public class DateFacet extends Facet {
         
         String afterWhichWidget = generateAfterWhichWidget();
         String beforeWhichWidget = generateBeforeWhichWidget();
-        return afterWhichWidget + beforeWhichWidget;
+        String hiddenFields =  generateHiddenFields();
+
+        return hiddenFields + afterWhichWidget + beforeWhichWidget;
         
     }
     
     private String generateAfterWhichWidget(){
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getAfterWhichToolTipText() + "\">");
-        html.append(generateHiddenFields());
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getAfterWhichToolTipText());
+        html.append("\">");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">Date on or after</span>");
-        html.append("<select" + disabled + " name=\"" + FacetParam.DATE_START.name() + "\">");
-        html.append("<option " + defaultSelected + "  value=\"default\">" + Facet.defaultValue + "</option>");
+        html.append("<select");
+        html.append(disabled);
+        html.append(" name=\"");
+        html.append(FacetParam.DATE_START.name());
+        html.append("\">");
+        html.append("<option ");
+        html.append(defaultSelected);
+        html.append("  value=\"default\">");
+        html.append(Facet.defaultValue);
+        html.append("</option>");
         
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
@@ -341,7 +352,15 @@ public class DateFacet extends Facet {
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
-            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");
+            html.append("<option");
+            html.append(selected);
+            html.append(" value=\"");
+            html.append(value);
+            html.append("\">");
+            html.append(displayValue);
+            html.append(" (");
+            html.append(count);
+            html.append(")</option>");
             if(value.equals("Unknown")){
                 
                 html.append("<optgroup label=\"-------------------\"></optgroup>");
@@ -359,13 +378,23 @@ public class DateFacet extends Facet {
     
     private String generateBeforeWhichWidget(){
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getBeforeWhichToolTipText() + "\">");
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getBeforeWhichToolTipText());
+        html.append("\">");
         Boolean onlyOneValue = valuesAndCountsComplement.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">Date on or before</span>");
-        html.append("<select" + disabled + " name=\"" + FacetParam.DATE_END.name() + "\">");
-        html.append("<option " + defaultSelected + "  value=\"default\">" + Facet.defaultValue + "</option>");
+        html.append("<select");
+        html.append(disabled);
+        html.append(" name=\"");
+        html.append(FacetParam.DATE_END.name());
+        html.append("\">");
+        html.append("<option ");
+        html.append(defaultSelected);
+        html.append("  value=\"default\">");
+        html.append(Facet.defaultValue);
+        html.append("</option>");
         
         Iterator<Count> vcit = valuesAndCountsComplement.iterator();
         
@@ -376,7 +405,15 @@ public class DateFacet extends Facet {
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
-            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");
+            html.append("<option");
+            html.append(selected);
+            html.append(" value=\"");
+            html.append(value);
+            html.append("\">");
+            html.append(displayValue);
+            html.append(" (");
+            html.append(count);
+            html.append(")</option>");
             if(value.equals("Unknown")){
                 
                 html.append("<optgroup label=\"-------------------\"></optgroup>");
@@ -488,27 +525,76 @@ public class DateFacet extends Facet {
         
         if(params.containsKey(FacetParam.DATE_START.name())){
             
-            String dateStart = params.get(FacetParam.DATE_START.name())[0];
+            String[] startValues = params.get(FacetParam.DATE_START.name());
             
-            if(dateStart != null && !dateStart.equals("") && !dateStart.equals("default")){
+            for(int i = 0; i < startValues.length; i++){
                 
-                hasConstraint = true;               
-                terminusAfterWhich = dateStart;
+                String dateStart = startValues[i];
+                
+                if(dateStart != null && !dateStart.equals("") && !dateStart.equals("default")){
+
+                
+                    if(terminusAfterWhich.equals("0")|| dateStart.equals("Unknown")){
+                               
+                            hasConstraint = true;               
+                           terminusAfterWhich = dateStart;
+                      
+                
+                    }
+                    else{
+                    
+                        if(Integer.valueOf(dateStart) > Integer.valueOf(terminusAfterWhich)){
+                               
+                                hasConstraint = true;               
+                                terminusAfterWhich = dateStart;
+   
+                       }
+                    
+                    }
+                    
+                }
                 
             }
-            
-        }
-        if(params.containsKey(FacetParam.DATE_END.name())){
-      
-           String dateEnd = params.get(FacetParam.DATE_END.name())[0];
+                
+           }
 
-           if(dateEnd != null && !dateEnd.equals("") && !dateEnd.equals("default")){
+        if(params.containsKey(FacetParam.DATE_END.name())){
             
-               hasConstraint = true;
-               terminusBeforeWhich = dateEnd;
-              
+           String[] endValues = params.get(FacetParam.DATE_END.name());
+           
+           for(int j = 0; j < endValues.length; j++){
+               
+               String dateEnd = endValues[j];
+               
+               if(dateEnd != null && !dateEnd.equals("") && !dateEnd.equals("default")){
+
+               
+                if(terminusBeforeWhich.equals("0") || dateEnd.equals("Unknown")){
+                    
+                
+                            hasConstraint = true;               
+                            terminusBeforeWhich = dateEnd;
+                            
+                     }
+                
+                else{
+                    
+                    if(Integer.valueOf(dateEnd) < Integer.valueOf(terminusBeforeWhich)){
+                        
+                
+                            hasConstraint = true;               
+                            terminusBeforeWhich = dateEnd;
+                            
+                        
+                        
+                    }
+                    
+                }              
+               
+               }
                
            }
+      
         }
         
         return hasConstraint;

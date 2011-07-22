@@ -1,5 +1,9 @@
 package info.papyri.dispatch;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
 /**
  * Maps BCP 47 language tags to expanded values for display
  * 
@@ -49,6 +53,8 @@ public enum LanguageCode {
     xpr_Prti("Parthian");
     
     private String expanded;
+    public static ArrayList<String> modernLanguages = new ArrayList<String>(Arrays.asList("English", "German", "French"));
+    public static ArrayList<String> modernLanguageCodes = new ArrayList<String>(Arrays.asList("en", "de", "fr"));
     
     LanguageCode(String ex){
         
@@ -59,6 +65,58 @@ public enum LanguageCode {
     public String expanded(){
         
         return expanded;
+        
+    }
+    
+    public static String filterModernLanguages(String rawString){
+        
+        
+        String[] passedLanguages = rawString.split(",");
+        ArrayList<String> filteredLanguages = new ArrayList<String>();
+        String filtered = "";
+        
+        for(int i = 0; i < passedLanguages.length; i++){
+            
+            String passedLanguage = passedLanguages[i].trim();
+            if(!modernLanguages.contains(passedLanguage)) filteredLanguages.add(passedLanguage);           
+            
+        }
+        
+        Iterator<String> flit = filteredLanguages.iterator();
+        while(flit.hasNext()){
+            
+            filtered += flit.next();
+            if(flit.hasNext()) filtered += ", ";
+                
+        }
+        
+        return filtered;
+        
+    }
+    
+    public static String filterModernLanguageCodes(String rawString){
+        
+        String[] passedLanguages = rawString.split(",");
+        ArrayList<String> filteredLanguages = new ArrayList<String>();
+        String filtered = "";
+        
+        for(int i = 0; i < passedLanguages.length; i++){
+            
+            String passedLanguage = passedLanguages[i].trim();
+            if(!modernLanguageCodes.contains(passedLanguage)) filteredLanguages.add(passedLanguage);           
+            
+        }
+        
+        Iterator<String> flit = filteredLanguages.iterator();
+        while(flit.hasNext()){
+            
+            filtered += flit.next();
+            if(flit.hasNext()) filtered += ", ";
+                
+        }
+        
+        return filtered;        
+       
         
     }
             

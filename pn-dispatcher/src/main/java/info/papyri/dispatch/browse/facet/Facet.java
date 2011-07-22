@@ -42,7 +42,7 @@ abstract public class Facet {
      * 
      *  @see FacetParam
      */
-    String formName;
+    FacetParam formName;
     
     /** The label displayed to the user */
     String displayName;
@@ -55,7 +55,7 @@ abstract public class Facet {
      * @param formName
      * @param displayName 
      */
-    public Facet(SolrField sf, String formName, String displayName){
+    public Facet(SolrField sf, FacetParam formName, String displayName){
         
         this.field = sf; 
         this.formName = formName;
@@ -86,7 +86,7 @@ abstract public class Facet {
             // as an escape character
             fq = fq.replaceAll("\\\\", "\\\\\\\\");
             if(fq.contains(" ")) fq = "\"" + fq + "\"";
-            fq = field + ":" + fq;
+            fq = field.name() + ":" + fq;
             solrQuery.addFilterQuery(fq);
             
             
@@ -105,14 +105,26 @@ abstract public class Facet {
     
      public String generateWidget() {
         
-        StringBuffer html = new StringBuffer("<div class=\"facet-widget\" title=\"" + getToolTipText() + "\">");
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getToolTipText());
+        html.append("\">");
         html.append(generateHiddenFields());
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
-        html.append("<span class=\"option-label\">" + getDisplayName(null) + "</span>");
-        html.append("<select" + disabled + " name=\"" + formName + "\">");
-        html.append("<option " + defaultSelected +  " value=\"default\">" + Facet.defaultValue + "</option>");
+        html.append("<span class=\"option-label\">");
+        html.append(getDisplayName(null));
+        html.append("</span>");
+        html.append("<select");
+        html.append(disabled);
+        html.append(" name=\"");
+        html.append(formName.name());
+        html.append("\">");
+        html.append("<option ");
+        html.append(defaultSelected);
+        html.append(" value=\"default\">");
+        html.append(Facet.defaultValue);
+        html.append("</option>");
         
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
@@ -124,7 +136,15 @@ abstract public class Facet {
             if(displayValue.length() > 60) displayValue = displayValue.substring(0, 60);
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
-            html.append("<option" + selected + " value=\"" + value + "\">" + displayValue + " (" + count + ")</option>");
+            html.append("<option");
+            html.append(selected);
+            html.append(" value=\"");
+            html.append(value);
+            html.append("\">");
+            html.append(displayValue);
+            html.append(" (");
+            html.append(count);
+            html.append(")</option>");
             
         }
         
@@ -153,7 +173,7 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String value = cit.next();
-            queryString += formName + "=" + value;
+            queryString += formName.name() + "=" + value;
             if(cit.hasNext()) queryString += "&";
             
             
@@ -185,7 +205,7 @@ abstract public class Facet {
 
             if(!value.equals(filterValue)){
                 
-                queryString += formName + "=" + value;
+                queryString += formName.name() + "=" + value;
                 queryString += "&";
                 
             }
@@ -233,7 +253,7 @@ abstract public class Facet {
         
         for(int i = 0; i < facetConstraints.size(); i++){
             
-            String name = formName; 
+            String name = formName.name(); 
             String value = facetConstraints.get(i);
             html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
             
@@ -247,9 +267,9 @@ abstract public class Facet {
         
         Boolean hasConstraint = false;
         
-        if(params.containsKey(this.formName)){
+        if(params.containsKey(this.formName.name())){
             
-            String[] values = params.get(this.formName);
+            String[] values = params.get(formName.name());
             
             for(int i = 0; i < values.length; i++){
                 
@@ -313,7 +333,7 @@ abstract public class Facet {
     
     public String[] getFormNames(){
         
-        String[] formNames = {formName};
+        String[] formNames = {formName.name()};
         
         return formNames;
         

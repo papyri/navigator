@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -6,9 +6,9 @@
       PN Search
     </title>
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
@@ -35,10 +35,10 @@
         </h1>
       </div>
       <div id="bd">
-        <div class="nav">
+        <div class="nav ui-corner-top">
           <!-- left nav -->
           <form method="get" accept-charset="utf-8">
-            <ul class="nav ui-corner-all">
+            <ul class="nav">
               <li>Browse: </li>
               <li>
                 <a href="/browse/ddbdp/">DDbDP</a>
@@ -51,6 +51,7 @@
               </li>
               <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
+              <li>or</li>
               <li>
                 <a href="/search">Search</a>
               </li>
@@ -60,11 +61,12 @@
         <div id="main">
           <div class="content search">
             <!-- Search form -->
+            <h2>Search</h2>
             <form action="/search" method="post" accept-charset="UTF-8" name="searchform">
               <div id="search-form-wrapper">
                 <div>
-                <p><input type="radio" name="type" value="phrase" id="phrase" onchange="if(this.checked){this.form.target.selectedIndex=0}"> <label for="phrase" id="phrase-label">phrase search</label> <input type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"> <label for="substring" id="substring-label">substring search</label> <input type="radio" name="type" value="proximity" id="proximity"> <label for="proximity" id="proximity-label">find within</label> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"> words</p>
-                <p><input type="text" name="keyword" value="" id="keyword" size="80"> in <select name="target" id="target" onchange="if(this.selectedIndex!=1 && this.form.substring.checked){jQuery('#phrase,#phrase-label').trigger('click')}" size="1">
+                <div>
+                <p style="background:white;border:thin solid silver;padding:1em;width:780px" class="ui-corner-all"><input type="text" name="keyword" value="" id="keyword" size="70"> in <select name="target" id="target" onchange="if(this.selectedIndex!=1 && this.form.substring.checked){jQuery('#phrase,#phrase-label').trigger('click')}" size="1">
                   <option value="all">
                     All
                   </option>
@@ -77,10 +79,29 @@
                   <option value="translation">
                     Translations
                   </option>
-                </select></p>
-                <div id="search-options"><p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text in Beta Code</label> <input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label> <input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label> <input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.target.selectedIndex=1;jQuery('#phrase,#phrase-label').trigger('click');}"> <label for="lemmas" id="lemmas-label">lemmatized search</label></p></div>
+                </select> <input type="submit" value="Search" id="search"></p>
+                <p>
+                  <a href="#" class="button" id="showeg">Examples</a>
+                  <input type="checkbox" id="togglehelp" onchange="toggleHelp()" autocomplete="off"><label for="togglehelp" id="togglehelp-label">Tool-Tips</label>
+
+                </p>
+                </div>
+                <div>
+                  <h3>Type</h3>
+                  <p><input class="type" type="radio" name="type" value="phrase" id="phrase" onchange="if(this.checked){this.form.target.selectedIndex=0}"> <label for="phrase" id="phrase-label">phrase search</label> <input class="type" class="type" type="radio" name="type" value="substring" id="substring" checked onchange="if(this.checked){this.form.target.selectedIndex=1}"> <label for="substring" id="substring-label">substring search</label> <input class="type" type="radio" name="type" value="proximity" id="proximity"> <label for="proximity" id="proximity-label">find within</label> <input type="text" name="within" value="10" id="within" size="2" style="width:1.5em"> words</p>
+                </div>
+                <div id="search-options">
+                  <h3>Options</h3>
+                  <p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text in Beta Code</label> 
+                    <br/><input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label> 
+                    <br/><input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label> 
+                    <br/><input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.target.selectedIndex=1;jQuery('#phrase,#phrase-label').trigger('click');}"> <label for="lemmas" id="lemmas-label">lemmatized search</label></p>
+                    <p><b>Sort results by:</b> 
+                      <br/><input type="checkbox" name="imagesfirst" value="yes" id="imagesfirst"> <label for="imagesfirst" id="imagesfirst-label">images first</label> 
+                      <br/><input type="checkbox" name="translationsfirst" value="" id="translationsfirst"> <label for="translationsfirst" id="translationsfirst-label">translations first</label> </p></div>
               </div>
               <div>
+                <h3>Filters</h3>
                 <p><label for="provenance">Provenance:</label> <input type="text" name="provenance" value="" id="provenance"></p>
                 <p>Date <label for="date_start">on or after</label> <input type="text/submit/hidden/button" name="date_start" value="" id="date_start"> <select name="start_era" id="start_era" onchange="" size="1">
                   <option value="bce">
@@ -102,13 +123,9 @@
                   </select> --><label for="volume">Volume:</label> <input type="text" name="volume" id="volume" size="3"></p>
                 <p><label for="apiscol">APIS collection:</label> <select name="apiscol" id="apiscol" onchange="" size="1"><option value="">All</option>
                 </select> <label for="invnum"><strong>Inventory Number <span class="pn-note">(APIS only)</span></strong></label> <input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span></p>
-                <p id="sort-options">Show records with <label for="imagesfirst" id="imagesfirst-label">images first</label><input type="checkbox" name="imagesfirst" value="yes" id="imagesfirst"> <label for="translationsfirst" id="translationsfirst-label">translations first</label><input type="checkbox" name="translationsfirst" value="" id="translationsfirst"></p>
+                
               </div>
-              <p style="text-align:center;font-size:123.1%">
-                <a href="#" class="button" id="showeg">Examples</a>
-                <input type="checkbox" id="togglehelp" onchange="toggleHelp()" autocomplete="off"><label for="togglehelp" id="togglehelp-label">Help</label>
-                <input type="submit" value="Search" id="search" style="height:52px">
-              </p>
+              
                 </div><!-- close #search-form-wrapper -->
             </form><!-- Search form end -->
           </div>
@@ -126,7 +143,7 @@
                 <li>ω (omega) = w</li>
                 <li>σ (medial sigma) = s1</li>
               </ul>
-            <b>Use s1 for medial sigma at the end of a search term (e.g. ^kais1 (= ^καισ) rather than ^kais (= ^καις).  You cannot use beta code to search for Latin terms</b>.</div>
+            </div>
             <div id="lemmas-help">Lemmatized Search searches for all forms of the entered dictionary headword (Greek only for now). For words that have lemmas identical to other words (like δέω, e.g.), you may append a number corresponding to the article's order in LSJ. If you do not append a number, the search will be done on all forms of all corresponding lemmas.</div>
           </div>
           <div id="examples" style="display:none;text-align:left">
@@ -183,7 +200,7 @@
       </div>
       <div id="footer-right-col">
         <p>Produced by</p>
-        <p><a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> &amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
+        <p><a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
           Ancient World</a></p>
         <div id="about-nav"> 
           <ul class="nav">
@@ -204,9 +221,6 @@
     <script type="text/javascript" charset="utf-8">
       jQuery("a.button").button();
       jQuery("#tmgo").button();
-      jQuery("#phrase,#substring,#proximity").button();
-      jQuery("#betaYes,#caps,#marks,#lemmas").button();
-      jQuery("#imagesfirst,#translationsfirst").button();
       jQuery("#togglehelp,#search,#newsearch").button();
       jQuery("#newsearch").click(function(){
         jQuery("#hidesearch").show();
@@ -312,12 +326,10 @@
           position: "left"
         });
         jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).hover(function() {
-              jQuery(this).css('background-color', '#445B88');
-              jQuery(this).find("a").css('color', 'white')
+              jQuery(this).css('background-color', '#F8F6F4');
           },
           function() {
               jQuery(this).css('background-color', 'transparent');
-              jQuery(this).find("a").css('color', 'black')
           });
           jQuery("#search").click(cookifySearchSettings);
       }

@@ -12,7 +12,7 @@ public class HasImagesFacet extends BooleanFacet {
 
     public HasImagesFacet(){
     
-        super(SolrField.images, FacetParam.IMG.name(), "Images Available");
+        super(SolrField.images, FacetParam.IMG, "Images Available");
     
     }
 

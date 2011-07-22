@@ -15,6 +15,7 @@ public enum SolrField {
         display_place,
         display_date,
         has_translation,
+        translation_language,
         language,
         hgv_identifier,
         images,
@@ -22,10 +23,11 @@ public enum SolrField {
         facet_language,
         full_identifier,
         item_letter,
-        transcription,
+        has_transcription,
         translations,
         date_category,
         unknown_date_flag,
-        transcription_ngram_ia
+        transcription_ngram_ia,
+        id
     
 }
