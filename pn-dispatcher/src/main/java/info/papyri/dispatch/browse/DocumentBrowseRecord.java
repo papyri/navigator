@@ -75,16 +75,17 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
          
          return invNum;
      } 
-      
+     
     StringBuilder displayName = new StringBuilder();
     displayName.append(this.documentGroupRecord.getSeries());
     displayName.append(" ");
     displayName.append(this.documentGroupRecord.getVolume().equals("0") ? "" : this.documentGroupRecord.getVolume());
     displayName.append(" ");
     displayName.append(this.itemId);
-    String rawName = displayName.toString();
-    return rawName.replaceAll("_", " ");
-  
+    String rawName = displayName.toString().replaceAll("_", " ");
+    
+    return rawName;
+    
   }
   
   private String expandLanguageCodes(String languageCodes){
