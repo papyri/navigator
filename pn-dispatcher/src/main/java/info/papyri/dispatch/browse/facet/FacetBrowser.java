@@ -95,9 +95,12 @@ public class FacetBrowser extends HttpServlet {
         Boolean constraintsPresent = parseRequestToFacets(request, facets);
         int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 0;
         SolrQuery solrQuery = this.buildFacetQuery(page, facets);
-        QueryResponse queryResponse = this.runFacetQuery(solrQuery);
+        QueryResponse queryResponse = runFacetQuery(solrQuery);
+        String origQuery = solrQuery.toString();
+        passCompletedQueryToDateFacet(facets, solrQuery);
         long resultSize = queryResponse.getResults().getNumFound();
         populateFacets(facets, queryResponse);
+        String currentQuery = solrQuery.toString();
         ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
         displayBrowseResult(response, html);  
@@ -154,7 +157,6 @@ public class FacetBrowser extends HttpServlet {
         
         SolrQuery sq = new SolrQuery();
         sq.setFacetMissing(true);
-        sq.setFacetMinCount(1);             
         sq.setRows(documentsPerPage); 
         sq.setStart(pageNumber * documentsPerPage); 
         
@@ -184,7 +186,7 @@ public class FacetBrowser extends HttpServlet {
      * @return The <code>QueryResponse</code> returned by the Solr server
      */
     
-    private QueryResponse runFacetQuery(SolrQuery sq){
+    static QueryResponse runFacetQuery(SolrQuery sq){
         
         try{
             
@@ -700,6 +702,26 @@ public class FacetBrowser extends HttpServlet {
             
         }
         return filteredQueryString;
+        
+    }
+    
+    private void passCompletedQueryToDateFacet(ArrayList<Facet> facets, SolrQuery completedQuery){
+        
+        Iterator<Facet> fit = facets.iterator();
+        
+        while(fit.hasNext()){
+            
+            Facet nowFacet = fit.next();
+            
+            if(nowFacet instanceof DateFacet){
+             
+                ((DateFacet) nowFacet).setCompletedQuery(completedQuery);
+                
+                
+            }
+            
+        }
+        
         
     }
         
