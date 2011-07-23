@@ -57,7 +57,10 @@
                   <xsl:text>|</xsl:text>
                </xsl:when>
                <xsl:otherwise>
-                  <br id="a{$div-loc}l{$line}"/>
+                  <br><xsl:choose>
+                    <xsl:when test="@xml:id"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:when>
+                    <xsl:otherwise><xsl:attribute name="id"><xsl:value-of select="a{$div-loc}l{$line}"/></xsl:attribute></xsl:otherwise>
+                  </xsl:choose></br>
                </xsl:otherwise>
             </xsl:choose>
             <xsl:choose>

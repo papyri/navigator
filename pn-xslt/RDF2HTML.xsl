@@ -113,7 +113,7 @@
                 <xsl:otherwise><xsl:value-of select="pi:get-id(/rdf:RDF/rdf:Description/@rdf:about)"/></xsl:otherwise>
               </xsl:choose>
             </title>
-            <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
             <script type="text/javascript">
@@ -131,14 +131,14 @@
             </script>
           </head>
           <body onload="init()">
-            <div id="d" class="page">
+            <div id="d">
               <div id="hd">
                 <h1>
                   Papyri.info
                 </h1>
               </div>
               <div id="bd">
-                <xi:include href="left-nav.xml"/>
+                <xi:include href="nav.xml"/>
                 <div id="main">
                   <div class="content ui-corner-all">
                     <h2><xsl:value-of select="pi:get-id(/rdf:RDF/rdf:Description/@rdf:about)"/></h2>
@@ -298,7 +298,7 @@
             <title>
               <xsl:call-template name="get-references"/>
             </title>
-            <script src="/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
             <xsl:if test="$image">
@@ -328,7 +328,7 @@
                 </h1>
               </div>
               <div id="bd">
-                <xi:include href="left-nav.xml"/>
+                <xi:include href="nav.xml"/>
                 <div id="main">
                   <div class="content ui-corner-all">
                     <h3 style="text-align:center"><xsl:call-template name="get-references"><xsl:with-param name="links">yes</xsl:with-param></xsl:call-template></h3>
@@ -806,6 +806,11 @@
     </tr>
     </xsl:for-each>
     
+  </xsl:template>
+  
+  <!-- Commentary links -->
+  <xsl:template match="t:div[@type='commentary']/t:list/t:item/t:ref">
+    <a href="{parent::t:item/@corresp}"><xsl:apply-templates/></a>.
   </xsl:template>
   
   <!-- Generate parallel reference string -->

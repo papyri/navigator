@@ -44,11 +44,13 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
     StringBuilder anchor = new StringBuilder();
     anchor.append("<a href='");
-    anchor.append(url);
+    anchor.append(url.toString().substring("http://papyri.info".length()));
     anchor.append("'>");
     anchor.append(getDisplayId());
     anchor.append("</a>");
-    StringBuilder html = new StringBuilder("<tr><td class=\"identifier\">" + anchor + "</td>");
+    StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\">");
+    html.append(anchor.toString());
+    html.append("</td>");
     html.append("<td class=\"display-place\">");
     html.append(place);
     html.append("</td>");

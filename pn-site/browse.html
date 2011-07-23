@@ -28,7 +28,7 @@
     </script>
   </head>
   <body onload="init()">
-    <div id="d" class="page">
+    <div id="d">
       <div id="hd">
         <h1>
           Papyri.info
@@ -39,20 +39,19 @@
           <!-- left nav -->
           <form method="get" accept-charset="utf-8">
             <ul class="nav">
+              <li>Browse: </li>
               <li>
-                <a href="/">Home</a>
-              </li>
-              <li>
-                <a href="/browse/ddbdp/">Browse DDbDP</a>
+                <a href="/browse/ddbdp/">DDbDP</a>
               </li>
               <li>
-                <a href="/browse/hgv/">Browse HGV</a>
+                <a href="/browse/hgv/">HGV</a>
               </li>
               <li>
-                <a href="/browse/apis/">Browse APIS</a>
+                <a href="/browse/apis/">APIS</a>
               </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" class="navField" /> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" value=" &gt; " class="navButton" /></div>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
+              <li>or</li>
               <li>
                 <a href="/search">Search</a>
               </li>
@@ -85,7 +84,8 @@
             </div>
             <div id="footer-right-col">
               <p>Produced by</p>
-              <p><a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> &amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
+              <p><a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> 
+                <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
                 Ancient World</a></p>
               <div id="about-nav"> 
                 <ul class="nav">
@@ -101,8 +101,40 @@
             </div>
             <div class="spacer"></div>
           </div>
-
     </div>
-    
+    <script type="text/javascript" charset="utf-8">
+      if (window.location.href.indexOf("ddbdp") > 0) {
+        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('DDbDP')").addClass("current");
+      }
+      if (window.location.href.indexOf("hgv") > 0) {
+        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('HGV')").addClass("current");
+      }
+      if (window.location.href.indexOf("apis") > 0) {
+        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('APIS')").addClass("current");
+      }
+      //Make the whole result row clickable
+      jQuery("tr.result-record").hover(
+        function(){
+          highlightSearchResultRow(jQuery(this));
+        },
+        function(){
+          jQuery(this).css('background-color', "white");
+          jQuery(this).next("tr.result-text").css('background-color', "white");
+      });
+      //make page links clickable
+      jQuery("div.page").not(".current").hover(function(){
+        jQuery(this).css({'background-color': '#ebf1e8', 'cursor': 'pointer'});
+        jQuery(this).click(function(){window.location = jQuery(this).find("a").attr("href")});
+      }, function(){
+        jQuery(this).css({'background-color': '#f9f9f9', 'cursor': 'default'});
+      });
+      function highlightSearchResultRow(row) {
+        row.css({'background-color': '#ebf1e8', 'cursor': 'pointer'});
+        row.click(function(){window.location = row.find("a").attr("href")});
+      }
+      function removeSearchResultHighlight(row) {
+        row.css({'background-color': 'white', 'cursor': 'default'});
+      }
+    </script>
   </body>
 </html>

@@ -405,7 +405,9 @@ public class Search extends HttpServlet {
         int p = 0;
         while (p < pages) {
           if ((p * rows) == start) {
+            out.print("<div class=\"page current\">");
             out.print((p + 1) + " ");
+            out.print("</div>");
           } else {
             StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
             if ("yes".equals(request.getParameter("imagesfirst"))) plink.append("&imagesfirst=yes");
