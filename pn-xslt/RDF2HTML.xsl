@@ -114,7 +114,7 @@
               </xsl:choose>
             </title>
             <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
             <script type="text/javascript">
 
@@ -299,7 +299,7 @@
               <xsl:call-template name="get-references"/>
             </title>
             <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/jquery-ui.custom.min.js" type="text/javascript" charset="utf-8"></script>
+            <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
             <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
             <xsl:if test="$image">
               <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
