@@ -253,7 +253,7 @@ public class FacetBrowser extends HttpServlet {
            try{ 
             
                 DocumentCollectionBrowseRecord collectionInfo = getDisplayCollectionInfo(doc);
-                String displayId = getDisplayId(doc);
+                String displayId = getDisplayId(collectionInfo, doc);
                 URL url = new URL((String) doc.getFieldValue(SolrField.id.name()));
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
@@ -330,24 +330,26 @@ public class FacetBrowser extends HttpServlet {
          
     }
     
+    
     /**
      * Determines the collection/series/volume-specific id number to be displayed for the passed
-     * <code>SolrDocument</code>
+     * <code>SolrDocument</code>, based on its associated <code>DocumentCollectionBrowseRecord</code>
      * 
+     * This method will need to be worked on; it's utterly dependent upon #getDisplayCollectionInfo, which is
+     * right now pretty arbitrary in its operations
      * 
+     * @param collectionInfo
      * @param doc
      * @return 
      */
     
-    private String getDisplayId(SolrDocument doc){
+    private String getDisplayId(DocumentCollectionBrowseRecord collectionInfo, SolrDocument doc){
         
+        // TODO: just a bodge; see getDisplayCollectionInfo above
         
-        String id = (String) doc.getFieldValue("id");
-
-        String idBits[] = id.split(";");
-        
-        return idBits[idBits.length - 1];
-        
+        String collectionPrefix = collectionInfo.getCollection() + "_";
+        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));     
+        return itemIds.get(0);
         
     }
     
