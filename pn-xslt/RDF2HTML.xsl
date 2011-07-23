@@ -133,9 +133,8 @@
           <body onload="init()">
             <div id="d">
               <div id="hd">
-                <h1>
-                  Papyri.info
-                </h1>
+                <h1>Papyri.info</h1>
+                <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2>
               </div>
               <div id="bd">
                 <xi:include href="nav.xml"/>
@@ -321,11 +320,10 @@
             </script>
           </head>
           <body onload="init()">
-            <div id="d" class="page">
+            <div id="d">
               <div id="hd">
-                <h1>
-                  Papyri.info
-                </h1>
+                <h1>Papyri.info</h1>
+                <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2>
               </div>
               <div id="bd">
                 <xi:include href="nav.xml"/>
