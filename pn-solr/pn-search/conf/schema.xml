@@ -56,11 +56,15 @@
         <field name="transcription_ic" type="text" indexed="true" stored="false"/>
         <field name="transcription_ia" type="text" indexed="true" stored="false"/>
         <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
+        <field name="has_transcription" type="boolean" indexed="true" stored="false"/>
+        <field name="translation_language" type="string" indexed="true" stord="false" multiValued="true"/>
         <field name="translation" type="text" indexed="true" stored="false" multiValued="true"/>
         <field name="has_translation" type="boolean" indexed="true" stored="true"/>
         <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
         <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
         <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
+        <field name="date_category" type="int" indexed="true" stored="false" multiValued="true"/>
+        <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
         <field name="metadata" type="text" indexed="true" stored="false" multiValued="true"/>
         <field name="images" type="boolean" indexed="true" stored="true"/>
         <field name="invnum" type="text" indexed="true" stored="true"/>
@@ -82,6 +86,9 @@
         <field name="ddbdp_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
         <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
         <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="true"/>
+        <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="hgv_full_identifier" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="apis_full_identifier" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0" multiValued="true"/>
         <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="true"/>
         

@@ -75,8 +75,7 @@ package info.papyri.dispatch.browse;
          * @return An anchor tag
          */
         
-        
-        @Override
+
         public String assembleLink(){
             
             String href = CollectionBrowser.BROWSE_SERVLET + "/" + collection;

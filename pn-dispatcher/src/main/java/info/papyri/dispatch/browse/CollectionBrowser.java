@@ -65,6 +65,7 @@ public class CollectionBrowser extends HttpServlet {
     static String SPARQL_URL;
     static String BROWSE_SERVLET = "/browse";
     static String PN_SEARCH = "pn-search/";
+    static String BASE;
     /* an ordered list of the classification hierarchy: collection (ddbdp | hgv | apis), series, volume, and item identifer.
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
@@ -79,6 +80,7 @@ public class CollectionBrowser extends HttpServlet {
         SOLR_URL = config.getInitParameter("solrUrl");
         SPARQL_URL = config.getInitParameter("sparqlUrl");
         home = config.getInitParameter("home");
+        BASE = config.getInitParameter("htmlPath");
         try {
             
             browseURL = new URL("file://" + home + "/" + "browse.html");
@@ -215,10 +217,12 @@ public class CollectionBrowser extends HttpServlet {
     
     String buildSparqlQuery(LinkedHashMap<SolrField, String> pathParts){
         
-        StringBuffer queryBuffer = new StringBuffer("PREFIX dc:<http://purl.org/dc/terms/> ");
-        queryBuffer.append("PREFIX pyr: <http://papyri.info/> ");
-        queryBuffer.append("SELECT ?child ?grandchild ");
-        queryBuffer.append("FROM " + SPARQL_GRAPH + " ");
+        StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
+        queryBuilder.append("PREFIX pyr: <http://papyri.info/> ");
+        queryBuilder.append("SELECT ?child ?grandchild ");
+        queryBuilder.append("FROM ");
+        queryBuilder.append(SPARQL_GRAPH);
+        queryBuilder.append(" ");
        
         // extract info from pathbits
         
@@ -239,10 +243,12 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
-        queryBuffer.append("WHERE { <pyr:" + subj + "> dc:hasPart ?child . ");
-        queryBuffer.append("OPTIONAL { ?child dc:hasPart ?grandchild . } }");
+        queryBuilder.append("WHERE { <pyr:");
+        queryBuilder.append(subj);
+        queryBuilder.append("> dc:hasPart ?child . ");
+        queryBuilder.append("OPTIONAL { ?child dc:hasPart ?grandchild . } }");
         
-        return queryBuffer.toString();
+        return queryBuilder.toString();
         
     }
     
@@ -407,6 +413,7 @@ public class CollectionBrowser extends HttpServlet {
         SolrQuery sq = new SolrQuery();
         sq.setStart((page - 1) * docsPerPage);
         sq.setRows(docsPerPage);
+        
         String query = "";
         for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
         
@@ -429,6 +436,8 @@ public class CollectionBrowser extends HttpServlet {
         }
         if(!query.isEmpty()) sq.setQuery(query);
         sq.addSortField(getCollectionPrefix(pathParts) + SolrField.item.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(getCollectionPrefix(pathParts) + SolrField.item_letter.name(), SolrQuery.ORDER.asc);
+        //sq.addSortField(getCollectionPrefix(pathParts) + SolrField.full_identifier, SolrQuery.ORDER.asc);
         return sq;
     }
     
@@ -444,7 +453,7 @@ public class CollectionBrowser extends HttpServlet {
         
         try{
         
-            SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
+            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8082/solr/" + PN_SEARCH);
             QueryResponse qr = solrServer.query(sq);
             return qr;
             
@@ -500,37 +509,34 @@ public class CollectionBrowser extends HttpServlet {
         ArrayList<String> previousIds = new ArrayList<String>();
         
         for(SolrDocument doc : qr.getResults()){
+            
+            try{
                    
                 DocumentBrowseRecord record;
                 String itemId = getDisplayId(pathParts, doc, previousIds);
                 if(itemId.equals("-1")) continue;
                 previousIds.add(itemId);
+                URL url = new URL((String)doc.getFieldValue(SolrField.id.name()));
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
                 String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());
                 Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
-                Boolean hasTranslation = doc.getFieldValuesMap().containsKey(SolrField.has_translation.name()) && (Boolean)doc.getFieldValue(SolrField.has_translation.name()) ? true : false;
+                Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
+                String translationLanguages = noTranslationLanguages ? "No translation" : doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");     
                 Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
-                if(pathParts.get(SolrField.collection).equals("hgv")){ 
-                   
-                   // HGV records require special treatment, as the link to their records cannot be derived from the path
-                   // to the collections that hold them. they thus have a distinct hgv_identifier field
-                   // TODO: should this be a subclass?
-                    
-                   ArrayList<String> hgvIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.hgv_identifier.name()).toString().replaceAll("[\\]\\[]", "").split(","))); 
-                   
-                   String hgvId = hgvIds.get(0);
-                   record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasImages, hasTranslation, hgvId);
-                   records.add(record);
-                }
-                 else{
-                    
-                    record = new DocumentBrowseRecord(dcr, itemId, place, date, language, hasImages, hasTranslation);
-                    records.add(record);
-                 }
+                String invNum = (String)doc.getFieldValue(SolrField.invnum.name());
+                record = new DocumentBrowseRecord(dcr, itemId, url, place, date, language, hasImages, translationLanguages, invNum);
+                records.add(record);
+                
+            } catch(MalformedURLException mui){
+                
+                System.out.println("URL malformed or missing " + mui.getMessage());
+                
+            }
             
+                 
         }
         Collections.sort(records);
         return records;          
@@ -557,10 +563,12 @@ public class CollectionBrowser extends HttpServlet {
     
     String getDisplayId(LinkedHashMap<SolrField, String> pathParts, SolrDocument doc, ArrayList<String> previousIds){
 
+
         String id = "";
-        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.item.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.full_identifier.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+        System.out.println(itemIds);
         if(itemIds.size() == 1){
-            
+
             if(!previousIds.contains(itemIds.get(0))) return itemIds.get(0);
             return "-1";
         
@@ -590,7 +598,7 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
-        if(collsToIds.size() == 0) return "-1";  
+        if(collsToIds.isEmpty()) return "-1";  
         String currentKey = pathParts.get(SolrField.series) + "|" + (pathParts.get(SolrField.volume) == null ? "0" : pathParts.get(SolrField.volume));
         String possId = collsToIds.get(currentKey);
         if(possId == null) possId = "-1";
@@ -613,7 +621,7 @@ public class CollectionBrowser extends HttpServlet {
         try{
         
             PrintWriter out = response.getWriter();
-           reader = new BufferedReader(new InputStreamReader(browseURL.openStream()));
+            reader = new BufferedReader(new InputStreamReader(browseURL.openStream()));
             String line = "";
             while ((line = reader.readLine()) != null) {
               
@@ -674,7 +682,9 @@ public class CollectionBrowser extends HttpServlet {
      */
     String buildHTML(LinkedHashMap<SolrField, String> pathParts, ArrayList<BrowseRecord> records, int page, long totalResults){
         
-        StringBuffer html = new StringBuffer("<h2>" + pathParts.get(SolrField.collection) + "</h2>");
+        StringBuilder html = new StringBuilder("<h2>");
+        html.append(pathParts.get(SolrField.collection));
+        html.append("</h2>"); 
         html = page != 0 ?  buildDocumentsHTML(pathParts, html, records, totalResults) : buildCollectionsHTML(html, records);
         return html.toString();
         
@@ -690,29 +700,30 @@ public class CollectionBrowser extends HttpServlet {
      * @see DocumentCollectionBrowseRecord#getHTML() 
      */
     
-    private StringBuffer buildCollectionsHTML(StringBuffer html, ArrayList<BrowseRecord> records){
+    private StringBuilder buildCollectionsHTML(StringBuilder html, ArrayList<BrowseRecord> records){
        
-        String listHeader = "<ul style=\"margin-left:2em;float:left;\">";
-        int columnLength = 25;
+        int numColumns = records.size() > 20 ? 5 : 1;
+        int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
+        int modulus = records.size() - initTotalPerColumn;
         
-        html.append(listHeader);
-        
-        for(int i = 0; i < records.size(); i++){
+        for(int currentColumn = 0; currentColumn < numColumns; currentColumn++){
             
-            html.append(records.get(i).getHTML());
+           html.append("<ul class=\"collections-column\">");
+
+           int totalThisColumn = initTotalPerColumn;
             
-            if(i == (records.size() - 1)){
-                
-                html.append("</ul>");
-                
+           if(currentColumn < modulus) totalThisColumn++;
+           
+           if(totalThisColumn > records.size()) totalThisColumn = records.size();
+            
+           for(int i = 0; i < totalThisColumn; i++){
+            
+                html.append(records.remove(0).getHTML());
+               
+            
             }
-            else if((i + 1) % columnLength == 0){
-                
-                html.append("</ul>");
-                html.append(listHeader);
-                
-                
-            }
+           
+           html.append("</ul>");
             
         }
         
@@ -732,7 +743,7 @@ public class CollectionBrowser extends HttpServlet {
      * @see DocumentBrowseRecord#getHTML() 
      */
     
-    private StringBuffer buildDocumentsHTML(LinkedHashMap<SolrField, String> pathParts, StringBuffer html, ArrayList<BrowseRecord> records, long totalResultSetSize){
+    private StringBuilder buildDocumentsHTML(LinkedHashMap<SolrField, String> pathParts, StringBuilder html, ArrayList<BrowseRecord> records, long totalResultSetSize){
         
         html.append("<table>");
         html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Has translation</td><td>Has images</td></tr>");
@@ -748,7 +759,9 @@ public class CollectionBrowser extends HttpServlet {
        
         if(totalResultSetSize > docsPerPage){
             
-            int numPages = (int) Math.ceil(totalResultSetSize / docsPerPage);
+            double rawTotal = (double)totalResultSetSize;
+            
+            long numPages = (long) Math.ceil(rawTotal / docsPerPage);
 
             html.append("<div id=\"pagination\">");
                     
@@ -766,11 +779,16 @@ public class CollectionBrowser extends HttpServlet {
             for(int i = 1; i <= numPages; i++){
                 
                 html.append("<div class=\"page\">");
-                html.append("<a href=\"" + pathBase + String.valueOf(i) + "\">");
+                html.append("<a href=\"");
+                html.append(pathBase);
+                html.append(String.valueOf(i));
+                html.append("\">");
                 html.append(String.valueOf(i));
                 html.append("</a></div>");   
                 
             }
+            
+            html.append("</div>");
        
             
         }

@@ -5,33 +5,77 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
- *
+ * Handles all the necessary backend (Solr) and frontend (HTML) interactions needed
+ * for selection of constraint values within a single facet.
+ * 
+ * 
  * @author thill
  */
 abstract public class Facet {
     
+    
+    /** A <code>List</code> of values to which the Solr responses must (possibly after processing
+     *  by this class) conform
+     */
     ArrayList<String> facetConstraints = new ArrayList<String>();
+    
+    /** A <code>List</code> of all values fond in the faceted field, along with the number
+     * of each.
+     * 
+     * Note the peculiarity of Solr terminology here: a <code>Count</code> object is 
+     * actually a member of a <code>FacetField</code>, and holds information both on
+     * the <code>String</code> representation of the value, and the number associated 
+     * with it (i.e., the "count" in the normal sense of the word)
+     */
     List<Count> valuesAndCounts;
+    /** The relevant Solr field */
     SolrField field;
-    String formName;
+    /** The value used for the <code>name</code> attribute in the <code>Facet</code>'s
+     *  HTML control.
+     * 
+     *  @see FacetParam
+     */
+    FacetParam formName;
+    
+    /** The label displayed to the user */
+    String displayName;
     static String defaultValue = "--- All values ---";
     
-    public Facet(SolrField sf, String formName){
+    /**
+     * Constructor
+     * 
+     * @param sf
+     * @param formName
+     * @param displayName 
+     */
+    public Facet(SolrField sf, FacetParam formName, String displayName){
         
         this.field = sf; 
         this.formName = formName;
+        this.displayName = displayName;
         
     }
+    
+    /**
+     * Modifies the passed <code>SolrQuery</code> to reflect the constraints and 
+     * faceting information required by the <code>Facet</code>
+     * 
+     * @param solrQuery
+     * @return The passed solrQuery, modified
+     * @see FacetBrowser#buildFacetQuery(int, java.util.EnumMap) 
+     */
     
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         solrQuery.addFacetField(field.name());
+        solrQuery.setFacetLimit(-1);
         
         Iterator<String> cit = facetConstraints.iterator();
         
@@ -42,7 +86,7 @@ abstract public class Facet {
             // as an escape character
             fq = fq.replaceAll("\\\\", "\\\\\\\\");
             if(fq.contains(" ")) fq = "\"" + fq + "\"";
-            fq = field + ":" + fq;
+            fq = field.name() + ":" + fq;
             solrQuery.addFilterQuery(fq);
             
             
@@ -52,7 +96,74 @@ abstract public class Facet {
         
     }
     
-    abstract public String generateWidget();
+    /** 
+     * Generates the HTML form element used for input.
+     * 
+     * @return A string representation of the requisite HTML
+     * @see FacetBrowser#assembleWidgetHTML(java.util.EnumMap, java.lang.StringBuffer) 
+     */
+    
+     public String generateWidget() {
+        
+        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
+        html.append(getToolTipText());
+        html.append("\">");
+        html.append(generateHiddenFields());
+        Boolean onlyOneValue = valuesAndCounts.size() == 1;
+        String disabled = onlyOneValue ? " disabled=\"true\"" : "";
+        String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
+        html.append("<span class=\"option-label\">");
+        html.append(getDisplayName(null));
+        html.append("</span>");
+        html.append("<select");
+        html.append(disabled);
+        html.append(" name=\"");
+        html.append(formName.name());
+        html.append("\">");
+        html.append("<option ");
+        html.append(defaultSelected);
+        html.append(" value=\"default\">");
+        html.append(Facet.defaultValue);
+        html.append("</option>");
+        
+        Iterator<Count> vcit = valuesAndCounts.iterator();
+        
+        while(vcit.hasNext()){
+            
+            Count valueAndCount = vcit.next();
+            String value = valueAndCount.getName();
+            String displayValue = getDisplayValue(value);
+            if(displayValue.length() > 60) displayValue = displayValue.substring(0, 60);
+            String count = String.valueOf(valueAndCount.getCount());
+            String selected = onlyOneValue ? " selected=\"true\"" : "";
+            html.append("<option");
+            html.append(selected);
+            html.append(" value=\"");
+            html.append(value);
+            html.append("\">");
+            html.append(displayValue);
+            html.append(" (");
+            html.append(count);
+            html.append(")</option>");
+            
+        }
+        
+        html.append("</select>");
+        html.append("</div><!-- closing .facet-widget -->");
+
+        return html.toString();
+        
+    }
+    
+    /**
+     * Returns the <code>Facet</code>'s constraints as a query string.
+     * 
+     * Required for pagination links to maintain state across pages.
+     * 
+     * @return 
+     * @see FacetBrowser#doPagination(java.util.EnumMap, long) 
+     * @see FacetBrowser#buildFullQueryString(java.util.EnumMap) 
+     */
     
     public String getAsQueryString(){
         
@@ -62,7 +173,7 @@ abstract public class Facet {
         while(cit.hasNext()){
             
             String value = cit.next();
-            queryString += formName + "=" + value;
+            queryString += formName.name() + "=" + value;
             if(cit.hasNext()) queryString += "&";
             
             
@@ -72,7 +183,18 @@ abstract public class Facet {
         
     }
     
-    public String getAsFilteredQueryString(String filterValue){
+    /**
+     * Returns the <code>Facet</code>'s constraints as a query string, minus the 
+     * value passed to the method,
+     * 
+     * Required for the anchor links that (from the user's perspective) 'remove' 
+     * constraints from the faceted display.
+     * 
+     * @return 
+     * @see FacetBrowser#assemblePreviousValuesHTML(java.util.EnumMap, java.lang.StringBuffer) 
+     */
+    
+    public String getAsFilteredQueryString(String filterParam, String filterValue){
         
         String queryString = "";
         
@@ -83,7 +205,7 @@ abstract public class Facet {
 
             if(!value.equals(filterValue)){
                 
-                queryString += formName + "=" + value;
+                queryString += formName.name() + "=" + value;
                 queryString += "&";
                 
             }
@@ -94,6 +216,14 @@ abstract public class Facet {
         return queryString;
         
     }
+    
+    /**
+     * Sets the values to be displayed by the <code>Facet</code>'s HTML form control.
+     * 
+     * 
+     * @param queryResponse
+     * @see FacetBrowser#populateFacets(java.util.EnumMap, org.apache.solr.client.solrj.response.QueryResponse) 
+     */
 
     public void setWidgetValues(QueryResponse queryResponse){
         
@@ -103,18 +233,76 @@ abstract public class Facet {
         Iterator<Count> cit = unfiltered.iterator();
         while(cit.hasNext()){
             
-            Count count = cit.next();
-            
-            if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0) valuesAndCounts.add(count);
+            Count count = cit.next();            
+            if(count.getName() != null && !count.getName().equals("") && count.getCount() > 0 && !count.getName().equals("null")) valuesAndCounts.add(count);
             
         }
           
-    }  
+    } 
     
-    public void addConstraint(String newValue){
+   /**
+     * Generates a hidden field for previously-selected constraints on the <code>Facet</code>.
+     * 
+     * 
+     * @return 
+     */
+    
+    String generateHiddenFields(){
+        
+        String html = "";
+        
+        for(int i = 0; i < facetConstraints.size(); i++){
+            
+            String name = formName.name(); 
+            String value = facetConstraints.get(i);
+            html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
+            
+        }
+        
+        return html;
+        
+    }
+    
+    public Boolean addConstraints(Map<String, String[]> params){
+        
+        Boolean hasConstraint = false;
+        
+        if(params.containsKey(this.formName.name())){
+            
+            String[] values = params.get(formName.name());
+            
+            for(int i = 0; i < values.length; i++){
+                
+                try{
+                    
+                    String param = java.net.URLDecoder.decode(values[i], "UTF-8");
+
+                    if(param != null && !param.equals("default") && !param.equals("")){
+                            
+                         addConstraint(param);
+                         hasConstraint = true;   
+                    }
+                    
+                    
+                }
+                catch(UnsupportedEncodingException uee){
+                    
+                    System.out.println("UnsupportedEncodingException: " + uee.getMessage());
+                    
+                }
+                
+            }
+            
+        }
+        
+        return hasConstraint;
+        
+    }
+    
+     void addConstraint(String newValue){
         
         if(newValue.equals(Facet.defaultValue)) return;
-        if(!facetConstraints.contains(newValue)) facetConstraints.add(trimValue(newValue));
+        if(!facetConstraints.contains(newValue)) facetConstraints.add(newValue.trim());
         
         
     }
@@ -125,54 +313,34 @@ abstract public class Facet {
         
     }
     
-    public ArrayList<String> getFacetConstraints(){
+    public ArrayList<String> getFacetConstraints(String facetParam){
         
         return facetConstraints;
         
     }
     
-    String generateHiddenFields(){
+    public String getDisplayName(String facetParam){
         
-        String html = "";
-        
-        for(int i = 1; i <= facetConstraints.size(); i++){
-            
-            String name = formName; // + String.valueOf(i);
-            String value = facetConstraints.get(i - 1);
-            html += "<input type=\"hidden\" name=\"" + name + "\" value=\"" + value + "\"/>";
-            
-        }
-        
-        return html;
+        return displayName;
         
     }
     
-    String URLEncode(String unencodedString){
+    public String getDisplayValue(String value){
         
-        try{
-            
-            String encodedString = java.net.URLEncoder.encode(unencodedString, "UTF-8");
-            return encodedString;
-            
-        }
-        catch(UnsupportedEncodingException uee){
-            
-            System.out.println(uee.getMessage());
-            return "UNSUPPORTED_ENCODING";
-            
-        }   
+        return value;
         
     }
     
-    String trimValue(String valueWithCount){
+    public String[] getFormNames(){
         
-        valueWithCount = valueWithCount.trim();
-        String valueWithoutCount = valueWithCount.replaceAll("\\([\\d]+\\)[\\s]*$", "");
-        valueWithoutCount = valueWithoutCount.trim();
-        return valueWithoutCount;
-   
+        String[] formNames = {formName.name()};
+        
+        return formNames;
+        
+        
     }
     
-
+    abstract String getToolTipText();
+ 
     
 }

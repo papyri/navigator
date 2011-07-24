@@ -32,6 +32,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import info.papyri.dispatch.browse.SolrField;
+
 /**
  * 
  * @author hcayless
@@ -346,37 +348,75 @@ public class Search extends HttpServlet {
       QueryResponse rs = solr.query(sq);
       SolrDocumentList docs = rs.getResults();
       out.println("<p>" + docs.getNumFound() + " hits.</p>");
-      out.println("<ul class=\"results\">");
+      out.println("<table>");
+      out.println("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translation</td><td>Images</td></tr>");
       String uq = q;
       try {
         uq = URLEncoder.encode(q, "UTF-8");
       } catch (Exception e) {}
       for (SolrDocument doc : docs) {
-        out.print("<li><span class=\"resulthead\"><a href=\"" + ((String)doc.getFieldValue("id")).substring(18) + "/?q=" + uq +"\">"
-                + util.substringAfter(((String)doc.getFieldValue("id")), "http://papyri.info/").replace("/", " - ")
-                + "</a> " + doc.getFieldValue("display_date") + ", " + doc.getFieldValue("display_place") +"</span>");
-        for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
-          out.print(line + "<br>\n");
+        Object[] translations = (doc.getFieldValues(SolrField.translations.name()) == null ? new Object[0] : doc.getFieldValues(SolrField.has_translation.name()).toArray());
+        boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
+        boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
+        String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
+        StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\">");
+        row.append("<a href=\"");
+        row.append(((String)doc.getFieldValue("id")).substring(18));
+        row.append("/?q=");
+        row.append(uq);
+        row.append("\">");
+        row.append(util.substringAfter(((String)doc.getFieldValue("id")), "http://papyri.info/").replace("/", " - "));
+        row.append("</a>");
+        row.append("</td>");
+        row.append("<td class=\"display-place\">");
+        row.append(doc.getFieldValue("display_place"));
+        row.append("</td>");
+        row.append("<td class=\"display-date\">");
+        row.append(doc.getFieldValue("display_date"));
+        row.append("</td>");
+        row.append("<td class=\"language\">");
+        row.append(language);
+        row.append("</td>");
+        row.append("<td class=\"has-translation\">");
+        if (translations.length == 0) {
+          row.append("none");
+        } else {
+          for (int i = 0; i < translations.length; i++) {
+            row.append(translations[i]);
+            if (i < (translations.length - 1)) row.append(", ");
+          } 
         }
-        out.println("</li>");
+        row.append("</td>");
+        row.append("<td class=\"has-images\">");
+        row.append(hasImages);
+        row.append("</td>");
+        row.append("</tr>");
+        row.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
+        for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
+          row.append(line + "<br>\n");
+        }
+        row.append("</td></tr>");
+        out.print(row);
       }
-      out.println("</ul>");
+      out.println("</table>");
       if (docs.getNumFound() > rows) {
-        out.println("<p id=\"resultpages\">");
+        out.println("<div id=\"pagination\">");
         int pages = (int) Math.ceil((double)docs.getNumFound() / (double)rows);
         int p = 0;
         while (p < pages) {
           if ((p * rows) == start) {
+            out.print("<div class=\"page current\">");
             out.print((p + 1) + " ");
+            out.print("</div>");
           } else {
             StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
             if ("yes".equals(request.getParameter("imagesfirst"))) plink.append("&imagesfirst=yes");
             if ("yes".equals(request.getParameter("translationsfirst"))) plink.append("&translationssfirst=yes");
-            out.print("<a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a> ");
+            out.print("<div class=\"page\"><a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a></div>");
           }
           p++;
         }
-        out.println("</p>");
+        out.println("</div>");
       }
     } catch (SolrServerException e) {
       out.println("<p>Unable to execute query.  Please try again.</p>");

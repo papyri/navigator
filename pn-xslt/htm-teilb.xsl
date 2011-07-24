@@ -44,7 +44,11 @@
             </xsl:if>
             <xsl:choose>
                <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]//t:lb[1])">
-                  <a id="a{$div-loc}l{$line}">
+                  <a>
+                    <xsl:choose>
+                      <xsl:when test="@xml:id"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:when>
+                      <xsl:otherwise><xsl:attribute name="id"><xsl:value-of select="concat('a', $div-loc, 'l', $line)"/></xsl:attribute></xsl:otherwise>
+                    </xsl:choose>
                      <xsl:comment>0</xsl:comment>
                   </a>
                   <!-- for the first lb in a div, create an empty anchor instead of a line-break -->
@@ -57,7 +61,10 @@
                   <xsl:text>|</xsl:text>
                </xsl:when>
                <xsl:otherwise>
-                  <br id="a{$div-loc}l{$line}"/>
+                  <br><xsl:choose>
+                    <xsl:when test="@xml:id"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:when>
+                    <xsl:otherwise><xsl:attribute name="id"><xsl:value-of select="concat('a', $div-loc, 'l', $line)"/></xsl:attribute></xsl:otherwise>
+                  </xsl:choose></br>
                </xsl:otherwise>
             </xsl:choose>
             <xsl:choose>

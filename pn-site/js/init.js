@@ -1,15 +1,14 @@
 function init() {
+    jQuery("div#hd h1").click(function() {window.location = "/"});
     jQuery("li.dialog").each(function(i) {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
         jQuery(this).hide();
     });
-    jQuery("ul.nav a").not($("#footer ul.nav li a")).hover(function() {
-        jQuery(this).css('background-color', '#445B88');
-        jQuery(this).find("a").css('color', 'white')
+    jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).not(".current").has("a").hover(function() {
+      jQuery(this).css('background-color', '#F8F6F4');
     },
     function() {
-        jQuery(this).css('background-color', 'transparent');
-        jQuery(this).find("a").css('color', 'black')
+      jQuery(this).css('background-color', 'transparent');
     });
     jQuery("div.controls input").each(function() {
         if (!this.checked) {
@@ -17,7 +16,7 @@ function init() {
         }
     });
     if (jQuery(".translation").length == 0 && jQuery(".image").length == 0) {
-        jQuery(".transcription").css('width', '100%');
+        jQuery(".transcription").css('width', '98.8%');
     }
     if (jQuery("#image").length > 0) {
         initImage();
