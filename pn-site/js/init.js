@@ -37,7 +37,7 @@ function init() {
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
         + "select ?subject "
         + "from <rmi://localhost/papyri.info#pi> "
-        + "where { ?subject dc:references <http://papyri.info" + window.location.pathname.replace(/\/$/, "") + "/source>}")
+        + "where { ?subject dc:references <http://papyri.info" + getPath().replace(/\/$/, "") + "/source>}")
         + "&format=json", function(data) {
             if (data.results.bindings.length > 0) {
                 jQuery("#controls").append('<div id="related" class="ui-widget-content ui-corner-all" style="margin-left:2em"><h4>related resources</h4></div>')
@@ -47,4 +47,15 @@ function init() {
                 })
             }
     });
+}
+
+function getPath() {
+    var result = window.location.href.substring(window.location.href.indexOf(window.location.pathname));
+    if (window.location.search.length > 0) {
+        result = result.substring(0, result.indexOf(window.location.search));
+    }
+    if (window.location.hash.length > 0 && result.indexOf("#") > 0) {
+        result = result.substring(0, result.indexOf(window.location.hash));
+    }
+    return result;
 }
