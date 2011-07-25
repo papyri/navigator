@@ -58,7 +58,7 @@
     <field name="has_transcription" type="boolean" indexed="true" stored="false"/>
     <field name="translation_language" type="string" indexed="true" stord="false" multiValued="true"/>
     <field name="translation" type="text" indexed="true" stored="true" multiValued="true"/>
-    <field name="has_translation" type="boolean" indexed="true" stored="false"/>
+    <field name="has_translation" type="boolean" indexed="true" stored="true"/>
     <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
     <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
