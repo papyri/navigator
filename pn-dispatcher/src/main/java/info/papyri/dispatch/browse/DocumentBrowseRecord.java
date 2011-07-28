@@ -7,6 +7,10 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
+ * The <code>DocumentBrowseRecord</code> class stores summary information regarding
+ * documents retrieved during browsing or search.
+ * 
+ * 
  * @author thill
  */
 public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
@@ -20,7 +24,12 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String translationLanguages;
   private String hasImage;
   private String invNum;
-
+  
+  // TODO: Change the way identifiers are handled, adding a preferredID String and an alternativeIDs ArrayList
+  // TODO: Change images display so that icons/links to the original images are displayed instead of a simple 'yes'/'no' value
+  // TODO: Special fields for APIS records?
+  // TODO: Change language display so that codes displayed instead of expanded strings.
+  
   public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, URL url, String place, String date, String lang, Boolean hasImg, String trans, String invNum) {
 
     // TODO: this will have to be changed depending on what users want to see in the records
@@ -71,6 +80,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
   }
 
+  // TODO: Change in line with trac http://idp.atlantides.org/trac/idp/ticket/828
+  
   public String getDisplayId() {
       
      if(documentGroupRecord.getCollection().toUpperCase().equals("APIS") && invNum != null){
@@ -89,6 +100,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     return rawName;
     
   }
+ 
   
   private String expandLanguageCodes(String languageCodes){
       
@@ -153,6 +165,17 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
   }
 
+  /**
+   * Allows sorting so that it occurs (in order of priority)
+   * 
+   * (1) DDbDP before HGV, HGV before APIS
+   * (2) Numeric by id
+   * (3) Alphabetic by letters occurring after the numeric portion
+   * 
+   * @param o
+   * @return 
+   */
+  
   @Override
   public int compareTo(Object o) {
 
