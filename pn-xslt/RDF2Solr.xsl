@@ -388,8 +388,8 @@
             </field>
             <field name="item">
               <xsl:choose>
-                <xsl:when test="string-length(replace($ddbdp_item, '\D', '')) &gt; 0">0</xsl:when>
-                <xsl:otherwise><xsl:value-of select="replace($ddbdp_item, '\D', '')"/></xsl:otherwise>
+                <xsl:when test="string-length(replace($ddbdp_item, '\D', '')) &gt; 0"><xsl:value-of select="replace($ddbdp_item, '\D', '')"/></xsl:when>
+                <xsl:otherwise>0</xsl:otherwise>
               </xsl:choose>
             </field>
           </xsl:if>

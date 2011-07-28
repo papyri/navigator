@@ -29,10 +29,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 import info.papyri.dispatch.browse.SolrField;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 
 /**
  * 
@@ -140,7 +142,7 @@ public class Search extends HttpServlet {
       exp.append(lemma);
     }
     sq.setQuery(exp.toString());
-    sq.setRows(100);
+    sq.setRows(1000);
     QueryResponse rs = solr.query(sq);
     SolrDocumentList forms = rs.getResults();
     Set<String> formSet = new HashSet<String>();
@@ -182,6 +184,7 @@ public class Search extends HttpServlet {
           }
         }
       }
+      boolean lemmaSearch = false;
       String field = null;
       if (query != null) {
         // assume that if the query string contains ":", the query specifies a field already,
@@ -229,24 +232,8 @@ public class Search extends HttpServlet {
       }
 
       if (field != null) {
-        if ("transcription_l".equals(field)) {
-          query = expandLemmas(query);
-          field = "transcription_ia";
-        }
         q = field + ":(" + query + ")";
-      } else {
-        if (query != null) {
-          if (!query.contains("transcription_l")) {
-            q = FileUtils.stripDiacriticals(query);
-          } else {
-            q = FileUtils.substringBefore(query, "transcription_l", false)
-                    + "transcription_ia:("
-                    + FileUtils.substringBefore(FileUtils.substringAfter(query, "transcription_l:(", false), ")", false)
-                    + FileUtils.substringAfter(FileUtils.substringAfter(query, "transcription_l:(", false), ")", false);
-            q = query;
-          }
-        }
-      }
+      } 
       String param;
       if ((param = request.getParameter("provenance")) != null && !"".equals(param)) {
         param = param.toLowerCase();
@@ -342,10 +329,20 @@ public class Search extends HttpServlet {
       sq.setSortField(sort, SolrQuery.ORDER.desc);
     }
     sq.setRows(rows);
-    sq.setQuery(q.replace("ς", "σ"));
-
+    if (q.contains("transcription_l")) {
+      StringBuilder query = new StringBuilder();
+      query.append(FileUtils.substringBefore(q, "transcription_l", false));
+      query.append("transcription_ia:(");
+      query.append(expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
+      query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
+      sq.setQuery(query.toString().replace("ς", "σ"));
+    } else {
+      sq.setQuery(q.replace("ς", "σ"));
+    }
     try {
-      QueryResponse rs = solr.query(sq);
+      QueryRequest req = new QueryRequest(sq);
+      req.setMethod(METHOD.POST);
+      QueryResponse rs = req.process(solr);
       SolrDocumentList docs = rs.getResults();
       out.println("<p>" + docs.getNumFound() + " hits.</p>");
       out.println("<table>");
@@ -392,7 +389,7 @@ public class Search extends HttpServlet {
         row.append("</td>");
         row.append("</tr>");
         row.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
-        for (String line : util.highlightMatches(q, util.loadTextFromId((String)doc.getFieldValue("id")))) {
+        for (String line : util.highlightMatches(sq.getQuery(), util.loadTextFromId((String)doc.getFieldValue("id")))) {
           row.append(line + "<br>\n");
         }
         row.append("</td></tr>");
@@ -420,6 +417,7 @@ public class Search extends HttpServlet {
       }
     } catch (SolrServerException e) {
       out.println("<p>Unable to execute query.  Please try again.</p>");
+      throw e;
     }
   }
 
