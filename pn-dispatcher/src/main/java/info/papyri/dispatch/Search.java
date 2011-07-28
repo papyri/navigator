@@ -29,10 +29,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 import info.papyri.dispatch.browse.SolrField;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 
 /**
  * 
@@ -343,9 +345,11 @@ public class Search extends HttpServlet {
     }
     sq.setRows(rows);
     sq.setQuery(q.replace("ς", "σ"));
-
+    
     try {
-      QueryResponse rs = solr.query(sq);
+      QueryRequest req = new QueryRequest(sq);
+      req.setMethod(METHOD.POST);
+      QueryResponse rs = req.process(solr);
       SolrDocumentList docs = rs.getResults();
       out.println("<p>" + docs.getNumFound() + " hits.</p>");
       out.println("<table>");
@@ -420,6 +424,7 @@ public class Search extends HttpServlet {
       }
     } catch (SolrServerException e) {
       out.println("<p>Unable to execute query.  Please try again.</p>");
+      throw e;
     }
   }
 
