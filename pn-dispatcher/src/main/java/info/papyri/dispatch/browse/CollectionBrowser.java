@@ -566,7 +566,7 @@ public class CollectionBrowser extends HttpServlet {
 
         String id = "";
         ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.full_identifier.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
-        System.out.println(itemIds);
+        //System.out.println(itemIds);
         if(itemIds.size() == 1){
 
             if(!previousIds.contains(itemIds.get(0))) return itemIds.get(0);
