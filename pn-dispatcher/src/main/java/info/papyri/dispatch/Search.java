@@ -140,7 +140,7 @@ public class Search extends HttpServlet {
       exp.append(lemma);
     }
     sq.setQuery(exp.toString());
-    sq.setRows(100);
+    sq.setRows(1000);
     QueryResponse rs = solr.query(sq);
     SolrDocumentList forms = rs.getResults();
     Set<String> formSet = new HashSet<String>();
