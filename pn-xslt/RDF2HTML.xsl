@@ -87,459 +87,258 @@
   <xsl:output method="html"/>
   
   <xsl:template match="/">
-    <xsl:choose>
-      <xsl:when test="//dc:hasPart">
-        <xsl:variable name="hgv" select="contains(/rdf:RDF/rdf:Description/@rdf:about, '/hgv/') and contains(//dc:hasPart[1]/@rdf:resource, '/source')"/>
-        <xsl:variable name="query">
-          prefix dc: &lt;http://purl.org/dc/terms/&gt;
-          select ?a ?b
-          from &lt;rmi://localhost/papyri.info#pi&gt;
-          where { &lt;<xsl:value-of select="/rdf:RDF/rdf:Description/@rdf:about"/>&gt; dc:hasPart ?a .
-          ?a dc:identifier ?b .
-          filter regex(str(?b), "^http:")}
-        </xsl:variable>
-        <xsl:variable name="hgvdoc">
-          <xsl:if test="$hgv"><xsl:copy-of select="doc(concat('http://',$server, '/mulgara/sparql?query=', encode-for-uri($query)))"/></xsl:if>
-        </xsl:variable>
-        <xsl:variable name="children" select="if ($hgv) then pi:get-toc($hgvdoc//sl:result) else pi:get-toc(//dc:hasPart) "/>
-        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
-        <html lang="en">
-          <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-            <title>
-              <xsl:choose>
-                <xsl:when test="pi:get-id(/rdf:RDF/rdf:Description/@rdf:about) = ''"><xsl:value-of select="$collection"/></xsl:when>
-                <xsl:otherwise><xsl:value-of select="pi:get-id(/rdf:RDF/rdf:Description/@rdf:about)"/></xsl:otherwise>
-              </xsl:choose>
-            </title>
-            <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
-            <script type="text/javascript">
-
-              var _gaq = _gaq || [];
-              _gaq.push(['_setAccount', 'UA-19774706-1']);
-              _gaq.push(['_trackPageview']);
-            
-              (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-              })();
-            
-            </script>
-          </head>
-          <body onload="init()">
-            <div id="d">
-              <div id="hd">
-                <h1>Papyri.info</h1>
-                <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2>
-              </div>
-              <div id="bd">
-                <xi:include href="nav.xml"/>
-                <div id="main">
-                  <div class="content ui-corner-all">
-                    <h2><xsl:value-of select="pi:get-id(/rdf:RDF/rdf:Description/@rdf:about)"/></h2>
-                    <xsl:choose>
-                      <xsl:when test="count($children) &lt; 40">
-                        <ul>
-                          <xsl:for-each select="$children">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                      </xsl:when>
-                      <xsl:when test="count($children) &lt; 80">
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &lt; 41]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv">
-                                <xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; 40]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                      </xsl:when>
-                      <xsl:when test="count($children) &lt; 120">
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &lt; 41]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; 40 and position() &lt; 81]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; 80]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                      </xsl:when>
-                      <xsl:when test="count($children) &lt; 160">
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &lt; 41]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; 40 and position() &lt; 81]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; 80 and position() &lt; 121]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; 120]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:variable name="csize" select="ceiling(count(//dc:hasPart) div 5)"/>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &lt; $csize + 1]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; $csize and position() &lt; ($csize * 2) + 1]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; ($csize * 2) and position() &lt; ($csize * 3) + 1]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; ($csize * 3) and position() &lt; ($csize * 4) + 1]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                        <ul style="margin-left:2em;float:left;">
-                          <xsl:for-each select="$children[position() &gt; ($csize * 4)]">
-                            <li><a href="{substring-after(replace(., 'source$', ''), 'http://papyri.info')}"><xsl:choose>
-                              <xsl:when test="$hgv"><xsl:value-of select="substring-after(pi:decode-uri($hgvdoc//sl:result[sl:binding[@name='a']/sl:uri/text() = current()]/sl:binding[@name='b']/sl:uri), 'http://papyri.info/hgv/')"/></xsl:when>
-                              <xsl:otherwise><xsl:value-of select="replace(replace(pi:get-id(.), ';;', '.'), ';', '.')"/></xsl:otherwise>
-                            </xsl:choose></a></li>
-                          </xsl:for-each>
-                        </ul>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </div>
-                </div>
-              </div>
-              <xi:include href="footer.xml"/>
-            </div>
-          </body>
-        </html>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
-        <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
-        <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
-        <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
-        <xsl:variable name="image" select="contains($related, 'http://papyri.info/images')"/>
-        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
-        <html lang="en">
-          <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-            <title>
-              <xsl:call-template name="get-references"/>
-            </title>
-            <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
-            <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
-            <xsl:if test="$image">
-              <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
-              <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
-            </xsl:if>            
-            <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
-            <script type="text/javascript">
-            
-              var _gaq = _gaq || [];
-              _gaq.push(['_setAccount', 'UA-19774706-1']);
-              _gaq.push(['_trackPageview']);
-            
-              (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-              })();
-            
-            </script>
-          </head>
-          <body onload="init()">
-            <div id="d">
-              <div id="hd">
-                <h1>Papyri.info</h1>
-                <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2>
-              </div>
-              <div id="bd">
-                <xi:include href="nav.xml"/>
-                <div id="main">
-                  <div class="content ui-corner-all">
-                    <h3 style="text-align:center"><xsl:call-template name="get-references"><xsl:with-param name="links">yes</xsl:with-param></xsl:call-template></h3>
-                    <xsl:if test="$hgv or $apis">
-                      <h4 style="text-align:center" id="titledate"></h4>
-                    </xsl:if>
-                    <div id="controls" class="ui-widget">
-                      <xsl:if test="$hgv or $apis">
-                        <div id="metadatacontrols" class="ui-widget-content ui-corner-all">
-                          <label for="mdt">metadata</label><input type="checkbox" name="metadata" id="mdt" checked="checked"/><br/>
-                          <xsl:if test="$hgv">
-                            <label for="hgvm">HGV data</label><input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
-                          </xsl:if>
-                          <xsl:if test="$apis">
-                            <label for="apism">APIS catalog record</label><input type="checkbox" name="apis" id="apism" checked="checked"/>
-                          </xsl:if>
-                        </div>
+    <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+    <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
+    <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
+    <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
+    <xsl:variable name="image" select="contains($related, 'http://papyri.info/images')"/>
+    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
+    <html lang="en">
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <title>
+          <xsl:call-template name="get-references"/>
+        </title>
+        <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
+        <xsl:if test="$image">
+          <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
+          <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
+        </xsl:if>            
+        <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+        
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-19774706-1']);
+          _gaq.push(['_trackPageview']);
+        
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+        
+        </script>
+      </head>
+      <body onload="init()">
+        <div id="d">
+          <div id="hd">
+            <h1>Papyri.info</h1>
+            <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2>
+          </div>
+          <div id="bd">
+            <xi:include href="nav.xml"/>
+            <div id="main">
+              <div class="content ui-corner-all">
+                <h3 style="text-align:center"><xsl:call-template name="get-references"><xsl:with-param name="links">yes</xsl:with-param></xsl:call-template></h3>
+                <xsl:if test="$hgv or $apis">
+                  <h4 style="text-align:center" id="titledate"></h4>
+                </xsl:if>
+                <div id="controls" class="ui-widget">
+                  <xsl:if test="$hgv or $apis">
+                    <div id="metadatacontrols" class="ui-widget-content ui-corner-all">
+                      <label for="mdt">metadata</label><input type="checkbox" name="metadata" id="mdt" checked="checked"/><br/>
+                      <xsl:if test="$hgv">
+                        <label for="hgvm">HGV data</label><input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
                       </xsl:if>
-                      <xsl:if test="$ddbdp or $image or $translation">
-                        <div id="textcontrols" class="ui-widget-content ui-corner-all">
-                          <label for="txt">text</label><input type="checkbox" name="text" id="txt" checked="checked"/><br/>
-                          <xsl:if test="$ddbdp">
-                            <label for="tcpt">transcription</label><input type="checkbox" name="transcription" id="tcpt" checked="checked"/>
-                          </xsl:if>
-                          <xsl:if test="$image">
-                            <label for="img">images</label><input type="checkbox" name="image" id="img" checked="checked"/>
-                          </xsl:if>
-                          <xsl:if test="$translation">
-                            <label for="tslt">translation</label><input type="checkbox" name="translation" id="tslt" checked="checked"/>
-                          </xsl:if>
-                        </div>
-                      </xsl:if>
-                      <xsl:if test="$ddbdp">
-                        <div id="editthis" class="ui-widget-content ui-corner-all">
-                          <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
-                        </div>
+                      <xsl:if test="$apis">
+                        <label for="apism">APIS catalog record</label><input type="checkbox" name="apis" id="apism" checked="checked"/>
                       </xsl:if>
                     </div>
-                    <xsl:if test="$collection = 'ddbdp'">
-                      <xsl:if test="$hgv or $apis">
-                        <div class="metadata">
-                          <xsl:for-each select="$relations[contains(., 'hgv/')]">
-                            <xsl:sort select="." order="ascending"/>
-                            <xsl:choose>
-                              <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
-                                <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
-                              </xsl:when>
-                              <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                            </xsl:choose>
-                          </xsl:for-each>
-                          <xsl:for-each select="$relations[contains(., '/apis/')]">
-                            <xsl:sort select="." order="ascending"/>
-                            <xsl:choose>
-                              <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
-                                <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
-                              </xsl:when>
-                              <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                            </xsl:choose>
-                          </xsl:for-each>
-                        </div>
+                  </xsl:if>
+                  <xsl:if test="$ddbdp or $image or $translation">
+                    <div id="textcontrols" class="ui-widget-content ui-corner-all">
+                      <label for="txt">text</label><input type="checkbox" name="text" id="txt" checked="checked"/><br/>
+                      <xsl:if test="$ddbdp">
+                        <label for="tcpt">transcription</label><input type="checkbox" name="transcription" id="tcpt" checked="checked"/>
                       </xsl:if>
-                      <div class="text">
-                        <div class="transcription data">
-                          <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
-                          <xsl:apply-templates select="/t:TEI"/>
-                          <div id="history">
-                            <h3>History</h3>
-                            <ul style="display:none">
-                              <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change">
-                                <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
-                              </xsl:for-each>
-                            </ul>
-                          </div>
-                          <p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a> © Duke Databank of Documentary Papyri.  
-                            This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
-                        </div>
-                        <xsl:if test="$image">
-                          <div id="image" class="image data"> 
-                            <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
-                            <ul>
-                              <xsl:for-each select="$relations[contains(., 'images/')]">
-                                <xsl:sort order="descending"/>
-                                <li><img src="{.}" alt="papyrus image"/></li>
-                              </xsl:for-each>
-                            </ul>
-                            <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
-                              concerning the use and reproduction of digital images included in APIS.  Please contact 
-                              the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
-                              if you wish to use any image in APIS.</p>
-                          </div>
-                        </xsl:if>
-                        <xsl:if test="$translation">
-                          <xsl:for-each select="pi:get-docs($relations[contains(., 'hgvtrans')], 'xml')/t:TEI//t:div[@type = 'translation']">
-                            <xsl:sort select="number(ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
-                            <div class="translation data">
-                              <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
-                                [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
-                              <xsl:apply-templates select="t:p"/>
-                            </div>
+                      <xsl:if test="$image">
+                        <label for="img">images</label><input type="checkbox" name="image" id="img" checked="checked"/>
+                      </xsl:if>
+                      <xsl:if test="$translation">
+                        <label for="tslt">translation</label><input type="checkbox" name="translation" id="tslt" checked="checked"/>
+                      </xsl:if>
+                    </div>
+                  </xsl:if>
+                  <xsl:if test="$ddbdp">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
+                </div>
+                <xsl:if test="$collection = 'ddbdp'">
+                  <xsl:if test="$hgv or $apis">
+                    <div class="metadata">
+                      <xsl:for-each select="$relations[contains(., 'hgv/')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(., '/apis/')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                    </div>
+                  </xsl:if>
+                  <div class="text">
+                    <div class="transcription data">
+                      <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
+                      <xsl:apply-templates select="/t:TEI"/>
+                      <div id="history">
+                        <h3>History</h3>
+                        <ul style="display:none">
+                          <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change">
+                            <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
                           </xsl:for-each>
-                          <xsl:for-each select="$relations[contains(., '/apis/')]">
-                            <xsl:choose>
-                              <xsl:when test="doc-available(pi:get-filename(., 'xml'))"><xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/></xsl:when>
-                              <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                            </xsl:choose>
+                        </ul>
+                      </div>
+                      <p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a> © Duke Databank of Documentary Papyri.  
+                        This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
+                    </div>
+                    <xsl:if test="$image">
+                      <div id="image" class="image data"> 
+                        <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
+                        <ul>
+                          <xsl:for-each select="$relations[contains(., 'images/')]">
+                            <xsl:sort order="descending"/>
+                            <li><img src="{.}" alt="papyrus image"/></li>
                           </xsl:for-each>
-                        </xsl:if>
+                        </ul>
+                        <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
+                          concerning the use and reproduction of digital images included in APIS.  Please contact 
+                          the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
+                          if you wish to use any image in APIS.</p>
                       </div>
                     </xsl:if>
-                    <xsl:if test="$collection = 'hgv'">
-                      <div class="metadata">
-                        <xsl:apply-templates select="/t:TEI" mode="metadata"/>
-                        <xsl:if test="$apis">
-                          <xsl:for-each select="$relations[contains(., '/apis/')]">
-                            <xsl:choose>
-                              <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
-                                <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
-                              </xsl:when>
-                              <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                            </xsl:choose>
-                          </xsl:for-each>
-                        </xsl:if>
-                      </div>
-                      <xsl:if test="$apis">
-                        <div class="text">
-                          <xsl:for-each select="$relations[contains(., '/apis/')]">
-                            <xsl:choose>
-                              <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
-                                <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/>
-                              </xsl:when>
-                              <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                            </xsl:choose>
-                          </xsl:for-each>
+                    <xsl:if test="$translation">
+                      <xsl:for-each select="pi:get-docs($relations[contains(., 'hgvtrans')], 'xml')/t:TEI//t:div[@type = 'translation']">
+                        <xsl:sort select="number(ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
+                        <div class="translation data">
+                          <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
+                            [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
+                          <xsl:apply-templates select="t:p"/>
                         </div>
-                      </xsl:if>
-                    </xsl:if>
-                    <xsl:if test="$collection = 'apis'">
-                      <div class="metadata">
-                        <xsl:apply-templates select="/t:TEI" mode="metadata"/>
-                      </div>
-                      <div class="text">
-                        <xsl:if test="$image">
-                        <div id="image" class="image data"> 
-                          <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
-                          <ul>
-                            <xsl:for-each select="$relations[contains(., 'images/')]">
-                              <xsl:sort order="descending"/>
-                              <li><img src="{.}" alt="papyrus image"/></li>
-                            </xsl:for-each>
-                          </ul>
-                          <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
-                            concerning the use and reproduction of digital images included in APIS.  Please contact 
-                            the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
-                            if you wish to use any image in APIS or to publish any material from APIS.</p>
-                        </div>
-                        </xsl:if>
-                        <xsl:if test="$translation">
-                          <xsl:apply-templates select="/t:TEI" mode="apistrans"/>
-                        </xsl:if>
-                      </div>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(., '/apis/')]">
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))"><xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/></xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
                     </xsl:if>
                   </div>
-                </div>
+                </xsl:if>
+                <xsl:if test="$collection = 'hgv'">
+                  <div class="metadata">
+                    <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+                    <xsl:if test="$apis">
+                      <xsl:for-each select="$relations[contains(., '/apis/')]">
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                    </xsl:if>
+                  </div>
+                  <xsl:if test="$apis">
+                    <div class="text">
+                      <xsl:for-each select="$relations[contains(., '/apis/')]">
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                    </div>
+                  </xsl:if>
+                </xsl:if>
+                <xsl:if test="$collection = 'apis'">
+                  <div class="metadata">
+                    <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+                  </div>
+                  <div class="text">
+                    <xsl:if test="$image">
+                    <div id="image" class="image data"> 
+                      <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
+                      <ul>
+                        <xsl:for-each select="$relations[contains(., 'images/')]">
+                          <xsl:sort order="descending"/>
+                          <li><img src="{.}" alt="papyrus image"/></li>
+                        </xsl:for-each>
+                      </ul>
+                      <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
+                        concerning the use and reproduction of digital images included in APIS.  Please contact 
+                        the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
+                        if you wish to use any image in APIS or to publish any material from APIS.</p>
+                    </div>
+                    </xsl:if>
+                    <xsl:if test="$translation">
+                      <xsl:apply-templates select="/t:TEI" mode="apistrans"/>
+                    </xsl:if>
+                  </div>
+                </xsl:if>
               </div>
-              <xi:include href="footer.xml"/>
             </div>
-            <script type="text/javascript" charset="utf-8">
-              $("#controls input").click(
-                function() {
-                  if (this.checked) {
-                    $("."+this.name).show();
-                    if (this.name == "transcription") {
-                      $(".image").css('width','50%');
-                      $(".translation").css('width','50%');
-                    }
-                  } else {
-                    $("."+this.name).hide();
-                    if (this.name == "transcription") {
-                      $(".image").css('width','100%');
-                      $(".translation").css('width','100%');
-                    }
-                  }
+          </div>
+          <xi:include href="footer.xml"/>
+        </div>
+        <script type="text/javascript" charset="utf-8">
+          $("#controls input").click(
+            function() {
+              if (this.checked) {
+                $("."+this.name).show();
+                if (this.name == "transcription") {
+                  $(".image").css('width','50%');
+                  $(".translation").css('width','50%');
                 }
-              );
-              $("#titledate").append(function() {
-                var result = "";
-                result += $(".mdtitle:first").text();
-                if (result != "") {
-                  result += " - ";
+              } else {
+                $("."+this.name).hide();
+                if (this.name == "transcription") {
+                  $(".image").css('width','100%');
+                  $(".translation").css('width','100%');
                 }
-                if ($("div.hgv .mddate").length > 0) {
-                  result += $("div.hgv .mddate").map(function (i) {
-                    return $(this).text();
-                  }).get().join("; ");
-                } else {
-                  result += $(".mddate:first").text();
-                }
-                if ($(".mdprov").length > 0) {
-                  result += " - ";
-                  result += $(".mdprov:first").text();
-                }
-                return result;
-              });
-              $("#history").click( function() {
-                $("#history>ul").toggle("blind");
-              });
-            </script>
-          </body>
-        </html>
-      </xsl:otherwise>
-    </xsl:choose>
-    
-    
+              }
+            }
+          );
+          $("#titledate").append(function() {
+            var result = "";
+            result += $(".mdtitle:first").text();
+            if (result != "") {
+              result += " - ";
+            }
+            if ($("div.hgv .mddate").length > 0) {
+              result += $("div.hgv .mddate").map(function (i) {
+                return $(this).text();
+              }).get().join("; ");
+            } else {
+              result += $(".mddate:first").text();
+            }
+            if ($(".mdprov").length > 0) {
+              result += " - ";
+              result += $(".mdprov:first").text();
+            }
+            return result;
+          });
+          $("#history").click( function() {
+            $("#history>ul").toggle("blind");
+          });
+        </script>
+      </body>
+    </html>
   </xsl:template>
   
   <xsl:function name="pi:get-toc">
