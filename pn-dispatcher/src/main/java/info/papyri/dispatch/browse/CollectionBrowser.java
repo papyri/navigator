@@ -563,46 +563,53 @@ public class CollectionBrowser extends HttpServlet {
     
     String getDisplayId(LinkedHashMap<SolrField, String> pathParts, SolrDocument doc, ArrayList<String> previousIds){
 
+        try{
 
-        String id = "";
-        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.full_identifier.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
-        //System.out.println(itemIds);
-        if(itemIds.size() == 1){
+            String id = "";
+            ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.full_identifier.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+            if(itemIds.size() == 1){
 
-            if(!previousIds.contains(itemIds.get(0))) return itemIds.get(0);
-            return "-1";
+
+                if(!previousIds.contains(itemIds.get(0))) return itemIds.get(0);
+                return "-1";
+
+            }
+
+            // if more than one id, need to work out which one corresponds to the collection/series/volume we're currently looking at.
+            // but these are all multivalued fields.
+            // however, the indexing order is constant - that is to say, the id value at one position will correspond to the 
+            // collection information at that same index point
+            // so we retrieve by making an inverse hashmap
+            // the keys to which are the collection information, and the values of which are the ids
+
+            HashMap<String, String> collsToIds = new HashMap<String, String>();
+
+            ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.volume.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+            ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.series.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
+
+            // populating the HashMap
+            for(int i = 0; i < series.size(); i++){
+                String itemValue = itemIds.get(i).trim().replaceAll("_", "");
+                if(previousIds.contains(itemValue)) continue;
+                String strSeries = series.get(i).trim().replaceAll("_", "");
+                // bodge for apis, which will only ever record a single apis_volume value (of 0) for each record
+                String strVolume = i > (volumes.size() - 1) ? "0" : volumes.get(i).trim().replaceAll("_", "");
+                String key = strSeries + "|" + strVolume;
+                collsToIds.put(key, itemValue);
+
+            }
+
+            if(collsToIds.isEmpty()) return "-1";  
+            String currentKey = pathParts.get(SolrField.series) + "|" + (pathParts.get(SolrField.volume) == null ? "0" : pathParts.get(SolrField.volume));
+            String possId = collsToIds.get(currentKey);
+            if(possId == null) possId = "-1";
+            return possId;
         
-        }
-        
-        // if more than one id, need to work out which one corresponds to the collection/series/volume we're currently looking at.
-        // but these are all multivalued fields.
-        // however, the indexing order is constant - that is to say, the id value at one position will correspond to the 
-        // collection information at that same index point
-        // so we retrieve by making an inverse hashmap
-        // the keys to which are the collection information, and the values of which are the ids
-                        
-        HashMap<String, String> collsToIds = new HashMap<String, String>();
-        
-        ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.volume.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
-        ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(getCollectionPrefix(pathParts) + SolrField.series.name()).toString().replaceAll("^\\[", "").replaceAll("\\]$", "").split(",")));
-       
-        // populating the HashMap
-        for(int i = 0; i < series.size(); i++){
-            String itemValue = itemIds.get(i).trim().replaceAll("_", "");
-            if(previousIds.contains(itemValue)) continue;
-            String strSeries = series.get(i).trim().replaceAll("_", "");
-            // bodge for apis, which will only ever record a single apis_volume value (of 0) for each record
-            String strVolume = i > (volumes.size() - 1) ? "0" : volumes.get(i).trim().replaceAll("_", "");
-            String key = strSeries + "|" + strVolume;
-            collsToIds.put(key, itemValue);
-            
-        }
-        
-        if(collsToIds.isEmpty()) return "-1";  
-        String currentKey = pathParts.get(SolrField.series) + "|" + (pathParts.get(SolrField.volume) == null ? "0" : pathParts.get(SolrField.volume));
-        String possId = collsToIds.get(currentKey);
-        if(possId == null) possId = "-1";
-        return possId;
+        } catch(NullPointerException npe){
+             
+             return "Missing id";
+             
+         }
         
     } 
     
