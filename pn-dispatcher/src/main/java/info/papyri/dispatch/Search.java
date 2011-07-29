@@ -300,6 +300,11 @@ public class Search extends HttpServlet {
           q += " AND invnum:(" + param + ")";
         }
       }
+      if (q == null && query == null) {
+        out.println("<p>Empty search.</p>");
+        return;
+      }
+      if (q == null) q= query;
 
     }
     SolrQuery sq = new SolrQuery();
