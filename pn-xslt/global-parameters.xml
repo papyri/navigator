@@ -48,6 +48,6 @@
   <!-- Line increment -->
   <parameter>
     <name>line-inc</name>
-    <value>5</value>
+    <value>1</value>
   </parameter>
 </parameters>

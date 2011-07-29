@@ -329,7 +329,7 @@ public class Search extends HttpServlet {
       sq.setSortField(sort, SolrQuery.ORDER.desc);
     }
     sq.setRows(rows);
-    if (q.contains("transcription_l")) {
+    if (q != null && q.contains("transcription_l")) {
       StringBuilder query = new StringBuilder();
       query.append(FileUtils.substringBefore(q, "transcription_l", false));
       query.append("transcription_ia:(");
