@@ -63,6 +63,7 @@
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     <xsl:variable name="image" select="contains($related, 'info:fedora/ldpd')"/>
+    <xsl:variable name="line-inc">5</xsl:variable>
     <add>
       <doc>
         <xsl:if test="$ddbdp = true()">
