@@ -16,7 +16,7 @@
   <xsl:include href="txt-teig.xsl"/>
   <xsl:include href="txt-teigap.xsl"/>
   <xsl:include href="txt-teihead.xsl"/>
-  <xsl:include href="txt-teilb.xsl"/>
+  <xsl:include href="pi-txt-teilb.xsl"/>
   <xsl:include href="txt-teilgandl.xsl"/>
   <xsl:include href="txt-teilistanditem.xsl"/>
   <xsl:include href="txt-teilistbiblandbibl.xsl"/>
@@ -59,6 +59,7 @@
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="line-inc">1</xsl:variable>
 
   <xsl:template match="/">
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
