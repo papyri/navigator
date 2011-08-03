@@ -7,6 +7,8 @@ package info.papyri.dispatch;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -510,6 +512,17 @@ public class FileUtils {
     } else {
       if (returnInput) return in; else return "";
     }
+  }
+  
+  public static String interpose(Collection coll, String sep) {
+    StringBuilder result = new StringBuilder();
+    for (Iterator<String> i = coll.iterator(); i.hasNext();) {
+      result.append(i.next());
+      if (i.hasNext()) {
+        result.append(sep);
+      }
+    }
+    return result.toString();
   }
 
   /**
