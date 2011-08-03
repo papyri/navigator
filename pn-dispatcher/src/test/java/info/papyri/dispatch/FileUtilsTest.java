@@ -99,6 +99,7 @@ public class FileUtilsTest extends TestCase {
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
+      System.out.println(r);
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
@@ -194,6 +195,7 @@ public class FileUtilsTest extends TestCase {
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
+      System.out.println(r);
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
@@ -296,6 +298,7 @@ public class FileUtilsTest extends TestCase {
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
+      System.out.println(r);
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;

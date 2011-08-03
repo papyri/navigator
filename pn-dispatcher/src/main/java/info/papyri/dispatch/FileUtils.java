@@ -347,42 +347,43 @@ public class FileUtils {
   public List<String> highlightMatches(String query, String t) {
     List<String> result = new ArrayList<String>();
     Pattern[] patterns = getPatterns(query);
-    String text = t.toString().replaceAll(hyphenatedLineNum, "ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
+    String text = t.toString().replaceAll(hyphenatedLineNum, "Ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
       int prevEnd = 0;
       while (m.find()) {
         int start = m.toMatchResult().start();
-        if (start > 30) {
-          int mstart = start;
-          start -= 30;
-          if (text.indexOf('ⓝ', start) > mstart) {
-            start = text.indexOf(" ", start);
-          } else {
-            while (text.indexOf('ⓝ', start) < mstart && text.indexOf('ⓝ', start) > 0) {
-              start = text.indexOf('ⓝ', start) + 1;
-            }
-          }
+        int end = m.toMatchResult().end();
+        if (text.substring(0, start).indexOf('ⓝ') > 0) {
+          start = text.substring(0, start).lastIndexOf("ⓝ");
         } else {
           start = 0;
         }
-        int end = m.toMatchResult().end();
-        if (end > text.length() - 100) {
+        if (end > text.length() - 50) {
           end = text.length();
         } else {
           if (text.indexOf('ⓝ', end) > 0) {
             end = text.indexOf('ⓝ', end) - 1;
           }
         }
+        // if our lines are excessively long, then trim them
+        if (end - start > 150) {
+          while (m.toMatchResult().start() - start > 100) {
+            start = text.indexOf(' ', start + 70) + 1; 
+          }
+          if (end - m.toMatchResult().end() > 100) {
+            end = text.lastIndexOf(' ', m.toMatchResult().end() + 70);
+          }
+        }
         if (start >= prevEnd) {
-          result.add(highlight(query, text.substring(start, end)).replaceAll("ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 "));
+          result.add(highlight(query, text.substring(start, end)).replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
           }
           prevEnd = end;
         } else {
           String hit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
-          result.add(highlight(query, hit).replaceAll("ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 "));
+          result.add(highlight(query, hit).replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
           }
@@ -533,7 +534,7 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]\\.+ⓜ)*";
+  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ)*";
   private static String exclude = "(<span\\s[^>]+>[^<]+</span>|<a\\s[^>]+>[^<]+</a>|<[^>]+>|&\\w+;)";
   private static String lineNum = "((\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNum = "(-(\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
