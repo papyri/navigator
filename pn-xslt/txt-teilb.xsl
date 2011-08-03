@@ -76,7 +76,7 @@
    </xsl:template>
 
    <xsl:template name="margin-num">
-      <xsl:value-of select="@n"/>
+      <xsl:value-of select="@n"/>. 
       <!-- template »line-numbering-tab« found in txt-tpl-linenumberingtab.xsl respectively odf-tpl-linenumberingtab.xsl -->
       <xsl:call-template name="line-numbering-tab" />
    </xsl:template>
