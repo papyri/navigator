@@ -507,7 +507,7 @@ td.kwic {
   padding-top: .5em;
   padding-bottom: .5em;
 }
-.ddbdp-ids, .hgv-ids, .apis-ids, .has-translation{
+.ddbdp-ids, .hgv-ids, .apis-ids, .has-translation, .language{
 
   text-align: center;
 

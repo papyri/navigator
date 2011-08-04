@@ -107,7 +107,7 @@
     <servlet-mapping>
         <servlet-name>FacetBrowser</servlet-name>
         <url-pattern>/faceted/*</url-pattern>
-    </servlet-mapping>
+        </servlet-mapping>
     <session-config>
         <session-timeout>
             30
