@@ -28,6 +28,8 @@ public enum SolrField {
         date_category,
         unknown_date_flag,
         transcription_ngram_ia,
-        id
+        id,
+        apis_inventory,
+        apis_publication_id
     
 }
