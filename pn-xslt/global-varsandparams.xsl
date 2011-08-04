@@ -29,8 +29,8 @@
               select="document($param-file)//parameter[name = 'edition-type']/value[@on = 'yes']"/>
   <xsl:param name="apparatus-style"
               select="document($param-file)//parameter[name = 'apparatus-style']/value[@on = 'yes']"/>
-  <xsl:param name="line-inc"
-              select="document($param-file)//parameter[name = 'line-inc']/value"/>
+  <!--<xsl:param name="line-inc"
+              select="document($param-file)//parameter[name = 'line-inc']/value"/>-->
   
   <xsl:param name="docroot">../output/data</xsl:param>
   

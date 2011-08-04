@@ -47,17 +47,19 @@ public class Search extends HttpServlet {
   private String htmlPath = "";
   private String home = "";
   private FileUtils util;
+  private SolrUtils solrutil;
   private static String PNSearch = "pn-search/";
   private static String morphSearch = "morph-search/";
 
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    solrUrl = config.getInitParameter("solrUrl");;
+    solrUrl = config.getInitParameter("solrUrl");
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     home = config.getInitParameter("home");
     util = new FileUtils(xmlPath, htmlPath);
+    solrutil = new SolrUtils(config);
     try {
       searchURL = new URL("file://" + home + "/" + "search.html");
     } catch (MalformedURLException e) {
@@ -130,40 +132,6 @@ public class Search extends HttpServlet {
       if (reader != null) reader.close();
     }
   }
-
-  private String expandLemmas(String query) throws MalformedURLException, SolrServerException, ServletException {
-    SolrServer solr = new CommonsHttpSolrServer(solrUrl + morphSearch);
-    StringBuilder exp = new StringBuilder();
-    SolrQuery sq = new SolrQuery();
-    String[] lemmas = query.split("\\s+");
-    for (String lemma : lemmas) {
-      exp.append(" lemma:");
-      exp.append(lemma);
-    }
-    sq.setQuery(exp.toString());
-    sq.setRows(1000);
-    QueryResponse rs = solr.query(sq);
-    SolrDocumentList forms = rs.getResults();
-    Set<String> formSet = new HashSet<String>();
-    if (forms.size() > 0) {
-      for (int i = 0; i < forms.size(); i++) {
-        formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
-      }
-    }
-    return interpose(formSet, " OR ");
-  }
-
-  private String interpose(Collection coll, String sep) {
-    StringBuilder result = new StringBuilder();
-    for (Iterator<String> i = coll.iterator(); i.hasNext();) {
-      result.append(i.next());
-      if (i.hasNext()) {
-        result.append(sep);
-      }
-    }
-    return result.toString();
-  }
-
 
   private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
     SolrServer solr = new CommonsHttpSolrServer(solrUrl + PNSearch);
@@ -299,6 +267,11 @@ public class Search extends HttpServlet {
           q += " AND invnum:(" + param + ")";
         }
       }
+      if (q == null && query == null) {
+        out.println("<p>Empty search.</p>");
+        return;
+      }
+      if (q == null) q= query;
 
     }
     SolrQuery sq = new SolrQuery();
@@ -328,11 +301,12 @@ public class Search extends HttpServlet {
       sq.setSortField(sort, SolrQuery.ORDER.desc);
     }
     sq.setRows(rows);
-    if (q.contains("transcription_l")) {
+    if (q != null && q.contains("transcription_l")) {
       StringBuilder query = new StringBuilder();
       query.append(FileUtils.substringBefore(q, "transcription_l", false));
       query.append("transcription_ia:(");
-      query.append(expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
+      query.append(solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
+      query.append(")");
       query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
       sq.setQuery(query.toString().replace("ς", "σ"));
     } else {

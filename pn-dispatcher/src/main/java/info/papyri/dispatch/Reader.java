@@ -36,6 +36,7 @@ public class Reader extends HttpServlet {
   private String xmlPath = "";
   private String htmlPath = "";
   private FileUtils util;
+  private SolrUtils solrutil;
   private byte[] buffer = new byte[8192];
 
   @Override
@@ -44,6 +45,7 @@ public class Reader extends HttpServlet {
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     util = new FileUtils(xmlPath, htmlPath);
+    solrutil = new SolrUtils(config);
     mulgara = config.getInitParameter("mulgaraUrl");
   }
 
@@ -131,6 +133,20 @@ public class Reader extends HttpServlet {
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
     throws ServletException, IOException {
     PrintWriter out = response.getWriter();
+    if (q.contains("transcription_l")) {
+      try {
+        StringBuilder query = new StringBuilder();
+        query.append(FileUtils.substringBefore(q, "transcription_l", false));
+        query.append("transcription_ia:(");
+        query.append(solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
+        query.append(")");
+        query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
+        q = query.toString();
+        System.out.println(q);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     if (f != null && f.exists()) {
       try {
         out.write(util.highlight(q, util.loadFile(f)));

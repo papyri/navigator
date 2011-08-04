@@ -7,6 +7,8 @@ package info.papyri.dispatch;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -303,16 +305,16 @@ public class FileUtils {
   public String highlight(String query, String t) {
     Pattern[] patterns = getPatterns(query);
     List<String> exclusions = getExclusions(t);
-    String text = t.toString().replaceAll(exclude, "ЖЖЖ\n");
+    String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
     int index = 0;
     for (Pattern pattern : patterns) {
       StringBuilder hl = new StringBuilder();
       Matcher m = pattern.matcher(text);
       while (m.find()) {
         hl.append(text.substring(index, m.start()));
-        hl.append(hlStart);
+        hl.append(hlStartMark);
         hl.append(text.substring(m.start(), m.end()));
-        hl.append(hlEnd);
+        hl.append(hlEndMark);
         index = m.end();
       }
       if (hl.length() > 0) {
@@ -321,7 +323,7 @@ public class FileUtils {
         index = 0;
       }
     }
-    Pattern p = Pattern.compile("ЖЖЖ\\n?");
+    Pattern p = Pattern.compile("ⓐⓐⓐ\\n?");
     int i = 0;
     int start = 0;
     Matcher m = p.matcher(text);
@@ -333,7 +335,7 @@ public class FileUtils {
       i++;
     }
     result.append(text.substring(start));
-    return result.toString();
+    return result.toString().replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
   }
   
   /**
@@ -347,38 +349,43 @@ public class FileUtils {
   public List<String> highlightMatches(String query, String t) {
     List<String> result = new ArrayList<String>();
     Pattern[] patterns = getPatterns(query);
-    String text = t.toString().replaceAll(excludeTxt, "").replace("<", "&lt;").replace(">", "&gt;");
+    String text = t.toString().replaceAll(hyphenatedLineNum, "Ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
       int prevEnd = 0;
       while (m.find()) {
         int start = m.toMatchResult().start();
-        if (start > 30) {
-          start -= 30;
-          if (text.indexOf(' ', start) > start) {
-            start = text.indexOf(' ', start) + 1;
-          }
+        int end = m.toMatchResult().end();
+        if (text.substring(0, start).indexOf('ⓝ') > 0) {
+          start = text.substring(0, start).lastIndexOf("ⓝ");
         } else {
           start = 0;
         }
-        int end = m.toMatchResult().end();
-        if (end > text.length() - 30) {
+        if (end > text.length() - 50) {
           end = text.length();
         } else {
-          end += 30;
-          if (text.indexOf(' ', end) > 0) {
-            end = text.indexOf(' ', end) + 1;
+          if (text.indexOf('ⓝ', end) > 0) {
+            end = text.indexOf('ⓝ', end) - 1;
+          }
+        }
+        // if our lines are excessively long, then trim them
+        if (end - start > 150) {
+          while (m.toMatchResult().start() - start > 100) {
+            start = text.indexOf(' ', start + 70) + 1; 
+          }
+          if (end - m.toMatchResult().end() > 100) {
+            end = text.lastIndexOf(' ', m.toMatchResult().end() + 70);
           }
         }
         if (start >= prevEnd) {
-          result.add(highlight(query, text.substring(start, end)));
+          result.add(highlight(query, text.substring(start, end)).replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
           }
           prevEnd = end;
         } else {
           String hit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
-          result.add(highlight(query, hit));
+          result.add(highlight(query, hit).replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
           }
@@ -506,6 +513,17 @@ public class FileUtils {
       if (returnInput) return in; else return "";
     }
   }
+  
+  public static String interpose(Collection coll, String sep) {
+    StringBuilder result = new StringBuilder();
+    for (Iterator<String> i = coll.iterator(); i.hasNext();) {
+      result.append(i.next());
+      if (i.hasNext()) {
+        result.append(sep);
+      }
+    }
+    return result.toString();
+  }
 
   /**
    * Utility function for mapping old PN static release URLs to new PN URLS
@@ -529,9 +547,12 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*Ж.]|&gt;|&lt;|ca\\.)*";
+  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ)*";
   private static String exclude = "(<span\\s[^>]+>[^<]+</span>|<a\\s[^>]+>[^<]+</a>|<[^>]+>|&\\w+;)";
-  private static String excludeTxt = "(-(\\s|\\r|\\n)+[0-9]*\\s*)";
+  private static String lineNum = "((\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
+  private static String hyphenatedLineNum = "(-(\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
+  private static String hlStartMark = "Ⓐ";
   private static String hlEnd = "</span>";
+  private static String hlEndMark = "Ⓑ";
 }

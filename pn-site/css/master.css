@@ -310,6 +310,8 @@ border-top: thin black solid;
 .previouslyread {
 text-decoration: underline;
 }
+
+.supraline { border-top: thin black solid; }
      
 *[lang="la"] {
 font-family: "GentiumAlt", "Gentium","Palatino Linotype", "Palatino", "Times New Roman", "Times", "Arial Unicode MS", serif;

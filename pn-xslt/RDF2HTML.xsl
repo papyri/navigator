@@ -81,6 +81,7 @@
       <xsl:otherwise><xsl:value-of select="//t:idno[@type='filename']"/></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
+  <xsl:variable name="line-inc">5</xsl:variable>
   
   <xsl:include href="pi-functions.xsl"/>
   
