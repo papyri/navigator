@@ -14,7 +14,10 @@ package info.papyri.dispatch.browse;
     public abstract class BrowseRecord implements Comparable{
         
         /**
-         * Returns an html representation of the Record 
+         * Returns an html representation of the Record.
+         * 
+         * This method is required so that large groups of records can be iterated over 
+         * and displayed automatically.
          * 
          * @return a string of html
          */

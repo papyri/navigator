@@ -46,6 +46,10 @@ abstract public class Facet {
     
     /** The label displayed to the user */
     String displayName;
+    
+    // TODO: Change this and make non-static so that all <code>Facet</code>s have their own
+    // default value. The current set-up is useful only with drop down <code>SELECT</code> 
+    //  elements
     static String defaultValue = "--- All values ---";
     
     /**
@@ -64,18 +68,18 @@ abstract public class Facet {
     }
     
     /**
-     * Modifies the passed <code>SolrQuery</code> to reflect the constraints and 
-     * faceting information required by the <code>Facet</code>
+     * Modifies the passed <code>SolrQuery</code> to reflect the constraints set upon, and 
+     * faceting information required by, the <code>Facet</code>
      * 
      * @param solrQuery
      * @return The passed solrQuery, modified
-     * @see FacetBrowser#buildFacetQuery(int, java.util.EnumMap) 
+     * @see FacetBrowser#buildFacetQuery(int, java.util.ArrayList) 
      */
     
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         solrQuery.addFacetField(field.name());
-        solrQuery.setFacetLimit(-1);
+        solrQuery.setFacetLimit(-1);                // = no limit; many facets have > 100 values, the default
         
         Iterator<String> cit = facetConstraints.iterator();
         
@@ -100,17 +104,18 @@ abstract public class Facet {
      * Generates the HTML form element used for input.
      * 
      * @return A string representation of the requisite HTML
-     * @see FacetBrowser#assembleWidgetHTML(java.util.EnumMap, java.lang.StringBuffer) 
+     * @see FacetBrowser#assembleWidgetHTML(java.util.ArrayList, java.lang.StringBuilder, java.util.Map) 
      */
     
      public String generateWidget() {
         
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
-        html.append(getToolTipText());
+        html.append(getToolTipText());                                          
         html.append("\">");
-        html.append(generateHiddenFields());
+        html.append(generateHiddenFields());    
+        // if only one value possible, then gray out control
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
-        String disabled = onlyOneValue ? " disabled=\"true\"" : "";
+        String disabled = onlyOneValue ? " disabled=\"true\"" : "";             
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">");
         html.append(getDisplayName(null));
@@ -133,7 +138,8 @@ abstract public class Facet {
             Count valueAndCount = vcit.next();
             String value = valueAndCount.getName();
             String displayValue = getDisplayValue(value);
-            if(displayValue.length() > 60) displayValue = displayValue.substring(0, 60);
+            // truncate if too long; otherwise control potentially takes up whole screen
+            if(displayValue.length() > 60) displayValue = displayValue.substring(0, 60);    
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
             html.append("<option");
@@ -160,9 +166,9 @@ abstract public class Facet {
      * 
      * Required for pagination links to maintain state across pages.
      * 
-     * @return 
-     * @see FacetBrowser#doPagination(java.util.EnumMap, long) 
-     * @see FacetBrowser#buildFullQueryString(java.util.EnumMap) 
+     * @return A querystring representing a <code>Facet</code>s constraints.
+     * @see FacetBrowser#doPagination(java.util.ArrayList, long) 
+     * @see FacetBrowser#buildFullQueryString(java.util.ArrayList) 
      */
     
     public String getAsQueryString(){
@@ -190,8 +196,9 @@ abstract public class Facet {
      * Required for the anchor links that (from the user's perspective) 'remove' 
      * constraints from the faceted display.
      * 
-     * @return 
-     * @see FacetBrowser#assemblePreviousValuesHTML(java.util.EnumMap, java.lang.StringBuffer) 
+     * @return A querystring representing the <code>Facet</code>'s constraints, excluding the
+     * value passed as a <code>String</code>.
+     * @see FacetBrowser#assemblePreviousValuesHTML(java.util.ArrayList, java.lang.StringBuilder, java.util.Map) 
      */
     
     public String getAsFilteredQueryString(String filterParam, String filterValue){
@@ -222,7 +229,7 @@ abstract public class Facet {
      * 
      * 
      * @param queryResponse
-     * @see FacetBrowser#populateFacets(java.util.EnumMap, org.apache.solr.client.solrj.response.QueryResponse) 
+     * @see FacetBrowser#populateFacets(java.util.ArrayList, org.apache.solr.client.solrj.response.QueryResponse)  
      */
 
     public void setWidgetValues(QueryResponse queryResponse){
@@ -241,10 +248,10 @@ abstract public class Facet {
     } 
     
    /**
-     * Generates a hidden field for previously-selected constraints on the <code>Facet</code>.
+     * Generates hidden fields for previously-selected constraints on the <code>Facet</code>.
      * 
      * 
-     * @return 
+     * @return The HTML for the hidden fields, as a <code>String</code>.
      */
     
     String generateHiddenFields(){
@@ -262,6 +269,15 @@ abstract public class Facet {
         return html;
         
     }
+    
+    /**
+     * Parses the parameters submitted in the <code>HttpServletRequest</code>  and stores
+     * those relevant to the <code>Facet</code> in question
+     * 
+     * @param params
+     * @return A <code>Boolean</code> indicating whether or not a constraint exists on the current 
+     * <code>Facet</code>.
+     */
     
     public Boolean addConstraints(Map<String, String[]> params){
         
@@ -299,6 +315,16 @@ abstract public class Facet {
         
     }
     
+    /**
+     * Parses each individual value submitted to the <code>Facet</code>.
+     * 
+     * The chief purpose of the method as defined here (i.e., in the superclass) is to weed out 
+     * default values and prevent them being used as constraints. Subclasses with 
+     * idiosyncratic values may have considerably more complex behavior.
+     * 
+     * @param newValue 
+     */
+    
      void addConstraint(String newValue){
         
         if(newValue.equals(Facet.defaultValue)) return;
@@ -306,6 +332,8 @@ abstract public class Facet {
         
         
     }
+     
+     /* getters and setters below */
     
     public SolrField getFacetField(){
         

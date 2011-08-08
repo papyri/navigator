@@ -135,10 +135,6 @@ public class FileUtilsTest extends TestCase {
     assertEquals(FileUtils.stripDiacriticals(in), out);
   }
 
-
-
-
-  
   public void testFindMatchesBigFile() {
     String query = "sheep";
     String id = "http://papyri.info/ddbdp/p.mich;2;123";
@@ -194,7 +190,7 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/bgu;16;2629";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
-    expResult.add("στρ̣[ατη]γῶι");
+    expResult.add("στρ̣[ατη]-<br/>31. γῶι");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
@@ -268,15 +264,14 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/p.cair.zen;1;59068";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
-    expResult.add("sheep");
-    expResult.add("sheep");
+    expResult.add("<span class=\"highlight\">sheep</span>");
+    expResult.add("<span class=\"highlight\">sheep-</span>pens");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
-          break;
         }
       }
     }

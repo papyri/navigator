@@ -5,39 +5,49 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 
 /**
+ * The <code>DocumentBrowseRecord</code> class stores summary information regarding
+ * documents retrieved during browsing or search.
+ * 
+ * 
  * @author thill
  */
 public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
-  private DocumentCollectionBrowseRecord documentGroupRecord;
-  private String itemId;
+  private String preferredId;
+  private ArrayList<String> itemIds = new ArrayList<String>();
   private URL url;
   private String place;
   private String date;
   private String language;
   private String translationLanguages;
-  private String hasImage;
-  private String invNum;
+  private String imagePath;
+  private static IdComparator documentComparator = new IdComparator();
+  private static String cameraImgPath = "/images/camera.gif";
+  private static String extLinkImgPath = "/images/extlink.gif";
+  private static String cameraImgHeight = "28px";
+  private static String cameraImgWidth = "35px";
+  private static String extLinkImgHeight = "20px";
+  private static String extLinkImgWidth = "20px";
+ 
+  
+  // TODO: Change images display so that icons/links to the original images are displayed instead of a simple 'yes'/'no' value
+  // TODO: Change language display so that codes displayed instead of expanded strings.
+  
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, String place, String date, String lang, Boolean hasImg, String trans) {
 
-  public DocumentBrowseRecord(DocumentCollectionBrowseRecord dgr, String itemId, URL url, String place, String date, String lang, Boolean hasImg, String trans, String invNum) {
-
-    // TODO: this will have to be changed depending on what users want to see in the records
-
-    this.documentGroupRecord = dgr;
-    this.itemId = itemId;
+    this.preferredId = tidyPreferredId(prefId);
+    this.itemIds = ids;
     this.url = url;
     this.place = place;
     this.date = date;
-    this.language = tidyAncientLanguages(lang);
-    this.translationLanguages = expandLanguageCodes(trans);
-    this.hasImage = hasImg ? "Yes" : "No";
-    this.invNum = invNum;
-
+    this.language = tidyAncientLanguageCodes(lang);
+    this.translationLanguages = tidyModernLanguageCodes(trans);
+    this.imagePath = hasImg ? "Yes" : "No";
+    
   }
-
-
 
   @Override
   public String getHTML() {
@@ -48,7 +58,9 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     anchor.append("'>");
     anchor.append(getDisplayId());
     anchor.append("</a>");
-    StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\">");
+    StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\" title=\"");
+    html.append(getAlternativeIds());
+    html.append("\">");
     html.append(anchor.toString());
     html.append("</td>");
     html.append("<td class=\"display-place\">");
@@ -64,39 +76,38 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");
-    html.append(hasImage);
+    html.append(imagePath);
     html.append("</td>");
     html.append("</tr>");
     return html.toString();
 
   }
 
+  // TODO: Change in line with trac http://idp.atlantides.org/trac/idp/ticket/828
+  
   public String getDisplayId() {
-      
-     if(documentGroupRecord.getCollection().toUpperCase().equals("APIS") && invNum != null){
-         
-         return invNum;
-     } 
      
-    StringBuilder displayName = new StringBuilder();
-    displayName.append(this.documentGroupRecord.getSeries());
-    displayName.append(" ");
-    displayName.append(this.documentGroupRecord.getVolume().equals("0") ? "" : this.documentGroupRecord.getVolume());
-    displayName.append(" ");
-    displayName.append(this.itemId);
-    String rawName = displayName.toString().replaceAll("_", " ");
-    
-    return rawName;
+    return preferredId;
     
   }
   
-  private String expandLanguageCodes(String languageCodes){
+  private String tidyPreferredId(String prefId){
       
+      String newId = prefId.replace(" 0 ", " ");
+      newId = newId.replace("hgv ", "");
+      newId = newId.replace("ddbdp ", "");
+      newId = newId.replace("apis ", "");
       
-        String expandedCodes = "";
-        
+      return newId;
+      
+  }
+ 
+  
+  private String tidyModernLanguageCodes(String languageCodes){
+              
         String[] codes = languageCodes.split(",");
-        Collections.sort(Arrays.asList(codes));
+        
+        // eliminate duplicates
         
         ArrayList<String> previousCodes = new ArrayList<String>();
         
@@ -104,36 +115,27 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
             
             String code = codes[i].trim();
             
-            if(previousCodes.contains(code)) continue;
-            previousCodes.add(code);
-            
-            String expandedCode;
-            
-            try{
-            
-                String swappedLanguageCode = code.replaceAll("-", "_");
-                LanguageCode lang = LanguageCode.valueOf(swappedLanguageCode);
-                expandedCode = lang.expanded();
-            
-            } 
-            catch(IllegalArgumentException iae){
-            
-                expandedCode = code;
-
-            }
-            
-            expandedCodes += expandedCode;
-            if(i < codes.length - 1) expandedCodes += ", ";
+            if(!previousCodes.contains(code))  previousCodes.add(code);
             
         }
 
-        return expandedCodes;
+        String tidiedCodes = "";
+
+        Iterator<String> pcit = previousCodes.iterator();
+        while(pcit.hasNext()){
+            
+            tidiedCodes += pcit.next();
+            if(pcit.hasNext()) tidiedCodes += ", ";
+            
+        }
+        
+        return tidiedCodes;
            
   }
   
-  private String tidyAncientLanguages(String rawLanguages){
+  private String tidyAncientLanguageCodes(String rawLanguageCodes){
       
-      String filteredLanguages = LanguageCode.filterModernLanguages(rawLanguages);
+      String filteredLanguages = LanguageCode.filterModernLanguageCodes(rawLanguageCodes);
       
       String[] splitLanguages = filteredLanguages.split(",");
       
@@ -152,7 +154,41 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       return alphabetized;
       
   }
+  
+  private String getAlternativeIds(){
+      
+      String allIds = "";
+      
+      Iterator<String> ait = itemIds.iterator();
+      
+      while(ait.hasNext()){
+      
+          String id = ait.next();
+          id = id.replaceAll(" 0 ", " ");
+          id = id.replaceAll("ddbdp", "DDbDp:");
+          id = id.replaceAll("hgv", "HGV:");
+          id = id.replaceAll("apis", "APIS:");
+          allIds += " = ";
+          allIds += id;
+          
+      }
+      
+      if("".equals(allIds)) return "No other identifiers";
+      
+      return allIds;
+  }
 
+  /**
+   * Allows sorting so that it occurs (in order of priority)
+   * 
+   * (1) DDbDP before HGV, HGV before APIS
+   * (2) Numeric by id
+   * (3) Alphabetic by letters occurring after the numeric portion
+   * 
+   * @param o
+   * @return 
+   */
+  
   @Override
   public int compareTo(Object o) {
 
@@ -160,29 +196,38 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     String thisId = this.getDisplayId() != null ? this.getDisplayId() : "";
     String thatId = comparandum.getDisplayId() != null ? comparandum.getDisplayId() : "";
 
-    thisId = thisId.replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
-    thatId = thatId.replaceAll("[^\\d]", "").replaceFirst("^0+(?!$)", "").replaceAll("[\\s]", "");
+    return documentComparator.compare(thisId, thatId);
 
-    if (thisId.isEmpty()) {
-      thisId = "0";
-    }
-    if (thatId.isEmpty()) {
-      thatId = "0";
-    }
-
-    long thisIdNo = Long.parseLong(thisId);
-    long thatIdNo = Long.parseLong(thatId);
-
-    if (thisIdNo > thatIdNo) {
-
-      return 1;
-
-    } else if (thisIdNo < thatIdNo) {
-
-      return -1;
-
-    }
-    return this.getDisplayId().compareToIgnoreCase(comparandum.getDisplayId());
-
+  }
+  
+  private String getImageHTML(){
+      
+      if(!imagePath.contains("http://")) return "None";
+      
+      StringBuilder html = new StringBuilder("<a href=\"");
+      html.append(imagePath);
+      html.append("\"><img alt=\"Image icon\" height=\"");
+      html.append(String.valueOf(cameraImgHeight));
+      html.append("\" width=\"");
+      html.append(String.valueOf(cameraImgWidth));
+      html.append("\" src=\"");
+      html.append(cameraImgPath);
+      html.append("\"/>");
+      
+      if(!imagePath.contains("papyri.info")){
+          
+          html.append("<img alt=\"External link icon\" height=\"");
+          html.append(String.valueOf(extLinkImgHeight));
+          html.append("\" width=\"");
+          html.append(String.valueOf(extLinkImgWidth));
+          html.append("\" src=\"");
+          html.append(extLinkImgPath);
+          html.append("\"/>");
+          
+      }
+      
+      html.append("</a>");
+      
+      return html.toString();
   }
 }

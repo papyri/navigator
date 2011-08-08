@@ -43,6 +43,10 @@
             <param-name>mulgaraUrl</param-name>
             <param-value>http://localhost:8090</param-value>
         </init-param>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8082/solr/</param-value>
+        </init-param>
     </servlet>
     <servlet>
     <servlet-name>FacetBrowser</servlet-name>    
@@ -107,7 +111,7 @@
     <servlet-mapping>
         <servlet-name>FacetBrowser</servlet-name>
         <url-pattern>/faceted/*</url-pattern>
-    </servlet-mapping>
+        </servlet-mapping>
     <session-config>
         <session-timeout>
             30

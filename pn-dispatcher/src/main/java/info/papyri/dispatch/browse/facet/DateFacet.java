@@ -15,23 +15,94 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
- *
+ * The <code>Facet</code> used for setting and displaying date constraints.
+ * 
+ * Note that unlike the other <code>Facet</code>s, <code>DateFacet</code> uses two
+ * widgets, and stores two values. This complicates the code internal to each method considerably.
+ * 
+ * Note also that these values (stored in the terminusAfterWhich and terminusBeforeWhich members) are
+ * triple-state: they may be '0' (effectively, 'undefined'), 'Unknown', or the <code>String</code>
+ * representation of an <code>Integer</code> value.
+ * 
+ * 
  * @author thill
  */
 public class DateFacet extends Facet {
 
-   static int INTERVAL = 50;        // years
+    /** The interval the difference between each date_category represents, in years.
+     * 
+     * Note that this cannot be changed arbitrarily in the code alone; the value
+     * reflects that used in the Solr index
+     */
+   static int INTERVAL = 50;                                                    
+   
+   /** A flag indicating whether the date has the value 'unknown'.
+    * 
+    * This value is special because
+    * (a) it cannot be converted to a number; and 
+    * (b) if *either* the terminus ante quem *or* the terminus post quem have the
+    *     value 'unknown', then *both* must have the value 'unknown'. Note that this
+    *     is not an arbitrary decision, but reflects the structure of data in the Solr
+    *     index.
+    * 
+    */
    private static SolrField flagField = SolrField.unknown_date_flag;
-   private static Comparator dateCountComparator;
-   private static int LOWER_BOUND = -50;
-   private static int UPPER_BOUND = 50;
+   
+   /**
+    * Comparator used in ordering dates in the <code>Facet</code> widget.
+    */
+   private static Comparator dateCountComparator;  
+   
+   /** The lowest (=earliest) date used by the <code>Facet</code> */
+   private static int LOWER_BOUND = -50;                                        // = 2500 BCE
+  /** The highest (=latest) date used by the <code>Facet</code> */
+   private static int UPPER_BOUND = 42;                                         // = 2100 CE 
+   /**
+    * Specifies the date *after which* documents will be returned.
+    * 
+    * Note that this is a <code>String</code>; it may hold either a string
+    * value that evaluates to an integer (LOWER_BOUND <= x <= UPPER_BOUND) or the 
+    * value 'Unknown'.
+    * 
+    * Note that the value '0' here serves as 'undefined' - there is no year zero
+    * 
+    */
    private String terminusAfterWhich = "0";
+      /**
+    * Specifies the date *before which* documents will be returned.
+    * 
+    * Note that this is a <code>String</code>; it may hold either a string
+    * value that evaluates to an integer (LOWER_BOUND <= x <= UPPER_BOUND) or the 
+    * value 'Unknown'.
+    * 
+    * Note that the value '0' here serves as 'undefined' - there is no year zero
+    * 
+    */
    private String terminusBeforeWhich = "0";
+   /**
+    * This is the complement of the <code>valuesAndCounts</code> member.
+    * 
+    * It is necessary because, unlike other <code>Facet</code>s, <code>this</code>
+    * is associated with two widgets, hence two sets of values and counts. The 
+    * standard <code>Facet.valuesAndCounts</code> <code>List</code> holds the 
+    * values associated with the terminusAfterWhich widget; the complement holds
+    * those associated with the terminusBeforeWhich widget, calculated by subtracting
+    * the number of documents found for each category in <code>valuesAndCounts</code>
+    * from the total number of documents found.
+    * 
+    * @see Facet#valuesAndCounts
+    * @see DateFacet#setBeforeWhichWidgetValues(org.apache.solr.client.solrj.response.QueryResponse) 
+    */
    List<Count> valuesAndCountsComplement;
    
    public DateFacet(){
         
         super(SolrField.date_category, FacetParam.DATE_START, "Date dummy");
+        
+        // dates need to sort with 'Unknown' at the top
+        // followed by BCE dates (= negative date_category value)
+        // followed by CE dates (= positive date_category value)
+        
         dateCountComparator = new Comparator() {
 
             @Override
@@ -628,13 +699,13 @@ public class DateFacet extends Facet {
     
     String getAfterWhichToolTipText(){
         
-        return "TODO: fill in tool tips for date facet";
+        return "The date after which the document is believed to have been in existence - i.e., the terminus post quem";
         
     }
     
     String getBeforeWhichToolTipText(){
         
-        return "TODO: fill in tool tips for date facet";
+        return "The date before which the document is believed to have been in existence - i.e., the terminus ante quem.";
         
     }
     

@@ -310,6 +310,8 @@ border-top: thin black solid;
 .previouslyread {
 text-decoration: underline;
 }
+
+.supraline { border-top: thin black solid; }
      
 *[lang="la"] {
 font-family: "GentiumAlt", "Gentium","Palatino Linotype", "Palatino", "Times New Roman", "Times", "Arial Unicode MS", serif;
@@ -507,7 +509,7 @@ td.kwic {
   padding-top: .5em;
   padding-bottom: .5em;
 }
-.ddbdp-ids, .hgv-ids, .apis-ids, .has-translation{
+.ddbdp-ids, .hgv-ids, .apis-ids, .has-translation, .language{
 
   text-align: center;
 

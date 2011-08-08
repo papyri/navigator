@@ -53,6 +53,7 @@
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
+  <xsl:variable name="line-inc">5</xsl:variable>
 
   <xsl:include href="pi-functions.xsl"/>
 
@@ -63,6 +64,7 @@
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     <xsl:variable name="image" select="contains($related, 'info:fedora/ldpd')"/>
+    
     <add>
       <doc>
         <xsl:if test="$ddbdp = true()">
@@ -182,7 +184,7 @@
                   <xsl:value-of select="."/>
                 </field>
                 <field name="facet_language">
-                  <xsl:value-of select="string(@ident)"></xsl:value-of>
+                  <xsl:value-of select="string(@ident)"/>
                 </field>
               </xsl:if>
             </xsl:for-each>
@@ -252,7 +254,7 @@
                 <xsl:value-of select="normalize-space(.)"/>
               </field>
               <field name="facet_language">
-                <xsl:value-of select="@ident"></xsl:value-of>          
+                <xsl:value-of select="@ident"/>
               </field>
             </xsl:for-each>
           </xsl:when>
@@ -269,8 +271,11 @@
         <xsl:when
           test="/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']">
           <!-- IFF HGV document -->
-          <xsl:for-each select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
-            <field name="hgv_identifier"><xsl:value-of select="normalize-space(.)"></xsl:value-of></field>
+          <xsl:for-each
+            select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
+            <field name="hgv_identifier">
+              <xsl:value-of select="normalize-space(.)"/>
+            </field>
           </xsl:for-each>
           <xsl:variable name="hgv_series">
             <xsl:value-of
@@ -287,10 +292,13 @@
               </xsl:otherwise>
             </xsl:choose>
           </xsl:variable>
-          <xsl:variable name="hgv_item"
+          <xsl:variable name="hgv_numbers"
             select="replace(normalize-space(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'numbers']), ' ', '_')"/>
+          <xsl:variable name="hgv_lines"
+            select="normalize-space(/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'lines'])"/>
+          <xsl:variable name="hgv_item" select="concat($hgv_numbers, ' ', $hgv_lines)"/>
           <xsl:variable name="hgv_item_letter">
-            <xsl:value-of select="replace($hgv_item, '\d', '')"></xsl:value-of>
+            <xsl:value-of select="replace($hgv_item, '\d', '')"/>
           </xsl:variable>
           <field name="hgv_series">
             <xsl:value-of select="$hgv_series"/>
@@ -299,16 +307,20 @@
             <xsl:value-of select="$hgv_volume"/>
           </field>
           <field name="hgv_full_identifier">
-            <xsl:value-of select="$hgv_item"></xsl:value-of>
+            <xsl:value-of select="$hgv_item"/>
           </field>
           <field name="hgv_item">
             <xsl:choose>
-              <xsl:when test="string-length(replace($hgv_item, '\D', '')) > 0"> <xsl:value-of select="replace($hgv_item, '\D', '')"/></xsl:when>
+              <xsl:when test="string-length(replace($hgv_item, '\D', '')) > 0">
+                <xsl:value-of select="replace($hgv_item, '\D', '')"/>
+              </xsl:when>
               <xsl:otherwise>0</xsl:otherwise>
             </xsl:choose>
           </field>
           <xsl:if test="string-length($hgv_item_letter) > 0">
-            <field name="hgv_item_letter"><xsl:value-of select="$hgv_item_letter"></xsl:value-of></field>
+            <field name="hgv_item_letter">
+              <xsl:value-of select="$hgv_item_letter"/>
+            </field>
           </xsl:if>
           <xsl:if test="$alterity = 'self'">
             <field name="series">
@@ -326,7 +338,9 @@
             <xsl:variable name="item" select="replace($hgv_item, '\D', '')"/>
             <field name="item">
               <xsl:choose>
-                <xsl:when test="string-length($item) &gt; 0"><xsl:value-of select="$item"/></xsl:when>
+                <xsl:when test="string-length($item) &gt; 0">
+                  <xsl:value-of select="$item"/>
+                </xsl:when>
                 <xsl:otherwise>0</xsl:otherwise>
               </xsl:choose>
             </field>
@@ -350,14 +364,15 @@
           </xsl:variable>
           <xsl:variable name="ddbdp_item">
             <xsl:choose>
-              <xsl:when test="string-length(replace(normalize-space($sort[3]), '\D', '')) = 0">0</xsl:when>
+              <xsl:when test="string-length(replace(normalize-space($sort[3]), '\D', '')) = 0"
+                >0</xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="replace(normalize-space($sort[3]), '\D', '')"/>
               </xsl:otherwise>
             </xsl:choose>
           </xsl:variable>
           <xsl:variable name="ddbdp_item_letter">
-            <xsl:value-of select="replace(normalize-space($sort[3]), '\d', '')"></xsl:value-of>
+            <xsl:value-of select="replace(normalize-space($sort[3]), '\d', '')"/>
           </xsl:variable>
           <field name="ddbdp_series">
             <xsl:value-of select="$ddbdp_series"/>
@@ -366,13 +381,15 @@
             <xsl:value-of select="$ddbdp_volume"/>
           </field>
           <field name="ddbdp_full_identifier">
-            <xsl:value-of select="normalize-space($sort[3])"></xsl:value-of>
+            <xsl:value-of select="normalize-space($sort[3])"/>
           </field>
           <field name="ddbdp_item">
             <xsl:value-of select="$ddbdp_item"/>
           </field>
           <xsl:if test="string-length($ddbdp_item_letter) > 0">
-            <field name="ddbdp_item_letter"><xsl:value-of select="$ddbdp_item_letter"></xsl:value-of></field>
+            <field name="ddbdp_item_letter">
+              <xsl:value-of select="$ddbdp_item_letter"/>
+            </field>
           </xsl:if>
           <xsl:if test="$alterity = 'self'">
             <field name="series">
@@ -388,8 +405,10 @@
             </field>
             <field name="item">
               <xsl:choose>
-                <xsl:when test="string-length(replace($ddbdp_item, '\D', '')) &gt; 0">0</xsl:when>
-                <xsl:otherwise><xsl:value-of select="replace($ddbdp_item, '\D', '')"/></xsl:otherwise>
+                <xsl:when test="string-length(replace($ddbdp_item, '\D', '')) &gt; 0">
+                  <xsl:value-of select="replace($ddbdp_item, '\D', '')"/>
+                </xsl:when>
+                <xsl:otherwise>0</xsl:otherwise>
               </xsl:choose>
             </field>
           </xsl:if>
@@ -407,26 +426,39 @@
             />
           </xsl:variable>
           <xsl:variable name="apis_item_letter">
-            <xsl:value-of select="replace($apis_item, '\d', '')"></xsl:value-of>
-           </xsl:variable>
+            <xsl:value-of select="replace($apis_item, '\d', '')"/>
+          </xsl:variable>
           <field name="apis_series">
             <xsl:value-of select="$apis_series"/>
           </field>
           <field name="apis_full_identifier">
-            <xsl:value-of select="$apis_item"></xsl:value-of>
+            <xsl:value-of select="$apis_item"/>
           </field>
           <field name="apis_item">
             <xsl:choose>
-              <xsl:when test="string-length(replace($apis_item, '\D', '')) > 0"><xsl:value-of select="replace($apis_item, '\D', '')"/></xsl:when>
+              <xsl:when test="string-length(replace($apis_item, '\D', '')) > 0">
+                <xsl:value-of select="replace($apis_item, '\D', '')"/>
+              </xsl:when>
               <xsl:otherwise>0</xsl:otherwise>
             </xsl:choose>
-            
+
           </field>
           <xsl:if test="string-length($apis_item_letter) > 0">
-            <field name="apis_item_letter"><xsl:value-of select="$apis_item_letter"></xsl:value-of></field>
+            <field name="apis_item_letter">
+              <xsl:value-of select="$apis_item_letter"/>
+            </field>
           </xsl:if>
+          <xsl:for-each
+            select="/t:TEI/t:text/t:body/t:div[@type='bibliography' and @subtype = 'citations']/t:listBibl/t:bibl[@type='ddbdp']">
+            <field name="apis_publication_id">
+              <xsl:value-of
+                select="replace(., ':', ' ')"
+              />
+            </field>
+          </xsl:for-each>
           <field name="apis_inventory">
-            <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']"></xsl:value-of>           
+            <xsl:value-of
+              select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']"/>
           </field>
           <xsl:if test="$alterity = 'self'">
             <field name="series">
@@ -434,10 +466,12 @@
             </field>
             <field name="volume">0</field>
             <field name="item">
-                         <xsl:choose>
-              <xsl:when test="string-length(replace($apis_item, '\D', '')) &gt; 0"><xsl:value-of select="replace($apis_item, '\D', '')"/></xsl:when>
-              <xsl:otherwise>0</xsl:otherwise>
-            </xsl:choose>
+              <xsl:choose>
+                <xsl:when test="string-length(replace($apis_item, '\D', '')) &gt; 0">
+                  <xsl:value-of select="replace($apis_item, '\D', '')"/>
+                </xsl:when>
+                <xsl:otherwise>0</xsl:otherwise>
+              </xsl:choose>
             </field>
           </xsl:if>
         </xsl:when>
@@ -557,7 +591,7 @@
     <!-- Dates -->
     <xsl:for-each
       select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate">
-           <xsl:choose>
+      <xsl:choose>
         <xsl:when test="pi:iso-date-to-num(@notBefore) and pi:iso-date-to-num(@notAfter)">
           <field name="date_start">
             <xsl:value-of select="pi:iso-date-to-num(@notBefore)"/>
@@ -566,10 +600,10 @@
             <xsl:value-of select="pi:iso-date-to-num(@notAfter)"/>
           </field>
           <field name="date_category">
-           <xsl:value-of select="pi:assign-date-category(@notBefore)"></xsl:value-of>
+            <xsl:value-of select="pi:assign-date-category(@notBefore)"/>
           </field>
           <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@notAfter)"></xsl:value-of>
+            <xsl:value-of select="pi:assign-date-category(@notAfter)"/>
           </field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@when)">
@@ -580,7 +614,7 @@
             <xsl:value-of select="pi:iso-date-to-num(@when)"/>
           </field>
           <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@when)"></xsl:value-of>
+            <xsl:value-of select="pi:assign-date-category(@when)"/>
           </field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@notBefore)">
@@ -591,7 +625,7 @@
             <xsl:value-of select="pi:iso-date-to-num(@notBefore)"/>
           </field>
           <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@notBefore)"></xsl:value-of>
+            <xsl:value-of select="pi:assign-date-category(@notBefore)"/>
           </field>
         </xsl:when>
         <xsl:when test="pi:iso-date-to-num(@notAfter)">
@@ -602,13 +636,14 @@
             <xsl:value-of select="pi:iso-date-to-num(@notAfter)"/>
           </field>
           <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@notAfter)"></xsl:value-of>
+            <xsl:value-of select="pi:assign-date-category(@notAfter)"/>
           </field>
         </xsl:when>
       </xsl:choose>
     </xsl:for-each>
     <!-- unknown date -->
-    <xsl:if test="count($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate) = 0">
+    <xsl:if
+      test="count($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate) = 0">
       <field name="unknown_date_flag">true</field>
     </xsl:if>
     <!-- InvNum -->
@@ -631,11 +666,15 @@
       <xsl:variable name="trans_lang">
         <!-- defaults to 'en' -->
         <xsl:choose>
-          <xsl:when test="@xml:lang"><xsl:value-of select="@xml:lang"></xsl:value-of></xsl:when>
+          <xsl:when test="@xml:lang">
+            <xsl:value-of select="@xml:lang"/>
+          </xsl:when>
           <xsl:otherwise>en</xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
-      <field name="translation_language"><xsl:value-of select="$trans_lang"></xsl:value-of></field>
+      <field name="translation_language">
+        <xsl:value-of select="$trans_lang"/>
+      </field>
     </xsl:for-each>
     <xsl:if test="$docs//t:div[@type='translation']">
       <field name="has_translation">true</field>
@@ -719,44 +758,50 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-  
+
   <xsl:function name="pi:assign-date-category">
     <!-- receives iso date and returns facetable date category -->
     <xsl:param name="raw-date"/>
     <xsl:variable name="era">
       <xsl:choose>
-        <xsl:when test="starts-with($raw-date, '-')"><xsl:value-of select="'BCE'"></xsl:value-of></xsl:when>
-        <xsl:otherwise><xsl:value-of select="'CE'"></xsl:value-of></xsl:otherwise>
+        <xsl:when test="starts-with($raw-date, '-')">
+          <xsl:value-of select="'BCE'"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="'CE'"/>
+        </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:variable name="year">
       <xsl:analyze-string select="$raw-date" regex="(-?\d{{4}})">
         <xsl:matching-substring>
-          <xsl:value-of select="regex-group(0)"></xsl:value-of>
+          <xsl:value-of select="regex-group(0)"/>
         </xsl:matching-substring>
       </xsl:analyze-string>
     </xsl:variable>
-    <xsl:variable name="interval" select="50"></xsl:variable>
+    <xsl:variable name="interval" select="50"/>
     <xsl:variable name="category">
       <xsl:choose>
         <xsl:when test="(number($year) mod $interval) = 0">
-          <xsl:value-of select="abs(number($year)) div $interval"></xsl:value-of>
+          <xsl:value-of select="abs(number($year)) div $interval"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="(abs(number($year)) + ($interval - (abs(number($year)) mod $interval))) div $interval"></xsl:value-of>
+          <xsl:value-of
+            select="(abs(number($year)) + ($interval - (abs(number($year)) mod $interval))) div $interval"
+          />
         </xsl:otherwise>
       </xsl:choose>
-      </xsl:variable>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="$era = 'BCE'">
-        <xsl:sequence select="concat('-', $category)"></xsl:sequence>
+        <xsl:sequence select="concat('-', $category)"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="$category"></xsl:sequence>
+        <xsl:sequence select="$category"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-  
+
   <xsl:function name="pi:get-date-range">
     <xsl:param name="date-seq"/>
     <xsl:variable name="min"

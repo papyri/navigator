@@ -1,8 +1,11 @@
 package info.papyri.dispatch.browse;
 
 /**
- *
+ * Custom exception class handling cases in which a <code>SolrField</code> is expected 
+ * but absent.
+ * 
  * @author thill
+ * @see info.papyri.dispatch.browse.facet.FacetBrowser#retrieveRecords(org.apache.solr.client.solrj.response.QueryResponse) 
  */
 public class FieldNotFoundException extends Exception{
     

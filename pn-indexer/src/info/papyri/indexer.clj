@@ -320,13 +320,13 @@
   [url exclude]
   ;; TODO: generate symlinks for relations
   ;; queue for HTML generation
-  (.add @html (list url (list "collection" (if (.contains (substring-after url "http://papyri.info/") "/")
-        (substring-before (substring-after url "http://papyri.info/") "/")
-        (substring-after url "http://papyri.info/")))
-        (list "related" "") 
-        (list "replaces" "") 
-        (list "isReplacedBy" "")
-        (list "server" nserver)))
+  ;;(.add @html (list url (list "collection" (if (.contains (substring-after url "http://papyri.info/") "/")
+  ;;     (substring-before (substring-after url "http://papyri.info/") "/")
+  ;;     (substring-after url "http://papyri.info/")))
+  ;;     (list "related" "") 
+  ;;     (list "replaces" "") 
+  ;;     (list "isReplacedBy" "")
+  ;;     (list "server" nserver)))
   (let [items (execute-query (has-part-query url))]
     (when (> (count items) 0)
       (if (.endsWith (last (first items)) "/source")

@@ -1,8 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
-import info.papyri.dispatch.browse.DocumentCollectionBrowseRecord;
-import info.papyri.dispatch.browse.FieldNotFoundException;
+import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class FacetBrowser extends HttpServlet {
     /** Solr server address. Supplied in config file */
     static String SOLR_URL;
     /** Path to appropriate Solr core */
-    static String PN_SEARCH = "pn-search/"; 
+    static String PN_SEARCH = "pn-search/";  
     /** path to home html directory */
     static private String home;
     /** path to html file used in html injection */
@@ -51,12 +51,7 @@ public class FacetBrowser extends HttpServlet {
     static private String FACET_PATH = "/dispatch/faceted/";
     /** Number of records to show per page. Used in pagination */
     static private int documentsPerPage = 50;
-    
-    static String BASE;
-    
-    String debug;
-
-    
+        
     @Override
     public void init(ServletConfig config) throws ServletException{
         
@@ -64,7 +59,6 @@ public class FacetBrowser extends HttpServlet {
 
         SOLR_URL = config.getInitParameter("solrUrl");
         home = config.getInitParameter("home");
-        BASE = config.getInitParameter("htmlPath");
         try {
             
             FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
@@ -80,6 +74,10 @@ public class FacetBrowser extends HttpServlet {
     
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * 
+     * Because this is the central coordinating method for the servlet, a step-by-step
+     * explanation of the method calls is provided in the method body.
+     * 
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -88,26 +86,66 @@ public class FacetBrowser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        debug = "";
+        /* Make sure both the request and the response are properly encoded */
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
+        
+        /* Get the <code>List</code> of facets to be displayed */
         ArrayList<Facet> facets = getFacets();
+        
+        /* Parse request, allowing each facet to pull out and parse the part of the request
+         * relevant to itself.
+         */
         Boolean constraintsPresent = parseRequestToFacets(request, facets);
+        
+        /* determine what page of results has been requested ('0' if no page requested and
+         * this is therefore the first page of results). 
+         * 
+         * Required for building the facet query.
+         */
         int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 0;
+        
+        /* Build the SolrQuery object to be used in querying Solr out of query parts contributed 
+         * by each of the facets in turn.
+         */
         SolrQuery solrQuery = this.buildFacetQuery(page, facets);
+        
+        /* Query the Solr server */
         QueryResponse queryResponse = this.runFacetQuery(solrQuery);
-        long resultSize = queryResponse.getResults().getNumFound();
+        
+        /* Allow each facet to pull out the values relevant to it from the <code>QueryResponse</code>
+         * returned by the Solr server.
+         */
         populateFacets(facets, queryResponse);
+        
+        /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
+           of which represents one returned document. */
         ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
+        
+                
+        /* Determine the number of results returned. 
+         * 
+         * Required for assembleHTML method 
+         */
+        long resultSize = queryResponse.getResults().getNumFound();
+        
+        /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
+         * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        
+        /* Inject the generated HTML */
         displayBrowseResult(response, html);  
      
     }
     
 
+    /** Returns the <code>List</code> of <code>Facet</code>s to be used. 
+     * 
+     *  Note that the order of <code>Facet</code> declaraion in the <code>List</code> determines
+     *  the order in which they are displayed.
+     */
     private ArrayList<Facet> getFacets(){
-        
-        
+          
         ArrayList<Facet> facets = new ArrayList<Facet>();
         
         facets.add(new SubStringFacet());
@@ -121,6 +159,18 @@ public class FacetBrowser extends HttpServlet {
         return facets;
         
     }
+    
+    /**
+     * Passes the passed <code>HttpServletRequest</code> object to each of the <code>Facet</code>s
+     * in turn, allowing each of them to retrieve the parts of the query string relevant to themselves.
+     * 
+     * @param request
+     * @param facets
+     * @return A Boolean indicating whether or not any constraints have been submitted in the query
+     * string which the results returned.
+     * @see Facet#addConstraints(java.util.Map) 
+     * 
+     */
   
     Boolean parseRequestToFacets(HttpServletRequest request, ArrayList<Facet> facets){
                 
@@ -145,7 +195,7 @@ public class FacetBrowser extends HttpServlet {
      * populate the <code>Facet</code>s.
      * 
      * @param pageNumber
-     * @param paramsToFacets
+     * @param facets
      * @return The <code>SolrQuery</code>
      * @see Facet#buildQueryContribution(org.apache.solr.client.solrj.SolrQuery) 
      */
@@ -154,11 +204,11 @@ public class FacetBrowser extends HttpServlet {
         
         SolrQuery sq = new SolrQuery();
         sq.setFacetMissing(true);
-        sq.setFacetMinCount(1);             
+        sq.setFacetMinCount(1);         // we don't want to see zero-count values            
         sq.setRows(documentsPerPage); 
         sq.setStart(pageNumber * documentsPerPage); 
         
-        // iterate through facets, adding to solr query
+        // iterate through facets, adding their contributions to solr query
         Iterator<Facet> fit = facets.iterator();
         while(fit.hasNext()){
             
@@ -167,8 +217,8 @@ public class FacetBrowser extends HttpServlet {
             
             
         }
-        // the Facets all add FilterQueries to the SolrQuery. We want all documents
-        // that pass these filters.
+        // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
+        // all documents that pass these filters - hence '*:*' as the actual query
         sq.setQuery("*:*");
         
         return sq;
@@ -178,7 +228,6 @@ public class FacetBrowser extends HttpServlet {
     
     /**
      * Queries the Solr server.
-     * 
      * 
      * @param sq
      * @return The <code>QueryResponse</code> returned by the Solr server
@@ -214,10 +263,10 @@ public class FacetBrowser extends HttpServlet {
     
     /**
      * Sends the <code>QueryResponse</code> returned by the Solr server to each of the
-     * <code>Facet</code>s to populate its values list.
+     * <code>Facet</code>s in turn to populate its values list.
      * 
      * 
-     * @param paramsToFacets
+     * @param facets
      * @param queryResponse 
      * @see Facet#setWidgetValues(org.apache.solr.client.solrj.response.QueryResponse) 
      */
@@ -244,36 +293,29 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    private ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse){
-        
+    ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse){
+               
         ArrayList<DocumentBrowseRecord> records = new ArrayList<DocumentBrowseRecord>();
         
         for(SolrDocument doc : queryResponse.getResults()){
             
            try{ 
             
-                DocumentCollectionBrowseRecord collectionInfo = getDisplayCollectionInfo(doc);
-                String displayId = getDisplayId(collectionInfo, doc);
-                URL url = new URL((String) doc.getFieldValue(SolrField.id.name()));
-                Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
-                String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
+                URL url = new URL((String) doc.getFieldValue(SolrField.id.name()));                 // link to full record
+                Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;    
+                String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());   // i.e., provenance
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
-                String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());
-                Boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
-                String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
+                String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());      // original language
+                Boolean languageIsNull = doc.getFieldValue(SolrField.facet_language.name()) == null;
+                String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
                 String translationLanguages = noTranslationLanguages ? "No translation" : (String)doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
                 Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;            
-                String invNum = (String)doc.getFieldValue(SolrField.invnum.name());
-                DocumentBrowseRecord record;           
-                record = new DocumentBrowseRecord(collectionInfo, displayId, url, place, date, language, hasImages, translationLanguages, invNum);
+                ArrayList<String> allIds = getAllSortedIds(doc);
+                String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, hasImages, translationLanguages);
                 records.add(record);
                 
-           }
-           catch (FieldNotFoundException fnfe){
-               
-               System.out.println(fnfe.getError());
-               continue;
            }
            catch (MalformedURLException mue){
                
@@ -281,75 +323,9 @@ public class FacetBrowser extends HttpServlet {
                
            }
         }
-        
-        // TODO: need to add code for  - retrieving all ids; getting which one to display as head id; retrieving url; parsing into Record
-        
+          
+        Collections.sort(records);
         return records;
-        
-    }
-    
-    /**
-     * Builds a <code>DocumentCollectionBrowseRecord</code> for the passed <code>SolrDocument</code>.
-     * 
-     * This method will need to be worked on, as right now it's pretty arbitrary: the record generated is based on:
-     * (1) The first ddbdp info encountered
-     * (2) Failing that, the first hgv info encountered
-     * (3) Failing that, the first apis info encountered
-     * 
-     * @param doc
-     * @return
-     * @throws FieldNotFoundException 
-     * @see DocumentCollectionBrowseRecord
-     */
-
-    private DocumentCollectionBrowseRecord getDisplayCollectionInfo(SolrDocument doc) throws FieldNotFoundException{
-        
-        // TODO: this is just a bodge, pending feedback on what the preferred ids are
-        
-        ArrayList<String> collections = new ArrayList<String>(Arrays.asList(doc.getFieldValue("collection").toString().replaceAll("[\\[\\]]", "").split(",")));           
-        if(collections.isEmpty()) throw new FieldNotFoundException("collection");
-        String collection = collections.contains("ddbdp") ? "ddbdp" : (collections.contains("hgv")? "hgv" : "apis");
-        String collectionPrefix = collection + "_";
-        ArrayList<String> series = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.series.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-        ArrayList<String> volumes = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-        String errInfo = collections.toString() + "|" + volumes.toString() + "|" + itemIds.toString();
-        if(series.isEmpty()) throw new FieldNotFoundException(collectionPrefix + "series", errInfo);    
-        if(itemIds.isEmpty()) throw new FieldNotFoundException(collectionPrefix + "item", errInfo);
-
-        if(volumes.size() > 0){
-            
-            return new DocumentCollectionBrowseRecord(collection, series.get(0), volumes.get(0));
-            
-        }
-        else{
-            
-            return new DocumentCollectionBrowseRecord(collection, series.get(0), false);
-            
-        }
-         
-    }
-    
-    
-    /**
-     * Determines the collection/series/volume-specific id number to be displayed for the passed
-     * <code>SolrDocument</code>, based on its associated <code>DocumentCollectionBrowseRecord</code>
-     * 
-     * This method will need to be worked on; it's utterly dependent upon #getDisplayCollectionInfo, which is
-     * right now pretty arbitrary in its operations
-     * 
-     * @param collectionInfo
-     * @param doc
-     * @return 
-     */
-    
-    private String getDisplayId(DocumentCollectionBrowseRecord collectionInfo, SolrDocument doc){
-        
-        // TODO: just a bodge; see getDisplayCollectionInfo above
-        
-        String collectionPrefix = collectionInfo.getCollection() + "_";
-        ArrayList<String> itemIds = new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.item.name()).toString().replaceAll("[\\[\\]]", "").split(",")));     
-        return itemIds.get(0);
         
     }
     
@@ -357,12 +333,12 @@ public class FacetBrowser extends HttpServlet {
      * Generates the HTML for injection
      * 
      * 
-     * @param paramsToFacets
+     * @param facets
      * @param constraintsPresent
      * @param resultsSize
      * @param returnedRecords
      * @param solrQuery Used for cheap 'n' easy debugging only
-     * @return 
+     * @return The complete HTML for all interactive portions of the page, as a <code>String</code>
      */
     
     private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams){
@@ -382,9 +358,9 @@ public class FacetBrowser extends HttpServlet {
      * Assembles the HTML displaying the <code>Facet</code> control widgets
      * 
      * 
-     * @param paramsToFacets
+     * @param facets
      * @param html
-     * @return 
+     * @return A <code>StringBuilder</code> holding the HTML for the <code>Facet</code> control widgets
      * @see Facet#generateWidget() 
      */
   
@@ -412,13 +388,13 @@ public class FacetBrowser extends HttpServlet {
      * Assembles the HTML displaying the records returned by the Solr server
      * 
      * 
-     * @param paramsToFacets
+     * @param facets
      * @param returnedRecords
      * @param constraintsPresent
      * @param resultSize
      * @param html
      * @param sq Used in debugging only
-     * @return 
+     * @return A <code>StringBuilder</code> holding the HTML for the records returned by the Solr server
      * @see DocumentBrowseRecord
      */
     
@@ -439,7 +415,7 @@ public class FacetBrowser extends HttpServlet {
         else{
             
             html.append("<table>");
-            html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translation</td><td>Has images</td></tr>");
+            html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translations</td><td>Images</td></tr>");
             Iterator<DocumentBrowseRecord> rit = returnedRecords.iterator();
             
             while(rit.hasNext()){
@@ -459,12 +435,11 @@ public class FacetBrowser extends HttpServlet {
     
     /**
      * Generates the HTML controls indicating the constraints currently set on each <code>Facet</code>, and that,
-     * when clicked, remove the constraint which they designate.
+     * when clicked, remove the constraint which they designate. 
      * 
-     * 
-     * @param paramsToFacets
+     * @param facets
      * @param html
-     * @return 
+     * @return A <code>StringBuilder</code> holding the HTML for all previous constraints defined on the dataset
      * @see #buildFilteredQueryString(java.util.EnumMap, info.papyri.dispatch.browse.facet.FacetParam, java.lang.String) 
      */
     
@@ -572,7 +547,7 @@ public class FacetBrowser extends HttpServlet {
      * 
      * @param paramsToFacets
      * @param resultSize
-     * @return 
+     * @return The HTML used for pagination display, as a <code>String</code>
      * @see #buildFullQueryString(java.util.EnumMap) 
      */
     
@@ -614,11 +589,11 @@ public class FacetBrowser extends HttpServlet {
     }
     
     /**
-     * Concatenates the querystring portions retrieved from each <code>Facet</code> into a
-     * complete querystring. 
+     * Retrieves querystrings from each of the <code>Facet</code>s in turn and concatenates them
+     * into a complete querystring.
      * 
-     * @param paramsToFacets
-     * @return 
+     * @param facets
+     * @return The complete querystring
      * @see Facet#getAsQueryString() 
      */
     
@@ -650,15 +625,18 @@ public class FacetBrowser extends HttpServlet {
     
     /**
      * Concatenates the querystring portions retrieved from each <code>Facet</code> into a
-     * compelete querystring, with the exception of the value given in the <code>facetValue</code>
-     * param in relation to the <code>Facet</code> derived from the <code>facetParam</code> and
-     * <code>paramsToFacets</code> params.
+     * complete querystring, with the exception of the value given in the passed <code>facetValue</code>, 
+     * which is omitted.
+     * 
+     * The resulting query string is then used in a link, which when clicked gives the appearance
+     * that a facet constraint has been removed (as its value is not included in the string.
      * 
      * 
-     * @param paramsToFacets
-     * @param facetParam
-     * @param facetValue
-     * @return 
+     * @param facets The <code>List</code> of all <code>Facet</code>s
+     * @param relFacet The <code>Facet</code> to which the value to be 'removed' belongs
+     * @param facetParam The name of the form control associated with the <code>Facet</code> and submitted by the user.
+     * @param facetValue The value to be 'removed'
+     * @return A filtered querystring.
      * @see Facet#getAsFilteredQueryString(java.lang.String) 
      */
     
@@ -704,7 +682,125 @@ public class FacetBrowser extends HttpServlet {
         return filteredQueryString;
         
     }
+   
+    
+    ArrayList<String> getAllSortedIds(SolrDocument doc){
         
+        ArrayList<String> ids = new ArrayList<String>();
+        
+        String id = (String) doc.getFieldValue(SolrField.id.name());
+        
+        // preferred identifier will always be ddbdp identifier
+        // based on url
+                
+        if(id != null && id.matches("/ddbdp/")){
+            
+            String canonicalId = id.substring("http://papyri.info".length());
+            canonicalId = canonicalId.replaceAll("_", " ").trim();
+            canonicalId = canonicalId.replaceAll(";;", ";");
+            canonicalId = canonicalId.replaceAll(";", " ").trim();
+            ids.add(canonicalId);
+            
+        }
+        
+        // following applies to apis only
+       // ideally order should go first publication numbers, then inventory numbers
+        
+        ArrayList<String> apisPublicationNumbers = doc.getFieldValue(SolrField.apis_publication_id.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_publication_id.name()).toString().replaceAll("\\[\\]", "").split(",")));
+        ArrayList<String> apisInventoryNumbers = doc.getFieldValue(SolrField.apis_inventory.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_inventory.name()).toString().replaceAll("\\[\\]", "").split(",")));
+       
+        if(apisPublicationNumbers != null) {
+
+            Iterator<String> pit = apisPublicationNumbers.iterator();
+            while(pit.hasNext()){
+
+                pit.next().replaceAll("_", "").trim();
+
+
+            }
+            apisPublicationNumbers = filterIds(apisPublicationNumbers);
+            sortIds(apisPublicationNumbers);
+            ids.addAll(apisPublicationNumbers);
+            
+        }      
+        
+        if(apisInventoryNumbers != null){
+
+            Iterator<String> invit = apisInventoryNumbers.iterator();
+            while(invit.hasNext()){
+
+                invit.next().replaceAll("_", "");
+            }
+            apisInventoryNumbers = filterIds(apisInventoryNumbers);
+            sortIds(apisInventoryNumbers);
+            ids.addAll(apisInventoryNumbers);
+
+        }
+        
+        String[] collections = {"ddbdp", "hgv", "apis"};
+
+        for(int i = 0; i < collections.length; i++){
+            
+            ArrayList<String> collectionMembers = new ArrayList<String>();
+            
+            String collection = collections[i];
+            String cpref = collection + "_";
+            
+            ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]",",").split(",")));
+            ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+            ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+                        
+            if(series != null && volumes != null && itemIds != null){
+                
+                for(int j = 0; j < series.size(); j++){
+                   
+                    if(j > itemIds.size() - 1) break;
+                    if(series.get(j).equals("0") || series.get(j).equals("")) break;
+                    String nowId = series.get(j).replaceAll("_", " ").trim() + " " + ((j > (volumes.size() - 1)) ? "" : volumes.get(j)).replaceAll("_", " ").trim() + " " + itemIds.get(j).replaceAll("_", " ").trim();
+                    collectionMembers.add(nowId);
+                    
+                } // closing for j loop
+                
+            }    // closing null check
+            
+            collectionMembers = filterIds(collectionMembers);
+            sortIds(collectionMembers);
+            ids.addAll(collectionMembers);
+            
+        }
+                
+        return ids;
+        
+    }
+    
+    ArrayList<String> filterIds(ArrayList<String> rawIds){
+        
+        ArrayList<String> acceptedIds = new ArrayList<String>();
+        
+        // weeding out duplicates
+        
+        Iterator<String> rit = rawIds.iterator();
+        
+        while(rit.hasNext()){
+        
+            String id = rit.next();
+            
+            if(!id.matches("^\\s*$") && !acceptedIds.contains(id)) acceptedIds.add(id);
+        
+        }        
+        
+       return acceptedIds;
+       
+       
+    }
+    
+    void sortIds(ArrayList<String> rawIds){
+        
+        IdComparator idComparator = new IdComparator();
+        Collections.sort(rawIds, idComparator);
+        
+    }
+    
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 

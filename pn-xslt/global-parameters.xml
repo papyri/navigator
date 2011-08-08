@@ -45,7 +45,7 @@
     <value on="yes">ddbdp</value>
   </parameter>
   
-  <!-- Line increment -->
+  <!-- Line increment — ignored -->
   <parameter>
     <name>line-inc</name>
     <value>5</value>
