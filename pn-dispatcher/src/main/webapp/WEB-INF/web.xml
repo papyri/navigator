@@ -17,7 +17,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8082/solr/</param-value>
+            <param-value>http://localhost:8083/solr/</param-value>
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
@@ -53,7 +53,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8082/solr/</param-value>
+            <param-value>http://localhost:8083/solr/</param-value>
         </init-param>
         <init-param>
          <param-name>htmlPath</param-name>    
@@ -73,7 +73,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8082/solr/</param-value>
+            <param-value>http://localhost:8083/solr/</param-value>
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
