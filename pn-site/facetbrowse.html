@@ -283,8 +283,6 @@
     <script type="text/javascript" charset="utf-8">
       jQuery("a.button").button();
       jQuery("#tmgo").button();
-      jQuery("#phrase,#substring,#proximity").button();
-      jQuery("#betaYes,#caps,#marks,#lemmas").button();
       jQuery("#imagesfirst,#translationsfirst").button();
       jQuery("#togglehelp,#search,#newsearch").button();
       jQuery("#newsearch").click(function(){
@@ -363,12 +361,12 @@
       	
       		var cookie_name = setting_values["name"];
       		var element = setting_values["element"];
-      		if(jQuery.cookie(cookie_name) && jQuery.cookie(cookie_name) != jQuery(element).attr("checked").toString()){
+      	/*	if(jQuery.cookie(cookie_name) && jQuery.cookie(cookie_name) != jQuery(element).attr("checked").toString()){
       		
       			jQuery(element).trigger("click");
       			jQuery(element + "-label").trigger("click");
       			
-      		}
+      		}*/
 
       	});
          
