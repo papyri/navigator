@@ -112,7 +112,7 @@ public class TranslationFacet extends Facet {
         
         if(noTranslationTotal > 0){
             
-            valuesAndCounts.add(new Count(new FacetField(SolrField.translation_language.name()), "No translation", noTranslationTotal));
+            valuesAndCounts.add(new Count(new FacetField(SolrField.translation_language.name()), "None", noTranslationTotal));
          
         }
     }

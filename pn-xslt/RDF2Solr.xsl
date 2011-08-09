@@ -209,6 +209,10 @@
                 />
               </xsl:call-template>
             </xsl:if>
+            <xsl:call-template name="images">
+              <xsl:with-param name="docs"
+                  select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"/>
+            </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id">http://papyri.info/hgv/<xsl:value-of
@@ -232,6 +236,10 @@
             <xsl:call-template name="metadata">
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
+            </xsl:call-template>
+            <xsl:call-template name="images">
+              <xsl:with-param name="docs"
+                  select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
@@ -257,6 +265,7 @@
                 <xsl:value-of select="@ident"/>
               </field>
             </xsl:for-each>
+            <xsl:call-template name="images"></xsl:call-template>
           </xsl:when>
         </xsl:choose>
       </doc>
@@ -558,11 +567,6 @@
         select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
       <xsl:text> </xsl:text>
     </field>
-    <!-- Images -->
-    <xsl:if
-      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
-      <field name="images">true</field>
-    </xsl:if>
     <xsl:choose>
       <xsl:when
         test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:p">
@@ -656,7 +660,26 @@
       </field>
     </xsl:if>
   </xsl:template>
-
+  
+  <xsl:template name="images">
+    <xsl:param name="docs" select="node()"></xsl:param>
+    <xsl:if
+      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
+      <field name="images">true</field>
+      <xsl:for-each select="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure']">
+        <field name="image_path"><xsl:value-of select=".//t:graphic/@url"></xsl:value-of></field>
+      </xsl:for-each>
+      <xsl:for-each select="/t:TEI/t:text/t:body/t:div[@type = 'figure']">
+        <field name="image_path"><xsl:value-of select=".//t:graphic/@url"></xsl:value-of></field>
+      </xsl:for-each>
+      <xsl:for-each select="$relations">
+        <xsl:if test="contains(. , 'images/')">
+          <field name="image_path"><xsl:value-of select="."></xsl:value-of></field>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:if>     
+  </xsl:template>
+  
   <xsl:template name="translation">
     <xsl:param name="docs"/>
     <xsl:for-each select="$docs//t:div[@type='translation']">

@@ -519,13 +519,12 @@ public class CollectionBrowser extends HttpServlet {
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("[\\[\\]]", "");
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
                 String translationLanguages = noTranslationLanguages ? "None" : doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");     
-                Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
-                
+                ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
                 if(!previousIds.contains(preferredId)){
                 
                     previousIds.add(preferredId);
                     allIds.remove(preferredId);
-                    record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, hasImages, translationLanguages);
+                    record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages);
                     records.add(record);
                 
                 }

@@ -67,15 +67,14 @@ public class FacetBrowserTest extends TestCase {
         
         // (ii) ordering should go:
         //      (a) canonical ddbdp identifier as reconsituted from uri
-        //      (b) APIS publication number
-        //      (c) APIS inventory number
-        //      (d) other ddbdp identifiers
-        //      (e) hgv identifiers
-        //      (f) other apis identifiers
+        //      (b) other ddbdp identifiers
+        //      (c) hgv identifiers
+        //      (d) other apis identifiers
+        //      (e) APIS publication number
+        //      (f) APIS inventory number
         // nb: ordering *within* these divisions is guaranteed by the IdComparator
         // see info.papyri.dispatch.browse.IdComparator and info.papyri.dispatch.browse.IdComparatorTest
-        
-        
+           
         SolrDocument mockDoc3 = new SolrDocument();
         mockDoc3.setField("id", "http://papyri.info/hgv/103000");
         mockDoc3.setField("ddbdp_series", "ddbdp-series-1");
@@ -90,7 +89,7 @@ public class FacetBrowserTest extends TestCase {
         mockDoc3.setField(SolrField.apis_publication_id.name(), "apis-test-1-publication");
         mockDoc3.setField(SolrField.apis_inventory.name(), "apis-test-1-inventory");
         
-        ArrayList<String> expectedResult3 = new ArrayList<String>(Arrays.asList("apis-test-1-publication", "apis-test-1-inventory", "ddbdp-series-1 1 100", "hgv-series-1 1 103000", "britmus 0 5"));
+        ArrayList<String> expectedResult3 = new ArrayList<String>(Arrays.asList("ddbdp-series-1 1 100", "hgv-series-1 1 103000", "apis-test-1-publication", "apis-test-1-inventory", "britmus 0 5"));
         assertEquals(expectedResult3, testInstance.getAllSortedIds(mockDoc3));
         
         // (iii) nulls shouldn't make it blow a gasket

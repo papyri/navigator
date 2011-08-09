@@ -19,6 +19,7 @@ public enum SolrField {
         language,
         hgv_identifier,
         images,
+        image_path,
         invnum,
         facet_language,
         full_identifier,
