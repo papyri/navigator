@@ -366,6 +366,7 @@ public class FacetBrowser extends HttpServlet {
     private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
         
         html.append("<div id=\"facet-widgets-wrapper\">");
+        html.append("<h2>Refine Search</h2>");
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);
         html.append("\"> ");
@@ -379,10 +380,14 @@ public class FacetBrowser extends HttpServlet {
         } catch (FacetNotFoundException fnfe){
             
             System.out.println(fnfe.getMessage());
-            
+            html.append("<!-- Facet not found ");
+            html.append(fnfe.getMessage());
+            html.append(" -->");
+
             
         }
         html.append("<h3>Filters</h3>");
+        
         try{
             
             Facet imgFacet = findFacet(facets, HasImagesFacet.class);
@@ -400,10 +405,12 @@ public class FacetBrowser extends HttpServlet {
             
         } catch (FacetNotFoundException fnfe){
             
-            System.out.println(fnfe.getMessage());
+            html.append("<!-- Facet not found ");
+            html.append(fnfe.getMessage());
+            html.append(" -->");
             
         }
-        // nb: submit button found in string-search facet html
+       
         html.append("</form>");
         html.append("</div><!-- closing #facet-widgets-wrapper -->");
         return html;

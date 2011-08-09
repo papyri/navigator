@@ -3,8 +3,6 @@ package info.papyri.dispatch.browse.facet;
 import info.papyri.dispatch.browse.SolrField;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -42,21 +40,20 @@ public class HasImagesFacet extends BooleanFacet {
         html.append("<div class=\"facet-widget\" title=\"");
         html.append(getToolTipText());
         html.append("\">");
-        
+        html.append("<p>");
         html.append("<input type=\"checkbox\" name=\"");
         html.append(formName.name());
-        html.append("\"");
+        html.append("\"/>");
         
         if(isSet){
             
             html.append(" checked=\"true\"");
             
         }
-        html.append("/><label for=\"");
-        html.append(formName.name());
-        html.append("\">");
+        html.append("<span class=\"option-label\">");
         html.append(getDisplayName(null));
-        html.append("</label>");
+        html.append("</span>");
+        html.append("</p>");
         html.append("</div><!-- closing .facet-widget -->");
         return html.toString();
         

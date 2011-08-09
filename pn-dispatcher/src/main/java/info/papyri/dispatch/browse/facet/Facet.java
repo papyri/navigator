@@ -112,7 +112,8 @@ abstract public class Facet {
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
         html.append(getToolTipText());                                          
         html.append("\">");
-        html.append(generateHiddenFields());    
+        html.append(generateHiddenFields()); 
+        html.append("<p>");
         // if only one value possible, then gray out control
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";             
@@ -155,6 +156,7 @@ abstract public class Facet {
         }
         
         html.append("</select>");
+        html.append("</p>");
         html.append("</div><!-- closing .facet-widget -->");
 
         return html.toString();
