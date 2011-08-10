@@ -23,20 +23,16 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String date;
   private String language;
   private String translationLanguages;
-  private String imagePath;
+  private ArrayList<String> imagePaths;
+  
   private static IdComparator documentComparator = new IdComparator();
-  private static String cameraImgPath = "/images/camera.gif";
-  private static String extLinkImgPath = "/images/extlink.gif";
-  private static String cameraImgHeight = "28px";
-  private static String cameraImgWidth = "35px";
-  private static String extLinkImgHeight = "20px";
-  private static String extLinkImgWidth = "20px";
+
  
   
   // TODO: Change images display so that icons/links to the original images are displayed instead of a simple 'yes'/'no' value
   // TODO: Change language display so that codes displayed instead of expanded strings.
   
-  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, String place, String date, String lang, Boolean hasImg, String trans) {
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, String place, String date, String lang, ArrayList<String> imgPaths, String trans) {
 
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
@@ -45,7 +41,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.date = date;
     this.language = tidyAncientLanguageCodes(lang);
     this.translationLanguages = tidyModernLanguageCodes(trans);
-    this.imagePath = hasImg ? "Yes" : "No";
+    this.imagePaths = imgPaths;
     
   }
 
@@ -76,7 +72,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");
-    html.append(imagePath);
+    html.append(getImageHTML());
     html.append("</td>");
     html.append("</tr>");
     return html.toString();
@@ -202,32 +198,50 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   private String getImageHTML(){
       
-      if(!imagePath.contains("http://")) return "None";
-      
-      StringBuilder html = new StringBuilder("<a href=\"");
-      html.append(imagePath);
-      html.append("\"><img alt=\"Image icon\" height=\"");
-      html.append(String.valueOf(cameraImgHeight));
-      html.append("\" width=\"");
-      html.append(String.valueOf(cameraImgWidth));
-      html.append("\" src=\"");
-      html.append(cameraImgPath);
-      html.append("\"/>");
-      
-      if(!imagePath.contains("papyri.info")){
+      String pathInfo = "";
+      Iterator<String> ipit = imagePaths.iterator();
+      Boolean hasExternalImgs = false;
+      Boolean hasInternalImgs = false;
+      String intIndicator = "<span class=\"internal-link-indicator\" title=\"Internal link: Image is available from papyri.info\">Int</span>";
+      String extIndicator = "<span class=\"external-link-indicator\" title=\"External link: Links will take you out of papyri.info. Papyri.info thus cannot guarantee their presence or quality.\">Ext</span>";
+      while(ipit.hasNext()){
           
-          html.append("<img alt=\"External link icon\" height=\"");
-          html.append(String.valueOf(extLinkImgHeight));
-          html.append("\" width=\"");
-          html.append(String.valueOf(extLinkImgWidth));
-          html.append("\" src=\"");
-          html.append(extLinkImgPath);
-          html.append("\"/>");
+          String path = ipit.next();
+          if(path.contains("papyri.info")){
+              
+              hasInternalImgs = true;
+              
+          }
+          else{
+              
+              hasExternalImgs = true;
+          }
+          
+          
+      }
+            
+      if(hasInternalImgs && hasExternalImgs){
+          
+          pathInfo = intIndicator + ", " + extIndicator;
+          
+      }
+      else if(hasInternalImgs){
+          
+          pathInfo = intIndicator;
+          
+      }
+      else if(hasExternalImgs){
+          
+          pathInfo = extIndicator;
+          
+      }
+      else{
+          
+          pathInfo = "None";
           
       }
       
-      html.append("</a>");
-      
-      return html.toString();
+      return pathInfo; 
+  
   }
 }

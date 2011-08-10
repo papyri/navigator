@@ -11,7 +11,7 @@ font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helveti
 font-size: 100%;
 min-height: 100%;
 }
-
+s
 div#hd, div#header {
 background: url("/images/header.jpg");
 color: white;
@@ -103,6 +103,7 @@ padding-top: 20px;
 text-align: center;
 height: 50px;
 }
+
 div.search p {
 margin-left:1em;
 padding:4px;
@@ -691,6 +692,18 @@ td.kwic {
 }
 
 /* END FOOTER STYLES  */
+
+/*  FACET CONTROLS (NB: LARGELY COPIED FROM SEARCH.HTML; CONSIDER INTEGRATING */
+
+#facet-stringsearch-wrapper{
+    
+    background:white;
+    border:thin solid silver;
+    padding:1em;
+    /*width:780px */
+    width: 550px; /* shrunk for faceted display */
+    
+}
 
 
 

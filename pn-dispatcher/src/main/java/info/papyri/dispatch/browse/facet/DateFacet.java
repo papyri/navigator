@@ -399,6 +399,7 @@ public class DateFacet extends Facet {
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
         html.append(getAfterWhichToolTipText());
         html.append("\">");
+        html.append("<p>");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
@@ -441,6 +442,7 @@ public class DateFacet extends Facet {
         }
         
         html.append("</select>");
+        html.append("</p>");
         html.append("</div><!-- closing .facet-widget -->");
 
         return html.toString();  
@@ -452,6 +454,7 @@ public class DateFacet extends Facet {
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
         html.append(getBeforeWhichToolTipText());
         html.append("\">");
+        html.append("<p>");
         Boolean onlyOneValue = valuesAndCountsComplement.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
@@ -494,6 +497,7 @@ public class DateFacet extends Facet {
         }
         
         html.append("</select>");
+        html.append("</p>");
         html.append("</div><!-- closing .facet-widget -->");
 
         return html.toString();         

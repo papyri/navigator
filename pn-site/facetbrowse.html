@@ -20,21 +20,20 @@
       #facet-wrapper{
       
         width:  96%;
-        margin: 2%;
-        width: 96%;
+        width: 100%;
         float: left;
         clear: both;
-        margin: 2%;
       
       }
       
       #facet-widgets-wrapper{
       
         position: relative;
-        width: 525px;
+        width: 600px;
         float: left;
         margin-right: 25px;
         margin-bottom: 50px;
+        
  
       }
       
@@ -60,6 +59,18 @@
         margin-top: 0;
         
       }
+      
+      #text-search-widget select, #text-search-widget input{
+        
+        float: none;
+      
+      }
+      
+      #text-search-widget label, #text-search-widget #search{
+      
+        margin-left: 7.5px;
+      
+      }
 
       #vals-and-records-wrapper{
       
@@ -73,7 +84,8 @@
         position: relative;
         width: 100%;
         border: 3px solid gray;
-        padding: 10px 5px;   
+        padding: 10px 5px; 
+        margin-top: 15px;
 
       }
 
@@ -168,7 +180,6 @@
       div.content{
       
         margin-left: auto;
-        font: 13px/1.231 arial,helvetica,clean,sans-serif;
       
       }
       
@@ -283,8 +294,6 @@
     <script type="text/javascript" charset="utf-8">
       jQuery("a.button").button();
       jQuery("#tmgo").button();
-      jQuery("#phrase,#substring,#proximity").button();
-      jQuery("#betaYes,#caps,#marks,#lemmas").button();
       jQuery("#imagesfirst,#translationsfirst").button();
       jQuery("#togglehelp,#search,#newsearch").button();
       jQuery("#newsearch").click(function(){
@@ -363,12 +372,12 @@
       	
       		var cookie_name = setting_values["name"];
       		var element = setting_values["element"];
-      		if(jQuery.cookie(cookie_name) && jQuery.cookie(cookie_name) != jQuery(element).attr("checked").toString()){
+      	/*	if(jQuery.cookie(cookie_name) && jQuery.cookie(cookie_name) != jQuery(element).attr("checked").toString()){
       		
       			jQuery(element).trigger("click");
       			jQuery(element + "-label").trigger("click");
       			
-      		}
+      		}*/
 
       	});
          

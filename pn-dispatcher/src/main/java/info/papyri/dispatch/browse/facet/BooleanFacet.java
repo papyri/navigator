@@ -92,6 +92,7 @@ abstract public class BooleanFacet extends Facet{
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
         html.append(getToolTipText());
         html.append("\">");
+        html.append("<p>");
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
@@ -130,6 +131,7 @@ abstract public class BooleanFacet extends Facet{
         }
         
         html.append("</select>");
+        html.append("</p>");
         html.append("</div><!-- closing .facet-widget -->");
         html.append(generateHiddenFields());
         return html.toString();

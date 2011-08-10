@@ -148,14 +148,13 @@ public class FacetBrowser extends HttpServlet {
           
         ArrayList<Facet> facets = new ArrayList<Facet>();
         
-        facets.add(new SubStringFacet());
+        facets.add(new StringSearchFacet());
         facets.add(new LanguageFacet());
         facets.add(new PlaceFacet());
         facets.add(new DateFacet());
-        facets.add(new HasImagesFacet());
         facets.add(new HasTranscriptionFacet());
         facets.add(new TranslationFacet());
-        
+        facets.add(new HasImagesFacet());
         return facets;
         
     }
@@ -310,10 +309,10 @@ public class FacetBrowser extends HttpServlet {
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
                 String translationLanguages = noTranslationLanguages ? "No translation" : (String)doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
-                Boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;            
+                ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, hasImages, translationLanguages);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages);
                 records.add(record);
                 
            }
@@ -367,17 +366,51 @@ public class FacetBrowser extends HttpServlet {
     private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
         
         html.append("<div id=\"facet-widgets-wrapper\">");
+        html.append("<h2>Refine Search</h2>");
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);
         html.append("\"> ");
-        Iterator<Facet> fit = facets.iterator();
-        while(fit.hasNext()){
+        try{
             
-            Facet facet = fit.next();
-            html.append(facet.generateWidget());
+        
+            Facet stringFacet = findFacet(facets, StringSearchFacet.class);
+            html.append(stringFacet.generateWidget());
+            
+        
+        } catch (FacetNotFoundException fnfe){
+            
+            System.out.println(fnfe.getMessage());
+            html.append("<!-- Facet not found ");
+            html.append(fnfe.getMessage());
+            html.append(" -->");
+
             
         }
-        html.append("<input type=\"submit\"/>");
+        html.append("<h3>Filters</h3>");
+        
+        try{
+            
+            Facet imgFacet = findFacet(facets, HasImagesFacet.class);
+            html.append(imgFacet.generateWidget());
+            Facet transcFacet = findFacet(facets, HasTranscriptionFacet.class);
+            html.append(transcFacet.generateWidget());
+            Facet translFacet = findFacet(facets, TranslationFacet.class);
+            html.append(translFacet.generateWidget());
+            Facet placeFacet = findFacet(facets, PlaceFacet.class);
+            html.append(placeFacet.generateWidget());
+            Facet langFacet = findFacet(facets, LanguageFacet.class);
+            html.append(langFacet.generateWidget());
+            Facet dateFacet = findFacet(facets, DateFacet.class);
+            html.append(dateFacet.generateWidget());
+            
+        } catch (FacetNotFoundException fnfe){
+            
+            html.append("<!-- Facet not found ");
+            html.append(fnfe.getMessage());
+            html.append(" -->");
+            
+        }
+       
         html.append("</form>");
         html.append("</div><!-- closing #facet-widgets-wrapper -->");
         return html;
@@ -395,7 +428,6 @@ public class FacetBrowser extends HttpServlet {
      * @param html
      * @param sq Used in debugging only
      * @return A <code>StringBuilder</code> holding the HTML for the records returned by the Solr server
-     * @see DocumentBrowseRecord
      */
     
     private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html){
@@ -414,6 +446,10 @@ public class FacetBrowser extends HttpServlet {
         }
         else{
             
+            html.append("<p>");
+            html.append(String.valueOf(resultSize));
+            html.append(" hits.");
+            html.append("</p>");
             html.append("<table>");
             html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translations</td><td>Images</td></tr>");
             Iterator<DocumentBrowseRecord> rit = returnedRecords.iterator();
@@ -703,12 +739,17 @@ public class FacetBrowser extends HttpServlet {
             
         }
         
-        // following applies to apis only
-       // ideally order should go first publication numbers, then inventory numbers
+        ArrayList<String> ddbdpIds = getCollectionIds("ddbdp", doc);
+        if(ddbdpIds.size() > 0) ids.addAll(ddbdpIds);
+        ArrayList<String> hgvIds = getCollectionIds("hgv", doc);
+        if(hgvIds.size() > 0) ids.addAll(hgvIds);
         
         ArrayList<String> apisPublicationNumbers = doc.getFieldValue(SolrField.apis_publication_id.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_publication_id.name()).toString().replaceAll("\\[\\]", "").split(",")));
         ArrayList<String> apisInventoryNumbers = doc.getFieldValue(SolrField.apis_inventory.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_inventory.name()).toString().replaceAll("\\[\\]", "").split(",")));
-       
+        
+        // following applies to apis only
+        // ideally order should go first publication numbers, then inventory numbers
+               
         if(apisPublicationNumbers != null) {
 
             Iterator<String> pit = apisPublicationNumbers.iterator();
@@ -737,39 +778,39 @@ public class FacetBrowser extends HttpServlet {
 
         }
         
-        String[] collections = {"ddbdp", "hgv", "apis"};
-
-        for(int i = 0; i < collections.length; i++){
-            
-            ArrayList<String> collectionMembers = new ArrayList<String>();
-            
-            String collection = collections[i];
-            String cpref = collection + "_";
-            
-            ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]",",").split(",")));
-            ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-            ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-                        
-            if(series != null && volumes != null && itemIds != null){
-                
-                for(int j = 0; j < series.size(); j++){
-                   
-                    if(j > itemIds.size() - 1) break;
-                    if(series.get(j).equals("0") || series.get(j).equals("")) break;
-                    String nowId = series.get(j).replaceAll("_", " ").trim() + " " + ((j > (volumes.size() - 1)) ? "" : volumes.get(j)).replaceAll("_", " ").trim() + " " + itemIds.get(j).replaceAll("_", " ").trim();
-                    collectionMembers.add(nowId);
-                    
-                } // closing for j loop
-                
-            }    // closing null check
-            
-            collectionMembers = filterIds(collectionMembers);
-            sortIds(collectionMembers);
-            ids.addAll(collectionMembers);
-            
-        }
-                
+        ArrayList<String> apisIds = getCollectionIds("apis", doc);
+        if(apisIds.size() > 0) ids.addAll(apisIds);
         return ids;
+        
+    }
+    
+    ArrayList<String> getCollectionIds(String collection, SolrDocument doc){
+            
+        ArrayList<String> collectionMembers = new ArrayList<String>();
+
+        String cpref = collection + "_";
+
+        ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]",",").split(",")));
+        ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+        ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+
+        if(series != null && volumes != null && itemIds != null){
+
+            for(int j = 0; j < series.size(); j++){
+
+                if(j > itemIds.size() - 1) break;
+                if(series.get(j).equals("0") || series.get(j).equals("")) break;
+                String nowId = series.get(j).replaceAll("_", " ").trim() + " " + ((j > (volumes.size() - 1)) ? "" : volumes.get(j)).replaceAll("_", " ").trim() + " " + itemIds.get(j).replaceAll("_", " ").trim();
+                collectionMembers.add(nowId);
+
+            } // closing for j loop
+
+        }    // closing null check
+
+        collectionMembers = filterIds(collectionMembers);
+        sortIds(collectionMembers);
+
+        return collectionMembers;
         
     }
     
@@ -801,6 +842,22 @@ public class FacetBrowser extends HttpServlet {
         
     }
     
+    private Facet findFacet(ArrayList<Facet> facets, Class facetSubClass) throws FacetNotFoundException{
+        
+        Iterator<Facet> fit = facets.iterator();
+        
+        while(fit.hasNext()){
+            
+            Facet facet = fit.next();
+            
+            if(facet.getClass().equals(facetSubClass)) return facet;
+            
+            
+        }
+        
+        throw new FacetNotFoundException(facetSubClass.toString());
+        
+    }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
