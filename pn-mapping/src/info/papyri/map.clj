@@ -163,7 +163,7 @@
   [uri]
   (let [deleterel (str "construct { ?s <" uri "> ?r }
                         from <rmi://localhost/papyri.info#pi>
-                        where { <" uri "> ?p ?r }")]
+                        where { ?s <" uri "> ?r }")]
   (let [factory (ConnectionFactory.)
         conn (.newConnection factory server)
         interpreter (SparqlInterpreter.)]
