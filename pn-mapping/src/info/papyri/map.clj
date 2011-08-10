@@ -159,6 +159,18 @@
     (.execute (Deletion. graph, (.parseQuery interpreter deleteobj)) conn)
     (.close conn))))
     
+(defn -deleteRelation
+  [uri]
+  (let [deleterel (str "construct { ?s <" uri "> ?r }
+                        from <rmi://localhost/papyri.info#pi>
+                        where { <" uri "> ?p ?r }")]
+  (let [factory (ConnectionFactory.)
+        conn (.newConnection factory server)
+        interpreter (SparqlInterpreter.)]
+    (.execute conn (CreateGraph. graph))
+    (.execute (Deletion. graph, (.parseQuery interpreter deleterel)) conn)
+    (.close conn))))
+    
 (defn -loadFile
   [f]
   (let [factory (ConnectionFactory.)
@@ -293,6 +305,8 @@
   (if (> (count args) 0) 
     (load-map (first args)))
     (do 
+      (println "Deleting Relations")
+      (-deleteRelation "http://purl.org/dc/terms/relation")
       (println "Processing DDB_EpiDoc_XML")
       (load-map (str idproot "/DDB_EpiDoc_XML"))
       (println "Processing HGV_meta_EpiDoc")
@@ -315,6 +329,7 @@
             (= function "load-file") (-loadFile (second args))
             (= function "delete-graph") (-deleteGraph)
             (= function "delete-uri") (-deleteUri (second args))
+            (= function "delete-relation") (-deleteRelation (second args))
             (= function "insert-inferences") (if (> (count args) 1)
               (for [file (rest args)] 
                 (-insertInferences (url-from-file file)))
