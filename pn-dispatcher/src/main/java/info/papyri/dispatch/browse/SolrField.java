@@ -29,8 +29,15 @@ public enum SolrField {
         date_category,
         unknown_date_flag,
         transcription_ngram_ia,
+        transcription,
+        transcription_ia,
+        metadata,
+        translation,
+        transcription_ic,
+        transcription_id,
         id,
         apis_inventory,
-        apis_publication_id
+        apis_publication_id,
+        
     
 }

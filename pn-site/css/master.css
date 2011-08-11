@@ -124,7 +124,7 @@ div#help {
 /* Top Navigation */
 div.nav {
 background:#ccc;
-position: absolute;
+/*position: absolute; */
 left: 0px;
 top: 67px;
 padding:0;
