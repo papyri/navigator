@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema name="epidoc" version="1.2">
   <types>
-    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true">
+    <fieldType name="lctext" class="solr.StrField" sortMissingLast="true" omitNorms="true">
       <analyzer type="index">
         <tokenizer class="solr.LowerCaseTokenizerFactory"/>
       </analyzer>
@@ -14,7 +14,7 @@
 
   <fields>
     <field name="id" type="int" indexed="true" stored="true" required="true"/>
-    <dynamicField name="*" type="string" indexed="true" stored="true"/>
+    <dynamicField name="*" type="lctext" indexed="true" stored="true"/>
   </fields>
   
   <uniqueKey>id</uniqueKey>
