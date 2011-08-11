@@ -10,6 +10,7 @@
       </analyzer>
     </fieldType>
     <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
   </types>
 
   <fields>
