@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema name="epidoc" version="1.2">
   <types>
-    <fieldType name="lctext" class="solr.StrField" sortMissingLast="true" omitNorms="true">
+    <fieldType name="lctext" class="solr.TextField" sortMissingLast="true" omitNorms="true">
       <analyzer type="index">
         <tokenizer class="solr.LowerCaseTokenizerFactory"/>
       </analyzer>
