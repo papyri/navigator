@@ -467,7 +467,7 @@
           </xsl:for-each>
           <field name="apis_inventory">
             <xsl:value-of
-              select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']"/>
+              select="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"/>
           </field>
           <xsl:if test="$alterity = 'self'">
             <field name="series">
