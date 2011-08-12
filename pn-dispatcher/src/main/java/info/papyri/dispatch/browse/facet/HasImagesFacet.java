@@ -43,13 +43,14 @@ public class HasImagesFacet extends BooleanFacet {
         html.append("<p>");
         html.append("<input type=\"checkbox\" name=\"");
         html.append(formName.name());
-        html.append("\"/>");
+        html.append("\"");
         
         if(isSet){
             
             html.append(" checked=\"true\"");
             
         }
+        html.append("/>");
         html.append("<span class=\"option-label\">");
         html.append(getDisplayName(null));
         html.append("</span>");
