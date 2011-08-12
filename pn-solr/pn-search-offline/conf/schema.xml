@@ -44,6 +44,7 @@
     </fieldType>
     
   </types>
+
       
       <fields>
         <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
@@ -58,14 +59,14 @@
         <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
         <field name="has_transcription" type="boolean" indexed="true" stored="false"/>
         <field name="translation_language" type="string" indexed="true" stord="false" multiValued="true"/>
-        <field name="translation" type="text" indexed="true" stored="false" multiValued="true"/>
+        <field name="translation" type="lctext" indexed="true" stored="false" multiValued="true"/>
         <field name="has_translation" type="boolean" indexed="true" stored="true"/>
         <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
         <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
         <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
         <field name="date_category" type="int" indexed="true" stored="false" multiValued="true"/>
         <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
-        <field name="metadata" type="text" indexed="true" stored="false" multiValued="true"/>
+        <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
         <field name="images" type="boolean" indexed="true" stored="true"/>
         <field name="image_path" type="string" indexed="false" stored="true" multiValued="true"/>
         <field name="invnum" type="text" indexed="true" stored="true"/>
@@ -96,6 +97,7 @@
       </fields>
       
 
+>>>>>>> b87b96681835d799579bb8489335c7e5aa0865e9
   <uniqueKey>id</uniqueKey>
 
   <!-- field for the QueryParser to use when an explicit fieldname is absent -->
