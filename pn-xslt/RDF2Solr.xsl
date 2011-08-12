@@ -367,10 +367,10 @@
         </xsl:if>
       </xsl:when>
       <xsl:when
-        test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']">
+        test="$docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']">
         <!-- DDBDP document -->
         <xsl:variable name="sort"
-          select="tokenize(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'], ';')"/>
+          select="tokenize($docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'], ';')"/>
         <xsl:variable name="ddbdp_volume">
           <xsl:choose>
             <xsl:when test="string-length($sort[2]) = 0">0</xsl:when>
@@ -468,7 +468,7 @@
           </field>
         </xsl:if>
         <xsl:for-each
-          select="$docs[1]//t:TEI/t:text/t:body/t:div[@type='bibliography' and @subtype = 'citations']/t:listBibl/t:bibl[@type='ddbdp']">
+          select="$docs[1]//t:TEI/t:text/t:body/t:div[@type='bibliography' and @subtype = 'citations']/t:listBibl/t:bibl[@type='ddbdp'][1]">
           <field name="apis_publication_id">
             <xsl:value-of
               select="replace(., ':', ' ')"
