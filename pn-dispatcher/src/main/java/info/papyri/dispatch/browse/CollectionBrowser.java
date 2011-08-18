@@ -452,7 +452,7 @@ public class CollectionBrowser extends HttpServlet {
         
         try{
         
-            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8083/solr/" + PN_SEARCH);
+            SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
             QueryResponse qr = solrServer.query(sq);
             return qr;
             

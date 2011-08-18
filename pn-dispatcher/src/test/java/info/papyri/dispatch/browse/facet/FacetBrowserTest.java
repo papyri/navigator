@@ -1,5 +1,8 @@
 package info.papyri.dispatch.browse.facet;
 
+import java.net.MalformedURLException;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import java.util.Arrays;
@@ -24,6 +27,16 @@ public class FacetBrowserTest extends TestCase {
     public FacetBrowserTest(String testName) {
         super(testName);
         testInstance = new FacetBrowser();
+        try{
+        SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8083/solr/pn-search/");
+        System.out.println("Successfully instantiated solr");
+        }
+        catch(MalformedURLException mue){
+            
+            System.out.println("Could not access solr server: " + mue.getMessage());
+            
+            
+        }
     }
     
     @Override
