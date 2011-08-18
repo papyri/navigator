@@ -11,7 +11,6 @@ font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helveti
 font-size: 100%;
 min-height: 100%;
 }
-s
 div#hd, div#header {
 background: url("/images/header.jpg");
 color: white;
@@ -124,7 +123,7 @@ div#help {
 /* Top Navigation */
 div.nav {
 background:#ccc;
-/*position: absolute; */
+position: absolute; 
 left: 0px;
 top: 67px;
 padding:0;
