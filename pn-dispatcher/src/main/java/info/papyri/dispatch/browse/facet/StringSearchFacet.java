@@ -5,7 +5,6 @@ import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.SolrField;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,17 +15,22 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 /**
- *
- * Note that this at the moment isn't strictly speaking a facet in terms of its
- * behaviour - there are no values to select from (though an autocomplete box
- * has the same sort of functionality ....)
+ * Replicates the functioning of <code>info.papyri.dispatch.Search</code> in a 
+ * manner compatible with the faceted browse framework and codebase.
+ * 
+ * Note that although the algorithm used for the search process is intended to
+ * replicate that defined in <code>info.papyri.dispatch.Search</code> it is implemented
+ * very differently. The logic for string-handling is all encapsulated in the inner 
+ * SearchConfiguration class, below and more specific documentation is provided there.
  * 
  * @author thill
+ * @version 2011.08.19
+ * @see info.papyri.dispatch.Search
  */
 public class StringSearchFacet extends Facet{
     
-    enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATIONS };
     enum SearchType{ PHRASE, SUBSTRING, LEMMAS, PROXIMITY, WITHIN  };
+    enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATIONS };
     enum SearchOption{ BETA, NO_CAPS, NO_MARKS };
 
     private HashMap<Integer, SearchConfiguration> searchConfigurations = new HashMap<Integer, SearchConfiguration>();
@@ -70,7 +74,7 @@ public class StringSearchFacet extends Facet{
         html.append("<p class=\"ui-corner-all\" id=\"facet-stringsearch-wrapper\">");
         html.append("<input type=\"text\" name=\"");
         html.append(formName.name());
-        html.append("\" size=\"40\" maxlength=\"250\" id=\"keyword\"></input>");
+        html.append("\" size=\"55\" maxlength=\"250\" id=\"keyword\"></input>");
         html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
         html.append("</p>");
         
@@ -88,7 +92,7 @@ public class StringSearchFacet extends Facet{
         html.append("<label for=\"substring\" id=\"substring-label\">substring search</label>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.LEMMAS.name().toLowerCase());
-        html.append("\"/>");
+        html.append("\" id=\"lemmas\"/>");
         html.append("<label for\"lemmas\" id=\"lemmas-label\">lemmatized search</label><br/>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.PROXIMITY.name().toLowerCase());
@@ -535,17 +539,64 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    /**
+     * This inner class handles the logic for string-searching previously found
+     * in <code>info.papyri.dispatch.Search</code>.
+     * 
+     * Note that while the logic is intended to be the same, the implementation
+     * is very different. In particular, the search query is understood to be made
+     * up of three parts, which are dealt with separately, as far as this is possible.
+     * (1) The search type (substring, phrase, lemmatised, or proximity)
+     * (2) The search target (text, metadata, translations, or all three)
+     * (3) Transformations to be made to the string itself (e.g., because it is in 
+     * betacode format, caps should be ignored, etc.)
+     * 
+     * In practice these three are inter-related in a cascading fashion - the search type
+     * affects the possible search targets and relevant transformations, while
+     * the search target affects the possible transformations.
+     * 
+     * 
+     */
+    
     class SearchConfiguration{
         
+        /** The search string as submitted by the user */
         private String rawWord;
+        /** The search string: i.e., the rawWord, after it has been
+         * subjected to the relevant transformations
+         */
         private String searchString;
-        private Integer paramNumber;
+        /**
+         * The search target (text, metadata, translation, or all three) 
+         */
         private SearchTarget target;
+        /**
+         * The search type (phrase, substring, lemmatized, proximity)
+         */
         private SearchType type;
+        /**
+         * The search window used for proximity searches; defaults to 0 for
+         * non-proximity searches
+         */
         private int proximityDistance;
+        /**
+         * <code>True</code> if betacode is being used; <code>False</code> otherwise.
+         * 
+         */
         private Boolean betaOn;
+        /** <code>True</code> if capitalisation is to be ignored; <code>False</code>
+         *  otherwise.
+         */
         private Boolean ignoreCaps;
+        /**
+         * <code>True</code> if diacritics are to be ignored; <code>False</code>
+         * otherwise.
+         */
         private Boolean ignoreMarks;
+        /**
+         * The SolrField that should be used in the search
+         * 
+         */
         private SolrField field;
         
         public SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean beta, Boolean caps, Boolean marks, int wi){
@@ -555,7 +606,6 @@ public class StringSearchFacet extends Facet{
             // <code>SolrField</code>
             
             target = tgt;
-            paramNumber = no == null ? 0 : no;
             type = ty;
             betaOn = beta;
             ignoreCaps = caps;
@@ -584,6 +634,19 @@ public class StringSearchFacet extends Facet{
             }
         }
         
+        /**
+         * Determines the field to search for the string in.
+         * 
+         * Replicates the logic of info.papyri.dispatch.Search#processRequest
+         * 
+         * @param st The search's <code>SearchType</code>
+         * @param t The search's <code>SearchTarget</code>
+         * @param noCaps Boolean - whether or not capitalisation is significant
+         * @param noMarks Boolean - whether or not diacritics are significant
+         * @return the <code>SolrField</code> to be searched
+         * @see info.papyri.dispatch.Search#runQuery(java.io.PrintWriter, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
+         */
+        
         private SolrField setField(SearchType st, SearchTarget t, Boolean noCaps, Boolean noMarks){
             
             if(st.equals(SearchType.SUBSTRING)) return SolrField.transcription_ngram_ia;
@@ -606,9 +669,25 @@ public class StringSearchFacet extends Facet{
             
             if(t.equals(SearchTarget.TRANSLATIONS)) return SolrField.translation;
             
-            return null;
+            return null;        // i.e., all fields will be searched (for Phrase search)
             
         }
+        
+        /**
+         * Transforms the search string into the appropriate form based on 
+         * search settings
+         * 
+         * 
+         * @param rawInput The string as submitted by the user
+         * @param st The search's <code>SearchType</code>
+         * @param beta <code>Boolean</code>: Whether or not the string is beta-encoded
+         * @param noCase <code>Boolean</code>: Whether or not to ignore caps
+         * @param noMarks <code>Boolean</code>: Whether or not to ignore diacritics
+         * @return <code>String</code> The transformed <code>String</code>
+         * @throws SolrServerException
+         * @throws MalformedURLException
+         * @throws Exception 
+         */
         
         private String transformSearchString(String rawInput, SearchType st, Boolean beta, Boolean noCase, Boolean noMarks) throws SolrServerException, MalformedURLException, Exception{
             
@@ -645,14 +724,16 @@ public class StringSearchFacet extends Facet{
             
         }
         
-
-        public Integer getParamNumber(){ return paramNumber; }
-        public SearchTarget getSearchTarget(){ return target; }
-        public SearchType getSearchType(){ return type; }
-        public int getProximityDistance(){ return proximityDistance; }
-        public String getKeyWord(){ return rawWord; }
+        /**
+         * Gets the search string in a form immediately ready for use in a 
+         * <code>SolrQuery</code>
+         * 
+         * @return 
+         */
+        
         public String getSearchString(){ 
            
+            // transformation only required if a proximity search
            if(type.equals(SearchType.PROXIMITY)){
 
                return "\"" + searchString + "\"~" + String.valueOf(proximityDistance);
@@ -661,6 +742,13 @@ public class StringSearchFacet extends Facet{
            return searchString;
         
         }
+        
+        /* getters and setters */
+        
+        public SearchTarget getSearchTarget(){ return target; }
+        public SearchType getSearchType(){ return type; }
+        public int getProximityDistance(){ return proximityDistance; }
+        public String getKeyWord(){ return rawWord; }
         public Boolean getBetaOn(){ return betaOn; }
         public Boolean getIgnoreCaps(){ return ignoreCaps; }
         public Boolean getIgnoreMarks(){ return ignoreMarks; }

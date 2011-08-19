@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
@@ -51,6 +53,8 @@ public class FacetBrowser extends HttpServlet {
     static private String FACET_PATH = "/dispatch/faceted/";
     /** Number of records to show per page. Used in pagination */
     static private int documentsPerPage = 50;
+    
+    static SolrUtils SOLR_UTIL;
         
     @Override
     public void init(ServletConfig config) throws ServletException{
@@ -58,6 +62,7 @@ public class FacetBrowser extends HttpServlet {
         super.init(config);
 
         SOLR_URL = config.getInitParameter("solrUrl");
+        SOLR_UTIL = new SolrUtils(config);
         home = config.getInitParameter("home");
         try {
             
@@ -109,7 +114,7 @@ public class FacetBrowser extends HttpServlet {
          * by each of the facets in turn.
          */
         SolrQuery solrQuery = this.buildFacetQuery(page, facets);
-        
+               
         /* Query the Solr server */
         QueryResponse queryResponse = this.runFacetQuery(solrQuery);
         
@@ -134,7 +139,7 @@ public class FacetBrowser extends HttpServlet {
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
         
         /* Inject the generated HTML */
-        displayBrowseResult(response, html);  
+        displayBrowseResult(response, html, solrQuery);  
      
     }
     
@@ -237,7 +242,7 @@ public class FacetBrowser extends HttpServlet {
         try{
             
           SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
-          QueryResponse qr = solrServer.query(sq);
+          QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.POST);
           return qr;
             
             
@@ -318,7 +323,7 @@ public class FacetBrowser extends HttpServlet {
            }
            catch (MalformedURLException mue){
                
-               System.out.print("Malformed URL: " + mue.getMessage());
+               System.out.print("Malformed URL in retrieveRecords: " + mue.getMessage());
                
            }
         }
@@ -545,7 +550,7 @@ public class FacetBrowser extends HttpServlet {
      * @see #assembleHTML(java.util.EnumMap, java.lang.Boolean, long, java.util.ArrayList, org.apache.solr.client.solrj.SolrQuery) 
      */
     
-    void displayBrowseResult(HttpServletResponse response, String html){
+    void displayBrowseResult(HttpServletResponse response, String html, SolrQuery sq){
         
         BufferedReader reader = null;
         try{
@@ -565,6 +570,8 @@ public class FacetBrowser extends HttpServlet {
                 }
           
             } 
+            
+            out.println("<h2>" + sq.toString() + "</h2>");
         
         }
         catch(Exception e){
