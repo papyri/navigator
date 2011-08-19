@@ -11,26 +11,9 @@
             <xsl:attribute name="id">
               <xsl:value-of select="@type"/>
             </xsl:attribute>
-          </xsl:if>
-          <!-- Temporary headings so we know what is where -->
-          <xsl:if test="not(t:head)">
             <xsl:choose>
-              <xsl:when test="@type = 'translation'">
-                  <h2>
-                     <xsl:value-of select="/t:TEI/t:teiHeader/t:profileDesc/t:langUsage/t:language[@ident = current()/@xml:lang]"/>
-                     <xsl:text> </xsl:text>
-                     <xsl:value-of select="@type"/>
-                  </h2>
-              </xsl:when>
-              <xsl:otherwise>
-                  <h2>
-                     <xsl:value-of select="@type"/>
-                     <xsl:if test="string(@subtype)">
-                        <xsl:text>: </xsl:text>
-                        <xsl:value-of select="@subtype"/>
-                     </xsl:if>
-                  </h2>
-              </xsl:otherwise>
+              <xsl:when test="@type='commentary' and @subtype='frontmatter'"><h3>Introduction</h3></xsl:when>
+              <xsl:when test="@type='commentary' and @subtype='linebyline'"><h3>Notes</h3></xsl:when>
             </xsl:choose>
           </xsl:if>
 
