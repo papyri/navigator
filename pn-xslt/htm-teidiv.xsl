@@ -11,6 +11,10 @@
             <xsl:attribute name="id">
               <xsl:value-of select="@type"/>
             </xsl:attribute>
+            <xsl:choose>
+              <xsl:when test="@type='commentary' and @subtype='frontmatter'"><h3>Introduction</h3></xsl:when>
+              <xsl:when test="@type='commentary' and @subtype='linebyline'"><h3>Notes</h3></xsl:when>
+            </xsl:choose>
           </xsl:if>
 
           <!-- Body of the div -->
