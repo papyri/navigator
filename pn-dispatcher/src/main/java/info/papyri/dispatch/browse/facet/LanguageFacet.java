@@ -59,6 +59,7 @@ public class LanguageFacet extends Facet{
         
     }
     
+    @Override
     public void setWidgetValues(QueryResponse queryResponse){
         
         FacetField facetField = queryResponse.getFacetField(field.name());

@@ -44,6 +44,7 @@
     </fieldType>
     
   </types>
+
       
       <fields>
         <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
