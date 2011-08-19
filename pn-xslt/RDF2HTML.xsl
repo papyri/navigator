@@ -18,6 +18,7 @@
   <xsl:import href="htm-teiapp.xsl"/>
   <xsl:import href="htm-teidiv.xsl"/>
   <xsl:import href="htm-teidivedition.xsl"/>
+  <xsl:import href="htm-teiemph.xsl"/>
   <xsl:import href="htm-teiforeign.xsl"/>
   <xsl:import href="htm-teifigure.xsl"/>
   <xsl:import href="htm-teig.xsl"/>
