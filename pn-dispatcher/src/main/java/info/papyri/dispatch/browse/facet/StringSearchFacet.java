@@ -246,6 +246,7 @@ public class StringSearchFacet extends Facet{
                 
             }
             
+            counter++;
             
         }
         
@@ -282,6 +283,7 @@ public class StringSearchFacet extends Facet{
                 if(!params.containsKey(typeGetter) || !params.containsKey(targetGetter)) continue;
 
                 String keyword = params.get(keywordGetter)[0];
+                if(keyword == null || "".equals(keyword)) continue;
                 String rawSearchType = params.get(typeGetter)[0].toUpperCase();
                 String rawSearchTarget = params.get(targetGetter)[0].toUpperCase();
                 
@@ -384,9 +386,11 @@ public class StringSearchFacet extends Facet{
         }
         
         SearchConfiguration config = searchConfigurations.get(Integer.valueOf(paramNumber));
-        // TODO: add some formatting here
-                
-        return config.getSearchType().name().toLowerCase();
+        
+        String searchType = config.getSearchType().name().toLowerCase();
+           
+        String firstCap = searchType.substring(0, 1).toUpperCase();
+        return firstCap + searchType.substring(1, searchType.length());
         
         
     }

@@ -139,7 +139,7 @@ public class FacetBrowser extends HttpServlet {
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
         
         /* Inject the generated HTML */
-        displayBrowseResult(response, html, solrQuery);  
+        displayBrowseResult(response, html);  
      
     }
     
@@ -550,7 +550,7 @@ public class FacetBrowser extends HttpServlet {
      * @see #assembleHTML(java.util.EnumMap, java.lang.Boolean, long, java.util.ArrayList, org.apache.solr.client.solrj.SolrQuery) 
      */
     
-    void displayBrowseResult(HttpServletResponse response, String html, SolrQuery sq){
+    void displayBrowseResult(HttpServletResponse response, String html){
         
         BufferedReader reader = null;
         try{
@@ -571,7 +571,6 @@ public class FacetBrowser extends HttpServlet {
           
             } 
             
-            out.println("<h2>" + sq.toString() + "</h2>");
         
         }
         catch(Exception e){
