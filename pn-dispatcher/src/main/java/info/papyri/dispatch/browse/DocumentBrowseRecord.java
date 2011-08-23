@@ -202,8 +202,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       Iterator<String> ipit = imagePaths.iterator();
       Boolean hasExternalImgs = false;
       Boolean hasInternalImgs = false;
-      String intIndicator = "<span class=\"internal-link-indicator\" title=\"Internal link: Image is available from papyri.info\">Int</span>";
-      String extIndicator = "<span class=\"external-link-indicator\" title=\"External link: Links will take you out of papyri.info. Papyri.info thus cannot guarantee their presence or quality.\">Ext</span>";
+      String intIndicator = "<span class=\"internal-link-indicator\" title=\"Internal link: Image is available from papyri.info\">Img</span>";
+      String extIndicator = "<span class=\"external-link-indicator\" title=\"External link: Links will take you out of papyri.info. Papyri.info thus cannot guarantee their presence or quality.\">Img (ext.)</span>";
       while(ipit.hasNext()){
           
           String path = ipit.next();
