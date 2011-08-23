@@ -38,8 +38,7 @@ public class StringSearchFacet extends Facet{
     public StringSearchFacet(){
         
         super(SolrField.transcription_ngram_ia, FacetParam.STRING, "String search");
-        
-        
+             
     }
     
     @Override
@@ -74,11 +73,9 @@ public class StringSearchFacet extends Facet{
         html.append("<p class=\"ui-corner-all\" id=\"facet-stringsearch-wrapper\">");
         html.append("<input type=\"text\" name=\"");
         html.append(formName.name());
-        html.append("\" size=\"55\" maxlength=\"250\" id=\"keyword\"></input>");
-        html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
+        html.append("\" size=\"70\" maxlength=\"250\" id=\"keyword\"></input>");
         html.append("</p>");
-        
-        
+               
         // search type control
         html.append("<div><h3>Type</h3>");
         html.append("<p>");
@@ -185,7 +182,7 @@ public class StringSearchFacet extends Facet{
             html.append(formName.name());
             html.append(String.valueOf(counter));
             html.append(v);
-            html.append(config.getSearchString());
+            html.append(config.getRawWord());
             html.append(c);
             
             html.append(inp);
@@ -398,6 +395,8 @@ public class StringSearchFacet extends Facet{
     @Override
     public String getAsQueryString(){
         
+        if(searchConfigurations.size() < 1) return "";
+        
         StringBuilder qs = new StringBuilder();
         
         for(Map.Entry<Integer, SearchConfiguration> entry : searchConfigurations.entrySet()){
@@ -455,7 +454,7 @@ public class StringSearchFacet extends Facet{
             
             qs.append(kwParam);
             qs.append("=");
-            qs.append(config.getSearchString());
+            qs.append(config.getRawWord());
             qs.append("&");
             qs.append(typeParam);
             qs.append("=");
@@ -469,6 +468,7 @@ public class StringSearchFacet extends Facet{
                 
                 qs.append("&");
                 qs.append(SearchOption.BETA.name().toLowerCase());
+                qs.append(paramNumber);
                 qs.append("=on");
                 
             }
@@ -476,6 +476,7 @@ public class StringSearchFacet extends Facet{
                 
                 qs.append("&");
                 qs.append(SearchOption.NO_CAPS.name().toLowerCase());
+                qs.append(paramNumber);
                 qs.append("=on");
                 
             }
@@ -483,6 +484,7 @@ public class StringSearchFacet extends Facet{
                 
                 qs.append("&");
                 qs.append(SearchOption.NO_MARKS.name().toLowerCase());
+                qs.append(paramNumber);
                 qs.append("=on");
                 
             }
@@ -490,9 +492,11 @@ public class StringSearchFacet extends Facet{
                 
                 qs.append("&");
                 qs.append(SearchType.PROXIMITY.name().toLowerCase());
+                qs.append(paramNumber);
                 qs.append("=on");            
                 qs.append("&");
                 qs.append(SearchType.WITHIN.name().toLowerCase());
+                qs.append(paramNumber);
                 qs.append("=");
                 qs.append(String.valueOf(config.getProximityDistance()));
             } 
@@ -752,12 +756,11 @@ public class StringSearchFacet extends Facet{
         public SearchTarget getSearchTarget(){ return target; }
         public SearchType getSearchType(){ return type; }
         public int getProximityDistance(){ return proximityDistance; }
-        public String getKeyWord(){ return rawWord; }
+        public String getRawWord(){ return rawWord; }
         public Boolean getBetaOn(){ return betaOn; }
         public Boolean getIgnoreCaps(){ return ignoreCaps; }
         public Boolean getIgnoreMarks(){ return ignoreMarks; }
         public SolrField getField(){ return field; }
-        public String getRawWord(){ return searchString; }
     }
     
 }
