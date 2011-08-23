@@ -65,7 +65,7 @@ public class TranslationFacet extends Facet {
         while(cit.hasNext()){
             
             String fq = cit.next();
-            if(fq.equals("No translation")){
+            if(fq.equals("None")){
                 
                 fq = "-" + field.name() + ":[* TO *]";
                 
