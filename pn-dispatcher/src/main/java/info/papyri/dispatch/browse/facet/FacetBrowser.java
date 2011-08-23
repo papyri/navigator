@@ -375,6 +375,8 @@ public class FacetBrowser extends HttpServlet {
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);
         html.append("\"> ");
+        html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
+
         try{
             
         
