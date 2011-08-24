@@ -358,6 +358,20 @@ public class FacetBrowser extends HttpServlet {
         
     }
     
+    private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq){
+        
+        StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
+        assembleWidgetHTML(facets, html, submittedParams);
+        html.append("<div id=\"vals-and-records-wrapper\">");
+        if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
+        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
+        html.append("</div><!-- closing #vals-and-records-wrapper -->");
+        html.append(sq.toString());
+        html.append("</div><!-- closing #facet-wrapper -->");
+        return html.toString();
+        
+    }
+    
     /**
      * Assembles the HTML displaying the <code>Facet</code> control widgets
      * 
