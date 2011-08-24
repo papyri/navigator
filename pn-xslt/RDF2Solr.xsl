@@ -574,6 +574,7 @@
       <xsl:value-of
         select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
       <xsl:text> </xsl:text>
+   
     </field>
     <xsl:choose>
       <xsl:when
