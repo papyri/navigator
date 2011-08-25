@@ -7,6 +7,7 @@ package info.papyri.dispatch.browse;
      */
 public enum SolrField {
    
+        all,
         collection,
         series,
         identifier,
