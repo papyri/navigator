@@ -32,6 +32,8 @@ $(document).ready(
 		hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_off["target-metadata"] = ["#betaYes"];
 		hic.reqd_off["target-translations"] = ["#betaYes"];
+		hic.reqd_on["target-all"] = ["#caps", "#marks"];
+		
 	    
 	    hic.configureSearchSettings = function(){
 	    
