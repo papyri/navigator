@@ -112,7 +112,7 @@ p#sort-options label {
   font-size:77%;
 }
 
-input.type, input.target {
+input.type, input.target, input.img-select {
   margin-left:1em;
 }
 
