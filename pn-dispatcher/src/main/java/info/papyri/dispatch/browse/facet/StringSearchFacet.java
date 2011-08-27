@@ -723,13 +723,7 @@ public class StringSearchFacet extends Facet{
                 cleanString = cleanString.replace("ΑΝΔ", "AND").replace("ΟΡ", "OR").replace("ΝΟΤ", "NOT");
 
             }
-            
-            if(noCase){
-                
-                cleanString = cleanString.toLowerCase();
-                cleanString = cleanString.replace("\\band\\b", "AND").replace("\\bnot\\b", "NOT").replace("\\bor\\b", "OR");               
-                
-            }
+            // no transform needed for nocaps text - performed by queryanalyzer
             if(noMarks){
                 
                 cleanString = FileUtils.stripDiacriticals(cleanString);
