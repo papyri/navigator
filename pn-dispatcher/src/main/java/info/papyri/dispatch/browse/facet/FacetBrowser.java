@@ -136,7 +136,7 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -313,7 +313,7 @@ public class FacetBrowser extends HttpServlet {
                 Boolean languageIsNull = doc.getFieldValue(SolrField.facet_language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
-                String translationLanguages = noTranslationLanguages ? "No translation" : (String)doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
+                String translationLanguages = noTranslationLanguages ? "None" : (String)doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
                 ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
                 Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 ArrayList<String> allIds = getAllSortedIds(doc);
@@ -366,7 +366,7 @@ public class FacetBrowser extends HttpServlet {
         html.append("<div id=\"vals-and-records-wrapper\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
-      //  html.append(submittedParams.keySet().toString());
+        html.append(submittedParams.keySet().toString());
         html.append("<br><br>");
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
         html.append(sq.toString());
@@ -504,9 +504,9 @@ public class FacetBrowser extends HttpServlet {
      */
     
     private StringBuilder assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
-                
-        html.append("<div id=\"previous-values\">");
-        
+          
+        StringBuilder previousValuesHTML = new StringBuilder("<div id=\"previous-values\">");
+        int prevValueCount = 0;
         Iterator<Facet> fit = facets.iterator();
         
         while(fit.hasNext()){
@@ -528,25 +528,25 @@ public class FacetBrowser extends HttpServlet {
                     Iterator<String> fvit = facetValues.iterator();
 
                     while(fvit.hasNext()){
-
+                        prevValueCount++;
                         String facetValue = fvit.next();
                         String displayFacetValue = facet.getDisplayValue(facetValue);
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue);
-                        html.append("<div class=\"facet-constraint\">");
-                        html.append("<div class=\"constraint-label\">");
-                        html.append(displayName);
-                        html.append(": ");
-                        html.append(displayFacetValue);
-                        html.append("</div><!-- closing .constraint-label -->");
-                        html.append("<div class=\"constraint-closer\">");
-                        html.append("<a href=\"");
-                        html.append(FACET_PATH);
-                        html.append("".equals(queryString) ? "" : "?");
-                        html.append(queryString);
-                        html.append("\" title =\"Remove facet value\">X</a>");
-                        html.append("</div><!-- closing .constraint-closer -->");
-                        html.append("<div class=\"spacer\"></div>");
-                        html.append("</div><!-- closing .facet-constraint -->");
+                        previousValuesHTML.append("<div class=\"facet-constraint\">");
+                        previousValuesHTML.append("<div class=\"constraint-label\">");
+                        previousValuesHTML.append(displayName);
+                        previousValuesHTML.append(": ");
+                        previousValuesHTML.append(displayFacetValue);
+                        previousValuesHTML.append("</div><!-- closing .constraint-label -->");
+                        previousValuesHTML.append("<div class=\"constraint-closer\">");
+                        previousValuesHTML.append("<a href=\"");
+                        previousValuesHTML.append(FACET_PATH);
+                        previousValuesHTML.append("".equals(queryString) ? "" : "?");
+                        previousValuesHTML.append(queryString);
+                        previousValuesHTML.append("\" title =\"Remove facet value\">X</a>");
+                        previousValuesHTML.append("</div><!-- closing .constraint-closer -->");
+                        previousValuesHTML.append("<div class=\"spacer\"></div>");
+                        previousValuesHTML.append("</div><!-- closing .facet-constraint -->");
                     }
 
                 }
@@ -555,8 +555,9 @@ public class FacetBrowser extends HttpServlet {
                      
         }
                 
-        html.append("<div class=\"spacer\"></div>");
-        html.append("</div><!-- closing #previous-values -->");
+        previousValuesHTML.append("<div class=\"spacer\"></div>");
+        previousValuesHTML.append("</div><!-- closing #previous-values -->");
+        if(prevValueCount > 0) html.append(previousValuesHTML.toString());
         return html;
         
     }
