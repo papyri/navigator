@@ -671,6 +671,7 @@
   </xsl:template>
   
   <xsl:template name="images">
+    <!-- note difference here - 'images' are *online* images, 'illustrations' are print-publication images -->
     <xsl:param name="docs" select="node()"></xsl:param>
     <xsl:if
       test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
@@ -686,7 +687,16 @@
           <field name="image_path"><xsl:value-of select="."></xsl:value-of></field>
         </xsl:if>
       </xsl:for-each>
-    </xsl:if>     
+    </xsl:if>    
+    <xsl:if test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure']">
+      <field name="images-ext">true</field>
+    </xsl:if>
+    <xsl:if test="contains($related, 'images/')">
+      <field name="images-int">true</field>
+    </xsl:if>
+    <xsl:if test="$docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]">
+      <field name="illustrations">true</field>   
+    </xsl:if>
   </xsl:template>
   
   <xsl:template name="translation">

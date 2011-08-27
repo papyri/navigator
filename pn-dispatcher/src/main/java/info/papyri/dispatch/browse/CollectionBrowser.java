@@ -520,11 +520,12 @@ public class CollectionBrowser extends HttpServlet {
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
                 String translationLanguages = noTranslationLanguages ? "None" : doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");     
                 ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+                Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 if(!previousIds.contains(preferredId)){
                 
                     previousIds.add(preferredId);
                     allIds.remove(preferredId);
-                    record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages);
+                    record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages, hasIllustration);
                     records.add(record);
                 
                 }
