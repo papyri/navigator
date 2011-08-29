@@ -69,6 +69,8 @@ public class HasImagesFacet extends Facet {
     @Override
     public String generateWidget() {
         
+        Boolean moreThanOneOn = getAllOnImageParams().size() > 1;
+        
         StringBuilder html = new StringBuilder();
         String chbx = "<input type=\"checkbox\" name=\"";
         String val = "\" value=\"";
@@ -80,8 +82,8 @@ public class HasImagesFacet extends Facet {
         html.append("<div class=\"facet-widget\" id=\"img-select\" title=\"");
         html.append(getToolTipText());
         html.append("\">");
+        html.append("<p id=\"img-selector-lbl\">Show only records with images from:</p>");
         html.append("<p>");
-        html.append("<span id=\"img-selector-lbl\">Show only records with images from:</span>");
         
         html.append(chbx);
         html.append(ImageParam.INT.name());
@@ -89,7 +91,7 @@ public class HasImagesFacet extends Facet {
         html.append("on");
         html.append(clss);
         if(ImageParam.INT.isOn()) html.append(" checked");
-        if(ImageParam.INT.isOn() && !ImageParam.INT.hasRecord()) html.append(" disabled");
+        if(ImageParam.INT.isOn() && moreThanOneOn && !ImageParam.INT.hasRecord()) html.append(" disabled");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.INT.name());
@@ -104,7 +106,7 @@ public class HasImagesFacet extends Facet {
         html.append("on");
         html.append(clss);
         if(ImageParam.EXT.isOn()) html.append(" checked");
-        if(ImageParam.EXT.isOn() && !ImageParam.EXT.hasRecord()) html.append(" disabled");
+        if(ImageParam.EXT.isOn() && moreThanOneOn && !ImageParam.EXT.hasRecord()) html.append(" disabled");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.EXT.name());
@@ -119,7 +121,7 @@ public class HasImagesFacet extends Facet {
         html.append("on");
         html.append(clss);
         if(ImageParam.PRINT.isOn()) html.append(" checked");
-        if(ImageParam.PRINT.isOn() && !ImageParam.PRINT.hasRecord()) html.append(" disabled");
+        if(ImageParam.PRINT.isOn() && moreThanOneOn && !ImageParam.PRINT.hasRecord()) html.append(" disabled");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.PRINT.name());
@@ -135,21 +137,32 @@ public class HasImagesFacet extends Facet {
         
     }
     
+    private ArrayList<ImageParam> getAllOnImageParams(){
+        
+        ArrayList<ImageParam> ons = new ArrayList<ImageParam>();
+        
+        for(ImageParam ip : ImageParam.values()){
+            
+            if(ip.isOn()) ons.add(ip);
+                   
+        }
+        
+        return ons;
+        
+        
+    }
+    
     @Override
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
-        
-        ArrayList<ImageParam> onParams = new ArrayList<ImageParam>();
-        
+                
         for(int i = 0; i < ImageParam.values().length; i++){
             
             ImageParam ip = ImageParam.values()[i];
             solrQuery.addFacetField(ip.getSearchField());
-            if(ip.isOn()){
-                System.out.println(ip.name() + " found to be on.");
-                onParams.add(ip);
-            }
             
         }
+        
+        ArrayList<ImageParam> onParams = getAllOnImageParams();
         
         if(onParams.size() < 1) return solrQuery;
         String fp = "(";
@@ -157,7 +170,6 @@ public class HasImagesFacet extends Facet {
         while(ipit.hasNext()){
             
             ImageParam onParam = ipit.next();
-            System.out.println("OnParam is " + onParam);
             fp += onParam.getSearchField() + ":true";
             if(ipit.hasNext()) fp += " OR ";     
             
@@ -177,11 +189,11 @@ public class HasImagesFacet extends Facet {
         Boolean constraintAdded = false;
         
         for(ImageParam ip : ImageParam.values()){
+            
             ip.setIsOn(false);
-            System.out.println("Image param is " + ip.name());
             
             if(params.containsKey(ip.name())){
-                System.out.println("Triggered on " + ip.name());
+
                 ip.setIsOn(true);
                 constraintAdded = true;
                 
@@ -232,25 +244,98 @@ public class HasImagesFacet extends Facet {
                 if("true".equals(count.getName()) && count.getCount() > 0) ip.setHasRecord(Boolean.TRUE);
                 
             }
-    
-    
+     
         }
             
     }
     
     @Override
+    public String[] getFormNames(){
+        
+        String[] formNames = new String[ImageParam.values().length];
+        
+        for(int i = 0; i < ImageParam.values().length; i++){
+            
+            formNames[i] = ImageParam.values()[i].name();
+            
+            
+        }
+        
+        return formNames;
+        
+    }
+    
+    @Override
     public String getAsFilteredQueryString(String filterParam, String filterValue){
         
-        return "";
+        String queryString = "";
+        ArrayList<ImageParam> ons = getAllOnImageParams();
+        
+        for(ImageParam ip : ons){
+                    
+            if(!ip.name().equals(filterParam)) queryString += ip.name() + "=on&";
+                        
+        }
+        
+        if(queryString.endsWith("&")) queryString = queryString.substring(0, queryString.length() - 1);
+        
+        return queryString;
         
     }
     
    @Override
    public ArrayList<String> getFacetConstraints(String facetParam){
         
-       return new ArrayList<String>();
+       ArrayList<ImageParam> ips = getAllOnImageParams();
+       ArrayList<String> ipStringArray = new ArrayList<String>();
+       for(ImageParam ip : ips){
+           
+           if(ip.name().equals(facetParam)) ipStringArray.add(ip.name());
+           
+       }
+       
+       return ipStringArray;
         
     }
+   
+   @Override
+   public String getDisplayName(String facetParam){
+       
+       ArrayList<ImageParam> facetConstraints = getAllOnImageParams();
+       String displayMsg = "";
+       
+       for(int i = 0; i < facetConstraints.size(); i++){
+           
+           ImageParam ip = facetConstraints.get(i);
+           
+           if(ip.name().equals(facetParam)){
+               
+               if(ip.equals(ImageParam.INT)){
+                   
+                   displayMsg = "Papyri.info image";
+                   
+               }
+               else if(ip.equals(ImageParam.EXT)){
+                   
+                   displayMsg = "Image hosted externally";
+                   
+               }
+               else if(ip.equals(ImageParam.PRINT)){
+                   
+                   displayMsg = "Print image exists";
+                   
+               }
+               
+              if(i < facetConstraints.size() - 1) displayMsg += " OR";
+               
+           }
+           
+           
+       }
+       
+       return displayMsg;
+       
+   }
    
     @Override   
     public String getDisplayValue(String value){

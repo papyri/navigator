@@ -366,7 +366,7 @@ public class StringSearchFacet extends Facet{
             dv.append(String.valueOf(config.getProximityDistance()));
             
         }
-   
+        
         return dv.toString();
         
     }
@@ -440,7 +440,6 @@ public class StringSearchFacet extends Facet{
         if(queryString.endsWith("&")) queryString = queryString.substring(0, queryString.length() - 1);
         return queryString;
         
-        
     }
     
     
@@ -503,6 +502,14 @@ public class StringSearchFacet extends Facet{
             } 
         
         return qs.toString();
+        
+    }
+    
+    @Override
+    public String getCSSSelectorID(){
+        
+        return super.getCSSSelectorID() + String.valueOf(searchConfigurations.size());
+        
         
     }
     
@@ -755,10 +762,12 @@ public class StringSearchFacet extends Facet{
 
                return "\"" + searchString + "\"~" + String.valueOf(proximityDistance);
            } 
-            
+           
            return searchString;
         
         }
+       
+        
         
         /* getters and setters */
         

@@ -335,6 +335,13 @@ abstract public class Facet {
         
     }
      
+    public String getCSSSelectorID(){
+        
+        return this.formName.name().toLowerCase();
+        
+    }
+     
+    
      /* getters and setters below */
     
     public SolrField getFacetField(){
