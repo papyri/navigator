@@ -33,7 +33,7 @@ $(document).ready(
 		hic.reqd_off["target-metadata"] = ["#betaYes"];
 		hic.reqd_off["target-translations"] = ["#betaYes"];
 		hic.reqd_on["target-all"] = ["#caps", "#marks"];
-		
+		hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
 	    
 	    hic.configureSearchSettings = function(){
 	    
@@ -131,7 +131,7 @@ $(document).ready(
 	    	var filteredels = [];
 	    	
 	    	// if a string is set for search, than the associated text, target, and option
-	    	// fileds must also be set.
+	    	// fields must also be set.
 	    	
 	    	var textel = $("input[name='STRING']");
 	    	if(!textel.attr("value").match(/^\s*$/)){
@@ -158,8 +158,12 @@ $(document).ready(
 	    	
 	    	}		
 	    	
-	    	var imgs = $("input:checkbox[name='IMG']:checked");
-	    	if(imgs.length > 0) filteredels.push(imgs);
+	    	var internals = $("input:checkbox[name='INT']:checked");
+	    	if(internals.length > 0) filteredels.push(internals);
+	    	var externals = $("input:checkbox[name='EXT']:checked");
+			if(externals.length > 0) filteredels.push(externals);
+			var printpubs = $("input:checkbox[name='PRINT']:checked");
+			if(printpubs.length > 0) filteredels.push(printpubs);
 	    	
 	    	var opts = $("select");
 
@@ -213,10 +217,35 @@ $(document).ready(
 			return false;
 
 	    }
+	    
+	    // this is working just fine at capturing text input
+	    // and triggering when needed. just a question of working
+	    // out what behaviours are desired
+	    
+	    hic.monitorTextInput = function(){
+	    
+	    	$(this).unbind('focus');
+			
+			$(this).keyup(function(event){
+			
+				event.stopPropagation();
+				var val = $(this).val();
+				if(val.match("lem:")) {
+				
+					// do some stuff here
+				
+				}
+				
+			
+			});
+	    
+	    }
 	
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		$("form[name='facets']").submit(hic.tidyQueryString);
+		//$("#keyword").focus(hic.monitorTextInput);
+		//$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 	}
 
 );

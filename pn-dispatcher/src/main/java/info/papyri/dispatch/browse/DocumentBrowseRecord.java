@@ -24,6 +24,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String language;
   private String translationLanguages;
   private ArrayList<String> imagePaths;
+  private Boolean hasIllustration;
   
   private static IdComparator documentComparator = new IdComparator();
 
@@ -32,7 +33,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   // TODO: Change images display so that icons/links to the original images are displayed instead of a simple 'yes'/'no' value
   // TODO: Change language display so that codes displayed instead of expanded strings.
   
-  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, String place, String date, String lang, ArrayList<String> imgPaths, String trans) {
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus) {
 
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
@@ -42,7 +43,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.language = tidyAncientLanguageCodes(lang);
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
-    
+    this.hasIllustration = illus;
   }
 
   @Override
@@ -198,12 +199,13 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   private String getImageHTML(){
       
-      String pathInfo = "";
+      String imageHTML = "";
       Iterator<String> ipit = imagePaths.iterator();
       Boolean hasExternalImgs = false;
       Boolean hasInternalImgs = false;
       String intIndicator = "<span class=\"internal-link-indicator\" title=\"Internal link: Image is available from papyri.info\">Img</span>";
       String extIndicator = "<span class=\"external-link-indicator\" title=\"External link: Links will take you out of papyri.info. Papyri.info thus cannot guarantee their presence or quality.\">Img (ext.)</span>";
+      String printIndicator = "<span class=\"illustration-indicator\" title=\"Images reproduced in print publication\">Print</span>";
       while(ipit.hasNext()){
           
           String path = ipit.next();
@@ -219,29 +221,27 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           
           
       }
-            
-      if(hasInternalImgs && hasExternalImgs){
-          
-          pathInfo = intIndicator + ", " + extIndicator;
-          
-      }
-      else if(hasInternalImgs){
-          
-          pathInfo = intIndicator;
-          
-      }
-      else if(hasExternalImgs){
-          
-          pathInfo = extIndicator;
-          
-      }
-      else{
-          
-          pathInfo = "None";
-          
-      }
       
-      return pathInfo; 
+      if(hasInternalImgs){
+          
+          imageHTML += intIndicator;
+          
+      }
+      if(hasExternalImgs){
+          
+          if(hasInternalImgs) imageHTML += ", ";
+          imageHTML += extIndicator;
+          
+      }
+      if(this.hasIllustration){
+          
+          if(hasInternalImgs || hasExternalImgs) imageHTML += ", ";
+          imageHTML += printIndicator;
+          
+      }
+      if(imageHTML.equals("")) imageHTML = "None";
+      
+      return imageHTML; 
   
   }
 }
