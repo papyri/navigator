@@ -391,7 +391,9 @@
      (let [docs (ArrayList.)]
        (.addAll docs @documents)
        (.removeAll @documents docs)
-       (.add solr docs))))
+       (print (str "Adding " (count docs) " to solr")
+       (.add solr docs)
+       (print (str (count docs)"...done.")))))
          (Thread/sleep 30000)
          (when (> (count @documents) 0)
      (index-solr solr))))))
@@ -404,7 +406,8 @@
 (defn print-words []
      (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
        (for [word @words]
-   (.write out (str word "\n")))))
+        (.write out (str word "\n")))
+      (.close out)))
 
 (defn load-morphs 
  [file]
@@ -521,8 +524,8 @@
   (let [solr (CommonsHttpSolrServer. (str solrurl "pn-search-offline/"))]
     (doto solr 
       (.commit)
-      (.optimize)))
-  (print-words))
+      (.optimize))))
+  ;; (print-words))
        
 
 (defn -main [& args]

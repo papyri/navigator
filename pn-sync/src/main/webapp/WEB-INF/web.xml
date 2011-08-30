@@ -8,6 +8,10 @@
        <servlet-name>Sync</servlet-name>  
        <servlet-class>info.papyri.sync.SyncServlet</servlet-class>
         <init-param>
+          <param-name>log4j-properties-location</param-name>
+          <param-value>WEB-INF/log4j.properties</param-value>
+        </init-param>
+        <init-param>
             <param-name>gitDir</param-name>
             <param-value>/data/papyri.info/idp.data</param-value>
         </init-param>
