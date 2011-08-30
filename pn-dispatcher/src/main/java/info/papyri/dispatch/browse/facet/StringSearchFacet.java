@@ -375,7 +375,7 @@ public class StringSearchFacet extends Facet{
     public String getDisplayName(String param){
         
         String paramNumber = "0";
-        Pattern pattern = Pattern.compile("^.+?(\\d+)$");
+        Pattern pattern = Pattern.compile(this.formName.toString() + "(\\d+)$");
         Matcher matcher = pattern.matcher(param);
         if(matcher.matches()){
             
@@ -615,7 +615,7 @@ public class StringSearchFacet extends Facet{
          */
         private SolrField field;
         
-        public SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean beta, Boolean caps, Boolean marks, int wi){
+        private SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean beta, Boolean caps, Boolean marks, int wi){
             
             // TODO: possible that keyword will already have a field specification - will
             // need to split on colon, trim, and make sure that string matches an existing

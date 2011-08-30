@@ -1,7 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,21 +24,21 @@ public class HasImagesFacet extends Facet {
         EXT ("Other sites", SolrField.images_ext), 
         PRINT("Print publications", SolrField.illustrations);
     
-        private final String message;
+        private final String label;
         private final SolrField searchField;
         private Boolean on;
         private Boolean hasRecords;
         
         ImageParam(String msg, SolrField sf){
             
-            this.message = msg;
+            this.label = msg;
             this.searchField = sf;
             this.on = false;
             this.hasRecords = false;
             
         }
         
-        public String getMessage(){ return this.message; }
+        public String getLabel(){ return this.label; }
         public String getSelector(){ return "img-" + this.name().toLowerCase(); }
         public void setIsOn(Boolean on){ this.on = on; }
         public Boolean isOn(){ return this.on; }
@@ -97,7 +96,7 @@ public class HasImagesFacet extends Facet {
         html.append(ImageParam.INT.name());
         html.append("\"");
         html.append(close);
-        html.append(ImageParam.INT.getMessage());
+        html.append(ImageParam.INT.getLabel());
         html.append(lblend);
         
         html.append(chbx);
@@ -112,7 +111,7 @@ public class HasImagesFacet extends Facet {
         html.append(ImageParam.EXT.name());
         html.append("\"");
         html.append(close);
-        html.append(ImageParam.EXT.getMessage());
+        html.append(ImageParam.EXT.getLabel());
         html.append(lblend);        
 
         html.append(chbx);
@@ -127,7 +126,7 @@ public class HasImagesFacet extends Facet {
         html.append(ImageParam.PRINT.name());
         html.append("\"");
         html.append(close);
-        html.append(ImageParam.PRINT.getMessage());
+        html.append(ImageParam.PRINT.getLabel());
         html.append(lblend);
               
         html.append("</p>");
@@ -326,7 +325,7 @@ public class HasImagesFacet extends Facet {
                    
                }
                
-              if(i < facetConstraints.size() - 1) displayMsg += " OR";
+              if(i < facetConstraints.size() - 1) displayMsg += " OR ";
                
            }
            

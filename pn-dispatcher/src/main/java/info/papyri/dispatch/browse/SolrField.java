@@ -42,6 +42,13 @@ public enum SolrField {
         id,
         apis_inventory,
         apis_publication_id,
+        ddbdp_series,
+        hgv_series,
+        apis_series,
+        ddbdp_volume,
+        hgv_volume,
+        ddbdp_full_identifier,
+        hgv_full_identifier,
+        apis_full_identifier
         
-    
 }

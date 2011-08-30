@@ -137,6 +137,7 @@ public class FacetBrowser extends HttpServlet {
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        //String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -160,6 +161,7 @@ public class FacetBrowser extends HttpServlet {
         facets.add(new HasTranscriptionFacet());
         facets.add(new TranslationFacet());
         facets.add(new HasImagesFacet());
+        facets.add(new IdentifierFacet());
         return facets;
         
     }
@@ -224,7 +226,7 @@ public class FacetBrowser extends HttpServlet {
         // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
         // all documents that pass these filters - hence '*:*' as the actual query
         sq.setQuery("*:*");
-        
+        System.out.println(sq.toString());
         return sq;
         
         
@@ -426,6 +428,8 @@ public class FacetBrowser extends HttpServlet {
             html.append(langFacet.generateWidget());
             Facet dateFacet = findFacet(facets, DateFacet.class);
             html.append(dateFacet.generateWidget());
+            Facet idFacet = findFacet(facets, IdentifierFacet.class);
+            html.append(idFacet.generateWidget());
             
         } catch (FacetNotFoundException fnfe){
             
