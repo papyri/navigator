@@ -2,6 +2,8 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +12,6 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
-/**
- * <code>BooleanFacet</code> regarding whether or not images are associated with a 
- * record.
- * 
- * @author thill
- */
 public class HasImagesFacet extends Facet {
     
     enum ImageParam{
@@ -26,31 +22,31 @@ public class HasImagesFacet extends Facet {
     
         private final String label;
         private final SolrField searchField;
-        private Boolean on;
-        private Boolean hasRecords;
         
         ImageParam(String msg, SolrField sf){
             
             this.label = msg;
             this.searchField = sf;
-            this.on = false;
-            this.hasRecords = false;
             
         }
         
         public String getLabel(){ return this.label; }
         public String getSelector(){ return "img-" + this.name().toLowerCase(); }
-        public void setIsOn(Boolean on){ this.on = on; }
-        public Boolean isOn(){ return this.on; }
         public String getSearchField(){ return this.searchField.name().replace("_", "-"); }
-        public void setHasRecord(Boolean hr){ this.hasRecords = hr; }
-        public Boolean hasRecord(){ return this.hasRecords; }
     
     };
+    
+    private EnumMap<ImageParam, SearchConfiguration> searchConfigurations;
     
     public HasImagesFacet(){
     
         super(SolrField.images_int, FacetParam.IMG, "Records with images only");
+        searchConfigurations = new EnumMap<ImageParam, SearchConfiguration>(ImageParam.class);
+        for(ImageParam ip : ImageParam.values()){
+            
+            searchConfigurations.put(ip, new SearchConfiguration(ip));
+          
+        }
     
     }
 
@@ -84,13 +80,14 @@ public class HasImagesFacet extends Facet {
         html.append("<p id=\"img-selector-lbl\">Show only records with images from:</p>");
         html.append("<p>");
         
+        SearchConfiguration intObj = searchConfigurations.get(ImageParam.INT);
         html.append(chbx);
         html.append(ImageParam.INT.name());
         html.append(val);
         html.append("on");
         html.append(clss);
-        if(ImageParam.INT.isOn()) html.append(" checked");
-        if(ImageParam.INT.isOn() && moreThanOneOn && !ImageParam.INT.hasRecord()) html.append(" disabled");
+        if(intObj.isOn()) html.append(" checked");
+        if(intObj.isOn() && moreThanOneOn && !intObj.hasRecord()) html.append(" disabled");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.INT.name());
@@ -99,13 +96,14 @@ public class HasImagesFacet extends Facet {
         html.append(ImageParam.INT.getLabel());
         html.append(lblend);
         
+        SearchConfiguration extObj = searchConfigurations.get(ImageParam.EXT);
         html.append(chbx);
         html.append(ImageParam.EXT.name());
         html.append(val);
         html.append("on");
         html.append(clss);
-        if(ImageParam.EXT.isOn()) html.append(" checked");
-        if(ImageParam.EXT.isOn() && moreThanOneOn && !ImageParam.EXT.hasRecord()) html.append(" disabled");
+        if(extObj.isOn()) html.append(" checked");
+        if(extObj.isOn() && moreThanOneOn && !extObj.hasRecord()) html.append(" disabled");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.EXT.name());
@@ -114,13 +112,14 @@ public class HasImagesFacet extends Facet {
         html.append(ImageParam.EXT.getLabel());
         html.append(lblend);        
 
+        SearchConfiguration prObj = searchConfigurations.get(ImageParam.PRINT);
         html.append(chbx);
         html.append(ImageParam.PRINT.name());
         html.append(val);
         html.append("on");
         html.append(clss);
-        if(ImageParam.PRINT.isOn()) html.append(" checked");
-        if(ImageParam.PRINT.isOn() && moreThanOneOn && !ImageParam.PRINT.hasRecord()) html.append(" disabled");
+        if(prObj.isOn()) html.append(" checked");
+        if(prObj.isOn() && moreThanOneOn && !prObj.hasRecord()) html.append(" disabled");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.PRINT.name());
@@ -142,7 +141,7 @@ public class HasImagesFacet extends Facet {
         
         for(ImageParam ip : ImageParam.values()){
             
-            if(ip.isOn()) ons.add(ip);
+            if(searchConfigurations.get(ip).isOn()) ons.add(ip);
                    
         }
         
@@ -189,11 +188,9 @@ public class HasImagesFacet extends Facet {
         
         for(ImageParam ip : ImageParam.values()){
             
-            ip.setIsOn(false);
-            
             if(params.containsKey(ip.name())){
 
-                ip.setIsOn(true);
+                searchConfigurations.get(ip).setIsOn(true);
                 constraintAdded = true;
                 
             }         
@@ -211,7 +208,7 @@ public class HasImagesFacet extends Facet {
         
         for(ImageParam ip : ImageParam.values()){
             
-            if(ip.isOn()){
+            if(searchConfigurations.get(ip).isOn()){
                 
                 qs += ip.name() + "=on&";
                 
@@ -235,12 +232,12 @@ public class HasImagesFacet extends Facet {
         for(ImageParam ip : ImageParam.values()){
     
             FacetField facetField = qr.getFacetField(ip.getSearchField());
-            List<Count> valuesAndCounts = facetField.getValues();
-            Iterator<Count> cit = valuesAndCounts.iterator();
+            List<Count> vsAndCs = facetField.getValues();
+            Iterator<Count> cit = vsAndCs.iterator();
             while(cit.hasNext()){
                 
                 Count count = cit.next();
-                if("true".equals(count.getName()) && count.getCount() > 0) ip.setHasRecord(Boolean.TRUE);
+                if("true".equals(count.getName()) && count.getCount() > 0) searchConfigurations.get(ip).setHasRecord(Boolean.TRUE);
                 
             }
      
@@ -300,12 +297,12 @@ public class HasImagesFacet extends Facet {
    @Override
    public String getDisplayName(String facetParam){
        
-       ArrayList<ImageParam> facetConstraints = getAllOnImageParams();
+       ArrayList<ImageParam> onParams = getAllOnImageParams();
        String displayMsg = "";
        
-       for(int i = 0; i < facetConstraints.size(); i++){
+       for(int i = 0; i < onParams.size(); i++){
            
-           ImageParam ip = facetConstraints.get(i);
+           ImageParam ip = onParams.get(i);
            
            if(ip.name().equals(facetParam)){
                
@@ -325,7 +322,7 @@ public class HasImagesFacet extends Facet {
                    
                }
                
-              if(i < facetConstraints.size() - 1) displayMsg += " OR ";
+              if(i < onParams.size() - 1) displayMsg += " OR ";
                
            }
            
@@ -341,6 +338,26 @@ public class HasImagesFacet extends Facet {
         
         return "";
         
+    }
+    
+    private class SearchConfiguration{
+    
+        private Boolean on;
+        private Boolean hasRecords;
+        
+        SearchConfiguration(ImageParam ip){
+            
+            on = false;
+            hasRecords = false;
+            
+        }
+        
+        public void setIsOn(Boolean state){ on = state; }
+        public Boolean isOn(){ return on; }
+        public void setHasRecord(Boolean hr){ hasRecords = hr; }
+        public Boolean hasRecord(){ return hasRecords; }
+    
+    
     }
     
 
