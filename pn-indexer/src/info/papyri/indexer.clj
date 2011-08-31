@@ -396,7 +396,7 @@
        (print (str (count docs)"...done.")))))
          (Thread/sleep 30000)
          (when (> (count @documents) 0)
-     (index-solr solr))))))
+     (index-solr solr)))))))
 
 (defn add-words [words]
   (let [word-arr (.split words "\\s+")]

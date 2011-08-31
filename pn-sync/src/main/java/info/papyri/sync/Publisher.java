@@ -6,7 +6,6 @@ package info.papyri.sync;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Calendar;
 import java.util.List;
 import info.papyri.map;
 import info.papyri.indexer;
@@ -21,7 +20,6 @@ import org.w3c.dom.NodeList;
 
 import org.apache.log4j.Logger;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -69,40 +67,40 @@ public class Publisher implements Runnable {
       lastrun = started;
       try {
         String head = GitWrapper.getLastSync();
-        System.out.println("Syncing at " + new Date());
+        logger.info("Syncing at " + new Date());
         GitWrapper.executeSync();
-        System.out.println(head + " = " + GitWrapper.getHead() + "?");
+        logger.info(head + " = " + GitWrapper.getHead() + "?");
         if (!head.equals(GitWrapper.getHead())) {
           List<String> diffs = GitWrapper.getDiffs(head);
           List<String> files = new ArrayList<String>();
           for (String diff : diffs) {
             files.add(base + File.separator + diff);
-            System.out.println(base + File.separator + diff);
+            logger.debug(base + File.separator + diff);
           }
           if (files.size() > 0) {
             status = MAPPING;
-            System.out.println("Mapping files starting at " + new Date());
+            logger.info("Mapping files starting at " + new Date());
             map.mapFiles(files);
             status = INFERENCING;
             for (String file : files) {
               map.insertInferences(file);
             }
             status = PUBLISHING;
-            System.out.println("Publishing files starting at " + new Date());
+            logger.info("Publishing files starting at " + new Date());
             List<String> urls = new ArrayList<String>();
             for (String diff : diffs) {
               urls.add(GitWrapper.filenameToUri(diff));
             }
             indexer.index(urls);
-            callSolrMethod("commit");
-            callSolrMethod("optimize");
-            callSolrMethod("swap");
+            success = callSolrMethod("commit");
+            success = callSolrMethod("optimize");
+            success = callSolrMethod("swap");
           }
         }
         status = IDLE;
         started = null;
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.error(e.getLocalizedMessage(), e);
         success = false;
       }
     }
