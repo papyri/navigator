@@ -136,8 +136,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-        //String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+        //String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -469,7 +469,7 @@ public class FacetBrowser extends HttpServlet {
         else if(resultSize == 0){
             
             html.append("<h2>0 documents found matching criteria set.</h2>");
-            html.append("<p>To determine why this is, try setting your criteria one at a time to see how this affects the results returned.</p>");
+            html.append("<p>To determine why this is, try setting or removing criteria one at a time to see how this affects the results returned.</p>");
             
         }
         else{
