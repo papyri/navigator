@@ -320,13 +320,13 @@
   [url exclude]
   ;; TODO: generate symlinks for relations
   ;; queue for HTML generation
-  ;;(.add @html (list url (list "collection" (if (.contains (substring-after url "http://papyri.info/") "/")
-  ;;     (substring-before (substring-after url "http://papyri.info/") "/")
-  ;;     (substring-after url "http://papyri.info/")))
-  ;;     (list "related" "") 
-  ;;     (list "replaces" "") 
-  ;;     (list "isReplacedBy" "")
-  ;;     (list "server" nserver)))
+  (.add @html (list url (list "collection" (if (.contains (substring-after url "http://papyri.info/") "/")
+        (substring-before (substring-after url "http://papyri.info/") "/")
+        (substring-after url "http://papyri.info/")))
+        (list "related" "") 
+        (list "replaces" "") 
+        (list "isReplacedBy" "")
+        (list "server" nserver)))
   (let [items (execute-query (has-part-query url))]
     (when (> (count items) 0)
       (if (.endsWith (last (first items)) "/source")
@@ -391,12 +391,10 @@
      (let [docs (ArrayList.)]
        (.addAll docs @documents)
        (.removeAll @documents docs)
-       (print (str "Adding " (count docs) " to solr")
-       (.add solr docs)
-       (print (str (count docs)"...done.")))))
+       (.add solr docs))))
          (Thread/sleep 30000)
          (when (> (count @documents) 0)
-     (index-solr solr)))))))
+     (index-solr solr))))))
 
 (defn add-words [words]
   (let [word-arr (.split words "\\s+")]
@@ -406,8 +404,7 @@
 (defn print-words []
      (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
        (for [word @words]
-        (.write out (str word "\n")))
-      (.close out)))
+   (.write out (str word "\n")))))
 
 (defn load-morphs 
  [file]
@@ -524,8 +521,8 @@
   (let [solr (CommonsHttpSolrServer. (str solrurl "pn-search-offline/"))]
     (doto solr 
       (.commit)
-      (.optimize))))
-  ;; (print-words))
+      (.optimize)))
+  (print-words))
        
 
 (defn -main [& args]

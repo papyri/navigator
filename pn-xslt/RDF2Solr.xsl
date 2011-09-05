@@ -329,6 +329,9 @@
         <field name="hgv_full_identifier">
           <xsl:value-of select="$hgv_item"/>
         </field>
+        <field name="classification_path">
+          <xsl:value-of select="$hgv_series"></xsl:value-of>;<xsl:value-of select="$hgv_volume"></xsl:value-of>;<xsl:value-of select="$hgv_series"></xsl:value-of> 
+        </field>
         <field name="hgv_item">
           <xsl:choose>
             <xsl:when test="string-length(replace($hgv_numbers, '\D', '')) > 0">
@@ -411,6 +414,9 @@
             <xsl:value-of select="$ddbdp_item_letter"/>
           </field>
         </xsl:if>
+        <field name="classification_path">
+          <xsl:value-of select="$ddbdp_series"></xsl:value-of>;<xsl:value-of select="$ddbdp_volume"></xsl:value-of>;<xsl:value-of select="$ddbdp_item"></xsl:value-of>
+        </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
             <xsl:value-of select="$ddbdp_series"/>
