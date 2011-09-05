@@ -330,7 +330,7 @@
           <xsl:value-of select="$hgv_item"/>
         </field>
         <field name="classification_path">
-          <xsl:value-of select="$hgv_series"></xsl:value-of>;<xsl:value-of select="$hgv_volume"></xsl:value-of>;<xsl:value-of select="$hgv_series"></xsl:value-of> 
+          <xsl:value-of select="$hgv_series"></xsl:value-of>;<xsl:value-of select="$hgv_volume"></xsl:value-of>;<xsl:value-of select="$hgv_item"></xsl:value-of> 
         </field>
         <field name="hgv_item">
           <xsl:choose>
