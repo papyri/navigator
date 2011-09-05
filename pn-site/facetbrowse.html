@@ -70,13 +70,13 @@
         
       }
       
-      #text-search-widget select, #text-search-widget input{
+      #text-search-widget select, #text-search-widget input, #img-select input{
         
         float: none;
       
       }
       
-      #text-search-widget label, #text-search-widget #search{
+      #text-search-widget label, #img-select label,#text-search-widget #search{
       
         margin-left: 7.5px;
       
@@ -131,6 +131,36 @@
         font-weight: bold;
         
       }
+      
+      /* selectors for img-facet previous constraints */
+      
+      #prev-constraint-img{
+      
+      	position: relative;
+		width: 18em;
+      }
+      
+      #prev-constraint-img .semicolon{
+      
+      	display: none;
+      
+      }
+      
+      #prev-constraint-img .constraint-label{
+      
+      	margin-right: 1.53m;
+      
+      }
+      
+      #prev-constraint-img .facet-constraint{
+      	
+      	width: 19em;
+      	margin-top: 0px;
+      	margin-bottom: 0px;
+      	
+      }
+     
+     /* pagination selectors */
      
       #pagination{
           
@@ -153,6 +183,44 @@
         text-align: center; 
       
       }
+      
+      /* identifier facet selectors */
+      
+	  #series-coll-wrapper, #vol-idno-wrapper{
+	  
+	  	float: left;
+
+	  }
+	  
+	  #series-coll-wrapper{
+	  
+	  	width: 55%;
+	  
+	  }
+	  
+	  #series-coll-wrapper p{
+	  
+	  	margin-right: 0px;
+	  
+	  }
+	  
+	  #vol-idno-wrapper{
+	  
+	  	width: 45%;
+	  
+	  }
+	  
+	 div.content p.coll-or{
+	  
+	  	  position: absolute;
+	  	  top: 3.2em;
+	  	  font-size: 12px;
+	  	  font-style: italic;
+	  	  margin-left: 1.5em;
+	  	  margin-top: 0px;
+	  	  margin-bottom: 0px;
+	  
+	  }
       
       table{
       
@@ -209,6 +277,7 @@
       }
       
     </style>
+
     <script type="text/javascript">
 
       var _gaq = _gaq || [];

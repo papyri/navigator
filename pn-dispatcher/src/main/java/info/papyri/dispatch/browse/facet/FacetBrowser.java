@@ -136,7 +136,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        //String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -160,6 +161,7 @@ public class FacetBrowser extends HttpServlet {
         facets.add(new HasTranscriptionFacet());
         facets.add(new TranslationFacet());
         facets.add(new HasImagesFacet());
+        facets.add(new IdentifierFacet());
         return facets;
         
     }
@@ -224,7 +226,7 @@ public class FacetBrowser extends HttpServlet {
         // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
         // all documents that pass these filters - hence '*:*' as the actual query
         sq.setQuery("*:*");
-        
+        System.out.println(sq.toString());
         return sq;
         
         
@@ -313,11 +315,12 @@ public class FacetBrowser extends HttpServlet {
                 Boolean languageIsNull = doc.getFieldValue(SolrField.facet_language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
-                String translationLanguages = noTranslationLanguages ? "No translation" : (String)doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
+                String translationLanguages = noTranslationLanguages ? "None" : (String)doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
                 ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+                Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages, hasIllustration);
                 records.add(record);
                 
            }
@@ -353,6 +356,22 @@ public class FacetBrowser extends HttpServlet {
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
+        html.append("</div><!-- closing #facet-wrapper -->");
+        return html.toString();
+        
+    }
+    
+    private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq){
+        
+        StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
+        assembleWidgetHTML(facets, html, submittedParams);
+        html.append("<div id=\"vals-and-records-wrapper\">");
+        if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
+        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
+        html.append(submittedParams.keySet().toString());
+        html.append("<br><br>");
+        html.append("</div><!-- closing #vals-and-records-wrapper -->");
+        html.append(sq.toString());
         html.append("</div><!-- closing #facet-wrapper -->");
         return html.toString();
         
@@ -409,6 +428,8 @@ public class FacetBrowser extends HttpServlet {
             html.append(langFacet.generateWidget());
             Facet dateFacet = findFacet(facets, DateFacet.class);
             html.append(dateFacet.generateWidget());
+            Facet idFacet = findFacet(facets, IdentifierFacet.class);
+            html.append(idFacet.generateWidget());
             
         } catch (FacetNotFoundException fnfe){
             
@@ -448,7 +469,7 @@ public class FacetBrowser extends HttpServlet {
         else if(resultSize == 0){
             
             html.append("<h2>0 documents found matching criteria set.</h2>");
-            html.append("<p>To determine why this is, try setting your criteria one at a time to see how this affects the results returned.</p>");
+            html.append("<p>To determine why this is, try setting or removing criteria one at a time to see how this affects the results returned.</p>");
             
         }
         else{
@@ -487,16 +508,25 @@ public class FacetBrowser extends HttpServlet {
      */
     
     private StringBuilder assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
-                
-        html.append("<div id=\"previous-values\">");
-        
+          
+        StringBuilder previousValuesHTML = new StringBuilder("<div id=\"previous-values\">");
         Iterator<Facet> fit = facets.iterator();
         
         while(fit.hasNext()){
             
-            Facet facet = fit.next();
+            Facet facet = fit.next();      
             
             String[] params = facet.getFormNames();
+            
+            Boolean wrapperRequired = getWrapperRequired(params, submittedParams);
+            
+            if(wrapperRequired){
+                
+                previousValuesHTML.append("<div class=\"prev-constraint-wrapper\" id=\"prev-constraint-");
+                previousValuesHTML.append(facet.getCSSSelectorID());
+                previousValuesHTML.append("\">");  
+                
+            }
             
             for(int i = 0; i < params.length; i++){
             
@@ -515,34 +545,54 @@ public class FacetBrowser extends HttpServlet {
                         String facetValue = fvit.next();
                         String displayFacetValue = facet.getDisplayValue(facetValue);
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue);
-                        html.append("<div class=\"facet-constraint\">");
-                        html.append("<div class=\"constraint-label\">");
-                        html.append(displayName);
-                        html.append(": ");
-                        html.append(displayFacetValue);
-                        html.append("</div><!-- closing .constraint-label -->");
-                        html.append("<div class=\"constraint-closer\">");
-                        html.append("<a href=\"");
-                        html.append(FACET_PATH);
-                        html.append("".equals(queryString) ? "" : "?");
-                        html.append(queryString);
-                        html.append("\" title =\"Remove facet value\">X</a>");
-                        html.append("</div><!-- closing .constraint-closer -->");
-                        html.append("<div class=\"spacer\"></div>");
-                        html.append("</div><!-- closing .facet-constraint -->");
+                        previousValuesHTML.append("<div class=\"facet-constraint constraint-");
+                        previousValuesHTML.append(param.toLowerCase());
+                        previousValuesHTML.append("\">");
+                        previousValuesHTML.append("<div class=\"constraint-label\">");
+                        previousValuesHTML.append(displayName);
+                        previousValuesHTML.append("<span class=\"semicolon\">:</span> ");
+                        previousValuesHTML.append(displayFacetValue);
+                        previousValuesHTML.append("</div><!-- closing .constraint-label -->");
+                        previousValuesHTML.append("<div class=\"constraint-closer\">");
+                        previousValuesHTML.append("<a href=\"");
+                        previousValuesHTML.append(FACET_PATH);
+                        previousValuesHTML.append("".equals(queryString) ? "" : "?");
+                        previousValuesHTML.append(queryString);
+                        previousValuesHTML.append("\" title =\"Remove facet value\">X</a>");
+                        previousValuesHTML.append("</div><!-- closing .constraint-closer -->");
+                        previousValuesHTML.append("<div class=\"spacer\"></div>");
+                        previousValuesHTML.append("</div><!-- closing .facet-constraint -->");
                     }
-
+                                        
                 }
             
             }
+            
+            if(wrapperRequired) previousValuesHTML.append("</div><!-- closing .prev-constraint-wrapper -->");
+
                      
         }
-                
-        html.append("<div class=\"spacer\"></div>");
-        html.append("</div><!-- closing #previous-values -->");
+        
+        previousValuesHTML.append("<div class=\"spacer\"></div>");
+        previousValuesHTML.append("</div><!-- closing #previous-values -->");
+        html.append(previousValuesHTML.toString());
         return html;
         
     }
+    
+    private Boolean getWrapperRequired(String[] facetParams, Map<String, String[]> submittedParams){
+                
+        for(int i = 0; i < facetParams.length; i++){
+            
+            String facetParam = facetParams[i];
+            if(submittedParams.containsKey(facetParam)) return true;
+            
+        }
+        
+        return false;
+        
+    }
+
     
     /**
      * Injects the HTML code previously generated by the <code>assembleHTML</code> method

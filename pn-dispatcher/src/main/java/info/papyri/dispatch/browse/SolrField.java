@@ -7,6 +7,7 @@ package info.papyri.dispatch.browse;
      */
 public enum SolrField {
    
+        all,
         collection,
         series,
         identifier,
@@ -19,7 +20,10 @@ public enum SolrField {
         language,
         hgv_identifier,
         images,
+        images_int,
+        images_ext,
         image_path,
+        illustrations,
         invnum,
         facet_language,
         full_identifier,
@@ -38,6 +42,13 @@ public enum SolrField {
         id,
         apis_inventory,
         apis_publication_id,
+        ddbdp_series,
+        hgv_series,
+        apis_series,
+        ddbdp_volume,
+        hgv_volume,
+        ddbdp_full_identifier,
+        hgv_full_identifier,
+        apis_full_identifier
         
-    
 }

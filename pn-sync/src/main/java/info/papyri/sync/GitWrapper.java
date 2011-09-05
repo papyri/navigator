@@ -15,16 +15,15 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
-import java.text.DateFormat;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.JsonNode;
+
+import org.apache.log4j.Logger;
+
 
 /**
  *
@@ -36,6 +35,7 @@ public class GitWrapper {
   private static String graph = "rmi://localhost/papyri.info#pi";
   private static String path = "/sparql/";
   private static String mulgara = "http://localhost:8090";
+  private static Logger logger = Logger.getLogger("pn-sync");
   
   public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
     git = new GitWrapper();
@@ -82,7 +82,7 @@ public class GitWrapper {
       if (git.success) {
         git.success = false;
       }
-      e.printStackTrace();
+      logger.error("Sync Failed", e);
     }
 
     // get current HEAD's SHA : git rev-parse HEAD
@@ -169,6 +169,7 @@ public class GitWrapper {
   }
 
   private void pull(String repo) throws Exception {
+    logger.info("Starting pull.");
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, "master");
       pb.directory(git.gitDir);
@@ -178,11 +179,13 @@ public class GitWrapper {
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
+      logger.error("Pull failed", e);
       throw e;
     }
   }
   
   private void push(String repo) throws Exception {
+    logger.info("Starting push");
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "pull", repo);
       pb.directory(git.gitDir);
@@ -190,6 +193,7 @@ public class GitWrapper {
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
+      logger.error("Push failed", e);
       throw e;
     }
   }
@@ -254,7 +258,7 @@ public class GitWrapper {
         JsonNode root = getDDbDPJson(m);
         result.append(root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText());
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.error("Failed to resolve URI.", e);
       }
     } else {
       result.append("http://papyri.info/");
@@ -268,7 +272,7 @@ public class GitWrapper {
       }
       result.append("/source");
     }
-    System.out.println(result);
+    logger.debug(result);
     return result.toString();
   }
   

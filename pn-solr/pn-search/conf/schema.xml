@@ -67,12 +67,15 @@
         <field name="date_category" type="int" indexed="true" stored="false" multiValued="true"/>
         <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
         <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
-        <field name="images" type="boolean" indexed="true" stored="true"/>
+        <field name="images" type="boolean" indexed="true" stored="false"/>
+        <field name="images-ext" type="boolean" indexed="true" stored="false"/>
+        <field name="images-int" type="boolean" indexed="true" stored="false"/>
+        <field name="illustrations" type="boolean" indexed="true" stored="true"/>
         <field name="image_path" type="string" indexed="false" stored="true" multiValued="true"/>
         <field name="invnum" type="text" indexed="true" stored="true"/>
         <field name="language" type="text" indexed="true" stored="true" multiValued="true"/>
         <field name="facet_language" type="string" indexed="true" stored="true" multiValued="true"/>
-        <field name="all" type="text" indexed="true" stored="false" multiValued="true"/>
+        <field name="all" type="lctext" indexed="true" stored="false" multiValued="true"/>
         <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
         <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
         <field name="item" type="long" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
@@ -87,6 +90,7 @@
         <field name="apis_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
         <field name="ddbdp_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
         <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
+        <field name="classification_path" type="string" stored="false" indexed="true" multiValued="true"/>
         <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
         <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
         <field name="hgv_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>

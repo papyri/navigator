@@ -329,6 +329,9 @@
         <field name="hgv_full_identifier">
           <xsl:value-of select="$hgv_item"/>
         </field>
+        <field name="classification_path">
+          <xsl:value-of select="$hgv_series"></xsl:value-of>;<xsl:value-of select="$hgv_volume"></xsl:value-of>;<xsl:value-of select="$hgv_series"></xsl:value-of> 
+        </field>
         <field name="hgv_item">
           <xsl:choose>
             <xsl:when test="string-length(replace($hgv_numbers, '\D', '')) > 0">
@@ -411,6 +414,9 @@
             <xsl:value-of select="$ddbdp_item_letter"/>
           </field>
         </xsl:if>
+        <field name="classification_path">
+          <xsl:value-of select="$ddbdp_series"></xsl:value-of>;<xsl:value-of select="$ddbdp_volume"></xsl:value-of>;<xsl:value-of select="$ddbdp_item"></xsl:value-of>
+        </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
             <xsl:value-of select="$ddbdp_series"/>
@@ -574,6 +580,7 @@
       <xsl:value-of
         select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
       <xsl:text> </xsl:text>
+   
     </field>
     <xsl:choose>
       <xsl:when
@@ -670,6 +677,7 @@
   </xsl:template>
   
   <xsl:template name="images">
+    <!-- note difference here - 'images' are *online* images, 'illustrations' are print-publication images -->
     <xsl:param name="docs" select="node()"></xsl:param>
     <xsl:if
       test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
@@ -685,7 +693,16 @@
           <field name="image_path"><xsl:value-of select="."></xsl:value-of></field>
         </xsl:if>
       </xsl:for-each>
-    </xsl:if>     
+    </xsl:if>    
+    <xsl:if test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure']">
+      <field name="images-ext">true</field>
+    </xsl:if>
+    <xsl:if test="contains($related, 'images/')">
+      <field name="images-int">true</field>
+    </xsl:if>
+    <xsl:if test="$docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]">
+      <field name="illustrations">true</field>   
+    </xsl:if>
   </xsl:template>
   
   <xsl:template name="translation">

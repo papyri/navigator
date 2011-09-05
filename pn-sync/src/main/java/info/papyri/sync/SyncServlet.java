@@ -18,6 +18,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -34,6 +39,18 @@ public class SyncServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
+    String log4j = config.getInitParameter("log4j-properties-location");
+    ServletContext sc = config.getServletContext();
+    if (log4j == null) {
+      BasicConfigurator.configure();
+    } else {
+      try {
+        PropertyConfigurator.configure(config.getServletContext().getRealPath("/") + log4j);
+      } catch (Exception e) {
+        System.out.println("Unable to load log4j properties from " + log4j);
+        BasicConfigurator.configure();
+      }
+    }
     git = GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
     scheduler.scheduleWithFixedDelay(publisher, 10, 60, MINUTES);
