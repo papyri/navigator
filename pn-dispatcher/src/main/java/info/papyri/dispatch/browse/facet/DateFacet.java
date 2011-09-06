@@ -677,7 +677,7 @@ public class DateFacet extends Facet {
     }
     
     @Override
-    public String getDisplayName(String facetParam){
+    public String getDisplayName(String facetParam, java.lang.String facetValue){
         
         if(facetParam.equals(FacetParam.DATE_START.name())) return "Date on or after";
         return "Date on or before";

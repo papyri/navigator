@@ -6,7 +6,20 @@ $(document).ready(
 	*/
 
 	function(){
-	
+			
+		$("#id-volume").autocomplete({
+			
+			source: $("#volume-autocomplete").text().split(' ').sort(function(a,b){return a - b;})
+			
+		});
+				
+		
+		$("#id-idno").autocomplete({
+		
+			source: $("#idno-autocomplete").text().split(' ')
+		
+		});
+			
 		// first, a little namespacing
 		
 		if(typeof info == 'undefined') info = {};
@@ -164,6 +177,14 @@ $(document).ready(
 			if(externals.length > 0) filteredels.push(externals);
 			var printpubs = $("input:checkbox[name='PRINT']:checked");
 			if(printpubs.length > 0) filteredels.push(printpubs);
+			
+			var vol = $("#id-volume");
+			var volno = vol.val();
+			if(volno != "" && volno != "n.a.") filteredels.push(vol);
+			
+			var ident = $("#id-idno");
+			var identno = ident.val();
+			if(identno != "" && identno != "n.a.") filteredels.push(ident);
 	    	
 	    	var opts = $("select");
 
