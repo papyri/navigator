@@ -87,7 +87,7 @@
         <field name="apis_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
         <field name="ddbdp_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
         <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
-        <field name="classification_path" type="string" stored="false" indexed="true" multiValued="true"/>
+        <field name="classification_path" type="string" stored="true" indexed="true" multiValued="true"/>
         <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
         <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
         <field name="hgv_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>

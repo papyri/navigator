@@ -316,7 +316,7 @@
           select="replace(normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'numbers']), ' ', '_')"/>
         <xsl:variable name="hgv_lines"
           select="normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'lines'])"/>
-        <xsl:variable name="hgv_item" select="concat($hgv_numbers, ' ', $hgv_lines)"/>
+        <xsl:variable name="hgv_item" select="replace(concat($hgv_numbers, ' ', $hgv_lines), '\s+$', '')"/>
         <xsl:variable name="hgv_item_letter">
           <xsl:value-of select="replace($hgv_item, '\d', '')"/>
         </xsl:variable>
