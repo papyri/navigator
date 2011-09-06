@@ -42,7 +42,10 @@
         <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
       </analyzer>
     </fieldType>
+    
   </types>
+
+      
       <fields>
         <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
         <field name="id" type="string" indexed="true" stored="true" required="true"/>
@@ -95,7 +98,6 @@
         <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0" multiValued="false"/>
         <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="false"/>
         <field name="apis_publication_id" type="string" indexed="false" stored="true" multiValued="false"/>
-        
       </fields>
       
 
