@@ -295,7 +295,7 @@ public class HasImagesFacet extends Facet {
     }
    
    @Override
-   public String getDisplayName(String facetParam){
+   public String getDisplayName(String facetParam, java.lang.String facetValue){
        
        ArrayList<ImageParam> onParams = getAllOnImageParams();
        String displayMsg = "";

@@ -83,7 +83,7 @@ public class StringSearchFacet extends Facet{
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.PHRASE.name().toLowerCase());
         html.append("\" id=\"phrase\"/> ");
-        html.append("<label for=\"phrase\" id=\"phrase-label\">phrase search</label>");
+        html.append("<label for=\"phrase\" id=\"phrase-label\">Word/Phrase search</label>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.SUBSTRING.name().toLowerCase());
         html.append("\" id=\"substring\" checked/> ");
@@ -372,7 +372,7 @@ public class StringSearchFacet extends Facet{
     }
     
     @Override
-    public String getDisplayName(String param){
+    public String getDisplayName(String param, java.lang.String facetValue){
         
         String paramNumber = "0";
         Pattern pattern = Pattern.compile(this.formName.toString() + "(\\d+)$");
@@ -743,7 +743,7 @@ public class StringSearchFacet extends Facet{
                                   
             }
             cleanString = cleanString.replace("ς", "σ");
-            if(type.equals(SearchType.SUBSTRING)) cleanString = cleanString.replace("^", "\\^");
+            if(type.equals(SearchType.SUBSTRING)) cleanString = cleanString.replace("#", "\\^");
             return cleanString;
             
         }

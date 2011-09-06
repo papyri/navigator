@@ -97,7 +97,7 @@ abstract public class BooleanFacet extends Facet{
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">");
-        html.append(getDisplayName(null));
+        html.append(getDisplayName(null, null));
         html.append("</span>");
         html.append("<select");
         html.append(disabled);

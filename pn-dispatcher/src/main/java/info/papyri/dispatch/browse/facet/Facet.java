@@ -119,7 +119,7 @@ abstract public class Facet {
         String disabled = onlyOneValue ? " disabled=\"true\"" : "";             
         String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">");
-        html.append(getDisplayName(null));
+        html.append(getDisplayName(null, null));
         html.append("</span>");
         html.append("<select");
         html.append(disabled);
@@ -356,7 +356,7 @@ abstract public class Facet {
         
     }
     
-    public String getDisplayName(String facetParam){
+    public String getDisplayName(String facetParam, java.lang.String facetValue){
         
         return displayName;
         

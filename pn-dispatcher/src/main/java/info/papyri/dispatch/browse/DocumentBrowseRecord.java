@@ -30,8 +30,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
  
   
-  // TODO: Change images display so that icons/links to the original images are displayed instead of a simple 'yes'/'no' value
-  // TODO: Change language display so that codes displayed instead of expanded strings.
   
   public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus) {
 

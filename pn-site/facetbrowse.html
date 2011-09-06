@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
       <!--[if IE]>
     <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <![endif]-->
     <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>
+
     <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
@@ -194,7 +197,7 @@
 	  
 	  #series-coll-wrapper{
 	  
-	  	width: 55%;
+	  	width: 65%;
 	  
 	  }
 	  
@@ -206,7 +209,7 @@
 	  
 	  #vol-idno-wrapper{
 	  
-	  	width: 45%;
+	  	width: 35%;
 	  
 	  }
 	  
@@ -221,6 +224,16 @@
 	  	  margin-bottom: 0px;
 	  
 	  }
+ 
+      .autocomplete-values{
+      
+     /* 	position: absolute;
+      	width: 1000px;
+      	left: -9999px;*/
+      	border: thin solid black;
+      
+      }
+	  
       
       table{
       
@@ -275,6 +288,20 @@
         overflow: hidden;
       
       }
+      
+      .vol-disabled{
+      	
+      	color: #444;
+      	font-style: italic;
+      
+      }
+      
+      .autocomplete-values{
+      
+		display: none;
+	
+      }
+
       
     </style>
 

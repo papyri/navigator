@@ -136,8 +136,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        //String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-        String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+        // String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -226,7 +226,6 @@ public class FacetBrowser extends HttpServlet {
         // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
         // all documents that pass these filters - hence '*:*' as the actual query
         sq.setQuery("*:*");
-        System.out.println(sq.toString());
         return sq;
         
         
@@ -476,7 +475,8 @@ public class FacetBrowser extends HttpServlet {
             
             html.append("<p>");
             html.append(String.valueOf(resultSize));
-            html.append(" hits.");
+            
+            html.append(resultSize > 1 ? " hits." : " hit");
             html.append("</p>");
             html.append("<table>");
             html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translations</td><td>Images</td></tr>");
@@ -534,8 +534,6 @@ public class FacetBrowser extends HttpServlet {
                 
                 if(submittedParams.containsKey(param)){
 
-                    String displayName = facet.getDisplayName(param);
-
                     ArrayList<String> facetValues = facet.getFacetConstraints(param);
 
                     Iterator<String> fvit = facetValues.iterator();
@@ -543,6 +541,7 @@ public class FacetBrowser extends HttpServlet {
                     while(fvit.hasNext()){
 
                         String facetValue = fvit.next();
+                        String displayName = facet.getDisplayName(param, facetValue);
                         String displayFacetValue = facet.getDisplayValue(facetValue);
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue);
                         previousValuesHTML.append("<div class=\"facet-constraint constraint-");
