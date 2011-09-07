@@ -127,7 +127,7 @@ public class HasImagesFacet extends Facet {
         html.append(close);
         html.append(ImageParam.PRINT.getLabel());
         html.append(lblend);
-              
+        html.append("<input type=\"submit\" value=\"Go\" id=\"img-go\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");              
         html.append("</p>");
         html.append("</div><!-- closing .facet-widget -->");
         return html.toString();

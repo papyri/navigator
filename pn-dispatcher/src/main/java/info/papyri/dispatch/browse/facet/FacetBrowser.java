@@ -43,14 +43,14 @@ public class FacetBrowser extends HttpServlet {
     /** Solr server address. Supplied in config file */
     static String SOLR_URL;
     /** Path to appropriate Solr core */
-    static String PN_SEARCH = "pn-search/";  
+    static String PN_SEARCH;  
     /** path to home html directory */
     static private String home;
     /** path to html file used in html injection */
     static private URL FACET_URL;
     /** path to servlet */
     /* TODO: Get this squared up with urlPatterns, above */
-    static private String FACET_PATH = "/dispatch/faceted/";
+    static private String FACET_PATH;
     /** Number of records to show per page. Used in pagination */
     static private int documentsPerPage = 50;
     
@@ -64,6 +64,8 @@ public class FacetBrowser extends HttpServlet {
         SOLR_URL = config.getInitParameter("solrUrl");
         SOLR_UTIL = new SolrUtils(config);
         home = config.getInitParameter("home");
+        PN_SEARCH = config.getInitParameter("pnSearchPath");
+        FACET_PATH = config.getInitParameter("facetBrowserPath");
         try {
             
             FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
@@ -350,7 +352,9 @@ public class FacetBrowser extends HttpServlet {
     private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams){
         
         StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(facets, html, submittedParams);
+//        assembleWidgetHTML(facets, html, submittedParams, !constraintsPresent || returnedRecords.size() == 0);
+                assembleWidgetHTML(facets, html, submittedParams, true);
+
         html.append("<div id=\"vals-and-records-wrapper\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
@@ -363,7 +367,8 @@ public class FacetBrowser extends HttpServlet {
     private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq){
         
         StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(facets, html, submittedParams);
+        assembleWidgetHTML(facets, html, submittedParams, !constraintsPresent || returnedRecords.size() == 0);
+
         html.append("<div id=\"vals-and-records-wrapper\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
@@ -386,9 +391,13 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#generateWidget() 
      */
   
-    private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
+    private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams, Boolean searchOpen){
         
-        html.append("<div id=\"facet-widgets-wrapper\">");
+        html.append("<div id=\"facet-widgets-wrapper\" ");
+        String wrapperClass = "class=\"search " + (searchOpen ? "search-open" : "search-closed") + "\"";
+        html.append(wrapperClass);
+        html.append(">");
+        html.append("<div id=\"search-toggler\"><div id=\"search-toggle-pointer\"></div><!-- closing #pointer --></div><!-- closing #toggler -->");
         html.append("<h2>Refine Search</h2>");
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);

@@ -1,4 +1,6 @@
-package info.papyri.dispatch.browse; 
+package info.papyri.dispatch.browse;
+
+import info.papyri.dispatch.browse.facet.IdentifierFacet;
 
 /**
      * <code>DocumentCollectionBrowseRecord</code>s are records of all information necessary to identify a <i>collection</i>
@@ -77,13 +79,40 @@ package info.papyri.dispatch.browse;
         
 
         public String assembleLink(){
+                       
+            if(!this.isDocumentParent) return assembleLinkToCollection();
+            return assembleLinkToFacetedBrowse();
+            
+        }
+        
+        private String assembleLinkToCollection(){
             
             String href = CollectionBrowser.BROWSE_SERVLET + "/" + collection;
-            
             String seriesIdent = "/" + series;
             String volumeIdent = volume == null ? "" : "/" + volume;
             href += seriesIdent + volumeIdent;
             if(this.isDocumentParent) href += "/documents/page1";
+            return href;                      
+            
+        }
+        
+        private String assembleLinkToFacetedBrowse(){
+            
+            String href = CollectionBrowser.FACET_SERVLET;
+            href += "?";
+            String collParam = IdentifierFacet.IdParam.SERIES.name();
+            if(collection.equals("apis")) collParam = IdentifierFacet.IdParam.COLLECTION.name();
+            collParam += "=" + series;
+            href += collParam;
+            if(volume != null){
+                
+                String volParam = IdentifierFacet.IdParam.VOLUME.name();
+                volParam += "=" + volume;
+                href += "&";
+                href += volParam;
+                
+            }
+            
             return href;
             
         }

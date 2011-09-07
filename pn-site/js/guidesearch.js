@@ -265,6 +265,7 @@ $(document).ready(
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		$("form[name='facets']").submit(hic.tidyQueryString);
+		$("form select").change(hic.tidyQueryString);
 		//$("#keyword").focus(hic.monitorTextInput);
 		//$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 	}
