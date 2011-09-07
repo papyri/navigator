@@ -43,14 +43,14 @@ public class FacetBrowser extends HttpServlet {
     /** Solr server address. Supplied in config file */
     static String SOLR_URL;
     /** Path to appropriate Solr core */
-    static String PN_SEARCH = "pn-search/";  
+    static String PN_SEARCH;  
     /** path to home html directory */
     static private String home;
     /** path to html file used in html injection */
     static private URL FACET_URL;
     /** path to servlet */
     /* TODO: Get this squared up with urlPatterns, above */
-    static private String FACET_PATH = "/dispatch/faceted/";
+    static private String FACET_PATH;
     /** Number of records to show per page. Used in pagination */
     static private int documentsPerPage = 50;
     
@@ -64,6 +64,8 @@ public class FacetBrowser extends HttpServlet {
         SOLR_URL = config.getInitParameter("solrUrl");
         SOLR_UTIL = new SolrUtils(config);
         home = config.getInitParameter("home");
+        PN_SEARCH = config.getInitParameter("pnSearchPath");
+        FACET_PATH = config.getInitParameter("facetBrowserPath");
         try {
             
             FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");

@@ -63,6 +63,14 @@
          <param-name>htmlPath</param-name>    
          <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
+        <init-param>
+        <param-name>pnSearchPath</param-name>    
+        <param-value>/pn-search</param-value>
+        </init-param>
+        <init-param>
+            <param-name>facetBrowserPath</param-name>
+            <param-value>/dispatch/faceted/</param-value>
+            </init-param>
     </servlet>
     <servlet>
         <servlet-name>ImageMetadata</servlet-name>
@@ -87,6 +95,22 @@
          <param-name>htmlPath</param-name>    
          <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
+        <init-param>
+        <param-name>sparqlGraph</param-name>    
+        <param-value>rmi://localhost/papyri.info#pi</param-value>
+        </init-param>
+        <init-param>
+        <param-name>browseServletPath</param-name>    
+        <param-value>/browse</param-value>
+        </init-param>
+        <init-param>
+        <param-name>pnSearchPath</param-name>    
+        <param-value>/pn-search</param-value>
+        </init-param>
+                <init-param>
+            <param-name>facetBrowserPath</param-name>
+            <param-value>/dispatch/faceted/</param-value>
+            </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
