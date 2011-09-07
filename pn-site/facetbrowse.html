@@ -112,7 +112,7 @@
         margin-bottom: 5px;
         float: left;
         margin-left: 10px;
-        
+        width: 100%;
       }
       
       .constraint-label{
@@ -137,10 +137,31 @@
       
       /* selectors for img-facet previous constraints */
       
+      .prev-constraint-wrapper{
+      
+      	float: left;
+      	width: 31%;
+      	margin-right: 2%;
+      	position: relative;
+      
+      }
+      
+      .prev-constraint-wrapper:after{
+      
+      	content:".";
+      	display: block;
+      	height: 0;
+      	clear: both;
+      	visibility: hidden;
+      	
+      
+      }
+      
       #prev-constraint-img{
       
       	position: relative;
-		width: 18em;
+      	margin-top: 5px;
+		
       }
       
       #prev-constraint-img .semicolon{
@@ -157,7 +178,6 @@
       
       #prev-constraint-img .facet-constraint{
       	
-      	width: 19em;
       	margin-top: 0px;
       	margin-bottom: 0px;
       	
