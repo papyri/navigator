@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: tpl-apparatus.xsl 1447 2008-08-07 12:57:55Z zau $ -->
+<!-- $Id: tpl-apparatus.xsl 1537 2011-08-16 11:18:03Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" 
-   exclude-result-prefixes="t" version="1.0">
+   xmlns:t="http://www.tei-c.org/ns/1.0"
+   exclude-result-prefixes="t" version="2.0">
 
    <!-- Generates the apparatus from the edition -->
    <!-- 
@@ -56,7 +56,8 @@
                  -->
                   <xsl:apply-templates select="t:sic/node()"/>
                   <xsl:call-template name="childCertainty"/>
-                  <xsl:text> papyrus</xsl:text>
+                  <xsl:call-template name="support"/>
+                  <!-- found below: inserts "papyrus" or "ostrakon" depending on filename -->
                </xsl:otherwise>
             </xsl:choose>
 
@@ -71,14 +72,21 @@
                   <xsl:apply-templates select="t:reg/node()"/>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:if test="t:reg[not(@xml:lang)]">
+                  <xsl:if test="t:reg[not(@xml:lang) and not(preceding-sibling::reg[not(@xml:lang)])]">
                   <!-- when ddbdp changeover happens:
                     <xsl:text>Read </xsl:text>
                     <xsl:apply-templates select="t:reg/node()"/>
                  -->
                   <xsl:apply-templates select="t:orig/node()"/>
                   <xsl:call-template name="childCertainty"/>
-                  <xsl:text> papyrus</xsl:text>
+                     
+                     <xsl:call-template name="support"/>
+                     <!-- found below: inserts "papyrus" or "ostrakon" depending on filename -->
+                     <!--<xsl:text> papyrus</xsl:text>-->
+                  </xsl:if>
+                  <xsl:if test="t:reg[not(@xml:lang)][2]">
+                     <xsl:text>; i.e. </xsl:text>
+                     <xsl:apply-templates select="t:reg[not(@xml:lang)][2]/node()"/>
                   </xsl:if>
                   <xsl:if test="t:reg[not(@xml:lang)] and t:reg[@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang]">
                      <xsl:text>; </xsl:text>
@@ -119,9 +127,14 @@
          <xsl:when test="local-name() = 'app'">
             <xsl:choose>
                <xsl:when test="@type = 'alternative'">
-                  <xsl:text>or </xsl:text>
-                  <xsl:apply-templates select="t:rdg/node()"/>
-                  <xsl:call-template name="childCertainty"/>
+                  <xsl:for-each select="t:rdg">
+                     <xsl:text>or </xsl:text>
+                     <xsl:apply-templates select="node()"/>
+                     <xsl:call-template name="childCertainty"/>
+                     <xsl:if test="following-sibling::t:rdg">
+                        <xsl:text>, </xsl:text>
+                     </xsl:if>
+                  </xsl:for-each>
                </xsl:when>
                <xsl:when test="@type = 'editorial' or @type = 'BL' or @type = 'SoSOL'">
                   <xsl:if test="@type = 'BL'">
@@ -229,8 +242,10 @@
                   </xsl:call-template>
                </xsl:with-param>
             </xsl:call-template>
-
-            <xsl:text> pap.</xsl:text>
+            
+            <xsl:call-template name="support"/>
+            <!-- found below: inserts "papyrus" or "ostrakon" depending on filename -->
+            <!--<xsl:text> pap.</xsl:text>-->
          </xsl:when>
 
          <!-- del -->
@@ -296,6 +311,18 @@
       <xsl:if test="child::t:certainty[@match='..']">
          <xsl:text>(?)</xsl:text>
       </xsl:if>
+   </xsl:template>
+   
+   <xsl:template name="support">
+      <xsl:choose>
+         <xsl:when test="starts-with(//t:idno[@type='filename'],'o.')">
+            <xsl:text> ostrakon</xsl:text>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:text> papyrus</xsl:text>
+         </xsl:otherwise>
+      </xsl:choose>
+      
    </xsl:template>
 
 </xsl:stylesheet>

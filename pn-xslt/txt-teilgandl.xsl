@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: txt-teilgandl.xsl 1447 2008-08-07 12:57:55Z zau $ -->
+<!-- $Id: txt-teilgandl.xsl 1543 2011-08-31 15:47:37Z ryanfb $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                version="2.0">
   <!-- template line-context can be found in teilgandl.xsl -->
   <xsl:include href="teilgandl.xsl"/>
 
@@ -17,7 +17,7 @@
             <xsl:text>
 &#xD;</xsl:text>
             <xsl:choose>
-               <xsl:when test="@n mod $line-inc = 0 and not(@n = 0)">
+               <xsl:when test="number(@n) and @n mod $line-inc = 0 and not(@n = 0)">
                   <xsl:text>	</xsl:text>
                   <xsl:value-of select="@n"/>
                   <xsl:text>	</xsl:text>

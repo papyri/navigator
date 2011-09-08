@@ -9,12 +9,14 @@
   
   <parameter>
     <name>leiden-style</name>
-    <value on="yes">ddbdp</value>
+    <value>ddbdp</value>
+    <value>dohnicht</value>
     <value>edh-itx</value>
     <value>edh-names</value>
     <value>edh-web</value>
     <value>ila</value>
     <value>london</value>
+    <value>petrae</value>
     <value>panciera</value>
     <value>seg</value>
     <value>sammelbuch</value>

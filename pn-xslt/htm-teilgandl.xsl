@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teilgandl.xsl 1447 2008-08-07 12:57:55Z zau $ -->
+<!-- $Id: htm-teilgandl.xsl 1540 2011-08-18 14:17:39Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                version="2.0">
   <xsl:include href="teilgandl.xsl"/>
 
   <xsl:template match="t:lg">
@@ -24,7 +24,7 @@
                </xsl:for-each>
             </xsl:variable>
             <br id="a{$div-loc}l{@n}"/>
-            <xsl:if test="@n mod $line-inc = 0 and not(@n = 0)">
+            <xsl:if test="number(@n) and @n mod $line-inc = 0 and not(@n = 0)">
                <span class="linenumber">
                   <xsl:value-of select="@n"/>
                </span>

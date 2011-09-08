@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teiseg.xsl 1450 2008-08-07 13:17:24Z zau $ -->
+<!-- $Id: teiseg.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                version="2.0">
   <!-- seg[@type='autopsy'] span added in htm-teiseg.xsl -->
   
   <xsl:template match="t:seg | t:w">
