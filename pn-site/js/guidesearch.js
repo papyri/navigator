@@ -302,8 +302,8 @@ $(document).ready(
 	
 		hic.showSearch = function(evt){
 		
-			var widgetWrapperMinWidth = 600;
-			var widgetWrapperPixelWidth = 0.33 * $("#facet-wrapper").width();
+			var widgetWrapperMinWidth = 500;
+			var widgetWrapperPixelWidth = 0.25 * $("#facet-wrapper").width();
 			var newWidgetWidthVal = widgetWrapperPixelWidth < widgetWrapperMinWidth ? widgetWrapperMinWidth : widgetWrapperPixelWidth;
 			newWidgetWidthVal += 23;
 			newWidgetWidthVal = newWidgetWidthVal;
@@ -312,8 +312,8 @@ $(document).ready(
 			$("#facet-widgets-wrapper").css("left", "-" + newWidgetWidthVal + "px");
 	    	$("#facet-widgets-wrapper").addClass("search-open");
 
-			var valsWrapperMinWidth = 800;
-			var valsWrapperPixelWidth = 0.6 * $("#facet-wrapper").width();
+			var valsWrapperMinWidth = 400;
+			var valsWrapperPixelWidth = 0.60 * $("#facet-wrapper").width();
 			var newValsWidth = valsWrapperPixelWidth < valsWrapperMinWidth ? valsWrapperMinWidth : valsWrapperPixelWidth;
 			$("#facet-widgets-wrapper").animate({ left: 0 }, 325);
 			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal + 23, width: newValsWidth }, 325, 
@@ -321,6 +321,7 @@ $(document).ready(
 				function(){
 				
 					$("#vals-and-records-wrapper").css({ "position" : "relative", "left" : 23 });
+					$("#vals-and-records-wrapper").removeAttr("width");
 					$("#search-toggle").height($("#facet-wrapper").height());
 	    			$("#search-toggle").removeClass("toggle-closed");
 	    			$("#search-toggle").addClass("toggle-open");
