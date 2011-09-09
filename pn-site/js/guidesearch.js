@@ -261,11 +261,98 @@ $(document).ready(
 			});
 	    
 	    }
+	    
+	    hic.hideSearch = function(evt){
+
+			var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
+			var initialHeight = $("#facet-wrapper").height();
+			var initialWidgetHeight = $("#facet-widgets-wrapper").height();
+			var valsWrapperMinWidth = 800;
+			var valsWrapperPixelWidth = 0.95 * $("#facet-wrapper").width();
+	    	var newValsWidth = valsWrapperPixelWidth < valsWrapperMinWidth ? valsWrapperMinWidth : valsWrapperPixelWidth;
+	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, 325);
+	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
+	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, 325, "swing",
+	    		
+	    		function(){
+	    			
+	    			$("#facet-wrapper").height(initialHeight);
+	    			$("#facet-widgets-wrapper").addClass("search-closed");
+	    			$("#facet-widgets-wrapper").offset({ left:-23 });
+	    			$("#facet-widgets-wrapper").removeClass("search-open");
+	    			$("#search-toggle").addClass("toggle-closed");
+	    			$("#search-toggle").removeClass("toggle-open");
+	    			$("#vals-and-records-wrapper").removeClass("vals-and-records-min");
+	    			$("#vals-and-records-wrapper").addClass("vals-and-records-max");
+	    			$("#vals-and-records-wrapper").css({"position":"absolute" });
+	    			var height = initialWidgetHeight > $("#vals-and-records-wrapper").height() ? initialWidgetHeight : $("#vals-and-records-wrapper").height();
+	    			$("#search-toggle-pointer").text(">>");
+	    			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });
+	    			hic.positionTogglePointer();
+
+
+	    		}
+	    	
+	    	
+	    	);
+	    	$("#search-toggle").unbind('click');
+	    	$("#search-toggle").click(hic.showSearch);
+	    
+	    }
 	
+		hic.showSearch = function(evt){
+		
+			var widgetWrapperMinWidth = 600;
+			var widgetWrapperPixelWidth = 0.33 * $("#facet-wrapper").width();
+			var newWidgetWidthVal = widgetWrapperPixelWidth < widgetWrapperMinWidth ? widgetWrapperMinWidth : widgetWrapperPixelWidth;
+			newWidgetWidthVal += 23;
+			newWidgetWidthVal = newWidgetWidthVal;
+			$("#vals-and-records-wrapper").css("position", "absolute");
+			$("#facet-widgets-wrapper").removeClass("search-closed");
+			$("#facet-widgets-wrapper").css("left", "-" + newWidgetWidthVal + "px");
+	    	$("#facet-widgets-wrapper").addClass("search-open");
+
+			var valsWrapperMinWidth = 800;
+			var valsWrapperPixelWidth = 0.6 * $("#facet-wrapper").width();
+			var newValsWidth = valsWrapperPixelWidth < valsWrapperMinWidth ? valsWrapperMinWidth : valsWrapperPixelWidth;
+			$("#facet-widgets-wrapper").animate({ left: 0 }, 325);
+			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal + 23, width: newValsWidth }, 325, 
+			
+				function(){
+				
+					$("#vals-and-records-wrapper").css({ "position" : "relative", "left" : 23 });
+					$("#search-toggle").height($("#facet-wrapper").height());
+	    			$("#search-toggle").removeClass("toggle-closed");
+	    			$("#search-toggle").addClass("toggle-open");
+	    			$("#vals-and-records-wrapper").addClass(".vals-and-records-min");
+	    			$("#vals-and-records-wrapper").removeClass("vals-and-records-max");	
+	    			$("#search-toggle-pointer").text("<<");
+	    			hic.positionTogglePointer();
+
+				}
+			
+			);
+			$("#search-toggle").unbind('click');
+			$("#search-toggle").click(hic.hideSearch);
+		
+		}
+		
+		hic.positionTogglePointer = function(){
+		
+			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });
+		
+		}
+		
+		
+		hic.positionTogglePointer();
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		$("form select").change(hic.tidyQueryString);
+		$("#search-toggle").height($("#facet-wrapper").height());
+		$(".toggle-open").click(hic.hideSearch);
+		$(".toggle-closed").click(hic.showSearch);
+		
 		//$("#keyword").focus(hic.monitorTextInput);
 		//$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 	}

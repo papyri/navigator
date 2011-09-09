@@ -21,25 +21,59 @@
    	<script src="/js/guidesearch.js" type="text/javascript" charset="utf-8"></script>
    <style type="text/css">
 
+      body, html{
+      
+      	height: 100%;
+		
+      } 
+	  body{
+	  
+	  	overflow-x: hidden;
+	  
+	  }
+
+	  div.content{
+	  
+	  	padding-bottom: 0px;
+	  	min-height: 100%;
+	  
+	  }
+
       #facet-wrapper{
       
-        width:  96%;
         width: 100%;
+        min-height: 100%;
         float: left;
         clear: both;
-      
+      	
       }
       
       #facet-widgets-wrapper{
       
         position: relative;
-        width: 600px;
         float: left;
         margin-right: 25px;
-        margin-bottom: 50px;
-        
+        padding-bottom: 50px;
+        min-height: 100%;
+        width: 33%;
+        min-width: 600px; 
  
       }
+      
+      #facet-widgets-wrapper.search-closed{
+      
+      	position: absolute;
+      	left: -23px;
+      	min-width: 0px;
+      	width: 0px;
+      
+      }
+      
+	 .search-closed h2, .search-closed form{
+	 
+	 	display: none;
+	 
+	 }
       
       #facet-widgets-wrapper form{
       
@@ -53,6 +87,46 @@
       	position: absolute;
       	right: 0;
       	top: -40px;
+      
+      }
+      
+      div.nav{
+      	
+      	z-index: 500;
+      
+      }
+      
+     /* search pane toggle */
+      .search table{
+      
+      	width: 100%;
+      
+      }
+
+      
+      #search-toggle{
+      
+      	cursor: pointer;
+      	width: 20px;
+      	height: 100%;	
+		position: absolute;
+		border: 1px solid lightGrey;
+		background: url(/images/greenfade.png) 100% 100% repeat-y;
+		font-weight: normal;
+		color: #555;
+		right: -45px;
+
+      }
+
+      
+      #search-toggle-pointer{
+      
+      	position: relative;
+      	color: #000;
+      	font-size: 10px;
+      	font-weight: bold;
+      	width: 100%;
+      	text-align: center;
       
       }
       
@@ -88,16 +162,36 @@
       #vals-and-records-wrapper{
       
         float: left;
-        width: 57.5%;
+        padding-left: 2.5%;
+        padding-right: 2.5%;
         
       }
+      
+      #vals-and-records-wrapper.vals-and-records-min{
+      	
+      	width: 60%;
+      	min-width: 800px;
+      	
+      
+      }
+      
+      #vals-and-records-wrapper.vals-and-records-max{
+      
+      	width: 92%;
+        margin-left: auto;
+        margin-right: auto;
+ 
+		  
+      }
+      
+      
       
       #previous-values{
       
         position: relative;
-        width: 100%;
+        width: 99%;
         border: 3px solid gray;
-        padding: 10px 5px; 
+        padding: 10px 0.5%; 
         margin-top: 15px;
 
       }
@@ -187,6 +281,7 @@
      
      	position: absolute;
      	right: 1.2em;
+     	bottom: 0px;
      
      }
      
@@ -251,16 +346,6 @@
 	  	  margin-bottom: 0px;
 	  
 	  }
- 
-      .autocomplete-values{
-      
-     /* 	position: absolute;
-      	width: 1000px;
-      	left: -9999px;*/
-      	border: thin solid black;
-      
-      }
-	  
       
       table{
       
@@ -328,15 +413,6 @@
 		display: none;
 	
       }
-      
-      /* search pane toggle */
-      
-      .search-closed{
-      	
-      	display: none;
-      
-      }
-
       
     </style>
 
