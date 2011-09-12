@@ -48,6 +48,7 @@
       
       <fields>
         <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
+        <field name="classification_path" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="id" type="string" indexed="true" stored="true" required="true"/>
         <field name="display_place" type="string" indexed="true" stored="true"/>
         <field name="display_date" type="string" indexed="false" stored="true"/>
@@ -68,8 +69,8 @@
         <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
         <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
         <field name="images" type="boolean" indexed="true" stored="false"/>
-        <field name="images-ext" type="boolean" indexed="true" stored="false"/>
-        <field name="images-int" type="boolean" indexed="true" stored="false"/>
+        <field name="images-ext" type="boolean" indexed="true" stored="true"/>
+        <field name="images-int" type="boolean" indexed="true" stored="true"/>
         <field name="illustrations" type="boolean" indexed="true" stored="true"/>
         <field name="image_path" type="string" indexed="false" stored="true" multiValued="true"/>
         <field name="invnum" type="text" indexed="true" stored="true"/>
