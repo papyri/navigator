@@ -316,7 +316,7 @@
           select="replace(normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'numbers']), ' ', '_')"/>
         <xsl:variable name="hgv_lines"
           select="normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'lines'])"/>
-        <xsl:variable name="hgv_item" select="replace(concat($hgv_numbers, ' ', $hgv_lines), '\s+$', '')"/>
+        <xsl:variable name="hgv_item" select="normalize-space(concat($hgv_numbers, ' ', $hgv_lines))"/>
         <xsl:variable name="hgv_item_letter">
           <xsl:value-of select="replace($hgv_item, '\d', '')"/>
         </xsl:variable>
@@ -328,6 +328,9 @@
         </field>
         <field name="hgv_full_identifier">
           <xsl:value-of select="$hgv_item"/>
+        </field>
+        <field name="classification_path">
+          <xsl:value-of select="string-join(($hgv_series, $hgv_volume, $hgv_item), ';')"></xsl:value-of>
         </field>
         <field name="hgv_item">
           <xsl:choose>
@@ -400,8 +403,9 @@
         <field name="ddbdp_volume">
           <xsl:value-of select="$ddbdp_volume"/>
         </field>
+        <xsl:variable name="ddbdp_full_identifier" select="normalize-space($sort[3])"></xsl:variable>
         <field name="ddbdp_full_identifier">
-          <xsl:value-of select="normalize-space($sort[3])"/>
+          <xsl:value-of select="$ddbdp_full_identifier"></xsl:value-of>
         </field>
         <field name="ddbdp_item">
           <xsl:value-of select="$ddbdp_item"/>
@@ -411,6 +415,9 @@
             <xsl:value-of select="$ddbdp_item_letter"/>
           </field>
         </xsl:if>
+        <field name="classification_path">
+          <xsl:value-of select="string-join(($ddbdp_series, $ddbdp_volume, normalize-space($sort[3])), ';')"></xsl:value-of>
+        </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
             <xsl:value-of select="$ddbdp_series"/>
