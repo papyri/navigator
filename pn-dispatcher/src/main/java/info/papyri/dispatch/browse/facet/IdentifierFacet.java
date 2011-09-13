@@ -5,16 +5,20 @@ import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 
 /**
  * <code>Facet</code> for selecting texts based on DDbDP/HGV series, APIS collection,
@@ -53,8 +57,8 @@ public class IdentifierFacet extends Facet{
         
                     SERIES("Series"),
                     COLLECTION("Collection"), 
-                    VOLUME("Volume"), 
-                    IDNO("ID Number");
+                    VOLUME("Vol."), 
+                    IDNO("ID # ");
     
         private final String label;
         
@@ -81,6 +85,12 @@ public class IdentifierFacet extends Facet{
      */
     
     private EnumMap<IdParam, SearchConfiguration> searchConfigurations;
+    
+    ArrayList<IdParam> idnoLedOrder = new ArrayList<IdParam>(Arrays.asList(IdParam.IDNO, IdParam.SERIES, IdParam.VOLUME));
+    ArrayList<IdParam> volumeLedOrder = new ArrayList<IdParam>(Arrays.asList(IdParam.VOLUME, IdParam.IDNO, IdParam.SERIES));
+    ArrayList<IdParam> seriesLedOrder = new ArrayList<IdParam>(Arrays.asList(IdParam.SERIES, IdParam.VOLUME, IdParam.IDNO));
+    EnumMap<SolrField, ArrayList<IdParam>> orders = new EnumMap<SolrField, ArrayList<IdParam>>(SolrField.class);
+    
        
     /**
      * Constructor.
@@ -97,31 +107,78 @@ public class IdentifierFacet extends Facet{
         searchConfigurations.put(IdParam.COLLECTION, new CollectionSearchConfiguration());
         searchConfigurations.put(IdParam.VOLUME, new VolumeSearchConfiguration());
         searchConfigurations.put(IdParam.IDNO, new IdnoSearchConfiguration());
+        orders.put(SolrField.idno_led_path, idnoLedOrder);
+        orders.put(SolrField.volume_led_path, volumeLedOrder);
+        orders.put(SolrField.series_led_path, seriesLedOrder);
         
     }    
     
     @Override
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
-        for(IdParam ip : IdParam.values()){
+        Boolean noConstraints = true;
+        
+        for(SearchConfiguration sc : searchConfigurations.values()){
             
-            ArrayList<SolrField> fields = searchConfigurations.get(ip).getFacetFields();
+            if(sc.hasConstraint()) noConstraints = false;
+            ArrayList<SolrField> fields = sc.getFacetFields();
             for(SolrField ipField : fields){ 
                 
                 solrQuery.addFacetField(ipField.name());
             
-            } 
-
-            if(searchConfigurations.get(ip).hasConstraint()){
-                
-                String luceneQueryString = searchConfigurations.get(ip).buildQueryClause();
-                if(!"".equals(luceneQueryString)) solrQuery.addFilterQuery(luceneQueryString);
-                
             }
-
+            
         }
-                
+        
+        if(noConstraints) return solrQuery;
+        if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint()){
+            
+            solrQuery.addFilterQuery(searchConfigurations.get(IdParam.COLLECTION).buildQueryClause(""));
+            solrQuery.addFilterQuery(searchConfigurations.get(IdParam.IDNO).buildQueryClause(""));
+            return solrQuery;
+            
+        }
+        
+        SolrField field = this.getLeadingField();
+        
+        String specifierClause = this.getSpecifierClause(field);
+        
+        for(SearchConfiguration sc : searchConfigurations.values()){
+            
+            
+            specifierClause = sc.buildQueryClause(specifierClause);
+            
+            
+        }
+        
+        
         return solrQuery; 
+        
+    }
+    
+    private SolrField getLeadingField(){
+        
+        if(searchConfigurations.get(IdParam.IDNO).hasConstraint()) return SolrField.idno_led_path;
+        if(searchConfigurations.get(IdParam.SERIES).hasConstraint()) return SolrField.series_led_path;
+        if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return SolrField.volume_led_path;
+        
+        return SolrField.series_led_path;
+        
+    }
+    
+    private String getSpecifierClause(SolrField ledPath){
+        
+        String specifierClause = "";
+        
+        ArrayList<IdParam> order = orders.get(ledPath);
+        for(IdParam ip : order){
+            
+            specifierClause += ip.name();
+            specifierClause += ";";
+            
+        }
+        specifierClause += "*";
+        return specifierClause;
         
     }
     
@@ -150,22 +207,48 @@ public class IdentifierFacet extends Facet{
     @Override
     public void setWidgetValues(QueryResponse queryResponse){
 
-        for(IdParam ip : IdParam.values()){
-
-            ArrayList<SolrField> fields = searchConfigurations.get(ip).getFacetFields();
+        SolrField searchField = this.getLeadingField();
+        ArrayList<IdParam> fieldOrder = orders.get(searchField);
+        ArrayList<String> component0 = new ArrayList<String>();
+        ArrayList<String> component1 = new ArrayList<String>();
+        ArrayList<String> component2 = new ArrayList<String>();
+        ArrayList<String> collections = new ArrayList<String>();
+        ArrayList<ArrayList<String>> components = new ArrayList<ArrayList<String>>(Arrays.asList(component0, component1, component2, collections));
+        
+        for(SolrDocument doc : queryResponse.getResults()){
             
-            for(SolrField ipField : fields){
-
-                FacetField ff = queryResponse.getFacetField(ipField.name());
+            Collection<Object> paths = doc.getFieldValues(searchField.name());
+            
+            for(Object obPath : paths){
                 
-                if(ff != null){
-                    
-                    searchConfigurations.get(ip).addIdValues(ipField, new ArrayList<Count>(ff.getValues()));
-                    
-                }
+                String path = (String)obPath;
+                String[] pathComponents = path.split(";");
+                component0.add(pathComponents[0]);
+                component1.add(pathComponents[1]);
+                component2.add(pathComponents[2]);
+                collections.add(pathComponents[3]);
                 
-            }   
-                     
+            }
+            
+        }
+            
+        int seriesIndex = fieldOrder.indexOf(IdParam.SERIES);
+        ArrayList<String> series = components.get(seriesIndex);
+        
+        for(int i = 0; i < series.size(); i++){
+            
+            String seriesName = series.get(i);
+            seriesName = collections.get(i) + ";" + seriesName;
+            series.set(i, seriesName);
+            
+        }
+        
+        for(int j = 0; j < fieldOrder.size(); j++){
+            
+            SearchConfiguration sc = searchConfigurations.get(j);
+            sc.setIdValues(queryResponse, components.get(j));
+            
+            
         }
         
     }
@@ -177,7 +260,7 @@ public class IdentifierFacet extends Facet{
         
             if(ip.name().equals(facetParam)){
                 
-                return searchConfigurations.get(ip).getConstraints();
+                return new ArrayList<String>(Arrays.asList(searchConfigurations.get(ip).getConstraint()));
                      
             } 
             
@@ -187,29 +270,7 @@ public class IdentifierFacet extends Facet{
     }
     
     @Override
-    String generateHiddenFields(){
-        
-        StringBuilder html = new StringBuilder();
-        
-        for(IdParam ip : IdParam.values()){
-            
-            String name = ip.name();
-            
-            for(String constraint : searchConfigurations.get(ip).getConstraints()){
-                
-                html.append("<input type=\"hidden\" name=\"");
-                html.append(name);
-                html.append("\" value=\"");
-                html.append(constraint);
-                html.append("\"/>");
-                            
-            }
-            
-        }
-        
-        return html.toString();
-        
-    }
+    String generateHiddenFields(){ return ""; }
     
     @Override
     public Boolean addConstraints(Map<String, String[]> params){
@@ -221,7 +282,11 @@ public class IdentifierFacet extends Facet{
             if(params.containsKey(ip.name())){
                 
                ArrayList<String> values = new ArrayList<String>(Arrays.asList(params.get(ip.name())));
-               searchConfigurations.get(ip).addConstraints(values);
+               if(values.size() != 0){
+                  
+                   searchConfigurations.get(ip).setConstraint(values.get(0));
+               
+               }
                hasConstraint = true;
                 
             }
@@ -244,17 +309,17 @@ public class IdentifierFacet extends Facet{
             
             String paramName = ip.name();
             
-            ArrayList<String> constraints = searchConfigurations.get(ip).getConstraints();
+            String constraint = searchConfigurations.get(ip).getConstraint();
             
-            Iterator<String> cit = constraints.iterator();
-            
-            while(cit.hasNext()){
+            if(!"".equals(constraint)){
                 
                 queryString += "&";
-                String constraint = cit.next();
-                queryString += paramName + "=" + constraint;
+                queryString += paramName;
+                queryString += "=";
+                queryString += constraint;
                 
             }
+
             
         }
         
@@ -270,18 +335,16 @@ public class IdentifierFacet extends Facet{
         
         for(IdParam ip : IdParam.values()){
         
-            ArrayList<String> constraints = searchConfigurations.get(ip).getConstraints();
-            
-            for(String constraint : constraints){
-            
-                if(!(filterParam.equals(ip.name()) && filterValue.equals(constraint))){
+            SearchConfiguration sc = searchConfigurations.get(ip);
+                        
+            if(!filterParam.equals(ip.name()) && sc.hasConstraint()){
                 
                     queryString += "&";
                     queryString += ip.name() + "=";
-                    queryString += constraint;
+                    queryString += sc.getConstraint();
                 
-                }
             }
+            
         }
         
         if(!"".equals(queryString)) queryString = queryString.substring(1);
@@ -293,24 +356,21 @@ public class IdentifierFacet extends Facet{
     public String getDisplayName(String facetParam, String facetValue){
         
         if(!facetParam.equals(IdParam.SERIES.name())) return facetParam.toUpperCase();
-             
-        SeriesSearchConfiguration ssc = (SeriesSearchConfiguration) searchConfigurations.get(IdParam.SERIES);
-        HashMap<Count, SolrField> csf = ssc.getIdValues();
-
-        String collection = "";
         
-        try{
-            
-            SolrField collectionField = ssc.getFieldFromCount(facetValue);
-            
-            if(collectionField.equals(SolrField.ddbdp_series)) collection =  "DDbDP ";
-            if(collectionField.equals(SolrField.hgv_series)) collection = "HGV ";
-            
-        }
-        catch(FieldNotFoundException fnfe){
-
-            System.out.println(fnfe.getMessage());
-            
+        String collection = "";
+        SeriesSearchConfiguration ssc = (SeriesSearchConfiguration) searchConfigurations.get(IdParam.SERIES);
+        HashMap<String, Long> csf = ssc.getIdValues();
+        Collection<String> keys = csf.keySet();
+        
+        for(String key : keys){
+        
+            if(key.contains(facetValue)){
+                
+                String[] keyBits = key.split(";");
+                collection = keyBits[0];
+                break;
+            }
+        
         }
 
         return collection + IdParam.SERIES.name().toUpperCase(); 
@@ -347,6 +407,13 @@ public class IdentifierFacet extends Facet{
         
     }
     
+    
+    
+    
+    /**************** PRIVATE CLASSES HERE ************************************/
+    
+    
+    
     /**
      * Defines the logic and behavior of individual levels of the classification hierarchy
      * 
@@ -359,180 +426,133 @@ public class IdentifierFacet extends Facet{
      * 
      */
     
-    private interface SearchConfiguration{
-    
-        public void addConstraints(ArrayList<String> newValues);
-        public ArrayList<String> getConstraints();
-        public ArrayList<SolrField> getFacetFields();
-        public void addIdValues(SolrField solrField, ArrayList<Count> results);
-        public ArrayList<String> getIdValuesAsHTML();
-        public String buildQueryClause();
-        public Boolean hasConstraint();
-        public String getCSSSelector();
-        public String buildHTMLControl();
-        public Boolean isDisabled();
-    
-    }
-    
-    private abstract class CollectionSeriesSearchConfiguration implements SearchConfiguration {
-    
-        /** The constraints to be applied, as selected by the user. */
-        ArrayList<String> constraints;
-        /** Maps between the faceted values returned and the SolrFields within which these
-         * values are defined. Required because DDbDp and HGV values are lumped together in a single
-         * control, but need to be disambiguated for query definition and display purposes.
-         */
-        HashMap<Count, SolrField> idValues;
+    private abstract class SearchConfiguration{
+        
+        
+        String constraint;
+        HashMap<String, Long> idValues;
         IdParam param;
- 
-        public CollectionSeriesSearchConfiguration(IdParam ip){
+        
+        public SearchConfiguration(IdParam ip){
             
-            constraints = new ArrayList<String>();
-            idValues = new HashMap<Count, SolrField>();
+            constraint = "";
+            idValues = new HashMap<String, Long>();
             param = ip;
-            
-        }
-    
-        @Override
-        public void addConstraints(ArrayList<String> newValues){ 
-            
-            for(String newValue : newValues){
-                
-                if(!constraints.contains(newValue)) constraints.add(newValue);
-                
-            }
-            
-        
+                   
         }
         
-        @Override
-        public ArrayList<String> getConstraints(){ return constraints; }
+        public void setConstraint(String newConstraint){
+            
+            constraint = newConstraint;
+            
+        }
         
-        @Override
-        public ArrayList<String> getIdValuesAsHTML(){ 
+        public String getConstraint(){
             
-            ArrayList<String> stringifiedValues = new ArrayList<String>();
+            return constraint;
             
-            for(Map.Entry<Count, SolrField> entry : idValues.entrySet()){
-                
-                Count count = entry.getKey();
-                SolrField sf = entry.getValue();
-                String collection = "";
-                if(sf.equals(SolrField.hgv_series)) collection = "HGV: ";
-                if(sf.equals(SolrField.ddbdp_series)) collection = "DDbDP: ";
-                String name = count.getName();
-                String displayName = name.replace("_", " ");
-                String number = String.valueOf(count.getCount());         
-                String stringValue = collection + displayName + " (" + number + ")";
-                String openTag = "<option value=\"";
-                openTag += name;
-                openTag += "\">";
-                stringValue = openTag + stringValue + "</option>";
-                stringifiedValues.add(stringValue);             
-                
-            }
-            
-            Collections.sort(stringifiedValues, new Comparator(){
-
-                @Override
-                public int compare(Object t, Object t1) {
-                    
-                    String rawFirst = (String) t;
-                    String rawSecond = (String) t1;
-                    return rawFirst.compareToIgnoreCase(rawSecond);
-                    
-                }
-                
-                
-                
-            }); 
-            
-            if(stringifiedValues.size() != 1){
-            
-                    String defaultValue = "<option value=\"default\">" + Facet.defaultValue + "</option>";
-                    stringifiedValues.add(0, defaultValue);
-                
-            }
-            
-            return stringifiedValues;
-            
-        } 
+        }
         
-        public HashMap<Count, SolrField> getIdValues(){ 
+        public Boolean hasConstraint(){
+            
+            return !"".equals(constraint);
+            
+        }
+        
+        public HashMap<String, Long> getIdValues(){ 
         
                return idValues;
             
         }
         
-        /**
-         * Given a string representing the name of a DDbDP or HGV series, returns a SolrField
-         * (<code>SolrField.ddbdp_series | SolrField.hgv_series</code>) indicating which of the two
-         * it is.
-         * 
-         * @param soughtName The name of a DDbDP or HGV collection
-         * @return 
-         * @throws FieldNotFoundException 
-         */
+        public Boolean anyConstraintSet(){
         
-        public SolrField getFieldFromCount(String soughtName) throws FieldNotFoundException{
+            for(SearchConfiguration sc : searchConfigurations.values()){
+            
+                if(sc.hasConstraint()) return true;
+            
+            
+            }
+        
+            return false;
+        
+        }
+        
+        public void setIdValues(QueryResponse queryResponse, ArrayList<String> rawValues){
                         
-            for(Map.Entry<Count, SolrField> entry : idValues.entrySet()){
+            for(SolrField facetField : this.getFacetFields()){
+            
+                FacetField ff = queryResponse.getFacetField(facetField.name());
                 
-                String name = entry.getKey().getName();
+                if(ff != null){
+                    
+                    List<Count> facetCounts = ff.getValues();
+            
+                    for(Count count : facetCounts){
 
-                if(name.equals(soughtName)){
-                    return entry.getValue();
+                        String name = count.getName();
+                        Long number = count.getCount();
+
+                        if(name != null && !"".equals(name) && !"0".equals(name) && !"null".equals(name)  && number != 0){
+                 
+                            if(idValues.containsKey(name)){
+                                
+                                Long currentValue = idValues.get(name);
+                                currentValue += number;
+                                idValues.put(name, currentValue);
+                                
+                            }
+                            else{
+                                
+                                idValues.put(name, number);
+                                
+                            }
+                 
+                        }   // closing extended null check
+              
+                    }       // closing loop through counts
+                
+                }           // closing ff null check          
+            
+            }               // closing loop through facet fiels
+            
+            
+            for(String name : rawValues){
+                
+                if(idValues.containsKey(name)){
+                    
+                    Long currentValue = idValues.get(name);
+                    currentValue++;
+                    idValues.put(name, currentValue);   
                     
                 }
                 
-                
             }
             
-            throw new FieldNotFoundException("Field not found: no Count found with name " + soughtName);     
+        }
+
+        public String getCSSSelector(){
+            
+            return "id-" + param.name().toLowerCase();
+            
             
         }
-        
-        
-        @Override
-        public Boolean hasConstraint(){ return constraints.size() > 0; }    
-        
-        @Override
         public abstract ArrayList<SolrField> getFacetFields();
-        
-        @Override
-        public String buildQueryClause(){
-
-            String lql = "";
-
-            Iterator<String> cit = constraints.iterator();
-
-            while(cit.hasNext()){
-
-                String constraint = cit.next();
-                lql += "(";
-
-                Iterator<SolrField> fit = this.getFacetFields().iterator();
-
-                while(fit.hasNext()){
-
-                    SolrField field = fit.next();
-
-                    lql += field.name() + ":" + constraint;
-
-                    if(fit.hasNext()) lql += " OR ";
-
-                }
-
-                lql += ")";
-
-                if(cit.hasNext()) lql += " AND ";
-
-            }    
-
-            return lql;
-
-        } 
-        
+        public abstract ArrayList<String> getIdValuesAsHTML();
+        public abstract String buildQueryClause(String rawClause);
+        public abstract String buildHTMLControl();
+        public abstract Boolean isDisabled();
+    
+    }
+    
+    private abstract class CollectionSeriesSearchConfiguration extends SearchConfiguration {
+    
+        public CollectionSeriesSearchConfiguration(IdParam ip){
+            
+            super(ip);
+            
+        }
+      
         @Override
         public String buildHTMLControl(){
           
@@ -580,28 +600,12 @@ public class IdentifierFacet extends Facet{
             
             
         }
-        
-        @Override
-        public void addIdValues(SolrField solrField, ArrayList<Count> counts){ 
-        
-          for(Count count : counts){
-              
-             String name = count.getName();
-             long number = count.getCount();
-             
-             // TODO: check why null or otherwise meaningless values are so often encountered;
-             // this has *got* to be a data curation problem
-             if(name != null && !"".equals(name) && !"0".equals(name) && !"null".equals(name)  && number != 0){
-                 
-                 idValues.put(count, solrField);
-                 
-             }
-              
-          }  
-        
-        }
 
     }
+    
+    
+    /*********************** SERIESSEARCHCONFIGURATION ************************/
+    
     
     private class SeriesSearchConfiguration extends CollectionSeriesSearchConfiguration{
         
@@ -613,28 +617,35 @@ public class IdentifierFacet extends Facet{
         }
         
         @Override
-        public ArrayList<SolrField> getFacetFields(){
-            
-            ArrayList<SolrField> fields = new ArrayList<SolrField>();
-            
-            // it is not possible to choose an HGV/DDbDP series 
-            //if an APIS collection has already been set
-            
-            if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint()) return fields;
-            
-            fields.add(SolrField.ddbdp_series);
-            fields.add(SolrField.hgv_series);
-            
-            return fields;
-            
-        }
-        
-        @Override
         public String getCSSSelector(){
             
             return "id-" + IdParam.SERIES.name().toLowerCase();
 
         }
+        /**
+         * 
+         * We do not want faceted for this facet if:
+         * (i) the COLLECTION facet has a constraint (in which case this facet is disabled
+         * (ii) it itself has a constraint (in which case this is the only value it can have)
+         * (iii) VOLUME or IDNO have a constraint set, in which case the *_led_path fields must be used
+         * instead of the standard faceting mechanism
+         * 
+         * @return 
+         */
+        @Override
+        public ArrayList<SolrField> getFacetFields(){
+            
+            ArrayList<SolrField> facetFields = new ArrayList<SolrField>();
+            
+            if(anyConstraintSet()) return facetFields;
+            
+            facetFields.add(SolrField.hgv_series);
+            facetFields.add(SolrField.ddbdp_series);
+            
+            return facetFields;
+            
+        }
+
         
         @Override
         public Boolean isDisabled(){
@@ -646,7 +657,81 @@ public class IdentifierFacet extends Facet{
             
         }
         
+        @Override
+        public String buildQueryClause(String rawClause){
+            
+            String queryString = "";
+            if("".equals(rawClause)) return queryString;
+            String specifier = this.hasConstraint() ? this.getConstraint() : "*";
+            queryString = rawClause.replace(IdParam.SERIES.name(), specifier);
+            return queryString;
+            
+        }
+        
+        @Override
+        public ArrayList<String> getIdValuesAsHTML(){ 
+            
+            ArrayList<String> stringifiedValues = new ArrayList<String>();
+            
+            for(Map.Entry<String, Long> entry : idValues.entrySet()){
+                
+                String extendedName = entry.getKey();
+                String number = String.valueOf(entry.getValue());
+                String[] nameBits = extendedName.split(";");
+                String collection = nameBits[0].toUpperCase() + ": ";
+                String name = nameBits[1];
+                String displayName = name.replace("_", " ");
+                displayName = collection + displayName + " (" + number + ")";
+                String openTag = "<option value=\"";
+                openTag += name;
+                openTag += "\">";
+                String stringValue = openTag + displayName + "</option>";
+                
+                if(!this.hasConstraint() || stringValue.equals(this.getConstraint())){
+                
+                    stringifiedValues.add(stringValue); 
+                    
+                }
+                
+            }
+            
+            Collections.sort(stringifiedValues, new Comparator(){
+
+                @Override
+                public int compare(Object t, Object t1) {
+                    
+                    String rawFirst = (String) t;
+                    String rawSecond = (String) t1;
+                    return rawFirst.compareToIgnoreCase(rawSecond);
+                    
+                }
+                
+            }); 
+            
+            if(stringifiedValues.size() != 1){
+            
+                    String defaultValue = "<option value=\"default\">" + Facet.defaultValue + "</option>";
+                    stringifiedValues.add(0, defaultValue);
+                
+            }
+            
+            return stringifiedValues;
+            
+        } 
+        
+        public Boolean getIsDisabled(){
+            
+            if(this.hasConstraint()) return true;
+            if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint()) return true;
+            if(idValues.size() < 2) return true;
+            return false;
+            
+        }
+
+        
     }
+    
+    /********************** COLLECTIONSEARCHCONFIGURATION *********************/
     
     private class CollectionSearchConfiguration extends CollectionSeriesSearchConfiguration{
         
@@ -656,18 +741,27 @@ public class IdentifierFacet extends Facet{
             
         }
         
+        /**
+         * 
+         * Browsing by APIS collection is incompatible with browsing by HGV/DDbDP series,
+         * and APIS collections do not use volumes. Accordingly, if either series or 
+         * volume has been set, the APIS facet is disabled.
+         * 
+         * 
+         * 
+         * @return 
+         */
+        
         @Override
         public ArrayList<SolrField> getFacetFields(){
             
             ArrayList<SolrField> fields = new ArrayList<SolrField>();
             
-            // it is not possible to navigate by APIS collection
-            // if a DDbDP/HGV series has already been set
-            
             if(searchConfigurations.get(IdParam.SERIES).hasConstraint()) return fields;
+            if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return fields;
+            if(this.hasConstraint()) return fields;
             
             fields.add(SolrField.apis_series);
-            
             return fields;
             
         }
@@ -691,46 +785,86 @@ public class IdentifierFacet extends Facet{
             
             
         }
- 
         
-    }
-    
-    private abstract class VolumeIdnoSearchConfiguration implements SearchConfiguration{
-       
-        ArrayList<String> constraints;
-        ArrayList<String> idValues;
-        IdParam param;
-        
-        public VolumeIdnoSearchConfiguration(IdParam ip){
+        @Override
+        public String buildQueryClause(String rawClause){
             
-           constraints = new ArrayList<String>();
-           idValues = new ArrayList<String>();
-           param = ip;
+            String queryString = "";
+            if(!this.hasConstraint()) return queryString;
+            queryString = SolrField.apis_series + ":" + this.getConstraint();
+            return queryString;
             
         }
         
         @Override
-        public void addConstraints(ArrayList<String> newValues){ 
+        public ArrayList<String> getIdValuesAsHTML(){ 
             
-            for(String newValue : newValues){
+            ArrayList<String> stringifiedValues = new ArrayList<String>();
+            
+            for(Map.Entry<String, Long> entry : idValues.entrySet()){
                 
-                if(!constraints.contains(newValue)) constraints.add(newValue);
+                String name = entry.getKey();
+                String number = String.valueOf(entry.getValue());
+                String displayName = name.replace("_", " ");
+                displayName = displayName + " (" + number + ")";
+                String openTag = "<option value=\"";
+                openTag += name;
+                openTag += "\">";
+                String stringValue = openTag + displayName + "</option>";
+                
+                if(!this.hasConstraint() || stringValue.equals(this.getConstraint())){
+                
+                    stringifiedValues.add(stringValue); 
+                    
+                }
                 
             }
             
+            Collections.sort(stringifiedValues, new Comparator(){
+
+                @Override
+                public int compare(Object t, Object t1) {
+                    
+                    String rawFirst = (String) t;
+                    String rawSecond = (String) t1;
+                    return rawFirst.compareToIgnoreCase(rawSecond);
+                    
+                }
+                
+            }); 
+            
+            if(stringifiedValues.size() != 1){
+            
+                    String defaultValue = "<option value=\"default\">" + Facet.defaultValue + "</option>";
+                    stringifiedValues.add(0, defaultValue);
+                
+            }
+            
+            return stringifiedValues;
+            
+        } 
         
+        public Boolean getIsDisabled(){
+            
+            if(searchConfigurations.get(IdParam.SERIES).hasConstraint()) return true;
+            if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return true;
+            if(this.hasConstraint()) return true;
+            if(idValues.size() < 2) return true;
+            return false;
+            
         }
-
-        @Override
-        public ArrayList<String> getConstraints() {
+        
+    }
+    
+    /*********************** VOLUMEIDNOSEARCHCONFIGURATION ********************/
+    
+    private abstract class VolumeIdnoSearchConfiguration extends SearchConfiguration{
+        
+        public VolumeIdnoSearchConfiguration(IdParam ip){
             
-            return constraints;
-            
+           super(ip);
             
         }
-
-        @Override
-        public abstract ArrayList<SolrField> getFacetFields();
         
         @Override
         public String buildHTMLControl(){
@@ -752,6 +886,13 @@ public class IdentifierFacet extends Facet{
             html.append("\" id=\"");
             html.append(this.getCSSSelector());
             html.append("\" size=\"5\" maxlength=\"10\"");
+            if(this.hasConstraint()){
+                
+                html.append(" value=\"");
+                html.append(this.getConstraint());
+                html.append("\"");
+                
+            }
 
             html.append("/>");
             
@@ -781,21 +922,13 @@ public class IdentifierFacet extends Facet{
         @Override
         public ArrayList<String> getIdValuesAsHTML() {
             
-            Collections.sort(idValues, new IdComparator());
-            return idValues;
-            
+             ArrayList<String> identifiers = new ArrayList<String>(idValues.keySet());
+             Collections.sort(identifiers, new IdComparator());
+             return identifiers;
             
         }
 
-        @Override
-        abstract public String buildQueryClause();
 
-        @Override
-        public Boolean hasConstraint(){
-            
-            return constraints.size() > 0;
-            
-        }
         
         @Override
         public Boolean isDisabled(){
@@ -803,8 +936,11 @@ public class IdentifierFacet extends Facet{
             return this.getFacetFields().size() < 1;
             
         }
+       
         
     } 
+    
+    /******************** VOLUMESEARCHCONFIGURATION **************************/
     
     private class VolumeSearchConfiguration extends VolumeIdnoSearchConfiguration{
         
@@ -814,163 +950,49 @@ public class IdentifierFacet extends Facet{
             
         }
         
+        /**
+         * 
+         * The VOLUME facet autopopulates only when IDNO or SERIES have been set,
+         * and when either of these are set the *_led_path mechanism needs to be used,
+         * rather than conventional faceting
+         * 
+         * @return 
+         */
         @Override
         public ArrayList<SolrField> getFacetFields(){
             
             ArrayList<SolrField> ff = new ArrayList<SolrField>();
-            if(!searchConfigurations.get(IdParam.SERIES).hasConstraint()) return ff;
-            ff.add(SolrField.ddbdp_volume);
-            ff.add(SolrField.hgv_volume);
+            
             return ff;
             
             
         }
         
-        @Override
-        public String buildHTMLControl(){
-                        
-            StringBuilder html = new StringBuilder();
-            
-            html.append("<p id=\"");
-            html.append(this.param.name().toLowerCase());
-            html.append("-wrapper\">");
-            
-            html.append("<label for=\"");
-            html.append(this.param.name());
-            html.append("\">");
-            html.append(this.param.getLabel());
-            html.append("</label>");
-            
-            html.append("<input type=\"text\" name=\"");
-            html.append(this.param.name());
-            html.append("\" id=\"");
-            html.append(this.getCSSSelector());
-            html.append("\" size=\"5\" maxlength=\"10\"");
-            if(this.isDisabled()) html.append(" class=\"vol-disabled\" value=\"n.a.\" disabled");
-            html.append("/>");
-            
-            html.append("</p>");
-            
-            if(this.getFacetFields().size() > 0){
-
-                html.append("<div class=\"autocomplete-values\" id=\"");
-                html.append(this.param.name().toLowerCase());
-                html.append("-autocomplete\">");          
-                ArrayList<String> autocompleteValues = this.getIdValuesAsHTML();
-                Iterator<String> acit = autocompleteValues.iterator();
-                while(acit.hasNext()){
-
-                    html.append(acit.next());
-                    if(acit.hasNext()) html.append(" ");
-
-
-                }
-                html.append("</div><!-- closing autocomplete values -->");
-            
-            }
-            return html.toString();
-            
-        }
-        
-       @Override
-        public void addIdValues(SolrField solrField, ArrayList<Count> results) {
-            
-            Boolean seriesRestriction = false;
-            
-            SeriesSearchConfiguration ssc = (SeriesSearchConfiguration)searchConfigurations.get(IdParam.SERIES);
-            if(ssc.hasConstraint()){
-                
-                ArrayList<String> seriesConstraints = ssc.getConstraints();
-                
-                ArrayList<SolrField> relFields = new ArrayList<SolrField>();
-                
-                Iterator<String> scit = seriesConstraints.iterator();
-                while(scit.hasNext()){
-                    try{                   
-
-                        SolrField seriesField = ssc.getFieldFromCount(scit.next());
-                        if(seriesField.equals(SolrField.ddbdp_series)) relFields.add(SolrField.ddbdp_volume);
-                        if(seriesField.equals(SolrField.hgv_series)) relFields.add(SolrField.hgv_volume);
-                    
-                    } catch (FieldNotFoundException fnfe){ 
-                        
-                        System.out.println(fnfe.getMessage()); 
-                    
-                    }
-                }
-                
-               seriesRestriction = true;
-               if(relFields.contains(solrField)) seriesRestriction = false;
-                
-            }
-            
-            if(!seriesRestriction){
-                for(Count result : results){
-
-                    String name = result.getName();
-                    long number = result.getCount();
-
-                    if(name != null && !idValues.contains(name) && !name.equals("null") && !name.equals("0") && number != 0){
-
-                        idValues.add(name);
-
-                    }
-
-                }
-                
-            }
-            
-        }
-        
-        @Override
-        public String buildQueryClause(){
+        public String buildQueryClause(String rawClause){
             
             String queryString = "";
-
-            ArrayList<String> volumeConstraints = this.getConstraints();
-                            
-            Iterator<String> vcit = volumeConstraints.iterator();
-
-            while(vcit.hasNext()){
-
-                String vConstr = vcit.next();
-
-                queryString += "(";
-
-                queryString += SolrField.ddbdp_volume.name() + ":" + vConstr;
-                queryString += " OR ";
-                queryString += SolrField.hgv_volume.name() + ":" + vConstr;
-
-                queryString += ")";
-                if(vcit.hasNext()) queryString += " AND ";
-
-            }
-
+            if("".equals(rawClause)) return queryString;
+            String specifier = this.hasConstraint() ? this.getConstraint() : "*";
+            queryString = rawClause.replace(IdParam.VOLUME.name(), specifier);      
             return queryString;
-    
-
-        }
-        
-        @Override
-        public String getCSSSelector(){
-            
-            return "id-" + IdParam.VOLUME.name().toLowerCase();
             
         }
         
-        @Override
-        public Boolean isDisabled(){
+        public Boolean getIsDisabled(){
             
-            CollectionSearchConfiguration csc = (CollectionSearchConfiguration)searchConfigurations.get(IdParam.COLLECTION);
-            SeriesSearchConfiguration ssc = (SeriesSearchConfiguration)searchConfigurations.get(IdParam.SERIES);
-            if(csc.hasConstraint()) return true;
-            if(ssc.hasConstraint() && this.getIdValuesAsHTML().size() < 1) return true;
+            if(this.hasConstraint()) return true;
+            if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint()) return true;
+            if(idValues.size() < 2) return true;
             return false;
             
         }
-        
+
     }
-    
+        
+
+   
+       /************************ IDNOSEARCHCONFIGURATION **********************/
+       
     private class IdnoSearchConfiguration extends VolumeIdnoSearchConfiguration{
         
         public IdnoSearchConfiguration(){
@@ -979,156 +1001,57 @@ public class IdentifierFacet extends Facet{
             
         }
         
+        /**
+         * Facetting should only be performed in connection with IDNOs when:
+         * (i) no constraint has been set on the facet itself
+         * (ii) a COLLECTION constraint has been set
+         * 
+         * 
+         * @return 
+         */
+        
         @Override
         public ArrayList<SolrField> getFacetFields(){
             
             ArrayList<SolrField> ff = new ArrayList<SolrField>();
+            if(!searchConfigurations.get(IdParam.COLLECTION).hasConstraint()) return ff;
+            if(this.hasConstraint()) return ff;
+            ff.add(SolrField.apis_full_identifier);
+            ff.add(SolrField.apis_publication_id);
+            ff.add(SolrField.apis_inventory);
             
-            SearchConfiguration collSc = searchConfigurations.get(IdParam.COLLECTION);
-            SearchConfiguration serSc = searchConfigurations.get(IdParam.SERIES);
-            SearchConfiguration volSc = searchConfigurations.get(IdParam.VOLUME);
-            
-            if(!collSc.hasConstraint() && !serSc.hasConstraint() && !volSc.hasConstraint()) return ff;
-            
-           if(collSc.hasConstraint()){
-               
-               ff.add(SolrField.apis_full_identifier);
-               ff.add(SolrField.apis_inventory);
-               ff.add(SolrField.apis_publication_id);
-               
-           }
-           else{
-               
-               ff.add(SolrField.ddbdp_full_identifier);
-               ff.add(SolrField.hgv_full_identifier);
-               
-           }
             return ff;    
             
         }
         
         @Override
-        public void addIdValues(SolrField solrField, ArrayList<Count> results) {
-            
-            Boolean seriesRestriction = false;
-            
-            SeriesSearchConfiguration ssc = (SeriesSearchConfiguration)searchConfigurations.get(IdParam.SERIES);
-            
-            if(ssc.hasConstraint()){
-                
-                ArrayList<String> seriesConstraints = ssc.getConstraints();
-                
-                ArrayList<SolrField> relFields = new ArrayList<SolrField>();
-                
-                Iterator<String> scit = seriesConstraints.iterator();
-                while(scit.hasNext()){
-                    try{                   
-
-                        SolrField seriesField = ssc.getFieldFromCount(scit.next());
-                        if(seriesField.equals(SolrField.ddbdp_series)) relFields.add(SolrField.ddbdp_full_identifier);
-                        if(seriesField.equals(SolrField.hgv_series)) relFields.add(SolrField.hgv_full_identifier);
-                    
-                    } catch (FieldNotFoundException fnfe){ 
-                        
-                        System.out.println(fnfe.getMessage()); 
-                    
-                    }
-                }
-                
-               seriesRestriction = true;
-               if(relFields.contains(solrField)) seriesRestriction = false;
-                
-            }
-            
-            if(!seriesRestriction){
-                for(Count result : results){
-
-                    String name = result.getName();
-                    long number = result.getCount();
-
-                    if(name != null && !idValues.contains(name) && !name.equals("null") && !name.equals("0") && number != 0){
-
-                        idValues.add(name);
-
-                    }
-
-                }
-                
-            }
-            
-        }
-        
-        @Override
-        public String buildQueryClause(){
+        public String buildQueryClause(String rawClause){
             
             String queryString = "";
             
-            SearchConfiguration collSc = searchConfigurations.get(IdParam.COLLECTION);
-            SearchConfiguration serSc = searchConfigurations.get(IdParam.SERIES);
-            SearchConfiguration volSc = searchConfigurations.get(IdParam.VOLUME);
-                 
-            Iterator<String> iit = this.getConstraints().iterator();
-          
-            if(collSc.hasConstraint()){  
+            if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint()){
                 
-                while(iit.hasNext()){
-                    
-                    String idConst = iit.next();
-                    
-                    queryString += "(";
-                    queryString += SolrField.apis_full_identifier.name() + ":" + idConst;
-                    queryString += " OR ";
-                    queryString += SolrField.apis_inventory.name() + ":" + idConst;
-                    queryString += " OR ";
-                    queryString += SolrField.apis_publication_id.name() + ":" + idConst;
-                    queryString += ")";
-                    if(iit.hasNext()) queryString += " AND ";
-                    
-                }
-                                      
-            }
-            else if(serSc.hasConstraint() || volSc.hasConstraint()){
-                                
-                while(iit.hasNext()){
-                    
-                    String constr = iit.next();
-                    
-                    queryString += "(";
-                    queryString += SolrField.ddbdp_full_identifier.name() + ":" + constr;
-                    queryString += " OR ";
-                    queryString += SolrField.hgv_full_identifier.name() + ":" + constr;
-                    queryString += ")";
-                    if(iit.hasNext()) queryString += " AND ";
-                    
-                }
-                
-            }
-            else{       // no constraints
-                
-                
-                while(iit.hasNext()){
-                    
-                    String constr = iit.next();
+                if(this.hasConstraint()){
 
                     queryString += "(";
-                    queryString += SolrField.apis_full_identifier.name() + ":" + constr;
+                    queryString += SolrField.apis_full_identifier.name() + ":" + this.getConstraint();
                     queryString += " OR ";
-                    queryString += SolrField.apis_inventory.name() + ":" + constr;
+                    queryString += SolrField.apis_inventory.name() + ":" + this.getConstraint();
                     queryString += " OR ";
-                    queryString += SolrField.apis_publication_id.name() + ":" + constr;
-                    queryString += " OR ";
-                    queryString += SolrField.ddbdp_full_identifier.name() + ":" + constr;
-                    queryString += " OR ";
-                    queryString += SolrField.hgv_full_identifier.name() + ":" + constr;
+                    queryString += SolrField.apis_publication_id.name() + ":" + this.getConstraint();
                     queryString += ")";
-                    if(iit.hasNext()) queryString += ")";
-                    
-                    
+                
                 }
                 
+            }
+            else{
+                
+                if("".equals(rawClause)) return queryString;
+                String specifier = this.hasConstraint() ? this.getConstraint() : "*";
+                queryString = rawClause.replace(rawClause, specifier);
                 
             }
-
+            
             return queryString;
             
         }
@@ -1141,7 +1064,20 @@ public class IdentifierFacet extends Facet{
             
         }
         
+        public Boolean getIsDisabled(){
+            
+            if(this.hasConstraint()) return true;
+            if(idValues.size() < 2) return true;
+            return false;
+           
+            
+        }
+        
     }
     
+  }
     
-}
+
+    
+    
+    

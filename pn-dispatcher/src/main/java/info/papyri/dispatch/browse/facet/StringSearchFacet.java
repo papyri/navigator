@@ -74,24 +74,24 @@ public class StringSearchFacet extends Facet{
         html.append("<p class=\"ui-corner-all\" id=\"facet-stringsearch-wrapper\">");
         html.append("<input type=\"text\" name=\"");
         html.append(formName.name());
-        html.append("\" size=\"70\" maxlength=\"250\" id=\"keyword\"></input>");
+        html.append("\" size=\"50\" maxlength=\"250\" id=\"keyword\"></input>");
         html.append("</p>");
                
         // search type control
-        html.append("<div><h3>Type</h3>");
+        html.append("<div class=\"stringsearch-section\">");
         html.append("<p>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.PHRASE.name().toLowerCase());
         html.append("\" id=\"phrase\"/> ");
-        html.append("<label for=\"phrase\" id=\"phrase-label\">Word/Phrase search</label>");
+        html.append("<label for=\"phrase\" id=\"phrase-label\">Word/Phrase search</label><br/>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.SUBSTRING.name().toLowerCase());
         html.append("\" id=\"substring\" checked/> ");
-        html.append("<label for=\"substring\" id=\"substring-label\">substring search</label>");
+        html.append("<label for=\"substring\" id=\"substring-label\">Substring search</label><br/>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.LEMMAS.name().toLowerCase());
         html.append("\" id=\"lemmas\"/>");
-        html.append("<label for\"lemmas\" id=\"lemmas-label\">lemmatized search</label><br/>");
+        html.append("<label for=\"lemmas\" id=\"lemmas-label\">Lemmatized search</label><br/>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.PROXIMITY.name().toLowerCase());
         html.append("\" id=\"proximity\"/>");
@@ -100,11 +100,10 @@ public class StringSearchFacet extends Facet{
         html.append(SearchType.WITHIN.name().toLowerCase());
         html.append("\" value=\"10\" id=\"within\" size=\"2\" style=\"width:1.5em\"/> words");    
         html.append("</p>");    
-        html.append("</div><!-- closing 'Type' anonymous div -->"); 
-        html.append("<div id=\"search-options\">");
+        html.append("</div><!-- closing .stringsearch section -->"); 
         
         // search target control
-        html.append("<div><h3>Target</h3>");
+        html.append("<div class=\"stringsearch-section\">");
         html.append("<p>");
         html.append("<input type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.TEXT.name().toLowerCase());
@@ -123,7 +122,7 @@ public class StringSearchFacet extends Facet{
         html.append("\" value=\"on\" id=\"target-translations\" class=\"target\"/>");
         html.append("<label for=\"");
         html.append(SearchTarget.TRANSLATIONS.name().toLowerCase());
-        html.append("<\" id=\"translation-label\">Translations</label>");
+        html.append("\" id=\"translation-label\">Translations</label>");
         html.append("<input type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.ALL.name().toLowerCase());
         html.append("\" value=\"on\" id=\"target-all\" class=\"target\"/>");
@@ -131,10 +130,11 @@ public class StringSearchFacet extends Facet{
         html.append(SearchTarget.ALL.name().toLowerCase());
         html.append("\" id=\"all-label\">All</label>");
         html.append("</p>");
-        html.append("</div>");
+        html.append("</div><!-- closing .stringsearch-section -->");
         
         // search options control
-        html.append("<h3>Options</h3>");
+        //html.append("<h3>Options</h3>");
+        html.append("<div class=\"stringsearch-section\">");
         html.append("<p><input type=\"checkbox\" name=\"");
         html.append(SearchOption.BETA.name().toLowerCase());
         html.append("\" id=\"betaYes\" value=\"on\"/>");
@@ -148,7 +148,7 @@ public class StringSearchFacet extends Facet{
         html.append("\" id=\"marks\" value=\"on\" checked></input>");  // will need to be changed once hooked in
         html.append("<label for=\"marks\" id=\"marks-label\">ignore diacritics/accents</label>");
         html.append("</p>");
-        html.append("</div><!-- closing 'Options' anonymous div -->");
+        html.append("</div><!-- closing .stringsearch-section -->");
         html.append("</div><!-- closing .facet-widget -->");
         return html.toString();
         

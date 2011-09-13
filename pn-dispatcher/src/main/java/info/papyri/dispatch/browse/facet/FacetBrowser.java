@@ -115,10 +115,10 @@ public class FacetBrowser extends HttpServlet {
         /* Build the SolrQuery object to be used in querying Solr out of query parts contributed 
          * by each of the facets in turn.
          */
-        SolrQuery solrQuery = this.buildFacetQuery(page, facets);
+        SolrQuery solrQuery = buildFacetQuery(page, facets);
                
         /* Query the Solr server */
-        QueryResponse queryResponse = this.runFacetQuery(solrQuery);
+        QueryResponse queryResponse = runFacetQuery(solrQuery);
         
         /* Allow each facet to pull out the values relevant to it from the <code>QueryResponse</code>
          * returned by the Solr server.
@@ -138,8 +138,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-        // String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+        //String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+         String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -149,21 +149,19 @@ public class FacetBrowser extends HttpServlet {
 
     /** Returns the <code>List</code> of <code>Facet</code>s to be used. 
      * 
-     *  Note that the order of <code>Facet</code> declaraion in the <code>List</code> determines
-     *  the order in which they are displayed.
      */
     private ArrayList<Facet> getFacets(){
           
         ArrayList<Facet> facets = new ArrayList<Facet>();
         
         facets.add(new StringSearchFacet());
-        facets.add(new LanguageFacet());
+        facets.add(new IdentifierFacet());
         facets.add(new PlaceFacet());
         facets.add(new DateFacet());
-        facets.add(new HasTranscriptionFacet());
+        facets.add(new LanguageFacet());
         facets.add(new TranslationFacet());
         facets.add(new HasImagesFacet());
-        facets.add(new IdentifierFacet());
+        facets.add(new HasTranscriptionFacet());
         return facets;
         
     }
@@ -382,7 +380,9 @@ public class FacetBrowser extends HttpServlet {
         html.append(submittedParams.keySet().toString());
         html.append("<br><br>");
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
+        html.append("<div id=\"sparql-wrap\">");
         html.append(sq.toString());
+        html.append("</div>");
         html.append("</div><!-- closing #facet-wrapper -->");
         return html.toString();
         
@@ -405,7 +405,7 @@ public class FacetBrowser extends HttpServlet {
         html.append(wrapperClass);
         html.append(">");
         html.append("<div id=\"search-toggle\" ");
-        String toggleClass = "class=\"toggle-" + (searchOpen? "open" : "closed") + "\"";
+        String toggleClass = "class=\"toggle-" + (searchOpen ? "open" : "closed") + "\"";
         html.append(toggleClass);
         html.append("><div id=\"search-toggle-pointer\">");
         String guillemets = searchOpen ? "&lt;&lt;" : "&gt;&gt;";
@@ -433,24 +433,25 @@ public class FacetBrowser extends HttpServlet {
 
             
         }
-        html.append("<h3>Filters</h3>");
         
         try{
-            
+
+            Facet idFacet = findFacet(facets, IdentifierFacet.class);
+            html.append(idFacet.generateWidget());
+            Facet placeFacet = findFacet(facets, PlaceFacet.class);
+            html.append(placeFacet.generateWidget());
+            Facet dateFacet = findFacet(facets, DateFacet.class);
+            html.append(dateFacet.generateWidget());
+            Facet langFacet = findFacet(facets, LanguageFacet.class);
+            html.append(langFacet.generateWidget());
+            Facet translFacet = findFacet(facets, TranslationFacet.class);
+            html.append(translFacet.generateWidget());
             Facet imgFacet = findFacet(facets, HasImagesFacet.class);
             html.append(imgFacet.generateWidget());
             Facet transcFacet = findFacet(facets, HasTranscriptionFacet.class);
             html.append(transcFacet.generateWidget());
-            Facet translFacet = findFacet(facets, TranslationFacet.class);
-            html.append(translFacet.generateWidget());
-            Facet placeFacet = findFacet(facets, PlaceFacet.class);
-            html.append(placeFacet.generateWidget());
-            Facet langFacet = findFacet(facets, LanguageFacet.class);
-            html.append(langFacet.generateWidget());
-            Facet dateFacet = findFacet(facets, DateFacet.class);
-            html.append(dateFacet.generateWidget());
-            Facet idFacet = findFacet(facets, IdentifierFacet.class);
-            html.append(idFacet.generateWidget());
+
+
             
         } catch (FacetNotFoundException fnfe){
             

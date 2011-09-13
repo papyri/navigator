@@ -49,5 +49,8 @@ public enum SolrField {
         hgv_volume,
         ddbdp_full_identifier,
         hgv_full_identifier,
-        apis_full_identifier        
+        apis_full_identifier,
+        series_led_path,
+        volume_led_path,
+        idno_led_path
 }
