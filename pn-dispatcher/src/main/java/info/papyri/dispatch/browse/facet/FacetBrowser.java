@@ -138,8 +138,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        //String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-         String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+         //String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -350,13 +350,9 @@ public class FacetBrowser extends HttpServlet {
     private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams){
         
         
-        Boolean searchVisible = (!constraintsPresent || returnedRecords.size() == 0);
         StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(facets, html, submittedParams, searchVisible);
-        html.append("<div id=\"vals-and-records-wrapper\" class=\"");
-        String wrapperClass = searchVisible ?  "vals-and-records-min" : "vals-and-records-max";
-        html.append(wrapperClass);
-        html.append("\">");
+        assembleWidgetHTML(facets, html, submittedParams);
+        html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
@@ -368,13 +364,8 @@ public class FacetBrowser extends HttpServlet {
     private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq){
         
         StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
-        Boolean searchNeeded = (!constraintsPresent || returnedRecords.size() == 0);
-        assembleWidgetHTML(facets, html, submittedParams, searchNeeded);
-
-        html.append("<div id=\"vals-and-records-wrapper\" class=\"");
-        String wrapperClass = searchNeeded ?  "vals-and-records-min" : "vals-and-records-max";
-        html.append(wrapperClass);
-        html.append("\">");
+        assembleWidgetHTML(facets, html, submittedParams);
+        html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
         html.append(submittedParams.keySet().toString());
@@ -398,19 +389,10 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#generateWidget() 
      */
   
-    private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams, Boolean searchOpen){
+    private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
         
-        html.append("<div id=\"facet-widgets-wrapper\" ");
-        String wrapperClass = "class=\"search " + (searchOpen ? "search-open" : "search-closed") + "\"";
-        html.append(wrapperClass);
-        html.append(">");
-        html.append("<div id=\"search-toggle\" ");
-        String toggleClass = "class=\"toggle-" + (searchOpen ? "open" : "closed") + "\"";
-        html.append(toggleClass);
-        html.append("><div id=\"search-toggle-pointer\">");
-        String guillemets = searchOpen ? "&lt;&lt;" : "&gt;&gt;";
-        html.append(guillemets);
-        html.append("</div><!-- closing #pointer --></div><!-- closing #toggler -->");
+        html.append("<div id=\"facet-widgets-wrapper\" class=\"search search-open\">");
+        html.append("<div id=\"search-toggle\" class=\"toggle-open\"><div id=\"search-toggle-pointer\">&lt;&lt;</div><!-- closing #pointer --></div><!-- closing #toggler -->");
         html.append("<h2>Refine Search</h2>");
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);

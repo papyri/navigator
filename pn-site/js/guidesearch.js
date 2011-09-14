@@ -6,20 +6,7 @@ $(document).ready(
 	*/
 
 	function(){
-			
-		$("#id-volume").autocomplete({
-			
-			source: $("#volume-autocomplete").text().split(' ').sort(function(a,b){return a - b;})
-			
-		});
-				
-		
-		$("#id-idno").autocomplete({
-		
-			source: $("#idno-autocomplete").text().split(' ')
-		
-		});
-			
+					
 		// first, a little namespacing
 		
 		if(typeof info == 'undefined') info = {};
@@ -191,8 +178,22 @@ $(document).ready(
 	    	for(var i = 0; i < opts.length; i++){
 	    	
 	    		var opt = $(opts[i]);
-	    		if(opt.attr("value") != "default" && !opt.attr("disabled")) filteredels.push(opt);
-	    	
+	    		//if(opt.attr("value") != "default" && !opt.attr("disabled")) filteredels.push(opt);
+	    		if(opt.attr("value") != "default"){
+	    		
+	    			if(opt.attr("id") == "id-series" || opt.attr("id") == "id-collection"){
+	    		
+	    				filteredels.push(opt)
+	    		
+	    			}
+	    			else if(!opt.attr("disabled")){
+	    			
+	    				filteredels.push(opt);
+	    			
+	    			}
+	    		
+	    		}
+
 	    	}
 	    	
 	    	var hiddens = document.getElementsByTagName("input");
@@ -353,6 +354,28 @@ $(document).ready(
 		$("#search-toggle").height($("#facet-wrapper").height());
 		$(".toggle-open").click(hic.hideSearch);
 		$(".toggle-closed").click(hic.showSearch);
+		$("#id-volume").autocomplete({
+			
+			source: $("#volume-autocomplete").text().split(' ').sort(function(a,b){return a - b;}),
+			select: function(event, ui){ 
+				
+				$("#id-volume").val(ui.item.value);
+				hic.tidyQueryString();
+				
+			}
+		});
+				
+		
+		$("#id-idno").autocomplete({
+		
+			source: $("#idno-autocomplete").text().split(' '),
+			select: function(event, ui){
+			
+				$("#id-idno").val(ui.item.value);
+				hic.tidyQueryString();
+			}
+		
+		});
 		
 		//$("#keyword").focus(hic.monitorTextInput);
 		//$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
