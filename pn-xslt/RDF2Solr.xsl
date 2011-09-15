@@ -271,6 +271,9 @@
               </field>
             </xsl:for-each>
             <xsl:call-template name="images"></xsl:call-template>
+              <field name="apis_title">
+                <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"></xsl:value-of>
+              </field>
           </xsl:when>
         </xsl:choose>
       </doc>
