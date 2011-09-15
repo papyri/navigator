@@ -42,7 +42,7 @@
         <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
       </analyzer>
     </fieldType>
-  </types>c
+  </types>
       <fields>
         <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
         <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
