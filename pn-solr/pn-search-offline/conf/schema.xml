@@ -42,13 +42,14 @@
         <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
       </analyzer>
     </fieldType>
+
     
   </types>
-
-      
       <fields>
         <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
-        <field name="classification_path" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="idno_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="id" type="string" indexed="true" stored="true" required="true"/>
         <field name="display_place" type="string" indexed="true" stored="true"/>
         <field name="display_date" type="string" indexed="false" stored="true"/>
@@ -98,6 +99,10 @@
         <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0" multiValued="false"/>
         <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="false"/>
         <field name="apis_publication_id" type="string" indexed="false" stored="true" multiValued="false"/>
+<<<<<<< HEAD
+=======
+        <field name="apis_title" type="text" indexed="false" stored="true" multivalued="false"/>
+>>>>>>> b31ddd29b807f0e3cfe97aab4f76aad49bf9d940
       </fields>
       
 

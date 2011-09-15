@@ -48,7 +48,9 @@
       
       <fields>
         <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
-        <field name="classification_path" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="idno_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="id" type="string" indexed="true" stored="true" required="true"/>
         <field name="display_place" type="string" indexed="true" stored="true"/>
         <field name="display_date" type="string" indexed="false" stored="true"/>
@@ -98,6 +100,7 @@
         <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0" multiValued="false"/>
         <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="false"/>
         <field name="apis_publication_id" type="string" indexed="false" stored="true" multiValued="false"/>
+        <field name="apis_title" type="text" indexed="false" stored="true" multivalued="false"/>
       </fields>
       
 

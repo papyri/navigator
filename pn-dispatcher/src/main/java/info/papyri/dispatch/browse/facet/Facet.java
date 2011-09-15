@@ -140,7 +140,7 @@ abstract public class Facet {
             String value = valueAndCount.getName();
             String displayValue = getDisplayValue(value);
             // truncate if too long; otherwise control potentially takes up whole screen
-            if(displayValue.length() > 45) displayValue = displayValue.substring(0, 45);    
+            if(displayValue.length() > 35) displayValue = displayValue.substring(0, 35);    
             String count = String.valueOf(valueAndCount.getCount());
             String selected = onlyOneValue ? " selected=\"true\"" : "";
             html.append("<option");

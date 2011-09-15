@@ -3,7 +3,6 @@ package info.papyri.dispatch.browse.facet;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +87,7 @@ public class HasImagesFacet extends Facet {
         html.append(clss);
         if(intObj.isOn()) html.append(" checked");
         if(intObj.isOn() && moreThanOneOn && !intObj.hasRecord()) html.append(" disabled");
+        html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.INT.name());
@@ -104,6 +104,7 @@ public class HasImagesFacet extends Facet {
         html.append(clss);
         if(extObj.isOn()) html.append(" checked");
         if(extObj.isOn() && moreThanOneOn && !extObj.hasRecord()) html.append(" disabled");
+        html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.EXT.name());
@@ -120,6 +121,7 @@ public class HasImagesFacet extends Facet {
         html.append(clss);
         if(prObj.isOn()) html.append(" checked");
         if(prObj.isOn() && moreThanOneOn && !prObj.hasRecord()) html.append(" disabled");
+        html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.PRINT.name());

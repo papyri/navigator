@@ -271,6 +271,9 @@
               </field>
             </xsl:for-each>
             <xsl:call-template name="images"></xsl:call-template>
+              <field name="apis_title">
+                <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"></xsl:value-of>
+              </field>
           </xsl:when>
         </xsl:choose>
       </doc>
@@ -329,8 +332,14 @@
         <field name="hgv_full_identifier">
           <xsl:value-of select="$hgv_item"/>
         </field>
-        <field name="classification_path">
-          <xsl:value-of select="string-join(($hgv_series, $hgv_volume, $hgv_item), ';')"></xsl:value-of>
+        <field name="series_led_path">
+          <xsl:value-of select="string-join(($hgv_series, $hgv_volume, $hgv_item, 'hgv'), ';')"></xsl:value-of>
+        </field>
+        <field name="volume_led_path">
+          <xsl:value-of select="string-join(($hgv_volume, $hgv_item, $hgv_series, 'hgv'), ';')"></xsl:value-of>
+        </field>
+        <field name="idno_led_path">
+          <xsl:value-of select="string-join(($hgv_item, $hgv_series, $hgv_volume, 'hgv'), ';')"></xsl:value-of>
         </field>
         <field name="hgv_item">
           <xsl:choose>
@@ -415,8 +424,14 @@
             <xsl:value-of select="$ddbdp_item_letter"/>
           </field>
         </xsl:if>
-        <field name="classification_path">
-          <xsl:value-of select="string-join(($ddbdp_series, $ddbdp_volume, normalize-space($sort[3])), ';')"></xsl:value-of>
+        <field name="series_led_path">
+          <xsl:value-of select="string-join(($ddbdp_series, $ddbdp_volume, $ddbdp_full_identifier, 'ddbdp'), ';')"></xsl:value-of>
+        </field>
+        <field name="volume_led_path">
+          <xsl:value-of select="string-join(($ddbdp_volume, $ddbdp_full_identifier, $ddbdp_series, 'ddbdp'), ';')"></xsl:value-of>
+        </field>
+        <field name="idno_led_path">
+          <xsl:value-of select="string-join(($ddbdp_full_identifier, $ddbdp_series, $ddbdp_volume, 'ddbdp'), ';')"></xsl:value-of>
         </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
