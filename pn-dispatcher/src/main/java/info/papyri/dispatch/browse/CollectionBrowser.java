@@ -516,6 +516,8 @@ public class CollectionBrowser extends HttpServlet {
                 String preferredId = this.getPreferredId(pathParts, allIds, doc);
                 sortIds(allIds);
                 URL url = new URL((String)doc.getFieldValue(SolrField.id.name()));
+                Boolean titleIsNull = doc.getFieldValue(SolrField.apis_title.name()) == null;
+                ArrayList<String> documentTitles = titleIsNull ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_title.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
@@ -530,7 +532,7 @@ public class CollectionBrowser extends HttpServlet {
                 
                     previousIds.add(preferredId);
                     allIds.remove(preferredId);
-                    record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages, hasIllustration);
+                    record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration);
                     records.add(record);
                 
                 }

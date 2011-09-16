@@ -328,7 +328,29 @@ public class IdentifierFacet extends Facet{
     }
     
     @Override
-    String generateHiddenFields(){ return ""; }
+    String generateHiddenFields(){ 
+    
+        StringBuilder html = new StringBuilder();
+        
+        for(IdParam ip : IdParam.values()){
+            
+            if(searchConfigurations.get(ip).hasConstraint()){
+                
+                String param = ip.name();
+                String val = searchConfigurations.get(ip).getConstraint();
+                html.append("<input type=\"hidden\" name=\"");
+                html.append(param);
+                html.append("\" value=\"");
+                html.append(val);
+                html.append("\"/>");
+                
+            }
+            
+        }
+    
+        return html.toString();
+    
+    }
     
     @Override
     public Boolean addConstraints(Map<String, String[]> params){
@@ -1178,6 +1200,8 @@ public class IdentifierFacet extends Facet{
                 ff.add(SolrField.apis_full_identifier);
                 ff.add(SolrField.apis_publication_id);
                 ff.add(SolrField.apis_inventory);
+                ff.add(SolrField.ddbdp_full_identifier);
+                ff.add(SolrField.hgv_full_identifier);
                 return ff;
             }
             ff.add(getLeadingField());

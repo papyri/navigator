@@ -52,5 +52,6 @@ public enum SolrField {
         apis_full_identifier,
         series_led_path,
         volume_led_path,
-        idno_led_path
+        idno_led_path,
+        apis_title
 }
