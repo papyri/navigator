@@ -64,7 +64,7 @@
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     <xsl:variable name="image" select="contains($related, 'info:fedora/ldpd')"/>
-    
+
     <add>
       <doc>
         <xsl:if test="$ddbdp = true()">
@@ -216,7 +216,8 @@
             </xsl:if>
             <xsl:call-template name="images">
               <xsl:with-param name="docs"
-                  select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"/>
+                select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
+              />
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
@@ -244,7 +245,7 @@
             </xsl:call-template>
             <xsl:call-template name="images">
               <xsl:with-param name="docs"
-                  select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
+                select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
@@ -270,10 +271,10 @@
                 <xsl:value-of select="@ident"/>
               </field>
             </xsl:for-each>
-            <xsl:call-template name="images"></xsl:call-template>
-              <field name="apis_title">
-                <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"></xsl:value-of>
-              </field>
+            <xsl:call-template name="images"/>
+            <field name="apis_title">
+              <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"/>
+            </field>
           </xsl:when>
         </xsl:choose>
       </doc>
@@ -288,18 +289,22 @@
         test="$docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']">
         <!-- IFF HGV document -->
         <xsl:variable name="hgv_identifiers">
-          <xsl:perform-sort select="$docs//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
+          <xsl:perform-sort
+            select="$docs//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
             <xsl:sort select="."/>
           </xsl:perform-sort>
         </xsl:variable>
         <field name="hgv_identifier">
           <xsl:choose>
             <xsl:when test="count($hgv_identifiers//*) gt 1">
-              <xsl:value-of select="$hgv_identifiers//*[1]"/> - <xsl:value-of select="$hgv_identifiers//*[position() = last()]"/>
+              <xsl:value-of select="$hgv_identifiers//*[1]"/> - <xsl:value-of
+                select="$hgv_identifiers//*[position() = last()]"/>
             </xsl:when>
-            <xsl:otherwise><xsl:value-of select="$hgv_identifiers[1]"/></xsl:otherwise>
+            <xsl:otherwise>
+              <xsl:value-of select="$hgv_identifiers[1]"/>
+            </xsl:otherwise>
           </xsl:choose>
-         </field>
+        </field>
         <xsl:variable name="hgv_series">
           <xsl:value-of
             select="replace(normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:title[@level = 's']), ' ', '_')"
@@ -319,7 +324,8 @@
           select="replace(normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'numbers']), ' ', '_')"/>
         <xsl:variable name="hgv_lines"
           select="normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'lines'])"/>
-        <xsl:variable name="hgv_item" select="normalize-space(concat($hgv_numbers, ' ', $hgv_lines))"/>
+        <xsl:variable name="hgv_item"
+          select="normalize-space(concat($hgv_numbers, ' ', $hgv_lines))"/>
         <xsl:variable name="hgv_item_letter">
           <xsl:value-of select="replace($hgv_item, '\d', '')"/>
         </xsl:variable>
@@ -333,13 +339,13 @@
           <xsl:value-of select="$hgv_item"/>
         </field>
         <field name="series_led_path">
-          <xsl:value-of select="string-join(($hgv_series, $hgv_volume, $hgv_item, 'hgv'), ';')"></xsl:value-of>
+          <xsl:value-of select="string-join(($hgv_series, $hgv_volume, $hgv_item, 'hgv'), ';')"/>
         </field>
         <field name="volume_led_path">
-          <xsl:value-of select="string-join(($hgv_volume, $hgv_item, $hgv_series, 'hgv'), ';')"></xsl:value-of>
+          <xsl:value-of select="string-join(($hgv_volume, $hgv_item, $hgv_series, 'hgv'), ';')"/>
         </field>
         <field name="idno_led_path">
-          <xsl:value-of select="string-join(($hgv_item, $hgv_series, $hgv_volume, 'hgv'), ';')"></xsl:value-of>
+          <xsl:value-of select="string-join(($hgv_item, $hgv_series, $hgv_volume, 'hgv'), ';')"/>
         </field>
         <field name="hgv_item">
           <xsl:choose>
@@ -412,9 +418,9 @@
         <field name="ddbdp_volume">
           <xsl:value-of select="$ddbdp_volume"/>
         </field>
-        <xsl:variable name="ddbdp_full_identifier" select="normalize-space($sort[3])"></xsl:variable>
+        <xsl:variable name="ddbdp_full_identifier" select="normalize-space($sort[3])"/>
         <field name="ddbdp_full_identifier">
-          <xsl:value-of select="$ddbdp_full_identifier"></xsl:value-of>
+          <xsl:value-of select="$ddbdp_full_identifier"/>
         </field>
         <field name="ddbdp_item">
           <xsl:value-of select="$ddbdp_item"/>
@@ -425,13 +431,19 @@
           </field>
         </xsl:if>
         <field name="series_led_path">
-          <xsl:value-of select="string-join(($ddbdp_series, $ddbdp_volume, $ddbdp_full_identifier, 'ddbdp'), ';')"></xsl:value-of>
+          <xsl:value-of
+            select="string-join(($ddbdp_series, $ddbdp_volume, $ddbdp_full_identifier, 'ddbdp'), ';')"
+          />
         </field>
         <field name="volume_led_path">
-          <xsl:value-of select="string-join(($ddbdp_volume, $ddbdp_full_identifier, $ddbdp_series, 'ddbdp'), ';')"></xsl:value-of>
+          <xsl:value-of
+            select="string-join(($ddbdp_volume, $ddbdp_full_identifier, $ddbdp_series, 'ddbdp'), ';')"
+          />
         </field>
         <field name="idno_led_path">
-          <xsl:value-of select="string-join(($ddbdp_full_identifier, $ddbdp_series, $ddbdp_volume, 'ddbdp'), ';')"></xsl:value-of>
+          <xsl:value-of
+            select="string-join(($ddbdp_full_identifier, $ddbdp_series, $ddbdp_volume, 'ddbdp'), ';')"
+          />
         </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
@@ -455,7 +467,8 @@
           </field>
         </xsl:if>
       </xsl:when>
-      <xsl:when test="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']">
+      <xsl:when
+        test="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']">
         <!-- APIS document -->
         <xsl:variable name="apis_series">
           <xsl:value-of
@@ -492,14 +505,23 @@
         <xsl:for-each
           select="$docs[1]//t:TEI/t:text/t:body/t:div[@type='bibliography' and @subtype = 'citations']/t:listBibl/t:bibl[@type='ddbdp'][1]">
           <field name="apis_publication_id">
-            <xsl:value-of
-              select="replace(., ':', ' ')"
-            />
+            <xsl:value-of select="replace(., ':', ' ')"/>
           </field>
         </xsl:for-each>
         <field name="apis_inventory">
           <xsl:value-of
-            select="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"/>
+            select="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
+          />
+        </field>
+        <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
+          <xsl:if test="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:authority = 'APIS'"> -->
+            <field name="apis_title">
+              <xsl:value-of select="."></xsl:value-of>
+            </field>
+          </xsl:if>
+        </xsl:for-each> 
+        <field name="apis_title">
+          <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"/>
         </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
@@ -596,7 +618,7 @@
       <xsl:value-of
         select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
       <xsl:text> </xsl:text>
-   
+
     </field>
     <xsl:choose>
       <xsl:when
@@ -691,36 +713,44 @@
       </field>
     </xsl:if>
   </xsl:template>
-  
+
   <xsl:template name="images">
     <!-- note difference here - 'images' are *online* images, 'illustrations' are print-publication images -->
-    <xsl:param name="docs" select="node()"></xsl:param>
+    <xsl:param name="docs" select="node()"/>
     <xsl:if
       test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
       <field name="images">true</field>
       <xsl:for-each select="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure']">
-        <field name="image_path"><xsl:value-of select=".//t:graphic/@url"></xsl:value-of></field>
+        <field name="image_path">
+          <xsl:value-of select=".//t:graphic/@url"/>
+        </field>
       </xsl:for-each>
       <xsl:for-each select="/t:TEI/t:text/t:body/t:div[@type = 'figure']">
-        <field name="image_path"><xsl:value-of select=".//t:graphic/@url"></xsl:value-of></field>
+        <field name="image_path">
+          <xsl:value-of select=".//t:graphic/@url"/>
+        </field>
       </xsl:for-each>
       <xsl:for-each select="$relations">
         <xsl:if test="contains(. , 'images/')">
-          <field name="image_path"><xsl:value-of select="."></xsl:value-of></field>
+          <field name="image_path">
+            <xsl:value-of select="."/>
+          </field>
         </xsl:if>
       </xsl:for-each>
-    </xsl:if>    
-    <xsl:if test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure']">
+    </xsl:if>
+    <xsl:if
+      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure']">
       <field name="images-ext">true</field>
     </xsl:if>
     <xsl:if test="contains($related, 'images/')">
       <field name="images-int">true</field>
     </xsl:if>
-    <xsl:if test="$docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]">
-      <field name="illustrations">true</field>   
+    <xsl:if
+      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]">
+      <field name="illustrations">true</field>
     </xsl:if>
   </xsl:template>
-  
+
   <xsl:template name="translation">
     <xsl:param name="docs"/>
     <xsl:for-each select="$docs//t:div[@type='translation']">
