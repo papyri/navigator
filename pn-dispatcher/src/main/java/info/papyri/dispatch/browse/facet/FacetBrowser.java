@@ -30,7 +30,7 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 
-@WebServlet(name = "FacetBrowser", urlPatterns = {"/FacetBrowser"})
+@WebServlet(name = "FacetBrowser", urlPatterns = {"/search"})
 
 /**
  * Enables faceted browsing of the pn collections
@@ -311,6 +311,8 @@ public class FacetBrowser extends HttpServlet {
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());   // i.e., provenance
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
                 String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());      // original language
+                Boolean titleIsNull = doc.getFieldValue(SolrField.apis_title.name()) == null;
+                ArrayList<String> documentTitles = titleIsNull ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_title.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
                 Boolean languageIsNull = doc.getFieldValue(SolrField.facet_language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
@@ -319,7 +321,7 @@ public class FacetBrowser extends HttpServlet {
                 Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages, hasIllustration);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration);
                 records.add(record);
                 
            }
@@ -452,6 +454,9 @@ public class FacetBrowser extends HttpServlet {
     /**
      * Assembles the HTML displaying the records returned by the Solr server
      * 
+     * Note the importance of the table-cell order defined here corresponding to the
+     * order defined at <code>DocumentBrowseRecord.getHTML()</code>
+     * 
      * 
      * @param facets
      * @param returnedRecords
@@ -460,6 +465,7 @@ public class FacetBrowser extends HttpServlet {
      * @param html
      * @param sq Used in debugging only
      * @return A <code>StringBuilder</code> holding the HTML for the records returned by the Solr server
+     * @see DocumentBrowseRecord#getHTML() 
      */
     
     private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html){
@@ -484,7 +490,7 @@ public class FacetBrowser extends HttpServlet {
             html.append(resultSize > 1 ? " hits." : " hit");
             html.append("</p>");
             html.append("<table>");
-            html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translations</td><td>Images</td></tr>");
+            html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Title</td><td>Location</td><td>Date</td><td>Languages</td><td>Translations</td><td>Images</td></tr>");
             Iterator<DocumentBrowseRecord> rit = returnedRecords.iterator();
             
             while(rit.hasNext()){

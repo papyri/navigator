@@ -178,21 +178,7 @@ $(document).ready(
 	    	for(var i = 0; i < opts.length; i++){
 	    	
 	    		var opt = $(opts[i]);
-	    		//if(opt.attr("value") != "default" && !opt.attr("disabled")) filteredels.push(opt);
-	    		if(opt.attr("value") != "default"){
-	    		
-	    			if(opt.attr("id") == "id-series" || opt.attr("id") == "id-collection"){
-	    		
-	    				filteredels.push(opt)
-	    		
-	    			}
-	    			else if(!opt.attr("disabled")){
-	    			
-	    				filteredels.push(opt);
-	    			
-	    			}
-	    		
-	    		}
+	    		if(opt.attr("value") != "default" && !opt.attr("disabled")) filteredels.push(opt);
 
 	    	}
 	    	
@@ -219,6 +205,7 @@ $(document).ready(
 					name = fel.getAttribute("name");
 					val = fel.getAttribute("value");
 				}
+				val = val.replace(/#/g, "^");
 				querystring += name + "=" + val;
 				
 				if(k < filteredels.length - 1) querystring += "&";
@@ -252,13 +239,12 @@ $(document).ready(
 			
 				event.stopPropagation();
 				var val = $(this).val();
-				if(val.match("lem:")) {
+				if(val.match("lex:")) {
 				
-					// do some stuff here
+					$("#lemmas").click();
 				
 				}
-				
-			
+						
 			});
 	    
 	    }
@@ -268,16 +254,19 @@ $(document).ready(
 			var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
 			var initialHeight = $("#facet-wrapper").height();
 			var initialWidgetHeight = $("#facet-widgets-wrapper").height();
+			var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
 			var valsWrapperMinWidth = 800;
 			var valsWrapperPixelWidth = 0.95 * $("#facet-wrapper").width();
 	    	var newValsWidth = valsWrapperPixelWidth < valsWrapperMinWidth ? valsWrapperMinWidth : valsWrapperPixelWidth;
+	    	$("#facet-wrapper").height(initialHeight);
 	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, 325);
 	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
+	    	$(".doc-title").animate({ width: 550 }, 325);
 	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, 325, "swing",
 	    		
 	    		function(){
 	    			
-	    			$("#facet-wrapper").height(initialHeight);
+	    			$("#facet-wrapper").height(finalHeight);
 	    			$("#facet-widgets-wrapper").addClass("search-closed");
 	    			$("#facet-widgets-wrapper").offset({ left:-23 });
 	    			$("#facet-widgets-wrapper").removeClass("search-open");
@@ -290,7 +279,6 @@ $(document).ready(
 	    			$("#search-toggle-pointer").text(">>");
 	    			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });
 	    			hic.positionTogglePointer();
-
 
 	    		}
 	    	
@@ -317,16 +305,21 @@ $(document).ready(
 			var valsWrapperPixelWidth = 0.60 * $("#facet-wrapper").width();
 			var newValsWidth = valsWrapperPixelWidth < valsWrapperMinWidth ? valsWrapperMinWidth : valsWrapperPixelWidth;
 			$("#facet-widgets-wrapper").animate({ left: 0 }, 325);
+			$(".doc-title").animate({ width: 125 }, 325);
 			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal + 23, width: newValsWidth }, 325, 
 			
 				function(){
 				
+					var widgetHeight = $("#facet-widgets-wrapper").height();
+					var resultsHeight = $("#vals-and-records-wrapper").height();
+					var greaterHeight = widgetHeight > resultsHeight ? widgetHeight : resultsHeight;
+					$("#facet-wrapper").height(greaterHeight);
 					$("#vals-and-records-wrapper").css({ "position" : "relative", "left" : 23 });
 					$("#vals-and-records-wrapper").removeAttr("width");
 					$("#search-toggle").height($("#facet-wrapper").height());
 	    			$("#search-toggle").removeClass("toggle-closed");
 	    			$("#search-toggle").addClass("toggle-open");
-	    			$("#vals-and-records-wrapper").addClass(".vals-and-records-min");
+	    			$("#vals-and-records-wrapper").addClass("vals-and-records-min");
 	    			$("#vals-and-records-wrapper").removeClass("vals-and-records-max");	
 	    			$("#search-toggle-pointer").text("<<");
 	    			hic.positionTogglePointer();
@@ -377,8 +370,8 @@ $(document).ready(
 		
 		});
 		
-		//$("#keyword").focus(hic.monitorTextInput);
-		//$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
+		$("#keyword").focus(hic.monitorTextInput);
+		$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 	}
 
 );

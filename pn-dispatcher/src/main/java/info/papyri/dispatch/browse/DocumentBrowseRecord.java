@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The <code>DocumentBrowseRecord</code> class stores summary information regarding
@@ -19,6 +21,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String preferredId;
   private ArrayList<String> itemIds = new ArrayList<String>();
   private URL url;
+  private String documentTitle;
   private String place;
   private String date;
   private String language;
@@ -31,11 +34,12 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
  
   
   
-  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus) {
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus) {
 
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
     this.url = url;
+    this.documentTitle = this.tidyTitles(titles);
     this.place = place;
     this.date = date;
     this.language = tidyAncientLanguageCodes(lang);
@@ -57,6 +61,9 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(getAlternativeIds());
     html.append("\">");
     html.append(anchor.toString());
+    html.append("</td>");
+    html.append("<td class=\"doc-title\">");
+    html.append(this.getTitleHTML());
     html.append("</td>");
     html.append("<td class=\"display-place\">");
     html.append(place);
@@ -171,6 +178,79 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       if("".equals(allIds)) return "No other identifiers";
       
       return allIds;
+  }
+  
+  private String tidyTitles(ArrayList<String> rawTitles){
+      
+      ArrayList<String> cleanTitles = new ArrayList<String>();
+      for(String rawTitle : rawTitles){
+          
+          String trimTitle = rawTitle.trim();
+          if(!cleanTitles.contains(trimTitle)) cleanTitles.add(trimTitle);
+          
+      }
+      
+      String trueTitle = "";
+      
+      for(String title : cleanTitles){
+          
+          String compTitle = title.toLowerCase();
+          compTitle = compTitle.replaceAll("[\\. ]", "");
+      
+          Boolean titleNotRedundant = true;
+          
+          if(preferredId != null){
+              
+              String compPrefId = preferredId.toLowerCase();
+              compPrefId = compPrefId.replaceAll("[\\. ]", "");
+              if(compPrefId.equals(compTitle)) titleNotRedundant = false;
+              
+          }
+          for(String id : itemIds){
+              
+              String compId = id.toLowerCase();
+              compId = compId.replaceAll("[\\. ]", "");
+              if(compId.equals(compTitle)) titleNotRedundant = false;
+          
+          }
+          
+          if(titleNotRedundant) trueTitle += title + ", ";
+          
+      }
+     
+     trueTitle = trueTitle.trim();
+     if(trueTitle.length() > 0) trueTitle = trueTitle.substring(0, trueTitle.length() - 1);
+     return trueTitle;
+      
+  }
+  
+  private String getTitleHTML(){
+      
+      if("".equals(documentTitle)){
+          
+          return "<div class=\"title-none\">---</div>";
+          
+      }
+      
+      StringBuilder html = new StringBuilder();
+      
+      html.append("<div class=\"title-long\">");
+      html.append(documentTitle);
+      html.append("</div><!-- closing .title-long -->");
+      
+      html.append("<div class=\"title-short\" title =\"");
+      html.append(documentTitle);
+      html.append("\">");
+      
+      String[] titleBits = documentTitle.split(" ");
+      String shortTitle = titleBits[0];
+      shortTitle += " &hellip;";
+      html.append(shortTitle);
+      html.append("</div><!-- closing .title-short -->");
+      
+      return html.toString();      
+      
+      
   }
 
   /**

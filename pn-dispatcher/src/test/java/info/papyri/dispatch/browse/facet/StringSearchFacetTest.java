@@ -3,8 +3,8 @@ package info.papyri.dispatch.browse.facet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import junit.framework.TestCase;
+import org.apache.solr.client.solrj.SolrQuery;
 
 
 /**
@@ -29,11 +29,11 @@ public class StringSearchFacetTest extends TestCase {
         super.tearDown();
     }
 
+    
+
 
     public void testPullApartParams() {
-        
-        System.out.println("pullApartParams");
-       
+
         HashMap<String, String[]> mockParams = new HashMap<String, String[]>();
         
         // requirements

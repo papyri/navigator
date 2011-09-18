@@ -69,7 +69,7 @@
         </init-param>
         <init-param>
             <param-name>facetBrowserPath</param-name>
-            <param-value>/dispatch/faceted/</param-value>
+            <param-value>/search</param-value>
             </init-param>
     </servlet>
     <servlet>
@@ -109,7 +109,7 @@
         </init-param>
                 <init-param>
             <param-name>facetBrowserPath</param-name>
-            <param-value>/dispatch/faceted/</param-value>
+            <param-value>/search</param-value>
             </init-param>
     </servlet>
     <servlet-mapping>
@@ -120,10 +120,10 @@
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+   <!-- <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/search</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -134,7 +134,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FacetBrowser</servlet-name>
-        <url-pattern>/faceted/*</url-pattern>
+        <url-pattern>/search</url-pattern>
         </servlet-mapping>
     <session-config>
         <session-timeout>
