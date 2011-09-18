@@ -205,6 +205,7 @@ $(document).ready(
 					name = fel.getAttribute("name");
 					val = fel.getAttribute("value");
 				}
+				val = val.replace(/#/g, "^");
 				querystring += name + "=" + val;
 				
 				if(k < filteredels.length - 1) querystring += "&";
@@ -238,13 +239,12 @@ $(document).ready(
 			
 				event.stopPropagation();
 				var val = $(this).val();
-				if(val.match("lem:")) {
+				if(val.match("lex:")) {
 				
-					// do some stuff here
+					$("#lemmas").click();
 				
 				}
-				
-			
+						
 			});
 	    
 	    }
@@ -279,7 +279,6 @@ $(document).ready(
 	    			$("#search-toggle-pointer").text(">>");
 	    			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });
 	    			hic.positionTogglePointer();
-
 
 	    		}
 	    	
@@ -371,8 +370,8 @@ $(document).ready(
 		
 		});
 		
-		//$("#keyword").focus(hic.monitorTextInput);
-		//$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
+		$("#keyword").focus(hic.monitorTextInput);
+		$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 	}
 
 );

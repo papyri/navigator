@@ -126,7 +126,7 @@
               <xsl:apply-templates select="//t:div[@type = 'edition']"/>
             </xsl:variable>
             <xsl:variable name="textnfc"
-              select="normalize-space(replace(translate($text, '[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"/>
+              select="normalize-space(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"/>
             <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
             <!-- transcription fields are 8-fold: plain, plain ignore diacriticals, plain ignore case, plain ignore case and diacriticals,
               ngram, ngram ignore diacriticals, ngram ignore case, ngram ignore case and diacriticals-->
