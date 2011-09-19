@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teiabbrandexpan.xsl 1450 2008-08-07 13:17:24Z zau $ -->
+<!-- $Id: teiabbrandexpan.xsl 1542 2011-08-22 18:09:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" version="1.0">
+   xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="2.0">
    <!-- Contains templates for expan and abbr -->
 
    <xsl:template match="t:expan">
       <xsl:apply-templates/>
+      <!-- Found in tpl-certlow.xsl -->
+      <xsl:call-template name="cert-low"/>
    </xsl:template>
 
    <xsl:template match="t:abbr">

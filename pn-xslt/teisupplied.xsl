@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teisupplied.xsl 1450 2008-08-07 13:17:24Z zau $ -->
+<!-- $Id: teisupplied.xsl 1546 2011-09-05 08:51:42Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                version="2.0">
 
   <xsl:template match="t:supplied[@reason='lost']">
       <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and child::t:*[1][local-name() = 'milestone'][@rend = 'paragraphos']">
@@ -53,10 +53,14 @@
             </xsl:choose>
             <!-- Found in tpl-cert-low.xsl -->
         <xsl:call-template name="cert-low"/>
-            <!-- Found in tpl-reasonlost.xsl -->
+            <!-- if supplied is immediately followed by inWord, end-of-line hyphen will be omitted so include it here instead -->
             <xsl:if test="following-sibling::node()[1][local-name()='lb' and @type='inWord']">
-               <xsl:text>-</xsl:text>
+               <!-- unless this is in the app part of a choice/subst/app in ddbdp -->
+               <!--<xsl:if test="not()">-->
+                  <xsl:text>-</xsl:text>
+               <!--</xsl:if>-->
             </xsl:if>
+            <!-- Found in tpl-reasonlost.xsl -->
         <xsl:call-template name="lost-closer"/>
          </xsl:otherwise>
       </xsl:choose>

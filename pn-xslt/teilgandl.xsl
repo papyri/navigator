@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teilgandl.xsl 1447 2008-08-07 12:57:55Z zau $ -->
+<!-- $Id: teilgandl.xsl 1541 2011-08-18 15:55:39Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                version="2.0">
   <!-- Called by [htm|txt]-teilgandl.xsl -->
 
   <xsl:template name="line-context">
@@ -13,7 +13,7 @@
          <xsl:variable name="pre-lb">
             <xsl:value-of select="preceding-sibling::t:lb[1]/@n"/>
          </xsl:variable>
-         <xsl:if test="$pre-lb mod $line-inc = 0 and not($pre-lb = 0)">
+         <xsl:if test="number($pre-lb) and $pre-lb mod $line-inc = 0 and not($pre-lb = 0)">
             <xsl:choose>
                <xsl:when test="@type = 'inWord'">
                   <xsl:text>(</xsl:text>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teiterm.xsl 1567 2008-08-21 16:38:31Z zau $ -->
+<!-- $Id: htm-teiterm.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                version="2.0">
   
   <xsl:template match="t:term">
       <xsl:choose>
@@ -15,13 +15,13 @@
                   <xsl:apply-templates/>
                </xsl:when>
                <xsl:otherwise>
-                 <xsl:choose>
-                   <xsl:when test="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]/text()"><span class="term">
-                   <xsl:apply-templates/>
-                   <span class="gloss" style="display:none"><xsl:value-of select="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]"/></span>                 
-                   </span></xsl:when>
-                   <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
-                 </xsl:choose>
+                  <xsl:choose>
+                    <xsl:when test="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]/text()"><span class="term">
+                    <xsl:apply-templates/>
+                    <span class="gloss" style="display:none"><xsl:value-of select="document($hgv-gloss)//t:item[@xml:id = $term]/t:gloss[@xml:lang = $lang]"/></span>                 
+                    </span></xsl:when>
+                    <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
+                  </xsl:choose>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:when>

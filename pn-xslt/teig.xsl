@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teig.xsl 1447 2008-08-07 12:57:55Z zau $ -->
+<!-- $Id: teig.xsl 1533 2011-08-08 16:00:44Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="1.0">
+   xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="2.0">
    <!-- Templates imported by [htm|txt]-teig.xsl -->
 
    <xsl:template name="lb-dash">
-      <xsl:if test="following::t:*[1][local-name() = 'lb'][@type='inWord']">
+      <xsl:if test="following::node()[1][local-name() = 'lb'][@type='inWord'] or
+         following::node()[1][normalize-space(.)=''][following::node()[1][local-name() = 'lb'][@type='inWord']]">
          <xsl:text>- </xsl:text>
       </xsl:if>
    </xsl:template>
@@ -96,6 +97,10 @@
             <xsl:text>☧</xsl:text>
             <xsl:call-template name="g-unclear-symbol"/>
          </xsl:when>
+         <xsl:when test="@type='dash'">
+            <xsl:text>—</xsl:text>
+            <xsl:call-template name="g-unclear-symbol"/>
+         </xsl:when>
          <xsl:when test="@type='dipunct'">
             <xsl:text>∶</xsl:text>
             <xsl:call-template name="g-unclear-symbol"/>
@@ -164,6 +169,10 @@
          </xsl:when>
          <xsl:when test="@type='parens-lower-closing'">
             <xsl:text>⎠</xsl:text>
+            <xsl:call-template name="g-unclear-symbol"/>
+         </xsl:when>
+         <xsl:when test="@type = 'rho-cross'">
+            <xsl:text>&#x2ce8;</xsl:text>
             <xsl:call-template name="g-unclear-symbol"/>
          </xsl:when>
          <xsl:when test="@type='slanting-stroke'">

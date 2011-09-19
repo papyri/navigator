@@ -346,16 +346,16 @@ public class DateFacet extends Facet {
                 
                 if(Integer.valueOf(queryName) >= bottomLimit){
                 
-                long rawValue = getNextSignificantCount(facetQueries, entry.getValue());
-                
-                long queryCount = totalCount - rawValue - missingCount;
-                
-                if(queryName != null && !queryName.equals("") && !queryName.equals("null") && queryCount > 0){
-                    
-                    Count count = new Count(new FacetField(field.name()), queryName, queryCount);
-                    valuesAndCountsComplement.add(count);                 
-                    
-                }
+                    long rawValue = getNextSignificantCount(facetQueries, entry.getValue());
+
+                    long queryCount = totalCount - rawValue - missingCount;
+
+                    if(queryName != null && !queryName.equals("") && !queryName.equals("null") && queryCount > 0){
+
+                        Count count = new Count(new FacetField(field.name()), queryName, queryCount);
+                        valuesAndCountsComplement.add(count);                 
+
+                    }
                 
                 }
                 
@@ -423,7 +423,7 @@ public class DateFacet extends Facet {
             String value = valueAndCount.getName();
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
-            String selected = onlyOneValue ? " selected=\"true\"" : "";
+            String selected = (onlyOneValue || value.equals(terminusAfterWhich)) ? " selected=\"true\"" : "";
             html.append("<option");
             html.append(selected);
             html.append(" value=\"");
@@ -478,7 +478,7 @@ public class DateFacet extends Facet {
             String value = valueAndCount.getName();
             String displayValue = getDisplayValue(value);
             String count = String.valueOf(valueAndCount.getCount());
-            String selected = onlyOneValue ? " selected=\"true\"" : "";
+            String selected = (onlyOneValue || value.equals(terminusBeforeWhich)) ? " selected=\"true\"" : "";
             html.append("<option");
             html.append(selected);
             html.append(" value=\"");

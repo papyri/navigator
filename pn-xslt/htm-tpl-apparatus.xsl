@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-tpl-apparatus.xsl 1497 2008-08-12 13:51:16Z zau $ -->
+<!-- $Id: htm-tpl-apparatus.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                version="2.0">
   <!-- Apparatus creation: look in tpl-apparatus.xsl for documentation -->
   <xsl:include href="tpl-apparatus.xsl"/>
 
@@ -32,7 +32,7 @@
                   <xsl:when test="local-name() = 'del'">
                      <br/>
                   </xsl:when>
-                  <xsl:when test="not(descendant::t:choice[child::t:sic and child::t:corr] | descendant::t:subst | descendant::t:app)">
+                  <xsl:when test="not(descendant::t:choice | descendant::t:subst | descendant::t:app)">
                      <br/>
                   </xsl:when>
                </xsl:choose>
@@ -50,7 +50,7 @@
     <xsl:if test="not(ancestor::t:div[@type = 'translation'])">
       <!-- Only produces a link if it is not nested in an element that would be in apparatus -->
       <xsl:if test="not((local-name() = 'choice' or local-name() = 'subst' or local-name() = 'app')
-         and (ancestor::t:choice[child::t:sic and child::t:corr] or ancestor::t:subst or ancestor::t:app))">
+         and (ancestor::t:choice or ancestor::t:subst or ancestor::t:app))">
             <xsl:variable name="app-num">
                <xsl:value-of select="name()"/>
                <xsl:number level="any" format="01"/>

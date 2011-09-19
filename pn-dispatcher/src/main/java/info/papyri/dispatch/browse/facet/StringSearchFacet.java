@@ -30,8 +30,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  */
 public class StringSearchFacet extends Facet{
     
-    enum SearchType{ PHRASE, SUBSTRING, LEMMAS, PROXIMITY, WITHIN  };
-    enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATIONS };
+    enum SearchType{ PHRASE, SUBSTRING, LEMMAS, PROXIMITY, WITHIN, USER_DEFINED  };
+    enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATIONS, USER_DEFINED };
     enum SearchOption{ BETA, NO_CAPS, NO_MARKS };
 
     private HashMap<Integer, SearchConfiguration> searchConfigurations = new HashMap<Integer, SearchConfiguration>();
@@ -50,6 +50,12 @@ public class StringSearchFacet extends Facet{
         while(scit.hasNext()){
             
             SearchConfiguration nowConfig = scit.next();
+            if(nowConfig.getSearchType().equals(SearchType.USER_DEFINED)){
+                
+                solrQuery.addFilterQuery(nowConfig.getSearchString());
+                continue;
+                
+            }
             String rawField = "+";
             rawField += nowConfig.getField().name() + ":";
             String searchString = "(" + nowConfig.getSearchString() + ")";
@@ -351,10 +357,10 @@ public class StringSearchFacet extends Facet{
         SearchConfiguration config = searchConfigurations.get(k);
         
         StringBuilder dv = new StringBuilder();
-        dv.append(config.getRawWord());
+        dv.append(config.getRawWord().replaceAll("\\^", "#"));
         dv.append("<br/>");
         dv.append("Target: ");
-        dv.append(config.getSearchTarget().name().toLowerCase());
+        dv.append(config.getSearchTarget().name().toLowerCase().replace("_", "-"));
         dv.append("<br/>");
         
         if(config.getBetaOn()) dv.append("Beta: On<br/>");
@@ -385,7 +391,7 @@ public class StringSearchFacet extends Facet{
         
         SearchConfiguration config = searchConfigurations.get(Integer.valueOf(paramNumber));
         
-        String searchType = config.getSearchType().name().toLowerCase();
+        String searchType = config.getSearchType().name().toLowerCase().replaceAll("_", "-");
            
         String firstCap = searchType.substring(0, 1).toUpperCase();
         return firstCap + searchType.substring(1, searchType.length());
@@ -615,11 +621,7 @@ public class StringSearchFacet extends Facet{
          */
         private SolrField field;
         
-        private SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean beta, Boolean caps, Boolean marks, int wi){
-            
-            // TODO: possible that keyword will already have a field specification - will
-            // need to split on colon, trim, and make sure that string matches an existing
-            // <code>SolrField</code>
+        SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean beta, Boolean caps, Boolean marks, int wi){
             
             target = tgt;
             type = ty;
@@ -674,6 +676,8 @@ public class StringSearchFacet extends Facet{
          */
         
         private SolrField setField(SearchType st, SearchTarget t, Boolean noCaps, Boolean noMarks) throws FieldNotFoundException{
+            
+            if(st.equals(SearchType.USER_DEFINED)) return null;
             
             if(st.equals(SearchType.SUBSTRING)) return SolrField.transcription_ngram_ia;
             
@@ -742,10 +746,27 @@ public class StringSearchFacet extends Facet{
                 cleanString = FacetBrowser.SOLR_UTIL.expandLemmas(cleanString);
                                   
             }
-            cleanString = cleanString.replace("ς", "σ");
-            if(type.equals(SearchType.SUBSTRING)) cleanString = cleanString.replace("#", "\\^");
+            cleanString = cleanString.replaceAll("ς", "σ");
+            cleanString = cleanString.replaceAll("#", "^");
+            cleanString = cleanString.replaceAll("\\^", "\\\\^");   
+            if(st.equals(SearchType.USER_DEFINED)) return getDirectEntryString(cleanString);
             return cleanString;
             
+        }
+        
+        String getDirectEntryString(String rawInput) throws MalformedURLException, SolrServerException{
+            
+            String deString = rawInput;
+            if(!deString.contains("lem:")) return deString;
+            String opener = deString.substring(0, deString.indexOf("lem:"));
+            int searchTermStart = deString.indexOf("lem:") + "lem:".length();
+            String remainder = deString.substring(searchTermStart);
+            int endTerm = remainder.indexOf(" ") == -1 ? remainder.length() : remainder.indexOf(" ");
+            String searchTerm = remainder.substring(0, endTerm);
+            String expandedSearchTerm = FacetBrowser.SOLR_UTIL.expandLemmas(searchTerm);
+            String query = opener + SolrField.transcription_ia.name() + "(" + expandedSearchTerm + ")" + remainder;
+            return query;
+                    
         }
         
         /**

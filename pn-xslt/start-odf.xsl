@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: start-txt.xsl 1510 2008-08-14 15:27:51Z zau $ -->
+<!-- $Id: start-odf.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
                 xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
                 xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
-                version="1.0">
+                exclude-result-prefixes="t" version="2.0">
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="no"/>
 
