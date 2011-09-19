@@ -1,10 +1,12 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import junit.framework.TestCase;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 
 
 /**
@@ -29,11 +31,11 @@ public class StringSearchFacetTest extends TestCase {
         super.tearDown();
     }
 
+    
+
 
     public void testPullApartParams() {
-        
-        System.out.println("pullApartParams");
-       
+
         HashMap<String, String[]> mockParams = new HashMap<String, String[]>();
         
         // requirements
@@ -71,7 +73,6 @@ public class StringSearchFacetTest extends TestCase {
         
         assertEquals(1, configs.size());
         SearchConfiguration config2 = configs.get(2);
-        System.out.println(config2.getSearchString());
         assertEquals("\"τοῦ\"~10", config2.getSearchString());
         assertEquals(StringSearchFacet.SearchTarget.METADATA, config2.getSearchTarget());
         assertEquals(StringSearchFacet.SearchType.PROXIMITY, config2.getSearchType());
@@ -127,6 +128,18 @@ public class StringSearchFacetTest extends TestCase {
         configs = testInstance.pullApartParams(mockParams);
         assertEquals(1, configs.size());
         assertEquals(0, configs.get(6).getProximityDistance());
+        
+        mockParams.clear();
+        
+        mockParams.put("STRING7", new String[]{"γγελιας# γους#"});
+        mockParams.put("type7", new String[]{ StringSearchFacet.SearchType.SUBSTRING.name()});
+        mockParams.put("target7", new String[]{ StringSearchFacet.SearchTarget.TEXT.name()});
+        mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase(), new String[]{"on"});
+        mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase(), new String[]{"on"});
+        configs.clear();
+        configs = testInstance.pullApartParams(mockParams);
+        System.out.println(configs.get(7).getSearchString());
+        
     }
     
     public void testGetFacetConstraints(){
@@ -141,6 +154,7 @@ public class StringSearchFacetTest extends TestCase {
         
         
     }
+    
 
 
 }

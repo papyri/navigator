@@ -63,6 +63,14 @@
          <param-name>htmlPath</param-name>    
          <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
+        <init-param>
+        <param-name>pnSearchPath</param-name>    
+        <param-value>/pn-search</param-value>
+        </init-param>
+        <init-param>
+            <param-name>facetBrowserPath</param-name>
+            <param-value>/search</param-value>
+            </init-param>
     </servlet>
     <servlet>
         <servlet-name>ImageMetadata</servlet-name>
@@ -87,6 +95,22 @@
          <param-name>htmlPath</param-name>    
          <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
+        <init-param>
+        <param-name>sparqlGraph</param-name>    
+        <param-value>rmi://localhost/papyri.info#pi</param-value>
+        </init-param>
+        <init-param>
+        <param-name>browseServletPath</param-name>    
+        <param-value>/browse</param-value>
+        </init-param>
+        <init-param>
+        <param-name>pnSearchPath</param-name>    
+        <param-value>/pn-search</param-value>
+        </init-param>
+                <init-param>
+            <param-name>facetBrowserPath</param-name>
+            <param-value>/search</param-value>
+            </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
@@ -96,10 +120,10 @@
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+   <!-- <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/search</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -110,7 +134,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FacetBrowser</servlet-name>
-        <url-pattern>/faceted/*</url-pattern>
+        <url-pattern>/search</url-pattern>
         </servlet-mapping>
     <session-config>
         <session-timeout>

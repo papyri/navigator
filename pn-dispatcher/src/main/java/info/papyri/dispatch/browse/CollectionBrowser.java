@@ -59,12 +59,13 @@ public class CollectionBrowser extends HttpServlet {
     static URL browseURL;
     /** Pagination constant */
     static int docsPerPage = 50;
-    static String SPARQL_GRAPH = "<rmi://localhost/papyri.info#pi>";
+    static String SPARQL_GRAPH;
     static String SOLR_URL;
     static String SPARQL_URL;
-    static String BROWSE_SERVLET = "/browse";
-    static String PN_SEARCH = "pn-search/";
+    static String BROWSE_SERVLET;
+    static String PN_SEARCH;
     static String BASE;
+    static String FACET_SERVLET;
     /* an ordered list of the classification hierarchy: collection (ddbdp | hgv | apis), series, volume, and item identifer.
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
@@ -78,8 +79,12 @@ public class CollectionBrowser extends HttpServlet {
 
         SOLR_URL = config.getInitParameter("solrUrl");
         SPARQL_URL = config.getInitParameter("sparqlUrl");
+        SPARQL_GRAPH = "<" + config.getInitParameter("sparqlGraph") + ">";
+        BROWSE_SERVLET = config.getInitParameter("browseServletPath");
+        FACET_SERVLET = config.getInitParameter("facetBrowserPath");
         home = config.getInitParameter("home");
         BASE = config.getInitParameter("htmlPath");
+        PN_SEARCH = config.getInitParameter("pnSearchPath");
         try {
             
             browseURL = new URL("file://" + home + "/" + "browse.html");
@@ -511,6 +516,8 @@ public class CollectionBrowser extends HttpServlet {
                 String preferredId = this.getPreferredId(pathParts, allIds, doc);
                 sortIds(allIds);
                 URL url = new URL((String)doc.getFieldValue(SolrField.id.name()));
+                Boolean titleIsNull = doc.getFieldValue(SolrField.apis_title.name()) == null;
+                ArrayList<String> documentTitles = titleIsNull ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_title.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
                 Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
@@ -525,7 +532,7 @@ public class CollectionBrowser extends HttpServlet {
                 
                     previousIds.add(preferredId);
                     allIds.remove(preferredId);
-                    record = new DocumentBrowseRecord(preferredId, allIds, url, place, date, language, imagePaths, translationLanguages, hasIllustration);
+                    record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration);
                     records.add(record);
                 
                 }

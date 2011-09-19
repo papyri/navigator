@@ -44,8 +44,8 @@ public class IdComparator implements Comparator {
             
             if(numberCheck.matcher(id1chunk).matches()){
 
-                if(Integer.valueOf(id1chunk) < Integer.valueOf(id2chunk)) return -1;
-                if(Integer.valueOf(id1chunk) > Integer.valueOf(id2chunk)) return 1;
+                if(Long.valueOf(id1chunk) < Long.valueOf(id2chunk)) return -1;
+                if(Long.valueOf(id1chunk) > Long.valueOf(id2chunk)) return 1;
                 
             }
             else{

@@ -3,7 +3,6 @@ package info.papyri.dispatch.browse.facet;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +87,7 @@ public class HasImagesFacet extends Facet {
         html.append(clss);
         if(intObj.isOn()) html.append(" checked");
         if(intObj.isOn() && moreThanOneOn && !intObj.hasRecord()) html.append(" disabled");
+        html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.INT.name());
@@ -104,6 +104,7 @@ public class HasImagesFacet extends Facet {
         html.append(clss);
         if(extObj.isOn()) html.append(" checked");
         if(extObj.isOn() && moreThanOneOn && !extObj.hasRecord()) html.append(" disabled");
+        html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.EXT.name());
@@ -120,6 +121,7 @@ public class HasImagesFacet extends Facet {
         html.append(clss);
         if(prObj.isOn()) html.append(" checked");
         if(prObj.isOn() && moreThanOneOn && !prObj.hasRecord()) html.append(" disabled");
+        html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.PRINT.name());
@@ -127,7 +129,7 @@ public class HasImagesFacet extends Facet {
         html.append(close);
         html.append(ImageParam.PRINT.getLabel());
         html.append(lblend);
-              
+        html.append("<input type=\"submit\" value=\"Go\" id=\"img-go\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");              
         html.append("</p>");
         html.append("</div><!-- closing .facet-widget -->");
         return html.toString();
@@ -295,7 +297,7 @@ public class HasImagesFacet extends Facet {
     }
    
    @Override
-   public String getDisplayName(String facetParam){
+   public String getDisplayName(String facetParam, java.lang.String facetValue){
        
        ArrayList<ImageParam> onParams = getAllOnImageParams();
        String displayMsg = "";

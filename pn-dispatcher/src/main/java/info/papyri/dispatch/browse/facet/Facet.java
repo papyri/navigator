@@ -116,10 +116,11 @@ abstract public class Facet {
         html.append("<p>");
         // if only one value possible, then gray out control
         Boolean onlyOneValue = valuesAndCounts.size() == 1;
-        String disabled = onlyOneValue ? " disabled=\"true\"" : "";             
-        String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
+        Boolean allSelected = facetConstraints.size() == valuesAndCounts.size();
+        String disabled = (onlyOneValue || allSelected) ? " disabled=\"true\"" : "";             
+        String defaultSelected = (onlyOneValue || allSelected) ? "" : "selected=\"true\"";
         html.append("<span class=\"option-label\">");
-        html.append(getDisplayName(null));
+        html.append(getDisplayName(null, null));
         html.append("</span>");
         html.append("<select");
         html.append(disabled);
@@ -132,6 +133,8 @@ abstract public class Facet {
         html.append(Facet.defaultValue);
         html.append("</option>");
         
+        Boolean oneConstraintSet = facetConstraints.size() == 1;
+                
         Iterator<Count> vcit = valuesAndCounts.iterator();
         
         while(vcit.hasNext()){
@@ -140,9 +143,9 @@ abstract public class Facet {
             String value = valueAndCount.getName();
             String displayValue = getDisplayValue(value);
             // truncate if too long; otherwise control potentially takes up whole screen
-            if(displayValue.length() > 45) displayValue = displayValue.substring(0, 45);    
+            if(displayValue.length() > 35) displayValue = displayValue.substring(0, 35);    
             String count = String.valueOf(valueAndCount.getCount());
-            String selected = onlyOneValue ? " selected=\"true\"" : "";
+            String selected = onlyOneValue || (oneConstraintSet && value.equals(facetConstraints.get(0)))? " selected=\"true\"" : "";
             html.append("<option");
             html.append(selected);
             html.append(" value=\"");
@@ -356,7 +359,7 @@ abstract public class Facet {
         
     }
     
-    public String getDisplayName(String facetParam){
+    public String getDisplayName(String facetParam, java.lang.String facetValue){
         
         return displayName;
         

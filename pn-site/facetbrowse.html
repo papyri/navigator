@@ -8,35 +8,76 @@
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
       <!--[if IE]>
     <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <![endif]-->
     <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>
+
     <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
    	<script src="/js/guidesearch.js" type="text/javascript" charset="utf-8"></script>
    <style type="text/css">
 
+      body, html{
+      
+      	height: 100%;
+		
+      } 
+
+	  
+	  #sparql-wrap{
+	  
+	  	width: 1400px;
+	  	margin-left: auto;
+	  	margin-right: auto;
+	  	word-wrap: break-word;
+	  
+	  }
+
+	  div.content{
+	  
+	  	padding-bottom: 0px;
+	  	min-height: 100%;
+	  
+	  }
+
       #facet-wrapper{
       
-        width:  96%;
         width: 100%;
+        min-height: 100%;
         float: left;
         clear: both;
-      
+      	
       }
       
       #facet-widgets-wrapper{
       
         position: relative;
-        width: 600px;
         float: left;
         margin-right: 25px;
-        margin-bottom: 50px;
-        
- 
+        padding-bottom: 50px;
+        min-height: 100%;
+        width: 500px; 
+        min-width: 500px;
       }
+      
+      #facet-widgets-wrapper.search-closed{
+      
+      	position: absolute;
+      	left: -23px;
+      	min-width: 0px;
+      	width: 0px;
+      
+      }
+      
+	 .search-closed h2, .search-closed form{
+	 
+	 	display: none;
+	 
+	 }
       
       #facet-widgets-wrapper form{
       
@@ -50,6 +91,46 @@
       	position: absolute;
       	right: 0;
       	top: -40px;
+      
+      }
+      
+      div.nav{
+      	
+      	z-index: 500;
+      
+      }
+      
+     /* search pane toggle */
+      .search table{
+      
+      	width: 100%;
+      
+      }
+
+      
+      #search-toggle{
+      
+      	cursor: pointer;
+      	width: 20px;
+      	height: 100%;	
+		position: absolute;
+		border: 1px solid lightGrey;
+		background: url(/images/greenfade.png) 100% 100% repeat-y;
+		font-weight: normal;
+		color: #555;
+		right: -45px;
+
+      }
+
+      
+      #search-toggle-pointer{
+      
+      	position: relative;
+      	color: #000;
+      	font-size: 10px;
+      	font-weight: bold;
+      	width: 100%;
+      	text-align: center;
       
       }
       
@@ -85,16 +166,51 @@
       #vals-and-records-wrapper{
       
         float: left;
-        width: 57.5%;
-        
+        margin-left: 23px;
+        padding-left: 1%;
+        padding-right: 1%;
+        min-height: 1100px;
+        /*min-width: 400px;*/
+
+      }
+      
+      .vals-and-records-min .title-long{
+      	
+      	display: none;
+      	
+      }
+      
+      .vals-and-records-max .title-short{
+      
+      	display: none;
+      
+      }
+      
+      .title-short, .title-long{
+      
+      	white-space: nowrap;
+      
+      }
+      
+      .title-none{
+      
+      	text-align: center;
+      
+      }
+      
+      #facet-stringsearch-wrapper{
+      
+      	width: 450px;
+      
+      
       }
       
       #previous-values{
       
         position: relative;
-        width: 100%;
+        width: 99%;
         border: 3px solid gray;
-        padding: 10px 5px; 
+        padding: 10px 0.5%; 
         margin-top: 15px;
 
       }
@@ -109,7 +225,7 @@
         margin-bottom: 5px;
         float: left;
         margin-left: 10px;
-        
+        width: 100%;
       }
       
       .constraint-label{
@@ -134,10 +250,31 @@
       
       /* selectors for img-facet previous constraints */
       
+      .prev-constraint-wrapper{
+      
+      	float: left;
+      	width: 31%;
+      	margin-right: 2%;
+      	position: relative;
+      
+      }
+      
+      .prev-constraint-wrapper:after{
+      
+      	content:".";
+      	display: block;
+      	height: 0;
+      	clear: both;
+      	visibility: hidden;
+      	
+      
+      }
+      
       #prev-constraint-img{
       
       	position: relative;
-		width: 18em;
+      	margin-top: 5px;
+		
       }
       
       #prev-constraint-img .semicolon{
@@ -154,11 +291,18 @@
       
       #prev-constraint-img .facet-constraint{
       	
-      	width: 19em;
       	margin-top: 0px;
       	margin-bottom: 0px;
       	
       }
+     
+     #img-go{
+     
+     	position: absolute;
+     	right: 1.2em;
+     	bottom: 0px;
+     
+     }
      
      /* pagination selectors */
      
@@ -194,7 +338,7 @@
 	  
 	  #series-coll-wrapper{
 	  
-	  	width: 55%;
+	  	width: 65%;
 	  
 	  }
 	  
@@ -206,7 +350,7 @@
 	  
 	  #vol-idno-wrapper{
 	  
-	  	width: 45%;
+	  	width: 35%;
 	  
 	  }
 	  
@@ -274,6 +418,46 @@
         width: 100%;
         overflow: hidden;
       
+      }
+      
+      div.stringsearch-section p{
+      
+      	padding-bottom: 20px;
+      	border-bottom: thin solid gray;
+      
+      }
+      
+      div.stringsearch-section:last-child p{
+      
+      	padding-bottom: 4px;
+      	border-bottom: none;
+      
+      }
+      
+      #marks, #caps, #betaYes{
+      
+      	margin-left: 1em;
+      
+      }
+      
+      .vol-disabled{
+      	
+      	color: #444;
+      	font-style: italic;
+      
+      }
+      
+      #id-idno:disabled, #id-volume:disabled{
+      
+       	color: #444;
+      	font-style: italic;     	
+      
+      }
+      
+      .autocomplete-values{
+      
+		display: none;
+	
       }
       
     </style>
