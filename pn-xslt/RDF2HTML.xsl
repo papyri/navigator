@@ -535,7 +535,7 @@
       <th class="rowheader" rowspan="1">Provenance</th>
       <td class="mdprov">
         <xsl:choose>
-          <xsl:when test="local-name(.) = 'origPlace'"><xsl:value-of select="."/></xsl:when>
+          <xsl:when test="local-name(.) = 'origPlace'"><xsl:apply-templates select="."/></xsl:when>
           <xsl:otherwise><xsl:if test="t:placeName[@type='ancientFindspot']"><xsl:value-of select="t:placeName[@type='ancientFindspot']"/><xsl:if test="t:geogName">, </xsl:if></xsl:if>
             <xsl:if test="t:geogName[@type='nome']"><xsl:value-of select="t:geogName[@type='nome']"/><xsl:if test="t:geogName[@type='ancientRegion']">, </xsl:if></xsl:if>
             <xsl:value-of select="t:geogName[@type='ancientRegion']"/></xsl:otherwise>
@@ -543,6 +543,17 @@
       </td>
     </tr>
   </xsl:template>
+  
+  <!-- Commented out until HGV XML makes sense
+  <xsl:template match="t:origPlace/t:placeName">
+    <xsl:choose>
+      <xsl:when test="t:placeName"> 
+        <xsl:apply-templates select="t:placeName[@type"></xsl:apply-templates>
+      </xsl:when> 
+      <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
+    </xsl:choose>
+    </xsl:template>
+  -->
   
   <!-- Material -->
   <xsl:template match="t:material" mode="metadata">
