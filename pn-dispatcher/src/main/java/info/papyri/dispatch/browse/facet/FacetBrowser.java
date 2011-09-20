@@ -30,7 +30,7 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 
-@WebServlet(name = "FacetBrowser", urlPatterns = {"/dispatch/faceted"})
+@WebServlet(name = "FacetBrowser", urlPatterns = {"/search"})
 
 /**
  * Enables faceted browsing of the pn collections
