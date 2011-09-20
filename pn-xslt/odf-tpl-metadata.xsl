@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-tpl-metadata.xsl 1548 2008-08-20 09:54:25Z zau $ -->
+<!-- $Id: odf-tpl-metadata.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
                 xmlns="http://www.w3.org/1999/xhtml"
                 exclude-result-prefixes="t" 
-                version="1.0">
+                version="2.0">
 
   <!-- Called from start-edition.xsl -->
   <xsl:param name="sammelbuchIndex"> 

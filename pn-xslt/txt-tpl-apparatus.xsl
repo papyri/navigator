@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: txt-tpl-apparatus.xsl 1448 2008-08-07 12:58:50Z zau $ -->
+<!-- $Id: txt-tpl-apparatus.xsl 1543 2011-08-31 15:47:37Z ryanfb $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                version="2.0">
   <!-- Apparatus creation: look in tpl-apparatus.xsl for documentation -->
   <xsl:include href="tpl-apparatus.xsl"/>
   
@@ -31,7 +31,7 @@ Apparatus
         <xsl:call-template name="ddbdp-app"/>
         
             <!-- Only creates a new line if the following is not true -->
-        <xsl:if test="not(descendant::t:choice[child::t:sic and child::t:corr] | descendant::t:subst | descendant::t:app)">
+        <xsl:if test="not(descendant::t:choice | descendant::t:subst | descendant::t:app)">
                <xsl:text>
 &#xD;</xsl:text>
             </xsl:if>

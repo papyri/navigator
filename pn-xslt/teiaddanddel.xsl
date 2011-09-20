@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teiaddanddel.xsl 1510 2008-08-14 15:27:51Z zau $ -->
+<!-- $Id: teiaddanddel.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="1.0">
+   xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="2.0">
    <!-- Contains templates for subst, add and del -->
    
    <!-- Imported by htm-teiaddanddel.xsl or called directly from start-txt.xsl -->

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teispace.xsl 1450 2008-08-07 13:17:24Z zau $ -->
+<!-- $Id: teispace.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" version="1.0">
+   xmlns:t="http://www.tei-c.org/ns/1.0"
+   exclude-result-prefixes="t" version="2.0">
    <!-- Found in [htm|txt]-teispace.xsl -->
 
    <xsl:template match="t:space">
@@ -38,20 +39,42 @@
             <xsl:choose>
                <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
                   <xsl:text>vac.</xsl:text>
-                  <xsl:if test="@quantity">
-                     <xsl:value-of select="@quantity"/>
-                     <xsl:if test="@unit='line'">
+                  <xsl:choose>
+                     <xsl:when test="@quantity">
+                        <xsl:if test="@precision='low'">
+                           <xsl:text>ca.</xsl:text>
+                        </xsl:if>
+                        <xsl:value-of select="@quantity"/>
+                     </xsl:when>
+                     <xsl:when test="@atLeast and @atMost">
+                        <xsl:value-of select="@atLeast"/>
+                        <xsl:text>-</xsl:text>
+                        <xsl:value-of select="@atMost"/>
+                     </xsl:when>
+                     <xsl:when test="@atLeast ">
+                        <xsl:text>&#x2265;</xsl:text>
+                        <xsl:value-of select="@atLeast"/>
+                     </xsl:when>
+                     <xsl:when test="@atMost ">
+                        <xsl:text>&#x2264;</xsl:text>
+                        <xsl:value-of select="@atMost"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:text>?</xsl:text>
+                     </xsl:otherwise>
+                  </xsl:choose>
+                  <xsl:if test="@unit='line'">
                         <xsl:text> line</xsl:text>
-                        <xsl:if test="@quantity > 1">
+                        <xsl:if test="@quantity > 1 or @extent='unknown' or @atLeast or @atMost">
                            <xsl:text>s</xsl:text>
                         </xsl:if>
                      </xsl:if>
-                  </xsl:if>
-
+                  
                   <xsl:if test="child::t:certainty[@match='..']">
                      <xsl:text>(?)</xsl:text>
                   </xsl:if>
                </xsl:when>
+               
                <xsl:when test="$leiden-style='london'">
                   <xsl:choose>
                      <xsl:when test="@extent = 'unknown'">
@@ -117,22 +140,17 @@
                            </xsl:with-param>
                         </xsl:call-template>
                      </xsl:when>
-                     <xsl:when test="@quantity = string(1) and @unit='line'">
+                     <xsl:when test="@quantity and @unit='line'">
                         <xsl:call-template name="space-content">
-                           <xsl:with-param name="vacat">vac.</xsl:with-param>
-                           <xsl:with-param name="extent">
-                              <xsl:value-of select="@quantity"/> line<xsl:value-of
-                                 select="$precision"/>
-                           </xsl:with-param>
-                        </xsl:call-template>
-                     </xsl:when>
-                     <xsl:when test="contains('23456789', @extent) and @unit='line'">
                         <!-- Found in [htm|txt]-teispace.xsl -->
-                        <xsl:call-template name="space-content">
                            <xsl:with-param name="vacat">vac.</xsl:with-param>
                            <xsl:with-param name="extent">
-                              <xsl:value-of select="@quantity"/> lines<xsl:value-of
-                                 select="$precision"/>
+                              <xsl:value-of select="@quantity"/>
+                              <xsl:text> line</xsl:text>
+                              <xsl:if test="@quantity > 1">
+                                 <xsl:text>s</xsl:text>
+                              </xsl:if>
+                              <xsl:value-of select="$precision"/>
                            </xsl:with-param>
                         </xsl:call-template>
                      </xsl:when>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: txt-teiref.xsl 1450 2008-08-07 13:17:24Z zau $ -->
+<!-- $Id: txt-teiref.xsl 1543 2011-08-31 15:47:37Z ryanfb $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tei="http://www.tei-c.org/ns/1.0"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                version="2.0">
   <xsl:include href="teiref.xsl"/>
 
   <xsl:template match="t:ref">

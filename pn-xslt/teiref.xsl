@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teiref.xsl 1449 2008-08-07 12:59:21Z zau $ -->
+<!-- $Id: teiref.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://www.tei-c.org/ns/1.0"
-                version="1.0">
+                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                version="2.0">
   <!-- Called from [htm|txt]-teiref.xsl -->
   
   <xsl:template name="reprint-text">
@@ -12,7 +12,9 @@
       <xsl:text>Reprinted </xsl:text>
       <xsl:value-of select="$direction"/>
       <xsl:text>: </xsl:text>
-      <a href="/ddbdp/{@n}"><xsl:value-of select="."/></a>
+      <xsl:call-template name="divide-links">
+         <xsl:with-param name="val" select="@n"/>
+      </xsl:call-template>
       <xsl:text>] </xsl:text>
       <xsl:apply-templates/>
   </xsl:template>

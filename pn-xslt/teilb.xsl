@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teilb.xsl 1447 2008-08-07 12:57:55Z zau $ -->
+<!-- $Id: teilb.xsl 1541 2011-08-18 15:55:39Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
-                version="1.0">
+                version="2.0">
   <!-- Imported by [htm|txt]-teilb.xsl -->
   
   <xsl:template match="t:lb">
@@ -20,7 +20,7 @@
         <xsl:when test="$verse-lines = 'on' and not(number(@n)) and ($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
                <xsl:call-template name="lb-content"/>
             </xsl:when>
-            <xsl:when test="@n mod $line-inc = 0 and not(@n = 0) and not(starts-with($leiden-style, 'edh'))">
+            <xsl:when test="number(@n) and @n mod $line-inc = 0 and not(@n = 0) and not(starts-with($leiden-style, 'edh'))">
                <xsl:call-template name="lb-content"/>
             </xsl:when>
          </xsl:choose>
