@@ -196,10 +196,8 @@ public class IdentifierFacet extends Facet{
     public String getSpecifierClauseAsJavaRegex(){
         
         String specifierClause = getCompleteSpecifierClause();
-        System.out.println("Specifier clause is " + specifierClause);
         specifierClause = specifierClause.replace("*", ".+?");
         specifierClause = "^" + specifierClause + "$";
-        System.out.println("Replaced clause is " + specifierClause);
         return specifierClause;
              
     }

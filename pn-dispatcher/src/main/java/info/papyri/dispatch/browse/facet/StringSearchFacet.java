@@ -7,13 +7,18 @@ import info.papyri.dispatch.browse.SolrField;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 
 /**
  * Replicates the functioning of <code>info.papyri.dispatch.Search</code> in a 
@@ -35,7 +40,8 @@ public class StringSearchFacet extends Facet{
     enum SearchOption{ BETA, NO_CAPS, NO_MARKS };
 
     private HashMap<Integer, SearchConfiguration> searchConfigurations = new HashMap<Integer, SearchConfiguration>();
-    
+    private static String morphSearch = "morph-search/";
+
     public StringSearchFacet(){
         
         super(SolrField.transcription_ngram_ia, FacetParam.STRING, "String search");
@@ -725,31 +731,32 @@ public class StringSearchFacet extends Facet{
         
         private String transformSearchString(String rawInput, SearchType st, Boolean beta, Boolean noCase, Boolean noMarks) throws SolrServerException, MalformedURLException, Exception{
             
-            String cleanString = rawInput;
-            
-            if(beta){
+            if(st.equals(SearchType.USER_DEFINED)) return getDirectEntryString(rawInput);
 
+            String cleanString = rawInput;
+            if(beta){
+                
                 TransCoder tc = new TransCoder("BetaCodeCaps", "UnicodeC");
                 cleanString = tc.getString(cleanString);
                 cleanString = cleanString.replace("ΑΝΔ", "AND").replace("ΟΡ", "OR").replace("ΝΟΤ", "NOT");
 
+            }
+            if(SearchType.LEMMAS.equals(st)){
+
+                cleanString = FacetBrowser.SOLR_UTIL.expandLemmas(cleanString);
+                if("".equals(cleanString)) cleanString = "NO LEMMA MATCH";
+                                  
             }
             // no transform needed for nocaps text - performed by queryanalyzer
             if(noMarks){
                 
                 cleanString = FileUtils.stripDiacriticals(cleanString);
                 
-                
+              
             }
-            if(SearchType.LEMMAS.equals(st)){
-                 
-                cleanString = FacetBrowser.SOLR_UTIL.expandLemmas(cleanString);
-                                  
-            }
-            cleanString = cleanString.replaceAll("ς", "σ");
             cleanString = cleanString.replaceAll("#", "^");
-            cleanString = cleanString.replaceAll("\\^", "\\\\^");   
-            if(st.equals(SearchType.USER_DEFINED)) return getDirectEntryString(cleanString);
+            cleanString = cleanString.replaceAll("\\^", "\\\\^"); 
+            cleanString = cleanString.replaceAll("ς", "σ");
             return cleanString;
             
         }
@@ -757,14 +764,19 @@ public class StringSearchFacet extends Facet{
         String getDirectEntryString(String rawInput) throws MalformedURLException, SolrServerException{
             
             String deString = rawInput;
+            deString = deString.replaceAll("#", "^");
+            deString = deString.replaceAll("\\^", "\\\\^"); 
             if(!deString.contains("lem:")) return deString;
             String opener = deString.substring(0, deString.indexOf("lem:"));
             int searchTermStart = deString.indexOf("lem:") + "lem:".length();
             String remainder = deString.substring(searchTermStart);
             int endTerm = remainder.indexOf(" ") == -1 ? remainder.length() : remainder.indexOf(" ");
             String searchTerm = remainder.substring(0, endTerm);
-            String expandedSearchTerm = FacetBrowser.SOLR_UTIL.expandLemmas(searchTerm);
-            String query = opener + SolrField.transcription_ia.name() + "(" + expandedSearchTerm + ")" + remainder;
+            String endQuery = remainder.substring(endTerm);
+            String expandedSearchTerm = this.expandLemmas(searchTerm);
+            expandedSearchTerm = expandedSearchTerm.replaceAll("ς", "σ");
+            if("".equals(expandedSearchTerm)) expandedSearchTerm = "NO LEMMA MATCH";
+            String query = opener + SolrField.transcription_ia.name() + ":(" + expandedSearchTerm + ")" + endQuery;
             return query;
                     
         }
@@ -787,6 +799,29 @@ public class StringSearchFacet extends Facet{
            return searchString;
         
         }
+        
+        public String expandLemmas(String query) throws MalformedURLException, SolrServerException {
+            SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
+            StringBuilder exp = new StringBuilder();
+            SolrQuery sq = new SolrQuery();
+            String[] lemmas = query.split("\\s+");
+            for (String lemma : lemmas) {
+              exp.append(" lemma:");
+              exp.append(lemma);
+            }
+            sq.setQuery(exp.toString());
+            sq.setRows(1000);
+            System.out.println("QUERY IS " + sq.toString());
+            QueryResponse rs = solr.query(sq);
+            SolrDocumentList forms = rs.getResults();
+            Set<String> formSet = new HashSet<String>();
+            if (forms.size() > 0) {
+              for (int i = 0; i < forms.size(); i++) {
+                formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
+              }
+            }
+            return FileUtils.interpose(formSet, " OR ");
+          }
        
         
         
