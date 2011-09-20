@@ -532,7 +532,7 @@ public class CollectionBrowser extends HttpServlet {
                 
                     previousIds.add(preferredId);
                     allIds.remove(preferredId);
-                    record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration);
+                    record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, "");
                     records.add(record);
                 
                 }

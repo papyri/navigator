@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 /**
  * The <code>DocumentBrowseRecord</code> class stores summary information regarding
@@ -28,13 +27,11 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String translationLanguages;
   private ArrayList<String> imagePaths;
   private Boolean hasIllustration;
+  private String highlightString;
   
   private static IdComparator documentComparator = new IdComparator();
-
- 
   
-  
-  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus) {
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, String hlite) {
 
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
@@ -46,6 +43,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
     this.hasIllustration = illus;
+    this.highlightString = hlite;
+    
   }
 
   @Override
@@ -54,6 +53,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     StringBuilder anchor = new StringBuilder();
     anchor.append("<a href='");
     anchor.append(url.toString().substring("http://papyri.info".length()));
+    anchor.append(this.getHighlightString());
     anchor.append("'>");
     anchor.append(getDisplayId());
     anchor.append("</a>");
@@ -273,6 +273,14 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
     return documentComparator.compare(thisId, thatId);
 
+  }
+  
+  private String getHighlightString(){
+      
+      if("".equals(highlightString)) return "";
+      return "/?q=" + highlightString;
+      
+      
   }
   
   private String getImageHTML(){

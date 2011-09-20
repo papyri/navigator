@@ -52,7 +52,7 @@ public class FacetBrowser extends HttpServlet {
     /* TODO: Get this squared up with urlPatterns, above */
     static private String FACET_PATH;
     /** Number of records to show per page. Used in pagination */
-    static private int documentsPerPage = 50;
+    static private int documentsPerPage = 15;
     
     static SolrUtils SOLR_UTIL;
         
@@ -123,23 +123,33 @@ public class FacetBrowser extends HttpServlet {
         /* Allow each facet to pull out the values relevant to it from the <code>QueryResponse</code>
          * returned by the Solr server.
          */
-        populateFacets(facets, queryResponse);
         
+         
+         if(queryResponse != null){
+         
+            populateFacets(facets, queryResponse);
+            
+         } else {
+        
+            queryResponse = new QueryResponse();
+            
+         }
+         
         /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
            of which represents one returned document. */
-        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
+        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse, facets);
         
                 
         /* Determine the number of results returned. 
          * 
          * Required for assembleHTML method 
          */
-        long resultSize = queryResponse.getResults().getNumFound();
+        long resultSize = queryResponse.getResults() == null ? 0 : queryResponse.getResults().getNumFound();
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-      //  String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-        String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+       // String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -150,7 +160,7 @@ public class FacetBrowser extends HttpServlet {
     /** Returns the <code>List</code> of <code>Facet</code>s to be used. 
      * 
      */
-    private ArrayList<Facet> getFacets(){
+    ArrayList<Facet> getFacets(){
           
         ArrayList<Facet> facets = new ArrayList<Facet>();
         
@@ -298,9 +308,14 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse){
-               
+    ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse, ArrayList<Facet> facets){
+              
+        
+        String highlightString = this.generateHighlightString(facets);
+
         ArrayList<DocumentBrowseRecord> records = new ArrayList<DocumentBrowseRecord>();
+        
+        if(queryResponse.getResults() == null) return records;
         
         for(SolrDocument doc : queryResponse.getResults()){
             
@@ -321,7 +336,7 @@ public class FacetBrowser extends HttpServlet {
                 Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, highlightString);
                 records.add(record);
                 
            }
@@ -334,6 +349,22 @@ public class FacetBrowser extends HttpServlet {
           
         Collections.sort(records);
         return records;
+        
+    }
+    
+    private String generateHighlightString(ArrayList<Facet> facets){
+        
+        String highlightString = "";
+        
+        try{
+        
+            StringSearchFacet ssf = (StringSearchFacet)this.findFacet(facets, StringSearchFacet.class);
+            String hWords = ssf.getHighlightString();
+            highlightString += hWords;
+        
+        }
+        catch(FacetNotFoundException fnfe){}
+        return highlightString;
         
     }
     
@@ -657,10 +688,11 @@ public class FacetBrowser extends HttpServlet {
     
     private String doPagination(ArrayList<Facet> facets, long resultSize){
         
+        if(resultSize <= documentsPerPage) return "";
+        
         int numPages = (int)(Math.ceil(resultSize / documentsPerPage));
         
-        if(numPages <= 1) return "";
-        
+                
         String fullQueryString = buildFullQueryString(facets);
         
         double widthEach = 8;
@@ -686,6 +718,7 @@ public class FacetBrowser extends HttpServlet {
             html.append("</div><!-- closing .page -->");
             
         }
+
         html.append("<div class=\"spacer\"></div><!-- closing .spacer -->");
         html.append("</div><!-- closing #pagination -->");
         return html.toString();

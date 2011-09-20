@@ -64,7 +64,7 @@ abstract public class Facet {
         this.field = sf; 
         this.formName = formName;
         this.displayName = displayName;
-        
+        valuesAndCounts = new ArrayList<Count>();
     }
     
     /**

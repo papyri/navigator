@@ -225,7 +225,7 @@ public class IdentifierFacet extends Facet{
     
     @Override
     public void setWidgetValues(QueryResponse queryResponse){
-
+        
         Boolean hasPathData = dispersePathData(queryResponse);
         
         if(!hasPathData){

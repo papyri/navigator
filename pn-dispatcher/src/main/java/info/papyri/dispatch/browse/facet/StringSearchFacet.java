@@ -567,6 +567,55 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    public String getHighlightString(){
+        
+        String words = "";
+        String field = "";
+        
+        for(SearchConfiguration searchConfiguration : searchConfigurations.values()){
+            
+            if("".equals(field)){
+                
+                SolrField testField = searchConfiguration.getField();
+                if(testField != null){
+                    
+                    field = testField.name();
+                    
+                }
+                
+                
+            }
+            String thisWord = searchConfiguration.getRawWord();
+            if(field.equals(SolrField.transcription_ia.name())){
+                
+                try{
+                    
+                    if(searchConfiguration.getSearchType().equals(SearchType.USER_DEFINED)){
+                    
+                         thisWord = searchConfiguration.expandLemmas(searchConfiguration.extractLemmaWord(thisWord));
+                         
+                    }
+                    else{
+                        
+                        thisWord = searchConfiguration.expandLemmas(thisWord);
+                        
+                    }
+                    
+                } 
+                catch (MalformedURLException mue){} 
+                catch (SolrServerException sse){}
+                
+            }
+            words += " " + thisWord;
+                       
+        }
+        if("".equals(field)) field = SolrField.transcription_ngram_ia.name();
+        if(words.length() > 0) words = words.substring(1);
+        String query = field + ":(" + words + ")";
+        return query;
+        
+    }
+    
     /**
      * This inner class handles the logic for string-searching previously found
      * in <code>info.papyri.dispatch.Search</code>.
@@ -637,7 +686,7 @@ public class StringSearchFacet extends Facet{
             proximityDistance = wi;
             try{
                 
-                field = setField(type, target, caps, marks);
+                field = setField(kw, type, target, caps, marks);
                 
             }
             catch(FieldNotFoundException fnfe){
@@ -681,9 +730,40 @@ public class StringSearchFacet extends Facet{
          * @see info.papyri.dispatch.Search#runQuery(java.io.PrintWriter, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
          */
         
-        private SolrField setField(SearchType st, SearchTarget t, Boolean noCaps, Boolean noMarks) throws FieldNotFoundException{
+        private SolrField setField(String keyword, SearchType st, SearchTarget t, Boolean noCaps, Boolean noMarks) throws FieldNotFoundException{
             
-            if(st.equals(SearchType.USER_DEFINED)) return null;
+            if(st.equals(SearchType.USER_DEFINED)){
+                
+                   SolrField nowField = SolrField.transcription_ngram_ia;
+                   if(keyword.contains("lem:")){
+                       
+                       return SolrField.transcription_ia;
+                       
+                   }
+                   if(keyword.contains(":")){
+                       
+                       String upToField = keyword.substring(0, keyword.indexOf(":"));
+                       String[] bits = upToField.split(" ");
+                       for(int i = bits.length - 1; i >= 0; i--){
+                           
+                           String bit = bits[i];
+                           if(!bit.equals("")){
+                               
+                               for(SolrField sf : SolrField.values()){
+                                   
+                                   if(bit.equals(sf.name())) nowField = SolrField.valueOf(bit);
+                                   
+                                   
+                               }
+                               
+                           }
+                           
+                       }
+                                              
+                   }
+                
+                   return nowField;
+            }
             
             if(st.equals(SearchType.SUBSTRING)) return SolrField.transcription_ngram_ia;
             
@@ -744,7 +824,6 @@ public class StringSearchFacet extends Facet{
             if(SearchType.LEMMAS.equals(st)){
 
                 cleanString = FacetBrowser.SOLR_UTIL.expandLemmas(cleanString);
-                if("".equals(cleanString)) cleanString = "NO LEMMA MATCH";
                                   
             }
             // no transform needed for nocaps text - performed by queryanalyzer
@@ -768,17 +847,26 @@ public class StringSearchFacet extends Facet{
             deString = deString.replaceAll("\\^", "\\\\^"); 
             if(!deString.contains("lem:")) return deString;
             String opener = deString.substring(0, deString.indexOf("lem:"));
-            int searchTermStart = deString.indexOf("lem:") + "lem:".length();
-            String remainder = deString.substring(searchTermStart);
-            int endTerm = remainder.indexOf(" ") == -1 ? remainder.length() : remainder.indexOf(" ");
-            String searchTerm = remainder.substring(0, endTerm);
-            String endQuery = remainder.substring(endTerm);
-            String expandedSearchTerm = this.expandLemmas(searchTerm);
+            String lemmaWord = extractLemmaWord(rawInput);
+            String remainder = deString.substring(deString.indexOf(lemmaWord) + lemmaWord.length());
+            String expandedSearchTerm = this.expandLemmas(lemmaWord);
             expandedSearchTerm = expandedSearchTerm.replaceAll("ς", "σ");
-            if("".equals(expandedSearchTerm)) expandedSearchTerm = "NO LEMMA MATCH";
-            String query = opener + SolrField.transcription_ia.name() + ":(" + expandedSearchTerm + ")" + endQuery;
+            String query = opener + SolrField.transcription_ia.name() + ":(" + expandedSearchTerm + ")" + remainder;
             return query;
                     
+        }
+        
+        private String extractLemmaWord(String rawInput){
+            
+            String lemmaWord = rawWord;
+            lemmaWord = lemmaWord.replaceAll("#", "^");
+            lemmaWord = lemmaWord.replaceAll("\\^", "\\\\^");
+            if(!lemmaWord.contains("lem:")) return "";
+            String lemmaWordStart = lemmaWord.substring(lemmaWord.indexOf("lem:") + "lem:".length());
+            if(!lemmaWordStart.contains(" ")) return lemmaWordStart;
+            lemmaWord = lemmaWordStart.substring(0, lemmaWordStart.indexOf(" "));
+            return lemmaWord;
+            
         }
         
         /**
@@ -811,7 +899,6 @@ public class StringSearchFacet extends Facet{
             }
             sq.setQuery(exp.toString());
             sq.setRows(1000);
-            System.out.println("QUERY IS " + sq.toString());
             QueryResponse rs = solr.query(sq);
             SolrDocumentList forms = rs.getResults();
             Set<String> formSet = new HashSet<String>();
@@ -819,8 +906,11 @@ public class StringSearchFacet extends Facet{
               for (int i = 0; i < forms.size(); i++) {
                 formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
               }
+             return FileUtils.interpose(formSet, " OR ");
+             
             }
-            return FileUtils.interpose(formSet, " OR ");
+            
+            return "NO LEMMA MATCH";
           }
        
         
