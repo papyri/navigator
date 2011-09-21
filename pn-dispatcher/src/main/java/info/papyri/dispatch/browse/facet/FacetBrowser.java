@@ -110,7 +110,7 @@ public class FacetBrowser extends HttpServlet {
          * 
          * Required for building the facet query.
          */
-        int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 0;
+        int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 1;
         
         /* Build the SolrQuery object to be used in querying Solr out of query parts contributed 
          * by each of the facets in turn.
@@ -149,7 +149,7 @@ public class FacetBrowser extends HttpServlet {
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-       // String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+        //String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -222,7 +222,7 @@ public class FacetBrowser extends HttpServlet {
         sq.setFacetMissing(true);
         sq.setFacetMinCount(1);         // we don't want to see zero-count values            
         sq.setRows(documentsPerPage); 
-        sq.setStart(pageNumber * documentsPerPage); 
+        sq.setStart((pageNumber - 1) * documentsPerPage); 
         
         // iterate through facets, adding their contributions to solr query
         Iterator<Facet> fit = facets.iterator();
@@ -233,6 +233,11 @@ public class FacetBrowser extends HttpServlet {
             
             
         }
+        sq.addSortField(SolrField.ddbdp_series.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.hgv_series.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.apis_series.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.ddbdp_volume.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.hgv_volume.name(), SolrQuery.ORDER.asc);
         // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
         // all documents that pass these filters - hence '*:*' as the actual query
         sq.setQuery("*:*");
