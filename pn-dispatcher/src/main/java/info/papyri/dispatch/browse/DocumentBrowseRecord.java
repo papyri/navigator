@@ -1,12 +1,13 @@
 package info.papyri.dispatch.browse;
 
+import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.LanguageCode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-
+import java.util.List;
 
 /**
  * The <code>DocumentBrowseRecord</code> class stores summary information regarding
@@ -81,6 +82,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(getImageHTML());
     html.append("</td>");
     html.append("</tr>");
+    html.append(this.getKWIC());
     return html.toString();
 
   }
@@ -280,6 +282,23 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       if("".equals(highlightString)) return "";
       return "/?q=" + highlightString;
       
+      
+  }
+  
+  private String getKWIC(){
+      
+      StringBuilder html = new StringBuilder();
+      FileUtils util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+      List<String> kwix = util.highlightMatches(highlightString, util.loadTextFromId(url.toExternalForm()));
+      html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
+      for(String kwic : kwix){
+          
+          html.append(kwic);
+          html.append("<br/>\n");
+          
+      }
+      html.append("</td></tr>");
+      return html.toString();
       
   }
   

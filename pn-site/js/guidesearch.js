@@ -29,6 +29,7 @@ $(document).ready(
 		// values are list of elements that *must* be 
 		// switched on or off onclick.
 
+        hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_on["lemmas"] = ["#caps", "#marks", "#target-text"];
 		hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_off["target-metadata"] = ["#betaYes"];
@@ -367,6 +368,7 @@ $(document).ready(
 		hic.positionTogglePointer();
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
+		$("#substring").click();
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		$("form select").change(hic.tidyQueryString);
 		$("#search-toggle").height($("#facet-wrapper").height());
