@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teisupplied.xsl 1546 2011-09-05 08:51:42Z gabrielbodard $ -->
+<!-- $Id: teisupplied.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -53,8 +53,8 @@
             </xsl:choose>
             <!-- Found in tpl-cert-low.xsl -->
         <xsl:call-template name="cert-low"/>
-            <!-- if supplied is immediately followed by inWord, end-of-line hyphen will be omitted so include it here instead -->
-            <xsl:if test="following-sibling::node()[1][local-name()='lb' and @type='inWord']">
+            <!-- if supplied is immediately followed by break=no, end-of-line hyphen will be omitted so include it here instead -->
+            <xsl:if test="following-sibling::node()[1][local-name()='lb' and (@break='no' or @type='inWord')]">
                <!-- unless this is in the app part of a choice/subst/app in ddbdp -->
                <!--<xsl:if test="not()">-->
                   <xsl:text>-</xsl:text>

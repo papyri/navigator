@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teilb.xsl 1541 2011-08-18 15:55:39Z gabrielbodard $ -->
+<!-- $Id: teilb.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -8,7 +8,7 @@
   <xsl:template match="t:lb">
       <xsl:if test="ancestor::t:l">
          <xsl:choose>
-            <xsl:when test="@type = 'inWord'">
+            <xsl:when test="@break='no' or @type='inWord'">
                <xsl:text>|</xsl:text>
             </xsl:when>
             <xsl:otherwise>
@@ -39,7 +39,7 @@
 
   <xsl:template name="lb-content">
       <xsl:choose>
-         <xsl:when test="@type = 'inWord'">
+         <xsl:when test="@break='no' or @type='inWord'">
             <xsl:text>(</xsl:text>
             <xsl:value-of select="@n"/>
             <xsl:text>)</xsl:text>

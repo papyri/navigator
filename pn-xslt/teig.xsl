@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teig.xsl 1533 2011-08-08 16:00:44Z gabrielbodard $ -->
+<!-- $Id: teig.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="2.0">
    <!-- Templates imported by [htm|txt]-teig.xsl -->
 
    <xsl:template name="lb-dash">
-      <xsl:if test="following::node()[1][local-name() = 'lb'][@type='inWord'] or
-         following::node()[1][normalize-space(.)=''][following::node()[1][local-name() = 'lb'][@type='inWord']]">
+      <xsl:if test="following::node()[1][local-name() = 'lb'][@break='no' or @type='inWord'] or
+         following::node()[1][normalize-space(.)=''][following::node()[1][local-name() = 'lb'][@break='no' or @type='inWord']]">
          <xsl:text>- </xsl:text>
       </xsl:if>
    </xsl:template>

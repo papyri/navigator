@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teimilestone.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-teimilestone.xsl 1556 2011-09-26 15:00:38Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -21,6 +21,12 @@
          </xsl:when>
          <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
             <xsl:choose>
+               <xsl:when test="@rend = 'wavy-line'">
+                  <xsl:if test="not(parent::t:supplied)">
+                     <br/>
+                  </xsl:if>
+                  <xsl:text>~~~~~~~~</xsl:text>
+               </xsl:when>
                <xsl:when test="@rend = 'paragraphos'">
                   <xsl:if test="not(parent::t:supplied)">
                      <br/>

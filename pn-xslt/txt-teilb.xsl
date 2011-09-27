@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: txt-teilb.xsl 1543 2011-08-31 15:47:37Z ryanfb $ -->
+<!-- $Id: txt-teilb.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0" version="2.0">
    <!-- Actual display and increment calculation found in teilb.xsl -->
@@ -23,7 +23,7 @@
                </xsl:if>
             </xsl:variable>
             <xsl:if
-               test="@type='inWord' and preceding::node()[1][not(local-name() = 'space' or local-name() = 'g'
+               test="(@break='no' or @type='inWord') and preceding::node()[1][not(local-name() = 'space' or local-name() = 'g'
                or @reason='lost')]
                and not(starts-with($leiden-style, 'edh'))
                and not($edition-type='diplomatic')">

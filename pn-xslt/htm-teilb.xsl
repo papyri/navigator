@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teilb.xsl 1530 2011-08-02 11:24:51Z gabrielbodard $ -->
+<!-- $Id: htm-teilb.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
   exclude-result-prefixes="t" version="2.0">
@@ -27,7 +27,7 @@
             </xsl:variable>
 
             <xsl:if
-               test="@type='inWord' 
+               test="(@break='no' or @type='inWord') 
                and preceding-sibling::node()[1][not(local-name() = 'space' or
                         local-name() = 'g' or
                         (local-name()='supplied' and @reason='lost') or
@@ -44,7 +44,7 @@
                            or ancestor::t:del[@rend='corrected'][parent::t:subst])
                and not($edition-type='diplomatic')
                and not(generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1]))">
-               <!-- print hyphen if type=inWord
+               <!-- print hyphen if break=no
                               *unless* previous line ends with space / g / supplied[reason=lost]
                               *or unless* the second part of an app in ddbdp
                               *or unless* diplomatic edition
@@ -67,7 +67,7 @@
                         or ancestor::t:reg[not(@xml:lang)][preceding-sibling::t:reg[not(@xml:lang)]]
                         or ancestor::t:del[@rend='corrected'][parent::t:subst]">
                   <xsl:choose>
-                     <xsl:when test="@type = 'inWord'">
+                     <xsl:when test="@break='no' or @type='inWord'">
                         <xsl:text>|</xsl:text>
                      </xsl:when>
                      <xsl:otherwise>
