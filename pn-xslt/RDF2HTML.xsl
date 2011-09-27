@@ -198,7 +198,7 @@
                       <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
                       <xsl:apply-templates select="/t:TEI"/>
                       <div id="history">
-                        <h3>History</h3>
+                        <h3>History (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
                         <ul style="display:none">
                           <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change">
                             <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
