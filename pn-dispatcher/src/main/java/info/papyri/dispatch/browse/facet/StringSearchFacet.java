@@ -6,6 +6,7 @@ import info.papyri.dispatch.browse.FieldNotFoundException;
 import info.papyri.dispatch.browse.SolrField;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -52,7 +54,7 @@ public class StringSearchFacet extends Facet{
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         Iterator<SearchConfiguration> scit = searchConfigurations.values().iterator();
-        
+        // TODO: SHIFT ENTIRE RESPONSIBILITY OF THIS INTO SEARCHCONFIGURATION OBJECT
         while(scit.hasNext()){
             
             SearchConfiguration nowConfig = scit.next();
@@ -195,7 +197,7 @@ public class StringSearchFacet extends Facet{
             html.append(formName.name());
             html.append(String.valueOf(counter));
             html.append(v);
-            html.append(config.getRawWord());
+            html.append(config.getRawWord().replaceAll("\"", "'"));
             html.append(c);
             
             html.append(inp);
@@ -363,7 +365,7 @@ public class StringSearchFacet extends Facet{
         SearchConfiguration config = searchConfigurations.get(k);
         
         StringBuilder dv = new StringBuilder();
-        dv.append(config.getRawWord().replaceAll("\\^", "#"));
+        dv.append(config.getRawWord().replaceAll("\\^", "#").replaceAll("'", "\""));
         dv.append("<br/>");
         dv.append("Target: ");
         dv.append(config.getSearchTarget().name().toLowerCase().replace("_", "-"));
@@ -424,6 +426,7 @@ public class StringSearchFacet extends Facet{
         
         String queryString = qs.toString();
         queryString = queryString.substring(0, queryString.length() - 1);
+        queryString = queryString.replaceAll("\"", "'");
         return queryString;
     }
     
@@ -449,6 +452,7 @@ public class StringSearchFacet extends Facet{
         }
         
         String queryString = qs.toString();
+        queryString = queryString.replaceAll("\"", "'");
         if(queryString.endsWith("&")) queryString = queryString.substring(0, queryString.length() - 1);
         return queryString;
         
@@ -570,23 +574,25 @@ public class StringSearchFacet extends Facet{
     public String getHighlightString(){
         
         String words = "";
-        String field = "";
-        
+        String nowField = "";
+        // TODO: SHIFT RESPONSIBILITY ONTO GETHIGHLIGHTSTRING METHOD OF SEARCHCONFIGURATION OBJECT
+        // DESIRED OUTPUT OF THIS METHOD IS SIMPLY CONCATENATED FIELD(VALUE)
         for(SearchConfiguration searchConfiguration : searchConfigurations.values()){
             
-            if("".equals(field)){
+            if("".equals(nowField)){
                 
                 SolrField testField = searchConfiguration.getField();
                 if(testField != null){
                     
-                    field = testField.name();
+                    nowField = testField.name();
                     
                 }
                 
                 
             }
-            String thisWord = searchConfiguration.getRawWord();
-            if(field.equals(SolrField.transcription_ia.name())){
+            String thisWord = searchConfiguration.getHighlightWord();
+ 
+           /* if(nowField.equals(SolrField.transcription_ia.name())){
                 
                 try{
                     
@@ -595,7 +601,7 @@ public class StringSearchFacet extends Facet{
                          thisWord = searchConfiguration.expandLemmas(searchConfiguration.extractLemmaWord(thisWord));
                          
                     }
-                    else{
+                    else if(searchConfiguration.getSearchType().equals(SearchType.LEMMAS)) {
                         
                         thisWord = searchConfiguration.expandLemmas(thisWord);
                         
@@ -605,13 +611,13 @@ public class StringSearchFacet extends Facet{
                 catch (MalformedURLException mue){} 
                 catch (SolrServerException sse){}
                 
-            }
+            }*/
             words += " " + thisWord;
                        
         }
-        if("".equals(field)) field = SolrField.transcription_ngram_ia.name();
+        if("".equals(nowField)) nowField = SolrField.transcription_ngram_ia.name();
         if(words.length() > 0) words = words.substring(1);
-        String query = field + ":(" + words + ")";
+        String query = nowField + ":(" + words + ")";
         return query;
         
     }
@@ -638,7 +644,7 @@ public class StringSearchFacet extends Facet{
     class SearchConfiguration{
         
         /** The search string as submitted by the user */
-        private String rawWord;
+        private String rawString;
         /** The search string: i.e., the rawWord, after it has been
          * subjected to the relevant transformations
          */
@@ -675,6 +681,10 @@ public class StringSearchFacet extends Facet{
          * 
          */
         private SolrField field;
+        private String highlightWord;
+        
+        private String[] SEARCH_OPERATORS = {"AND", "OR", "NOT", "&&", "||", "+", "-", "WITHIN", "BEFORE", "AFTER", "IMMEDIATELY-BEFORE", "IMMEDIATELY-AFTER"};
+        private HashMap<String, String> STRINGOPS_TO_SOLROPS = new HashMap<String, String>();
         
         SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean beta, Boolean caps, Boolean marks, int wi){
             
@@ -695,7 +705,7 @@ public class StringSearchFacet extends Facet{
                 field = SolrField.all;
                 
             }
-            rawWord = kw;
+            rawString = kw;
             try{
                 
                searchString = transformSearchString(kw, type, beta, caps, marks);
@@ -715,6 +725,8 @@ public class StringSearchFacet extends Facet{
                 searchString = "ERROR: Probable source of error - " + kw + " is not valid betacode " + e.getMessage();
                 
             }
+            STRINGOPS_TO_SOLROPS.put("NOT", "-");
+            STRINGOPS_TO_SOLROPS.put("WITHIN", "~");
         }
         
         /**
@@ -833,10 +845,58 @@ public class StringSearchFacet extends Facet{
                 
               
             }
+            cleanString = cleanString.replaceAll("'", "\"");
+            this.highlightWord = cleanString;
             cleanString = cleanString.replaceAll("#", "^");
             cleanString = cleanString.replaceAll("\\^", "\\\\^"); 
             cleanString = cleanString.replaceAll("ς", "σ");
             return cleanString;
+            
+        }
+        
+        ArrayList<String> harvestKeywords(String rawInput){
+            
+            if(rawInput == null) return new ArrayList<String>();
+            
+            String cleanedInput = rawInput;
+
+            cleanedInput = cleanedInput.replaceAll("[()#]", " ");
+
+            
+            for(String operator : this.SEARCH_OPERATORS){
+                
+                try{
+                    
+                     if("||".equals(operator)) operator = "\\|\\|";
+                     cleanedInput = cleanedInput.replaceAll(operator, " ");
+                    
+                }
+                catch(PatternSyntaxException pse){
+                    
+                    operator = "\\" + operator;
+                    cleanedInput = cleanedInput.replaceAll(operator, " ");
+                    
+                }
+                
+            }
+
+            cleanedInput = cleanedInput.replaceAll("[^\\s]+?:", " ");
+            cleanedInput = cleanedInput.trim();
+            ArrayList<String> inputBits = new ArrayList<String>(Arrays.asList(cleanedInput.split("(\\s)+")));
+            return inputBits;
+            
+        }
+        
+        HashMap<String, String> transformKeywords(ArrayList<String> keywords){
+            
+            HashMap<String, String> transformationMap = new HashMap<String, String>();
+            
+            if(keywords == null) return transformationMap;
+            
+            
+            
+            
+            return transformationMap;
             
         }
         
@@ -858,7 +918,7 @@ public class StringSearchFacet extends Facet{
         
         private String extractLemmaWord(String rawInput){
             
-            String lemmaWord = rawWord;
+            String lemmaWord = rawString;
             lemmaWord = lemmaWord.replaceAll("#", "^");
             lemmaWord = lemmaWord.replaceAll("\\^", "\\\\^");
             if(!lemmaWord.contains("lem:")) return "";
@@ -889,6 +949,7 @@ public class StringSearchFacet extends Facet{
         }
         
         public String expandLemmas(String query) throws MalformedURLException, SolrServerException {
+            
             SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
             StringBuilder exp = new StringBuilder();
             SolrQuery sq = new SolrQuery();
@@ -918,9 +979,10 @@ public class StringSearchFacet extends Facet{
         /* getters and setters */
         
         public SearchTarget getSearchTarget(){ return target; }
+        public String getHighlightWord(){ return highlightWord; }
         public SearchType getSearchType(){ return type; }
         public int getProximityDistance(){ return proximityDistance; }
-        public String getRawWord(){ return rawWord; }
+        public String getRawWord(){ return rawString; }
         public Boolean getBetaOn(){ return betaOn; }
         public Boolean getIgnoreCaps(){ return ignoreCaps; }
         public Boolean getIgnoreMarks(){ return ignoreMarks; }
