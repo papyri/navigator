@@ -1,14 +1,11 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 import junit.framework.TestCase;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.xerces.util.URI.MalformedURIException;
+
 
 
 /**
@@ -236,23 +233,58 @@ public class StringSearchFacetTest extends TestCase {
 
     }
     
-    private void testTransformKeywords(){      
+    public void testLemmatizeWord(){
+        
+        // sanity check - returns false if no lemma requested
+        
+        StringSearchFacet.SearchConfiguration tinstance = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
+        ArrayList<String> testInput = new ArrayList<String>(Arrays.asList("λόγιος"));
+        assertFalse(tinstance.lemmatizeWord(testInput, 0));
+        
+        
+         // basic test - single instance
+         StringSearchFacet.SearchConfiguration tinstance2 = testInstance.new SearchConfiguration("lem:λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
+         testInput = new ArrayList<String>(Arrays.asList("λόγιος"));
+         assertTrue(tinstance2.lemmatizeWord(testInput, 0));
+        
+        // double instance
+         StringSearchFacet.SearchConfiguration tinstance3 = testInstance.new SearchConfiguration("lem:λόγιος AND lem:προχειρισάμενοι", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
+         testInput = new ArrayList<String>(Arrays.asList("λόγιος", "προχειρισάμενοι"));
+         assertTrue(tinstance3.lemmatizeWord(testInput, 0));
+         assertTrue(tinstance3.lemmatizeWord(testInput, 1));
+         
+        // mixed instance
+        StringSearchFacet.SearchConfiguration tinstance4 = testInstance.new SearchConfiguration("lem:λόγιος AND προχειρισάμενοι", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
+         testInput = new ArrayList<String>(Arrays.asList("λόγιος", "προχειρισάμενοι"));
+         assertTrue(tinstance4.lemmatizeWord(testInput, 0));
+         assertFalse(tinstance4.lemmatizeWord(testInput, 1));
+        
+        // repetitive instance
+        StringSearchFacet.SearchConfiguration tinstance5 = testInstance.new SearchConfiguration("transcription_ngram_ia:λόγιος AND lem:λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
+        testInput = new ArrayList<String>(Arrays.asList("λόγιος", "λόγιος"));
+        assertFalse(tinstance5.lemmatizeWord(testInput, 0));
+        assertTrue(tinstance5.lemmatizeWord(testInput, 1));
+       
+        
+        
+        
+    }
+    
+    public void testTransformKeywords(){      
         
         StringSearchFacet.SearchConfiguration tinstance = testInstance.new SearchConfiguration("test", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.SUBSTRING, true, false, false, 0);
-        
+
         // null check
-        HashMap<String, String> testOutput = tinstance.transformKeywords(null);
+        ArrayList<String> testOutput = tinstance.transformKeywords(null);
         assertEquals(0, testOutput.size());
-        
         
         // return correct betacode
         // note also sigma transformation
         ArrayList<String> betaInput = new ArrayList<String>(Arrays.asList("lu/w", "strathgo\\s"));
         testOutput = tinstance.transformKeywords(betaInput);
         assertEquals(2, testOutput.size());
-        assertEquals("λύω", testOutput.get("lu/w"));
-        assertEquals("στρατηγὸσ", testOutput.get("strathgo\\s"));
-        
+        assertEquals("λύω", testOutput.get(0));
+        assertEquals("στρατηγὸσ", testOutput.get(1));
         
         // lowercase if required
         
@@ -261,9 +293,9 @@ public class StringSearchFacetTest extends TestCase {
         testOutput.clear();
         testOutput = tinstance2.transformKeywords(capsInput);
         assertEquals(3, testOutput.size());
-        assertEquals("stratiou", testOutput.get("Stratiou"));
-        assertEquals("στρατιοῦ", testOutput.get("Στρατιοῦ"));
-        assertEquals("στρατιου", testOutput.get("ΣΤΡΑΤΙΟΥ"));
+        assertEquals("stratiou", testOutput.get(0));
+        assertEquals("στρατιοῦ", testOutput.get(1));
+        assertEquals("στρατιου", testOutput.get(2));
         
         
         // remove diacritics if required
@@ -272,9 +304,9 @@ public class StringSearchFacetTest extends TestCase {
         testOutput.clear();
         testOutput = tinstance3.transformKeywords(diaInput);
         assertEquals(3, testOutput.size());
-        assertEquals("Στρατηγοσ", testOutput.get("Στρατηγὸς"));
-        assertEquals("παραγγελιασ", testOutput.get("παραγγελίας"));
-        assertEquals("σιλλυ", "σίλλὖ");
+        assertEquals("Στρατηγοσ", testOutput.get(0));
+        assertEquals("παραγγελιασ", testOutput.get(1));
+        assertEquals("σιλλυ", testOutput.get(2));
         
         // combo - remove diacritics and lowecase betacode input
         StringSearchFacet.SearchConfiguration tinstance4 = testInstance.new SearchConfiguration("test", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.SUBSTRING, true, true, true, 0);
@@ -282,7 +314,7 @@ public class StringSearchFacetTest extends TestCase {
         testOutput.clear();
         testOutput = tinstance4.transformKeywords(comboInput);
         assertEquals(1, testOutput.size());
-        assertEquals("στρατηγοσ", testOutput.get("STRATHGO\\S"));
+        assertEquals("στρατηγοσ", testOutput.get(0));
         
         // wrap phrase search in double-quotes if not so already
         StringSearchFacet.SearchConfiguration tinstance5 = testInstance.new SearchConfiguration("test", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, true, true, 0);
@@ -290,29 +322,53 @@ public class StringSearchFacetTest extends TestCase {
         testOutput.clear();
         testOutput = tinstance5.transformKeywords(phraseInput);
         assertEquals(3, testOutput.size());
-        assertEquals("\"των ανδρων\"", testOutput.get("των ανδρων"));
-        assertEquals("\"των ανδρων\"", testOutput.get("'των ανδρων'"));
-        assertEquals("\"των ανδρων\"", testOutput.get("\"των ανδρων\""));
+        assertEquals("\"των ανδρων\"", testOutput.get(0));
+        assertEquals("\"των ανδρων\"", testOutput.get(1));
+        assertEquals("\"των ανδρων\"", testOutput.get(2));
         
         // expand lemmas
         // both with html control input
         StringSearchFacet.SearchConfiguration tinstance6 = testInstance.new SearchConfiguration("test", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.LEMMAS, false, true, true, 0);
-        ArrayList<String> lemmaInput0 = new ArrayList<String>(Arrays.asList("λόγιας"));
+        ArrayList<String> lemmaInput0 = new ArrayList<String>(Arrays.asList("λόγιος"));
         testOutput.clear();
         testOutput = tinstance6.transformKeywords(lemmaInput0);
         assertEquals(1, testOutput.size());
-        assertTrue(testOutput.get("λόγιας").matches("\\((([^\\s]+?) OR )+[^\\s]+\\)"));
+        assertTrue(testOutput.get(0).matches("\\((([^\\s]+?) OR )+[^\\s]+\\)"));
         // and in situ
-        StringSearchFacet.SearchConfiguration tinstance7 = testInstance.new SearchConfiguration("lem:προχειρισάμενοι", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
-        ArrayList<String> lemmaInput1 = new ArrayList<String>(Arrays.asList("προχειρισάμενοι"));
+        StringSearchFacet.SearchConfiguration tinstance7 = testInstance.new SearchConfiguration("lem:λύω", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
+        ArrayList<String> lemmaInput1 = new ArrayList<String>(Arrays.asList("λύω"));
         testOutput.clear();
         testOutput = tinstance7.transformKeywords(lemmaInput1);
         assertEquals(1, testOutput.size());
-        assertTrue(testOutput.get("προχειρισάμενοι").matches("\\((([^\\s]+?) OR )+[^\\s]+\\)"));
+        assertTrue(testOutput.get(0).matches("\\((([^\\s]+?) OR )+[^\\s]+\\)"));      
+        // no lemma available should result in the string being left untransformed but bracketed
+        StringSearchFacet.SearchConfiguration tinstance8 = testInstance.new SearchConfiguration("test", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.LEMMAS, false, true, true, 0);
+        ArrayList<String> lemmaInput2 = new ArrayList<String>(Arrays.asList("ψψζξ"));
+        testOutput.clear();
+        testOutput = tinstance6.transformKeywords(lemmaInput2);
+        assertEquals(1, testOutput.size());
+        assertEquals("(ψψζξ)", testOutput.get(0));
         
+        // repeated terms in the query should not cause problems
+        StringSearchFacet.SearchConfiguration tinstance9 = testInstance.new SearchConfiguration("lem:λόγος AND transcription_ngram_ia:λόγος AND transcription_ia:λόγος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, true, true, 0);
+        ArrayList<String> repeatInput = new ArrayList<String>(Arrays.asList("λόγος", "λόγος", "λόγος"));
+        testOutput.clear();
+        testOutput = tinstance9.transformKeywords(repeatInput);
+        assertEquals(3, testOutput.size());
+        assertTrue(testOutput.get(0).matches("\\((([^\\s]+?) OR )+[^\\s]+\\)"));
+        assertEquals("λογοσ", testOutput.get(1));
+        assertEquals("λογοσ", testOutput.get(2));
         
+        // word-boundary octothorpe characters should be converted into carets
+        ArrayList<String> octoInput = new ArrayList<String>(Arrays.asList("#του", "#ανδρ#"));
+        testOutput.clear();
+        testOutput = tinstance9.transformKeywords(octoInput);
+        assertEquals(2, testOutput.size());
+        assertEquals("\\^του", testOutput.get(0));
+        assertEquals("\\^ανδρ\\^", testOutput.get(1));
     }
     
+
 
 
 }

@@ -4,6 +4,7 @@ import edu.unc.epidoc.transcoder.TransCoder;
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.FieldNotFoundException;
 import info.papyri.dispatch.browse.SolrField;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -861,7 +862,6 @@ public class StringSearchFacet extends Facet{
             String cleanedInput = rawInput;
 
             cleanedInput = cleanedInput.replaceAll("[()#]", " ");
-
             
             for(String operator : this.SEARCH_OPERATORS){
                 
@@ -887,17 +887,86 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        HashMap<String, String> transformKeywords(ArrayList<String> keywords){
+        ArrayList<String> transformKeywords(ArrayList<String> keywords){
             
-            HashMap<String, String> transformationMap = new HashMap<String, String>();
+            ArrayList<String> transformedKeywords = new ArrayList<String>();
             
-            if(keywords == null) return transformationMap;
+            if(keywords == null) return transformedKeywords;
+            int counter = 0;
             
+            for(String keyword : keywords){
             
+                if(ignoreCaps){
+                    
+                    keyword = keyword.toLowerCase();
+                    
+                }
+                if(betaOn){
+               
+                    try{
+                    
+                        String betaWord = "";
+                        betaWord = convertToUnicode(keyword); 
+                        keyword = betaWord;
+                    
+                    }
+                    catch(Exception e){
+                    
+                        transformedKeywords.add(keyword);
+                        continue;
+                    
+                    }  
+                }
+                if(lemmatizeWord(keywords, counter)){
+                    
+                    try{ 
+                        
+                        String keywordExpanded = this.expandLemmas(keyword);
+                        keyword = "(" + keywordExpanded + ")";
+                    
+                    }
+                    catch(Exception e){
+                        
+                        transformedKeywords.add(keyword);
+                        continue;
+                        
+                    }
+                    
+                }
+                if(ignoreMarks) keyword = FileUtils.stripDiacriticals(keyword);
+                keyword = keyword.replaceAll("#", "^");
+                keyword = keyword.replaceAll("\\^", "\\\\^"); 
+                
+                if(type.equals(SearchType.PHRASE)){
+                    
+                    if(keyword.indexOf("'") == 0 || keyword.indexOf("\"") == 0) keyword = keyword.substring(1);
+                    if(keyword.lastIndexOf("'") == (keyword.length() - 1) || keyword.lastIndexOf("\"") == (keyword.length() - 1)) keyword = keyword.substring(0, keyword.length() - 1);
+                    keyword = "\"" + keyword + "\"";
+                    
+                }
+                
+                
+                
+                keyword = keyword.replaceAll("ς", "σ");
+                
+                
+                transformedKeywords.add(keyword);
+                counter++;
             
+                
+            }
             
-            return transformationMap;
+            return transformedKeywords;
             
+        }
+        
+        private String convertToUnicode(String betaString) throws UnsupportedEncodingException, Exception{
+            
+            TransCoder tc = new TransCoder("BetaCodeCaps", "UnicodeC");
+            String unicodeString = tc.getString(betaString);
+            unicodeString = unicodeString.replace("ΑΝΔ", "AND").replace("ΟΡ", "OR").replace("ΝΟΤ", "NOT");           
+            return unicodeString;
+                
         }
         
         String getDirectEntryString(String rawInput) throws MalformedURLException, SolrServerException{
@@ -914,6 +983,42 @@ public class StringSearchFacet extends Facet{
             String query = opener + SolrField.transcription_ia.name() + ":(" + expandedSearchTerm + ")" + remainder;
             return query;
                     
+        }
+        
+        Boolean lemmatizeWord(ArrayList<String> keywords, int currentIteration){
+            
+            if(type.equals(SearchType.LEMMAS)) return true;
+            
+            if(!type.equals(SearchType.USER_DEFINED)) return false;
+            
+            String keyword = keywords.get(currentIteration);
+
+            int previousOccurrences = 0;
+            
+            for(int i = 0; i < currentIteration; i++){
+                
+                if(keywords.get(i).equals(keyword)) previousOccurrences++;
+                
+            }
+
+            int index = 0;
+            String lemSub = rawString.substring(index);
+            int counter = 0;
+            
+            while(lemSub.contains(keyword)){
+                
+                index = lemSub.indexOf(keyword);
+                if(counter == previousOccurrences) break;
+                lemSub = lemSub.substring(index + keyword.length());
+                counter++;
+                
+            }
+            
+            if(index - "lem:".length() < 0) return false;
+            String lemcheck = lemSub.substring(index - "lem:".length(), index);
+            if(lemcheck.equals("lem:")) return true;
+            return false;
+            
         }
         
         private String extractLemmaWord(String rawInput){
@@ -971,7 +1076,7 @@ public class StringSearchFacet extends Facet{
              
             }
             
-            return "NO LEMMA MATCH";
+            return query;
           }
        
         
