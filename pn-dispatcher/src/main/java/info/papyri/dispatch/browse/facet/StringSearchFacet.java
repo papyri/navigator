@@ -743,41 +743,38 @@ public class StringSearchFacet extends Facet{
          * @see info.papyri.dispatch.Search#runQuery(java.io.PrintWriter, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
          */
         
-        private SolrField setField(String keyword, SearchType st, SearchTarget t, Boolean noCaps, Boolean noMarks) throws FieldNotFoundException{
+        private SolrField deduceField(){
+                        
+            if(type.equals(SearchType.SUBSTRING)) return SolrField.transcription_ngram_ia;
             
-            if(st.equals(SearchType.USER_DEFINED)){
+            if(type.equals(SearchType.LEMMAS)) return SolrField.transcription_ia;
+            
+            // henceforth only proximity and phrase searches possible
+            
+            if(target.equals(SearchTarget.TEXT)){
                 
-                   SolrField nowField = SolrField.transcription_ngram_ia;
-                   if(keyword.contains("lem:")){
-                       
-                       return SolrField.transcription_ia;
-                       
-                   }
-                   if(keyword.contains(":")){
-                       
-                       String upToField = keyword.substring(0, keyword.indexOf(":"));
-                       String[] bits = upToField.split(" ");
-                       for(int i = bits.length - 1; i >= 0; i--){
-                           
-                           String bit = bits[i];
-                           if(!bit.equals("")){
-                               
-                               for(SolrField sf : SolrField.values()){
-                                   
-                                   if(bit.equals(sf.name())) nowField = SolrField.valueOf(bit);
-                                   
-                                   
-                               }
-                               
-                           }
-                           
-                       }
-                                              
-                   }
+                if(ignoreCaps && ignoreMarks) return SolrField.transcription_ia;
                 
-                   return nowField;
+                if(ignoreCaps) return SolrField.transcription_ic;
+                        
+                if(ignoreMarks) return SolrField.transcription_id;
+                
+                return SolrField.transcription;
+                
             }
+                        
+            if(target.equals(SearchTarget.METADATA)) return SolrField.metadata;
             
+            if(target.equals(SearchTarget.TRANSLATIONS)) return SolrField.translation;
+            
+            if(target.equals(SearchTarget.ALL)) return SolrField.all;
+            
+            return null;
+            
+        }
+        
+                private SolrField setField(String keyword, SearchType st, SearchTarget t, Boolean noCaps, Boolean noMarks) throws FieldNotFoundException{
+                        
             if(st.equals(SearchType.SUBSTRING)) return SolrField.transcription_ngram_ia;
             
             if(st.equals(SearchType.LEMMAS)) return SolrField.transcription_ia;
@@ -959,6 +956,61 @@ public class StringSearchFacet extends Facet{
             return transformedKeywords;
             
         }
+        
+        String substituteOperators(String expandedString){
+            
+            String smallString = expandedString;
+            
+            
+            return smallString;
+            
+            
+        }
+        
+        String substituteTerms(ArrayList<String> initialTerms, ArrayList<String> transformedTerms){
+            
+            String remainingString = rawString;
+            ArrayList<String> subBits = new ArrayList<String>();
+            
+            for(int i = 0; i < initialTerms.size(); i++){
+                
+                String iTerm = initialTerms.get(i);
+                String sTerm = transformedTerms.get(i);
+                
+                String[] remBits = remainingString.split(iTerm, 2);
+                String newClause = remBits[0] + sTerm;
+                remainingString = remBits[1];
+                subBits.add(newClause);
+                
+                
+            }
+            String swapString = "";
+            for(String bit : subBits){
+                
+                swapString += bit;
+                
+            }
+            return swapString;
+            
+        }
+        
+        String substituteFields(){
+            
+            String fieldString = rawString;
+            if(type.equals(SearchType.USER_DEFINED)){
+                
+                fieldString = fieldString.replaceAll("\\blem:", "transcription_ia:");
+                return fieldString;
+                
+            }
+            
+            String fieldDesignator = deduceField().name();
+            fieldString = fieldDesignator + ":(" + fieldString + ")";
+            return fieldString;
+            
+        }
+        
+        
         
         private String convertToUnicode(String betaString) throws UnsupportedEncodingException, Exception{
             

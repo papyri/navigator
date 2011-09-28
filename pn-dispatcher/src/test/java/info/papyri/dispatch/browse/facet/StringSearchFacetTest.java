@@ -233,6 +233,106 @@ public class StringSearchFacetTest extends TestCase {
 
     }
     
+    public void testSubstituteTerms(){
+        
+        // sanity check - no transformation req'd
+        StringSearchFacet.SearchConfiguration tinstance = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, false, false, 0);
+        ArrayList<String> initialInput = new ArrayList<String>(Arrays.asList("λόγιος"));
+        ArrayList<String> transformedInput = new ArrayList<String>(Arrays.asList("λόγιος"));
+        assertEquals("λόγιος", tinstance.substituteTerms(initialInput, transformedInput));
+        
+        // with field
+        StringSearchFacet.SearchConfiguration tinstance2 = testInstance.new SearchConfiguration("transcription:lo/gios", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, true, false, false, 0);
+        initialInput = new ArrayList<String>(Arrays.asList("lo/gios"));
+        transformedInput = new ArrayList<String>(Arrays.asList("λόγιοσ"));
+        assertEquals("transcription:λόγιοσ", tinstance2.substituteTerms(initialInput, transformedInput));
+        
+        // pseudo-lemmatised
+        StringSearchFacet.SearchConfiguration tinstance3 = testInstance.new SearchConfiguration("lem:λύω AND του", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.LEMMAS, true, false, false, 0);
+        initialInput = new ArrayList<String>(Arrays.asList("λύω", "του"));
+        transformedInput = new ArrayList<String>(Arrays.asList("(λυω OR λυεισ OR λυε)", "του"));
+        assertEquals("lem:(λυω OR λυεισ OR λυε) AND του", tinstance3.substituteTerms(initialInput, transformedInput));
+        
+        // repeated
+        StringSearchFacet.SearchConfiguration tinstance4 = testInstance.new SearchConfiguration("transcription:λύω AND lem:λύω AND transcription_ia:λυεις", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.LEMMAS, true, false, false, 0);
+        initialInput = new ArrayList<String>(Arrays.asList("λύω", "λύω", "λυεις"));
+        transformedInput = new ArrayList<String>(Arrays.asList("λύω", "(λυω OR λυεισ OR λυε)", "λυεισ"));
+        assertEquals("transcription:λύω AND lem:(λυω OR λυεισ OR λυε) AND transcription_ia:λυεισ", tinstance4.substituteTerms(initialInput, transformedInput));  
+        
+    }
+    
+    public void testSubstituteFields(){
+        
+        // sanity check - no transformation required
+        StringSearchFacet.SearchConfiguration tinstance = testInstance.new SearchConfiguration("transcription:λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, false, 0);
+        assertEquals("transcription:λόγιος", tinstance.substituteFields());
+        
+        // HTML control searches - need always to wrap in brackets
+        // substring search -
+        // field should be transcription_ngram_ia
+         StringSearchFacet.SearchConfiguration tinstance2 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.SUBSTRING, false, false, false, 0);
+         assertEquals("transcription_ngram_ia:(λόγιος)", tinstance2.substituteFields());
+        
+        // lemma search -
+        // field should be transcription_ia
+        StringSearchFacet.SearchConfiguration tinstance3 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.LEMMAS, false, false, false, 0);
+         assertEquals("transcription_ia:(λόγιος)", tinstance3.substituteFields());
+        
+        // phrase search
+        // field should be transcription
+         StringSearchFacet.SearchConfiguration tinstance4 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, false, false, 0);
+         assertEquals("transcription:(λόγιος)", tinstance4.substituteFields());
+         
+        // metadata search - 
+        // field should be metadata (for present)
+         StringSearchFacet.SearchConfiguration tinstance5 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.METADATA, StringSearchFacet.SearchType.PHRASE, false, false, false, 0);
+         assertEquals("metadata:(λόγιος)", tinstance5.substituteFields());
+        
+        // translation search -
+        // field should be translation
+         StringSearchFacet.SearchConfiguration tinstance6 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TRANSLATIONS, StringSearchFacet.SearchType.PHRASE, false, false, false, 0);
+         assertEquals("translation:(λόγιος)", tinstance6.substituteFields());
+         
+        // all search -
+        // field should be all
+          StringSearchFacet.SearchConfiguration tinstance7 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.ALL, StringSearchFacet.SearchType.PHRASE, false, false, false, 0);
+         assertEquals("all:(λόγιος)", tinstance7.substituteFields());
+         
+        // if no caps and no marks
+        // field should be transcription_ia
+         StringSearchFacet.SearchConfiguration tinstance8 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, true, true, 0);
+         assertEquals("transcription_ia:(λόγιος)", tinstance8.substituteFields());
+        
+        // if no caps only
+        // field should be transcription_ic
+         StringSearchFacet.SearchConfiguration tinstance9 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, true, false, 0);
+         assertEquals("transcription_ic:(λόγιος)", tinstance9.substituteFields());        
+        
+        // if no marks only
+        // field should be transcription_id
+         StringSearchFacet.SearchConfiguration tinstance10 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, false, true, 0);
+         assertEquals("transcription_id:(λόγιος)", tinstance10.substituteFields());
+         
+        // USER-DEFINED SEARCHES
+        
+        // lem indicators need to be replaced with transcription_ia
+        // pure
+        StringSearchFacet.SearchConfiguration tinstance11 = testInstance.new SearchConfiguration("lem:λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, false, 0);
+         assertEquals("transcription_ia:λόγιος", tinstance11.substituteFields());
+         
+         StringSearchFacet.SearchConfiguration tinstance12 = testInstance.new SearchConfiguration("lem:λόγιος AND lem:του", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, false, 0);
+         assertEquals("transcription_ia:λόγιος AND transcription_ia:του", tinstance12.substituteFields());
+        // mixed
+         StringSearchFacet.SearchConfiguration tinstance13 = testInstance.new SearchConfiguration("lem:λόγιος AND transcription:του", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, false, 0);
+         assertEquals("transcription_ia:λόγιος AND transcription:του", tinstance13.substituteFields());
+        
+        
+        
+        
+        
+        
+    }
+    
     public void testLemmatizeWord(){
         
         // sanity check - returns false if no lemma requested
@@ -264,10 +364,7 @@ public class StringSearchFacetTest extends TestCase {
         testInput = new ArrayList<String>(Arrays.asList("λόγιος", "λόγιος"));
         assertFalse(tinstance5.lemmatizeWord(testInput, 0));
         assertTrue(tinstance5.lemmatizeWord(testInput, 1));
-       
-        
-        
-        
+          
     }
     
     public void testTransformKeywords(){      
