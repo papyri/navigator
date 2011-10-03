@@ -167,10 +167,10 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesSubstringPhraseWordBoundaries() {
     String query = "transcription_ngram_ia:(\"μεν\\^ \\^κα\")";
-    String id = "http://papyri.info/ddbdp/bgu;2;454";
+    String id = "http://papyri.info/ddbdp/bgu;1;110";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
-    expResult.add("μεν(*) κα");
+    expResult.add("μεν) κα");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {

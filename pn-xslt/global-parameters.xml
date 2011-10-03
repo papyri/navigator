@@ -9,7 +9,7 @@
   
   <parameter>
     <name>leiden-style</name>
-    <value>ddbdp</value>
+    <value on="yes">ddbdp</value>
     <value>dohnicht</value>
     <value>edh-itx</value>
     <value>edh-names</value>
