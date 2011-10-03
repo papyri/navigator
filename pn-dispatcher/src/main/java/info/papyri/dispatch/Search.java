@@ -311,6 +311,7 @@ public class Search extends HttpServlet {
       req.setMethod(METHOD.POST);
       QueryResponse rs = req.process(solr);
       SolrDocumentList docs = rs.getResults();
+      out.println(q.toString());
       out.println("<p>" + docs.getNumFound() + " hits.</p>");
       out.println("<table>");
       out.println("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translation</td><td>Images</td></tr>");

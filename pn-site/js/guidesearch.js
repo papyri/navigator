@@ -29,6 +29,7 @@ $(document).ready(
 		// values are list of elements that *must* be 
 		// switched on or off onclick.
 
+        hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_on["lemmas"] = ["#caps", "#marks", "#target-text"];
 		hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_off["target-metadata"] = ["#betaYes"];
@@ -232,46 +233,56 @@ $(document).ready(
 
 	    }
 	    
-	    // this is working just fine at capturing text input
-	    // and triggering when needed. just a question of working
-	    // out what behaviours are desired
 	    
 	    hic.monitorTextInput = function(){
 	    
 	    	$(this).unbind('focus');
+			$(this).unbind('keypress');
+			$(this).unbind('keyup');
+	    	var betaOn = $("#beta-on").attr("checked");
 	    	colonFound = false;
 	    	var selectedRadios = [];
-			
-			$(this).keyup(function(event){
-			
-				event.stopPropagation();
-				var val = $(this).val();
-				if(!colonFound && val.match(":")) {
-				
-					colonFound = true;
-					$(".stringsearch-section input:radio").attr("disabled", "disabled");
-					$(".stringsearch-section input:checkbox").removeAttr("disabled");
-					selectedRadios = $(".stringsearch-section input:radio:checked");
-					$(".stringsearch-section input:radio:checked").removeAttr("checked");
-					hic.mixedsearch = true;
-			
-				}
-				else if(!val.match(":") && colonFound){
+	    	
+	    	if(betaOn){
 
-                    colonFound = false;
-					$(".stringsearch-section input:radio").removeAttr("disabled");
-					hic.mixedsearch = false;
-				    for(var i = 0; i < selectedRadios.length; i++){
-
-                        selectedRadios[i].click();   
-				    
-				    }
-				    
+				$(this).keypress(function(event){ return convertCharToggle(this, true, event); });
+	    		$(this).keyup(function(event){ return convertStr( this, event ); });
+	    	    	
+	    	
+	    	}
+	    	else{
+			
+				$(this).keyup(function(event){
+			
+					event.stopPropagation();
+					var val = $(this).val();
+					if(!colonFound && val.match(":")) {
 				
-				}
+						colonFound = true;
+						$(".stringsearch-section input:radio").attr("disabled", "disabled");
+						$(".stringsearch-section input:checkbox").removeAttr("disabled");
+						selectedRadios = $(".stringsearch-section input:radio:checked");
+						$(".stringsearch-section input:radio:checked").removeAttr("checked");
+						hic.mixedsearch = true;
+			
+					}
+					else if(!val.match(":") && colonFound){
+
+                    	colonFound = false;
+						$(".stringsearch-section input:radio").removeAttr("disabled");
+						hic.mixedsearch = false;
+				    	for(var i = 0; i < selectedRadios.length; i++){
+
+                        	selectedRadios[i].click();   
+				    
+				    	} 
+				
+					}
 						
-			});
+				});
 	    
+	    	}
+	    	
 	    }
 	    
 	    hic.hideSearch = function(evt){
@@ -367,6 +378,7 @@ $(document).ready(
 		hic.positionTogglePointer();
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
+		$("#substring").click();
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		$("form select").change(hic.tidyQueryString);
 		$("#search-toggle").height($("#facet-wrapper").height());

@@ -80,6 +80,18 @@
     </xsl:choose>
   </xsl:function>
   
+  <xsl:function name="pi:get-blame-url" as="xs:string">
+    <xsl:param name="identifier"/>
+    <xsl:variable name="base">https://github.com/papyri/idp.data/blame/master/</xsl:variable>
+    <xsl:variable name="id" select="tokenize($identifier, ';')"/>
+    <xsl:choose>
+      <!-- like http://papyri.info/ddbdp/c.etiq.mom;;165/source -->
+      <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:when>
+      <!-- like http://papyri.info/ddbdp/bgu;1;1/source -->
+      <xsl:otherwise><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/', $id[1], '.', $id[2], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
   <!-- Given an identifier URL, get the bare id -->
   <xsl:function name="pi:get-id" as="xs:string">
     <xsl:param name="url"/>

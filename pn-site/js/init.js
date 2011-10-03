@@ -4,7 +4,7 @@ function init() {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
         jQuery(this).hide();
     });
-    jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).not(".current").has("a").hover(function() {
+    jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").hover(function() {
       jQuery(this).css('background-color', '#F8F6F4');
     },
     function() {

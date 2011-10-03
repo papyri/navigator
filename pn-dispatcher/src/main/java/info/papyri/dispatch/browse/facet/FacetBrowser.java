@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -30,7 +29,7 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 
-@WebServlet(name = "FacetBrowser", urlPatterns = {"/dispatch/faceted"})
+@WebServlet(name = "FacetBrowser", urlPatterns = {"/search"})
 
 /**
  * Enables faceted browsing of the pn collections
@@ -52,7 +51,7 @@ public class FacetBrowser extends HttpServlet {
     /* TODO: Get this squared up with urlPatterns, above */
     static private String FACET_PATH;
     /** Number of records to show per page. Used in pagination */
-    static private int documentsPerPage = 50;
+    static private int documentsPerPage = 15;
     
     static SolrUtils SOLR_UTIL;
         
@@ -110,7 +109,7 @@ public class FacetBrowser extends HttpServlet {
          * 
          * Required for building the facet query.
          */
-        int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 0;
+        int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 1;
         
         /* Build the SolrQuery object to be used in querying Solr out of query parts contributed 
          * by each of the facets in turn.
@@ -123,23 +122,33 @@ public class FacetBrowser extends HttpServlet {
         /* Allow each facet to pull out the values relevant to it from the <code>QueryResponse</code>
          * returned by the Solr server.
          */
-        populateFacets(facets, queryResponse);
         
+         
+         if(queryResponse != null){
+         
+            populateFacets(facets, queryResponse);
+            
+         } else {
+        
+            queryResponse = new QueryResponse();
+            
+         }
+         
         /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
            of which represents one returned document. */
-        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse);
+        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse, facets);
         
                 
         /* Determine the number of results returned. 
          * 
          * Required for assembleHTML method 
          */
-        long resultSize = queryResponse.getResults().getNumFound();
+        long resultSize = queryResponse.getResults() == null ? 0 : queryResponse.getResults().getNumFound();
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-       //  String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+     //   String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -150,7 +159,7 @@ public class FacetBrowser extends HttpServlet {
     /** Returns the <code>List</code> of <code>Facet</code>s to be used. 
      * 
      */
-    private ArrayList<Facet> getFacets(){
+    ArrayList<Facet> getFacets(){
           
         ArrayList<Facet> facets = new ArrayList<Facet>();
         
@@ -212,7 +221,7 @@ public class FacetBrowser extends HttpServlet {
         sq.setFacetMissing(true);
         sq.setFacetMinCount(1);         // we don't want to see zero-count values            
         sq.setRows(documentsPerPage); 
-        sq.setStart(pageNumber * documentsPerPage); 
+        sq.setStart((pageNumber - 1) * documentsPerPage); 
         
         // iterate through facets, adding their contributions to solr query
         Iterator<Facet> fit = facets.iterator();
@@ -223,6 +232,9 @@ public class FacetBrowser extends HttpServlet {
             
             
         }
+        sq.addSortField(SolrField.series.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.volume.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.item.name(), SolrQuery.ORDER.asc);
         // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
         // all documents that pass these filters - hence '*:*' as the actual query
         sq.setQuery("*:*");
@@ -298,9 +310,14 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse){
-               
+    ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse, ArrayList<Facet> facets){
+              
+        
+        String highlightString = this.generateHighlightString(facets);
+
         ArrayList<DocumentBrowseRecord> records = new ArrayList<DocumentBrowseRecord>();
+        
+        if(queryResponse.getResults() == null) return records;
         
         for(SolrDocument doc : queryResponse.getResults()){
             
@@ -321,7 +338,7 @@ public class FacetBrowser extends HttpServlet {
                 Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, highlightString);
                 records.add(record);
                 
            }
@@ -334,6 +351,22 @@ public class FacetBrowser extends HttpServlet {
           
         Collections.sort(records);
         return records;
+        
+    }
+    
+    private String generateHighlightString(ArrayList<Facet> facets){
+        
+        String highlightString = "";
+        
+        try{
+        
+            StringSearchFacet ssf = (StringSearchFacet)this.findFacet(facets, StringSearchFacet.class);
+            String hWords = ssf.getHighlightString();
+            highlightString += hWords;
+        
+        }
+        catch(FacetNotFoundException fnfe){}
+        return highlightString;
         
     }
     
@@ -399,8 +432,13 @@ public class FacetBrowser extends HttpServlet {
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);
         html.append("\"> ");
+        html.append("<div id=\"search-reset-wrapper\">");
+        html.append("<a href=\"");
+        html.append(FacetBrowser.FACET_PATH);
+        html.append("\" id=\"reset-all\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" aria-disabled=\"false\">Reset All</a>");
         html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
-
+        html.append("</div>");
+        
         try{
             
         
@@ -485,8 +523,7 @@ public class FacetBrowser extends HttpServlet {
         else{
             
             html.append("<p>");
-            html.append(String.valueOf(resultSize));
-            
+            html.append(String.valueOf(resultSize));           
             html.append(resultSize > 1 ? " hits." : " hit");
             html.append("</p>");
             html.append("<table>");
@@ -533,9 +570,9 @@ public class FacetBrowser extends HttpServlet {
             
             if(wrapperRequired){
                 
-                previousValuesHTML.append("<div class=\"prev-constraint-wrapper\" id=\"prev-constraint-");
+                previousValuesHTML.append("<div class='prev-constraint-wrapper' id='prev-constraint-");
                 previousValuesHTML.append(facet.getCSSSelectorID());
-                previousValuesHTML.append("\">");  
+                previousValuesHTML.append("'>");  
                 
             }
             
@@ -555,22 +592,22 @@ public class FacetBrowser extends HttpServlet {
                         String displayName = facet.getDisplayName(param, facetValue);
                         String displayFacetValue = facet.getDisplayValue(facetValue);
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue);
-                        previousValuesHTML.append("<div class=\"facet-constraint constraint-");
+                        previousValuesHTML.append("<div class='facet-constraint constraint-");
                         previousValuesHTML.append(param.toLowerCase());
-                        previousValuesHTML.append("\">");
-                        previousValuesHTML.append("<div class=\"constraint-label\">");
+                        previousValuesHTML.append("'>");
+                        previousValuesHTML.append("<div class='constraint-label'>");
                         previousValuesHTML.append(displayName);
-                        previousValuesHTML.append("<span class=\"semicolon\">:</span> ");
+                        previousValuesHTML.append("<span class='semicolon'>:</span> ");
                         previousValuesHTML.append(displayFacetValue);
                         previousValuesHTML.append("</div><!-- closing .constraint-label -->");
-                        previousValuesHTML.append("<div class=\"constraint-closer\">");
-                        previousValuesHTML.append("<a href=\"");
+                        previousValuesHTML.append("<div class='constraint-closer'>");
+                        previousValuesHTML.append("<a href='");
                         previousValuesHTML.append(FACET_PATH);
                         previousValuesHTML.append("".equals(queryString) ? "" : "?");
                         previousValuesHTML.append(queryString);
-                        previousValuesHTML.append("\" title =\"Remove facet value\">X</a>");
+                        previousValuesHTML.append("' title ='Remove facet value'>X</a>");
                         previousValuesHTML.append("</div><!-- closing .constraint-closer -->");
-                        previousValuesHTML.append("<div class=\"spacer\"></div>");
+                        previousValuesHTML.append("<div class='spacer'></div>");
                         previousValuesHTML.append("</div><!-- closing .facet-constraint -->");
                     }
                                         
@@ -583,7 +620,7 @@ public class FacetBrowser extends HttpServlet {
                      
         }
         
-        previousValuesHTML.append("<div class=\"spacer\"></div>");
+        previousValuesHTML.append("<div class='spacer'></div>");
         previousValuesHTML.append("</div><!-- closing #previous-values -->");
         html.append(previousValuesHTML.toString());
         return html;
@@ -657,36 +694,39 @@ public class FacetBrowser extends HttpServlet {
     
     private String doPagination(ArrayList<Facet> facets, long resultSize){
         
-        int numPages = (int)(Math.ceil(resultSize / documentsPerPage));
+        if(resultSize <= documentsPerPage) return "";
         
-        if(numPages <= 1) return "";
+        Float resultSizeAsFloat = Float.valueOf(resultSize);
         
+        int numPages = (int)(Math.ceil(resultSizeAsFloat / documentsPerPage));
+                
         String fullQueryString = buildFullQueryString(facets);
         
         double widthEach = 8;
         double totalWidth = widthEach * numPages;
         totalWidth = totalWidth > 100 ? 100 : totalWidth;
         
-        StringBuilder html = new StringBuilder("<div id=\"pagination\" style=\"width:");
+        StringBuilder html = new StringBuilder("<div id='pagination' style='width:");
         html.append(String.valueOf(totalWidth));
-        html.append("%\">");
-        
+        html.append("%'>");
+
         for(long i = 1; i <= numPages; i++){
             
-            html.append("<div class=\"page\">");
-            html.append("<a href=\"");
+            html.append("<div class='page'>");
+            html.append("<a href='");
             html.append(FACET_PATH);
             html.append("?");
             html.append(fullQueryString);
             html.append("page=");
             html.append(i);
-            html.append("\">");
+            html.append("'>");
             html.append(String.valueOf(i));
             html.append("</a>");
             html.append("</div><!-- closing .page -->");
             
         }
-        html.append("<div class=\"spacer\"></div><!-- closing .spacer -->");
+
+        html.append("<div class='spacer'></div><!-- closing .spacer -->");
         html.append("</div><!-- closing #pagination -->");
         return html.toString();
         

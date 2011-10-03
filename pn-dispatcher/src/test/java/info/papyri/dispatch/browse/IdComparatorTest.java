@@ -29,9 +29,7 @@ public class IdComparatorTest extends TestCase {
      * Test of compare method, of class DocumentBrowseRecordComparator.
      */
     public void testCompare() {
-        
-        System.out.println("compare");
-     
+             
         IdComparator testInstance = new IdComparator();
 
         ArrayList<String> sorted1 = new ArrayList<String>(Arrays.asList("99", "100", "101", "102", "1000", "10001"));
@@ -74,8 +72,6 @@ public class IdComparatorTest extends TestCase {
         
         IdComparator testInstance = new IdComparator();
         
-        System.out.println("splitIntoNumericAndAlphabeticComponents");
-
         String testString1 = "12345";
         ArrayList<String> testArray1 = new ArrayList<String>(Arrays.asList("12345"));
         

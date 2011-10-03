@@ -40,7 +40,6 @@ public class IdentifierFacetTest extends TestCase {
         assertTrue(testInstance.addConstraints(mockParams));
         SolrQuery sq = new SolrQuery();
         sq = testInstance.buildQueryContribution(sq);
-        System.out.println(sq.toString());
         
     }
     
@@ -54,16 +53,7 @@ public class IdentifierFacetTest extends TestCase {
         
         String test1 = testInstance.getSpecifierClauseAsJavaRegex();
         assertEquals("^2133;BGU;12;.+?$", test1);
-        Pattern pattern = Pattern.compile(test1);
-        ArrayList<String> patterns = new ArrayList<String>();
-        patterns.add("testing1");
-        patterns.add("testing2");
-        for(String patt : patterns){
-            
-            Matcher matcher = pattern.matcher(patt);
-            if(!matcher.matches()) System.out.println("didn't match");
-            
-        }
+
         
         mockParams.clear();
         mockParams.put(IdentifierFacet.IdParam.SERIES.name(), new String[]{"bgu"});

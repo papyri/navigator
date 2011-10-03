@@ -196,10 +196,8 @@ public class IdentifierFacet extends Facet{
     public String getSpecifierClauseAsJavaRegex(){
         
         String specifierClause = getCompleteSpecifierClause();
-        System.out.println("Specifier clause is " + specifierClause);
         specifierClause = specifierClause.replace("*", ".+?");
         specifierClause = "^" + specifierClause + "$";
-        System.out.println("Replaced clause is " + specifierClause);
         return specifierClause;
              
     }
@@ -227,7 +225,7 @@ public class IdentifierFacet extends Facet{
     
     @Override
     public void setWidgetValues(QueryResponse queryResponse){
-
+        
         Boolean hasPathData = dispersePathData(queryResponse);
         
         if(!hasPathData){
@@ -1200,9 +1198,13 @@ public class IdentifierFacet extends Facet{
                 ff.add(SolrField.apis_full_identifier);
                 ff.add(SolrField.apis_publication_id);
                 ff.add(SolrField.apis_inventory);
+                return ff;
+            }
+            else if(searchConfigurations.get(IdParam.SERIES).hasConstraint()){
+                
                 ff.add(SolrField.ddbdp_full_identifier);
                 ff.add(SolrField.hgv_full_identifier);
-                return ff;
+                
             }
             ff.add(getLeadingField());
             return ff;    

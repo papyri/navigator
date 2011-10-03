@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teilgandl.xsl 1541 2011-08-18 15:55:39Z gabrielbodard $ -->
+<!-- $Id: teilgandl.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -15,7 +15,7 @@
          </xsl:variable>
          <xsl:if test="number($pre-lb) and $pre-lb mod $line-inc = 0 and not($pre-lb = 0)">
             <xsl:choose>
-               <xsl:when test="@type = 'inWord'">
+               <xsl:when test="@break='no' or @type='inWord'">
                   <xsl:text>(</xsl:text>
                   <xsl:value-of select="$pre-lb"/>
                   <xsl:text>)</xsl:text>

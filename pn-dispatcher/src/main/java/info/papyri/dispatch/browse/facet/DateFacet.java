@@ -102,7 +102,7 @@ public class DateFacet extends Facet {
         // dates need to sort with 'Unknown' at the top
         // followed by BCE dates (= negative date_category value)
         // followed by CE dates (= positive date_category value)
-        
+        valuesAndCountsComplement = new ArrayList<Count>();
         dateCountComparator = new Comparator() {
 
             @Override
