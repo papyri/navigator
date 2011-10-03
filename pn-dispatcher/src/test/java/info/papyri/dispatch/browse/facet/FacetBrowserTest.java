@@ -29,7 +29,7 @@ public class FacetBrowserTest extends TestCase {
         testInstance = new FacetBrowser();
         try{
         SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8083/solr/pn-search/");
-        System.out.println("Successfully instantiated solr");
+
         }
         catch(MalformedURLException mue){
             
@@ -137,7 +137,7 @@ public class FacetBrowserTest extends TestCase {
         expect(mockQueryResponse.getResults()).andReturn(solrDocumentList).anyTimes();
         replay(mockQueryResponse);
 
-        assertEquals(0, testInstance.retrieveRecords(mockQueryResponse).size());
+        assertEquals(0, testInstance.retrieveRecords(mockQueryResponse, testInstance.getFacets()).size());
         
         verify(mockQueryResponse);
         
@@ -151,7 +151,7 @@ public class FacetBrowserTest extends TestCase {
         
         expect(mockQueryResponse2.getResults()).andReturn(solrDocumentList).anyTimes();
         replay(mockQueryResponse2);
-        assertEquals(1, testInstance.retrieveRecords(mockQueryResponse2).size());
+        assertEquals(1, testInstance.retrieveRecords(mockQueryResponse2, testInstance.getFacets()).size());
         verify(mockQueryResponse2);
         
         

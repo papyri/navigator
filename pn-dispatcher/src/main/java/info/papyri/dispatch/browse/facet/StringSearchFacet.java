@@ -2,7 +2,6 @@ package info.papyri.dispatch.browse.facet;
 
 import edu.unc.epidoc.transcoder.TransCoder;
 import info.papyri.dispatch.FileUtils;
-import info.papyri.dispatch.browse.FieldNotFoundException;
 import info.papyri.dispatch.browse.SolrField;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -40,7 +39,7 @@ public class StringSearchFacet extends Facet{
     
     enum SearchType{ PHRASE, SUBSTRING, LEMMAS, PROXIMITY, WITHIN, USER_DEFINED  };
     enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATIONS, USER_DEFINED };
-    enum SearchOption{ BETA, NO_CAPS, NO_MARKS };
+    enum SearchOption{ NO_CAPS, NO_MARKS };
 
     private HashMap<Integer, SearchConfiguration> searchConfigurations = new HashMap<Integer, SearchConfiguration>();
     private static String morphSearch = "morph-search/";
@@ -55,21 +54,10 @@ public class StringSearchFacet extends Facet{
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         Iterator<SearchConfiguration> scit = searchConfigurations.values().iterator();
-        // TODO: SHIFT ENTIRE RESPONSIBILITY OF THIS INTO SEARCHCONFIGURATION OBJECT
         while(scit.hasNext()){
             
             SearchConfiguration nowConfig = scit.next();
-            if(nowConfig.getSearchType().equals(SearchType.USER_DEFINED)){
-                
-                solrQuery.addFilterQuery(nowConfig.getSearchString());
-                continue;
-                
-            }
-            String rawField = "+";
-            rawField += nowConfig.getField().name() + ":";
-            String searchString = "(" + nowConfig.getSearchString() + ")";
-            String fullString = rawField + searchString;
-            solrQuery.addFilterQuery(fullString);   
+            solrQuery.addFilterQuery(nowConfig.getSearchString()); 
                      
         }
         
@@ -90,7 +78,24 @@ public class StringSearchFacet extends Facet{
         html.append("<input type=\"text\" name=\"");
         html.append(formName.name());
         html.append("\" size=\"50\" maxlength=\"250\" id=\"keyword\"></input>");
+
         html.append("</p>");
+
+        // search options control
+        html.append("<div class=\"stringsearch-section\">");
+        html.append("<p>");
+        html.append("<input type=\"checkbox\" name=\"beta-on\" id=\"beta-on\" value=\"on\"></input>");  
+        html.append("<label for=\"beta-on\" id=\"marks-label\">Convert from betacode as you type</label><br/>");
+        html.append("<input type=\"checkbox\" name=\"");
+        html.append(SearchOption.NO_CAPS.name().toLowerCase());
+        html.append("\" id=\"caps\" value=\"on\" checked></input>");    
+        html.append("<label for=\"caps\" id=\"caps-label\">ignore capitalization</label><br/>");
+        html.append("<input type=\"checkbox\" name=\"");
+        html.append(SearchOption.NO_MARKS.name().toLowerCase());
+        html.append("\" id=\"marks\" value=\"on\" checked></input>");  
+        html.append("<label for=\"marks\" id=\"marks-label\">ignore diacritics/accents</label>");
+        html.append("</p>");
+        html.append("</div><!-- closing .stringsearch-section -->");
                
         // search type control
         html.append("<div class=\"stringsearch-section\">");
@@ -146,25 +151,8 @@ public class StringSearchFacet extends Facet{
         html.append("\" id=\"all-label\">All</label>");
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
-        
-        // search options control
-        //html.append("<h3>Options</h3>");
-        html.append("<div class=\"stringsearch-section\">");
-        html.append("<p><input type=\"checkbox\" name=\"");
-        html.append(SearchOption.BETA.name().toLowerCase());
-        html.append("\" id=\"betaYes\" value=\"on\"/>");
-        html.append("<label for=\"betaYes\" id=\"betaYes-label\">search text in Beta Code</label> <br/>");
-        html.append("<input type=\"checkbox\" name=\"");
-        html.append(SearchOption.NO_CAPS.name().toLowerCase());
-        html.append("\" id=\"caps\" value=\"on\" checked></input>");    // will need to be changed once hooked in
-        html.append("<label for=\"caps\" id=\"caps-label\">ignore capitalization</label><br/>");
-        html.append("<input type=\"checkbox\" name=\"");
-        html.append(SearchOption.NO_MARKS.name().toLowerCase());
-        html.append("\" id=\"marks\" value=\"on\" checked></input>");  // will need to be changed once hooked in
-        html.append("<label for=\"marks\" id=\"marks-label\">ignore diacritics/accents</label>");
-        html.append("</p>");
-        html.append("</div><!-- closing .stringsearch-section -->");
         html.append("</div><!-- closing .facet-widget -->");
+        
         return html.toString();
         
     }
@@ -190,15 +178,15 @@ public class StringSearchFacet extends Facet{
         
         while(scit.hasNext()){
             
-            String inp = "<input type=\"hidden\" name=\"";
-            String v = "\" value=\"";
-            String c = "\"/>";
+            String inp = "<input type='hidden' name='";
+            String v = "' value='";
+            String c = "'/>";
             SearchConfiguration config = scit.next();
             html.append(inp);
             html.append(formName.name());
             html.append(String.valueOf(counter));
             html.append(v);
-            html.append(config.getRawWord().replaceAll("\"", "'"));
+            html.append(config.getRawString());
             html.append(c);
             
             html.append(inp);
@@ -222,17 +210,6 @@ public class StringSearchFacet extends Facet{
                 html.append(String.valueOf(counter));               
                 html.append(v);
                 html.append(String.valueOf(config.getProximityDistance()));
-                html.append(c);
-                
-            }
-            
-            if(config.getBetaOn()){
-                
-                html.append(inp);
-                html.append(SearchOption.BETA.name().toLowerCase());
-                html.append(String.valueOf(counter));
-                html.append(v);
-                html.append("on");
                 html.append(c);
                 
             }
@@ -289,7 +266,6 @@ public class StringSearchFacet extends Facet{
                 String typeGetter = "type" + matchSuffix;
                 String withinGetter = SearchType.WITHIN.name().toLowerCase() + matchSuffix;
                 String targetGetter = "target" + matchSuffix;
-                String betaGetter = SearchOption.BETA.name().toLowerCase() + matchSuffix;
                 String capsGetter = SearchOption.NO_CAPS.name().toLowerCase() + matchSuffix;
                 String marksGetter = SearchOption.NO_MARKS.name().toLowerCase() + matchSuffix;
 
@@ -314,19 +290,17 @@ public class StringSearchFacet extends Facet{
                     
                 }
                 
-                String[] rawBeta = params.get(betaGetter);
                 String[] rawCaps = params.get(capsGetter);
                 String[] rawMarks = params.get(marksGetter);
                 String[] rawDistance = params.get(withinGetter);
 
                 int distance = rawDistance == null ? 0 : rawDistance[0].matches("\\d+") ? Integer.valueOf(rawDistance[0]) : 0;    
 
-                Boolean beta = rawBeta == null ? false : "on".equals(rawBeta[0]);
                 Boolean caps = rawCaps == null ? false : "on".equals(rawCaps[0]);
                 Boolean marks = rawMarks == null ? false : "on".equals(rawMarks[0]);
 
                 
-                SearchConfiguration searchConfig = new SearchConfiguration(keyword, matchSuffix.equals("") ? 0 : Integer.valueOf(matchSuffix), trgt, ty, beta, caps, marks, distance);
+                SearchConfiguration searchConfig = new SearchConfiguration(keyword, matchSuffix.equals("") ? 0 : Integer.valueOf(matchSuffix), trgt, ty, caps, marks, distance);
                 Integer matchNumber = matchSuffix.equals("") ? 0 : Integer.valueOf(matchSuffix);
                 configs.put(matchNumber, searchConfig);
                 
@@ -366,13 +340,12 @@ public class StringSearchFacet extends Facet{
         SearchConfiguration config = searchConfigurations.get(k);
         
         StringBuilder dv = new StringBuilder();
-        dv.append(config.getRawWord().replaceAll("\\^", "#").replaceAll("'", "\""));
+        dv.append(config.getRawString().replaceAll("\\^", "#"));
         dv.append("<br/>");
         dv.append("Target: ");
         dv.append(config.getSearchTarget().name().toLowerCase().replace("_", "-"));
         dv.append("<br/>");
         
-        if(config.getBetaOn()) dv.append("Beta: On<br/>");
         if(config.getIgnoreCaps()) dv.append("No Caps: On<br/>");
         if(config.getIgnoreMarks()) dv.append("No Marks: On<br/>");
         if(config.getSearchType().equals(SearchType.PROXIMITY)){
@@ -427,7 +400,6 @@ public class StringSearchFacet extends Facet{
         
         String queryString = qs.toString();
         queryString = queryString.substring(0, queryString.length() - 1);
-        queryString = queryString.replaceAll("\"", "'");
         return queryString;
     }
     
@@ -453,7 +425,6 @@ public class StringSearchFacet extends Facet{
         }
         
         String queryString = qs.toString();
-        queryString = queryString.replaceAll("\"", "'");
         if(queryString.endsWith("&")) queryString = queryString.substring(0, queryString.length() - 1);
         return queryString;
         
@@ -471,7 +442,7 @@ public class StringSearchFacet extends Facet{
             
             qs.append(kwParam);
             qs.append("=");
-            qs.append(config.getRawWord());
+            qs.append(config.getRawString());
             qs.append("&");
             qs.append(typeParam);
             qs.append("=");
@@ -481,14 +452,6 @@ public class StringSearchFacet extends Facet{
             qs.append("=");
             qs.append(config.getSearchTarget().name());
             
-            if(config.getBetaOn()){
-                
-                qs.append("&");
-                qs.append(SearchOption.BETA.name().toLowerCase());
-                qs.append(paramNumber);
-                qs.append("=on");
-                
-            }
             if(config.getIgnoreCaps()){
                 
                 qs.append("&");
@@ -574,53 +537,15 @@ public class StringSearchFacet extends Facet{
     
     public String getHighlightString(){
         
-        String words = "";
-        String nowField = "";
-        // TODO: SHIFT RESPONSIBILITY ONTO GETHIGHLIGHTSTRING METHOD OF SEARCHCONFIGURATION OBJECT
-        // DESIRED OUTPUT OF THIS METHOD IS SIMPLY CONCATENATED FIELD(VALUE)
+        String highlightString = "";
+
         for(SearchConfiguration searchConfiguration : searchConfigurations.values()){
             
-            if("".equals(nowField)){
-                
-                SolrField testField = searchConfiguration.getField();
-                if(testField != null){
-                    
-                    nowField = testField.name();
-                    
-                }
-                
-                
-            }
-            String thisWord = searchConfiguration.getHighlightWord();
- 
-           /* if(nowField.equals(SolrField.transcription_ia.name())){
-                
-                try{
-                    
-                    if(searchConfiguration.getSearchType().equals(SearchType.USER_DEFINED)){
-                    
-                         thisWord = searchConfiguration.expandLemmas(searchConfiguration.extractLemmaWord(thisWord));
-                         
-                    }
-                    else if(searchConfiguration.getSearchType().equals(SearchType.LEMMAS)) {
-                        
-                        thisWord = searchConfiguration.expandLemmas(thisWord);
-                        
-                    }
-                    
-                } 
-                catch (MalformedURLException mue){} 
-                catch (SolrServerException sse){}
-                
-            }*/
-            words += " " + thisWord;
-                       
+            highlightString += searchConfiguration.getHighlightString();
+            
         }
-        if("".equals(nowField)) nowField = SolrField.transcription_ngram_ia.name();
-        if(words.length() > 0) words = words.substring(1);
-        String query = nowField + ":(" + words + ")";
-        return query;
         
+        return highlightString;
     }
     
     /**
@@ -663,11 +588,7 @@ public class StringSearchFacet extends Facet{
          * non-proximity searches
          */
         private int proximityDistance;
-        /**
-         * <code>True</code> if betacode is being used; <code>False</code> otherwise.
-         * 
-         */
-        private Boolean betaOn;
+
         /** <code>True</code> if capitalisation is to be ignored; <code>False</code>
          *  otherwise.
          */
@@ -682,173 +603,33 @@ public class StringSearchFacet extends Facet{
          * 
          */
         private SolrField field;
-        private String highlightWord;
         
         private String[] SEARCH_OPERATORS = {"AND", "OR", "NOT", "&&", "||", "+", "-", "WITHIN", "BEFORE", "AFTER", "IMMEDIATELY-BEFORE", "IMMEDIATELY-AFTER"};
         private HashMap<String, String> STRINGOPS_TO_SOLROPS = new HashMap<String, String>();
         
-        SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean beta, Boolean caps, Boolean marks, int wi){
+        SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean caps, Boolean marks, int wi){
             
             target = tgt;
             type = ty;
-            betaOn = beta;
             ignoreCaps = caps;
             ignoreMarks = marks;
             proximityDistance = wi;
-            try{
-                
-                field = setField(kw, type, target, caps, marks);
-                
-            }
-            catch(FieldNotFoundException fnfe){
-                
-                System.out.println("FieldNotFoundException with search for " + kw + ": " + fnfe.getMessage());
-                field = SolrField.all;
-                
-            }
-            rawString = kw;
-            try{
-                
-               searchString = transformSearchString(kw, type, beta, caps, marks);
-            
-            } catch (MalformedURLException mue){
-                
-                searchString = "ERROR: Malformed URL " + mue.getMessage();
-                
-            } catch (SolrServerException sse){
-            
-                searchString = "ERROR: SolrServerException " + sse.getMessage();
-            
-            }
-            catch(Exception e){
-                
-                // this will probably be thrown by the Transcoder
-                searchString = "ERROR: Probable source of error - " + kw + " is not valid betacode " + e.getMessage();
-                
-            }
+            rawString = kw;  
+            searchString = transformSearchString();
             STRINGOPS_TO_SOLROPS.put("NOT", "-");
             STRINGOPS_TO_SOLROPS.put("WITHIN", "~");
         }
         
-        /**
-         * Determines the field to search for the string in.
-         * 
-         * Replicates the logic of info.papyri.dispatch.Search#processRequest
-         * 
-         * @param st The search's <code>SearchType</code>
-         * @param t The search's <code>SearchTarget</code>
-         * @param noCaps Boolean - whether or not capitalisation is significant
-         * @param noMarks Boolean - whether or not diacritics are significant
-         * @return the <code>SolrField</code> to be searched
-         * @see info.papyri.dispatch.Search#runQuery(java.io.PrintWriter, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
-         */
-        
-        private SolrField deduceField(){
-                        
-            if(type.equals(SearchType.SUBSTRING)) return SolrField.transcription_ngram_ia;
+        String transformSearchString(){
             
-            if(type.equals(SearchType.LEMMAS)) return SolrField.transcription_ia;
-            
-            // henceforth only proximity and phrase searches possible
-            
-            if(target.equals(SearchTarget.TEXT)){
-                
-                if(ignoreCaps && ignoreMarks) return SolrField.transcription_ia;
-                
-                if(ignoreCaps) return SolrField.transcription_ic;
-                        
-                if(ignoreMarks) return SolrField.transcription_id;
-                
-                return SolrField.transcription;
-                
-            }
-                        
-            if(target.equals(SearchTarget.METADATA)) return SolrField.metadata;
-            
-            if(target.equals(SearchTarget.TRANSLATIONS)) return SolrField.translation;
-            
-            if(target.equals(SearchTarget.ALL)) return SolrField.all;
-            
-            return null;
-            
-        }
-        
-                private SolrField setField(String keyword, SearchType st, SearchTarget t, Boolean noCaps, Boolean noMarks) throws FieldNotFoundException{
-                        
-            if(st.equals(SearchType.SUBSTRING)) return SolrField.transcription_ngram_ia;
-            
-            if(st.equals(SearchType.LEMMAS)) return SolrField.transcription_ia;
-            
-            // henceforth only proximity and phrase searches possible
-            
-            if(t.equals(SearchTarget.TEXT)){
-                
-                if(noCaps && noMarks) return SolrField.transcription_ia;
-                
-                if(noCaps) return SolrField.transcription_ic;
-                        
-                if(noMarks) return SolrField.transcription_id;
-                
-                return SolrField.transcription;
-                
-            }
-                        
-            if(t.equals(SearchTarget.METADATA)) return SolrField.metadata;
-            
-            if(t.equals(SearchTarget.TRANSLATIONS)) return SolrField.translation;
-            
-            if(t.equals(SearchTarget.ALL)) return SolrField.all;
-            
-            throw new FieldNotFoundException("Unknown", "With search type " + st.name() + ", search target " + t.name() + ", no caps set to " + noCaps.toString() + ", no diacritics set to " + noMarks.toString());
-            
-        }
-        
-        /**
-         * Transforms the search string into the appropriate form based on 
-         * search settings
-         * 
-         * 
-         * @param rawInput The string as submitted by the user
-         * @param st The search's <code>SearchType</code>
-         * @param beta <code>Boolean</code>: Whether or not the string is beta-encoded
-         * @param noCase <code>Boolean</code>: Whether or not to ignore caps
-         * @param noMarks <code>Boolean</code>: Whether or not to ignore diacritics
-         * @return <code>String</code> The transformed <code>String</code>
-         * @throws SolrServerException
-         * @throws MalformedURLException
-         * @throws Exception 
-         */
-        
-        private String transformSearchString(String rawInput, SearchType st, Boolean beta, Boolean noCase, Boolean noMarks) throws SolrServerException, MalformedURLException, Exception{
-            
-            if(st.equals(SearchType.USER_DEFINED)) return getDirectEntryString(rawInput);
-
-            String cleanString = rawInput;
-            if(beta){
-                
-                TransCoder tc = new TransCoder("BetaCodeCaps", "UnicodeC");
-                cleanString = tc.getString(cleanString);
-                cleanString = cleanString.replace("ΑΝΔ", "AND").replace("ΟΡ", "OR").replace("ΝΟΤ", "NOT");
-
-            }
-            if(SearchType.LEMMAS.equals(st)){
-
-                cleanString = FacetBrowser.SOLR_UTIL.expandLemmas(cleanString);
-                                  
-            }
-            // no transform needed for nocaps text - performed by queryanalyzer
-            if(noMarks){
-                
-                cleanString = FileUtils.stripDiacriticals(cleanString);
-                
-              
-            }
-            cleanString = cleanString.replaceAll("'", "\"");
-            this.highlightWord = cleanString;
-            cleanString = cleanString.replaceAll("#", "^");
-            cleanString = cleanString.replaceAll("\\^", "\\\\^"); 
-            cleanString = cleanString.replaceAll("ς", "σ");
-            return cleanString;
+            ArrayList<String> keywords = harvestKeywords(this.rawString);
+            ArrayList<String> transWords = transformKeywords(keywords);
+            String swappedTerms = substituteTerms(keywords, transWords);
+            String swappedOps = substituteOperators(swappedTerms);
+            String swappedFields = substituteFields(swappedOps);
+            swappedFields = swappedFields.replaceAll("#", "^");
+            swappedFields = swappedFields.replaceAll("\\^", "\\\\^"); 
+            return swappedFields;
             
         }
         
@@ -858,20 +639,30 @@ public class StringSearchFacet extends Facet{
             
             String cleanedInput = rawInput;
 
-            cleanedInput = cleanedInput.replaceAll("[()#]", " ");
+            cleanedInput = cleanedInput.replaceAll("[()#^]", " ");
+            cleanedInput = cleanedInput.replaceAll("~[\\s]*[\\d]+", " ");
             
             for(String operator : this.SEARCH_OPERATORS){
                 
                 try{
-                    
-                     if("||".equals(operator)) operator = "\\|\\|";
-                     cleanedInput = cleanedInput.replaceAll(operator, " ");
+                     String operatorPattern = operator;
+                     if("||".equals(operator)){
+                         
+                         operatorPattern = "\\|\\|";
+                         
+                     }
+                     else if(operator.matches("[A-Z-]+") && !operator.equals("-")){
+                         
+                         operatorPattern = "\\b" + operator + "\\b";
+                         
+                     }
+                     cleanedInput = cleanedInput.replaceAll(operatorPattern, " ");
                     
                 }
                 catch(PatternSyntaxException pse){
                     
-                    operator = "\\" + operator;
-                    cleanedInput = cleanedInput.replaceAll(operator, " ");
+                    String operatorPattern = "\\" + operator;
+                    cleanedInput = cleanedInput.replaceAll(operatorPattern, " ");
                     
                 }
                 
@@ -898,32 +689,16 @@ public class StringSearchFacet extends Facet{
                     keyword = keyword.toLowerCase();
                     
                 }
-                if(betaOn){
-               
-                    try{
-                    
-                        String betaWord = "";
-                        betaWord = convertToUnicode(keyword); 
-                        keyword = betaWord;
-                    
-                    }
-                    catch(Exception e){
-                    
-                        transformedKeywords.add(keyword);
-                        continue;
-                    
-                    }  
-                }
+
                 if(lemmatizeWord(keywords, counter)){
-                    
+
                     try{ 
                         
                         String keywordExpanded = this.expandLemmas(keyword);
                         keyword = "(" + keywordExpanded + ")";
-                    
                     }
                     catch(Exception e){
-                        
+
                         transformedKeywords.add(keyword);
                         continue;
                         
@@ -931,22 +706,7 @@ public class StringSearchFacet extends Facet{
                     
                 }
                 if(ignoreMarks) keyword = FileUtils.stripDiacriticals(keyword);
-                keyword = keyword.replaceAll("#", "^");
-                keyword = keyword.replaceAll("\\^", "\\\\^"); 
-                
-                if(type.equals(SearchType.PHRASE)){
-                    
-                    if(keyword.indexOf("'") == 0 || keyword.indexOf("\"") == 0) keyword = keyword.substring(1);
-                    if(keyword.lastIndexOf("'") == (keyword.length() - 1) || keyword.lastIndexOf("\"") == (keyword.length() - 1)) keyword = keyword.substring(0, keyword.length() - 1);
-                    keyword = "\"" + keyword + "\"";
-                    
-                }
-                
-                
-                
-                keyword = keyword.replaceAll("ς", "σ");
-                
-                
+                keyword = keyword.replaceAll("ς", "σ");  
                 transformedKeywords.add(keyword);
                 counter++;
             
@@ -960,11 +720,33 @@ public class StringSearchFacet extends Facet{
         String substituteOperators(String expandedString){
             
             String smallString = expandedString;
+            if(type.equals(SearchType.PROXIMITY)){
+                
+                smallString = smallString + "~" + String.valueOf(proximityDistance);
+                
+            }
             
-            
+            smallString = transformProximitySearch(smallString);
             return smallString;
             
             
+        }
+        
+        String transformProximitySearch(String searchString){
+            
+            if(!searchString.contains("~")) return searchString;
+            searchString = searchString.replaceAll("\\s*~\\s*(\\d+)", "~$1");
+            String[] searchBits = searchString.split("~");
+            if(searchBits.length < 2) return searchString;
+            String prelimSearchTerms = searchBits[0];
+            String[] medSearchTerms = prelimSearchTerms.split(" ");
+            if(medSearchTerms.length < 2) return searchString;
+            String searchTerms = medSearchTerms[medSearchTerms.length - 2] + " " + medSearchTerms[medSearchTerms.length - 1];
+            if(searchTerms.indexOf("\"") != 0) searchTerms = "\"" + searchTerms;
+            if(searchTerms.lastIndexOf("\"") != (searchTerms.length() - 1)) searchTerms = searchTerms + "\"";
+            String newSearchString = searchTerms + "~" + searchBits[1];
+            return newSearchString;
+                     
         }
         
         String substituteTerms(ArrayList<String> initialTerms, ArrayList<String> transformedTerms){
@@ -974,9 +756,8 @@ public class StringSearchFacet extends Facet{
             
             for(int i = 0; i < initialTerms.size(); i++){
                 
-                String iTerm = initialTerms.get(i);
-                String sTerm = transformedTerms.get(i);
-                
+                String iTerm = initialTerms.get(i).replace("?", "\\?").replace("*", "\\*");
+                String sTerm = transformedTerms.get(i);                
                 String[] remBits = remainingString.split(iTerm, 2);
                 String newClause = remBits[0] + sTerm;
                 remainingString = remBits[1];
@@ -984,6 +765,7 @@ public class StringSearchFacet extends Facet{
                 
                 
             }
+            subBits.add(remainingString);
             String swapString = "";
             for(String bit : subBits){
                 
@@ -994,9 +776,8 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        String substituteFields(){
+        String substituteFields(String fieldString){
             
-            String fieldString = rawString;
             if(type.equals(SearchType.USER_DEFINED)){
                 
                 fieldString = fieldString.replaceAll("\\blem:", "transcription_ia:");
@@ -1004,8 +785,73 @@ public class StringSearchFacet extends Facet{
                 
             }
             
-            String fieldDesignator = deduceField().name();
-            fieldString = fieldDesignator + ":(" + fieldString + ")";
+            String fieldDesignator = "";
+            
+            if(type.equals(SearchType.SUBSTRING)){
+                
+                fieldDesignator = SolrField.transcription_ngram_ia.name();
+                
+            }
+            
+            else if(type.equals(SearchType.LEMMAS)){
+                
+                
+                fieldDesignator = SolrField.transcription_ia.name();
+            
+            }
+            
+            // henceforth only proximity and phrase searches possible
+            
+            else if(target.equals(SearchTarget.TEXT)){
+                
+                if(ignoreCaps && ignoreMarks){
+                    
+                    fieldDesignator = SolrField.transcription_ia.name();
+                
+                }
+                
+                else if(ignoreCaps){
+                    
+                    
+                    fieldDesignator = SolrField.transcription_ic.name();
+                
+                }
+                        
+                else if(ignoreMarks){
+                    
+                    fieldDesignator = SolrField.transcription_id.name();
+                
+                }
+                
+                else{
+                    
+                    fieldDesignator = SolrField.transcription.name();
+
+                    
+                }
+                
+            }
+                        
+            else if(target.equals(SearchTarget.METADATA)){
+                
+                fieldDesignator = SolrField.metadata.name();
+            
+            }
+            
+            else if(target.equals(SearchTarget.TRANSLATIONS)){
+                
+                fieldDesignator = SolrField.translation.name();
+            
+            }
+            
+            else if(target.equals(SearchTarget.ALL)){
+                
+                fieldDesignator = SolrField.all.name();
+            
+            }
+            
+            if(!fieldDesignator.equals("")) fieldString = fieldDesignator + ":(" + fieldString + ")";
+            
             return fieldString;
             
         }
@@ -1020,23 +866,7 @@ public class StringSearchFacet extends Facet{
             return unicodeString;
                 
         }
-        
-        String getDirectEntryString(String rawInput) throws MalformedURLException, SolrServerException{
-            
-            String deString = rawInput;
-            deString = deString.replaceAll("#", "^");
-            deString = deString.replaceAll("\\^", "\\\\^"); 
-            if(!deString.contains("lem:")) return deString;
-            String opener = deString.substring(0, deString.indexOf("lem:"));
-            String lemmaWord = extractLemmaWord(rawInput);
-            String remainder = deString.substring(deString.indexOf(lemmaWord) + lemmaWord.length());
-            String expandedSearchTerm = this.expandLemmas(lemmaWord);
-            expandedSearchTerm = expandedSearchTerm.replaceAll("ς", "σ");
-            String query = opener + SolrField.transcription_ia.name() + ":(" + expandedSearchTerm + ")" + remainder;
-            return query;
-                    
-        }
-        
+                
         Boolean lemmatizeWord(ArrayList<String> keywords, int currentIteration){
             
             if(type.equals(SearchType.LEMMAS)) return true;
@@ -1086,25 +916,6 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        /**
-         * Gets the search string in a form immediately ready for use in a 
-         * <code>SolrQuery</code>
-         * 
-         * @return 
-         */
-        
-        public String getSearchString(){ 
-           
-            // transformation only required if a proximity search
-           if(type.equals(SearchType.PROXIMITY)){
-
-               return "\"" + searchString + "\"~" + String.valueOf(proximityDistance);
-           } 
-           
-           return searchString;
-        
-        }
-        
         public String expandLemmas(String query) throws MalformedURLException, SolrServerException {
             
             SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
@@ -1136,11 +947,19 @@ public class StringSearchFacet extends Facet{
         /* getters and setters */
         
         public SearchTarget getSearchTarget(){ return target; }
-        public String getHighlightWord(){ return highlightWord; }
+        public String getSearchString(){ return searchString; }
+        public String getHighlightString(){ 
+            
+            String highlightString = searchString;
+            
+            
+            
+            return highlightString;
+        
+        }
         public SearchType getSearchType(){ return type; }
         public int getProximityDistance(){ return proximityDistance; }
-        public String getRawWord(){ return rawString; }
-        public Boolean getBetaOn(){ return betaOn; }
+        public String getRawString(){ return rawString; }
         public Boolean getIgnoreCaps(){ return ignoreCaps; }
         public Boolean getIgnoreMarks(){ return ignoreMarks; }
         public SolrField getField(){ return field; }

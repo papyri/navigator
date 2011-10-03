@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -149,7 +148,7 @@ public class FacetBrowser extends HttpServlet {
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
-        //String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
+     //   String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -233,11 +232,9 @@ public class FacetBrowser extends HttpServlet {
             
             
         }
-        sq.addSortField(SolrField.ddbdp_series.name(), SolrQuery.ORDER.asc);
-        sq.addSortField(SolrField.hgv_series.name(), SolrQuery.ORDER.asc);
-        sq.addSortField(SolrField.apis_series.name(), SolrQuery.ORDER.asc);
-        sq.addSortField(SolrField.ddbdp_volume.name(), SolrQuery.ORDER.asc);
-        sq.addSortField(SolrField.hgv_volume.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.series.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.volume.name(), SolrQuery.ORDER.asc);
+        sq.addSortField(SolrField.item.name(), SolrQuery.ORDER.asc);
         // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
         // all documents that pass these filters - hence '*:*' as the actual query
         sq.setQuery("*:*");
@@ -435,8 +432,13 @@ public class FacetBrowser extends HttpServlet {
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);
         html.append("\"> ");
+        html.append("<div id=\"search-reset-wrapper\">");
+        html.append("<a href=\"");
+        html.append(FacetBrowser.FACET_PATH);
+        html.append("\" id=\"reset-all\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" aria-disabled=\"false\">Reset All</a>");
         html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
-
+        html.append("</div>");
+        
         try{
             
         
@@ -521,8 +523,7 @@ public class FacetBrowser extends HttpServlet {
         else{
             
             html.append("<p>");
-            html.append(String.valueOf(resultSize));
-            
+            html.append(String.valueOf(resultSize));           
             html.append(resultSize > 1 ? " hits." : " hit");
             html.append("</p>");
             html.append("<table>");
@@ -569,9 +570,9 @@ public class FacetBrowser extends HttpServlet {
             
             if(wrapperRequired){
                 
-                previousValuesHTML.append("<div class=\"prev-constraint-wrapper\" id=\"prev-constraint-");
+                previousValuesHTML.append("<div class='prev-constraint-wrapper' id='prev-constraint-");
                 previousValuesHTML.append(facet.getCSSSelectorID());
-                previousValuesHTML.append("\">");  
+                previousValuesHTML.append("'>");  
                 
             }
             
@@ -591,22 +592,22 @@ public class FacetBrowser extends HttpServlet {
                         String displayName = facet.getDisplayName(param, facetValue);
                         String displayFacetValue = facet.getDisplayValue(facetValue);
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue);
-                        previousValuesHTML.append("<div class=\"facet-constraint constraint-");
+                        previousValuesHTML.append("<div class='facet-constraint constraint-");
                         previousValuesHTML.append(param.toLowerCase());
-                        previousValuesHTML.append("\">");
-                        previousValuesHTML.append("<div class=\"constraint-label\">");
+                        previousValuesHTML.append("'>");
+                        previousValuesHTML.append("<div class='constraint-label'>");
                         previousValuesHTML.append(displayName);
-                        previousValuesHTML.append("<span class=\"semicolon\">:</span> ");
+                        previousValuesHTML.append("<span class='semicolon'>:</span> ");
                         previousValuesHTML.append(displayFacetValue);
                         previousValuesHTML.append("</div><!-- closing .constraint-label -->");
-                        previousValuesHTML.append("<div class=\"constraint-closer\">");
-                        previousValuesHTML.append("<a href=\"");
+                        previousValuesHTML.append("<div class='constraint-closer'>");
+                        previousValuesHTML.append("<a href='");
                         previousValuesHTML.append(FACET_PATH);
                         previousValuesHTML.append("".equals(queryString) ? "" : "?");
                         previousValuesHTML.append(queryString);
-                        previousValuesHTML.append("\" title =\"Remove facet value\">X</a>");
+                        previousValuesHTML.append("' title ='Remove facet value'>X</a>");
                         previousValuesHTML.append("</div><!-- closing .constraint-closer -->");
-                        previousValuesHTML.append("<div class=\"spacer\"></div>");
+                        previousValuesHTML.append("<div class='spacer'></div>");
                         previousValuesHTML.append("</div><!-- closing .facet-constraint -->");
                     }
                                         
@@ -619,7 +620,7 @@ public class FacetBrowser extends HttpServlet {
                      
         }
         
-        previousValuesHTML.append("<div class=\"spacer\"></div>");
+        previousValuesHTML.append("<div class='spacer'></div>");
         previousValuesHTML.append("</div><!-- closing #previous-values -->");
         html.append(previousValuesHTML.toString());
         return html;
@@ -695,8 +696,9 @@ public class FacetBrowser extends HttpServlet {
         
         if(resultSize <= documentsPerPage) return "";
         
-        int numPages = (int)(Math.ceil(resultSize / documentsPerPage));
+        Float resultSizeAsFloat = Float.valueOf(resultSize);
         
+        int numPages = (int)(Math.ceil(resultSizeAsFloat / documentsPerPage));
                 
         String fullQueryString = buildFullQueryString(facets);
         
@@ -704,27 +706,27 @@ public class FacetBrowser extends HttpServlet {
         double totalWidth = widthEach * numPages;
         totalWidth = totalWidth > 100 ? 100 : totalWidth;
         
-        StringBuilder html = new StringBuilder("<div id=\"pagination\" style=\"width:");
+        StringBuilder html = new StringBuilder("<div id='pagination' style='width:");
         html.append(String.valueOf(totalWidth));
-        html.append("%\">");
-        
+        html.append("%'>");
+
         for(long i = 1; i <= numPages; i++){
             
-            html.append("<div class=\"page\">");
-            html.append("<a href=\"");
+            html.append("<div class='page'>");
+            html.append("<a href='");
             html.append(FACET_PATH);
             html.append("?");
             html.append(fullQueryString);
             html.append("page=");
             html.append(i);
-            html.append("\">");
+            html.append("'>");
             html.append(String.valueOf(i));
             html.append("</a>");
             html.append("</div><!-- closing .page -->");
             
         }
 
-        html.append("<div class=\"spacer\"></div><!-- closing .spacer -->");
+        html.append("<div class='spacer'></div><!-- closing .spacer -->");
         html.append("</div><!-- closing #pagination -->");
         return html.toString();
         
