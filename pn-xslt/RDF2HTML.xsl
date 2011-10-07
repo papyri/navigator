@@ -87,22 +87,7 @@
   </xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
   
-  <xsl:include href="pi-functions.xsl"/>
-  
-  <xsl:output method="html"/>
-  
-  <xsl:template match="/">
-    <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
-    <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
-    <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
-    <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
-    <xsl:variable name="image" select="contains($related, 'http://papyri.info/images')"/>
-    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
-   
-    <html lang="en" version="HTML+RDFa 1.1">
-      <xsl:namespace name="dc" select="'http://purl.org/dc/terms/'"></xsl:namespace>
-      <head>
-        <xsl:template name="collection-hierarchy">
+  <xsl:template name="collection-hierarchy">
     <xsl:param name="all-ancestors"></xsl:param>
     <xsl:param name="last-ancestor"></xsl:param>
     <xsl:variable name="ancestors"><xsl:value-of select="concat(normalize-space($all-ancestors), ' ')"></xsl:value-of></xsl:variable>
@@ -127,6 +112,22 @@
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
+  <xsl:include href="pi-functions.xsl"/>
+  
+  <xsl:output method="html"/>
+  
+  <xsl:template match="/">
+    <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+    <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
+    <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
+    <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
+    <xsl:variable name="image" select="contains($related, 'http://papyri.info/images')"/>
+    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
+   
+    <html lang="en" version="HTML+RDFa 1.1">
+      <xsl:namespace name="dc" select="'http://purl.org/dc/terms/'"></xsl:namespace>
+      <head>
+        
         
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <xsl:call-template name="collection-hierarchy">
