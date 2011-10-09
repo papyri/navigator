@@ -407,6 +407,7 @@ $(document).ready(
 		
 		});
 		
+		$("#beta-on").change(function(){$("#keyword").focus();});
 		$("#keyword").focus(hic.monitorTextInput);
 		$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 	}
