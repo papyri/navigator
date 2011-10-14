@@ -14,34 +14,31 @@
   
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="id">http://papyri.info/biblio/<xsl:value-of select="replace(/t:bibl/@xml:id, '[a-zA-Z]', '')"/></xsl:variable>
   
   <xsl:template match="/t:bibl">
-    <xsl:variable name="id">http://papyri.info/<xsl:value-of select="replace(@xml:id, '[a-zA-Z]', '')"/></xsl:variable>
     <rdf:Description rdf:about="{$id}">
       <dcterms:source rdf:parseType="resource">
         <dcterms:bibliographicCitation rdf:resource="{$id}"/>
       </dcterms:source>
-      <xsl:apply-templates select="t:relatedItem//t:ptr"><xsl:with-param name="id" select="$id"/></xsl:apply-templates>
+      <xsl:apply-templates select="t:relatedItem"/>
     </rdf:Description>
   </xsl:template>  
   
-  <xsl:template match="t:relatedItem[@type='appearsIn']//t:ptr">
-    <xsl:param name="id"/>
-    <dcterms:isPartOf rdf:resource="{@target}">
+  <xsl:template match="t:relatedItem[@type='appearsIn']">
+    <dcterms:isPartOf rdf:resource="{t:bibl/t:ptr/@target}">
       <dcterms:hasPart rdf:resource="{$id}"/>
     </dcterms:isPartOf>
   </xsl:template>
   
-  <xsl:template match="t:relatedItem[@type='reviews']//t:ptr">
-    <xsl:param name="id"/>
-    <cito:reviews rdf:resource="{@target}">
+  <xsl:template match="t:relatedItem[@type='reviews']">
+    <cito:reviews rdf:resource="{t:bibl/t:ptr/@target}">
       <cito:isReviewedBy rdf:resource="{$id}"/>
     </cito:reviews>
   </xsl:template>
   
-  <xsl:template match="t:relatedItem[@type='mentions']//t:bibl">
-    <xsl:param name="id"/>
-    <dcterms:references rdf:resource="http://papyri.info/ddbdp/{t:idno[@type='ddb']}/edition">
+  <xsl:template match="t:relatedItem[@type='mentions']">
+    <dcterms:references rdf:resource="http://papyri.info/ddbdp/{t:biblio/t:idno[@type='ddb']}/edition">
       <dcterms:isReferencedBy rdf:resource="{$id}"/>
     </dcterms:references>
   </xsl:template>

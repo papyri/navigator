@@ -56,6 +56,14 @@
   </xsl:template>
   
   <xsl:template match="t:bibl">
+    <xsl:call-template name="buildCitation"></xsl:call-template>
+    <xsl:if test="t:seg[@type='original' and @resp='#BP']">
+      <p class="bp-cite"><xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
+        <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></p>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="buildCitation">
     <xsl:variable name="mainWork" select="pi:get-docs(t:relatedItem[@type='appearsIn']//t:ptr/@target, 'xml')"/>
     <xsl:variable name="author"><xsl:call-template name="author"/></xsl:variable>
     <xsl:variable name="editor"><xsl:call-template name="editor"/></xsl:variable>
@@ -71,10 +79,6 @@
       <xsl:if test="t:relatedItem[@type='appearsIn']">"<xsl:value-of select="$articleTitle"/><xsl:if test="@subtype='journal'">,</xsl:if>" </xsl:if>
       <xsl:copy-of select="$mainTitle"/><xsl:if test="string-length($pubInfo) > 0">, </xsl:if><xsl:value-of select="$pubInfo"/>. <a class="button" id="editbibl" href="http://papyri.info/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a>
     </p>
-    <xsl:if test="t:seg[@type='original' and @resp='#BP']">
-      <p class="bp-cite"><xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
-        <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></p>
-    </xsl:if>
   </xsl:template>
   
   <xsl:template name="author">

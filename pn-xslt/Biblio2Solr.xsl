@@ -6,14 +6,21 @@
   exclude-result-prefixes="t"
   version="2.0">
   
+  <xsl:import href="Biblio2HTML.xsl"/>
   <xsl:include href="pi-functions.xsl"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
+  
+  <xsl:template match="/">
+    <xsl:apply-templates/>
+  </xsl:template>
   
   <xsl:template match="/t:bibl">
     <add>
       <doc>
         <field name="id"><xsl:value-of select="t:idno[@type='pi']"/></field>
+        <field name="sort"><xsl:call-template name="sort"/></field>
+        <field name="display"><xsl:call-template name="buildCitation"/></field>
       <xsl:apply-templates/>
     </doc>
     </add>
@@ -21,6 +28,13 @@
     
   <xsl:template match="t:idno">
     <field name="identifier">urn:cts:<xsl:value-of select="@type"/>:<xsl:value-of select="pi:escape-urn(.)"/></field>
+  </xsl:template>
+  
+  <xsl:template name="sort">
+    <xsl:if test="t:author">
+      <xsl:value-of select="t:author[@n=1]/t:surname"/>, <xsl:value-of select="t:author[@n=1]/t:forename"/>, 
+    </xsl:if>
+    <xsl:value-of select="t:title[@type='main'][1]"/>
   </xsl:template>
   
   <xsl:template match="t:note">

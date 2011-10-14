@@ -49,9 +49,9 @@
         </init-param>
     </servlet>
     <servlet>
-    <servlet-name>FacetBrowser</servlet-name>    
-    <servlet-class>info.papyri.dispatch.browse.facet.FacetBrowser</servlet-class>
-            <init-param>
+        <servlet-name>FacetBrowser</servlet-name>
+        <servlet-class>info.papyri.dispatch.browse.facet.FacetBrowser</servlet-class>
+        <init-param>
             <param-name>home</param-name>
             <param-value>/data/papyri.info/pn/home</param-value>
         </init-param>
@@ -60,17 +60,17 @@
             <param-value>http://localhost:8083/solr/</param-value>
         </init-param>
         <init-param>
-         <param-name>htmlPath</param-name>    
-         <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-name>htmlPath</param-name>
+            <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
         <init-param>
-        <param-name>pnSearchPath</param-name>    
-        <param-value>/pn-search</param-value>
+            <param-name>pnSearchPath</param-name>
+            <param-value>/pn-search</param-value>
         </init-param>
         <init-param>
             <param-name>facetBrowserPath</param-name>
             <param-value>/search</param-value>
-            </init-param>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>ImageMetadata</servlet-name>
@@ -92,25 +92,45 @@
             <param-value>http://localhost:8090</param-value>
         </init-param>
         <init-param>
-         <param-name>htmlPath</param-name>    
-         <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-name>htmlPath</param-name>
+            <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
         <init-param>
-        <param-name>sparqlGraph</param-name>    
-        <param-value>rmi://localhost/papyri.info#pi</param-value>
+            <param-name>sparqlGraph</param-name>
+            <param-value>rmi://localhost/papyri.info#pi</param-value>
         </init-param>
         <init-param>
-        <param-name>browseServletPath</param-name>    
-        <param-value>/browse</param-value>
+            <param-name>browseServletPath</param-name>
+            <param-value>/browse</param-value>
         </init-param>
         <init-param>
-        <param-name>pnSearchPath</param-name>    
-        <param-value>/pn-search</param-value>
+            <param-name>pnSearchPath</param-name>
+            <param-value>/pn-search</param-value>
         </init-param>
-                <init-param>
+        <init-param>
             <param-name>facetBrowserPath</param-name>
             <param-value>/search</param-value>
-            </init-param>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>BiblioSearch</servlet-name>
+        <servlet-class>info.papyri.dispatch.BiblioSearch</servlet-class>
+        <init-param>
+            <param-name>home</param-name>
+            <param-value>/data/papyri.info/pn/home</param-value>
+        </init-param>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8083/solr/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>xmlPath</param-name>
+            <param-value>/data/papyri.info/idp.data</param-value>
+        </init-param>
+        <init-param>
+            <param-name>htmlPath</param-name>
+            <param-value>/data/papyri.info/pn/idp.html</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
@@ -120,7 +140,7 @@
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
     </servlet-mapping>
-   <!-- <servlet-mapping>
+    <!-- <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/search</url-pattern>
     </servlet-mapping> -->
@@ -135,7 +155,11 @@
     <servlet-mapping>
         <servlet-name>FacetBrowser</servlet-name>
         <url-pattern>/search</url-pattern>
-        </servlet-mapping>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BiblioSearch</servlet-name>
+        <url-pattern>/BiblioSearch</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
