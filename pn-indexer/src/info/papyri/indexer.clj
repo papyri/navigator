@@ -44,13 +44,63 @@
 (def html (ref (ConcurrentLinkedQueue.)))
 (def solrtemplates (ref nil))
 (def text (ref (ConcurrentLinkedQueue.)))
-(def texttemplates (ref (ConcurrentLinkedQueue.)))
+(def texttemplates (ref nil))
+(def bibsolrtemplates (ref nil))
+(def bibhtmltemplates (ref nil))
 (def links (ref (ConcurrentLinkedQueue.)))
 (def documents (ref (ConcurrentLinkedQueue.)))
+(def bibliodocuments (ref (ConcurrentLinkedQueue.)))
 (def words (ref (ConcurrentSkipListSet.)))
 (def *current*)
 (def *doc*)
 (def *index*)
+
+(defn add-words [words]
+  (let [word-arr (.split words "\\s+")]
+    (for [word word-arr]
+      (.add @words word))))
+
+(defn dochandler []
+     (SAXResult. 
+      (let [current (StringBuilder.)
+	    chars  (StringBuilder.)
+	    solrdoc (SolrInputDocument.)]
+	(proxy [DefaultHandler] []
+	  (startElement [uri local qname atts]
+			(when (= local "field")
+			  (doto current (.append (.getValue atts "name")))
+			  (when (> (.length chars) 0)
+			    (doto chars (.delete 0 (.length chars))))))
+	  (characters [ch start length]
+		      (doto chars (.append ch start length)))
+	  (endElement [uri local qname]
+		      (when (> (.length current) 0)
+			(.addField solrdoc (.toString current) (.toString chars))
+			(doto current (.delete 0 (.length current)))))
+	  (endDocument []
+		       (when (not (nil? (.getField solrdoc "transcription")))
+			 (add-words (.getFieldValue solrdoc "transcription")))
+		       (.add @documents solrdoc))))))
+
+(defn bibliodochandler []
+     (SAXResult. 
+      (let [current (StringBuilder.)
+	    chars  (StringBuilder.)
+	    solrdoc (SolrInputDocument.)]
+	(proxy [DefaultHandler] []
+	  (startElement [uri local qname atts]
+			(when (= local "field")
+			  (doto current (.append (.getValue atts "name")))
+			  (when (> (.length chars) 0)
+			    (doto chars (.delete 0 (.length chars))))))
+	  (characters [ch start length]
+		      (doto chars (.append ch start length)))
+	  (endElement [uri local qname]
+		      (when (> (.length current) 0)
+			(.addField solrdoc (.toString current) (.toString chars))
+			(doto current (.delete 0 (.length current)))))
+	  (endDocument []
+		       (.add @bibliodocuments solrdoc))))))
 
 (defn copy
   "Performs a file copy from the source to the destination, making directories if necessary."
@@ -188,7 +238,7 @@
    (println (str (.getMessage e) " processing " url ".")))))
 
 (defn transform
-  "Takes an java.io.InputStream, a list of key/value parameter pairs, and a javax.xml.transform.Result"
+  "Takes an java.io.File, a list of key/value parameter pairs, and a javax.xml.transform.Result"
   [url, params, #^Result out, pool]
   
     (let [xslt (.poll pool)
@@ -380,26 +430,21 @@
     (dosync (ref-set texttemplates nil)))
 
 (defn index-solr
-  [solr]
+  [solr documents]
   (.start (Thread. 
      (fn []
        (let [solr (StreamingUpdateSolrServer. solr 5000 5)]
          (.setRequestWriter solr (BinaryRequestWriter.))
-         (while (= (count @documents) 0)
+         (while (= (count documents) 0)
      (Thread/sleep 30000))
-         (when (> (count @documents) 0)
+         (when (> (count documents) 0)
      (let [docs (ArrayList.)]
-       (.addAll docs @documents)
-       (.removeAll @documents docs)
+       (.addAll docs documents)
+       (.removeAll documents docs)
        (.add solr docs))))
          (Thread/sleep 30000)
-         (when (> (count @documents) 0)
+         (when (> (count documents) 0)
      (index-solr solr))))))
-
-(defn add-words [words]
-  (let [word-arr (.split words "\\s+")]
-    (for [word word-arr]
-      (.add @words word))))
 
 (defn print-words []
      (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
@@ -438,7 +483,7 @@
   (binding [*current* nil
       *doc* nil
       *index* 0]
-    (index-solr (str solrurl "morph-search/"))
+    (index-solr (str solrurl "morph-search/") @documents)
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
     (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))]
@@ -448,17 +493,19 @@
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
+  (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
+  (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")
 
   (if (nil? (first args))
     (do
       (println "Queueing DDbDP...")
-      (queue-collections "http://papyri.info/ddbdp" ())
+      ;(queue-collections "http://papyri.info/ddbdp" ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing HGV...")
-      (queue-collections "http://papyri.info/hgv" '("ddbdp"))
+      ;(queue-collections "http://papyri.info/hgv" '("ddbdp"))
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
-      (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
+      ;(queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
       (println (str "Queued " (count @html) " documents.")))
     (doseq [arg (first args)] (queue-item arg)))
 
@@ -476,43 +523,26 @@
  
   ;; Start Solr indexing thread if we're doing the lot
   (when (nil? (first args))
-    (index-solr (str solrurl "pn-search-offline/")))
+    (index-solr (str solrurl "pn-search-offline/") @documents))
   
   ;; Index docs queued in @text
   (println "Indexing text...")
-   (let [pool (Executors/newFixedThreadPool nthreads)
+  (let [pool (Executors/newFixedThreadPool nthreads)
         tasks
-  (map (fn [x]
-         (fn []
-     (when (not (.startsWith (first x) "http"))
-           (transform (first x)
-                (list (second x) (nth x 2))
-                (SAXResult. 
-                 (let [current (StringBuilder.)
-                 chars  (StringBuilder.)
-                 solrdoc (SolrInputDocument.)]
-                   (proxy [DefaultHandler] []
-               (startElement [uri local qname atts]
-                       (when (= local "field")
-                   (doto current (.append (.getValue atts "name")))
-                   (when (> (.length chars) 0)
-                     (doto chars (.delete 0 (.length chars))))))
-               (characters [ch start length]
-                     (doto chars (.append ch start length)))
-               (endElement [uri local qname]
-                     (when (> (.length current) 0)
-                       (.addField solrdoc (.toString current) (.toString chars))
-                       (doto current (.delete 0 (.length current)))))
-               (endDocument []
-                      (when (not (nil? (.getField solrdoc "transcription")))
-                  (add-words (.getFieldValue solrdoc "transcription")))
-                      (.add @documents solrdoc))))) @solrtemplates)))) @text)]
-         (doseq [future (.invokeAll pool tasks)]
-           (.get future))
-         (doto pool
-           (.shutdown)))
+  	(map (fn [x]
+  	       (fn []
+  		 (when (not (.startsWith (first x) "http"))
+  		   (transform (first x)
+  			      (list (second x) (nth x 2))
+  			      (dochandler) @solrtemplates)))) @text)]
+    (doseq [future (.invokeAll pool tasks)]
+      (.get future))
+    (doto pool
+      (.shutdown)))
+
+    
   (when (> (count @documents) 0)
-    (index-solr (str solrurl "pn-search-offline/")))
+    (index-solr (str solrurl "pn-search-offline/") @documents))
 
   (dosync (ref-set html nil)
     (ref-set text nil)
@@ -522,8 +552,28 @@
     (doto solr 
       (.commit)
       (.optimize)))
-  (print-words))
-       
+  (print-words)
+
+  (index-solr (str solrurl "biblio-search/") @bibliodocuments)
+  ;; Generate and Index bibliography
+  (println "Generating and indexing bibliography...")
+  (let [pool (Executors/newFixedThreadPool nthreads)
+	htmlpath (str htpath "/biblio/")
+	files (file-seq (File. (str filepath "/Biblio")))
+	tasks (map (fn [x]
+		     (fn []
+		       (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
+		       (transform (str "file://" (.getAbsolutePath x)) ()
+				  (StreamResult. (File. (str htmlpath (.replace (.getName x) ".xml" ".html"))))
+				  @bibhtmltemplates)))
+		   (filter #(.endsWith (.getName %) ".xml") files))]
+    (doseq [future (.invokeAll pool tasks)]
+      (.get future))
+    (doto pool
+      (.shutdown)))
+
+  (when (> (count @bibliodocuments) 0)
+    (index-solr (str solrurl "biblio-search/") @bibliodocuments)))
 
 (defn -main [& args]
   (if (> (count args) 0)

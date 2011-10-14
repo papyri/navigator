@@ -13,7 +13,7 @@
   <xsl:template match="/t:bibl">
     <add>
       <doc>
-        <field name="id"><xsl:value-of select="@xml:id"/></field>
+        <field name="id"><xsl:value-of select="t:idno[@type='pi']"/></field>
       <xsl:apply-templates/>
     </doc>
     </add>

@@ -15,11 +15,14 @@
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="identifier" type="string" indexed="true" stored="true" multiValued="true"/>
-    <dynamicField name="*" type="lctext" indexed="true" stored="true"/>
+    <dynamicField name="*" type="lctext" indexed="true" stored="true" multiValued="true"/>
     <field name="all" type="lctext" indexed="true" stored="false" multiValued="true"/>
   </fields>
   
   <uniqueKey>id</uniqueKey>
+  
+  <defaultSearchField>all</defaultSearchField>
+  
   <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
   <solrQueryParser defaultOperator="AND"/>
   

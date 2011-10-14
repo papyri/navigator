@@ -76,6 +76,11 @@
           <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', substring-after($url, 'http://papyri.info/apis/'), 'index.html')"/></xsl:otherwise>
         </xsl:choose>
       </xsl:when>
+      <!-- Like http://papyri.info/biblio/54953 -->
+      <xsl:when test="contains($url, 'biblio/')">
+        <xsl:variable name="dir" select="ceiling(number(substring-after($url, 'http://papyri.info/biblio/')) div 1000)"/>
+        <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-after($url, 'http://papyri.info/biblio/'), '.xml')"/>
+      </xsl:when>
       <xsl:otherwise><xsl:sequence select="string('null')"/></xsl:otherwise>
     </xsl:choose>
   </xsl:function>
@@ -136,6 +141,18 @@
       else
       0
       "/>
+  </xsl:function>
+  
+  <xsl:function name="pi:dec-to-hex" as="xs:string">
+    <xsl:param name="in" as="xs:integer"/>
+    <xsl:value-of select="
+      if ($in eq 0) then '0' 
+      else 
+        concat(
+          if ($in gt 16) then 
+          pi:dec-to-hex($in idiv 16) 
+          else '',
+          substring('0123456789ABCDEF', ($in mod 16) + 1, 1))"/>
   </xsl:function>
   
   <xsl:function name="pi:decode-uri-segment">
