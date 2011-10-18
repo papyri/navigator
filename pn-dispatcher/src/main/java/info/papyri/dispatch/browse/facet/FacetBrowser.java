@@ -428,14 +428,17 @@ public class FacetBrowser extends HttpServlet {
         
         html.append("<div id=\"facet-widgets-wrapper\" class=\"search search-open\">");
         html.append("<div id=\"search-toggle\" class=\"toggle-open\"><div id=\"search-toggle-pointer\">&lt;&lt;</div><!-- closing #pointer --></div><!-- closing #toggler -->");
-        html.append("<h2>Refine Search</h2>");
+        String heading = submittedParams.size() > 0 ? "Refine Search" : "Search";     
+        html.append("<h2>");
+        html.append(heading);
+        html.append("</h2>");
         html.append("<form name=\"facets\" method=\"get\" action=\"");
         html.append(FACET_PATH);
         html.append("\"> ");
         html.append("<div id=\"search-reset-wrapper\">");
         html.append("<a href=\"");
         html.append(FacetBrowser.FACET_PATH);
-        html.append("\" id=\"reset-all\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" aria-disabled=\"false\">Reset All</a>");
+        html.append("\" id=\"reset-all\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" aria-disabled=\"false\">New Search</a>");
         html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
         html.append("</div>");
         

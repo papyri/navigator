@@ -262,6 +262,17 @@
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:hasPart ?a }" url url))
             
+(defn is-part-of-query
+	[url]
+	(format "prefix dc: <http://purl.org/dc/terms/>
+			select ?p ?gp ?ggp
+			from <rmi://localhost/papyri.info#pi>
+			where{ <%s> dc:isPartOf ?p .
+				   ?p dc:isPartOf ?gp .
+				   optional { ?gp dc:isPartOf ?ggp }
+			
+			}" url))
+            
 (defn batch-relation-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
@@ -285,6 +296,75 @@
             where { <%s> dc:hasPart ?a .
                     ?a dc:replaces ?b }" url))
 
+(defn batch-hgv-source-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            construct {?a dc:source ?b}
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:hasPart ?a .
+                    ?a dc:source ?b }" url))
+        
+(defn hgv-source-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            select ?a
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:source ?a  }" url))        
+        
+(defn batch-other-source-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            construct {?a dc:source ?b}
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:hasPart ?a .
+                    ?a dc:relation ?hgv .
+                    ?hgv dc:source ?b }" url))
+                    
+(defn other-source-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            select ?a
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:relation ?hgv .
+                    ?hgv dc:source ?a }" url))        
+        		                                    
+        		                
+(defn batch-hgv-citation-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            construct {?a dc:bibliographicCitation ?c}
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:hasPart ?a .
+                    ?a dc:source ?b .
+                    ?b dc:bibliographicCitation ?c }" url))  
+                    
+(defn hgv-citation-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            select ?a
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:source ?b .
+                    ?b dc:bibliographicCitation ?a }" url)) 
+                    
+(defn batch-other-citation-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            construct {?a dc:bibliographicCitation ?c}
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:hasPart ?a .
+                    ?a dc:relation ?hgv .
+                    ?hgv dc:source ?b .
+                    ?b dc:bibliographicCitation ?c }" url))  
+                    
+(defn other-citation-query
+	[url]
+    (format  "prefix dc: <http://purl.org/dc/terms/> 
+            select ?a
+            from <rmi://localhost/papyri.info#pi>
+            where { <%s> dc:relation ?hgv .
+                    ?hgv dc:source ?b .
+                    ?b dc:bibliographicCitation ?a }" url))  
+            
 (defn replaces-query
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
@@ -327,62 +407,92 @@
   (println (get-filename url))
   (let [relations (execute-query (relation-query url))
        replaces (execute-query (replaces-query url))
-       is-replaced-by (execute-query (is-replaced-by-query url))]
-
+       is-replaced-by (execute-query (is-replaced-by-query url))
+       is-part-of (execute-query (is-part-of-query url))
+       source (if (empty? (re-seq #"/hgv/" url))
+       		   	  (execute-query (other-source-query url))
+       		   	  (execute-query (hgv-source-query url)))
+       citation(if (empty? (re-seq #"/hgv" url))
+       			  (execute-query (other-citation-query url))
+       			  (execute-query (hgv-citation-query url)))
+       ]
     (.add @html (list (str "file:" (get-filename url))
           (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
           (list "related" (apply str (interpose " " (for [x relations] (first x)))))
           (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
           (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (first x)))))
+          (list "isPartOf" (apply str (interpose " " (first is-part-of))))
+          (list "sources" (apply str (interpose " " (for [x source](first x)))))
+          (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
           (list "server" nserver)))))
 
 (defn queue-items
-  [url exclude]
+  [url exclude prev-urls]
+  (let [all-urls (cons url prev-urls)]
   (let [items (execute-query (has-part-query url))
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
-        is-replaced-by (execute-query (batch-is-replaced-by-query url))]
+        is-replaced-by (execute-query (batch-is-replaced-by-query url))
+        all-sources (if (empty? (re-seq #"/hgv/" url))
+        			(execute-query (batch-other-source-query url))
+        			(execute-query (batch-hgv-source-query url)))
+        all-citations (if (empty? (re-seq #"/hgv/" url))
+        			(execute-query (batch-other-citation-query url))
+        			(execute-query (batch-hgv-citation-query url)))]	
         (doseq [item items]
              (let  [related (if (empty? relations) ()
           (filter (fn [x] (= (first x) (last item))) relations))
                     reprint-from (if (empty? replaces) ()
          (filter (fn [x] (= (first x) (last item))) replaces))
+                    sources (if (empty? all-sources) ()
+          (filter (fn [x] (= (first x) (last item))) all-sources))
+                    citations (if (empty? all-citations) ()
+          (filter (fn [x] (= (first x) (last item))) all-citations))
                     reprint-in (if (empty? is-replaced-by) ()
              (filter (fn [x] (= (first x) (last item))) is-replaced-by))
                     exclusion (some (set (for [x (filter 
                       (fn [s] (and (.startsWith (last s) "http://papyri.info") (not (.contains (.toString (last s)) "/images/")))) related)] 
                (substring-before (substring-after (last x) "http://papyri.info/") "/"))) exclude)]
       (if (nil? exclusion)
-        (.add @html (list (str "file:" (get-filename (last item)))
+        ( .add @html (list (str "file:" (get-filename (last item)))
           (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
           (list "related" (apply str (interpose " " (for [x related] (last x)))))
           (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
           (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
+          (list "isPartOf" (apply str (interpose " " all-urls)))   
+          (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
+          (list "citationForm" (apply str (interpose "" (for [x citations](last x)))))       
           (list "server" nserver)))
         (do (.add @links (list (get-html-filename (.toString (last (reduce (fn [x y] (if (.contains (last x) exclusion) x y)) related))))
              (get-html-filename (.toString (last item)))))
       (.add @links (list (get-txt-filename (.toString (last (reduce (fn [x y] (if (.contains (last x) exclusion) x y)) related))))
-             (get-txt-filename (last item))))))))))
+             (get-txt-filename (last item)))))))))))	
                   
 (defn queue-collections
   "Adds URLs to the HTML transform and indexing queues for processing.  Takes a URL, like http://papryi.info/ddbdp/rdf,
   a set of collections to exclude and recurses down to the item level."
-  [url exclude]
+  [url exclude prev-urls]
   ;; TODO: generate symlinks for relations
   ;; queue for HTML generation
+  (let [all-urls (cons url prev-urls)]
   (.add @html (list url (list "collection" (if (.contains (substring-after url "http://papyri.info/") "/")
         (substring-before (substring-after url "http://papyri.info/") "/")
         (substring-after url "http://papyri.info/")))
         (list "related" "") 
         (list "replaces" "") 
         (list "isReplacedBy" "")
+        (list "isPartOf" "")
+        (list "sources", "")
+        (list "citationForm", "")
         (list "server" nserver)))
-  (let [items (execute-query (has-part-query url))]
+   (let [items (execute-query (has-part-query url))]
     (when (> (count items) 0)
       (if (.endsWith (last (first items)) "/source")
-        (queue-items url exclude)
+        (queue-items url exclude prev-urls)
         (doseq [item items]
-          (queue-collections (last item) exclude))))))
+          (println "Recursing down")
+          (println (apply str (interpose " " all-urls)))
+          (queue-collections (last item) exclude all-urls)))))))
 
 (defn generate-html
   []
@@ -394,7 +504,7 @@
           (transform (if (.startsWith (first x) "http")
             (str (.replace (first x) "papyri.info" nserver) "/rdf")
             (first x))
-          (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5))
+          (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8))
           (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
            (catch Exception e
        (.printStackTrace e)
@@ -499,13 +609,13 @@
   (if (nil? (first args))
     (do
       (println "Queueing DDbDP...")
-      ;(queue-collections "http://papyri.info/ddbdp" ())
+      (queue-collections "http://papyri.info/ddbdp" () ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing HGV...")
-      ;(queue-collections "http://papyri.info/hgv" '("ddbdp"))
+      (queue-collections "http://papyri.info/hgv" '("ddbdp") ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
-      ;(queue-collections "http://papyri.info/apis" '("ddbdp", "hgv"))
+      (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv") ())
       (println (str "Queued " (count @html) " documents.")))
     (doseq [arg (first args)] (queue-item arg)))
 

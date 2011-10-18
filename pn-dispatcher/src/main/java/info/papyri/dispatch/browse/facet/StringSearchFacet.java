@@ -1,9 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
-import edu.unc.epidoc.transcoder.TransCoder;
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.SolrField;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -338,9 +336,15 @@ public class StringSearchFacet extends Facet{
         if(!searchConfigurations.containsKey(k)) return "Facet value not found";
         
         SearchConfiguration config = searchConfigurations.get(k);
+        String rs = config.getRawString();
+        
+        Pattern pattern = Pattern.compile(".*identifier:([\\d]+).*");
+        Matcher matcher = pattern.matcher(rs);
+        
+        if(matcher.matches()) return getTrismegistosDisplayValue(matcher);
         
         StringBuilder dv = new StringBuilder();
-        dv.append(config.getRawString().replaceAll("\\^", "#"));
+        dv.append(rs.replaceAll("\\^", "#"));
         dv.append("<br/>");
         dv.append("Target: ");
         dv.append(config.getSearchTarget().name().toLowerCase().replace("_", "-"));
@@ -356,6 +360,17 @@ public class StringSearchFacet extends Facet{
         }
         
         return dv.toString();
+        
+    }
+    
+    String getTrismegistosDisplayValue(Matcher matcher){
+        
+        String tmNumber = matcher.group(1);
+        StringBuilder tmsb = new StringBuilder();
+        tmsb.append("Trismegistos Identifier: ");
+        tmsb.append(tmNumber);
+        return tmsb.toString();
+        
         
     }
     
@@ -622,6 +637,7 @@ public class StringSearchFacet extends Facet{
         
         String transformSearchString(){
             
+            checkBetacodeSlip();
             ArrayList<String> keywords = harvestKeywords(this.rawString);
             ArrayList<String> transWords = transformKeywords(keywords);
             String swappedTerms = substituteTerms(keywords, transWords);
@@ -630,6 +646,12 @@ public class StringSearchFacet extends Facet{
             swappedFields = swappedFields.replaceAll("#", "^");
             swappedFields = swappedFields.replaceAll("\\^", "\\\\^"); 
             return swappedFields;
+            
+        }
+        
+        private void checkBetacodeSlip(){
+            
+            rawString = rawString.replaceAll(" ΑΝΔ ", " AND ").replaceAll(" ΟΡ ", " OR ").replaceAll(" ΝΟΤ ", " NOT ");
             
         }
         
@@ -856,16 +878,6 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        
-        
-        private String convertToUnicode(String betaString) throws UnsupportedEncodingException, Exception{
-            
-            TransCoder tc = new TransCoder("BetaCodeCaps", "UnicodeC");
-            String unicodeString = tc.getString(betaString);
-            unicodeString = unicodeString.replace("ΑΝΔ", "AND").replace("ΟΡ", "OR").replace("ΝΟΤ", "NOT");           
-            return unicodeString;
-                
-        }
                 
         Boolean lemmatizeWord(ArrayList<String> keywords, int currentIteration){
             

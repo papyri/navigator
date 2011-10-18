@@ -7,6 +7,7 @@
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:cito="http://purl.org/spar/cito/"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:gawd="http://gawd.atlantides.org/terms/"
   exclude-result-prefixes="t"
   version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
@@ -18,28 +19,34 @@
   
   <xsl:template match="/t:bibl">
     <rdf:Description rdf:about="{$id}">
-      <dcterms:source rdf:parseType="resource">
-        <dcterms:bibliographicCitation rdf:resource="{$id}"/>
-      </dcterms:source>
-      <xsl:apply-templates select="t:relatedItem"/>
+      <rdfs:type rdf:resource="gawd:BibliographicReference"/>
+      <dcterms:relation rdf:resource="{$id}/frbr:Work"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="{$id}/frbr:Work">
+    <dcterms:bibliographicCitation rdf:resource="{$id}"/>
+    <xsl:apply-templates select="t:relatedItem"/>
+    </dcterms:relation>
     </rdf:Description>
   </xsl:template>  
   
+  
+  
   <xsl:template match="t:relatedItem[@type='appearsIn']">
-    <dcterms:isPartOf rdf:resource="{t:bibl/t:ptr/@target}">
-      <dcterms:hasPart rdf:resource="{$id}"/>
+    <dcterms:isPartOf rdf:resource="{t:bibl/t:ptr/@target}/frbr:Work">
+      <dcterms:hasPart rdf:resource="{$id}/frbr:Work"/>
     </dcterms:isPartOf>
   </xsl:template>
   
   <xsl:template match="t:relatedItem[@type='reviews']">
-    <cito:reviews rdf:resource="{t:bibl/t:ptr/@target}">
-      <cito:isReviewedBy rdf:resource="{$id}"/>
+    <cito:reviews rdf:resource="{t:bibl/t:ptr/@target}/frbr:Work">
+      <cito:isReviewedBy rdf:resource="{$id}/frbr:Work"/>
     </cito:reviews>
   </xsl:template>
   
   <xsl:template match="t:relatedItem[@type='mentions']">
     <dcterms:references rdf:resource="http://papyri.info/ddbdp/{t:biblio/t:idno[@type='ddb']}/edition">
-      <dcterms:isReferencedBy rdf:resource="{$id}"/>
+      <rdfs:type rdf:resource="gawd:Edition"/>
+      <dcterms:isReferencedBy rdf:resource="{$id}/frbr:Work"/>
     </dcterms:references>
   </xsl:template>
   

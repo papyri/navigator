@@ -72,6 +72,9 @@
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
   <xsl:param name="isReplacedBy"/>
+  <xsl:param name="isPartOf"/>
+  <xsl:param name="sources"/>
+  <xsl:param name="citationForm"/>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
@@ -84,6 +87,31 @@
   </xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
   
+  <xsl:template name="collection-hierarchy">
+    <xsl:param name="all-ancestors"></xsl:param>
+    <xsl:param name="last-ancestor"></xsl:param>
+    <xsl:variable name="ancestors"><xsl:value-of select="concat(normalize-space($all-ancestors), ' ')"></xsl:value-of></xsl:variable>
+    <xsl:variable name="current-ancestor">
+      <xsl:value-of select="substring-before($ancestors, ' ')"></xsl:value-of>
+    </xsl:variable>
+    <xsl:variable name="remaining">
+      <xsl:value-of select="concat(normalize-space(substring-after($ancestors, $current-ancestor)), ' ')"></xsl:value-of>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="$last-ancestor">
+        <meta about="{$last-ancestor}" property="dc:isPartOf" content="{$current-ancestor}" />
+      </xsl:when>
+      <xsl:otherwise>
+        <meta property="dc:isPartOf" content="{$current-ancestor}"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="$remaining ne ' '">
+      <xsl:call-template name="collection-hierarchy">
+        <xsl:with-param name="all-ancestors"><xsl:value-of select="$remaining"></xsl:value-of></xsl:with-param>
+        <xsl:with-param name="last-ancestor"><xsl:value-of select="$current-ancestor"></xsl:value-of></xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
   <xsl:include href="pi-functions.xsl"/>
   
   <xsl:output method="html"/>
@@ -95,9 +123,31 @@
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
     <xsl:variable name="image" select="contains($related, 'http://papyri.info/images')"/>
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
-    <html lang="en">
+   
+    <html lang="en" version="HTML+RDFa 1.1">
+      <xsl:namespace name="dc" select="'http://purl.org/dc/terms/'"></xsl:namespace>
       <head>
+        
+        
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <xsl:call-template name="collection-hierarchy">
+          <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
+        </xsl:call-template>
+        <xsl:for-each select="tokenize($sources, '\s')">
+          <meta property="dc:source" content="{.}"/>
+        </xsl:for-each>
+        <xsl:for-each select="$relations">
+          <meta property="dc:relation" content="{.}"/>
+        </xsl:for-each>
+        <xsl:for-each select="tokenize($replaces, ' ')">
+          <meta property="dc:replaces" content="{.}"/>
+        </xsl:for-each>
+        <xsl:for-each select="tokenize($isReplacedBy, ' ')">
+          <meta property="dc:isReplacedBy" content="{.}"/>
+        </xsl:for-each>
+       <xsl:if test="string-length($citationForm) > 0">
+          <meta property="dc:bibliographicCitation" datatype="xsd:string" content="{replace($citationForm, '&quot;', '')}"/>
+       </xsl:if>
         <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
         <title>
           <xsl:call-template name="get-references"/>
@@ -128,13 +178,13 @@
         <div id="d">
           <div id="hd">
             <h1>Papyri.info</h1>
-            <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2>
+            <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2>   
           </div>
           <div id="bd">
             <xi:include href="nav.xml"/>
             <div id="main">
               <div class="content ui-corner-all">
-                <h3 style="text-align:center"><xsl:call-template name="get-references"><xsl:with-param name="links">yes</xsl:with-param></xsl:call-template></h3>
+                <h3 style="text-align:center"><xsl:call-template name="get-references"></xsl:call-template></h3>
                 <xsl:if test="$hgv or $apis">
                   <h4 style="text-align:center" id="titledate"></h4>
                 </xsl:if>
@@ -625,25 +675,26 @@
   
   <!-- Generate parallel reference string -->
   <xsl:template name="get-references">
-    <xsl:param name="links"/>
-    <xsl:if test="$collection = 'hgv'">HGV </xsl:if><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
+    <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
+    <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
     <xsl:if test="count($relations[contains(., 'hgv/')]) gt 0"> = HGV </xsl:if>
     <xsl:for-each select="$relations[contains(., 'hgv/')]">
       <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
         <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
-          <xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each><xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="."/>       
+        </xsl:for-each>
+        <xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
         <xsl:if test="position() != last()"> = </xsl:if>
       </xsl:if>
     </xsl:for-each>
-    <xsl:for-each-group select="$relations[contains(., 'hgv/')]" group-by="replace(., '[a-z]', '')"><xsl:if test="contains(., 'hgv')">
-      = <xsl:choose>
-        <xsl:when test="$links = 'yes'"><a href="http://www.trismegistos.org/tm/detail.php?quick={replace(pi:get-id(.), '[a-z]', '')}">Trismegistos <xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/></a></xsl:when>
-        <xsl:otherwise>Trismegistos <xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/></xsl:otherwise>
-      </xsl:choose>
+    <xsl:for-each-group select="$relations[contains(., 'hgv/')]" group-by="replace(., '[a-z]', '')">
+      <xsl:if test="contains(., 'hgv')">
+      = Trismegistos <xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/>
     </xsl:if></xsl:for-each-group>
-    <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"/></xsl:for-each>
-    <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"/></xsl:for-each>
-    <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"/></xsl:for-each>
+    <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+    <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+    <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
   </xsl:template>
   
   <xsl:template match="rdf:Description">
