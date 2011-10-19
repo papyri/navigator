@@ -554,7 +554,7 @@
        (.add solr docs))))
          (Thread/sleep 30000)
          (when (> (count documents) 0)
-     (index-solr solr))))))
+     (index-solr solr documents))))))
 
 (defn print-words []
      (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
