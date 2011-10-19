@@ -48,9 +48,8 @@
 (def bibsolrtemplates (ref nil))
 (def bibhtmltemplates (ref nil))
 (def links (ref (ConcurrentLinkedQueue.)))
-(def documents (ref (ConcurrentLinkedQueue.)))
-(def bibliodocuments (ref (ConcurrentLinkedQueue.)))
 (def words (ref (ConcurrentSkipListSet.)))
+(def solr (ref nil))
 (def *current*)
 (def *doc*)
 (def *index*)
@@ -80,7 +79,7 @@
 	  (endDocument []
 		       (when (not (nil? (.getField solrdoc "transcription")))
 			 (add-words (.getFieldValue solrdoc "transcription")))
-		       (.add @documents solrdoc))))))
+		       (.add @solr solrdoc))))))
 
 (defn bibliodochandler []
      (SAXResult. 
@@ -100,7 +99,7 @@
 			(.addField solrdoc (.toString current) (.toString chars))
 			(doto current (.delete 0 (.length current)))))
 	  (endDocument []
-		       (.add @bibliodocuments solrdoc))))))
+		       (.add @solr solrdoc))))))
 
 (defn copy
   "Performs a file copy from the source to the destination, making directories if necessary."
@@ -539,23 +538,6 @@
       (.shutdown)))
     (dosync (ref-set texttemplates nil)))
 
-(defn index-solr
-  [solr documents]
-  (.start (Thread. 
-     (fn []
-       (let [solr (StreamingUpdateSolrServer. solr 5000 5)]
-         (.setRequestWriter solr (BinaryRequestWriter.))
-         (while (= (count documents) 0)
-     (Thread/sleep 30000))
-         (when (> (count documents) 0)
-     (let [docs (ArrayList.)]
-       (.addAll docs documents)
-       (.removeAll documents docs)
-       (.add solr docs))))
-         (Thread/sleep 30000)
-         (when (> (count documents) 0)
-     (index-solr solr documents))))))
-
 (defn print-words []
      (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
        (for [word @words]
@@ -564,36 +546,32 @@
 (defn load-morphs 
  [file]
  (let [value (StringBuilder.)
-  handler (proxy [DefaultHandler] []
-         (startElement [uri local qname atts]
-      (set! *current* qname)
-      (when (= qname "analysis")
-        (set! *doc* (SolrInputDocument.))
-        (set! *index* (+ *index* 1))
-        (.addField *doc* "id" *index*)))
-         (characters [ch start length]
-          (when-not (.startsWith *current* "analys")
-      (.append value ch start length)))
-    (endElement [uri local qname]
-          (if (not (.startsWith qname "analys"))
-      (.addField *doc* *current* (.toString value))
-      (do
-        (dosync (.add @documents *doc*))
-        (when (> (count @documents) 5000)
-          (index-solr (str solrurl "morph-search/")))))
-          (set! *current* "analysis")
-          (.delete value 0 (.length value)))
-    (endDocument []
-           (index-solr (str solrurl "morph-search/"))))]
+       handler (proxy [DefaultHandler] []
+		 (startElement [uri local qname atts]
+			       (set! *current* qname)
+			       (when (= qname "analysis")
+				 (set! *doc* (SolrInputDocument.))
+				 (set! *index* (+ *index* 1))
+				 (.addField *doc* "id" *index*)))
+		 (characters [ch start length]
+			     (when-not (.startsWith *current* "analys")
+			       (.append value ch start length)))
+		 (endElement [uri local qname]
+			     (if (not (.startsWith qname "analys"))
+			       (.addField *doc* *current* (.toString value))
+			       (.add @solr *doc*))
+			     (set! *current* "analysis")
+			     (.delete value 0 (.length value))))]
    (.. SAXParserFactory newInstance newSAXParser
-                   (parse (InputSource. (FileInputStream. file)) 
-         handler))))
+       (parse (InputSource. (FileInputStream. file)) 
+	      handler))))
          
 (defn -loadLemmas []
   (binding [*current* nil
       *doc* nil
-      *index* 0]
-    (index-solr (str solrurl "morph-search/") @documents)
+	    *index* 0]
+    (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "morph-search/") 5000 5))
+	    (.setRequestWriter @solr (BinaryRequestWriter.)))
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
     (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))]
@@ -620,9 +598,7 @@
     (doseq [arg (first args)] (queue-item arg)))
 
   (dosync (ref-set text @html))
-  
-  (println (str "Queued " (count @html) " documents."))
- 
+   
   ;; Generate HTML
   (println "Generating HTML...")
   (generate-html)
@@ -630,10 +606,9 @@
   ;; Generate text
   (println "Generating text...")
   (generate-text)
- 
-  ;; Start Solr indexing thread if we're doing the lot
-  (when (nil? (first args))
-    (index-solr (str solrurl "pn-search-offline/") @documents))
+
+  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search-offline/") 5000 5))
+	  (.setRequestWriter @solr (BinaryRequestWriter.)))
   
   ;; Index docs queued in @text
   (println "Indexing text...")
@@ -650,21 +625,20 @@
     (doto pool
       (.shutdown)))
 
-    
-  (when (> (count @documents) 0)
-    (index-solr (str solrurl "pn-search-offline/") @documents))
+  (println "Optimizing index...")
+  (doto @solr
+    (.commit)
+    (.optimize))
 
   (dosync (ref-set html nil)
     (ref-set text nil)
     (ref-set solrtemplates nil))
   
-  (let [solr (CommonsHttpSolrServer. (str solrurl "pn-search-offline/"))]
-    (doto solr 
-      (.commit)
-      (.optimize)))
+  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "biblio-search/") 5000 5))
+	  (.setRequestWriter @solr (BinaryRequestWriter.)))
+  
   (print-words)
 
-  (index-solr (str solrurl "biblio-search/") @bibliodocuments)
   ;; Generate and Index bibliography
   (println "Generating and indexing bibliography...")
   (let [pool (Executors/newFixedThreadPool nthreads)
@@ -682,13 +656,14 @@
     (doto pool
       (.shutdown)))
 
-  (when (> (count @bibliodocuments) 0)
-    (index-solr (str solrurl "biblio-search/") @bibliodocuments)))
+  (println "Optimizing index...")
+  (doto @solr
+    (.commit)
+    (.optimize)))
 
 (defn -main [& args]
   (if (> (count args) 0)
     (if (= (first args) "load-lemmas")
       (-loadLemmas)
       (-index args))
-    (-index))
-  )
+    (-index)))
