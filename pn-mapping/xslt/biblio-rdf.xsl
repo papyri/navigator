@@ -29,22 +29,27 @@
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='appearsIn']">
-    <dcterms:isPartOf rdf:resource="urn:gawd:{replace(t:bibl/t:ptr/@target, '//', '')}">
-      <dcterms:hasPart rdf:resource="{$urn}"/>
+    <dcterms:isPartOf>
+      <rdf:Description rdf:about="urn:gawd:{replace(t:bibl/t:ptr/@target, '//', '')}">
+        <dcterms:hasPart rdf:resource="{$urn}"/>
+      </rdf:Description>
     </dcterms:isPartOf>
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='reviews']">
-    <cito:reviews rdf:resource="{t:bibl/t:ptr/@target}/frbr:Work">
-      <cito:isReviewedBy rdf:resource="{$id}/frbr:Work"/>
+    <cito:reviews rdf:resource="">
+      <rdf:Description rdf:about="urn:gawd:{replace(t:bibl/t:ptr/@target, '//', '')}">
+        <cito:isReviewedBy rdf:resource="{$urn}"/>
+      </rdf:Description>
     </cito:reviews>
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='mentions']">
-    <dcterms:references
-      rdf:resource="http://papyri.info/ddbdp/{t:biblio/t:idno[@type='ddb']}/edition">
-      <rdfs:type rdf:resource="gawd:Edition"/>
-      <dcterms:isReferencedBy rdf:resource="{$urn}"/>
+    <dcterms:references>
+      <rdf:Description rdf:about="http://papyri.info/ddbdp/{t:biblio/t:idno[@type='ddb']}/edition">
+        <rdfs:type rdf:resource="gawd:Edition"/>
+        <dcterms:isReferencedBy rdf:resource="{$urn}"/>
+      </rdf:Description>
     </dcterms:references>
   </xsl:template>
 
