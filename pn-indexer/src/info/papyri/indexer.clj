@@ -490,8 +490,8 @@
       (if (.endsWith (last (first items)) "/source")
         (queue-items url exclude prev-urls)
         (doseq [item items]
-          (println "Recursing down")
-          (println (apply str (interpose " " all-urls)))
+          ;;(println "Recursing down")
+          ;;(println (apply str (interpose " " all-urls)))
           (queue-collections (last item) exclude all-urls)))))))
 
 (defn generate-html

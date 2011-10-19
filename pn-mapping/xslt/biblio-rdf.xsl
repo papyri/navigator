@@ -13,16 +13,16 @@
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="id">http://papyri.info/biblio/<xsl:value-of
       select="replace(/t:bibl/@xml:id, '[a-zA-Z]', '')"/></xsl:variable>
-  <xsl:variable name="urn">urn:gawd:http:papyri.info/biblio/<xsl:value-of
+  <xsl:variable name="urn">urn:pi:http:papyri.info/biblio/<xsl:value-of
       select="replace(/t:bibl/@xml:id, '[a-zA-Z]', '')"/></xsl:variable>
 
   <xsl:template match="/t:bibl">
     <rdf:Description rdf:about="{$id}">
-      <rdfs:type rdf:resource="gawd:BibliographicReference"/>
+      <rdfs:type rdf:resource="http://gawd.atlantides.org/terms/BibliographicReference"/>
       <dcterms:references rdf:resource="{$urn}"/>
     </rdf:Description>
     <rdf:Description rdf:about="{$urn}">
-      <rdfs:type rdf:resource="bibo:Document"/>
+      <rdfs:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
       <dcterms:bibliographicCitation rdf:resource="{$id}"/>
       <xsl:apply-templates select="t:relatedItem"/>
     </rdf:Description>
@@ -30,7 +30,7 @@
 
   <xsl:template match="t:relatedItem[@type='appearsIn']">
     <dcterms:isPartOf>
-      <rdf:Description rdf:about="urn:gawd:{replace(t:bibl/t:ptr/@target, '//', '')}">
+      <rdf:Description rdf:about="urn:pi:{replace(t:bibl/t:ptr/@target, '//', '')}">
         <dcterms:hasPart rdf:resource="{$urn}"/>
       </rdf:Description>
     </dcterms:isPartOf>
@@ -38,7 +38,7 @@
 
   <xsl:template match="t:relatedItem[@type='reviews']">
     <cito:reviews rdf:resource="">
-      <rdf:Description rdf:about="urn:gawd:{replace(t:bibl/t:ptr/@target, '//', '')}">
+      <rdf:Description rdf:about="urn:pi:{replace(t:bibl/t:ptr/@target, '//', '')}">
         <cito:isReviewedBy rdf:resource="{$urn}"/>
       </rdf:Description>
     </cito:reviews>
@@ -46,8 +46,8 @@
 
   <xsl:template match="t:relatedItem[@type='mentions']">
     <dcterms:references>
-      <rdf:Description rdf:about="http://papyri.info/ddbdp/{t:biblio/t:idno[@type='ddb']}/edition">
-        <rdfs:type rdf:resource="gawd:Edition"/>
+      <rdf:Description rdf:about="urn:pi:http:papyri.info/ddbdp/{t:biblio/t:idno[@type='ddb']}">
+        <rdfs:type rdf:resource="http://gawd.atlantides.org/terms/Edition"/>
         <dcterms:isReferencedBy rdf:resource="{$urn}"/>
       </rdf:Description>
     </dcterms:references>
