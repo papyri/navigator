@@ -158,7 +158,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BiblioSearch</servlet-name>
-        <url-pattern>/BiblioSearch</url-pattern>
+        <url-pattern>/bibliosearch</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
