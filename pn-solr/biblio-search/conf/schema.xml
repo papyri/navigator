@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema name="epidoc" version="1.2">
+  <types>
+    <fieldType name="lctext" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+      <analyzer type="index">
+        <tokenizer class="solr.LowerCaseTokenizerFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.LowerCaseTokenizerFactory"/>
+      </analyzer>
+    </fieldType>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+  </types>
+
+  <fields>
+    <field name="id" type="string" indexed="true" stored="true" required="true"/>
+    <field name="identifier" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="sort" type="string" indexed="true" required="true"/>
+    <field name="display" type="string" indexed="false" stored="true" required="true"/>
+    <dynamicField name="*" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="all" type="lctext" indexed="true" stored="false" multiValued="true"/>
+  </fields>
+  
+  <uniqueKey>id</uniqueKey>
+  
+  <defaultSearchField>all</defaultSearchField>
+  
+  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
+  <solrQueryParser defaultOperator="AND"/>
+  
+  <copyField source="*" dest="all"/>
+  
+</schema>

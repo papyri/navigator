@@ -39,7 +39,8 @@
 (def xslts {"DDB_EpiDoc_XML" "/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
       "HGV_meta_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
-      "HGV_trans_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl"})
+      "HGV_trans_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl",
+      "Biblio" "/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
 (def idproot "/data/papyri.info/idp.data")
 (def ddbroot "/data/papyri.info/idp.data/DDB_EpiDoc_XML")
 (def help (str "Usage: <function> [<params>]\n"
@@ -111,7 +112,8 @@
   (cond (.contains (str file) "DDB_EpiDoc_XML") (xslts "DDB_EpiDoc_XML")
     (.contains (str file) "HGV_meta_EpiDoc") (xslts "HGV_meta_EpiDoc")
     (.contains (str file) "APIS") (xslts "APIS")
-    (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")))
+    (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")
+    (.contains (str file) "Biblio") (xslts "Biblio")))
     
 (defn format-url-query
   [filename] 
@@ -314,7 +316,9 @@
       (println "Processing APIS")
       (load-map (str idproot "/APIS"))
       (println "Processing HGV_trans_EpiDoc")
-      (load-map (str idproot "/HGV_trans_EpiDoc")))
+      (load-map (str idproot "/HGV_trans_EpiDoc"))
+      (println "Processing Bibliography")
+      (load-map (str idproot "/Biblio")))
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
