@@ -77,9 +77,8 @@
     <field name="translation" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="has_translation" type="boolean" indexed="true" stored="true"/>
     <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="date_start" type="int" indexed="true" stored="false" multiValued="true"/>
-    <field name="date_end" type="int" indexed="true" stored="false" multiValued="true"/>
-    <field name="date_category" type="int" indexed="true" stored="false" multiValued="true"/>
+    <field name="earliest_date" type="int" indexed="true" stored="true"/>
+    <field name="latest_date" type="int" indexed="true" stored="true"/>
     <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false"
       required="false"/>
     <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
