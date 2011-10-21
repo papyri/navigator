@@ -192,7 +192,8 @@
               <xsl:with-param name="docs" select="/"/>
               <xsl:with-param name="alterity">self</xsl:with-param>
             </xsl:call-template>
-            <xsl:if test="$hgv or $apis">
+            <xsl:choose>
+            <xsl:when test="$hgv or $apis">
               <xsl:call-template name="facetfields">
                 <xsl:with-param name="docs"
                   select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
@@ -204,6 +205,8 @@
                 <xsl:with-param name="alterity">other</xsl:with-param>
               </xsl:call-template>
               <xsl:call-template name="metadata">
+                <xsl:with-param name="hgv-docs"
+                  select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
                 <xsl:with-param name="docs"
                   select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
                 />
@@ -213,7 +216,11 @@
                   select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
                 />
               </xsl:call-template>
-            </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+            <field name="unknown_date_flag">true</field>
+          </xsl:otherwise>
+          </xsl:choose>
             <xsl:call-template name="images">
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
@@ -240,6 +247,8 @@
               <xsl:with-param name="alterity">other</xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="metadata">
+              <xsl:with-param name="hgv-docs"
+                select="pi:get-docs($relations[contains(., 'hgv/')], 'xml') union /"/>
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
@@ -257,6 +266,7 @@
               <xsl:with-param name="alterity">self</xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="metadata">
+              <xsl:with-param name="hgv-docs" select="/.."/>
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
             <xsl:call-template name="translation">
@@ -515,11 +525,11 @@
         </field>
         <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
           <xsl:if test="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:authority = 'APIS'"> -->
-            <field name="apis_title">
-              <xsl:value-of select="."></xsl:value-of>
+              <field name="apis_title">
+              <xsl:value-of select="."/>
             </field>
           </xsl:if>
-        </xsl:for-each> 
+        </xsl:for-each>
         <field name="apis_title">
           <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"/>
         </field>
@@ -542,17 +552,54 @@
   </xsl:template>
 
   <xsl:template name="metadata">
+    <xsl:param name="hgv-docs"/>
     <xsl:param name="docs"/>
     <field name="display_place">
       <xsl:value-of
         select="normalize-space(string-join($docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"
       />
     </field>
+    <xsl:variable name="relevant-date-nodeset">
+      <xsl:choose>
+        <xsl:when
+          test="$hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate/(@when|@notBefore|@notAfter)">
+          <xsl:value-of
+            select="$hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate/(@when|@notBefore|@notAfter)"
+          />
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of
+            select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate/(@when|@notBefore|@notAfter)"
+          />
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <field name="display_date">
-      <xsl:value-of
-        select="pi:get-date-range($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate/(@when|@notBefore|@notAfter))"
-      />
+      <xsl:choose>
+        <xsl:when test="count(tokenize($relevant-date-nodeset, ' ')) gt 0">
+          <xsl:value-of select="pi:get-date-range(tokenize($relevant-date-nodeset, ' '))"/>
+        </xsl:when>
+        <xsl:otherwise>Unknown</xsl:otherwise>
+      </xsl:choose>
     </field>
+    <xsl:choose>
+    <xsl:when test="count(tokenize($relevant-date-nodeset, ' ')) gt 0">
+      <field name="earliest_date">
+        <xsl:value-of
+          select="pi:get-min-date(remove(tokenize($relevant-date-nodeset, ' '), 1), pi:iso-date-to-num(tokenize($relevant-date-nodeset, ' ')[1]), false())"
+        />
+      </field>
+      <field name="latest_date">
+        <xsl:value-of
+          select="pi:get-max-date(remove(tokenize($relevant-date-nodeset, ' '), 1), pi:iso-date-to-num(tokenize($relevant-date-nodeset, ' ')[1]), false())"
+        />
+      </field>
+    </xsl:when>
+        <!-- unknown date -->
+    <xsl:otherwise>
+      <field name="unknown_date_flag">true</field>
+    </xsl:otherwise>
+      </xsl:choose>
     <field name="metadata">
       <!-- Title -->
       <xsl:value-of
@@ -645,64 +692,8 @@
       </xsl:when>
       <!-- end thill 2011.05.11 -->
     </xsl:choose>
-    <!-- Dates -->
-    <xsl:for-each
-      select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate">
-      <xsl:choose>
-        <xsl:when test="pi:iso-date-to-num(@notBefore) and pi:iso-date-to-num(@notAfter)">
-          <field name="date_start">
-            <xsl:value-of select="pi:iso-date-to-num(@notBefore)"/>
-          </field>
-          <field name="date_end">
-            <xsl:value-of select="pi:iso-date-to-num(@notAfter)"/>
-          </field>
-          <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@notBefore)"/>
-          </field>
-          <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@notAfter)"/>
-          </field>
-        </xsl:when>
-        <xsl:when test="pi:iso-date-to-num(@when)">
-          <field name="date_start">
-            <xsl:value-of select="pi:iso-date-to-num(@when)"/>
-          </field>
-          <field name="date_end">
-            <xsl:value-of select="pi:iso-date-to-num(@when)"/>
-          </field>
-          <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@when)"/>
-          </field>
-        </xsl:when>
-        <xsl:when test="pi:iso-date-to-num(@notBefore)">
-          <field name="date_start">
-            <xsl:value-of select="pi:iso-date-to-num(@notBefore)"/>
-          </field>
-          <field name="date_end">
-            <xsl:value-of select="pi:iso-date-to-num(@notBefore)"/>
-          </field>
-          <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@notBefore)"/>
-          </field>
-        </xsl:when>
-        <xsl:when test="pi:iso-date-to-num(@notAfter)">
-          <field name="date_start">
-            <xsl:value-of select="pi:iso-date-to-num(@notAfter)"/>
-          </field>
-          <field name="date_end">
-            <xsl:value-of select="pi:iso-date-to-num(@notAfter)"/>
-          </field>
-          <field name="date_category">
-            <xsl:value-of select="pi:assign-date-category(@notAfter)"/>
-          </field>
-        </xsl:when>
-      </xsl:choose>
-    </xsl:for-each>
-    <!-- unknown date -->
-    <xsl:if
-      test="count($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate) = 0">
-      <field name="unknown_date_flag">true</field>
-    </xsl:if>
+
+
     <!-- InvNum -->
     <xsl:if
       test="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']">
@@ -853,55 +844,12 @@
     </xsl:choose>
   </xsl:function>
 
-  <xsl:function name="pi:assign-date-category">
-    <!-- receives iso date and returns facetable date category -->
-    <xsl:param name="raw-date"/>
-    <xsl:variable name="era">
-      <xsl:choose>
-        <xsl:when test="starts-with($raw-date, '-')">
-          <xsl:value-of select="'BCE'"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="'CE'"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="year">
-      <xsl:analyze-string select="$raw-date" regex="(-?\d{{4}})">
-        <xsl:matching-substring>
-          <xsl:value-of select="regex-group(0)"/>
-        </xsl:matching-substring>
-      </xsl:analyze-string>
-    </xsl:variable>
-    <xsl:variable name="interval" select="50"/>
-    <xsl:variable name="category">
-      <xsl:choose>
-        <xsl:when test="(number($year) mod $interval) = 0">
-          <xsl:value-of select="abs(number($year)) div $interval"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of
-            select="(abs(number($year)) + ($interval - (abs(number($year)) mod $interval))) div $interval"
-          />
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:choose>
-      <xsl:when test="$era = 'BCE'">
-        <xsl:sequence select="concat('-', $category)"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="$category"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
   <xsl:function name="pi:get-date-range">
     <xsl:param name="date-seq"/>
     <xsl:variable name="min"
-      select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
+      select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), true())"/>
     <xsl:variable name="max"
-      select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
+      select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), true())"/>
     <xsl:choose>
       <xsl:when test="$min = $max">
         <xsl:sequence select="$min"/>
@@ -915,23 +863,25 @@
   <xsl:function name="pi:get-min-date">
     <xsl:param name="date-seq"/>
     <xsl:param name="current"/>
+    <xsl:param name="for-display"/>
     <xsl:choose>
       <xsl:when test="count($date-seq) = 0">
         <xsl:choose>
-          <xsl:when test="$current le 0">
-            <xsl:sequence select="concat(abs($current), ' BCE')"/>
+          <xsl:when test="$for-display">
+            <xsl:sequence select="pi:add-era($current)"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:sequence select="concat($current, ' CE')"/>
+            <xsl:sequence select="number($current)"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
       <xsl:when test="pi:iso-date-to-num($date-seq[1]) lt $current">
         <xsl:sequence
-          select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
+          select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), $for-display)"
+        />
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="pi:get-min-date(remove($date-seq, 1), $current)"/>
+        <xsl:sequence select="pi:get-min-date(remove($date-seq, 1), $current, $for-display)"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
@@ -939,25 +889,41 @@
   <xsl:function name="pi:get-max-date">
     <xsl:param name="date-seq"/>
     <xsl:param name="current"/>
+    <xsl:param name="for-display"/>
     <xsl:choose>
       <xsl:when test="count($date-seq) = 0">
         <xsl:choose>
-          <xsl:when test="$current le 0">
-            <xsl:sequence select="concat(abs($current), ' BCE')"/>
+          <xsl:when test="$for-display">
+            <xsl:sequence select="pi:add-era($current)"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:sequence select="concat($current, ' CE')"/>
+            <xsl:sequence select="number($current)"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
       <xsl:when test="pi:iso-date-to-num($date-seq[1]) gt $current">
         <xsl:sequence
-          select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]))"/>
+          select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), $for-display)"
+        />
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="pi:get-max-date(remove($date-seq, 1), $current)"/>
+        <xsl:sequence select="pi:get-max-date(remove($date-seq, 1), $current, $for-display)"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
+
+  <xsl:function name="pi:add-era">
+    <xsl:param name="raw-date"/>
+    <xsl:choose>
+      <xsl:when test="$raw-date le 0">
+        <xsl:sequence select="concat(abs($raw-date), ' BCE')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="concat($raw-date, ' CE')"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+
+
 
 </xsl:stylesheet>
