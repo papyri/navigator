@@ -108,15 +108,12 @@ public class BiblioSearch extends HttpServlet {
               StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\">");
               row.append("<a href=\"");
               row.append("/biblio/");
-              row.append(((String) doc.getFieldValue("id")).substring(18));
+              row.append(((String) doc.getFieldValue("id")));
               row.append("/?q=");
               row.append(uq);
               row.append("\">");
-              row.append(doc.getFieldValue("id"));
-              row.append("</a>");
-              row.append("</td>");
-              row.append("<td>");
               row.append(doc.getFieldValue("display"));
+              row.append("</a>");
               row.append("</td>");
               row.append("</tr>");
               out.print(row);
