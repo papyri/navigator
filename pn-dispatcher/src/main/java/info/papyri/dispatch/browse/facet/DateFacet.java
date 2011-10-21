@@ -2,8 +2,10 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,17 +15,14 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.RangeFacet;
 
 /**
  * The <code>Facet</code> used for setting and displaying date constraints.
  * 
  * Note that unlike the other <code>Facet</code>s, <code>DateFacet</code> uses two
  * widgets, and stores two values. This complicates the code internal to each method considerably.
- * 
- * Note also that these values (stored in the terminusAfterWhich and terminusBeforeWhich members) are
- * triple-state: they may be '0' (effectively, 'undefined'), 'Unknown', or the <code>String</code>
- * representation of an <code>Integer</code> value.
- * 
+ *
  * 
  * @author thill
  */
@@ -31,10 +30,11 @@ public class DateFacet extends Facet {
 
     /** The interval the difference between each date_category represents, in years.
      * 
-     * Note that this cannot be changed arbitrarily in the code alone; the value
-     * reflects that used in the Solr index
+     * 
      */
-   static int INTERVAL = 50;                                                    
+   static int INTERVAL = 50;
+   static int RANGE_START = -2500;
+   static int RANGE_END = 2500;
    
    /** A flag indicating whether the date has the value 'unknown'.
     * 
@@ -42,67 +42,36 @@ public class DateFacet extends Facet {
     * (a) it cannot be converted to a number; and 
     * (b) if *either* the terminus ante quem *or* the terminus post quem have the
     *     value 'unknown', then *both* must have the value 'unknown'. Note that this
-    *     is not an arbitrary decision, but reflects the structure of data in the Solr
+    *     is not an arbitrary o, but reflects the structure of data in the Solr
     *     index.
     * 
     */
    private static SolrField flagField = SolrField.unknown_date_flag;
    
+   enum DateParam{ DATE_MODE, DATE_START_TEXT, DATE_START_ERA, DATE_END_TEXT, DATE_END_ERA };
    /**
     * Comparator used in ordering dates in the <code>Facet</code> widget.
     */
    private static Comparator dateCountComparator;  
    
-   /** The lowest (=earliest) date used by the <code>Facet</code> */
-   private static int LOWER_BOUND = -50;                                        // = 2500 BCE
-  /** The highest (=latest) date used by the <code>Facet</code> */
-   private static int UPPER_BOUND = 42;                                         // = 2100 CE 
-   /**
-    * Specifies the date *after which* documents will be returned.
-    * 
-    * Note that this is a <code>String</code>; it may hold either a string
-    * value that evaluates to an integer (LOWER_BOUND <= x <= UPPER_BOUND) or the 
-    * value 'Unknown'.
-    * 
-    * Note that the value '0' here serves as 'undefined' - there is no year zero
-    * 
-    */
-   private String terminusAfterWhich = "0";
-      /**
-    * Specifies the date *before which* documents will be returned.
-    * 
-    * Note that this is a <code>String</code>; it may hold either a string
-    * value that evaluates to an integer (LOWER_BOUND <= x <= UPPER_BOUND) or the 
-    * value 'Unknown'.
-    * 
-    * Note that the value '0' here serves as 'undefined' - there is no year zero
-    * 
-    */
-   private String terminusBeforeWhich = "0";
-   /**
-    * This is the complement of the <code>valuesAndCounts</code> member.
-    * 
-    * It is necessary because, unlike other <code>Facet</code>s, <code>this</code>
-    * is associated with two widgets, hence two sets of values and counts. The 
-    * standard <code>Facet.valuesAndCounts</code> <code>List</code> holds the 
-    * values associated with the terminusAfterWhich widget; the complement holds
-    * those associated with the terminusBeforeWhich widget, calculated by subtracting
-    * the number of documents found for each category in <code>valuesAndCounts</code>
-    * from the total number of documents found.
-    * 
-    * @see Facet#valuesAndCounts
-    * @see DateFacet#setBeforeWhichWidgetValues(org.apache.solr.client.solrj.response.QueryResponse) 
-    */
-   List<Count> valuesAndCountsComplement;
+   Terminus terminusAfterWhich;
+   Terminus terminusBeforeWhich;
+   
+   enum DateMode{ STRICT, LOOSE }
+   
+   DateMode dateModeDefault = DateMode.LOOSE;
+   DateMode dateMode = dateModeDefault;
    
    public DateFacet(){
         
-        super(SolrField.date_category, FacetParam.DATE_START, "Date dummy");
+        super(SolrField.unknown_date_flag, FacetParam.DATE_START, "Date dummy");
+        
+        terminusBeforeWhich = new TerminusBeforeWhich("");
+        terminusAfterWhich = new TerminusAfterWhich("");
         
         // dates need to sort with 'Unknown' at the top
         // followed by BCE dates (= negative date_category value)
         // followed by CE dates (= positive date_category value)
-        valuesAndCountsComplement = new ArrayList<Count>();
         dateCountComparator = new Comparator() {
 
             @Override
@@ -129,32 +98,26 @@ public class DateFacet extends Facet {
            
         solrQuery.addFacetField(flagField.name());
         
-        if(terminusAfterWhich.equals("Unknown") || terminusBeforeWhich.equals("Unknown")){
+        if(terminusAfterWhich.getCurrentValue().equals("Unknown") || terminusBeforeWhich.getCurrentValue().equals("Unknown")){
             
-            solrQuery.addFilterQuery(flagField.name() + ":true");
+            solrQuery.addFilterQuery(flagField.name() + ":" + Boolean.TRUE.toString());
             return solrQuery;
             
         }
-        
-        solrQuery.addFacetField(field.name());
-        int startTerminus = terminusAfterWhich.equals("0") ? LOWER_BOUND : Integer.valueOf(terminusAfterWhich);
-        int endTerminus = terminusBeforeWhich.equals("0") ? UPPER_BOUND : Integer.valueOf(terminusBeforeWhich);
-        
-        if(!terminusAfterWhich.equals("0") || !terminusBeforeWhich.equals("0")){
-        
-            solrQuery.addFilterQuery(field.name() + ":[" + String.valueOf(startTerminus) + " TO " + String.valueOf(endTerminus) + "]");
-        
-        }
-        for(int i = startTerminus; i <= endTerminus; i++){
-                    
-            if(i != 0){
-                
-                solrQuery.addFacetQuery(field.name() + ":[" + String.valueOf(i) + " TO " + String.valueOf(endTerminus) + "]");
+       
+        Integer startDate = terminusAfterWhich.getMostExtremeValue();
+        Integer endDate = terminusBeforeWhich.getMostExtremeValue(); 
+        if(endDate < startDate){
             
-            }
+            solrQuery.addFilterQuery("-" + SolrField.earliest_date.name() + ":[* TO *]");
+            solrQuery.addFilterQuery("-" + SolrField.unknown_date_flag.name() + ":true");
+            
         }
-        
-        
+        solrQuery.addNumericRangeFacet(SolrField.earliest_date.name(), startDate, endDate, INTERVAL);
+        solrQuery.addNumericRangeFacet(SolrField.latest_date.name(), startDate, endDate, INTERVAL);
+        terminusBeforeWhich.getQueryContribution(solrQuery);
+        terminusAfterWhich.getQueryContribution(solrQuery);
+
         return solrQuery;
         
     }   
@@ -163,19 +126,8 @@ public class DateFacet extends Facet {
     @Override
     public String getAsQueryString(){
         
-        if(terminusAfterWhich.equals("Unknown")){
-            
-            return FacetParam.DATE_START.name() + "=Unknown";
-            
-        }
-        else if(terminusBeforeWhich.equals("Unknown")){
-            
-            return FacetParam.DATE_END.name() + "=Unknown";
-            
-        }
-        
-        String tAfter = terminusAfterWhich.equals("0") ? "" : FacetParam.DATE_START.name() + "=" + terminusAfterWhich; 
-        String tBefore = terminusBeforeWhich.equals("0") ? "" : FacetParam.DATE_END.name() + "=" + terminusBeforeWhich;
+        String tBefore = terminusBeforeWhich.getAsQueryString();
+        String tAfter = terminusAfterWhich.getAsQueryString();
         
         String queryString = "";
         if(!tAfter.equals("") && !tBefore.equals("")){
@@ -189,6 +141,8 @@ public class DateFacet extends Facet {
             
         }
         
+        if(!queryString.equals("")) queryString += "&" + DateParam.DATE_MODE.name() + "=" + dateMode.name();
+        
         return queryString;
         
     }
@@ -196,339 +150,149 @@ public class DateFacet extends Facet {
     @Override
     public String getAsFilteredQueryString(String filterParam, String filterValue){
         
-        String filterField = "";
-        String terminus = "0";
-        
-        if(filterParam.equals(FacetParam.DATE_START.name())){
+        if(filterValue.equals("Unknown")) return "";
+        String queryString = "";
+                
+        if(filterParam.equals(DateParam.DATE_START_TEXT.name())){
             
-            if(!terminusBeforeWhich.equals("0")){
-                
-                filterField = FacetParam.DATE_END.name();
-                terminus = terminusBeforeWhich;
-                
-                
-            }
+            queryString = terminusBeforeWhich.getAsQueryString();
             
         }
         else{
             
-            if(!terminusAfterWhich.equals("0")){
-                
-                filterField = FacetParam.DATE_START.name();
-                terminus = terminusAfterWhich;
-                
-            }
-            
-            
+            queryString = terminusAfterWhich.getAsQueryString();
+                     
         }
         
-        if("".equals(filterField)) return "";
-        
-        String value = terminusBeforeWhich.equals("Unknown") || terminusAfterWhich.equals("Unknown") ? "Unknown" : String.valueOf(terminus);
-        
-        return filterField + "=" + value;
-        
+        if(!queryString.equals("")) queryString += "&" + DateParam.DATE_MODE.name() + "=" + dateMode.name();
+        return queryString;
+                
     }
     
     @Override
-    public String getDisplayValue(String dateCode){
+    public String getDisplayValue(String date){
         
-        if(dateCode.equals("Unknown")) return dateCode;
-        int rawDate = Integer.valueOf(dateCode);
+        if(date.equals("Unknown")) return date;
+        int rawDate = Integer.valueOf(date);
+        rawDate = rawDate == 0 ? 1 : rawDate;
         
         String era;
-        String startRange;
-        String endRange;
         
         if(rawDate < 0){
             
             era = "BCE";
-            int startNum = rawDate * INTERVAL;
-            startRange = String.valueOf(startNum).substring(1);
-            endRange = String.valueOf(startNum + (INTERVAL - 1)).substring(1);
+            date = String.valueOf(rawDate).substring(1);
             
         }
         else{
             
             era = "CE";
-            int endNum = rawDate * INTERVAL;
-            startRange = String.valueOf(endNum - (INTERVAL - 1));
-            endRange = String.valueOf(endNum);
-            
+            date = String.valueOf(rawDate);
         }
         
-        return startRange + "-" + endRange + " " + era; 
+        return date + " " + era; 
         
     }
     
     @Override
     public void setWidgetValues(QueryResponse queryResponse){
+
+        terminusBeforeWhich.calculateWidgetValues(queryResponse);
+        terminusAfterWhich.calculateWidgetValues(queryResponse);
         
-        setAfterWhichWidgetValues(queryResponse);
-        setBeforeWhichWidgetValues(queryResponse);
+        if(dateMode == DateMode.LOOSE){
+
+            long grandTotal = queryResponse.getResults().getNumFound();
+            if(queryResponse.getFacetField(SolrField.unknown_date_flag.name()) != null){
+                
+                List<Count> counts = queryResponse.getFacetField(SolrField.unknown_date_flag.name()).getValues();
+                for(Count count : counts){
+                    
+                    if(count.getName() != null && count.getName().equals("true")) grandTotal -= count.getCount();
+                    
+                }
+                
+            }
+            ArrayList<Count> beforeWhichLooseValues = terminusBeforeWhich.calculateLooseWidgetValues(grandTotal);
+            ArrayList<Count> afterWhichLooseValues = terminusAfterWhich.calculateLooseWidgetValues(grandTotal);
+            terminusBeforeWhich.setValuesAndCounts(beforeWhichLooseValues);
+            terminusAfterWhich.setValuesAndCounts(afterWhichLooseValues);
+            
+        }
+        
+        terminusBeforeWhich.filterValuesAndCounts();
+        terminusAfterWhich.filterValuesAndCounts();
          
     }
-    
-    
-    public void setAfterWhichWidgetValues(QueryResponse queryResponse){
-        
-        valuesAndCounts = new ArrayList<Count>();
-        
-        valuesAndCounts = addUnknownCount((ArrayList<Count>)valuesAndCounts, queryResponse);
-        
-        Map<String, Integer> facetQueries = queryResponse.getFacetQuery();
-        int bottomLimit = getLowestCategoryWithMembers(queryResponse);
-        for(Map.Entry<String, Integer> entry : facetQueries.entrySet()){
-            
-            String rawQueryName = entry.getKey();
-            Pattern pattern = Pattern.compile("^" + field.name() + ":\\[\\s*(-?\\d+)\\s*TO\\s*-?\\d+\\s*\\]" + "$");
-            Matcher matcher = pattern.matcher(rawQueryName);
-            if(matcher.matches()){
-            
-                String queryName = String.valueOf(matcher.group(1));
-                Integer queryCount = entry.getValue();
-                
-                if(queryName != null && !queryName.equals("") && !queryName.equals("null") && queryCount > 0 && Integer.valueOf(queryName) >= bottomLimit){
-                    
-                    Count count = new Count(new FacetField(field.name()), queryName, queryCount);
-                    valuesAndCounts.add(count);                 
-                    
-                }
-                
-            }
-                 
-        }
-        
-        Collections.sort(valuesAndCounts, dateCountComparator);
-           
-        
-    }
-    
-    public void setBeforeWhichWidgetValues(QueryResponse queryResponse){
-        
-        valuesAndCountsComplement = new ArrayList<Count>();
-                
-        valuesAndCountsComplement = addUnknownCount((ArrayList<Count>)valuesAndCountsComplement, queryResponse);
-        
-        if(terminusAfterWhich.equals("Unknown") || terminusBeforeWhich.equals("Unknown")) return;
-
-        long totalCount = queryResponse.getResults().getNumFound();
-        List<Count> counts = queryResponse.getFacetField(field.name()).getValues();
-        Iterator<Count> cit = counts.iterator();
-        long missingCount = 0;
-
-        while(cit.hasNext()){
-            
-            Count count = cit.next();
-            String name = count.getName();
-            if(name == null || name.equals("")){
-                
-                missingCount = count.getCount();
-                
-            }
-   
-            
-        }
-        
-        
-        Map<String, Integer> facetQueries = queryResponse.getFacetQuery();
-                
-        int bottomLimit = getLowestCategoryWithMembers(queryResponse);
-        
-        for(Map.Entry<String, Integer> entry : facetQueries.entrySet()){
-            
-            String rawQueryName = entry.getKey();
-            Pattern pattern = Pattern.compile("^" + field.name() + ":\\[\\s*(-?\\d+)\\s*TO\\s*-?\\d+\\s*\\]" + "$");
-            Matcher matcher = pattern.matcher(rawQueryName);
-            if(matcher.matches()){
-            
-                String queryName = matcher.group(1);
-                
-                if(Integer.valueOf(queryName) >= bottomLimit){
-                
-                    long rawValue = getNextSignificantCount(facetQueries, entry.getValue());
-
-                    long queryCount = totalCount - rawValue - missingCount;
-
-                    if(queryName != null && !queryName.equals("") && !queryName.equals("null") && queryCount > 0){
-
-                        Count count = new Count(new FacetField(field.name()), queryName, queryCount);
-                        valuesAndCountsComplement.add(count);                 
-
-                    }
-                
-                }
-                
-            }
-                 
-        }
-        
-        Collections.sort(valuesAndCountsComplement, dateCountComparator);         
-        
-    } 
-    
-    private long getNextSignificantCount(Map<String, Integer> facetQueries, long currentValue){
-        
-        ArrayList<Long> counts = new ArrayList<Long>();
-        
-        for(Map.Entry<String, Integer> entry : facetQueries.entrySet()){
-            
-            long count = entry.getValue();
-            if(count < currentValue) counts.add(count);
-                  
-        }
-        
-        if(counts.size() == 0) return 0;
-        
-        return Collections.max(counts);
-        
-    }
-    
+       
+    @Override
     public String generateWidget() {
         
-        String afterWhichWidget = generateAfterWhichWidget();
-        String beforeWhichWidget = generateBeforeWhichWidget();
-        String hiddenFields =  generateHiddenFields();
-
-        return hiddenFields + afterWhichWidget + beforeWhichWidget;
+        String afterWhichWidget = terminusAfterWhich.generateWidget();
+        String beforeWhichWidget = terminusBeforeWhich.generateWidget();
+        String modeSelector = generateModeSelector();
+        return afterWhichWidget + beforeWhichWidget + modeSelector;
         
     }
     
-    private String generateAfterWhichWidget(){
+    private String generateModeSelector(){
         
-        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
-        html.append(getAfterWhichToolTipText());
+        StringBuilder html = new StringBuilder();
+        html.append("<div class=\"facet-widget date-facet-widget\" id=\"date-mode-facet-widget\">");
+        String l = DateMode.LOOSE.name();
+        String s = DateMode.STRICT.name();
+        String checked = "\" checked=\"checked\" ";
+        String unchecked = "\"";    
+        String looseChecked = dateMode == DateMode.LOOSE ? checked : unchecked;
+        String strictChecked = dateMode == DateMode.STRICT ? checked : unchecked;
+        html.append("<input type=\"radio\" title=\"Items fall within defined timespan: i.e., their date-range overlaps with the range specified \" name=\"");
+        html.append(DateParam.DATE_MODE.name());
+        html.append("\" value=\"");
+        html.append(l);
+        html.append("\" id=\"");
+        html.append(l);
+        html.append(looseChecked);
+        html.append("/>");
+        html.append("<label for=\"");
+        html.append(l);
         html.append("\">");
-        html.append("<p>");
-        Boolean onlyOneValue = valuesAndCounts.size() == 1;
-        String disabled = onlyOneValue ? " disabled=\"true\"" : "";
-        String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
-        html.append("<span class=\"option-label\">Date on or after</span>");
-        html.append("<select");
-        html.append(disabled);
-        html.append(" name=\"");
-        html.append(FacetParam.DATE_START.name());
+        html.append(l.substring(0, 1));
+        html.append(l.toLowerCase().substring(1));
+        html.append("</label>");
+        html.append("<input type=\"radio\" title=\"Both ends of item's timespan fall within the timespan defined: i.e., the 'after' and 'before' values represent termini post and ante quem\" name=\"");
+        html.append(DateParam.DATE_MODE.name());
+        html.append("\" value=\"");
+        html.append(s);
+        html.append("\" id=\"");
+        html.append(s);
+        html.append(strictChecked);
+        html.append("/>");
+        html.append("<label for=\"");
+        html.append(s);
         html.append("\">");
-        html.append("<option ");
-        html.append(defaultSelected);
-        html.append("  value=\"default\">");
-        html.append(Facet.defaultValue);
-        html.append("</option>");
-        
-        Iterator<Count> vcit = valuesAndCounts.iterator();
-        
-        while(vcit.hasNext()){
-            
-            Count valueAndCount = vcit.next();
-            String value = valueAndCount.getName();
-            String displayValue = getDisplayValue(value);
-            String count = String.valueOf(valueAndCount.getCount());
-            String selected = (onlyOneValue || value.equals(terminusAfterWhich)) ? " selected=\"true\"" : "";
-            html.append("<option");
-            html.append(selected);
-            html.append(" value=\"");
-            html.append(value);
-            html.append("\">");
-            html.append(displayValue);
-            html.append(" (");
-            html.append(count);
-            html.append(")</option>");
-            if(value.equals("Unknown")){
-                
-                html.append("<optgroup label=\"-------------------\"></optgroup>");
-                
-            }
-            
-        }
-        
-        html.append("</select>");
-        html.append("</p>");
+        html.append(s.substring(0, 1));
+        html.append(s.toLowerCase().substring(1));
+        html.append("</label>");  
         html.append("</div><!-- closing .facet-widget -->");
-
-        return html.toString();  
+        return html.toString();
         
     }
     
-    private String generateBeforeWhichWidget(){
+    private String getEraOptions(String terminusEra){
         
-        StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
-        html.append(getBeforeWhichToolTipText());
-        html.append("\">");
-        html.append("<p>");
-        Boolean onlyOneValue = valuesAndCountsComplement.size() == 1;
-        String disabled = onlyOneValue ? " disabled=\"true\"" : "";
-        String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
-        html.append("<span class=\"option-label\">Date on or before</span>");
-        html.append("<select");
-        html.append(disabled);
-        html.append(" name=\"");
-        html.append(FacetParam.DATE_END.name());
-        html.append("\">");
-        html.append("<option ");
-        html.append(defaultSelected);
-        html.append("  value=\"default\">");
-        html.append(Facet.defaultValue);
-        html.append("</option>");
+        String allOptions = "";
         
-        Iterator<Count> vcit = valuesAndCountsComplement.iterator();
+        ArrayList<String> eras = new ArrayList<String>(Arrays.asList("BCE", "CE"));
         
-        while(vcit.hasNext()){
+        for(String era : eras){
             
-            Count valueAndCount = vcit.next();
-            String value = valueAndCount.getName();
-            String displayValue = getDisplayValue(value);
-            String count = String.valueOf(valueAndCount.getCount());
-            String selected = (onlyOneValue || value.equals(terminusBeforeWhich)) ? " selected=\"true\"" : "";
-            html.append("<option");
-            html.append(selected);
-            html.append(" value=\"");
-            html.append(value);
-            html.append("\">");
-            html.append(displayValue);
-            html.append(" (");
-            html.append(count);
-            html.append(")</option>");
-            if(value.equals("Unknown")){
-                
-                html.append("<optgroup label=\"-------------------\"></optgroup>");
-                
-            }
+            String tag = era.equals(terminusEra) ? "<option selected>" + era + "</option>" : "<option>" + era + "</option>";
+            allOptions += tag;
             
         }
         
-        html.append("</select>");
-        html.append("</p>");
-        html.append("</div><!-- closing .facet-widget -->");
-
-        return html.toString();         
+        return allOptions;
         
-        
-    }
-    
-    int getLowestCategoryWithMembers(QueryResponse queryResponse){
-        
-        if(terminusAfterWhich.equals("Unknown") || terminusBeforeWhich.equals("Unknown")) return 0;
-        
-        List<Count> counts = queryResponse.getFacetField(field.name()).getValues();
-        
-        for(int i = LOWER_BOUND; i <= UPPER_BOUND; i++){
-            
-            Iterator<Count> cit = counts.iterator();
-            while(cit.hasNext()){
-                
-                Count count = cit.next();
-                String name = count.getName();
-                
-                long number = count.getCount();
-                
-                if(name != null && Integer.valueOf(name) == i && number > 0) return i;
-                
-                
-            }       
-            
-        }
-        
-        return 0;
     }
 
     @Override
@@ -536,158 +300,160 @@ public class DateFacet extends Facet {
         
         ArrayList<String> constraints = new ArrayList<String>();
                
-        if(facetParam.equals(FacetParam.DATE_START.name()) && !terminusAfterWhich.equals("0")) constraints.add(terminusAfterWhich);
+        if(facetParam.equals(DateParam.DATE_START_TEXT.name())) terminusAfterWhich.addCurrentValue(constraints);
         
-        if(facetParam.equals(FacetParam.DATE_END.name()) && !terminusBeforeWhich.equals("0")) constraints.add(String.valueOf(terminusBeforeWhich));
+        if(facetParam.equals(DateParam.DATE_END_TEXT.name())) terminusBeforeWhich.addCurrentValue(constraints);
         
         return constraints;
         
     }
     
     @Override
-    String generateHiddenFields(){
-        
-        String html = "";
-        
-        if(!terminusAfterWhich.equals("0")){
-            
-            html += "<input type=\"hidden\" name=\"" + FacetParam.DATE_START.name() + "\" value=\"" + String.valueOf(terminusAfterWhich) + "\"/>";
-            
-        }
-        if(!terminusBeforeWhich.equals("0")){
-            
-            html += "<input type=\"hidden\" name=\"" + FacetParam.DATE_END.name() + "\" value=\"" + String.valueOf(terminusBeforeWhich) + "\"/>";
-            
-        }
-
-        
-        return html;
-        
-    }
-    
-    public ArrayList<Count> addUnknownCount(ArrayList<Count> valuesAndCounts, QueryResponse queryResponse){
-        
-        long unknownCountNumber = getUnknownCount(queryResponse);
-        Count unknownCount = new Count(new FacetField(flagField.name()), "Unknown", unknownCountNumber);
-        if(unknownCountNumber > 0){
-            
-            valuesAndCounts.add(unknownCount);
-        }
-        
-        return valuesAndCounts;
-        
-    }
-    
-    private long getUnknownCount(QueryResponse queryResponse){
-             
-        List<Count> counts = queryResponse.getFacetField(flagField.name()).getValues();
-        Iterator<Count> cit = counts.iterator();
-        while(cit.hasNext()){
-            
-            Count count = cit.next();
-            if(count.getName()!= null && count.getName().equals("true")) return count.getCount();
-            
-        }
-        
-        return 0;
-        
-    }
+    String generateHiddenFields(){ return ""; }
     
     @Override
     public Boolean addConstraints(Map<String, String[]> params){
-                
-        Boolean hasConstraint = false;
         
-        if(params.containsKey(FacetParam.DATE_START.name())){
+        if(params.containsKey(DateParam.DATE_MODE.name())){
             
-            String[] startValues = params.get(FacetParam.DATE_START.name());
-            
-            for(int i = 0; i < startValues.length; i++){
+            try{
                 
-                String dateStart = startValues[i];
-                
-                if(dateStart != null && !dateStart.equals("") && !dateStart.equals("default")){
-
-                
-                    if(terminusAfterWhich.equals("0")|| dateStart.equals("Unknown")){
-                               
-                            hasConstraint = true;               
-                           terminusAfterWhich = dateStart;
-                      
-                
-                    }
-                    else{
+                String[] dateModes = params.get(DateParam.DATE_MODE.name());
+                DateMode selectedMode = null;
+                for(int i = 0; i < dateModes.length; i++){
                     
-                        if(Integer.valueOf(dateStart) > Integer.valueOf(terminusAfterWhich)){
-                               
-                                hasConstraint = true;               
-                                terminusAfterWhich = dateStart;
-   
-                       }
-                    
+                    String nowMode = dateModes[i];
+                    if(nowMode != null && !nowMode.equals("")){
+                        
+                       selectedMode = DateMode.valueOf(nowMode);   
+                       break;
+                        
                     }
                     
                 }
                 
+                dateMode = selectedMode == null ? dateModeDefault : selectedMode;
+                
+                
+                
             }
-                
-           }
+            catch(IllegalArgumentException iae){
 
-        if(params.containsKey(FacetParam.DATE_END.name())){
-            
-           String[] endValues = params.get(FacetParam.DATE_END.name());
+                dateMode = dateModeDefault;
+                
+            }
+                 
+        }
+        
+        Boolean hasStartDate = parseParamsForStartDate(params);
+        Boolean hasEndDate = parseParamsForEndDate(params);
+                
+        return (hasStartDate || hasEndDate);
+        
+        
+    }
+    
+    public Boolean parseParamsForStartDate(Map<String, String[]> params){
+                
+        if(params.containsKey(DateParam.DATE_START_TEXT.name())){
            
-           for(int j = 0; j < endValues.length; j++){
-               
-               String dateEnd = endValues[j];
-               
-               if(dateEnd != null && !dateEnd.equals("") && !dateEnd.equals("default")){
-
-               
-                if(terminusBeforeWhich.equals("0") || dateEnd.equals("Unknown")){
+            String[] startValues = params.get(DateParam.DATE_START_TEXT.name());
+            
+            String startValue = null;
+            
+            for(int i = 0; i < startValues.length; i++){
+                
+                startValue = startValues[i];
+                if(startValue != null && !startValue.equals("")) break;
+                
+                
+            }
+            if(startValue != null){
+            
+                if(startValue.equals("n.a.")){
                     
+                    terminusAfterWhich.setCurrentValue("Unknown");
+                    return true;
+                }
+                Pattern pattern = Pattern.compile("(\\d{1,4})");
+                Matcher matcher = pattern.matcher(startValue);
+            
+                if(matcher.matches()){
                 
-                            hasConstraint = true;               
-                            terminusBeforeWhich = dateEnd;
-                            
-                     }
-                
-                else{
+                    String year = matcher.group();
+                    if(year.equals("1")) year = "0";
                     
-                    if(Integer.valueOf(dateEnd) < Integer.valueOf(terminusBeforeWhich)){
+                    if(params.containsKey(DateParam.DATE_START_ERA.name()) && params.get(DateParam.DATE_START_ERA.name())[0].equals("BCE")){
                         
-                
-                            hasConstraint = true;               
-                            terminusBeforeWhich = dateEnd;
-                            
-                        
+                        year = "-" + year;
                         
                     }
                     
-                }              
-               
-               }
-               
-           }
-      
+                    terminusAfterWhich.setCurrentValue(year);
+                    return true;
+                }
+                
+            }
+                      
         }
         
-        return hasConstraint;
+        
+        return false;        
+    }
+    
+    public Boolean parseParamsForEndDate(Map<String, String[]> params){
+        
+        if(params.containsKey(DateParam.DATE_END_TEXT.name())){
+            
+            String endValue = params.get(DateParam.DATE_END_TEXT.name())[0];
+            
+            if(endValue != null){
+            
+                if(endValue.equals("n.a.")){
+                    
+                    terminusBeforeWhich.setCurrentValue("Unknown");
+                    return true;
+                    
+                }
+                Pattern pattern = Pattern.compile("(\\d{1,4})");
+                Matcher matcher = pattern.matcher(endValue);  
+                
+                if(matcher.matches()){
+                    
+                    String year = matcher.group();
+                    if(year.equals("1")) year = "0";
+                   
+                    if(params.containsKey(DateParam.DATE_END_ERA.name()) && params.get(DateParam.DATE_END_ERA.name())[0].equals("BCE")){
+                        
+                        year = "-" + year;
+                        
+                    }
+                    
+                   terminusBeforeWhich.setCurrentValue(year);
+                   return true; 
+                    
+                }
+                
+            }
+            
+        }
+        
+        return false;
         
     }
     
     @Override
-    public String getDisplayName(String facetParam, java.lang.String facetValue){
+    public String getDisplayName(String facetParam, String facetValue){
         
-        if(facetParam.equals(FacetParam.DATE_START.name())) return "Date on or after";
-        return "Date on or before";
+        if(facetParam.equals(DateParam.DATE_START_TEXT.name())) return terminusAfterWhich.getDisplayName();
+        return terminusBeforeWhich.getDisplayName();
         
     }
         
     @Override
     public String[] getFormNames(){
         
-        String[] formNames = {FacetParam.DATE_START.name(), FacetParam.DATE_END.name()};
+        String[] formNames = {DateParam.DATE_START_TEXT.name(), DateParam.DATE_END_TEXT.name()};
         return formNames;
         
         
@@ -710,6 +476,815 @@ public class DateFacet extends Facet {
     String getBeforeWhichToolTipText(){
         
         return "The date before which the document is believed to have been in existence - i.e., the terminus ante quem.";
+        
+    }
+    
+    abstract class Terminus{
+        
+        ArrayList<Count> valuesAndCounts;
+        String currentValue;
+        private SolrField facetField;
+        Comparator facetCountComparator;
+        
+        public Terminus(String value, SolrField f){
+            
+            currentValue = value;
+            valuesAndCounts = new ArrayList<Count>();
+            facetField = f;
+            facetCountComparator = new Comparator()  {
+
+                @Override
+                public int compare(Object t, Object t1) {
+                    
+                    String c1 = ((RangeFacet.Count)t).getValue();
+                    String c2 = ((RangeFacet.Count)t1).getValue();
+                    
+                    try{
+                        
+                        Integer i1 = Integer.valueOf(c1);
+                        Integer i2 = Integer.valueOf(c2);                        
+                        return  i1 - i2;
+                        
+                    } 
+                    catch(NumberFormatException nfe){
+                    
+                        return 0;
+                    
+                    }
+                    
+                    
+                }
+            };
+        }
+        
+        abstract SolrQuery getQueryContribution(SolrQuery solrQuery);
+                      
+        abstract String getAsQueryString();
+        
+        abstract String getDisplayName();
+        
+        abstract String getDisplayValue(String dateCode);
+        
+        abstract String generateWidget();
+                                                
+        abstract void orderFacetQueries(List<RangeFacet.Count> fqs);
+        
+        abstract void orderValuesAndCounts();
+        
+        
+        void filterValuesAndCounts(){
+            
+            orderValuesAndCounts();
+            ArrayList<Count> filteredCounts = new ArrayList<Count>();
+            long previousCount = 0;
+            
+            for(Count vc : valuesAndCounts){
+                
+                long nowCount = vc.getCount();
+                String nowName = vc.getName();
+                if((nowCount > 0 && nowCount != previousCount) || nowName.equals(currentValue)) filteredCounts.add(vc);
+                previousCount = nowCount;
+                
+            }
+            
+            if(filteredCounts.size() > 1){
+
+                if(filteredCounts.get(0).getCount() == filteredCounts.get(1).getCount()) filteredCounts.remove(0);
+                
+            }
+            Collections.sort(filteredCounts, DateFacet.dateCountComparator);
+            valuesAndCounts = filteredCounts;         
+            
+        }       
+        
+        void calculateWidgetValues(QueryResponse qr) {
+            
+            addUnknownCount(qr);
+            if(currentValue.equals("Unknown") || this.getOtherTerminus().getCurrentValue().equals("Unknown")) return;
+            List<RangeFacet> facetQueries = qr.getFacetRanges();
+            List<RangeFacet.Count> dateList = new ArrayList<RangeFacet.Count>();
+                        
+            for(RangeFacet rf : facetQueries){
+            
+                String rangeName = rf.getName();
+                if(rangeName.equals(this.getFacetField().name())) dateList = rf.getCounts();
+                      
+            }
+            this.calculateStrictWidgetValues(dateList);            
+             
+        }  
+              
+        HashMap<Integer, Long> mapRangeFacets(List<RangeFacet.Count> counts){
+            
+            HashMap<Integer, Long> rangeMap = new HashMap<Integer, Long>();
+            
+            for(RangeFacet.Count count : counts){
+                
+                Integer name = Integer.valueOf(count.getValue());
+                long number = count.getCount();
+                rangeMap.put(name, number);  
+                
+            }
+                       
+            return rangeMap;
+            
+        }
+        
+        public void addUnknownCount(QueryResponse queryResponse){
+        
+            long unknownCountNumber = getUnknownCount(queryResponse);
+            Count unknownCount = new Count(new FacetField(flagField.name()), "Unknown", unknownCountNumber);
+            if(unknownCountNumber > 0){
+
+                valuesAndCounts.add(unknownCount);
+            }
+        
+        }
+        
+        private long getUnknownCount(QueryResponse queryResponse){
+
+            List<Count> counts = queryResponse.getFacetField(flagField.name()).getValues();
+            Iterator<Count> cit = counts.iterator();
+            while(cit.hasNext()){
+
+                Count count = cit.next();
+                if(count.getName()!= null && count.getName().equals("true")) return count.getCount();
+
+            }
+
+            return 0;
+
+        }        
+        
+        
+        Boolean active(){
+            
+            if(currentValue.equals("")) return false;
+            return true;
+                
+        }
+        
+        Boolean otherIsUnknown(){
+            
+            return getOtherTerminus().getCurrentValue().equals("Unknown");
+
+            
+        }
+        
+        abstract Terminus getOtherTerminus();
+        
+        void addCurrentValue(ArrayList<String> constraints){ if(!currentValue.equals("")) constraints.add(currentValue); }
+        
+        void setCurrentValue(String newValue){  
+           
+            currentValue = newValue;
+           
+            
+        }
+          
+        
+        String getCurrentValue(){
+            
+            return currentValue;
+            
+        }
+        
+
+        
+        SolrField getFacetField(){ 
+            
+            return this.facetField; 
+        
+        }
+        
+        abstract Integer getMostExtremeValue();
+        
+        Count pluckCountFromList(String desiredValue, List<Count> countList){
+            
+            for(Count count : countList){
+                
+                String value = count.getName();
+                if(value.equals(desiredValue)) return count;
+                
+            }
+            
+            return null;
+            
+        }
+        
+        long getGrandTotal(List<Count> facetResponse){
+            
+            long grandTotal = 0;
+            
+            for(Count count : facetResponse){
+
+                if(count.getName() != null && !count.getName().equals("")){
+                
+                      grandTotal += count.getCount();  
+                    
+                }
+      
+            }
+            
+            return grandTotal;
+            
+        }
+        
+        abstract void calculateStrictWidgetValues(List<RangeFacet.Count> facetQueries);
+         
+        abstract public ArrayList<Count> calculateLooseWidgetValues(long grandTotal);
+          
+        String getEra(){
+            
+            try{
+                
+                String era = "";
+                if(Integer.valueOf(currentValue) <= -1){
+                    
+                    return "BCE";
+                    
+                }
+                else if(Integer.valueOf(currentValue) >= 0){
+                    
+                    return "CE";
+                    
+                }
+                
+            }
+            catch(NumberFormatException nfe){
+                
+                return "";
+                
+                
+            }
+            
+            return "";
+            
+        }
+        
+        public ArrayList<Count> getValuesAndCounts(){ return this.valuesAndCounts; }
+        
+        public void setValuesAndCounts(ArrayList<Count> newCounts){ this.valuesAndCounts = newCounts; }
+        
+ 
+    }
+    
+    class TerminusAfterWhich extends Terminus{
+        
+        HashMap<Integer, Integer> cumulativeTotals;
+        
+        public TerminusAfterWhich(String value){
+            
+            super(value, SolrField.earliest_date);
+    
+        }
+
+        @Override
+        SolrQuery getQueryContribution(SolrQuery solrQuery) {
+            
+            if(active()){
+                 
+                String fq = "";
+                if(dateMode == DateMode.STRICT){
+                
+                    Integer endDate = getOtherTerminus().getMostExtremeValue() - 1;
+                    fq = this.getFacetField().name() + ":[" + String.valueOf(currentValue) + " TO " + String.valueOf(endDate) + "]";
+                    
+                }
+                else{
+                    
+                    fq =  this.getOtherTerminus().getFacetField().name() + ":[" + String.valueOf(currentValue) + " TO " + DateFacet.RANGE_END + "]";
+                      
+                }
+                solrQuery.addFilterQuery(fq);
+            }
+            
+            return solrQuery;
+            
+        }
+
+        @Override
+        String getAsQueryString() {
+            
+            if(active()){
+                
+                String paramValue = currentValue;
+                if(!paramValue.equals("Unknown")){
+                    
+                    paramValue = String.valueOf(Math.abs(Integer.valueOf(paramValue)));
+                    
+                    
+                    
+                }
+                else{
+                    
+                    paramValue = "n.a.";
+                    
+                }
+                
+                String qs = DateParam.DATE_START_TEXT.name() + "=" + paramValue;
+                
+                if(!paramValue.equals("n.a.")) qs += "&" + DateParam.DATE_START_ERA.name() + "=" + getEra(); 
+                
+                return  qs;  
+                
+            }
+            
+            return "";
+            
+        }
+
+        @Override
+        String getDisplayValue(String dateCode) {
+            
+            
+            if(dateCode.equals("Unknown")) return dateCode;
+            Integer rawDate = Integer.valueOf(dateCode);
+            String era = rawDate < 0 ? "BCE" : "CE";
+            if(rawDate == 0) rawDate = 1;
+            rawDate = Math.abs(rawDate);
+            return String.valueOf(rawDate) + " " + era;
+            
+        }
+        
+        @Override
+        public void orderFacetQueries(List<RangeFacet.Count> fqs){
+            
+            Collections.sort(fqs, facetCountComparator);
+            Collections.reverse(fqs);
+            
+        }
+
+        @Override
+        String generateWidget() {  
+            
+            Boolean thisIsOdd = (!currentValue.equals("") && !currentValue.equals("Unknown") && Integer.valueOf(currentValue) % DateFacet.INTERVAL != 0) ? true : false;
+            String otherValue = terminusBeforeWhich.getCurrentValue();
+            Boolean thatIsOdd = (!otherValue.equals("") && !otherValue.equals("Unknown") && Integer.valueOf(otherValue) % DateFacet.INTERVAL != 0) ? true : false;
+            Boolean oddValues = (thisIsOdd || thatIsOdd);
+            
+            Boolean startIsUnknown = currentValue.equals("Unknown") || terminusBeforeWhich.getCurrentValue().equals("Unknown");
+            String startDisplayValue = startIsUnknown ? "n.a." : currentValue.replaceAll("^-", "");  
+            startDisplayValue = startDisplayValue.equals("0") ? "1" : startDisplayValue;
+            
+            StringBuilder html = new StringBuilder("<div class=\"facet-widget date-facet-widget\" title=\"");
+            html.append(getAfterWhichToolTipText());
+            html.append("\">");
+            Boolean onlyOneValue = valuesAndCounts.size() == 1;
+            String defaultSelected = (onlyOneValue || oddValues) ? "" : "selected=\"true\"";
+            String disabled = (onlyOneValue || oddValues) ? " disabled=\"true\"" : "";
+            html.append("<span class=\"option-label\">Date on or after</span>");
+            html.append("<select name=\"");
+            html.append(FacetParam.DATE_START.name());
+            html.append("\"");
+            html.append(disabled);
+            html.append(">");
+            html.append("<option ");
+            html.append(defaultSelected);
+            html.append("  value=\"default\">");
+            html.append(Facet.defaultValue);
+            html.append("</option>");
+
+            if(!oddValues){
+            
+                Iterator<Count> vcit = valuesAndCounts.iterator();
+
+                while(vcit.hasNext()){
+
+                    Count valueAndCount = vcit.next();
+                    String value = valueAndCount.getName();
+                    String displayValue = getDisplayValue(value);
+                    String count = String.valueOf(valueAndCount.getCount());
+                    String selected = (onlyOneValue || value.equals(currentValue)) ? " selected=\"true\"" : "";
+                    html.append("<option");
+                    html.append(selected);
+                    html.append(" value=\"");
+                    html.append(value);
+                    html.append("\">");
+                    html.append(displayValue);
+                    html.append(" (");
+                    html.append(count);
+                    html.append(")</option>");
+                    if(value.equals("Unknown")){
+
+                        html.append("<optgroup label=\"-------------------\"></optgroup>");
+
+                    }
+
+                }
+                
+            }
+
+            html.append("</select>");
+            
+            html.append("<div class=\"date-input-box");
+            if(startIsUnknown) html.append(" unknown-date");
+            html.append("\">");
+            html.append("<input type=\"text\" size=\"4\" maxlength=\"4\" name=\"");
+            html.append(DateParam.DATE_START_TEXT.name());
+            html.append("\" id=\"");
+            html.append(DateParam.DATE_START_TEXT.name());
+            html.append("\" value=\"");
+            html.append(startDisplayValue);    
+            html.append("\"");
+            html.append("/>");
+            html.append("</input>");
+
+            html.append("<select name=\"");
+            html.append(DateParam.DATE_START_ERA.name());
+            html.append("\" id=\"");
+            html.append(DateParam.DATE_START_ERA.name());
+            html.append("\"");
+            html.append(">");
+            html.append(getEraOptions(this.getEra()));
+            html.append("</select>");
+            html.append("</div><!-- closing .date-input-box -->");
+            html.append("</div><!-- closing .facet-widget -->");
+
+            return html.toString();                    
+            
+        }
+        
+        @Override
+        void calculateStrictWidgetValues(List<RangeFacet.Count> facetQueries) {
+               
+            long runningTotal = 0;
+      
+            HashMap<Integer, Long> responseAsMap = mapRangeFacets(facetQueries);
+            
+            for(int i = DateFacet.RANGE_END; i >= DateFacet.RANGE_START; i -= DateFacet.INTERVAL){
+                
+                String name = String.valueOf(i);
+                long number = responseAsMap.containsKey(i) ? responseAsMap.get(i) : 0;
+                runningTotal += number;
+                Count newCount = new Count(new FacetField(getFacetField().name()), name, runningTotal);
+                valuesAndCounts.add(newCount);
+                   
+            }
+                        
+            Collections.sort(valuesAndCounts, dateCountComparator);
+
+        }
+
+        @Override
+        Integer getMostExtremeValue(){
+            
+            if(!currentValue.equals("Unknown") && !currentValue.equals("")) return Integer.valueOf(currentValue);
+            return DateFacet.RANGE_START;
+            
+            
+        }
+
+        @Override
+        String getDisplayName() {
+            
+            return "Date on or after";
+            
+        }
+
+        @Override
+        public ArrayList<Count> calculateLooseWidgetValues(long grandTotal) {
+            
+            ArrayList<Count> looseWidgetValues = new ArrayList<Count>();
+            ArrayList<Count> complement = terminusBeforeWhich.getValuesAndCounts();
+                    
+            for(int i = 0; i < this.valuesAndCounts.size(); i++){
+                
+                try{
+                    
+                    Count count = this.valuesAndCounts.get(i); 
+                    String name = count.getName();
+                    if(name.equals("Unknown")){
+                        
+                        looseWidgetValues.add(count);
+                        
+                    }
+                    else{
+                        
+                        long looseCount = i > 0 ? grandTotal - (complement.get(i).getCount()) : 0;
+                        Count newCount = new Count(new FacetField(SolrField.earliest_date.name()), name, looseCount);
+                        looseWidgetValues.add(newCount);
+                    
+                    }
+                      
+                }
+                catch(NumberFormatException nfe){}
+                catch(NullPointerException npe){}
+           
+            }
+            Collections.sort(looseWidgetValues, dateCountComparator);
+            return looseWidgetValues;
+                     
+        }
+
+        @Override
+        Terminus getOtherTerminus() {
+            
+            return terminusBeforeWhich;
+            
+        }
+
+        @Override
+        void orderValuesAndCounts() {
+            
+            Collections.sort(valuesAndCounts, DateFacet.dateCountComparator);
+            
+        }
+        
+        
+    }
+    
+    class TerminusBeforeWhich extends Terminus{
+        
+       HashMap<Integer, Integer> cumulativeTotals;
+        
+        public TerminusBeforeWhich(String value){
+            
+            super(value, SolrField.latest_date);
+            
+        }
+
+        @Override
+        SolrQuery getQueryContribution(SolrQuery solrQuery) {
+            
+            if(active()){
+                
+                String fq = "";
+                Integer endDate = Integer.valueOf(currentValue) - 1;
+                
+                if(dateMode == DateMode.STRICT){
+                
+                    Integer startDate = getOtherTerminus().getMostExtremeValue();
+                    fq = this.getFacetField().name() + ":[" + String.valueOf(startDate) + " TO " + String.valueOf(endDate) + "]";
+                    solrQuery.addFilterQuery(fq);
+                
+                }
+                else{
+                    
+                    fq = this.getOtherTerminus().getFacetField().name() + ":[" + DateFacet.RANGE_START + " TO " + String.valueOf(endDate) + "]";
+                    
+                }
+               
+                solrQuery.addFilterQuery(fq);
+            }
+            
+            return solrQuery;
+            
+        }
+        
+        @Override
+        void calculateStrictWidgetValues(List<RangeFacet.Count> facetQueries) {
+               
+            long runningTotal = 0;
+            HashMap<Integer, Long> responseAsMap = mapRangeFacets(facetQueries);
+            int start = terminusAfterWhich.getMostExtremeValue();
+            int end = this.getMostExtremeValue();
+            
+            for(int i = DateFacet.RANGE_START; i <= DateFacet.RANGE_END; i += DateFacet.INTERVAL){
+                
+                String name = String.valueOf(i);
+                int retrievalNumber = i - DateFacet.INTERVAL;
+                long number = responseAsMap.containsKey(retrievalNumber) ? responseAsMap.get(retrievalNumber) : 0;
+                runningTotal += number;
+                Count newCount = new Count(new FacetField(getFacetField().name()), name, runningTotal);
+                valuesAndCounts.add(newCount);
+                   
+            }
+            
+            Collections.sort(valuesAndCounts, dateCountComparator);
+
+        }        
+        
+        @Override
+        String getAsQueryString() {
+            
+            if(active()){
+                
+                String paramValue = currentValue;
+                if(!paramValue.equals("Unknown")){
+                    
+                    paramValue = String.valueOf(Math.abs(Integer.valueOf(currentValue)));
+                    
+                }
+                else{
+                    
+                    paramValue = "n.a.";                    
+                }
+                
+                String qs = DateParam.DATE_END_TEXT.name() + "=" + paramValue;
+                if(!paramValue.equals("n.a.")) qs += "&" + DateParam.DATE_END_ERA.name() + "=" +  getEra();  
+                return  qs; 
+                
+            }
+            
+            return "";
+            
+        }
+
+        @Override
+        String getDisplayValue(String date) {
+            
+            if(date.equals("Unknown")) return date;
+            Integer rawDate = Integer.valueOf(date);
+            if(rawDate == 0) rawDate = 1;
+            String era = rawDate < 0 ? "BCE" : "CE";
+            rawDate = Math.abs(rawDate);
+            return String.valueOf(rawDate) + " " + era;
+            
+        }
+
+        @Override
+        String generateWidget() {
+            
+            Boolean thisIsOdd = (!currentValue.equals("") && !currentValue.equals("Unknown") && Integer.valueOf(currentValue) % DateFacet.INTERVAL != 0) ? true : false;
+            String otherValue = terminusAfterWhich.getCurrentValue();
+            Boolean thatIsOdd = (!otherValue.equals("") && !otherValue.equals("Unknown") && Integer.valueOf(otherValue) % DateFacet.INTERVAL != 0) ? true : false;
+            Boolean oddValues = (thisIsOdd || thatIsOdd);
+
+            Boolean endIsUnknown = currentValue.equals("Unknown") || terminusAfterWhich.getCurrentValue().equals("Unknown");
+            String endDisplayValue = endIsUnknown? "n.a." : currentValue.replaceAll("^-", "");           
+            endDisplayValue = endDisplayValue.equals("0") ? "1" : endDisplayValue;
+            
+            StringBuilder html = new StringBuilder("<div class=\"facet-widget date-facet-widget\" title=\"");
+            html.append(getBeforeWhichToolTipText());
+            html.append("\">");
+            Boolean onlyOneValue = valuesAndCounts.size() == 1;
+            String defaultSelected = (onlyOneValue || oddValues) ? " selected=\"true\"" : "";
+            String disabled = (onlyOneValue || oddValues) ? " disabled=\"true\"" : "";
+            html.append("<span class=\"option-label\">Date before</span>");
+            html.append("<select name=\"");
+            html.append(FacetParam.DATE_END.name());
+            html.append("\"");
+            html.append(disabled);
+            html.append(">");
+            html.append("<option ");
+            html.append(defaultSelected);
+            html.append("  value=\"default\">");
+            html.append(Facet.defaultValue);
+            html.append("</option>");
+
+            if(!oddValues){
+                     
+                Iterator<Count> vcit = valuesAndCounts.iterator();
+
+                while(vcit.hasNext()){
+
+                    Count valueAndCount = vcit.next();
+                    String value = valueAndCount.getName();
+                    String displayValue = getDisplayValue(value);
+                    String count = String.valueOf(valueAndCount.getCount());
+                    String selected = (onlyOneValue || value.equals(currentValue)) ? " selected=\"true\"" : "";
+                    html.append("<option");
+                    html.append(selected);
+                    html.append(" value=\"");
+                    html.append(value);
+                    html.append("\">");
+                    html.append(displayValue);
+                    html.append(" (");
+                    html.append(count);
+                    html.append(")</option>");
+                    if(value.equals("Unknown")){
+
+                        html.append("<optgroup label=\"-------------------\"></optgroup>");
+
+                    }
+
+                }
+
+            }
+
+            html.append("</select>");
+            html.append("<div class=\"date-input-box");
+            if(endIsUnknown) html.append(" unknown-date");
+            html.append("\">");
+            html.append("<input type=\"text\" size=\"4\" maxlength=\"4\" name=\"");
+            html.append(DateParam.DATE_END_TEXT.name());
+            html.append("\" id=\"");
+            html.append(DateParam.DATE_END_TEXT.name());
+            html.append("\" value=\"");
+            html.append(endDisplayValue);        
+            html.append("\"");
+            html.append(">");
+            html.append("</input>");
+            html.append("<select name=\"");
+            html.append(DateParam.DATE_END_ERA.name());
+            html.append("\" id=\"");
+            html.append(DateParam.DATE_END_ERA.name());
+            html.append("\">");
+            html.append(getEraOptions(this.getEra()));
+            html.append("</select>");    
+            html.append("</div><!-- closing .date-input-box -->");
+            html.append("</div><!-- closing .facet-widget -->");
+
+            return html.toString();         
+                       
+        }
+        
+        @Override
+        public void orderFacetQueries(List<RangeFacet.Count> fqs){
+            
+            Collections.sort(fqs, facetCountComparator);
+            
+        }
+
+        
+        @Override
+        Integer getMostExtremeValue(){
+            
+            if(!currentValue.equals("Unknown") && !currentValue.equals("")) return Integer.valueOf(currentValue);
+            return DateFacet.RANGE_END;
+            
+        }
+        
+        @Override
+        public ArrayList<Count> calculateLooseWidgetValues(long grandTotal) {
+            
+            ArrayList<Count> looseWidgetValues = new ArrayList<Count>();
+            ArrayList<Count> complement = terminusAfterWhich.getValuesAndCounts();
+            
+            for(int i = 0; i < this.getValuesAndCounts().size(); i++){
+                
+                try{
+                    
+                    Count count = this.getValuesAndCounts().get(i);
+                    String name = count.getName();
+                    if(name.equals("Unknown")){
+                        
+                        looseWidgetValues.add(count);
+                        
+                    }
+                    else{
+                        
+                        long looseCount = 0;
+                        if(i > 0){
+                            
+                            looseCount = grandTotal - complement.get(i).getCount();
+                        }
+                        Count newCount = new Count(new FacetField(SolrField.latest_date.name()), name, looseCount);
+                        looseWidgetValues.add(newCount);
+                    
+                    }
+                }
+                catch(NumberFormatException nfe){}
+                catch(NullPointerException npe){}
+           
+            }
+           Collections.sort(looseWidgetValues, dateCountComparator);
+           return looseWidgetValues; 
+                     
+        }
+
+
+        @Override
+        String getDisplayName() {
+            
+            return "Date before";
+            
+        }
+
+        @Override
+        Terminus getOtherTerminus() {
+            
+            return terminusAfterWhich;
+            
+        }
+
+        @Override
+        void orderValuesAndCounts() {
+            
+            Collections.sort(valuesAndCounts, DateFacet.dateCountComparator);
+            Collections.reverse(valuesAndCounts);
+            
+        }
+        
+        @Override
+        void filterValuesAndCounts(){
+            
+            orderValuesAndCounts();
+            ArrayList<Count> filteredCounts = new ArrayList<Count>();
+            long previousCount = 0;
+            int otherLimit = terminusAfterWhich.getMostExtremeValue();
+            
+            for(Count vc : valuesAndCounts){
+                
+                long nowCount = vc.getCount();
+                String nowName = vc.getName();
+                Boolean tooSmall = !nowName.equals("Unknown") && !nowName.equals("") && Integer.valueOf(nowName) <= otherLimit;
+                if(((nowCount > 0 && nowCount != previousCount) && !tooSmall) || nowName.equals(currentValue)) filteredCounts.add(vc);
+                previousCount = nowCount;
+                
+            }
+            
+            if(filteredCounts.size() > 1){
+
+                if(filteredCounts.get(0).getCount() == filteredCounts.get(1).getCount()) filteredCounts.remove(0);
+                
+            }
+            Collections.sort(filteredCounts, DateFacet.dateCountComparator);
+            valuesAndCounts = filteredCounts;         
+            
+        } 
+                
         
     }
     

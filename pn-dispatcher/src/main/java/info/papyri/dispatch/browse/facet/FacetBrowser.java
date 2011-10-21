@@ -147,7 +147,7 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
+          String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap());
      //   String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery);
         
         /* Inject the generated HTML */
@@ -386,7 +386,7 @@ public class FacetBrowser extends HttpServlet {
         
         
         StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(facets, html, submittedParams);
+        assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
@@ -399,7 +399,7 @@ public class FacetBrowser extends HttpServlet {
     private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq){
         
         StringBuilder html = new StringBuilder("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(facets, html, submittedParams);
+        assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams);
         assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html);
@@ -424,11 +424,11 @@ public class FacetBrowser extends HttpServlet {
      * @see Facet#generateWidget() 
      */
   
-    private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams){
+    private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, Boolean hasConstraints, StringBuilder html, Map<String, String[]> submittedParams){
         
         html.append("<div id=\"facet-widgets-wrapper\" class=\"search search-open\">");
         html.append("<div id=\"search-toggle\" class=\"toggle-open\"><div id=\"search-toggle-pointer\">&lt;&lt;</div><!-- closing #pointer --></div><!-- closing #toggler -->");
-        String heading = submittedParams.size() > 0 ? "Refine Search" : "Search";     
+        String heading = hasConstraints ? "Refine Search" : "Search";     
         html.append("<h2>");
         html.append(heading);
         html.append("</h2>");

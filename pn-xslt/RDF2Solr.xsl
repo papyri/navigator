@@ -838,6 +838,7 @@
       <xsl:when test="starts-with($date, '-')">
         <xsl:sequence select=" number(substring($date, 1, 5))"/>
       </xsl:when>
+      <xsl:when test="not(number(substring($date, 1, 4)))"></xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="number(substring($date, 1, 4))"/>
       </xsl:otherwise>
