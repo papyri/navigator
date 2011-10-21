@@ -647,7 +647,7 @@
 		     (fn []
 		       (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
 		       (transform (str "file://" (.getAbsolutePath x)) ()
-				  (StreamResult. (File. (str htmlpath (.getParent x) "/" (.replace (.getName x) ".xml" ".html"))))
+				  (StreamResult. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html"))))
 				  @bibhtmltemplates)))
 		   (filter #(.endsWith (.getName %) ".xml") files))]
     (doseq [future (.invokeAll pool tasks)]
