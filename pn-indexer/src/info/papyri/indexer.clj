@@ -440,8 +440,6 @@
       (if (.endsWith (last (first items)) "/source")
         (queue-items url exclude prev-urls)
         (doseq [item items]
-          (println "Recursing down")
-          (println (apply str (interpose " " all-urls)))
           (queue-collections (last item) exclude all-urls)))))))
 
 (defn generate-html
@@ -475,7 +473,8 @@
            (when (not (.startsWith (first x) "http"))
        (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
             (transform (if (.startsWith (first x) "http")
-                                           (str (.replace (first x) "papyri.info" nserver) "/rdf")
+            							   ((println "File is " + (first x))
+                                           (str (.replace (first x) "papyri.info" nserver) "/rdf"))
                                            (first x))
            (list (second x) (nth x 2) (nth x 3) (nth x 4))
            (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)

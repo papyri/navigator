@@ -170,6 +170,8 @@ $(document).ready(
 			if(externals.length > 0) filteredels.push(externals);
 			var printpubs = $("input:checkbox[name='PRINT']:checked");
 			if(printpubs.length > 0) filteredels.push(printpubs);
+			var datemode = $("input:radio[name='DATE_MODE']:checked");
+			if(datemode.length > 0) filteredels.push(datemode);
 			
 			var vol = $("#id-volume");
 			var volno = vol.val();
@@ -178,13 +180,33 @@ $(document).ready(
 			var ident = $("#id-idno");
 			var identno = ident.val();
 			if(identno != "" && identno != "n.a.") filteredels.push(ident);
+	
+	    	var datestart = $("#DATE_START_TEXT");
+	    	var startval = datestart.val();
+	    	if(startval != "") filteredels.push(datestart);
 	    	
-	    	var opts = $("select");
+	    	var dateend = $("#DATE_END_TEXT");
+	    	var endval = dateend.val();
+	    	if(endval != "") filteredels.push(dateend);
+	    	
+	    	var opts = $("select").not("[name='DATE_START']").not("[name='DATE_END']");
 
 	    	for(var i = 0; i < opts.length; i++){
 	    	
 	    		var opt = $(opts[i]);
-	    		if(opt.attr("value") != "default" && !opt.attr("disabled")) filteredels.push(opt);
+	    		if(opt.attr("name") == "DATE_START_ERA" || opt.attr("name") == "DATE_END_ERA"){
+	    		
+	    			var prefix = opt.attr("name").substring(0, opt.attr("name").length - 4);
+	    			var correlatedText = prefix + "_TEXT";
+	    			var correlatedValue = $("input[name='" + correlatedText + "']").val();
+	    			if(correlatedValue != "" && correlatedValue != "n.a.") filteredels.push(opt);
+	
+	    		}
+	    		else if(opt.attr("value") != "default" && !opt.attr("disabled")){
+	    		
+	    			filteredels.push(opt);
+	    			
+	    		}
 
 	    	}
 	    	
@@ -380,10 +402,48 @@ $(document).ready(
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		$("#substring").click();
 		$("form[name='facets']").submit(hic.tidyQueryString);
-		$("form select").change(hic.tidyQueryString);
+		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").change(hic.tidyQueryString);
+		$("select[name='DATE_START'], select[name='DATE_END']").change(function(){ 
+			
+			var val = $(this).val();
+			val = val == "0" ? 1 : val;
+			var era = val < 0 ? "BCE" : "CE";
+			var correspondingTextInput = $(this).attr("name") + "_TEXT";
+			var correspondingEraInput = $(this).attr("name") + "_ERA";
+			var passedValue = val == "Unknown" ? "n.a." : Math.abs(val);
+			$("input[name='" + correspondingTextInput + "']").val(passedValue);
+			$("select[name='" + correspondingEraInput + "']").val(era);
+			$("form[name='facets']").submit();
+
+		
+		});
+		$("select[name='DATE_START_ERA'], select[name='DATE_END_ERA']").change(function(){
+		
+	    	var prefix = $(this).attr("name").substring(0, $(this).attr("name").length - 4);
+	    	var correlatedText = prefix + "_TEXT";
+	    	var correlatedValue = $("input[name='" + correlatedText + "']").val();
+	    	if(correlatedValue == "" || correlatedValue == "n.a.") return false;		
+			$("form[name='facets']").submit();
+		
+		});
+		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
 		$("#search-toggle").height($("#facet-wrapper").height());
 		$(".toggle-open").click(hic.hideSearch);
 		$(".toggle-closed").click(hic.showSearch);
+		$("input#DATE_START_TEXT, input#DATE_END_TEXT").focus(function(){
+		
+			$(this).css("font-style", "normal");
+		
+		});
+		$("input#DATE_START_TEXT, input#DATE_END_TEXT").blur(function(){
+		
+			if($(this).val() == "n.a."){
+			
+				$(this).css("font-style", "italic");
+				
+			}
+		
+		});
 		$("#id-volume").autocomplete({
 			
 			source: $("#volume-autocomplete").text().split(' ').sort(function(a,b){return a - b;}),

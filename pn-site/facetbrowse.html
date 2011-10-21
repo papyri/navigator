@@ -436,7 +436,13 @@
       
       }
       
-      .vol-disabled{
+      div.unknown-date input#DATE_START_TEXT, div.unknown-date input#DATE_END_TEXT{
+      
+      	width: 4em;
+      
+      }
+      
+      .vol-disabled, div.unknown-date input#DATE_START_TEXT, div.unknown-date input#DATE_END_TEXT{
       	
       	color: #444;
       	font-style: italic;
@@ -471,6 +477,76 @@
       color: #555;
       }
       
+      .unknown-date{
+      
+      	color: #444;
+      	font-style: italic;
+      
+      }
+      
+      /*date widget styles */
+      
+      .date-facet-widget{
+      
+      	margin: 1em;
+      	padding-bottom: 1em;
+      	padding-left: 4px;
+      	position: relative;
+      
+      }
+      
+      .date-facet-widget select{
+      
+      	float: left;
+      
+      }
+      
+      .date-facet-widget .option-label{
+      
+      	display: block;
+      	width: 10em;
+      	float: left;
+      
+      }
+      
+      .date-facet-widget .date-input-box{
+      
+      	position: relative;
+      	float: right;
+      	margin-right: 35px;
+      	display: inline-block;
+		top: 0;      
+      }
+      
+      .date-input-box input{
+      
+      	float: left;
+      
+      }
+      
+      .date-input-box select{
+      
+      	float: right;
+      
+      }
+      
+      #date-mode-facet-widget input{
+      
+      	float: none;
+      	margin-right: 0.5em;
+      
+      }
+      
+      #date-mode-facet-widget{
+      
+      	padding-bottom: 0;
+      
+      }
+      
+     input#STRICT{
+      	
+      	margin-left: 3em;
+      }
     </style>
 
     <script type="text/javascript">
@@ -633,13 +709,6 @@
 
       }
       
-      
-      function cookifySearchSettings(){
-
-      	jQuery.cookie(search_settings.betacode.name, jQuery("input[name='beta']").attr("checked").toString());
-      
-      }
-      
       function retrieveSearchSettings(){
       
       	jQuery.each(search_settings, function(setting, setting_values){
@@ -681,7 +750,6 @@
               jQuery(this).css('background-color', 'transparent');
               jQuery(this).find("a").css('color', 'black')
           });
-          jQuery("#search").click(cookifySearchSettings);
       }
       
       function toggleHelp() {
