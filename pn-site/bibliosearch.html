@@ -510,37 +510,43 @@
               </li>
               <li>or</li>
               <li>
-                <a href="/search">Search</a>
-              </li>
             </ul>
           </form>
         </div>
-	<div id="main">
-	  <div class="content search">
-	    <div id="facet-wrapper">
-	      <div id="facet-widgets-wrapper" class="search search-open">
-	        <div id="search-toggle" class="toggle-open">
-	          <div id="search-toggle-pointer">&lt;&lt;</div>
-	        </div>
-	        <h2>Search</h2>
-	        <form name="bibliosearch" method="get" action="/bibliosearch">
-	          <div id="search-reset-wrapper">
-		    <input type="submit" value="Search" id="search"
-		    class="ui-button ui-widget ui-state-default ui-corner-all" role="button"/>
-	          </div>
-	        </form>
-          </div>
-        </div>
-	    <div id="vals-and-records-wrapper"
-  class="vals-and-records-min">
-	      <div id="facet-records-wrapper">
-	        <h2>Bibliography</h2>
-			<!-- Results -->
-	      </div
-	    </div>
-        </div>
-	  </div>
-      <div class="footer">
+		<div id="main">
+			<div class="content search">
+			  <!-- Facet browse results -->
+	
+			  <div id="facet-wrapper">
+				<div id="facet-widgets-wrapper" class="search search-open">
+				  <div id="search-toggle" class="toggle-open">
+					<div id="search-toggle-pointer">
+					  &lt;&lt;
+					</div><!-- closing #pointer -->
+				  </div><!-- closing #toggler -->
+				  <h2>Search</h2>
+				  <form name="facets" method="get" action="/bibliosearch" id="facets">
+					<div id="search-reset-wrapper">
+					  <a href="/search" id="reset-all" class="ui-button ui-widget ui-state-default ui-corner-all" aria-disabled="false" name="reset-all">New Search</a> <input type="submit" value="Search" id="search" class="ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false">
+					</div>
+	
+					<div class="facet-widget" id="text-search-widget" title="Performs a substring search, as though using the standard Search page. Capitalisation and diacritcs are ignored.">
+					  <p class="ui-corner-all" id="facet-stringsearch-wrapper"><input type="text" name="q" size="50" maxlength="250" id="keyword"></p>
+	
+					</div><!-- closing .facet-widget -->
+				  </form>
+				</div><!-- closing #facet-widgets-wrapper -->
+			  </div>
+			<div id="vals-and-records-wrapper" class="vals-and-records-min">
+			  <div id="facet-records-wrapper">
+				<h2>Results</h2>
+				<!-- Results -->
+			  </div><!-- closing #facet-records-wrapper -->
+			</div><!-- closing #vals-and-records-wrapper -->
+			</div>
+		  </div>
+      	</div>
+      	<div class="footer">
         <div id="ft">
           <div id="footer">
             <div id="footer-left-col">
@@ -579,7 +585,8 @@
             </div>
             <div class="spacer"></div>
           </div>
-        </div>      </div>
+        </div>      
+        </div>
     </div>
     <script type="text/javascript" charset="utf-8">
       jQuery("a.button").button();
