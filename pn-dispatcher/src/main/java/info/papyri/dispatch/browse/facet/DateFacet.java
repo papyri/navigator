@@ -113,8 +113,10 @@ public class DateFacet extends Facet {
             solrQuery.addFilterQuery("-" + SolrField.unknown_date_flag.name() + ":true");
             
         }
-        solrQuery.addNumericRangeFacet(SolrField.earliest_date.name(), startDate, endDate, INTERVAL);
-        solrQuery.addNumericRangeFacet(SolrField.latest_date.name(), startDate, endDate, INTERVAL);
+        Integer startFacet = Integer.valueOf(terminusAfterWhich.getFacetBucket());
+        Integer endFacet = Integer.valueOf(terminusBeforeWhich.getFacetBucket());
+        solrQuery.addNumericRangeFacet(SolrField.earliest_date.name(), startFacet, endFacet, INTERVAL);
+        solrQuery.addNumericRangeFacet(SolrField.latest_date.name(), startFacet, endFacet, INTERVAL);
         terminusBeforeWhich.getQueryContribution(solrQuery);
         terminusAfterWhich.getQueryContribution(solrQuery);
 
@@ -531,6 +533,7 @@ public class DateFacet extends Facet {
         
         abstract void orderValuesAndCounts();
         
+        abstract Integer getFacetBucket();
         
         void filterValuesAndCounts(){
             
@@ -690,6 +693,14 @@ public class DateFacet extends Facet {
             
         }
         
+        Long filterValueFromValuesAndCounts(Integer facetBucket){
+            
+            Count soughtCount = this.pluckCountFromList(String.valueOf(facetBucket), valuesAndCounts);
+            long soughtNumber = soughtCount.getCount();
+            this.getValuesAndCounts().remove(soughtCount);
+            return soughtNumber;
+        }
+        
         abstract void calculateStrictWidgetValues(List<RangeFacet.Count> facetQueries);
          
         abstract public ArrayList<Count> calculateLooseWidgetValues(long grandTotal);
@@ -817,12 +828,7 @@ public class DateFacet extends Facet {
 
         @Override
         String generateWidget() {  
-            
-            Boolean thisIsOdd = (!currentValue.equals("") && !currentValue.equals("Unknown") && Integer.valueOf(currentValue) % DateFacet.INTERVAL != 0) ? true : false;
-            String otherValue = terminusBeforeWhich.getCurrentValue();
-            Boolean thatIsOdd = (!otherValue.equals("") && !otherValue.equals("Unknown") && Integer.valueOf(otherValue) % DateFacet.INTERVAL != 0) ? true : false;
-            Boolean oddValues = (thisIsOdd || thatIsOdd);
-            
+                        
             Boolean startIsUnknown = currentValue.equals("Unknown") || terminusBeforeWhich.getCurrentValue().equals("Unknown");
             String startDisplayValue = startIsUnknown ? "n.a." : currentValue.replaceAll("^-", "");  
             startDisplayValue = startDisplayValue.equals("0") ? "1" : startDisplayValue;
@@ -831,8 +837,8 @@ public class DateFacet extends Facet {
             html.append(getAfterWhichToolTipText());
             html.append("\">");
             Boolean onlyOneValue = valuesAndCounts.size() == 1;
-            String defaultSelected = (onlyOneValue || oddValues) ? "" : "selected=\"true\"";
-            String disabled = (onlyOneValue || oddValues) ? " disabled=\"true\"" : "";
+            String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
+            String disabled = onlyOneValue ? " disabled=\"true\"" : "";
             html.append("<span class=\"option-label\">Date on or after</span>");
             html.append("<select name=\"");
             html.append(FacetParam.DATE_START.name());
@@ -844,37 +850,33 @@ public class DateFacet extends Facet {
             html.append("  value=\"default\">");
             html.append(Facet.defaultValue);
             html.append("</option>");
+        
+            Iterator<Count> vcit = valuesAndCounts.iterator();
 
-            if(!oddValues){
-            
-                Iterator<Count> vcit = valuesAndCounts.iterator();
+            while(vcit.hasNext()){
 
-                while(vcit.hasNext()){
+                Count valueAndCount = vcit.next();
+                String value = valueAndCount.getName();
+                String displayValue = getDisplayValue(value);
+                String count = String.valueOf(valueAndCount.getCount());
+                String selected = (onlyOneValue || value.equals(currentValue)) ? " selected=\"true\"" : "";
+                html.append("<option");
+                html.append(selected);
+                html.append(" value=\"");
+                html.append(value);
+                html.append("\">");
+                html.append(displayValue);
+                html.append(" (");
+                html.append(count);
+                html.append(")</option>");
+                if(value.equals("Unknown")){
 
-                    Count valueAndCount = vcit.next();
-                    String value = valueAndCount.getName();
-                    String displayValue = getDisplayValue(value);
-                    String count = String.valueOf(valueAndCount.getCount());
-                    String selected = (onlyOneValue || value.equals(currentValue)) ? " selected=\"true\"" : "";
-                    html.append("<option");
-                    html.append(selected);
-                    html.append(" value=\"");
-                    html.append(value);
-                    html.append("\">");
-                    html.append(displayValue);
-                    html.append(" (");
-                    html.append(count);
-                    html.append(")</option>");
-                    if(value.equals("Unknown")){
-
-                        html.append("<optgroup label=\"-------------------\"></optgroup>");
-
-                    }
+                    html.append("<optgroup label=\"-------------------\"></optgroup>");
 
                 }
-                
-            }
 
+            }
+                
             html.append("</select>");
             
             html.append("<div class=\"date-input-box");
@@ -921,7 +923,15 @@ public class DateFacet extends Facet {
                 valuesAndCounts.add(newCount);
                    
             }
-                        
+
+            if(!currentValue.equals("") && Integer.valueOf(currentValue) % DateFacet.INTERVAL != 0){
+                
+                int facetBucket = this.getFacetBucket();
+                Long count = filterValueFromValuesAndCounts(facetBucket);
+                Count newCount = new Count(new FacetField(getFacetField().name()), currentValue, count);
+                valuesAndCounts.add(newCount);
+                
+            }
             Collections.sort(valuesAndCounts, dateCountComparator);
 
         }
@@ -940,6 +950,24 @@ public class DateFacet extends Facet {
             
             return "Date on or after";
             
+        }
+        
+        @Override
+        Integer getFacetBucket(){
+            
+            try{
+                
+                Integer currVal = Integer.valueOf(currentValue);
+                int remainder = Math.abs(currVal % DateFacet.INTERVAL);
+                if(currVal < 0) remainder = DateFacet.INTERVAL - remainder;
+                return currVal - remainder;
+                
+            }
+            catch(NumberFormatException nfe){
+                
+                return DateFacet.RANGE_START;
+                
+            }
         }
 
         @Override
@@ -1037,8 +1065,6 @@ public class DateFacet extends Facet {
                
             long runningTotal = 0;
             HashMap<Integer, Long> responseAsMap = mapRangeFacets(facetQueries);
-            int start = terminusAfterWhich.getMostExtremeValue();
-            int end = this.getMostExtremeValue();
             
             for(int i = DateFacet.RANGE_START; i <= DateFacet.RANGE_END; i += DateFacet.INTERVAL){
                 
@@ -1049,6 +1075,14 @@ public class DateFacet extends Facet {
                 Count newCount = new Count(new FacetField(getFacetField().name()), name, runningTotal);
                 valuesAndCounts.add(newCount);
                    
+            }
+            if(!currentValue.equals("") && Integer.valueOf(currentValue) % DateFacet.INTERVAL != 0){
+                
+                Integer facetBucket = this.getFacetBucket();
+                Long count = filterValueFromValuesAndCounts(facetBucket);
+                Count newCount = new Count(new FacetField(getFacetField().name()), currentValue, count);
+                valuesAndCounts.add(newCount);
+                
             }
             
             Collections.sort(valuesAndCounts, dateCountComparator);
@@ -1096,11 +1130,6 @@ public class DateFacet extends Facet {
         @Override
         String generateWidget() {
             
-            Boolean thisIsOdd = (!currentValue.equals("") && !currentValue.equals("Unknown") && Integer.valueOf(currentValue) % DateFacet.INTERVAL != 0) ? true : false;
-            String otherValue = terminusAfterWhich.getCurrentValue();
-            Boolean thatIsOdd = (!otherValue.equals("") && !otherValue.equals("Unknown") && Integer.valueOf(otherValue) % DateFacet.INTERVAL != 0) ? true : false;
-            Boolean oddValues = (thisIsOdd || thatIsOdd);
-
             Boolean endIsUnknown = currentValue.equals("Unknown") || terminusAfterWhich.getCurrentValue().equals("Unknown");
             String endDisplayValue = endIsUnknown? "n.a." : currentValue.replaceAll("^-", "");           
             endDisplayValue = endDisplayValue.equals("0") ? "1" : endDisplayValue;
@@ -1109,8 +1138,8 @@ public class DateFacet extends Facet {
             html.append(getBeforeWhichToolTipText());
             html.append("\">");
             Boolean onlyOneValue = valuesAndCounts.size() == 1;
-            String defaultSelected = (onlyOneValue || oddValues) ? " selected=\"true\"" : "";
-            String disabled = (onlyOneValue || oddValues) ? " disabled=\"true\"" : "";
+            String defaultSelected = onlyOneValue  ? " selected=\"true\"" : "";
+            String disabled = onlyOneValue ? " disabled=\"true\"" : "";
             html.append("<span class=\"option-label\">Date before</span>");
             html.append("<select name=\"");
             html.append(FacetParam.DATE_END.name());
@@ -1122,37 +1151,34 @@ public class DateFacet extends Facet {
             html.append("  value=\"default\">");
             html.append(Facet.defaultValue);
             html.append("</option>");
-
-            if(!oddValues){
                      
-                Iterator<Count> vcit = valuesAndCounts.iterator();
+            Iterator<Count> vcit = valuesAndCounts.iterator();
 
-                while(vcit.hasNext()){
+            while(vcit.hasNext()){
 
-                    Count valueAndCount = vcit.next();
-                    String value = valueAndCount.getName();
-                    String displayValue = getDisplayValue(value);
-                    String count = String.valueOf(valueAndCount.getCount());
-                    String selected = (onlyOneValue || value.equals(currentValue)) ? " selected=\"true\"" : "";
-                    html.append("<option");
-                    html.append(selected);
-                    html.append(" value=\"");
-                    html.append(value);
-                    html.append("\">");
-                    html.append(displayValue);
-                    html.append(" (");
-                    html.append(count);
-                    html.append(")</option>");
-                    if(value.equals("Unknown")){
+                Count valueAndCount = vcit.next();
+                String value = valueAndCount.getName();
+                String displayValue = getDisplayValue(value);
+                String count = String.valueOf(valueAndCount.getCount());
+                String selected = (onlyOneValue || value.equals(currentValue)) ? " selected=\"true\"" : "";
+                html.append("<option");
+                html.append(selected);
+                html.append(" value=\"");
+                html.append(value);
+                html.append("\">");
+                html.append(displayValue);
+                html.append(" (");
+                html.append(count);
+                html.append(")</option>");
+                if(value.equals("Unknown")){
 
-                        html.append("<optgroup label=\"-------------------\"></optgroup>");
-
-                    }
+                    html.append("<optgroup label=\"-------------------\"></optgroup>");
 
                 }
 
             }
 
+            
             html.append("</select>");
             html.append("<div class=\"date-input-box");
             if(endIsUnknown) html.append(" unknown-date");
@@ -1193,6 +1219,25 @@ public class DateFacet extends Facet {
             
             if(!currentValue.equals("Unknown") && !currentValue.equals("")) return Integer.valueOf(currentValue);
             return DateFacet.RANGE_END;
+            
+        }
+        
+        @Override
+        Integer getFacetBucket(){
+            
+            try{
+                
+                Integer currVal = Integer.valueOf(currentValue);
+                int remainder = Math.abs(currVal % DateFacet.INTERVAL);
+                if(currVal > 0) remainder = DateFacet.INTERVAL - remainder;
+                return currVal + remainder;
+                
+                
+            } catch(NumberFormatException nfe){
+                
+                return DateFacet.RANGE_END;
+                
+            }
             
         }
         
