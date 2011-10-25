@@ -10,6 +10,8 @@
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:include href="pi-functions.xsl"/>
   
+  <xsl:output method="html"/>
+  
   <xsl:template match="/">
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
     <html lang="en">
