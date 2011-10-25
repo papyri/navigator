@@ -20,20 +20,68 @@ import org.apache.solr.client.solrj.response.RangeFacet;
 /**
  * The <code>Facet</code> used for setting and displaying date constraints.
  * 
- * Note that unlike the other <code>Facet</code>s, <code>DateFacet</code> uses two
- * widgets, and stores two values. This complicates the code internal to each method considerably.
+ * Note that unlike  other <code>Facet</code>s, <code>DateFacet</code> uses two
+ * widgets, and stores two values. This necessitates the use of two <code>Terminus</code> 
+ * objects to handle each widget and the relationships between them.
+ * 
+ * Note also that two modes of date calculation are supported.
+ * (i) 'Strict' date selection, whereby the range of dates associated with each text (i.e.,
+ * the terminus post quem and the terminus ante quem) must fall <em>within</em> the range 
+ * specified by the user
+ * (ii) 'Loose' date selection, whereby the range of dates associated with each text (the
+ * t.p.q. and t.a.q) must <em>overlap</em> with the range specified by the user.
+ * 
+ * Mathematically, the relationship between Strict and Loose date selection is perhaps
+ * counter-intuitive.
+ * 
+ * Strict date selection is relatively straightforward: counts are cumulative - so that, assuming
+ * a total range between, say, 100 CE and 500 CE and a faceting interval of 100 years, 
+ * the number of items with end dates prior to, 400 will consist of the total number with 
+ * end dates falling in the facet range 100 - 200 plus the number with end dates in the range 200 - 300 
+ * plus the number with end dates between 300 and 400. The number with start dates subsequent to 300 
+ * will be the number with start dates between 400 and 500, plus those with start dates between 300 and 400.
+ * 
+ * Loose date selection involves, essentially, the complement of these values. When the
+ * user in this mode uses the 'date before' control to select, say, all items with start 
+ * <em>or</em> end dates before 400, (s)he's effectively asking for all items with start
+ * dates before that period (because those with start dates afterwards will necessarily
+ * have end dates after that point as well). The items to be returned, then, will consist
+ * of the total body of texts less the number with start dates after the selected point.
+ * 
+ * The end result is that loose date queries can appear at first glance to be backwards,
+ * both in terms of how items are selected and totals are calculated: selection involves
+ * setting constraints on the complementary <code>Terminus</code> object, while count
+ * calculation involves subtraction of the complementary <code>Terminus</code> objects
+ * totals.
+ * 
+ * Also to be noted are several differences between backend and frontend date representation.
+ * (i) On the backend, all dates are represented as integers, with negative values indicating
+ * BCE dates and positive values CE dates. On the front end all dates are positive integers,
+ * suffixed with 'BCE' or 'CE' string values
+ * (ii) The backend uses 0 as a valid date value for faceting purposes; in display this 
+ * is converted to 1 CE.
+ * (iii) Items with unknown dates have this value represented as 'Unknown' in both the backend
+ * and in the frontend drop-down date selector; in the text input it is 'n.a.'
  *
+ * Note further the specific character of date-range specification: the start date is <em>
+ * inclusive</em>, while the end date is <em>exclusive</em>
  * 
  * @author thill
+ * @see info.papyri.dispatch.browse.facet.DateFacet.Terminus
+ * @see info.papyri.dispatch.browse.facet.DateFacet.TerminusAfterWhich
+ * @see info.papyri.dispatch.browse.facet.DateFacet.TerminusBeforeWhich
  */
 public class DateFacet extends Facet {
 
-    /** The interval the difference between each date_category represents, in years.
-     * 
-     * 
+    /** The year-interval to be used for display in the drop-down HTML controls and for faceting.
+     *  (that is to say, the facet 'buckets' are 50-year spans
      */
    static int INTERVAL = 50;
+   
+   /** The earliest date to be used in faceting */
    static int RANGE_START = -2500;
+   
+   /** The latest date to be used in faceting */
    static int RANGE_END = 2500;
    
    /** A flag indicating whether the date has the value 'unknown'.
@@ -42,11 +90,28 @@ public class DateFacet extends Facet {
     * (a) it cannot be converted to a number; and 
     * (b) if *either* the terminus ante quem *or* the terminus post quem have the
     *     value 'unknown', then *both* must have the value 'unknown'. Note that this
-    *     is not an arbitrary o, but reflects the structure of data in the Solr
+    *     is not an arbitrary, but reflects the structure of data in the Solr
     *     index.
     * 
     */
    private static SolrField flagField = SolrField.unknown_date_flag;
+   
+   /** The names of the HTML form controls.
+    * 
+    *  DATE_MODE is used for the date mode (Strict/Loose) radio-button selector
+    *  DATE_START_TEXT and DATE_END_TEXT are text inputs for designating the terminus post quem
+    *  and terminus ante quem respectively
+    *  DATE_START_ERA and DATE_END_ERA are the date era (BCE / CE) drop-down selectors associated
+    *  with the DATE_START_TEXT and DATE_END_TEXT input controls
+    * 
+    *  Two other HTML controls - DATE_START and DATE_END - are used by the <code>DateFacet</code> -
+    *  but for UI reasons simply ferry their values via JavaScript to the DATE_START_TEXT and 
+    *  DATE_END_TEXT controls. They are thus essentially invisible to the servlet and do not
+    *  have enum values of their own.
+    * 
+    *  @see TerminusAfterWhich#generateWidget() 
+    *  @see TerminusBeforeWhich#generateWidget() 
+    */
    
    enum DateParam{ DATE_MODE, DATE_START_TEXT, DATE_START_ERA, DATE_END_TEXT, DATE_END_ERA };
    /**
@@ -54,12 +119,29 @@ public class DateFacet extends Facet {
     */
    private static Comparator dateCountComparator;  
    
+   /** Object representing a date <em>after which</em> sought items must have originated -
+    *  that is to say, the <i>terminus post quem</i>.
+    */
    Terminus terminusAfterWhich;
+   /** Object representing a date <em>before which</em> sought items must have originated - 
+    *  that is to say, the <i>terminus ante quem</i>.
+    * 
+    */
    Terminus terminusBeforeWhich;
+   
+   /**
+    * Enum for the two possible modes of date calculation, strict and loose.
+    * 
+    */
    
    enum DateMode{ STRICT, LOOSE }
    
+   /**
+    *  The default date mode
+    */
    DateMode dateModeDefault = DateMode.LOOSE;
+   
+   /** The date mode currently set */
    DateMode dateMode = dateModeDefault;
    
    public DateFacet(){
@@ -70,8 +152,8 @@ public class DateFacet extends Facet {
         terminusAfterWhich = new TerminusAfterWhich("");
         
         // dates need to sort with 'Unknown' at the top
-        // followed by BCE dates (= negative date_category value)
-        // followed by CE dates (= positive date_category value)
+        // followed by BCE dates (= negative date value)
+        // followed by CE dates (= positive date value)
         dateCountComparator = new Comparator() {
 
             @Override
@@ -106,7 +188,11 @@ public class DateFacet extends Facet {
         }
        
         Integer startDate = terminusAfterWhich.getMostExtremeValue();
-        Integer endDate = terminusBeforeWhich.getMostExtremeValue(); 
+        Integer endDate = terminusBeforeWhich.getMostExtremeValue();
+        // In 'loose' date mode it is possible in some cases to retrieve texts with the
+        // end date set earlier than the start date. Although this is coherent in terms of backend
+        // logic, it may not appear to be so to the end user. This conditional block accordingly
+        // ensures that such queries return to results to the end user.
         if(endDate < startDate){
             
             solrQuery.addFilterQuery("-" + SolrField.earliest_date.name() + ":[* TO *]");
@@ -117,9 +203,8 @@ public class DateFacet extends Facet {
         Integer endFacet = Integer.valueOf(terminusBeforeWhich.getFacetBucket());
         solrQuery.addNumericRangeFacet(SolrField.earliest_date.name(), startFacet, endFacet, INTERVAL);
         solrQuery.addNumericRangeFacet(SolrField.latest_date.name(), startFacet, endFacet, INTERVAL);
-        terminusBeforeWhich.getQueryContribution(solrQuery);
-        terminusAfterWhich.getQueryContribution(solrQuery);
-
+        terminusBeforeWhich.buildQueryContribution(solrQuery);
+        terminusAfterWhich.buildQueryContribution(solrQuery);
         return solrQuery;
         
     }   
@@ -176,6 +261,7 @@ public class DateFacet extends Facet {
         
         if(date.equals("Unknown")) return date;
         int rawDate = Integer.valueOf(date);
+        // convert zero value to 1 CE
         rawDate = rawDate == 0 ? 1 : rawDate;
         
         String era;
@@ -201,7 +287,9 @@ public class DateFacet extends Facet {
 
         terminusBeforeWhich.calculateWidgetValues(queryResponse);
         terminusAfterWhich.calculateWidgetValues(queryResponse);
-        
+        // when calculating loose-date totals, we are interested in the total number
+        // of items <em>associated with dates</em> - that is, the total number of 
+        // items returned, less those with an unknown date value
         if(dateMode == DateMode.LOOSE){
 
             long grandTotal = queryResponse.getResults().getNumFound();
@@ -309,7 +397,14 @@ public class DateFacet extends Facet {
         return constraints;
         
     }
-    
+    /**
+     * Because date is specified as a range, each of the two widgets can have only one value,
+     * and hidden fields are not generated.
+     * 
+     * This method accordingly returns an empty string.
+     * 
+     * @return 
+     */
     @Override
     String generateHiddenFields(){ return ""; }
     
@@ -334,16 +429,11 @@ public class DateFacet extends Facet {
                     
                 }
                 
-                dateMode = selectedMode == null ? dateModeDefault : selectedMode;
-                
-                
-                
-            }
-            catch(IllegalArgumentException iae){
-
-                dateMode = dateModeDefault;
+                if(selectedMode != null) dateMode = selectedMode;
+                                
                 
             }
+            catch(IllegalArgumentException iae){ }
                  
         }
         
@@ -481,18 +571,63 @@ public class DateFacet extends Facet {
         
     }
     
+    /**
+     * <code>Terminus</code> objects handle all frontend and backend processing involved
+     * with setting one end of a date range.
+     * 
+     * The <code>Terminus</code> class accordingly has two subclasses - <code>TerminusAfterWhich</code>,
+     * for setting the start of the range, and <code>TerminusBeforeWhich</code> for setting its end.   
+     * 
+     * Note that many <code>Terminus</code> methods are simply delegated versions of <code>Facet</code>
+     * methods of the same signature.
+     * 
+     */
+    
     abstract class Terminus{
         
+        /** A list of date ranges, specified by either the start or end of the range, and associated
+         *  count of all items that fall into that range
+         * 
+         * @see Facet#valuesAndCounts
+         */
+        
         ArrayList<Count> valuesAndCounts;
+        
+        /** The current value of the <code>Terminus</code>
+         * 
+         * This will normally be a string representation of an integer, but may also be "Unknown",
+         * or the empty string if not yet defined.
+         * 
+         */
         String currentValue;
+        
+        /**
+         * The <code>SolrField</code> from which the <code>Terminus</code> draws its values.
+         * 
+         */
         private SolrField facetField;
+        
+        /**
+         * The <code>Comparator</code> used to sort the faceting values returned from 
+         * the server
+         */
         Comparator facetCountComparator;
+        
+        /**
+         * Constructor
+         * 
+         * @param value The value of the <code>Terminus</code>
+         * @param f The Solr field the <code>Terminus</code> uses for faceting
+         */
         
         public Terminus(String value, SolrField f){
             
             currentValue = value;
             valuesAndCounts = new ArrayList<Count>();
             facetField = f;
+            /** Sorting should be from lowest to highest, but needs to take account
+             *  of the possibility of string values being submitted.
+             */
             facetCountComparator = new Comparator()  {
 
                 @Override
@@ -519,22 +654,76 @@ public class DateFacet extends Facet {
             };
         }
         
-        abstract SolrQuery getQueryContribution(SolrQuery solrQuery);
+        /**
+         * @see Facet#buildQueryContribution(org.apache.solr.client.solrj.SolrQuery) 
+         */
+        
+        abstract SolrQuery buildQueryContribution(SolrQuery solrQuery);
+        
+        /**
+         * @see Facet#getAsQueryString() 
+         */
                       
         abstract String getAsQueryString();
         
+        /**
+         * Returns the label to be associated with the <code>Terminus</code>
+         */
         abstract String getDisplayName();
+        
+        /**
+         * @see Facet#getDisplayValue(java.lang.String) 
+         */
         
         abstract String getDisplayValue(String dateCode);
         
+        /**
+         * @see Facet#generateWidget() 
+         */
+        
         abstract String generateWidget();
-                                                
+        
+        /**
+         * Sorts the facet values returned from the server using the facetCountComparator.
+         * 
+         * The point of this is to allow the <code>Terminus</code> subclasses to churn through
+         * the returned values in order and add up the totals cumulatively. <code>TerminusAfterWhich</code>
+         * accordingly reverses the normal order in order to proceed through them backwards (because
+         * the number of items will increase the further back in time one sets the 'date after which'
+         * 
+         * @param fqs The relevant <code>List</code> of <code>RangeFacet.Count</code>s returned by the server
+         */
         abstract void orderFacetQueries(List<RangeFacet.Count> fqs);
         
+        
+        /** Sorts the valuesAndCounts
+         * 
+         * As with the orderFacetQueries method, the two <code>Terminus</code> subclasses need to
+         * do this in reverse order from each other.
+         * 
+         * @see Terminus#valuesAndCounts
+         */
         abstract void orderValuesAndCounts();
         
+        
+        /** Returns the facet range into which an odd (that is, != any of the facet range intervals)
+         * date falls
+         */
         abstract Integer getFacetBucket();
         
+        /**
+         * Eliminates redundant facet ranges.
+         * 
+         * 'Redundant' facet ranges are those which:
+         * (i)   do not contain any items
+         * (ii)  contain the same number of items as the preceding facet range, in the case of the 
+         * the <code>TerminusAfterWhich</code> (because, for example, any date that is after 200 CE
+         * is necessarily also after 100 CE)
+         * (iii)  contain the same number of items as the following facet range, in the case of the
+         * <code>TerminusBeforeWhich</code> (because, for example, any date that falls before 100 CE
+         * also necessarily falls before 200 CE).
+         * 
+         */
         void filterValuesAndCounts(){
             
             orderValuesAndCounts();
@@ -545,11 +734,13 @@ public class DateFacet extends Facet {
                 
                 long nowCount = vc.getCount();
                 String nowName = vc.getName();
+                // we want to include the currently selected value
                 if((nowCount > 0 && nowCount != previousCount) || nowName.equals(currentValue)) filteredCounts.add(vc);
                 previousCount = nowCount;
                 
             }
-            
+            // the above loop fails to filter out the first value in the sortd valuesAndCounts list when required
+            // so another conditional block is required
             if(filteredCounts.size() > 1){
 
                 if(filteredCounts.get(0).getCount() == filteredCounts.get(1).getCount()) filteredCounts.remove(0);
@@ -559,6 +750,20 @@ public class DateFacet extends Facet {
             valuesAndCounts = filteredCounts;         
             
         }       
+        
+        /**
+         * Calculates the values to be displayed in the widget.
+         * 
+         * This functionality is typically handled in other <code>Facet</code>s by the setWidgetValues
+         * method. Date values, however, are more complex,and the widget values thus require significantly
+         * more post-processing. The chief function of this method, then, is chiefly to identify the relevant
+         * part of the Solr query response and forward this on to the relevant post-processing methods.
+         * 
+         * @see Facet#setWidgetValues(org.apache.solr.client.solrj.response.QueryResponse) 
+         * @see Terminus#calculateStrictWidgetValues(java.util.List) 
+         * @see Terminus#calculateLooseWidgetValues(long) 
+         * 
+         */
         
         void calculateWidgetValues(QueryResponse qr) {
             
@@ -576,6 +781,12 @@ public class DateFacet extends Facet {
             this.calculateStrictWidgetValues(dateList);            
              
         }  
+        
+        /**
+         * Takes a list of <code>Count</code>s and converts them into a <code>HashMap</code>, 
+         * with the name of the <code>Count</code> object (here, converted to an integer) 
+         * as the key and the associated number of items as the value.
+         */
               
         HashMap<Integer, Long> mapRangeFacets(List<RangeFacet.Count> counts){
             
@@ -593,16 +804,30 @@ public class DateFacet extends Facet {
             
         }
         
+        /**
+         * Checks to see whether any items of unknown date are included in the <code>QueryResponse</code>,
+         * and creates a <code>Count</code> object to represent these if so.
+         * 
+         * @param queryResponse 
+         */
+        
         public void addUnknownCount(QueryResponse queryResponse){
         
             long unknownCountNumber = getUnknownCount(queryResponse);
-            Count unknownCount = new Count(new FacetField(flagField.name()), "Unknown", unknownCountNumber);
             if(unknownCountNumber > 0){
-
+                
+                Count unknownCount = new Count(new FacetField(flagField.name()), "Unknown", unknownCountNumber);
                 valuesAndCounts.add(unknownCount);
             }
         
         }
+        
+        /**
+         * Returns the number of items of unknown date returned in the <code>QueryResponse</code>.
+         * 
+         * @param queryResponse
+         * @return The number of items of unknown date
+         */
         
         private long getUnknownCount(QueryResponse queryResponse){
 
@@ -620,47 +845,51 @@ public class DateFacet extends Facet {
         }        
         
         
-        Boolean active(){
-            
-            if(currentValue.equals("")) return false;
-            return true;
-                
-        }
-        
-        Boolean otherIsUnknown(){
-            
-            return getOtherTerminus().getCurrentValue().equals("Unknown");
-
-            
-        }
-        
+        /**
+         * Returns the <code>Terminus</code> other than <code>this</code> - that is, if the callee is 
+         * the <code>terminusBeforeWhich</code>, then the <code>terminusAfterWhich</code> is returned,and
+         * vice versa.
+         * 
+         * @return The other <code>Terminus</code> 
+         */
         abstract Terminus getOtherTerminus();
+        
+        /** 
+         * Adds the current value to the passed array
+         * 
+         * This is required because objects querying the <code>DateFacet<code> for its constraints will require
+         * <em>both</em> the <code>TerminusBeforeWhich</code> and <code>TerminusAfterWhich</code> values.
+         * 
+         * @param constraints 
+         * @see DateFacet#getFacetConstraints(java.lang.String) 
+         */
         
         void addCurrentValue(ArrayList<String> constraints){ if(!currentValue.equals("")) constraints.add(currentValue); }
         
-        void setCurrentValue(String newValue){  
-           
-            currentValue = newValue;
-           
-            
-        }
-          
+        void setCurrentValue(String newValue){ currentValue = newValue; }
+                 
+        String getCurrentValue(){ return currentValue; }
         
-        String getCurrentValue(){
-            
-            return currentValue;
-            
-        }
+        SolrField getFacetField(){ return this.facetField;  }
         
-
-        
-        SolrField getFacetField(){ 
-            
-            return this.facetField; 
-        
-        }
+        /**
+         * Returns the end of the range for which the <code>Terminus</code> is responsible. This will
+         * be either the current value of the <code>Terminus</code>, if set, or one of the DateFacet.RANGE_START
+         * or DateFacet.RANGE_END values, depending on which one is relevant (RANGE_START for the <code>TerminusAfterWhich</code>,
+         * RANGE_END for the <code>TerminusBeforeWhich</code>).
+         * 
+         * @return 
+         */
         
         abstract Integer getMostExtremeValue();
+        
+        /**
+         * Retrieves a <code>Count</code> object of the passed name from a <code>List</code> and returns it.
+         * 
+         * @param desiredValue
+         * @param countList
+         * @return 
+         */
         
         Count pluckCountFromList(String desiredValue, List<Count> countList){
             
@@ -674,6 +903,14 @@ public class DateFacet extends Facet {
             return null;
             
         }
+        
+        /**
+         * Returns the aggregate total count of all the <code>Count</code> objects in
+         * the passed <code>List</code> of <code>Count</code>s.
+         * 
+         * @param facetResponse
+         * @return 
+         */
         
         long getGrandTotal(List<Count> facetResponse){
             
@@ -693,6 +930,14 @@ public class DateFacet extends Facet {
             
         }
         
+        /**
+         * Removes the <code>Count</code> object with the passed value from the
+         * valuesAndCounts <code>ArrayList</code>
+         *  
+         * @param facetBucket
+         * @return 
+         */
+        
         Long filterValueFromValuesAndCounts(Integer facetBucket){
             
             Count soughtCount = this.pluckCountFromList(String.valueOf(facetBucket), valuesAndCounts);
@@ -701,10 +946,38 @@ public class DateFacet extends Facet {
             return soughtNumber;
         }
         
+        /**
+         * Calculates the values to be displayed in the relevant HTML control widget when in 'Strict' mode.
+         * 
+         * These values will consist essentially of a list of all the facet intervals
+         * (i)  associated with a cumulative count of items with start/end dates coming after/before
+         * that interval date respectively
+         * (ii) filtered for duplicate and zero values
+         * 
+         * @param facetQueries 
+         */
+        
         abstract void calculateStrictWidgetValues(List<RangeFacet.Count> facetQueries);
+        
+        /**
+         * Calculates the values to be displayed in the relevant HTML control widget when in 'Loose' mode.
+         * 
+         * These  values will consist essentially of a list of all the facet intervals
+         * (i) associated with a cumulate count of items with either start or end dates coming after/before
+         * the interval date
+         * (ii) filterd for duplicate and zero values
+         * 
+         * @param grandTotal
+         * @return 
+         */
          
         abstract public ArrayList<Count> calculateLooseWidgetValues(long grandTotal);
           
+        /**
+         * Returns 'BCE' if the current value of the <code>Terminus</code> is negative, or 'CE' otherwise.
+         * 
+         * @return 
+         */
         String getEra(){
             
             try{
@@ -724,12 +997,12 @@ public class DateFacet extends Facet {
             }
             catch(NumberFormatException nfe){
                 
-                return "";
+                return "CE";
                 
                 
             }
             
-            return "";
+            return "CE";
             
         }
         
@@ -741,9 +1014,7 @@ public class DateFacet extends Facet {
     }
     
     class TerminusAfterWhich extends Terminus{
-        
-        HashMap<Integer, Integer> cumulativeTotals;
-        
+                
         public TerminusAfterWhich(String value){
             
             super(value, SolrField.earliest_date);
@@ -751,20 +1022,20 @@ public class DateFacet extends Facet {
         }
 
         @Override
-        SolrQuery getQueryContribution(SolrQuery solrQuery) {
+        SolrQuery buildQueryContribution(SolrQuery solrQuery) {
             
-            if(active()){
+            if(!currentValue.equals("")){
                  
                 String fq = "";
                 if(dateMode == DateMode.STRICT){
-                
-                    Integer endDate = getOtherTerminus().getMostExtremeValue() - 1;
+                    // end date is *exclusive*
+                    Integer endDate = terminusBeforeWhich.getMostExtremeValue() - 1;
                     fq = this.getFacetField().name() + ":[" + String.valueOf(currentValue) + " TO " + String.valueOf(endDate) + "]";
                     
                 }
                 else{
                     
-                    fq =  this.getOtherTerminus().getFacetField().name() + ":[" + String.valueOf(currentValue) + " TO " + DateFacet.RANGE_END + "]";
+                    fq =  terminusBeforeWhich.getFacetField().name() + ":[" + String.valueOf(currentValue) + " TO " + DateFacet.RANGE_END + "]";
                       
                 }
                 solrQuery.addFilterQuery(fq);
@@ -777,14 +1048,12 @@ public class DateFacet extends Facet {
         @Override
         String getAsQueryString() {
             
-            if(active()){
+            if(!currentValue.equals("")){
                 
                 String paramValue = currentValue;
                 if(!paramValue.equals("Unknown")){
                     
-                    paramValue = String.valueOf(Math.abs(Integer.valueOf(paramValue)));
-                    
-                    
+                    paramValue = String.valueOf(Math.abs(Integer.valueOf(paramValue)));               
                     
                 }
                 else{
@@ -923,7 +1192,7 @@ public class DateFacet extends Facet {
                 valuesAndCounts.add(newCount);
                    
             }
-
+            // dealing with cases that do not fall exactly on a pre-defined faceting date interval
             if(!currentValue.equals("") && Integer.valueOf(currentValue) % DateFacet.INTERVAL != 0){
                 
                 int facetBucket = this.getFacetBucket();
@@ -1023,9 +1292,7 @@ public class DateFacet extends Facet {
     }
     
     class TerminusBeforeWhich extends Terminus{
-        
-       HashMap<Integer, Integer> cumulativeTotals;
-        
+                
         public TerminusBeforeWhich(String value){
             
             super(value, SolrField.latest_date);
@@ -1033,23 +1300,23 @@ public class DateFacet extends Facet {
         }
 
         @Override
-        SolrQuery getQueryContribution(SolrQuery solrQuery) {
+        SolrQuery buildQueryContribution(SolrQuery solrQuery) {
             
-            if(active()){
+            if(!currentValue.equals("")){
                 
                 String fq = "";
                 Integer endDate = Integer.valueOf(currentValue) - 1;
                 
                 if(dateMode == DateMode.STRICT){
                 
-                    Integer startDate = getOtherTerminus().getMostExtremeValue();
+                    Integer startDate = terminusAfterWhich.getMostExtremeValue();
                     fq = this.getFacetField().name() + ":[" + String.valueOf(startDate) + " TO " + String.valueOf(endDate) + "]";
                     solrQuery.addFilterQuery(fq);
                 
                 }
                 else{
                     
-                    fq = this.getOtherTerminus().getFacetField().name() + ":[" + DateFacet.RANGE_START + " TO " + String.valueOf(endDate) + "]";
+                    fq = terminusAfterWhich.getFacetField().name() + ":[" + DateFacet.RANGE_START + " TO " + String.valueOf(endDate) + "]";
                     
                 }
                
@@ -1069,6 +1336,9 @@ public class DateFacet extends Facet {
             for(int i = DateFacet.RANGE_START; i <= DateFacet.RANGE_END; i += DateFacet.INTERVAL){
                 
                 String name = String.valueOf(i);
+                // note the decrement here - because facet ranges are defined *forward* (e.g.
+                // '300' refers to the span '300 - 350', the TerminusBeforeWhich needs to shunt
+                // everything one interval back to be accurate
                 int retrievalNumber = i - DateFacet.INTERVAL;
                 long number = responseAsMap.containsKey(retrievalNumber) ? responseAsMap.get(retrievalNumber) : 0;
                 runningTotal += number;
@@ -1092,7 +1362,7 @@ public class DateFacet extends Facet {
         @Override
         String getAsQueryString() {
             
-            if(active()){
+            if(!currentValue.equals("")){
                 
                 String paramValue = currentValue;
                 if(!paramValue.equals("Unknown")){
