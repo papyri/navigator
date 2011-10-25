@@ -435,11 +435,12 @@ $(document).ready(
 		
 		}
 		
-		$("#search-toggle").height($("#facet-wrapper").height());
 		$(".toggle-open").click(hic.hideSearch);
 		$(".toggle-closed").click(hic.showSearch);		
 		$("#vals-and-records-wrapper").width(hic.getValsAndRecordsWidth("init"));
 		hic.positionTogglePointer();
+		$("#search-toggle").height($("#facet-wrapper").height());
+
 		
 	    /***********************************************
 	     END HIDE/REVEAL
