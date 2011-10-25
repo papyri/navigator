@@ -10,6 +10,8 @@
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:include href="pi-functions.xsl"/>
   
+  <xsl:output method="html"/>
+  
   <xsl:template match="/">
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
     <html lang="en">
@@ -58,8 +60,10 @@
   <xsl:template match="t:bibl">
     <p><xsl:call-template name="buildCitation"/> <a class="button" id="editbibl" href="http://papyri.info/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a></p>
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
-      <p class="bp-cite"><xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
-        <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></p>
+      <div class="bp-cite">
+        <h4>original BP record</h4>
+        <xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
+        <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></div>
     </xsl:if>
   </xsl:template>
   
