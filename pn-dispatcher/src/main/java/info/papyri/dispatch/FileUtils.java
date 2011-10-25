@@ -120,8 +120,8 @@ public class FileUtils {
                 .append("/index.html").toString());
       }
     } else if ("biblio".equals(collection)) {
-      return new File(pathname.append("/Biblio/")
-              .append(Math.ceil(Double.parseDouble(item) / 1000))
+      return new File(pathname.append("/biblio/")
+              .append((int)Math.ceil(Double.parseDouble(item) / 1000))
               .append("/")
               .append(item)
               .append(".html").toString());
