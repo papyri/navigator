@@ -41,6 +41,15 @@ public class FileUtilsTest extends TestCase {
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
   }
+  
+  public void testGetHtmlBiblioFile() {
+    String collection = "biblio";
+    String item = "1234";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    File expResult = new File("/data/papyri.info/pn/idp.html/biblio/2/1234.html");
+    File result = instance.getHtmlFile(collection, item);
+    assertEquals(expResult, result);
+  }
 
   /**
    * Test of getTextFile method, of class FileUtils.

@@ -91,6 +91,7 @@ public class BiblioSearch extends HttpServlet {
           }
           SolrQuery sq = new SolrQuery();
           try {
+            sq.setQuery(q);
             QueryRequest req = new QueryRequest(sq);
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);
@@ -107,15 +108,12 @@ public class BiblioSearch extends HttpServlet {
               StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\">");
               row.append("<a href=\"");
               row.append("/biblio/");
-              row.append(((String) doc.getFieldValue("id")).substring(18));
+              row.append(((String) doc.getFieldValue("id")));
               row.append("/?q=");
               row.append(uq);
               row.append("\">");
-              row.append(doc.getFieldValue("id"));
-              row.append("</a>");
-              row.append("</td>");
-              row.append("<td>");
               row.append(doc.getFieldValue("display"));
+              row.append("</a>");
               row.append("</td>");
               row.append("</tr>");
               out.print(row);
@@ -132,12 +130,6 @@ public class BiblioSearch extends HttpServlet {
                   out.print("</div>");
                 } else {
                   StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
-                  if ("yes".equals(request.getParameter("imagesfirst"))) {
-                    plink.append("&imagesfirst=yes");
-                  }
-                  if ("yes".equals(request.getParameter("translationsfirst"))) {
-                    plink.append("&translationssfirst=yes");
-                  }
                   out.print("<div class=\"page\"><a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a></div>");
                 }
                 p++;

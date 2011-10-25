@@ -16,11 +16,12 @@
   </xsl:template>
   
   <xsl:template match="/t:bibl">
+    <xsl:variable name="citation"><xsl:call-template name="buildCitation"/></xsl:variable>
     <add>
       <doc>
         <field name="id"><xsl:value-of select="t:idno[@type='pi']"/></field>
         <field name="sort"><xsl:call-template name="sort"/></field>
-        <field name="display"><xsl:call-template name="buildCitation"/></field>
+        <field name="display"><xsl:call-template name="escapeTags"><xsl:with-param name="markup" select="$citation"/></xsl:call-template></field>
       <xsl:apply-templates/>
     </doc>
     </add>
@@ -31,10 +32,21 @@
   </xsl:template>
   
   <xsl:template name="sort">
-    <xsl:if test="t:author">
-      <xsl:value-of select="t:author[@n=1]/t:surname"/>, <xsl:value-of select="t:author[@n=1]/t:forename"/>, 
-    </xsl:if>
-    <xsl:value-of select="t:title[@type='main'][1]"/>
+    <xsl:choose>
+      <xsl:when test="t:author[@n]">
+        <xsl:value-of select="t:author[@n=1]/t:surname"/>, <xsl:value-of select="t:author[@n=1]/t:forename"/>, 
+      </xsl:when>
+      <xsl:when test="t:author/t:surname">
+        <xsl:value-of select="t:author[1]/t:surname"/>, <xsl:value-of select="t:author[1]/t:forename"/>,
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="t:author"/>, 
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:choose>
+      <xsl:when test="t:title[@type='main']"><xsl:value-of select="t:title[@type='main'][1]"/></xsl:when>
+      <xsl:when test="@type='review'">Review</xsl:when>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="t:note">
@@ -49,6 +61,13 @@
     <field name="{local-name(.)}"><xsl:value-of select="normalize-space(replace(.,'\s+',' '))"/></field>
   </xsl:template>
   
+  <xsl:template name="escapeTags">
+    <xsl:param name="markup"/>
+    <xsl:apply-templates select="$markup" mode="escape"/>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="escape">&lt;<xsl:value-of select="local-name(.)"/><xsl:for-each select="@*"><xsl:text> </xsl:text><xsl:value-of select="local-name(.)"/>="<xsl:value-of select="."/>"</xsl:for-each>&gt;<xsl:apply-templates mode="escape"/>&lt;/<xsl:value-of select="local-name(.)"/>&gt;</xsl:template>
+    
   <xsl:function name="pi:escape-urn">
     <xsl:param name="in"/>
     <xsl:sequence select="string-join(for $c in pi:split($in) 
