@@ -587,7 +587,7 @@
               <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
               <li>or Search:</li>
-              <li>
+              <li class="current">
                 <a href="/search">Data</a>
               </li>
               <li>
@@ -735,15 +735,6 @@
       
         initSearchCookies();
       	retrieveSearchSettings();
-      	if (window.location.href.indexOf("ddbdp") > 0) {
-        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('DDbDP')").addClass("current");
-        }
-        if (window.location.href.indexOf("hgv") > 0) {
-          jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('HGV')").addClass("current");
-        }
-        if (window.location.href.indexOf("apis") > 0) {
-          jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('APIS')").addClass("current");
-        }
 	jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").hover(function() {
           jQuery(this).css('background-color', '#F8F6F4');
         }, function() {
