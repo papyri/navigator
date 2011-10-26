@@ -1,7 +1,7 @@
 $(document).ready(
 
 	/**
-	* Functions aimed at tidying the search UI functionality
+	* Various UI-related functions
 	*
 	*/
 
@@ -36,6 +36,13 @@ $(document).ready(
 		hic.reqd_off["target-translations"] = ["#betaYes"];
 		hic.reqd_on["target-all"] = ["#caps", "#marks"];
 		hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
+		
+		/**
+		 * Restricts user options so that only possible string-search configurations
+		 * can be set
+		 * TODO: needs to be revised in wake of poor user response!
+		 */
+		 
 	    
 	    hic.configureSearchSettings = function(){
 	    
@@ -126,7 +133,6 @@ $(document).ready(
 	    * the server.
 	    */
 	    
-	    
 	    hic.tidyQueryString = function(){
 
             var querystring = "";
@@ -163,13 +169,15 @@ $(document).ready(
 	    		}
 	    	
 	    	}		
-	    	
+	    	// image filter elements
 	    	var internals = $("input:checkbox[name='INT']:checked");
 	    	if(internals.length > 0) filteredels.push(internals);
 	    	var externals = $("input:checkbox[name='EXT']:checked");
 			if(externals.length > 0) filteredels.push(externals);
 			var printpubs = $("input:checkbox[name='PRINT']:checked");
 			if(printpubs.length > 0) filteredels.push(printpubs);
+			
+			// date mode selector
 			var datemode = $("input:radio[name='DATE_MODE']:checked");
 			if(datemode.length > 0) filteredels.push(datemode);
 			
@@ -189,11 +197,23 @@ $(document).ready(
 	    	var endval = dateend.val();
 	    	if(endval != "") filteredels.push(dateend);
 	    	
+	    	// note that there are two separate means of entering dates: 
+	    	// using a drop-down selector, or via text input
+	    	// to avoid the need to disambiguate these and decide issues
+	    	// of priority, the selectors (DATE_START and DATE_END controls)
+	    	// never submit their values directly to the server
+	    	// instead their values are copied into the relevant text
+	    	// input fields (DATE_START_TEXT and DATE_END_TEXT), which
+	    	// *are* submitted
+	    	
 	    	var opts = $("select").not("[name='DATE_START']").not("[name='DATE_END']");
 
 	    	for(var i = 0; i < opts.length; i++){
 	    	
 	    		var opt = $(opts[i]);
+	    		
+	    		// Era selection should be submitted only if there is a numerical
+	    		// year value to go with it
 	    		if(opt.attr("name") == "DATE_START_ERA" || opt.attr("name") == "DATE_END_ERA"){
 	    		
 	    			var prefix = opt.attr("name").substring(0, opt.attr("name").length - 4);
@@ -255,7 +275,12 @@ $(document).ready(
 
 	    }
 	    
-	    
+	    /**
+	     * Monitors the text being entered into the search box for a variety of inputs:
+	     * (i)  for continuous conversion from betacode, if required
+	     * (ii) for entry of a colon character, to switch into direct string search mode
+	     */
+	     
 	    hic.monitorTextInput = function(){
 	    
 	    	$(this).unbind('focus');
@@ -268,8 +293,7 @@ $(document).ready(
 	    	if(betaOn){
 
 				$(this).keypress(function(event){ return convertCharToggle(this, true, event); });
-	    		$(this).keyup(function(event){ return convertStr( this, event ); });
-	    	    	
+	    		$(this).keyup(function(event){ return convertStr( this, event ); });	    	    	
 	    	
 	    	}
 	    	else{
@@ -288,6 +312,7 @@ $(document).ready(
 						hic.mixedsearch = true;
 			
 					}
+					// check to make sure user hasn't deleted a previously-entered colon char
 					else if(!val.match(":") && colonFound){
 
                     	colonFound = false;
@@ -307,6 +332,15 @@ $(document).ready(
 	    	
 	    }
 	    
+	    /***********************************************
+	     START HIDE/REVEAL
+	     **********************************************/
+	    
+	    /**
+	     * Hides search controls in order to expand result display
+	     *
+	     * TODO: clunky. Fix.
+	     */
 	    hic.hideSearch = function(evt){
 
 			var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
@@ -343,7 +377,13 @@ $(document).ready(
 	    	$("#search-toggle").click(hic.showSearch);
 	    
 	    }
-	
+	    
+	    /**
+	     * Shrinks search results in order to display search panel.
+	     *
+	     * TODO: Clunky. Fix.
+	     */
+		
 		hic.showSearch = function(evt){
 		
 			var widgetWrapperWidth = 500;
@@ -395,14 +435,22 @@ $(document).ready(
 		
 		}
 		
-		
+		$(".toggle-open").click(hic.hideSearch);
+		$(".toggle-closed").click(hic.showSearch);		
 		$("#vals-and-records-wrapper").width(hic.getValsAndRecordsWidth("init"));
 		hic.positionTogglePointer();
-		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
-		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
-		$("#substring").click();
-		$("form[name='facets']").submit(hic.tidyQueryString);
-		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").change(hic.tidyQueryString);
+		$("#search-toggle").height($("#facet-wrapper").height());
+
+		
+	    /***********************************************
+	     END HIDE/REVEAL
+	     **********************************************/
+		
+		/**
+		 * Passes values selected using drop-down date selector
+		 * to appropriate text input
+		 */
+		
 		$("select[name='DATE_START'], select[name='DATE_END']").change(function(){ 
 			
 			var val = $(this).val();
@@ -417,6 +465,12 @@ $(document).ready(
 
 		
 		});
+		
+		/**
+		 * Ensures that date era selector change events do not trigger submit unless a date
+		 * value has been entered
+		 *
+		 */
 		$("select[name='DATE_START_ERA'], select[name='DATE_END_ERA']").change(function(){
 		
 	    	var prefix = $(this).attr("name").substring(0, $(this).attr("name").length - 4);
@@ -426,15 +480,23 @@ $(document).ready(
 			$("form[name='facets']").submit();
 		
 		});
-		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
-		$("#search-toggle").height($("#facet-wrapper").height());
-		$(".toggle-open").click(hic.hideSearch);
-		$(".toggle-closed").click(hic.showSearch);
+
+		/**
+		 * Ensures that 'n.a.' style disappears when the user enters new
+		 * values manually
+		 *
+		 */
 		$("input#DATE_START_TEXT, input#DATE_END_TEXT").focus(function(){
 		
 			$(this).css("font-style", "normal");
 		
 		});
+		
+		/**
+		 * Applies special styling to 'n.a.' value in DATE_START_TEXT and
+		 * DATE_END_TEXT controls
+		 *
+		 */
 		$("input#DATE_START_TEXT, input#DATE_END_TEXT").blur(function(){
 		
 			if($(this).val() == "n.a."){
@@ -444,6 +506,10 @@ $(document).ready(
 			}
 		
 		});
+		
+		/**
+		 * Autocomplete functionality for volume text input
+		 */
 		$("#id-volume").autocomplete({
 			
 			source: $("#volume-autocomplete").text().split(' ').sort(function(a,b){return a - b;}),
@@ -455,7 +521,9 @@ $(document).ready(
 			}
 		});
 				
-		
+		/**
+		 * Autocomplete functionality for id number text input
+		 */
 		$("#id-idno").autocomplete({
 		
 			source: $("#idno-autocomplete").text().split(' '),
@@ -467,9 +535,21 @@ $(document).ready(
 		
 		});
 		
+		// changing date mode causes tidy and submit
+		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
+		// turning betacode on/off selects text input
 		$("#beta-on").change(function(){$("#keyword").focus();});
+		// entry into string search triggers text monitoring 
 		$("#keyword").focus(hic.monitorTextInput);
 		$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
+		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
+		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
+		// select substring as default
+		$("#substring").click();
+		// submit triggers tidy ...
+		$("form[name='facets']").submit(hic.tidyQueryString);
+		// ... unless checks need to be in place first
+		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").change(hic.tidyQueryString);
 	}
 
 );
