@@ -96,8 +96,7 @@ public class BiblioSearch extends HttpServlet {
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);
             SolrDocumentList docs = rs.getResults();
-            out.println(q.toString());
-            out.println("<p>" + docs.getNumFound() + " hits.</p>");
+            out.println("<p>" + docs.getNumFound() + " hits on \"" + q.toString() + "\".</p>");
             out.println("<table>");
             String uq = q;
             try {
