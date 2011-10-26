@@ -223,7 +223,8 @@ public class CollectionBrowser extends HttpServlet {
         
         StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
         queryBuilder.append("PREFIX pyr: <http://papyri.info/> ");
-        queryBuilder.append("SELECT ?child ?grandchild ");
+        queryBuilder.append("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ");
+        queryBuilder.append("SELECT ?child ?grandchild ?label ?label2 ");
         queryBuilder.append("FROM ");
         queryBuilder.append(SPARQL_GRAPH);
         queryBuilder.append(" ");
@@ -250,8 +251,12 @@ public class CollectionBrowser extends HttpServlet {
         queryBuilder.append("WHERE { <pyr:");
         queryBuilder.append(subj);
         queryBuilder.append("> dc:hasPart ?child . ");
-        queryBuilder.append("OPTIONAL { ?child dc:hasPart ?grandchild . } }");
-        
+        queryBuilder.append("OPTIONAL { ?child dc:hasPart ?grandchild . } ");
+        queryBuilder.append("OPTIONAL { ?grandchild rdfs:label ?label . } ");
+        queryBuilder.append("OPTIONAL { ?grandchild dc:hasPart ?greatgrandchild . } ");
+        queryBuilder.append("OPTIONAL { ?greatgrandchild rdfs:label ?label2 . } }");
+
+        System.out.println("Query is " + queryBuilder.toString());
         return queryBuilder.toString();
         
     }
@@ -312,10 +317,12 @@ public class CollectionBrowser extends HttpServlet {
             JsonNode result = rnit.next();
             String child = result.path("child").path("value").getValueAsText();
             String grandchild = result.path("grandchild").path("value").getValueAsText();
- 
+            String labelTest1 = stringifyUnicodeLiterals(result.path("label").path("value").getValueAsText());
+            String labelTest2 = stringifyUnicodeLiterals(result.path("label2").path("value").getValueAsText());
+            String label = (labelTest1 == null || labelTest1.equals("")) ? labelTest2 : labelTest1;
             if(!childLog.contains(child)){
                 
-                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, grandchild);
+                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, grandchild, label);
                 records.add(dbr);
                 childLog.add(child);
                        
@@ -325,6 +332,24 @@ public class CollectionBrowser extends HttpServlet {
         
         Collections.sort(records);
         return records;
+    }
+    
+    private String stringifyUnicodeLiterals(String lbl){
+        
+        if(lbl == null || lbl.equals("")) return "";
+        
+        String cleanLabel = "";
+        
+        char[] labelBits = lbl.toCharArray();
+        
+        for(int i = 0; i < labelBits.length; i++){
+            
+            cleanLabel += labelBits[i];
+            
+        }
+        
+        return cleanLabel;
+        
     }
     
     /**
@@ -346,7 +371,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String grandchild){
+    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String grandchild, String seriesLabel){
 
         Boolean grandchildIsDocument = grandchild.matches(".*/source$");
         
@@ -391,14 +416,14 @@ public class CollectionBrowser extends HttpServlet {
         
         if(pathParts.size() == SOLR_FIELDS.indexOf(SolrField.series)){
              
-             return new DocumentCollectionBrowseRecord(collection, significantChildSubstring, grandchildIsDocument);
+             return new DocumentCollectionBrowseRecord(collection, significantChildSubstring, grandchildIsDocument, seriesLabel);
 
             
         }
         else{
             
             
-             return new DocumentCollectionBrowseRecord(collection, pathParts.get(SolrField.series), significantChildSubstring);
+             return new DocumentCollectionBrowseRecord(collection, pathParts.get(SolrField.series), significantChildSubstring, seriesLabel);
 
             
         }

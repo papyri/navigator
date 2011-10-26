@@ -19,6 +19,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         private String volume;
         /* True if the immediate children of this record are documents; false if they are other collections */
         private Boolean isDocumentParent;
+        private String unicodeLabel;
     
         /**
          * Constructor for cases in which the volume is known
@@ -58,12 +59,27 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
             
         }
         
+        public DocumentCollectionBrowseRecord(String collection, String series, String volume, String lbl){
+            
+            this(collection, series, volume);
+            unicodeLabel = lbl;
+            
+        }
+        
+        public DocumentCollectionBrowseRecord(String collection, String series, Boolean isDocumentParent, String lbl){
+            
+            this(collection, series, isDocumentParent);
+            unicodeLabel = lbl;
+            
+        }
+        
         
         @Override
         public String getHTML(){
             
             String href = assembleLink();
-            String displayString = series + (volume == null ? "" : " " + volume);
+            String seriesRepresentation = (unicodeLabel == null || unicodeLabel.equals("")) ? series : unicodeLabel;
+            String displayString = seriesRepresentation + (volume == null ? "" : " " + volume);
             displayString = displayString.replaceAll("_", " ");
             String html = "<li><a href='" + href + "'>" + displayString + "</li>";
             return html;
@@ -102,7 +118,8 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
             href += "?";
             String collParam = IdentifierFacet.IdParam.SERIES.name();
             if(collection.equals("apis")) collParam = IdentifierFacet.IdParam.COLLECTION.name();
-            collParam += "=" + series;
+            String seriesRepresentation = (unicodeLabel != null && !unicodeLabel.equals("")) ? unicodeLabel : series;
+            collParam += "=" + seriesRepresentation;
             href += collParam;
             if(volume != null){
                 
