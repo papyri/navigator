@@ -62,8 +62,9 @@
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="bp-cite">
         <h4>original BP record</h4>
-        <xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
-        <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></div>
+        <p><xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
+          <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></p>
+      </div>
     </xsl:if>
   </xsl:template>
   
@@ -114,7 +115,7 @@
     <xsl:for-each select="t:editor">
       <xsl:sort select="number(@n)"/>
       <xsl:if test="position() > 1 and position() = last()"><xsl:text> and </xsl:text></xsl:if><xsl:value-of select="."/><xsl:if test="count(../t:editor) > 2 and position() != last()">, </xsl:if>
-    </xsl:for-each> ed<xsl:if test="count(t:editor) > 1">s</xsl:if>.
+    </xsl:for-each><xsl:if test="t:editor"> ed<xsl:if test="count(t:editor) > 1">s</xsl:if>.</xsl:if>
   </xsl:template>
   
   <xsl:template name="pubInfo">
