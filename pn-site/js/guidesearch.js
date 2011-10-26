@@ -29,12 +29,12 @@ $(document).ready(
 		// values are list of elements that *must* be 
 		// switched on or off onclick.
 
-        hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
+        	hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_on["lemmas"] = ["#caps", "#marks", "#target-text"];
 		hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_off["target-metadata"] = ["#betaYes"];
 		hic.reqd_off["target-translations"] = ["#betaYes"];
-		hic.reqd_on["target-all"] = ["#caps", "#marks"];
+		hic.reqd_on["target-all"] = ["#phrase", "#caps", "#marks"];
 		hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
 		
 		/**
@@ -44,7 +44,7 @@ $(document).ready(
 		 */
 		 
 	    
-	    hic.configureSearchSettings = function(){
+	   	hic.configureSearchSettings = function(){
 	    
 	    	var reqd_disabled = [];
 	    	
@@ -59,7 +59,7 @@ $(document).ready(
 	    		
 	    		var target = $("#text-search-widget").find("input[name='target']:checked").attr("id");
 	    		if(hic.reqd_on[target]) jQuery.merge(reqd_disabled, hic.reqd_on[target]); 
-	    		if(hic.reqd_off[target]) jQuery.merge(reqd_disabled, hic.reqd_off[target]); 
+	    		if(hic.reqd_off[target]) reqd_disabled; 
 	    	
 	    	}
 	    	else if(eltype == "target"){
