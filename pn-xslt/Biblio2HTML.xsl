@@ -17,6 +17,7 @@
     <html lang="en">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
         <title><xsl:value-of select="t:bibl/t:idno[@type='pi']"/></title>
         <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>

@@ -108,7 +108,7 @@ public class StringSearchFacet extends Facet{
         html.append("<label for=\"substring\" id=\"substring-label\">Substring search</label><br/>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.LEMMAS.name().toLowerCase());
-        html.append("\" id=\"lemmas\"/>");
+        html.append("\" id=\"lemmas\"/> ");
         html.append("<label for=\"lemmas\" id=\"lemmas-label\">Lemmatized search</label><br/>");
         html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
         html.append(SearchType.PROXIMITY.name().toLowerCase());
