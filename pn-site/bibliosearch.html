@@ -34,7 +34,7 @@
 
     </script>
   </head>
-  <body onload="init()">
+  <body>
     <div id="d">
       <div id="hd">
         <h1>Papyri.info</h1>
@@ -126,8 +126,16 @@
     <script type="text/javascript" charset="utf-8">
       jQuery("a.button").button();
       jQuery("#tmgo").button();
-      jQuery("#imagesfirst,#translationsfirst").button();
-      jQuery("#togglehelp,#search,#newsearch").button();      
+      jQuery("#search").button();   
+      if (window.location.href.indexOf("ddbdp") > 0) {
+        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('DDbDP')").addClass("current");
+      }
+      if (window.location.href.indexOf("hgv") > 0) {
+        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('HGV')").addClass("current");
+      }
+      if (window.location.href.indexOf("apis") > 0) {
+        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('APIS')").addClass("current");
+      }   
     </script>
   </body>
 </html>
