@@ -744,14 +744,6 @@
           innerHtml: "Click to turn contextual help for the search form on and off.",
           position: "left"
         });
-        jQuery("ul.nav li").not(".dialog").not("#footer ul.nav li").hover(function() {
-              jQuery(this).css('background-color', '#445B88');
-              jQuery(this).find("a").css('color', 'white')
-          },
-          function() {
-              jQuery(this).css('background-color', 'transparent');
-              jQuery(this).find("a").css('color', 'black')
-          });
       }
       
       function toggleHelp() {
