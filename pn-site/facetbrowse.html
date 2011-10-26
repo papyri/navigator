@@ -1,10 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD  HTML 4.01//EN">
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>
-   	   PN Search
-    </title>
+    <title>PN Search</title>
+    <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -587,9 +586,12 @@
               </li>
               <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
-              <li>or</li>
+              <li>or Search:</li>
               <li>
-                <a href="/search">Search</a>
+                <a href="/search">Data</a>
+              </li>
+              <li>
+                <a href="/search">Bibliography</a>
               </li>
             </ul>
           </form>

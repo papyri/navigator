@@ -58,7 +58,7 @@
   </xsl:template>
   
   <xsl:template match="t:bibl">
-    <p><xsl:call-template name="buildCitation"/> <a class="button" id="editbibl" href="http://papyri.info/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a></p>
+    <p><xsl:call-template name="buildCitation"/> <a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a></p>
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="bp-cite">
         <h4>original BP record</h4>

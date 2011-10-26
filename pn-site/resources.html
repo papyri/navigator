@@ -1,9 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>about papyri.info</title>
+  <title>Papyrological Resources</title>
+  <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <link rel="stylesheet" href="css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
@@ -32,28 +32,31 @@
     </div>
     <div id="bd">
       <div class="nav">
-        <!-- left nav -->
-        <form method="get" accept-charset="utf-8">
-          <ul class="nav">
-            <li>Browse: </li>
-            <li>
-              <a href="/browse/ddbdp/">DDbDP</a>
-            </li>
-            <li>
-              <a href="/browse/hgv/">HGV</a>
-            </li>
-            <li>
-              <a href="/browse/apis/">APIS</a>
-            </li>
-            <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
-            </li>
-            <li>or</li>
-            <li>
-              <a href="/search">Search</a>
-            </li>
-          </ul>
-        </form>
-      </div>
+          <!-- left nav -->
+          <form method="get" accept-charset="utf-8">
+            <ul class="nav">
+              <li>Browse: </li>
+              <li>
+                <a href="/browse/ddbdp/">DDbDP</a>
+              </li>
+              <li>
+                <a href="/browse/hgv/">HGV</a>
+              </li>
+              <li>
+                <a href="/browse/apis/">APIS</a>
+              </li>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              </li>
+              <li>or Search:</li>
+              <li>
+                <a href="/search">Data</a>
+              </li>
+              <li>
+                <a href="/search">Bibliography</a>
+              </li>
+            </ul>
+          </form>
+        </div>
       <div id="main">
         <div class="content">
         <table id="resources"> 
