@@ -124,18 +124,10 @@
         </div>
     </div>
     <script type="text/javascript" charset="utf-8">
+      jQuery("div#hd h1").click(function() {window.location = "/"});
       jQuery("a.button").button();
       jQuery("#tmgo").button();
       jQuery("#search").button();   
-      if (window.location.href.indexOf("ddbdp") > 0) {
-        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('DDbDP')").addClass("current");
-      }
-      if (window.location.href.indexOf("hgv") > 0) {
-        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('HGV')").addClass("current");
-      }
-      if (window.location.href.indexOf("apis") > 0) {
-        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('APIS')").addClass("current");
-      }  
       jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").hover(function() {
         jQuery(this).css('background-color', '#F8F6F4');
       }, function() {

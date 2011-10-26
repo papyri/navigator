@@ -732,18 +732,19 @@
       
       var help = false;
       function init() {
-      
+        jQuery("div#hd h1").click(function() {window.location = "/"});
         initSearchCookies();
       	retrieveSearchSettings();
+	jQuery("li.dialog").each(function(i) {
+          jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
+          jQuery(this).hide();
+        });
 	jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").hover(function() {
           jQuery(this).css('background-color', '#F8F6F4');
         }, function() {
           jQuery(this).css('background-color', 'transparent');
         });
-        jQuery("li.dialog").each(function(i) {
-          jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
-          jQuery(this).hide();
-        });
+        
         jQuery("#togglehelp-label").CreateBubblePopup({
           innerHtml: "Click to turn contextual help for the search form on and off.",
           position: "left"
