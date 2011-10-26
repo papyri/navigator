@@ -735,7 +735,15 @@
       
         initSearchCookies();
       	retrieveSearchSettings();
-      
+      	if (window.location.href.indexOf("ddbdp") > 0) {
+        jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('DDbDP')").addClass("current");
+        }
+        if (window.location.href.indexOf("hgv") > 0) {
+          jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('HGV')").addClass("current");
+        }
+        if (window.location.href.indexOf("apis") > 0) {
+          jQuery("ul.nav li").not(".dialog").not($("#footer ul.nav li")).has("a:contains('APIS')").addClass("current");
+        }
         jQuery("li.dialog").each(function(i) {
           jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
           jQuery(this).hide();
