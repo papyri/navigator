@@ -46,7 +46,7 @@
 
   <xsl:template match="t:relatedItem[@type='mentions']">
     <dcterms:references>
-      <rdf:Description rdf:about="urn:pi:http:papyri.info/ddbdp/{t:biblio/t:idno[@type='ddb']}">
+      <rdf:Description rdf:about="urn:pi:http:papyri.info/ddbdp/{t:bibl/t:idno[@type='ddb']}">
         <rdfs:type rdf:resource="http://gawd.atlantides.org/terms/Edition"/>
         <dcterms:isReferencedBy rdf:resource="{$urn}"/>
       </rdf:Description>

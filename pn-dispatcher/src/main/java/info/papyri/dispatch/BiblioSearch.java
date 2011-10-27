@@ -93,6 +93,7 @@ public class BiblioSearch extends HttpServlet {
             sq.setQuery(q);
             sq.setStart(start);
             sq.setRows(rows);
+            sq.setSortField("sort", SolrQuery.ORDER.desc);
             QueryRequest req = new QueryRequest(sq);
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);

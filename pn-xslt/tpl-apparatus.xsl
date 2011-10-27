@@ -73,16 +73,9 @@
                </xsl:when>
                <xsl:otherwise>
                   <xsl:if test="t:reg[not(@xml:lang) and not(preceding-sibling::reg[not(@xml:lang)])]">
-                  <!-- when ddbdp changeover happens:
                     <xsl:text>Read </xsl:text>
                     <xsl:apply-templates select="t:reg/node()"/>
-                 -->
-                  <xsl:apply-templates select="t:orig/node()"/>
                   <xsl:call-template name="childCertainty"/>
-                     
-                     <xsl:call-template name="support"/>
-                     <!-- found below: inserts "papyrus" or "ostrakon" depending on filename -->
-                     <!--<xsl:text> papyrus</xsl:text>-->
                   </xsl:if>
                   <xsl:if test="t:reg[not(@xml:lang)][2]">
                      <xsl:text>; i.e. </xsl:text>
