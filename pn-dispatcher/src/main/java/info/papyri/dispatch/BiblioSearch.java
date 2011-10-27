@@ -79,7 +79,7 @@ public class BiblioSearch extends HttpServlet {
       while ((line = reader.readLine()) != null) {
         if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
           SolrServer solr = new CommonsHttpSolrServer(solrUrl + BiblioSearch);
-          int rows = 20;
+          int rows = 30;
           try {
             rows = Integer.parseInt(request.getParameter("rows"));
           } catch (Exception e) {
@@ -87,17 +87,17 @@ public class BiblioSearch extends HttpServlet {
           int start = 0;
           try {
             start = Integer.parseInt(request.getParameter("start"));
-          } catch (Exception e) {
-          }
+          } catch (Exception e) {}
           SolrQuery sq = new SolrQuery();
           try {
             sq.setQuery(q);
+            sq.setStart(start);
+            sq.setRows(rows);
             QueryRequest req = new QueryRequest(sq);
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);
             SolrDocumentList docs = rs.getResults();
-            out.println(q.toString());
-            out.println("<p>" + docs.getNumFound() + " hits.</p>");
+            out.println("<p>" + docs.getNumFound() + " hits on \"" + q.toString() + "\".</p>");
             out.println("<table>");
             String uq = q;
             try {
@@ -105,7 +105,7 @@ public class BiblioSearch extends HttpServlet {
             } catch (Exception e) {
             }
             for (SolrDocument doc : docs) {
-              StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\">");
+              StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td>");
               row.append("<a href=\"");
               row.append("/biblio/");
               row.append(((String) doc.getFieldValue("id")));
@@ -130,7 +130,7 @@ public class BiblioSearch extends HttpServlet {
                   out.print("</div>");
                 } else {
                   StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
-                  out.print("<div class=\"page\"><a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a></div>");
+                  out.print("<div class=\"page\"><a href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></div>");
                 }
                 p++;
               }

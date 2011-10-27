@@ -29,12 +29,12 @@ $(document).ready(
 		// values are list of elements that *must* be 
 		// switched on or off onclick.
 
-        hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
+        	hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_on["lemmas"] = ["#caps", "#marks", "#target-text"];
 		hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
 		hic.reqd_off["target-metadata"] = ["#betaYes"];
 		hic.reqd_off["target-translations"] = ["#betaYes"];
-		hic.reqd_on["target-all"] = ["#caps", "#marks"];
+		hic.reqd_on["target-all"] = ["#phrase", "#caps", "#marks"];
 		hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
 		
 		/**
@@ -44,7 +44,7 @@ $(document).ready(
 		 */
 		 
 	    
-	    hic.configureSearchSettings = function(){
+	   	hic.configureSearchSettings = function(){
 	    
 	    	var reqd_disabled = [];
 	    	
@@ -118,7 +118,7 @@ $(document).ready(
 	    		for(var i = 0; i < offanda.length; i++){
 	    		
 	    			$(offanda[i]).removeAttr("checked");
-	    			$(offanda[i]).attr("disabled", "disabled");
+	    			//$(offanda[i]).attr("disabled", "disabled");
 	    		
 	    		}
 	    	
@@ -292,41 +292,40 @@ $(document).ready(
 	    	
 	    	if(betaOn){
 
-				$(this).keypress(function(event){ return convertCharToggle(this, true, event); });
+			$(this).keypress(function(event){ return convertCharToggle(this, true, event); });
 	    		$(this).keyup(function(event){ return convertStr( this, event ); });	    	    	
 	    	
 	    	}
 	    	else{
 			
-				$(this).keyup(function(event){
-			
-					event.stopPropagation();
-					var val = $(this).val();
-					if(!colonFound && val.match(":")) {
+			$(this).keyup(function(event){			
+				event.stopPropagation();
+				var val = $(this).val();
+				if(!colonFound && val.match(":")) {
 				
-						colonFound = true;
-						$(".stringsearch-section input:radio").attr("disabled", "disabled");
-						$(".stringsearch-section input:checkbox").removeAttr("disabled");
-						selectedRadios = $(".stringsearch-section input:radio:checked");
-						$(".stringsearch-section input:radio:checked").removeAttr("checked");
-						hic.mixedsearch = true;
-			
-					}
-					// check to make sure user hasn't deleted a previously-entered colon char
-					else if(!val.match(":") && colonFound){
+					colonFound = true;
+					$(".stringsearch-section input:radio").attr("disabled", "disabled");
+					$(".stringsearch-section input:checkbox").removeAttr("disabled");
+					selectedRadios = $(".stringsearch-section input:radio:checked");
+					$(".stringsearch-section input:radio:checked").removeAttr("checked");
+					hic.mixedsearch = true;
+		
+				}
+				// check to make sure user hasn't deleted a previously-entered colon char
+				else if(!val.match(":") && colonFound){
 
-                    	colonFound = false;
-						$(".stringsearch-section input:radio").removeAttr("disabled");
-						hic.mixedsearch = false;
+		                    	colonFound = false;
+					$(".stringsearch-section input:radio").removeAttr("disabled");
+					hic.mixedsearch = false;
 				    	for(var i = 0; i < selectedRadios.length; i++){
 
-                        	selectedRadios[i].click();   
-				    
-				    	} 
+                	        	selectedRadios[i].click();   
+			    
+			    	} 
 				
-					}
+			}
 						
-				});
+			});
 	    
 	    	}
 	    	
@@ -343,41 +342,41 @@ $(document).ready(
 	     */
 	    hic.hideSearch = function(evt){
 
-			var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
-			var initialHeight = $("#facet-wrapper").height();
-			var initialWidgetHeight = $("#facet-widgets-wrapper").height();
-			var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
+		var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
+		var initialHeight = $("#facet-wrapper").height();
+		var initialWidgetHeight = $("#facet-widgets-wrapper").height();
+		var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
 	    	var newValsWidth = hic.getValsAndRecordsWidth("hide-search");
 	    	$("#facet-wrapper").height(initialHeight);
 	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, 325);
 	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
 	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, 325, "swing",
 	    		
-	    		function(){
+    		function(){
 	    			
-	    			$("#facet-wrapper").height(finalHeight);
-	    			$("#facet-widgets-wrapper").addClass("search-closed");
-	    			$("#facet-widgets-wrapper").offset({ left:-23 });
-	    			$("#facet-widgets-wrapper").removeClass("search-open");
-	    			$("#search-toggle").addClass("toggle-closed");
-	    			$("#search-toggle").removeClass("toggle-open");
-	    			$("#vals-and-records-wrapper").removeClass("vals-and-records-min");
-	    			$("#vals-and-records-wrapper").addClass("vals-and-records-max");
-	    			$("#vals-and-records-wrapper").css({"position":"relative" });
-	    			var height = initialWidgetHeight > $("#vals-and-records-wrapper").height() ? initialWidgetHeight : $("#vals-and-records-wrapper").height();
-	    			$("#search-toggle-pointer").text(">>");
-	    			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });	    			
-	    			hic.positionTogglePointer();
+    			$("#facet-wrapper").height(finalHeight);
+    			$("#facet-widgets-wrapper").addClass("search-closed");
+    			$("#facet-widgets-wrapper").offset({ left:-23 });
+    			$("#facet-widgets-wrapper").removeClass("search-open");
+    			$("#search-toggle").addClass("toggle-closed");
+    			$("#search-toggle").removeClass("toggle-open");
+    			$("#vals-and-records-wrapper").removeClass("vals-and-records-min");
+    			$("#vals-and-records-wrapper").addClass("vals-and-records-max");
+    			$("#vals-and-records-wrapper").css({"position":"relative" });
+    			var height = initialWidgetHeight > $("#vals-and-records-wrapper").height() ? initialWidgetHeight : $("#vals-and-records-wrapper").height();
+    			$("#search-toggle-pointer").text(">>");
+    			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });	    			
+    			hic.positionTogglePointer();
 
-	    		}
+    		}
 	    	
 	    	
-	    	);
-	    	$("#search-toggle").unbind('click');
-	    	$("#search-toggle").click(hic.showSearch);
+    	);
+    	$("#search-toggle").unbind('click');
+    	$("#search-toggle").click(hic.showSearch);
 	    
-	    }
-	    
+   }
+    
 	    /**
 	     * Shrinks search results in order to display search panel.
 	     *

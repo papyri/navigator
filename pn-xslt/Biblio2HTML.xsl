@@ -17,6 +17,7 @@
     <html lang="en">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
         <title><xsl:value-of select="t:bibl/t:idno[@type='pi']"/></title>
         <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
@@ -58,12 +59,14 @@
   </xsl:template>
   
   <xsl:template match="t:bibl">
-    <p><xsl:call-template name="buildCitation"/> <a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a></p>
+    <p><xsl:call-template name="buildCitation"/> <a href="source">xml</a> <a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a></p>
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="bp-cite">
         <h4>original BP record</h4>
-        <xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
-        <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></div>
+        <p><xsl:for-each select="t:seg[@type='original']">
+          <xsl:value-of select="@subtype"/>: <xsl:value-of select="."/><xsl:if test="position() != last()"><br/></xsl:if>
+        </xsl:for-each></p>
+      </div>
     </xsl:if>
   </xsl:template>
   
@@ -94,12 +97,12 @@
   <xsl:template name="articleTitle">
     <xsl:choose>
       <xsl:when test="t:title[@level='a']"><xsl:value-of select="t:title[@level='a']"/></xsl:when>
-      <xsl:when test="@type='review'">Review of <xsl:for-each select="pi:get-docs(t:relatedItem[@type='reviews']//t:ptr/@target, 'xml')/t:bibl"><a href="/biblio/{t:idno[@type='pi']}"><xsl:call-template name="buildCitation"/></a></xsl:for-each><xsl:text>, </xsl:text></xsl:when>
+      <xsl:when test="@type='review'">Review of <xsl:for-each select="pi:get-docs(t:relatedItem[@type='reviews']//t:ptr/@target, 'xml')/t:bibl"><a href="/biblio/{t:idno[@type='pi']}/"><xsl:call-template name="buildCitation"/></a></xsl:for-each><xsl:text>, </xsl:text></xsl:when>
     </xsl:choose>
   </xsl:template>
   
   <xsl:template name="mainTitle" match="t:bibl" mode="mainTitle">
-    <xsl:if test="t:title[@level='m']"><xsl:text> in </xsl:text><xsl:call-template name="editor"/></xsl:if><i><a href="/biblio/{t:idno[@type='pi']}"><xsl:choose>
+    <xsl:if test="t:title[@level='m']"><xsl:text> in </xsl:text><xsl:call-template name="editor"/></xsl:if><i><a href="/biblio/{t:idno[@type='pi']}/"><xsl:choose>
       <xsl:when test="t:title[@level='m']"><xsl:value-of select="t:title[@level='m']"/></xsl:when>
       <xsl:when test="t:title[@level='j']">
         <xsl:choose>
@@ -114,7 +117,7 @@
     <xsl:for-each select="t:editor">
       <xsl:sort select="number(@n)"/>
       <xsl:if test="position() > 1 and position() = last()"><xsl:text> and </xsl:text></xsl:if><xsl:value-of select="."/><xsl:if test="count(../t:editor) > 2 and position() != last()">, </xsl:if>
-    </xsl:for-each> ed<xsl:if test="count(t:editor) > 1">s</xsl:if>.
+    </xsl:for-each><xsl:if test="t:editor"> ed<xsl:if test="count(t:editor) > 1">s</xsl:if>.</xsl:if>
   </xsl:template>
   
   <xsl:template name="pubInfo">

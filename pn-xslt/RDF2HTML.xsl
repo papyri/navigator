@@ -122,7 +122,8 @@
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
     <xsl:variable name="image" select="contains($related, 'http://papyri.info/images')"/>
-    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
+ </xsl:text>
    
     <html lang="en" version="HTML+RDFa 1.1">
       <xsl:namespace name="dc" select="'http://purl.org/dc/terms/'"></xsl:namespace>
@@ -148,6 +149,7 @@
        <xsl:if test="string-length($citationForm) > 0">
           <meta property="dc:bibliographicCitation" datatype="xsd:string" content="{replace($citationForm, '&quot;', '')}"/>
        </xsl:if>
+        <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
         <title>
           <xsl:call-template name="get-references"/>

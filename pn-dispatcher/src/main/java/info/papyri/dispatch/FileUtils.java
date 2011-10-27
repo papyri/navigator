@@ -247,6 +247,12 @@ public class FileUtils {
                 .append(parts[2])
                 .append(".xml").toString());
       }
+    }  else if ("biblio".equals(collection)) {
+      return new File(pathname.append("/Biblio/")
+              .append((int)Math.ceil(Double.parseDouble(item) / 1000))
+              .append("/")
+              .append(item)
+              .append(".xml").toString());
     }
     return null;
   }

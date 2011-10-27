@@ -301,7 +301,7 @@ div#edition {
 margin-left: 3em;
 }
 div.bp-cite {
-border:thin solid silver
+border:thin solid silver;
 margin:2em;
 padding:1em;
 }
