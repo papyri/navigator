@@ -87,11 +87,11 @@ public class BiblioSearch extends HttpServlet {
           int start = 0;
           try {
             start = Integer.parseInt(request.getParameter("start"));
-          } catch (Exception e) {
-          }
+          } catch (Exception e) {}
           SolrQuery sq = new SolrQuery();
           try {
             sq.setQuery(q);
+            sq.setStart(start);
             sq.setRows(rows);
             QueryRequest req = new QueryRequest(sq);
             req.setMethod(METHOD.POST);
