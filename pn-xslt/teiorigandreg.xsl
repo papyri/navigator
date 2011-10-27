@@ -12,14 +12,12 @@
                <xsl:when test="not(../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)])">
                   <xsl:apply-templates/>
                </xsl:when>
-               <xsl:otherwise/>
+              <xsl:otherwise>
+                <xsl:apply-templates/>
+                <xsl:call-template name="cert-low"/> 
+               </xsl:otherwise>
             </xsl:choose>
          </xsl:when>
-               <xsl:apply-templates/>
-               <xsl:call-template name="cert-low"/> 
-         <xsl:otherwise>
-            <xsl:apply-templates/>
-         </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
 
