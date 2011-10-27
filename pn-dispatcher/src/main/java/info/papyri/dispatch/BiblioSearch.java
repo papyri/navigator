@@ -79,7 +79,7 @@ public class BiblioSearch extends HttpServlet {
       while ((line = reader.readLine()) != null) {
         if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
           SolrServer solr = new CommonsHttpSolrServer(solrUrl + BiblioSearch);
-          int rows = 20;
+          int rows = 30;
           try {
             rows = Integer.parseInt(request.getParameter("rows"));
           } catch (Exception e) {
@@ -92,6 +92,7 @@ public class BiblioSearch extends HttpServlet {
           SolrQuery sq = new SolrQuery();
           try {
             sq.setQuery(q);
+            sq.setRows(rows);
             QueryRequest req = new QueryRequest(sq);
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);
@@ -129,7 +130,7 @@ public class BiblioSearch extends HttpServlet {
                   out.print("</div>");
                 } else {
                   StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
-                  out.print("<div class=\"page\"><a href=\"/search?q=" + plink + "\">" + (p + 1) + "</a></div>");
+                  out.print("<div class=\"page\"><a href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></div>");
                 }
                 p++;
               }
