@@ -37,7 +37,7 @@
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='reviews']">
-    <cito:reviews rdf:resource="{$urn}">
+    <cito:reviews>
       <rdf:Description rdf:about="urn:pi:{replace(t:bibl/t:ptr/@target, '//', '')}">
         <cito:isReviewedBy rdf:resource="{$urn}"/>
       </rdf:Description>
