@@ -63,8 +63,9 @@
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="bp-cite">
         <h4>original BP record</h4>
-        <p><xsl:value-of select="t:seg[@type='original' and @subtype='titre']"/><br/>
-          <xsl:value-of select="t:seg[@type='original' and @subtype='publication']"/></p>
+        <p><xsl:for-each select="t:seg[@type='original']">
+          <xsl:value-of select="@subtype"/>: <xsl:value-of select="."/><xsl:if test="position() != last()"><br/></xsl:if>
+        </xsl:for-each></p>
       </div>
     </xsl:if>
   </xsl:template>
