@@ -37,7 +37,7 @@
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='reviews']">
-    <cito:reviews rdf:resource="">
+    <cito:reviews rdf:resource="{$urn}">
       <rdf:Description rdf:about="urn:pi:{replace(t:bibl/t:ptr/@target, '//', '')}">
         <cito:isReviewedBy rdf:resource="{$urn}"/>
       </rdf:Description>
@@ -45,12 +45,14 @@
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='mentions']">
-    <dcterms:references>
-      <rdf:Description rdf:about="urn:pi:http:papyri.info/ddbdp/{t:bibl/t:idno[@type='ddb']}">
-        <rdfs:type rdf:resource="http://gawd.atlantides.org/terms/Edition"/>
-        <dcterms:isReferencedBy rdf:resource="{$urn}"/>
-      </rdf:Description>
-    </dcterms:references>
+    <xsl:if test="not(contains(t:bibl/t:idno[@type='ddb'], ' '))">
+      <dcterms:references>
+        <rdf:Description rdf:about="urn:pi:http:papyri.info/ddbdp/{t:bibl/t:idno[@type='ddb']}">
+          <rdfs:type rdf:resource="http://gawd.atlantides.org/terms/Edition"/>
+          <dcterms:isReferencedBy rdf:resource="{$urn}"/>
+        </rdf:Description>
+      </dcterms:references>
+    </xsl:if>
   </xsl:template>
 
 </xsl:stylesheet>
