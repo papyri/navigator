@@ -59,7 +59,7 @@
   </xsl:template>
   
   <xsl:template match="t:bibl">
-    <p><xsl:call-template name="buildCitation"/> <a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a></p>
+    <p><xsl:call-template name="buildCitation"/> <a href="source">xml</a> <a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a></p>
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="bp-cite">
         <h4>original BP record</h4>
@@ -96,12 +96,12 @@
   <xsl:template name="articleTitle">
     <xsl:choose>
       <xsl:when test="t:title[@level='a']"><xsl:value-of select="t:title[@level='a']"/></xsl:when>
-      <xsl:when test="@type='review'">Review of <xsl:for-each select="pi:get-docs(t:relatedItem[@type='reviews']//t:ptr/@target, 'xml')/t:bibl"><a href="/biblio/{t:idno[@type='pi']}"><xsl:call-template name="buildCitation"/></a></xsl:for-each><xsl:text>, </xsl:text></xsl:when>
+      <xsl:when test="@type='review'">Review of <xsl:for-each select="pi:get-docs(t:relatedItem[@type='reviews']//t:ptr/@target, 'xml')/t:bibl"><a href="/biblio/{t:idno[@type='pi']}/"><xsl:call-template name="buildCitation"/></a></xsl:for-each><xsl:text>, </xsl:text></xsl:when>
     </xsl:choose>
   </xsl:template>
   
   <xsl:template name="mainTitle" match="t:bibl" mode="mainTitle">
-    <xsl:if test="t:title[@level='m']"><xsl:text> in </xsl:text><xsl:call-template name="editor"/></xsl:if><i><a href="/biblio/{t:idno[@type='pi']}"><xsl:choose>
+    <xsl:if test="t:title[@level='m']"><xsl:text> in </xsl:text><xsl:call-template name="editor"/></xsl:if><i><a href="/biblio/{t:idno[@type='pi']}/"><xsl:choose>
       <xsl:when test="t:title[@level='m']"><xsl:value-of select="t:title[@level='m']"/></xsl:when>
       <xsl:when test="t:title[@level='j']">
         <xsl:choose>

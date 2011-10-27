@@ -104,7 +104,7 @@ public class BiblioSearch extends HttpServlet {
             } catch (Exception e) {
             }
             for (SolrDocument doc : docs) {
-              StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\">");
+              StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td>");
               row.append("<a href=\"");
               row.append("/biblio/");
               row.append(((String) doc.getFieldValue("id")));
