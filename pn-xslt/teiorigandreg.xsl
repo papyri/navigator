@@ -12,15 +12,12 @@
                <xsl:when test="not(../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)])">
                   <xsl:apply-templates/>
                </xsl:when>
-               <xsl:otherwise/>
+              <xsl:otherwise>
+                <xsl:apply-templates/>
+                <xsl:call-template name="cert-low"/> 
+               </xsl:otherwise>
             </xsl:choose>
          </xsl:when>
-         <!-- commented out until later DDbDP switch-over
-               <xsl:apply-templates/>
-               <xsl:call-template name="cert-low"/> -->
-         <xsl:otherwise>
-            <xsl:apply-templates/>
-         </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
 
@@ -30,12 +27,6 @@
             <xsl:choose>
                <xsl:when test="@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang"/>
                <xsl:when test="preceding-sibling::t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)]"/>
-               <xsl:otherwise>
-                  <!-- to be removed when later DDbDP switch-over -->
-                  <xsl:apply-templates/>
-                  <!-- cert-low template found in tpl-certlow.xsl -->
-                  <xsl:call-template name="cert-low"/>
-               </xsl:otherwise>
             </xsl:choose>
          </xsl:when>
          <xsl:otherwise/>
