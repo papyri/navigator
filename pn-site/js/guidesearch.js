@@ -137,6 +137,7 @@ $(document).ready(
 
             var querystring = "";
 	    	var filteredels = [];
+	    	var mixedsearch = false;
 	    	
 	    	// if a string is set for search, than the associated text, target, and option
 	    	// fields must also be set.
@@ -144,6 +145,8 @@ $(document).ready(
 	    	var textel = $("input[name='STRING']");
 	    	if(!textel.attr("value").match(/^\s*$/)){
 
+				if(textel.attr("value").indexOf(":") != -1) mixedsearch = true;
+				
                 filteredels.push(textel);
 	    		var betas = $("#betaYes:checked");
 	    		if(betas.length > 0) filteredels.push(betas);
@@ -154,7 +157,7 @@ $(document).ready(
 	    		var marks = $("#marks:checked");
 	    		if(marks.length > 0) filteredels.push(marks);
 
-                if(!hic.mixedsearch){
+                if(!mixedsearch){
                 
 	    		     var type = $("input[name='type']").filter(":checked");
 	    		     filteredels.push(type);
@@ -268,7 +271,7 @@ $(document).ready(
 				current = currentbits[0];
 			
 			}
-            if(hic.mixedsearch) querystring += "&type=user_defined&target=user_defined"			
+            if(mixedsearch) querystring += "&type=user_defined&target=user_defined"			
 			var hrefwquery = current + "?" + querystring;
 			window.location = hrefwquery;
 			return false;
@@ -292,7 +295,7 @@ $(document).ready(
 	    	
 	    	if(betaOn){
 
-			$(this).keypress(function(event){ return convertCharToggle(this, true, event); });
+				$(this).keypress(function(event){ return convertCharToggle(this, true, event); });
 	    		$(this).keyup(function(event){ return convertStr( this, event ); });	    	    	
 	    	
 	    	}
@@ -308,18 +311,16 @@ $(document).ready(
 					$(".stringsearch-section input:checkbox").removeAttr("disabled");
 					selectedRadios = $(".stringsearch-section input:radio:checked");
 					$(".stringsearch-section input:radio:checked").removeAttr("checked");
-					hic.mixedsearch = true;
 		
 				}
 				// check to make sure user hasn't deleted a previously-entered colon char
 				else if(!val.match(":") && colonFound){
 
-		                    	colonFound = false;
+		            colonFound = false;
 					$(".stringsearch-section input:radio").removeAttr("disabled");
-					hic.mixedsearch = false;
-				    	for(var i = 0; i < selectedRadios.length; i++){
+				    for(var i = 0; i < selectedRadios.length; i++){
 
-                	        	selectedRadios[i].click();   
+                	    selectedRadios[i].click();   
 			    
 			    	} 
 				
@@ -540,7 +541,7 @@ $(document).ready(
 		$("#beta-on").change(function(){$("#keyword").focus();});
 		// entry into string search triggers text monitoring 
 		$("#keyword").focus(hic.monitorTextInput);
-		$("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
+		// $("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		// select substring as default
