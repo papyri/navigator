@@ -3,10 +3,12 @@
   <types>
     <fieldType name="lctext" class="solr.TextField" sortMissingLast="true" omitNorms="true">
       <analyzer type="index">
-        <tokenizer class="solr.LowerCaseTokenizerFactory"/>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
       <analyzer type="query">
-        <tokenizer class="solr.LowerCaseTokenizerFactory"/>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
