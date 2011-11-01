@@ -57,6 +57,10 @@
     <field name="original"><xsl:value-of select="."/></field>
   </xsl:template>
   
+  <xsl:template match="t:seg[@subtype='index']">
+    <field name="index"><xsl:value-of select="."/></field>
+  </xsl:template>
+  
   <xsl:template match="*">
     <field name="{local-name(.)}"><xsl:value-of select="normalize-space(replace(.,'\s+',' '))"/></field>
   </xsl:template>
