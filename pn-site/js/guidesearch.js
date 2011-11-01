@@ -29,11 +29,12 @@ $(document).ready(
 		// values are list of elements that *must* be 
 		// switched on or off onclick.
 
-        	hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
+    	hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
+    	hic.reqd_on["substring"] = ["#target-text"];
 		hic.reqd_on["lemmas"] = ["#caps", "#marks", "#target-text"];
 		hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
-		hic.reqd_off["target-metadata"] = ["#betaYes"];
-		hic.reqd_off["target-translations"] = ["#betaYes"];
+		hic.reqd_off["target-metadata"] = ["#beta-on"];
+		hic.reqd_off["target-translations"] = ["#beta-on"];
 		hic.reqd_on["target-all"] = ["#phrase", "#caps", "#marks"];
 		hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
 		
@@ -45,10 +46,8 @@ $(document).ready(
 		 
 	    
 	   	hic.configureSearchSettings = function(){
-	    
+
 	    	var reqd_disabled = [];
-	    	
-	    	// step one: re-enable disabled selectors as required
 
 	    	var eltype = $(this).attr("name");
 	    	
@@ -69,7 +68,7 @@ $(document).ready(
 	    		if(hic.reqd_off[type]) jQuery.merge(reqd_disabled, hic.reqd_off[type]);
 	    		
 	    	}
-	    	
+
 	    	// then enable all currently disabled elements not found in the
 	    	// reqd_disabled array
 
@@ -118,10 +117,9 @@ $(document).ready(
 	    		for(var i = 0; i < offanda.length; i++){
 	    		
 	    			$(offanda[i]).removeAttr("checked");
-	    			//$(offanda[i]).attr("disabled", "disabled");
+	    			$(offanda[i]).attr("disabled", "disabled");
 	    		
 	    		}
-	    	
 	    	
 	    	}
 	    }
@@ -434,14 +432,7 @@ $(document).ready(
 			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });
 		
 		}
-		
-		$(".toggle-open").click(hic.hideSearch);
-		$(".toggle-closed").click(hic.showSearch);		
-		$("#vals-and-records-wrapper").width(hic.getValsAndRecordsWidth("init"));
-		hic.positionTogglePointer();
-		$("#search-toggle").height($("#facet-wrapper").height());
-
-		
+			
 	    /***********************************************
 	     END HIDE/REVEAL
 	     **********************************************/
@@ -534,18 +525,22 @@ $(document).ready(
 			}
 		
 		});
-		
+		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
+		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
+		// select substring as default
+		$("#substring").click();
+		$(".toggle-open").click(hic.hideSearch);
+		$(".toggle-closed").click(hic.showSearch);		
+		$("#vals-and-records-wrapper").width(hic.getValsAndRecordsWidth("init"));
+		hic.positionTogglePointer();
+		$("#search-toggle").height($("#facet-wrapper").height());
 		// changing date mode causes tidy and submit
 		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
 		// turning betacode on/off selects text input
 		$("#beta-on").change(function(){$("#keyword").focus();});
 		// entry into string search triggers text monitoring 
 		$("#keyword").focus(hic.monitorTextInput);
-		// $("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
-		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
-		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
-		// select substring as default
-		$("#substring").click();
+		 $("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
 		// submit triggers tidy ...
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		// ... unless checks need to be in place first
