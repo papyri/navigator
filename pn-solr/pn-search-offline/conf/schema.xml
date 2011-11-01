@@ -81,6 +81,8 @@
     <field name="latest_date" type="int" indexed="true" stored="true"/>
     <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false"
       required="false"/>
+    <field name="apis_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="hgv_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="images" type="boolean" indexed="true" stored="false"/>
     <field name="images-ext" type="boolean" indexed="true" stored="true"/>
@@ -143,6 +145,8 @@
 
   <copyField source="transcription_ia" dest="all"/>
   <copyField source="translation" dest="all"/>
-  <copyField source="metadata" dest="all"/>
-
+  <copyField source="hgv_metadata" dest="all"/>
+  <copyField source="apis_metadata" dest="all"/>
+  <copyField source="hgv_metadata" dest="metadata"/>
+  <copyField source="apis_metadata" dest="metadata"/>
 </schema>

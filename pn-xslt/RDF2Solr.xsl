@@ -193,34 +193,36 @@
               <xsl:with-param name="alterity">self</xsl:with-param>
             </xsl:call-template>
             <xsl:choose>
-            <xsl:when test="$hgv or $apis">
-              <xsl:call-template name="facetfields">
-                <xsl:with-param name="docs"
-                  select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
-                <xsl:with-param name="alterity">other</xsl:with-param>
-              </xsl:call-template>
-              <xsl:call-template name="facetfields">
-                <xsl:with-param name="docs"
-                  select="pi:get-docs($relations[contains(., '/apis/')][1], 'xml')"/>
-                <xsl:with-param name="alterity">other</xsl:with-param>
-              </xsl:call-template>
-              <xsl:call-template name="metadata">
-                <xsl:with-param name="hgv-docs"
-                  select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
-                <xsl:with-param name="docs"
-                  select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
-                />
-              </xsl:call-template>
-              <xsl:call-template name="translation">
-                <xsl:with-param name="docs"
-                  select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
-                />
-              </xsl:call-template>
-          </xsl:when>
-          <xsl:otherwise>
-            <field name="unknown_date_flag">true</field>
-          </xsl:otherwise>
-          </xsl:choose>
+              <xsl:when test="$hgv or $apis">
+                <xsl:call-template name="facetfields">
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
+                  <xsl:with-param name="alterity">other</xsl:with-param>
+                </xsl:call-template>
+                <xsl:call-template name="facetfields">
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., '/apis/')][1], 'xml')"/>
+                  <xsl:with-param name="alterity">other</xsl:with-param>
+                </xsl:call-template>
+                <xsl:call-template name="metadata">
+                  <xsl:with-param name="hgv-docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
+                  <xsl:with-param name="apis-docs"
+                    select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
+                  />
+                </xsl:call-template>
+                <xsl:call-template name="translation">
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
+                  />
+                </xsl:call-template>
+              </xsl:when>
+              <xsl:otherwise>
+                <field name="unknown_date_flag">true</field>
+              </xsl:otherwise>
+            </xsl:choose>
             <xsl:call-template name="images">
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
@@ -247,10 +249,13 @@
               <xsl:with-param name="alterity">other</xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="metadata">
-              <xsl:with-param name="hgv-docs"
-                select="pi:get-docs($relations[contains(., 'hgv/')], 'xml') union /"/>
-              <xsl:with-param name="docs"
+              <xsl:with-param name="hgv-docs" select="/">
+              </xsl:with-param>
+              <xsl:with-param name="apis-docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
+              <xsl:with-param name="docs"
+                select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"
+              />
             </xsl:call-template>
             <xsl:call-template name="images">
               <xsl:with-param name="docs"
@@ -267,6 +272,7 @@
             </xsl:call-template>
             <xsl:call-template name="metadata">
               <xsl:with-param name="hgv-docs" select="/.."/>
+              <xsl:with-param name="apis-docs" select="/"/>
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
             <xsl:call-template name="translation">
@@ -524,7 +530,7 @@
           />
         </field>
         <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
-          <xsl:if test="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:authority = 'APIS'"> -->
+          <xsl:if test="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:authority = 'APIS'">
               <field name="apis_title">
               <xsl:value-of select="."/>
             </field>
@@ -553,6 +559,7 @@
 
   <xsl:template name="metadata">
     <xsl:param name="hgv-docs"/>
+    <xsl:param name="apis-docs"/>
     <xsl:param name="docs"/>
     <field name="display_place">
       <xsl:value-of
@@ -583,89 +590,156 @@
       </xsl:choose>
     </field>
     <xsl:choose>
-    <xsl:when test="count(tokenize($relevant-date-nodeset, ' ')) gt 0">
-      <field name="earliest_date">
-        <xsl:value-of
-          select="pi:get-min-date(remove(tokenize($relevant-date-nodeset, ' '), 1), pi:iso-date-to-num(tokenize($relevant-date-nodeset, ' ')[1]), false())"
-        />
-      </field>
-      <field name="latest_date">
-        <xsl:value-of
-          select="pi:get-max-date(remove(tokenize($relevant-date-nodeset, ' '), 1), pi:iso-date-to-num(tokenize($relevant-date-nodeset, ' ')[1]), false())"
-        />
-      </field>
-    </xsl:when>
-        <!-- unknown date -->
-    <xsl:otherwise>
-      <field name="unknown_date_flag">true</field>
-    </xsl:otherwise>
-      </xsl:choose>
-    <field name="metadata">
+      <xsl:when test="count(tokenize($relevant-date-nodeset, ' ')) gt 0">
+        <field name="earliest_date">
+          <xsl:value-of
+            select="pi:get-min-date(remove(tokenize($relevant-date-nodeset, ' '), 1), pi:iso-date-to-num(tokenize($relevant-date-nodeset, ' ')[1]), false())"
+          />
+        </field>
+        <field name="latest_date">
+          <xsl:value-of
+            select="pi:get-max-date(remove(tokenize($relevant-date-nodeset, ' '), 1), pi:iso-date-to-num(tokenize($relevant-date-nodeset, ' ')[1]), false())"
+          />
+        </field>
+      </xsl:when>
+      <!-- unknown date -->
+      <xsl:otherwise>
+        <field name="unknown_date_flag">true</field>
+      </xsl:otherwise>
+    </xsl:choose>
+    <field name="hgv_metadata">
       <!-- Title -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Summary -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Publications -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition'], ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition'], ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Inv. Id -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Physical Desc. -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Post-concordance BL Entries -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections'], ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections'], ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Translations -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations'], ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations'], ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Provenance -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Material -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Language -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:textLang, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:textLang, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Date -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Commentary -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:text/t:body/t:div[@type='commentary']/t:p, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:text/t:body/t:div[@type='commentary']/t:p, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Notes (general|lines|palaeography|recto/verso|conservation|preservation) -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:note, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:note, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Print Illustrations -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl], ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl], ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Subjects -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:profileDesc/t:textClass/t:keywords, ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:profileDesc/t:textClass/t:keywords, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Associated Names -->
       <xsl:value-of
-        select="normalize-space(string-join($docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
+        select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
       <xsl:text> </xsl:text>
 
+    </field>
+
+    <field name="apis_metadata">
+      <!-- Title -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Summary -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Publications -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition'], ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Inv. Id -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Physical Desc. -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Post-concordance BL Entries -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections'], ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Translations -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations'], ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Provenance -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Material -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Language -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:textLang, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Date -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Commentary -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:text/t:body/t:div[@type='commentary']/t:p, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Notes (general|lines|palaeography|recto/verso|conservation|preservation) -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:note, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Print Illustrations -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl], ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Subjects -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:profileDesc/t:textClass/t:keywords, ' '))"/>
+      <xsl:text> </xsl:text>
+      <!-- Associated Names -->
+      <xsl:value-of
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
+      <xsl:text> </xsl:text>
     </field>
     <xsl:choose>
       <xsl:when
@@ -838,7 +912,7 @@
       <xsl:when test="starts-with($date, '-')">
         <xsl:sequence select=" number(substring($date, 1, 5))"/>
       </xsl:when>
-      <xsl:when test="not(number(substring($date, 1, 4)))"></xsl:when>
+      <xsl:when test="not(number(substring($date, 1, 4)))"/>
       <xsl:otherwise>
         <xsl:sequence select="number(substring($date, 1, 4))"/>
       </xsl:otherwise>
