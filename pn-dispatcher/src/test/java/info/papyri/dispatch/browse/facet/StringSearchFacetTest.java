@@ -289,7 +289,7 @@ public class StringSearchFacetTest extends TestCase {
         
         // translation search -
         // field should be translation
-         StringSearchFacet.SearchConfiguration tinstance6 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TRANSLATIONS, StringSearchFacet.SearchType.PHRASE, false, false, 0);
+         StringSearchFacet.SearchConfiguration tinstance6 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TRANSLATION, StringSearchFacet.SearchType.PHRASE, false, false, 0);
          assertEquals("translation:(λόγιος)", tinstance6.substituteFields("λόγιος"));
          
         // all search -

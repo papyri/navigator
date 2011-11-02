@@ -361,7 +361,7 @@ public class FileUtils {
   public List<String> highlightMatches(String query, String t) {
     List<String> result = new ArrayList<String>();
     Pattern[] patterns = getPatterns(query);
-    String text = t.toString().replaceAll(hyphenatedLineNum, "Ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
+    String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓝ$3ⓞ").replaceAll(hyphenatedLineNum, "Ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
       int prevEnd = 0;
@@ -390,14 +390,15 @@ public class FileUtils {
           }
         }
         if (start >= prevEnd) {
-          result.add(highlight(query, text.substring(start, end)).replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
+          result.add(highlight(query, text.substring(start, end)).replaceAll("Ⓝ([^ⓞ]+)ⓞ"
+                  + "", "-]<br/>$1 ").replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
           }
           prevEnd = end;
         } else {
           String hit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
-          result.add(highlight(query, hit).replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
+          result.add(highlight(query, hit).replaceAll("Ⓝ([^ⓞ]+)ⓞ", "-]<br/>$1 ").replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
           }
@@ -559,9 +560,10 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ)*";
+  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓞ)*";
   private static String exclude = "(<span\\s[^>]+>[^<]+</span>|<a\\s[^>]+>[^<]+</a>|<[^>]+>|&\\w+;)";
   private static String lineNum = "((\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
+  private static String hyphenatedLineNumInSupplied = "(-\\](\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNum = "(-(\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlStartMark = "Ⓐ";

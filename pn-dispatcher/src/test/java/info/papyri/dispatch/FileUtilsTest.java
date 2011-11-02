@@ -199,7 +199,7 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/bgu;16;2629";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
-    expResult.add("στρ̣[ατη]-<br/>31. γῶι");
+    expResult.add("στρ̣[ατη-]<br/>31. γῶι");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
