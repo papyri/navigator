@@ -775,9 +775,9 @@
     <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="t:lb[@type='inWord']"/>
+  <xsl:template match="t:lb[@break='no']"/>
 
-  <xsl:template match="t:lb[not(@type='inWord')]">
+  <xsl:template match="t:lb[not(@break='no')]">
     <xsl:text> </xsl:text>
   </xsl:template>
 
