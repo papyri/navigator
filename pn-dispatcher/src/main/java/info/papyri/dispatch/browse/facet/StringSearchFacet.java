@@ -36,7 +36,7 @@ import org.apache.solr.common.SolrDocumentList;
 public class StringSearchFacet extends Facet{
     
     enum SearchType{ PHRASE, SUBSTRING, LEMMAS, PROXIMITY, WITHIN, USER_DEFINED  };
-    enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATIONS, USER_DEFINED };
+    enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATION, USER_DEFINED };
     enum SearchOption{ NO_CAPS, NO_MARKS };
 
     private HashMap<Integer, SearchConfiguration> searchConfigurations = new HashMap<Integer, SearchConfiguration>();
@@ -136,10 +136,10 @@ public class StringSearchFacet extends Facet{
         html.append(SearchTarget.METADATA.name().toLowerCase());
         html.append("\" id=\"metadata-label\">Metadata</label>");
         html.append("<input type=\"radio\" name=\"target\" value=\"");        
-        html.append(SearchTarget.TRANSLATIONS.name().toLowerCase());
+        html.append(SearchTarget.TRANSLATION.name().toLowerCase());
         html.append("\" value=\"on\" id=\"target-translations\" class=\"target\"/>");
         html.append("<label for=\"");
-        html.append(SearchTarget.TRANSLATIONS.name().toLowerCase());
+        html.append(SearchTarget.TRANSLATION.name().toLowerCase());
         html.append("\" id=\"translation-label\">Translations</label>");
         html.append("<input type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.ALL.name().toLowerCase());
@@ -802,7 +802,11 @@ public class StringSearchFacet extends Facet{
             
             if(type.equals(SearchType.USER_DEFINED)){
                 
-                fieldString = fieldString.replaceAll("\\blem:", "transcription_ia:");
+                fieldString = Pattern.compile("\\blem:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.transcription_ia.name() + ":");
+                fieldString = Pattern.compile("\\bstring:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.transcription_ngram_ia.name() + ":");
+                fieldString = Pattern.compile("\\bapis:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.apis_metadata.name() + ":");
+                fieldString = Pattern.compile("\\bhgv:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.hgv_metadata.name() + ":");
+                fieldString = Pattern.compile("\\bmeta:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.metadata.name() + ":");
                 return fieldString;
                 
             }
@@ -860,7 +864,7 @@ public class StringSearchFacet extends Facet{
             
             }
             
-            else if(target.equals(SearchTarget.TRANSLATIONS)){
+            else if(target.equals(SearchTarget.TRANSLATION)){
                 
                 fieldDesignator = SolrField.translation.name();
             
