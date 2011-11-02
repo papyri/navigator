@@ -45,6 +45,7 @@
   <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
+  <xsl:import href="pi-txt-teilb.xsl"/>
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
