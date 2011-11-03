@@ -21,14 +21,19 @@
       <doc>
         <field name="id"><xsl:value-of select="t:idno[@type='pi']"/></field>
         <field name="sort"><xsl:call-template name="sort"/></field>
-        <field name="date"><xsl:choose>
-          <xsl:when test="number(//t:date[1]) = number(//t:date[1])">
-            <field name="date"><xsl:value-of select="//t:date"/></field>
+        <field name="date"><xsl:for-each select="t:date">
+          <xsl:if test="position() = 1">
+            <xsl:choose>
+          <xsl:when test="number(.) = number(.)">
+            <xsl:value-of select="."/>
           </xsl:when>
           <xsl:otherwise>
-            <field name="date">99999</field>
+            99999
           </xsl:otherwise>
-        </xsl:choose></field>
+        </xsl:choose>
+          </xsl:if>
+          
+        </xsl:for-each></field>
         <field name="display"><xsl:call-template name="escapeTags"><xsl:with-param name="markup" select="$citation"/></xsl:call-template></field>
       <xsl:apply-templates/>
     </doc>
