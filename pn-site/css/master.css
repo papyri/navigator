@@ -369,6 +369,13 @@ margin-bottom: 0;
 float: left;
 margin-left: -2em;
 }
+
+.linenumberbroken {
+color: red;
+float: left;
+margin-left: -2em;
+}
+
     
 .underline {
 text-decoration: underline;

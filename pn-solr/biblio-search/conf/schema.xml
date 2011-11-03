@@ -12,11 +12,14 @@
       </analyzer>
     </fieldType>
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true"
+      positionIncrementGap="0"/>
   </types>
 
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="identifier" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="date" type="int" indexed="true" stored="false" required="true"/>
     <field name="sort" type="string" indexed="true" stored="false" required="true"/>
     <field name="display" type="string" indexed="false" stored="true" required="true"/>
     <dynamicField name="*" type="lctext" indexed="true" stored="false" multiValued="true"/>

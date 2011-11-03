@@ -31,6 +31,17 @@
     <field name="identifier">urn:cts:<xsl:value-of select="@type"/>:<xsl:value-of select="pi:escape-urn(.)"/></field>
   </xsl:template>
   
+  <xsl:template match="t:date">
+    <xsl:choose>
+      <xsl:when test="number(.) = number(.)">
+        <field name="date"><xsl:value-of select="."/></field>
+      </xsl:when>
+      <xsl:otherwise>
+        <field name="date">99999</field>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
   <xsl:template name="sort">
     <xsl:choose>
       <xsl:when test="t:author[@n]">
@@ -50,7 +61,7 @@
   </xsl:template>
   
   <xsl:template match="t:note">
-    <field name="{@type}"><xsl:value-of select="."/></field>
+    <field name="note"><xsl:value-of select="."/></field>
   </xsl:template>
   
   <xsl:template match="t:seg">

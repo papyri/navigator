@@ -59,15 +59,17 @@
   </xsl:template>
   
   <xsl:template match="t:bibl">
-    <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="source">xml</a><xsl:text>] </xsl:text><!--<a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text>--></p>
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
-      <div class="bp-cite">
-        <h4>original BP record</h4>
-        <p><xsl:for-each select="t:seg[@type='original']">
-          <xsl:value-of select="@subtype"/>: <xsl:value-of select="."/><xsl:if test="position() != last()"><br/></xsl:if>
-        </xsl:for-each></p>
+      <div> <!-- class="bp-cite" -->
+        <h4>Original BP record</h4>
+        <p><xsl:apply-templates select="t:seg[@type='original']|t:not[@resp='#BP']"/></p>
       </div>
     </xsl:if>
+    <div>
+      <h4>Provisional papyri.info output</h4>
+      <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="source">xml</a><xsl:text>] </xsl:text><!--<a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text>--></p>
+    </div>
+    
   </xsl:template>
   
   <xsl:template name="buildCitation">
@@ -134,7 +136,7 @@
         <xsl:if test="t:publisher or t:date">(<xsl:if test="$main//t:publisher"><xsl:value-of select="$main/t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="$main//t:date"/>)</xsl:if> <xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
       </xsl:when>
       <!-- journal -->
-      <xsl:when test="t:title[@level='j']"><xsl:if test="t:publisher">(<xsl:value-of select="t:publisher"/>)</xsl:if></xsl:when>
+      <xsl:when test="t:title[@level='j']"><xsl:if test="t:publisher">(<xsl:value-of select="t:publisher"/><xsl:text> </xsl:text><xsl:value-of select="t:date"/>)</xsl:if></xsl:when>
       <!-- book -->
       <xsl:when test="t:title[@level='m']">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
       <xsl:when test="t:publisher or t:date">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
@@ -143,6 +145,22 @@
   
   <xsl:template name="pages">
     <xsl:value-of select="t:biblScope[@type='pp']"/>
+  </xsl:template>
+  
+  <xsl:template match="t:seg[@type='original']">
+    <xsl:choose>
+      <xsl:when test="@subtype='index'">Index: <xsl:value-of select="."/><br/></xsl:when>
+      <xsl:when test="@subtype='indexBis'">Index Bis: <xsl:value-of select="."/><br/></xsl:when>
+      <xsl:when test="@subtype='titre'">Titre: <xsl:value-of select="."/><br/></xsl:when>
+      <xsl:when test="@subtype='publication'">Publication: <xsl:value-of select="."/><br/></xsl:when>
+      <xsl:when test="@subtype='sbSeg'">S.B. &amp; S.E.G.: <xsl:value-of select="."/><br/></xsl:when>
+      <xsl:when test="@subtype='cr'">C.R.: <xsl:value-of select="."/><br/></xsl:when>
+      <xsl:when test="@subtype='nom'"/>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="t:note[@resp='#BP']">
+    Résumé: <xsl:value-of select="."/><br/>
   </xsl:template>
   
 </xsl:stylesheet>
