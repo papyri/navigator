@@ -62,7 +62,7 @@
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div> <!-- class="bp-cite" -->
         <h4>Original BP record</h4>
-        <p><xsl:apply-templates select="t:seg[@type='original']|t:not[@resp='#BP']"/></p>
+        <p><xsl:apply-templates select="t:seg[@type='original']|t:note[@resp='#BP']"/></p>
       </div>
     </xsl:if>
     <div>
