@@ -21,6 +21,14 @@
       <doc>
         <field name="id"><xsl:value-of select="t:idno[@type='pi']"/></field>
         <field name="sort"><xsl:call-template name="sort"/></field>
+        <field name="date"><xsl:choose>
+          <xsl:when test="number(//t:date[1]) = number(//t:date[1])">
+            <field name="date"><xsl:value-of select="//t:date"/></field>
+          </xsl:when>
+          <xsl:otherwise>
+            <field name="date">99999</field>
+          </xsl:otherwise>
+        </xsl:choose></field>
         <field name="display"><xsl:call-template name="escapeTags"><xsl:with-param name="markup" select="$citation"/></xsl:call-template></field>
       <xsl:apply-templates/>
     </doc>
@@ -31,16 +39,9 @@
     <field name="identifier">urn:cts:<xsl:value-of select="@type"/>:<xsl:value-of select="pi:escape-urn(.)"/></field>
   </xsl:template>
   
-  <xsl:template match="t:date">
-    <xsl:choose>
-      <xsl:when test="number(.) = number(.)">
-        <field name="date"><xsl:value-of select="."/></field>
-      </xsl:when>
-      <xsl:otherwise>
-        <field name="date">99999</field>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
+  <xsl:template match="t:date"/>
+    
+  
   
   <xsl:template name="sort">
     <xsl:choose>
