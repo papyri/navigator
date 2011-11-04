@@ -45,6 +45,7 @@
   <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
+  <xsl:import href="pi-txt-teilb.xsl"/>
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
@@ -847,9 +848,9 @@
     <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="t:lb[@type='inWord']"/>
+  <xsl:template match="t:lb[@break='no']"/>
 
-  <xsl:template match="t:lb[not(@type='inWord')]">
+  <xsl:template match="t:lb[not(@break='no')]">
     <xsl:text> </xsl:text>
   </xsl:template>
 

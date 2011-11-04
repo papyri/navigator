@@ -1,5 +1,6 @@
 @import url("custom-theme/jquery-ui-1.8.14.custom.css");
 @import url("jquery.bubblepopup.v2.1.5.css");
+@import url("yui/reset-fonts-grids.css");
 
 html {
 background: #ccc;
@@ -369,6 +370,13 @@ margin-bottom: 0;
 float: left;
 margin-left: -2em;
 }
+
+.linenumberbroken {
+color: red;
+float: left;
+margin-left: -2em;
+}
+
     
 .underline {
 text-decoration: underline;
