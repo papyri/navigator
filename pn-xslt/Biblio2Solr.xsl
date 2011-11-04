@@ -21,15 +21,17 @@
       <doc>
         <field name="id"><xsl:value-of select="t:idno[@type='pi']"/></field>
         <field name="sort"><xsl:call-template name="sort"/></field>
-        <field name="date"><xsl:for-each select="//t:date">
-          <xsl:if test="position() = 1">
-            <xsl:choose>
-          <xsl:when test="string-length(normalize-space(.)) > 0 and number(.) = number(.)"><xsl:value-of select="."/></xsl:when>
+        <field name="date"><xsl:choose>
+          <xsl:when test="//t:date"><xsl:for-each select="//t:date">
+            <xsl:if test="position() = 1">
+              <xsl:choose>
+                <xsl:when test="string-length(normalize-space(.)) > 0 and number(.) = number(.)"><xsl:value-of select="."/></xsl:when>
+                <xsl:otherwise>99999</xsl:otherwise>
+              </xsl:choose>
+            </xsl:if>
+          </xsl:for-each></xsl:when>
           <xsl:otherwise>99999</xsl:otherwise>
-        </xsl:choose>
-          </xsl:if>
-          
-        </xsl:for-each></field>
+        </xsl:choose></field>
         <field name="display"><xsl:call-template name="escapeTags"><xsl:with-param name="markup" select="$citation"/></xsl:call-template></field>
       <xsl:apply-templates/>
     </doc>
