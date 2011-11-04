@@ -704,5 +704,37 @@ td.kwic {
     
 }
 
+/*  MORE-LIKE-THIS ADDITIONS THILL 2011.11.04 */
+
+div.metadata div.more-like-this{
+    
+    display: inline;
+    font-size: 80%;
+    font-family: inherit;
+    margin-top: 0px;
+    margin-left: 15px;
+
+}
+
+div.more-like-this a{
+    
+    margin-right: 10px;
+    
+}
+
+div.more-like-this a:before{
+    
+    content:"[";
+    
+}
+
+div.more-like-this a:after{
+    
+    content:"]";
+    
+}
+
+/* END MORE-LIKE-THIS ADDITIONS */
+
 
 
