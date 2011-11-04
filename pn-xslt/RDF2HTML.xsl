@@ -11,6 +11,7 @@
   version="2.0" exclude-result-prefixes="#all">
   
   <xsl:import href="global-varsandparams.xsl"/>
+  <xsl:import href="morelikethis-varsandparams.xsl"/>
   
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
   <xsl:import href="htm-teiab.xsl"/>
@@ -67,7 +68,7 @@
   <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
-  
+  <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
   <xsl:param name="collection"/>
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
@@ -520,7 +521,27 @@
     <xsl:variable name="pubcount" select="count(../t:div[@type = 'bibliography' and @subtype = 'otherPublications']//t:bibl) + 1"/>
     <tr>
       <th class="rowheader" rowspan="{$pubcount}">Publications</th>
-      <td><xsl:value-of select=".//t:bibl"/></td>
+      <td>
+        <xsl:value-of select=".//t:bibl"/>
+        <!-- more-like-this output -->
+        <xsl:if test=".//t:title[@level='s']">
+          <div class="more-like-this">
+          <xsl:variable name="series-name">
+            <xsl:value-of select=".//t:title[@level='s'][1]"></xsl:value-of>
+          </xsl:variable>
+          <a href="{concat($facet-root, $series-param, '=', $series-name)}" title="More in series {$series-name}" target="_blank">More in series <xsl:value-of select="$series-name"></xsl:value-of></a>
+          <xsl:if test=".//t:biblScope[@type='volume']">
+            <xsl:variable name="series-name">
+            <xsl:value-of select=".//t:title[@level='s'][1]"></xsl:value-of>
+          </xsl:variable>
+            <xsl:variable name="volume-name">
+              <xsl:value-of select=".//t:biblScope[@type='volume']"></xsl:value-of>
+            </xsl:variable>
+            <a href="{concat($facet-root, $series-param, '=', $series-name, '&amp;', $volume-param, '=', $volume-name)}" title="More in series {$series-name}, vol. {$volume-name}" target="_blank">More in series <xsl:value-of select="$series-name"/>, vol. <xsl:value-of select="$volume-name"/></a>
+          </xsl:if>
+            </div>
+        </xsl:if>
+      </td>
     </tr>
     <xsl:for-each select="../t:div[@type = 'bibliography' and @subtype = 'otherPublications']//t:bibl">
       <tr>
@@ -592,6 +613,13 @@
             <xsl:if test="t:geogName[@type='nome']"><xsl:value-of select="t:geogName[@type='nome']"/><xsl:if test="t:geogName[@type='ancientRegion']">, </xsl:if></xsl:if>
             <xsl:value-of select="t:geogName[@type='ancientRegion']"/></xsl:otherwise>
         </xsl:choose>
+          <!-- more-like-this output -->        
+          <xsl:if test="//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])">
+            <xsl:variable name="provenance-value">
+              <xsl:value-of select="normalize-space(string-join(/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"></xsl:value-of>
+            </xsl:variable>
+            <div class="more-like-this"><a href="{concat($facet-root, $provenance-param, '=', $provenance-value)}" title="More from {$provenance-value}" target="_blank">More from <xsl:value-of select="$provenance-value"></xsl:value-of></a></div>
+          </xsl:if>
       </td>
     </tr>
   </xsl:template>
@@ -619,7 +647,25 @@
   <xsl:template match="t:textLang" mode="metadata">
     <tr>
       <th class="rowheader">Language</th>
-      <td><xsl:value-of select="."/></td>
+      <td>
+        <xsl:value-of select="."/>
+        <!-- more-like-this output -->
+        <!-- nb: impossible to test at present owing to problems with how language information is selected. See http://idp.atlantides.org/trac/idp/ticket/916 -->
+        <xsl:variable name="all-langs-found" select="distinct-values(//t:div[@type='edition']/descendant-or-self::*/@xml:lang)"></xsl:variable>
+        <xsl:if test="count($all-langs-found) > 0 and count(//t:langUsage/t:language) > 0">
+          <div class="more-like-this">
+            <xsl:for-each select="//t:langUsage/t:language">
+              <xsl:variable name="ident" select="string(@ident)"/>
+              <xsl:if test="index-of($all-langs-found, $ident)">
+                <xsl:if test="key('lang-codes', $ident)">
+                  <xsl:variable name="expansion"><xsl:value-of select="key('lang-codes', $ident)"></xsl:value-of></xsl:variable>
+                  <a href="{concat($facet-root, $language-param, '=', $ident)}" title="More texts in {$expansion}" target="_blank">More texts in <xsl:value-of select="$expansion"></xsl:value-of></a>
+                </xsl:if>
+              </xsl:if>             
+            </xsl:for-each>
+          </div>
+        </xsl:if>
+      </td>
     </tr>
   </xsl:template>
   
@@ -627,9 +673,139 @@
   <xsl:template match="t:origDate" mode="metadata">
     <tr>
       <th class="rowheader">Date</th>
-      <td class="mddate"><xsl:value-of select="."/></td>
+      <td class="mddate">
+        <xsl:value-of select="."/>
+        <!-- more-like-this output -->
+        <xsl:if test="./(@when|@notBefore|@notAfter)">
+          <xsl:variable name="date-start">
+            <xsl:choose>
+              <xsl:when test="./@when">
+               <xsl:value-of select="pi:trim-date-to-year(./@when)"></xsl:value-of>
+              </xsl:when>
+              <xsl:when test="./@notBefore">
+                <xsl:value-of select="pi:trim-date-to-year(./@notBefore)"></xsl:value-of>
+              </xsl:when>
+              <xsl:otherwise>no start date</xsl:otherwise>
+            </xsl:choose> 
+          </xsl:variable>
+         <xsl:variable name="temp-date-end">
+           <xsl:choose>
+             <xsl:when test="./@when">
+                 <xsl:value-of select="pi:trim-date-to-year(./@when) + 1"></xsl:value-of>
+             </xsl:when>
+             <xsl:when test="./@notAfter">
+               <xsl:value-of select="pi:trim-date-to-year(./@notAfter)"></xsl:value-of>
+             </xsl:when>
+             <xsl:otherwise>no end date</xsl:otherwise>
+           </xsl:choose>
+          </xsl:variable>
+           <xsl:variable name="date-end">
+             <xsl:choose>
+             <xsl:when test="$temp-date-end eq $date-start">
+               <xsl:value-of select="$temp-date-end + 1"></xsl:value-of>
+             </xsl:when>
+               <xsl:otherwise>
+                 <xsl:value-of select="$temp-date-end"></xsl:value-of>
+               </xsl:otherwise>
+             </xsl:choose>
+           </xsl:variable>
+          <xsl:variable name="and">&amp;</xsl:variable>
+           <xsl:variable name="date-start-querystring">
+             <xsl:choose>
+               <xsl:when test="$date-start eq 'no start date'"></xsl:when>
+               <xsl:otherwise>
+                 <xsl:value-of select="$and"></xsl:value-of>
+                 <xsl:value-of select="$date-start-param"></xsl:value-of>
+                 <xsl:text>=</xsl:text>
+                 <xsl:value-of select="$date-start"></xsl:value-of>
+                <xsl:value-of select="$and"></xsl:value-of>
+                 <xsl:value-of select="$date-start-era-param"></xsl:value-of>
+                 <xsl:text>=</xsl:text>
+                 <xsl:value-of select="pi:get-era($date-start)"></xsl:value-of>
+               </xsl:otherwise>
+             </xsl:choose>
+           </xsl:variable>
+           <xsl:variable name="date-end-querystring">
+             <xsl:choose>
+               <xsl:when test="$date-end eq 'no end date'"></xsl:when>
+               <xsl:otherwise>
+                 <xsl:value-of select="$and"></xsl:value-of>
+                 <xsl:value-of select="$date-end-param"></xsl:value-of>
+                 <xsl:text>=</xsl:text>
+                 <xsl:value-of select="$date-end"></xsl:value-of>
+                 <xsl:value-of select="$and"></xsl:value-of>
+                 <xsl:value-of select="$date-end-era-param"></xsl:value-of>
+                 <xsl:text>=</xsl:text>
+                 <xsl:value-of select="pi:get-era($date-end)"></xsl:value-of>
+               </xsl:otherwise>
+             </xsl:choose>
+           </xsl:variable>
+          <xsl:variable name="span-label">
+            <xsl:choose>
+              <xsl:when test="$date-start eq 'no start date'">
+                <xsl:text> before </xsl:text>
+                <xsl:value-of select="$date-end"></xsl:value-of>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="pi:get-era($date-end)"/>
+              </xsl:when>
+              <xsl:when test="$date-end eq 'no end date'">
+                <xsl:text> after </xsl:text>
+                <xsl:value-of select='$date-start'></xsl:value-of>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="pi:get-era($date-start)"></xsl:value-of>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text> between </xsl:text>
+                <xsl:value-of select="$date-start"></xsl:value-of>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="pi:get-era($date-start)"></xsl:value-of>
+                <xsl:text> and </xsl:text>
+                <xsl:value-of select="$date-end"></xsl:value-of>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="pi:get-era($date-end)"></xsl:value-of>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
+          <xsl:variable name="date-mode">
+            <xsl:value-of select="$date-mode-param"></xsl:value-of>
+            <xsl:text>=</xsl:text>
+            <xsl:value-of select="$date-mode-value"></xsl:value-of>
+          </xsl:variable>
+          <xsl:variable name="anchor" select="concat($facet-root, $date-mode, $date-start-querystring, $date-end-querystring)"></xsl:variable>
+          <div class="more-like-this"><a href="{$anchor}" title="More from this timespan" target="_blank">More from the period <xsl:value-of select="$span-label"></xsl:value-of></a></div>
+        </xsl:if>
+      </td>
     </tr>
   </xsl:template>
+  
+  <xsl:function name="pi:trim-date-to-year">
+    <xsl:param name="raw-date"></xsl:param>
+    <xsl:variable name="cooked-date">
+    <xsl:analyze-string select="$raw-date" regex="(-?\d{{4}})(-\d{{1,2}}){{0,2}}">
+      <xsl:matching-substring>
+        <xsl:value-of select="regex-group(1)"></xsl:value-of>
+      </xsl:matching-substring>
+    </xsl:analyze-string>
+    </xsl:variable>
+    <xsl:variable name="trimmed-date">
+      <xsl:choose>
+        <xsl:when test="substring($cooked-date, 1, 1) eq '0'"><xsl:value-of select="substring($cooked-date, 2)"></xsl:value-of></xsl:when>
+        <xsl:otherwise><xsl:value-of select="$cooked-date"></xsl:value-of></xsl:otherwise>
+      </xsl:choose>    
+    </xsl:variable>
+    <xsl:sequence select="number($trimmed-date)"></xsl:sequence>
+  </xsl:function>
+  
+  <xsl:function name="pi:get-era">
+    <xsl:param name="raw-year"></xsl:param>
+    <xsl:variable name="era">
+      <xsl:choose>
+      <xsl:when test="number($raw-year) lt 0">BCE</xsl:when>
+      <xsl:otherwise>CE</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:sequence select="$era"></xsl:sequence>
+  </xsl:function>
   
   <!-- Notes -->
   <xsl:template match="t:msItem/t:note" mode="metadata">
@@ -703,3 +879,4 @@
     <xsl:value-of select="@rdf:about"/>
   </xsl:template>
 </xsl:stylesheet>
+
