@@ -60,12 +60,12 @@
   
   <xsl:template match="t:bibl">
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
-      <div> <!-- class="bp-cite" -->
+      <div class="biblio"> <!-- class="bp-cite" -->
         <h4>Original BP record</h4>
         <p><xsl:apply-templates select="t:seg[@type='original']|t:note[@resp='#BP']"/></p>
       </div>
     </xsl:if>
-    <div>
+    <div class="biblio">
       <h4>Provisional papyri.info output</h4>
       <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="source">xml</a><xsl:text>] </xsl:text><!--<a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text>--></p>
     </div>
