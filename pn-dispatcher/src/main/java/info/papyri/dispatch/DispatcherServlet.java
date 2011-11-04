@@ -103,6 +103,8 @@ public class DispatcherServlet extends HttpServlet {
         }
         if ("hgvtrans".equals(domain)) {
           params.put("query", hgvtrans(query.toString()));
+        } if ("biblio".equals(domain)) {
+          params.put("query", biblio(query.toString()));
         }
         params.put("default-graph-uri", graph);
         params.put("format", format);
@@ -280,6 +282,13 @@ public class DispatcherServlet extends HttpServlet {
       return "construct{<http://papyri.info/hgvtrans/" + in + "/source> " +
                 "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> " +
                 "where {<http://papyri.info/hgvtrans/" + in + "/source> ?Predicate ?Object} "
+             + "order by ?Object";
+    }
+    
+    protected String biblio(String in) {
+      return "construct{<http://papyri.info/biblio/" + in + "> " +
+                "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> " +
+                "where {<http://papyri.info/biblio/" + in + "> ?Predicate ?Object} "
              + "order by ?Object";
     }
 

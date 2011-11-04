@@ -2,7 +2,8 @@
 <!-- $Id: htm-teilb.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
-  exclude-result-prefixes="t" version="2.0">
+   xmlns:EDF="http://epidoc.sourceforge.net/ns/functions"
+  exclude-result-prefixes="t EDF" version="2.0">
    <!-- Actual display and increment calculation found in teilb.xsl -->
    <xsl:import href="teilb.xsl"/>
 
@@ -26,30 +27,26 @@
                </xsl:if>
             </xsl:variable>
 
-            <xsl:if
-               test="(@break='no' or @type='inWord') 
-               and preceding-sibling::node()[1][not(local-name() = 'space' or
-                        local-name() = 'g' or
-                        (local-name()='supplied' and @reason='lost') or
+            <xsl:if test="(@break='no' or @type='inWord')">
+               <!-- print hyphen if break=no  -->
+               <xsl:choose>
+                  <!--    *unless* diplomatic edition  -->
+                  <xsl:when test="$edition-type='diplomatic'"/>
+                  <!--    *or unless* the lb is first in its ancestor div  -->
+                  <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1])"/>
+                  <!--   *or unless* the second part of an app in ddbdp  -->
+                  <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and
+                           (ancestor::t:corr or ancestor::t:reg or ancestor::t:rdg or ancestor::t:del[parent::t:subst])"/>
+                  <!--  *unless* previous line ends with space / g / supplied[reason=lost]  -->
+                  <xsl:when test="preceding-sibling::node()[1][local-name() = 'space' or
+                        local-name() = 'g' or (local-name()='supplied' and @reason='lost') or
                         (normalize-space(.)='' 
                                  and preceding-sibling::node()[1][local-name() = 'space' or
-                                 local-name() = 'g' or
-                                 (local-name()='supplied' and @reason='lost')]))]
-               and not(($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and
-                           (ancestor::t:sic or ancestor::t:orig[../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)]] 
-                           or ancestor::t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang) and
-                                                       not(../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)])]
-                           or ancestor::t:rdg or ancestor::t:del[ancestor::t:choice])
-                           or ancestor::t:reg[not(@xml:lang)][preceding-sibling::t:reg[not(@xml:lang)]]
-                           or ancestor::t:del[@rend='corrected'][parent::t:subst])
-               and not($edition-type='diplomatic')
-               and not(generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1]))">
-               <!-- print hyphen if break=no
-                              *unless* previous line ends with space / g / supplied[reason=lost]
-                              *or unless* the second part of an app in ddbdp
-                              *or unless* diplomatic edition
-                              *or unless* the lb is first in its ancestor div  -->
-               <xsl:text>-</xsl:text>
+                                 local-name() = 'g' or (local-name()='supplied' and @reason='lost')])]"/>
+                  <xsl:otherwise>
+                      <xsl:text>-</xsl:text>
+                  </xsl:otherwise>
+               </xsl:choose>
             </xsl:if>
             <xsl:choose>
                <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1])">
@@ -60,11 +57,9 @@
                </xsl:when>
                <xsl:when
                   test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') 
-                  and (ancestor::t:sic or ancestor::t:orig[../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)]] 
-                        or ancestor::t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang) and
-                        not(../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)])]
+                  and (ancestor::t:sic 
+                        or ancestor::t:reg
                         or ancestor::t:rdg or ancestor::t:del[ancestor::t:choice])
-                        or ancestor::t:reg[not(@xml:lang)][preceding-sibling::t:reg[not(@xml:lang)]]
                         or ancestor::t:del[@rend='corrected'][parent::t:subst]">
                   <xsl:choose>
                      <xsl:when test="@break='no' or @type='inWord'">
@@ -96,14 +91,32 @@
                      and unless it is a gap line or vacat in DDbDP -->
                   <xsl:call-template name="margin-num"/>
                </xsl:when>
-               <xsl:when test="preceding-sibling::t:*[1][local-name() = 'gap'][@unit = 'line']">
-                  <!-- always print line-no after gap line -->
+               <xsl:when test="$leiden-style = 'ddbdp' and preceding-sibling::t:*[1][local-name()='gap'][@unit = 'line']">
+                  <!-- always print line-no after gap line in ddbdp -->
+                  <xsl:call-template name="margin-num"/>
+               </xsl:when>
+               <xsl:when test="$leiden-style = 'ddbdp' and following::t:lb[1][ancestor::t:reg[following-sibling::t:orig[not(descendant::t:lb)]]]">
+                  <!-- always print line-no when broken orig in line, in ddbdp -->
                   <xsl:call-template name="margin-num"/>
                </xsl:when>
             </xsl:choose>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
+   
+   <xsl:function name="EDF:f-wwrap">
+      <!-- called by teisupplied.xsl, teig.xsl and teispace.xsl -->
+      <xsl:param name="ww-context"/>
+         <xsl:choose>
+            <xsl:when test="$ww-context/following-sibling::node()[1][(local-name()='lb' and (@break='no' or @type='inWord'))
+            or normalize-space(.)='' and following-sibling::node()[1][local-name()='lb' and (@break='no' or @type='inWord')]]">
+               <xsl:value-of select="true()"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="false()"/>
+            </xsl:otherwise>
+         </xsl:choose>
+   </xsl:function>
 
 
    <xsl:template name="margin-num">
@@ -111,30 +124,31 @@
          <!-- don't print marginal line number inside tags that are relegated to the apparatus (ddbdp) -->
          <xsl:when
             test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') 
-            and (ancestor::t:sic or ancestor::t:orig[../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)]] 
-            or ancestor::t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang) and
-            not(../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)])]
+            and (ancestor::t:sic
+            or ancestor::t:reg
             or ancestor::t:rdg or ancestor::t:del[ancestor::t:choice])
-            or ancestor::t:reg[not(@xml:lang)][preceding-sibling::t:reg[not(@xml:lang)]]
             or ancestor::t:del[@rend='corrected'][parent::t:subst]"/>
          <xsl:otherwise>
-            <span class="linenumber">
+            <span>
+                  <xsl:choose>
+                     <xsl:when test="$leiden-style = 'ddbdp' and following::t:lb[1][ancestor::t:reg[following-sibling::t:orig[not(descendant::t:lb)]]]">
+                        <xsl:attribute name="class">
+                           <xsl:text>linenumberbroken</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                           <xsl:text>line-break missing in orig</xsl:text>
+                        </xsl:attribute>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:attribute name="class">
+                           <xsl:text>linenumber</xsl:text>
+                         </xsl:attribute>
+                     </xsl:otherwise>
+                  </xsl:choose>
                <xsl:value-of select="@n"/>
             </span>
          </xsl:otherwise>
       </xsl:choose>
-      
-      <!--<xsl:if test="not(apparatus-style = 'ddbdp' 
-                                 and (ancestor::t:sic
-                                          or ancestor::t:orig[../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)]]
-                                          or ancestor::t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)
-                                                         and not(../t:reg[not(@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang)])]
-                                          or ancestor::t:rdg or ancestor::t:del[ancestor::t:choice]
-                                          or ancestor::t:reg[not(@xml:lang)][preceding-sibling::t:reg[not(@xml:lang)]]))">
-         <span class="linenumber">
-            <xsl:value-of select="@n"/>
-         </span>
-      </xsl:if>-->
    </xsl:template>
 
 </xsl:stylesheet>

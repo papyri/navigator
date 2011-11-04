@@ -1,5 +1,6 @@
 @import url("custom-theme/jquery-ui-1.8.14.custom.css");
 @import url("jquery.bubblepopup.v2.1.5.css");
+@import url("yui/reset-fonts-grids.css");
 
 html {
 background: #ccc;
@@ -369,6 +370,13 @@ margin-bottom: 0;
 float: left;
 margin-left: -2em;
 }
+
+.linenumberbroken {
+color: red;
+float: left;
+margin-left: -2em;
+}
+
     
 .underline {
 text-decoration: underline;
@@ -703,6 +711,38 @@ td.kwic {
     width: 550px; /* shrunk for faceted display */
     
 }
+
+/*  MORE-LIKE-THIS ADDITIONS THILL 2011.11.04 */
+
+div.metadata div.more-like-this{
+    
+    display: inline;
+    font-size: 80%;
+    font-family: inherit;
+    margin-top: 0px;
+    margin-left: 15px;
+
+}
+
+div.more-like-this a{
+    
+    margin-right: 10px;
+    
+}
+
+div.more-like-this a:before{
+    
+    content:"[";
+    
+}
+
+div.more-like-this a:after{
+    
+    content:"]";
+    
+}
+
+/* END MORE-LIKE-THIS ADDITIONS */
 
 
 
