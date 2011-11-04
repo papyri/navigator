@@ -21,10 +21,10 @@
       <doc>
         <field name="id"><xsl:value-of select="t:idno[@type='pi']"/></field>
         <field name="sort"><xsl:call-template name="sort"/></field>
-        <field name="date"><xsl:for-each select="t:date">
+        <field name="date"><xsl:for-each select="//t:date">
           <xsl:if test="position() = 1">
             <xsl:choose>
-          <xsl:when test="number(.) = number(.)">
+          <xsl:when test="string-length(.) > 0 and number(.) = number(.)">
             <xsl:value-of select="."/>
           </xsl:when>
           <xsl:otherwise>
