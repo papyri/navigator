@@ -24,7 +24,7 @@
         <field name="date"><xsl:for-each select="//t:date">
           <xsl:if test="position() = 1">
             <xsl:choose>
-          <xsl:when test="string-length(.) > 0 and number(.) = number(.)"><xsl:value-of select="."/></xsl:when>
+          <xsl:when test="string-length(normalize-space(.)) > 0 and number(.) = number(.)"><xsl:value-of select="."/></xsl:when>
           <xsl:otherwise>99999</xsl:otherwise>
         </xsl:choose>
           </xsl:if>
@@ -41,9 +41,7 @@
   </xsl:template>
   
   <xsl:template match="t:date"/>
-    
-  
-  
+      
   <xsl:template name="sort">
     <xsl:choose>
       <xsl:when test="t:author[@n]">
