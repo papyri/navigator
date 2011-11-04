@@ -128,7 +128,7 @@
       <!-- article in journal -->
       <xsl:when test="$main//t:title[@level='j']">
         <!-- TODO: get additional biblScope values -->
-        <xsl:value-of select="t:biblScope[@type='issue']"/> <xsl:if test="t:book">(<xsl:value-of select="$main//t:date"/>)</xsl:if>
+        <xsl:value-of select="t:biblScope[@type='issue']"/><xsl:text> </xsl:text><xsl:if test="t:date">(<xsl:value-of select="t:date"/>)</xsl:if>
       </xsl:when>
       <!-- article in book -->
       <xsl:when test="$main//t:title[@level='m']">
@@ -136,7 +136,7 @@
         <xsl:if test="t:publisher or t:date">(<xsl:if test="$main//t:publisher"><xsl:value-of select="$main/t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="$main//t:date"/>)</xsl:if> <xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
       </xsl:when>
       <!-- journal -->
-      <xsl:when test="t:title[@level='j']"><xsl:if test="t:publisher">(<xsl:value-of select="t:publisher"/><xsl:text> </xsl:text><xsl:value-of select="t:date"/>)</xsl:if></xsl:when>
+      <xsl:when test="t:title[@level='j']"><xsl:if test="t:publisher or t:date">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:if></xsl:when>
       <!-- book -->
       <xsl:when test="t:title[@level='m']">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
       <xsl:when test="t:publisher or t:date">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
