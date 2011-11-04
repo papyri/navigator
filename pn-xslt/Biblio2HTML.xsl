@@ -62,7 +62,12 @@
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="biblio"> <!-- class="bp-cite" -->
         <h4>Original BP record</h4>
-        <p><xsl:apply-templates select="t:seg[@type='original']|t:note[@resp='#BP']"/></p>
+        <p><xsl:apply-templates select="t:seg[@type='original' and @subtype='index']"/>
+          <xsl:apply-templates select="t:seg[@type='original' and @subtype='indexBis']"/>
+          <xsl:apply-templates select="t:seg[@type='original' and @subtype='titre']"/>
+          <xsl:apply-templates select="t:seg[@type='original' and @subtype='publication']"/>
+          <xsl:apply-templates select="t:note[@resp='#BP']"/>
+          <xsl:apply-templates select="t:seg[@type='original' and @subtype='sbSeg']"/></p>
       </div>
     </xsl:if>
     <div class="biblio">
