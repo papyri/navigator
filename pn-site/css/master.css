@@ -79,7 +79,8 @@ div.search h2 {
 font-size:167%;
 border:none;
 font-weight:normal;
-margin-left:0.5em;
+margin-left:0.6em;
+float: left;
 }
 
 div.content h3 {
