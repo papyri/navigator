@@ -205,6 +205,10 @@ $(document).ready(
 	    	var endval = dateend.val();
 	    	if(endval != "") filteredels.push(dateend);
 	    	
+	    	var docsperpage = $("#DOCS_PER_PAGE");
+	    	var docsval = docsperpage.val();
+	    	if(docsval.match(/^\d{1,3}$/) && docsval > 0) filteredels.push(docsperpage);
+	    	
 	    	// note that there are two separate means of entering dates: 
 	    	// using a drop-down selector, or via text input
 	    	// to avoid the need to disambiguate these and decide issues
@@ -362,6 +366,7 @@ $(document).ready(
 	    			
     			$("#facet-wrapper").height(finalHeight);
     			$("#facet-widgets-wrapper").addClass("search-closed");
+    			$("form[name='facets']").addClass("search-closed");
     			$("#facet-widgets-wrapper").offset({ left:-23 });
     			$("#facet-widgets-wrapper").removeClass("search-open");
     			$("#search-toggle").addClass("toggle-closed");
@@ -395,6 +400,7 @@ $(document).ready(
 			var newWidgetWidthVal = widgetWrapperWidth;
 			$("#vals-and-records-wrapper").css("position", "absolute");
 			$("#facet-widgets-wrapper").removeClass("search-closed");
+	    	$("form[name='facets']").removeClass("search-closed");
 			$("#facet-widgets-wrapper").css("left", "-" + newWidgetWidthVal + "px");
 	    	$("#facet-widgets-wrapper").addClass("search-open");
 			var newValsWidth = hic.getValsAndRecordsWidth("show-search");

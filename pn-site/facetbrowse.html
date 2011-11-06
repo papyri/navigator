@@ -74,13 +74,13 @@
       
       }
       
-	 .search-closed h2, .search-closed form{
+	 .search-closed #facet-widgets-wrapper h2, .search-closed .facet-widget, .search-closed#search-reset-wrapper {
 	 
 	 	display: none;
 	 
 	 }
       
-      #facet-widgets-wrapper form{
+      form[name="facets"]{
       
         width: 100%;
       	position: relative;
@@ -105,6 +105,7 @@
       
       #search-toggle{
       
+      	display: block;
       	cursor: pointer;
       	width: 20px;
       	height: 100%;	
@@ -463,10 +464,9 @@
       }
       
       #search-reset-wrapper{
-      
-      	position: absolute;
-      	right: 0px;
-      	top: -45px;
+
+      	float: right;
+      	margin-top: 15px;
       
       }
       
@@ -546,6 +546,46 @@
      input#STRICT{
       	
       	margin-left: 3em;
+      }
+      
+      #results-prefix-wrapper{
+      
+      	position: relative;
+      
+      }
+      
+      #results-prefix{
+      
+      	width: 75%;
+      	float: left;
+      
+      }
+      
+      #results-prefix p{
+      
+      	clear: both;
+      
+      }
+      
+      #docs-per-page{
+      
+      	position: relative;
+      	float: right;
+      	width: 245px;
+      	margin-top: 20px;
+      
+      }
+      
+      #docs-per-page input#DOCS_PER_PAGE{
+      
+      	width: 35px;
+      
+      }
+      
+      #docs-per-page label{
+      
+      	font-size: 85%;
+		padding-right: 10px;      
       }
     </style>
 

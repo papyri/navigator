@@ -18,6 +18,7 @@ public enum FacetParam {
     IMG,
     TRANSL,
     TRANSC,
-    IDENTIFIER
+    IDENTIFIER,
+    DOCS_PER_PAGE
     
 }
