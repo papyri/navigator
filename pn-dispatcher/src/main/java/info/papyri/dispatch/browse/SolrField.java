@@ -56,6 +56,6 @@ public enum SolrField {
         series_led_path,
         volume_led_path,
         idno_led_path,
-        apis_title
+        title
         
 }

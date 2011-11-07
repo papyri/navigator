@@ -131,7 +131,7 @@
     <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="false"/>
     <field name="apis_publication_id" type="string" indexed="false" stored="true"
       multiValued="false"/>
-    <field name="apis_title" type="text" indexed="false" stored="true" multiValued="true"/>
+    <field name="title" type="text" indexed="false" stored="true" multiValued="false"/>
   </fields>
 
 

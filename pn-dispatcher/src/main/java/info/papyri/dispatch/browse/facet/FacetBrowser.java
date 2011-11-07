@@ -345,8 +345,8 @@ public class FacetBrowser extends HttpServlet {
                 String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());   // i.e., provenance
                 Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
                 String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());      // original language
-                Boolean titleIsNull = doc.getFieldValue(SolrField.apis_title.name()) == null;
-                ArrayList<String> documentTitles = titleIsNull ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_title.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+                Boolean titleIsNull = doc.getFieldValue(SolrField.title.name()) == null;
+                ArrayList<String> documentTitles = titleIsNull ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.title.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
                 Boolean languageIsNull = doc.getFieldValue(SolrField.facet_language.name()) == null;
                 String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
                 Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
