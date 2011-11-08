@@ -155,7 +155,7 @@
   <xsl:template match="t:seg[@type='original']">
     <xsl:choose>
       <xsl:when test="@subtype='index'">Index: <xsl:value-of select="."/><br/></xsl:when>
-      <xsl:when test="@subtype='indexBis'">Index Bis: <xsl:value-of select="."/><br/></xsl:when>
+      <xsl:when test="@subtype='indexBis'">Index bis: <xsl:value-of select="."/><br/></xsl:when>
       <xsl:when test="@subtype='titre'">Titre: <xsl:value-of select="."/><br/></xsl:when>
       <xsl:when test="@subtype='publication'">Publication: <xsl:value-of select="."/><br/></xsl:when>
       <xsl:when test="@subtype='sbSeg'">S.B. &amp; S.E.G.: <xsl:value-of select="."/><br/></xsl:when>

@@ -194,12 +194,31 @@ public class FileUtilsTest extends TestCase {
   }
 
 
-  public void testFindMatchesLinebreak() {
+  public void testFindMatchesLinebreakInSupplied() {
     String query = "transcription_ngram_ia:(στρατηγωι)";
     String id = "http://papyri.info/ddbdp/bgu;16;2629";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("στρ̣[ατη-]<br/>31. γῶι");
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    int matches = 0;
+    for (String r : result) {
+      for (String e : expResult) {
+        if (r.contains(e)) {
+          matches++;
+          break;
+        }
+      }
+    }
+    assertEquals(expResult.size(), matches);
+  }
+  
+  public void testFindMatchesLinebreak() {
+    String query = "transcription_ngram_ia:(στρατηγ)";
+    String id = "http://papyri.info/ddbdp/bgu;2;432";
+    FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    List<String> expResult = new ArrayList<String>();
+    expResult.add("σ]τρατηγ</span>είας");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
