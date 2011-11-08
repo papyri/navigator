@@ -29,14 +29,13 @@ $(document).ready(
 		// values are list of elements that *must* be 
 		// switched on or off onclick.
 
-    	hic.reqd_off["substring"] = ["#target-metadata", "#target-translations", "#target-all"];
-    	hic.reqd_on["substring"] = ["#target-text"];
-		hic.reqd_on["lemmas"] = ["#caps", "#marks", "#target-text"];
-		hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
-		hic.reqd_off["target-metadata"] = ["#beta-on"];
-		hic.reqd_off["target-translations"] = ["#beta-on"];
-		hic.reqd_on["target-all"] = ["#phrase", "#caps", "#marks"];
-		hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
+		hic.reqd_on["target-metadata"] = ["#caps", "#marks"];
+		hic.reqd_off["target-metadata"] = ["#beta-on", "#substring", "#lemmas"];
+		hic.reqd_on["target-translations"] = ["#caps", "#marks"];
+		hic.reqd_off["target-translations"] = ["#beta-on", "#substring", "#lemmas"];
+		hic.reqd_on["target-all"] = ["#caps", "#marks"];
+		//hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
+		//hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
 		
 		/**
 		 * Restricts user options so that only possible string-search configurations
@@ -122,6 +121,14 @@ $(document).ready(
 	    		}
 	    	
 	    	}
+	    	
+	    	// check whether a search-type is now selected
+	    	// if not, default to 'Word/Phrase' search
+	    	if($("input[name='type']:checked").length == 0){
+	    		
+	    		$("#phrase").attr("checked", "checked");
+	    	
+	    	}
 	    }
 	    
 	    /**
@@ -197,6 +204,10 @@ $(document).ready(
 	    	var dateend = $("#DATE_END_TEXT");
 	    	var endval = dateend.val();
 	    	if(endval != "") filteredels.push(dateend);
+	    	
+	    	var docsperpage = $("#DOCS_PER_PAGE");
+	    	var docsval = docsperpage.val();
+	    	if(docsval.match(/^\d{1,3}$/) && docsval > 0) filteredels.push(docsperpage);
 	    	
 	    	// note that there are two separate means of entering dates: 
 	    	// using a drop-down selector, or via text input
@@ -355,6 +366,7 @@ $(document).ready(
 	    			
     			$("#facet-wrapper").height(finalHeight);
     			$("#facet-widgets-wrapper").addClass("search-closed");
+    			$("form[name='facets']").addClass("search-closed");
     			$("#facet-widgets-wrapper").offset({ left:-23 });
     			$("#facet-widgets-wrapper").removeClass("search-open");
     			$("#search-toggle").addClass("toggle-closed");
@@ -388,6 +400,7 @@ $(document).ready(
 			var newWidgetWidthVal = widgetWrapperWidth;
 			$("#vals-and-records-wrapper").css("position", "absolute");
 			$("#facet-widgets-wrapper").removeClass("search-closed");
+	    	$("form[name='facets']").removeClass("search-closed");
 			$("#facet-widgets-wrapper").css("left", "-" + newWidgetWidthVal + "px");
 	    	$("#facet-widgets-wrapper").addClass("search-open");
 			var newValsWidth = hic.getValsAndRecordsWidth("show-search");

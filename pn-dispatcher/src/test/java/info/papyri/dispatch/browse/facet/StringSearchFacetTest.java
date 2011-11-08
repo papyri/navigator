@@ -1,10 +1,21 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import junit.framework.TestCase;
+import org.apache.lucene.search.TermQuery;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.TermsResponse;
+import org.apache.solr.client.solrj.response.TermsResponse.Term;
+import org.apache.solr.common.params.CommonParams;
 
 
 
@@ -507,7 +518,61 @@ public class StringSearchFacetTest extends TestCase {
         
     }
     
+    public void testTerms(){
+        
+        try{
+        
+            System.out.println("Entering terms test");
+            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8083/solr/pn-search/");
+            SolrQuery sq = new SolrQuery();
+            sq.setParam(CommonParams.QT, "/terms");
+            sq.setTerms(true);
+            sq.setTermsLimit(10);
+            sq.addTermsField("transcription_ia");
+            sq.setTermsRegex(".*(?<!δ)ικοσ.*");
+            sq.setQuery("*:*");
+            System.out.println("Query is " + sq.toString());
+            QueryResponse qr = solrServer.query(sq, METHOD.POST);
+            TermsResponse termResponse = qr.getTermsResponse();
+            for(Term term : termResponse.getTerms("transcription_ia")){
+                
+                System.out.println("Term is " + term.getTerm());
+                
+            }
+            
+            String test1 = "cab";
+            if(test1.matches(".*(?<!b)b")){
+                
+                System.out.println("Test 1 matches");
+                
+            }
+            else{
+                
+                System.out.println("Test 1 doesn't match");
+                
+            }
+            
+            
+            
 
+        }
+        catch(MalformedURLException mue){
+            
+            System.out.println("Could not access solr server: " + mue.getMessage());
+            
+            
+        }
+        catch(SolrServerException sse){
+            
+            System.out.println("Query error: " + sse.getCause());
+            
+        }
+        
+        
+        
+        
+        
+    }
 
 
 }

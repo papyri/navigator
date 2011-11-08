@@ -79,7 +79,8 @@ div.search h2 {
 font-size:167%;
 border:none;
 font-weight:normal;
-margin-left:0.5em;
+margin-left:0.6em;
+float: left;
 }
 
 div.content h3 {
@@ -516,6 +517,11 @@ tr.result-record {
 }
 
 td.kwic {
+  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
   padding-left: 1em;
   padding-top: .5em;
   padding-bottom: .5em;
@@ -714,6 +720,38 @@ td.kwic {
     width: 550px; /* shrunk for faceted display */
     
 }
+
+/*  MORE-LIKE-THIS ADDITIONS THILL 2011.11.04 */
+
+div.metadata div.more-like-this{
+    
+    display: inline;
+    font-size: 80%;
+    font-family: inherit;
+    margin-top: 0px;
+    margin-left: 15px;
+
+}
+
+div.more-like-this a{
+    
+    margin-right: 10px;
+    
+}
+
+div.more-like-this a:before{
+    
+    content:"[";
+    
+}
+
+div.more-like-this a:after{
+    
+    content:"]";
+    
+}
+
+/* END MORE-LIKE-THIS ADDITIONS */
 
 
 

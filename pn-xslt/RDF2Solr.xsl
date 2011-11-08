@@ -753,7 +753,6 @@
           />
         </field>
       </xsl:when>
-      <!-- edited thill 2011.05.11 for multiple possible findspots -->
       <xsl:when
         test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace">
         <xsl:variable name="doc"
@@ -765,7 +764,6 @@
           </field>
         </xsl:for-each>
       </xsl:when>
-      <!-- end thill 2011.05.11 -->
     </xsl:choose>
 
 
@@ -906,100 +904,5 @@
 
     </xsl:choose>
   </xsl:template>
-
-  <xsl:function name="pi:iso-date-to-num">
-    <xsl:param name="date"/>
-    <xsl:choose>
-      <xsl:when test="starts-with($date, '-')">
-        <xsl:sequence select=" number(substring($date, 1, 5))"/>
-      </xsl:when>
-      <xsl:when test="not(number(substring($date, 1, 4)))"/>
-      <xsl:otherwise>
-        <xsl:sequence select="number(substring($date, 1, 4))"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
-  <xsl:function name="pi:get-date-range">
-    <xsl:param name="date-seq"/>
-    <xsl:variable name="min"
-      select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), true())"/>
-    <xsl:variable name="max"
-      select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), true())"/>
-    <xsl:choose>
-      <xsl:when test="$min = $max">
-        <xsl:sequence select="$min"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="concat($min, ' - ', $max)"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
-  <xsl:function name="pi:get-min-date">
-    <xsl:param name="date-seq"/>
-    <xsl:param name="current"/>
-    <xsl:param name="for-display"/>
-    <xsl:choose>
-      <xsl:when test="count($date-seq) = 0">
-        <xsl:choose>
-          <xsl:when test="$for-display">
-            <xsl:sequence select="pi:add-era($current)"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:sequence select="number($current)"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="pi:iso-date-to-num($date-seq[1]) lt $current">
-        <xsl:sequence
-          select="pi:get-min-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), $for-display)"
-        />
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="pi:get-min-date(remove($date-seq, 1), $current, $for-display)"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
-  <xsl:function name="pi:get-max-date">
-    <xsl:param name="date-seq"/>
-    <xsl:param name="current"/>
-    <xsl:param name="for-display"/>
-    <xsl:choose>
-      <xsl:when test="count($date-seq) = 0">
-        <xsl:choose>
-          <xsl:when test="$for-display">
-            <xsl:sequence select="pi:add-era($current)"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:sequence select="number($current)"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="pi:iso-date-to-num($date-seq[1]) gt $current">
-        <xsl:sequence
-          select="pi:get-max-date(remove($date-seq, 1), pi:iso-date-to-num($date-seq[1]), $for-display)"
-        />
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="pi:get-max-date(remove($date-seq, 1), $current, $for-display)"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
-  <xsl:function name="pi:add-era">
-    <xsl:param name="raw-date"/>
-    <xsl:choose>
-      <xsl:when test="$raw-date le 0">
-        <xsl:sequence select="concat(abs($raw-date), ' BCE')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="concat($raw-date, ' CE')"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
-
 
 </xsl:stylesheet>
