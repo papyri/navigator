@@ -50,6 +50,7 @@
 (def links (ref (ConcurrentLinkedQueue.)))
 (def words (ref (ConcurrentSkipListSet.)))
 (def solr (ref nil))
+(def solrbiblio (ref nil))
 (def *current*)
 (def *doc*)
 (def *index*)
@@ -99,7 +100,7 @@
 			(.addField solrdoc (.toString current) (.toString chars))
 			(doto current (.delete 0 (.length current)))))
 	  (endDocument []
-		       (.add @solr solrdoc))))))
+		       (.add @solrbiblio solrdoc))))))
 
 (defn copy
   "Performs a file copy from the source to the destination, making directories if necessary."
@@ -575,13 +576,40 @@
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
     (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))]
       (.commit solr))))
+
+(defn -loadBiblio []
+  (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
+  (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")
+  (dosync (ref-set solrbiblio (StreamingUpdateSolrServer. (str solrurl "biblio-search/") 1000 5))
+          (.setRequestWriter @solrbiblio (BinaryRequestWriter.)))
+
+  ;; Generate and Index bibliography
+  (println "Generating and indexing bibliography...")
+  (let [pool (Executors/newFixedThreadPool nthreads)
+        htmlpath (str htpath "/biblio/")
+        files (file-seq (File. (str filepath "/Biblio")))
+        tasks (map (fn [x]
+                     (fn []
+                       (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
+                       (transform (str "file://" (.getAbsolutePath x)) ()
+                                  (StreamResult. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html"))))
+                                  @bibhtmltemplates)))
+                   (filter #(.endsWith (.getName %) ".xml") files))]
+    (doseq [future (.invokeAll pool tasks)]
+      (.get future))
+    (doto pool
+      (.shutdown)))
+
+  (println "Optimizing index...")
+  (doto @solrbiblio
+    (.commit)
+    (.optimize)))
+
    
 (defn -index [& args]
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
-  (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
-  (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")
 
   (if (nil? (first args))
     (do
@@ -606,14 +634,14 @@
   (println "Generating text...")
   (generate-text)
 
-  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search-offline/") 5000 5))
+  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search-offline/") 500 5))
 	  (.setRequestWriter @solr (BinaryRequestWriter.)))
   
   ;; Index docs queued in @text
   (println "Indexing text...")
   (let [pool (Executors/newFixedThreadPool nthreads)
         tasks
-  	(map (fn [x]
+   	(map (fn [x]
   	       (fn []
   		 (when (not (.startsWith (first x) "http"))
   		   (transform (first x)
@@ -633,36 +661,13 @@
     (ref-set text nil)
     (ref-set solrtemplates nil))
   
-  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "biblio-search/") 5000 5))
-	  (.setRequestWriter @solr (BinaryRequestWriter.)))
-  
-  (print-words)
+  (print-words))
 
-  ;; Generate and Index bibliography
-  (println "Generating and indexing bibliography...")
-  (let [pool (Executors/newFixedThreadPool nthreads)
-	htmlpath (str htpath "/biblio/")
-	files (file-seq (File. (str filepath "/Biblio")))
-	tasks (map (fn [x]
-		     (fn []
-		       (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
-		       (transform (str "file://" (.getAbsolutePath x)) ()
-				  (StreamResult. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html"))))
-				  @bibhtmltemplates)))
-		   (filter #(.endsWith (.getName %) ".xml") files))]
-    (doseq [future (.invokeAll pool tasks)]
-      (.get future))
-    (doto pool
-      (.shutdown)))
-
-  (println "Optimizing index...")
-  (doto @solr
-    (.commit)
-    (.optimize)))
 
 (defn -main [& args]
   (if (> (count args) 0)
-    (if (= (first args) "load-lemmas")
-      (-loadLemmas)
+    (case (first args) 
+      "load-lemmas" (-loadLemmas)
+      "biblio" (-loadBiblio)
       (-index args))
     (-index)))

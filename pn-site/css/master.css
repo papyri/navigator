@@ -301,6 +301,9 @@ width: 20%;
 div#edition {
 margin-left: 3em;
 }
+div.biblio {
+margin:1em;
+}
 div.bp-cite {
 border:thin solid silver;
 margin:2em;
