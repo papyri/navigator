@@ -302,6 +302,9 @@ width: 20%;
 div#edition {
 margin-left: 3em;
 }
+div.biblio {
+margin:1em;
+}
 div.bp-cite {
 border:thin solid silver;
 margin:2em;
@@ -514,6 +517,11 @@ tr.result-record {
 }
 
 td.kwic {
+  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
   padding-left: 1em;
   padding-top: .5em;
   padding-bottom: .5em;
