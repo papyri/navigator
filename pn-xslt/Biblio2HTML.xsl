@@ -67,7 +67,9 @@
           <xsl:apply-templates select="t:seg[@type='original' and @subtype='titre']"/>
           <xsl:apply-templates select="t:seg[@type='original' and @subtype='publication']"/>
           <xsl:apply-templates select="t:note[@resp='#BP']"/>
-          <xsl:apply-templates select="t:seg[@type='original' and @subtype='sbSeg']"/></p>
+          <xsl:apply-templates select="t:seg[@type='original' and @subtype='sbSeg']"/>
+          <xsl:apply-templates select="t:seg[@type='original' and @subtype='cr']"/>
+          <xsl:call-template name="bpId" /></p>
       </div>
     </xsl:if>
     <div class="biblio">
@@ -138,13 +140,13 @@
       <!-- article in book -->
       <xsl:when test="$main//t:title[@level='m']">
         <xsl:if test="t:series"><xsl:value-of select="t:series/t:title[@level='s']"/><xsl:if test="t:series/t:biblScope[@type='volume']"> vol. <xsl:value-of select="t:series/t:biblScope[@type='volume']"/></xsl:if></xsl:if>
-        <xsl:if test="t:publisher or t:date">(<xsl:if test="$main//t:publisher"><xsl:value-of select="$main/t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="$main//t:date"/>)</xsl:if> <xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
+        <xsl:if test="t:pubPlace or t:date">(<xsl:if test="$main//t:pubPlace"><xsl:value-of select="$main/t:pubPlace"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="$main//t:date"/>)</xsl:if> <xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
       </xsl:when>
       <!-- journal -->
       <xsl:when test="t:title[@level='j']"><xsl:if test="t:publisher or t:date">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:if></xsl:when>
       <!-- book -->
-      <xsl:when test="t:title[@level='m']">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
-      <xsl:when test="t:publisher or t:date">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
+      <xsl:when test="t:title[@level='m']">(<xsl:if test="t:pubPlace"><xsl:value-of select="t:pubPlace"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
+      <xsl:when test="t:pubPlace or t:date">(<xsl:if test="t:pubPlace"><xsl:value-of select="t:pubPlace"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
     </xsl:choose>
   </xsl:template>
   
@@ -166,6 +168,20 @@
   
   <xsl:template match="t:note[@resp='#BP']">
     Résumé: <xsl:value-of select="."/><br/>
+  </xsl:template>
+
+  <xsl:template name="bpId">
+    <xsl:choose>
+      <xsl:when test="string(//t:idno[@type='bp'])">
+        No: <xsl:value-of select="//t:idno[@type='bp']"/><br/>
+      </xsl:when>
+      <xsl:when test="string(//t:idno[@type='bp_old'])">
+        Ancien No: <xsl:value-of select="//t:idno[@type='bp_old']"/><br/>
+      </xsl:when>
+      <xsl:otherwise>
+        There is no bp id available
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
 </xsl:stylesheet>
