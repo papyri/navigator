@@ -229,6 +229,7 @@
                 select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
               />
             </xsl:call-template>
+            <xsl:call-template name="revision-history"></xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id">http://papyri.info/hgv/<xsl:value-of
@@ -262,6 +263,7 @@
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
+            <xsl:call-template name="revision-history"></xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
             <field name="id">http://papyri.info/apis/<xsl:value-of
@@ -289,9 +291,7 @@
               </field>
             </xsl:for-each>
             <xsl:call-template name="images"/>
-            <field name="apis_title">
-              <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"/>
-            </field>
+            <xsl:call-template name="revision-history"></xsl:call-template>
           </xsl:when>
         </xsl:choose>
       </doc>
@@ -530,16 +530,6 @@
             select="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
           />
         </field>
-        <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
-          <xsl:if test="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:authority = 'APIS'">
-              <field name="apis_title">
-              <xsl:value-of select="."/>
-            </field>
-          </xsl:if>
-        </xsl:for-each>
-        <field name="apis_title">
-          <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"/>
-        </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
             <xsl:value-of select="$apis_series"/>
@@ -562,6 +552,11 @@
     <xsl:param name="hgv-docs"/>
     <xsl:param name="apis-docs"/>
     <xsl:param name="docs"/>
+    <xsl:call-template name="title">
+      <xsl:with-param name="hgv-docs"><xsl:copy-of select="$hgv-docs"></xsl:copy-of></xsl:with-param>
+      <xsl:with-param name="apis-docs"><xsl:copy-of select="$apis-docs"></xsl:copy-of></xsl:with-param>
+      <xsl:with-param name="docs"><xsl:copy-of select="$docs"></xsl:copy-of></xsl:with-param>
+    </xsl:call-template>
     <field name="display_place">
       <xsl:value-of
         select="normalize-space(string-join($docs[.//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])][1]/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"
@@ -879,6 +874,34 @@
         <xsl:call-template name="ddbdp-app"/>
       </xsl:for-each>
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="title">
+    <xsl:param name="hgv-docs"/>
+    <xsl:param name="apis-docs"/>
+    <xsl:param name="docs"/>
+    <xsl:if test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
+      <field name="title">
+    <xsl:choose>
+      <xsl:when test="$hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
+        <xsl:value-of select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"></xsl:value-of>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"></xsl:value-of>
+      </xsl:otherwise>
+    </xsl:choose>
+        </field>
+    </xsl:if>
+  </xsl:template>
+
+<xsl:template name="revision-history">
+          <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
+         <field name="first_revised">
+          <xsl:value-of select="concat(pi:get-earliest-date(/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, /t:TEI/t:teiHeader/t:revisionDesc/t:change[@when][1]), $date-suffix)"></xsl:value-of>
+        </field>
+        <field name="last_revised">
+         <xsl:value-of select="concat(pi:get-latest-date(/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, /t:TEI/t:teiHeader/t:revisionDesc/t:change[@when][1]), $date-suffix)"></xsl:value-of>
+        </field>  
   </xsl:template>
 
   <xsl:template name="ddbdp-app">
