@@ -229,6 +229,7 @@
                 select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
               />
             </xsl:call-template>
+            <xsl:call-template name="revision-history"></xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id">http://papyri.info/hgv/<xsl:value-of
@@ -262,6 +263,7 @@
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
+            <xsl:call-template name="revision-history"></xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
             <field name="id">http://papyri.info/apis/<xsl:value-of
@@ -289,6 +291,7 @@
               </field>
             </xsl:for-each>
             <xsl:call-template name="images"/>
+            <xsl:call-template name="revision-history"></xsl:call-template>
           </xsl:when>
         </xsl:choose>
       </doc>
@@ -889,7 +892,16 @@
     </xsl:choose>
         </field>
     </xsl:if>
-    
+  </xsl:template>
+
+<xsl:template name="revision-history">
+          <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
+         <field name="first_revised">
+          <xsl:value-of select="concat(pi:get-earliest-date(/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, /t:TEI/t:teiHeader/t:revisionDesc/t:change[@when][1]), $date-suffix)"></xsl:value-of>
+        </field>
+        <field name="last_revised">
+         <xsl:value-of select="concat(pi:get-latest-date(/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, /t:TEI/t:teiHeader/t:revisionDesc/t:change[@when][1]), $date-suffix)"></xsl:value-of>
+        </field>  
   </xsl:template>
 
   <xsl:template name="ddbdp-app">
