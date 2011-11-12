@@ -229,7 +229,7 @@
                 select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
               />
             </xsl:call-template>
-            <xsl:call-template name="revision-history"></xsl:call-template>
+            <!--<xsl:call-template name="revision-history"/>-->
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id">http://papyri.info/hgv/<xsl:value-of
@@ -263,7 +263,7 @@
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
             </xsl:call-template>
-            <xsl:call-template name="revision-history"></xsl:call-template>
+            <!--<xsl:call-template name="revision-history"/>-->
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
             <field name="id">http://papyri.info/apis/<xsl:value-of
@@ -291,7 +291,7 @@
               </field>
             </xsl:for-each>
             <xsl:call-template name="images"/>
-            <xsl:call-template name="revision-history"></xsl:call-template>
+            <!--<xsl:call-template name="revision-history"/>-->
           </xsl:when>
         </xsl:choose>
       </doc>
