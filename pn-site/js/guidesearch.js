@@ -253,6 +253,8 @@ $(document).ready(
 	    		if(htype == "hidden") filteredels.push(hidden);
 	    	
 	    	}
+	    	
+	    	var params = {};
 			
 			for(var k = 0; k < filteredels.length; k++){
 			
@@ -264,13 +266,21 @@ $(document).ready(
 				
 					name = fel.getAttribute("name");
 					val = fel.getAttribute("value");
+
 				}
 				val = val.replace(/#/g, "^");
-				querystring += name + "=" + val;
-				
-				if(k < filteredels.length - 1) querystring += "&";
+				params[name] = val;
 				
 			}
+			
+			if(mixedsearch){
+			
+				params["type"] = "user_defined";
+				params["target"] = "user_defined";
+			
+			}
+			
+			$.get("http://localhost/search", params);
 
             var current = window.location;
 
@@ -280,8 +290,7 @@ $(document).ready(
 				current = currentbits[0];
 			
 			}
-            if(mixedsearch) querystring += "&type=user_defined&target=user_defined"			
-			var hrefwquery = current + "?" + querystring;
+			var hrefwquery = current + "?" + $.param(params);
 			window.location = hrefwquery;
 			return false;
 
