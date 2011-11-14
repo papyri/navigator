@@ -494,10 +494,12 @@
   </xsl:template>
   
   <xsl:template match="t:TEI" mode="apistrans">
+    <xsl:if test=".//t:div[@type = 'translation']/t:ab">
     <div class="translation data">
       <h2>APIS Translation (English)</h2>
       <p><xsl:value-of select=".//t:div[@type = 'translation']/t:ab"/></p>
     </div>
+    </xsl:if>
   </xsl:template>
   
   <!-- Title -->
