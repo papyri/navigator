@@ -575,7 +575,9 @@
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
     (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))]
-      (.commit solr))))
+      (doto solr
+	(.commit)
+	(.optimize)))))
 
 (defn -loadBiblio []
   (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")

@@ -12,11 +12,13 @@
         <xsl:variable name="id">http://papyri.info/hgvtrans/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']"/>/source</xsl:variable>
         <rdf:Description rdf:about="{$id}">
             <dcterms:identifier>papyri.info/hgvtrans/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']"/></dcterms:identifier>
-            <dcterms:relation>
+            <xsl:if test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid']/text()">
+              <dcterms:relation>
                 <rdf:Description rdf:about="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type='ddb-hybrid']}/source">
-                    <dcterms:relation rdf:resource="{$id}"/>
+                  <dcterms:relation rdf:resource="{$id}"/>
                 </rdf:Description>
-            </dcterms:relation>
+              </dcterms:relation>
+            </xsl:if>
             <dcterms:relation>
                 <rdf:Description rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}/source">
                     <dcterms:relation rdf:resource="{$id}"/>
