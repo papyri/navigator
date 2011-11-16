@@ -407,8 +407,6 @@ public class AtomFeedServlet extends HttpServlet{
             
             String id = (String) doc.getFieldValue(SolrField.id.name());
             String title = getTitle(id, doc);
-            // TODO: Right now these values are simply pulled from the revisionDesc element
-            // TODO: Is this the right approach?
             Date modified = (Date) doc.getFieldValue(SolrField.last_revised.name());
             Date published = (Date) doc.getFieldValue(SolrField.first_revised.name());
             String summary = getSummary(doc);
@@ -606,8 +604,8 @@ public class AtomFeedServlet extends HttpServlet{
         }
         else{
             
-            series = doc.getFieldValue(TitleField.apis_series.name()) == null ? "" : (String) doc.getFieldValue(TitleField.hgv_series.name());
-            item = doc.getFieldValue(TitleField.apis_full_identifier.name()) == null ? "" : (String) doc.getFieldValue(TitleField.hgv_full_identifier.name());               
+            series = doc.getFieldValue(TitleField.apis_series.name()) == null ? "" : (String) doc.getFieldValue(TitleField.apis_series.name());
+            item = doc.getFieldValue(TitleField.apis_full_identifier.name()) == null ? "" : (String) doc.getFieldValue(TitleField.apis_full_identifier.name());               
             
         }
         
@@ -642,19 +640,19 @@ public class AtomFeedServlet extends HttpServlet{
                
         String summary = "";
         
-        if(doc.getFieldValue(SolrField.title.name()) != null){
+        if(doc.getFieldValue(SolrField.title.name()) != null && !doc.getFieldValue(SolrField.title.name()).equals("")){
             
             summary += "Title: " + doc.getFieldValue(SolrField.title.name());
             
         }
         
-        if(doc.getFieldValue(SolrField.display_place.name()) != null){
+        if(doc.getFieldValue(SolrField.display_place.name()) != null && !doc.getFieldValue(SolrField.display_place.name()).equals("")){
             
             if(summary.length() != 0) summary += ", ";
             summary += "Provenance: " + (String) doc.getFieldValue(SolrField.display_place.name());
             
         }
-        if(doc.getFieldValue(SolrField.display_date.name()) != null){
+        if(doc.getFieldValue(SolrField.display_date.name()) != null && !doc.getFieldValue(SolrField.display_date.name()).equals("")){
             
             if(summary.length() != 0) summary += ", ";
             summary += "Date: " + (String) doc.getFieldValue(SolrField.display_date.name());
