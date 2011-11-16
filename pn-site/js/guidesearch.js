@@ -368,6 +368,10 @@ $(document).ready(
 	    	var newValsWidth = hic.getValsAndRecordsWidth("hide-search");
 	    	$("#facet-wrapper").height(initialHeight);
 	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, 325);
+	    	window.setTimeout(function(){
+	    		$(".title-long").css("display", "block")
+	    		$(".title-short").css("display", "none");
+	    		}, 150);
 	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
 	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, 325, "swing",
 	    		
@@ -413,6 +417,10 @@ $(document).ready(
 			$("#facet-widgets-wrapper").css("left", "-" + newWidgetWidthVal + "px");
 	    	$("#facet-widgets-wrapper").addClass("search-open");
 			var newValsWidth = hic.getValsAndRecordsWidth("show-search");
+			window.setTimeout(function(){
+	    		$(".title-long").css("display", "none");
+	    		$(".title-short").css("display", "block");
+	    	}, 200);
 			$("#facet-widgets-wrapper").animate({ left: 0 }, 325);
 			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal + 23, width: newValsWidth }, 325, 
 			
