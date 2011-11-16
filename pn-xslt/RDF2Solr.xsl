@@ -903,27 +903,12 @@
 <xsl:template name="revision-history">
       <xsl:param name="docs"></xsl:param>
           <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
-          <xsl:variable name="dummy-date">1900-01-01</xsl:variable>
-          <xsl:variable name="raw-first-revised"><xsl:value-of select="concat(pi:get-earliest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>
-          <xsl:variable name="raw-last-revised"><xsl:value-of select="concat(pi:get-latest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>
-          <xsl:variable name="first-revised">
-            <xsl:choose>
-              <xsl:when test="matches($raw-first-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
-                <xsl:value-of select="$raw-first-revised"></xsl:value-of>
-              </xsl:when>
-              <xsl:otherwise><xsl:value-of select="concat($dummy-date, $date-suffix)"></xsl:value-of></xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-        <xsl:variable name="last-revised">
-          <xsl:choose>
-          <xsl:when test="matches($raw-last-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
-            <xsl:value-of select="$raw-last-revised"></xsl:value-of>
-          </xsl:when>
-            <xsl:otherwise><xsl:value-of select="concat($dummy-date, $date-suffix)"></xsl:value-of></xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
+          <xsl:variable name="first-revised"><xsl:value-of select="concat(pi:get-earliest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>
+          <xsl:variable name="last-revised"><xsl:value-of select="concat(pi:get-latest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>   
+  <xsl:if test="matches($first-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z') and matches($last-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
   <field name="first_revised"><xsl:value-of select="$first-revised"></xsl:value-of></field>
   <field name="last_revised"><xsl:value-of select="$last-revised"></xsl:value-of></field>
+  </xsl:if>
   </xsl:template>
 
   <xsl:template name="ddbdp-app">

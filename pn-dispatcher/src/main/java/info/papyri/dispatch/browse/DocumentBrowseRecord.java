@@ -246,7 +246,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
       String[] titleBits = documentTitle.split(" ");
       String shortTitle = titleBits[0];
-      shortTitle += " &hellip;";
+      if(shortTitle.length() < documentTitle.length()) shortTitle += " &hellip;";
       html.append(shortTitle);
       html.append("</div><!-- closing .title-short -->");
       
