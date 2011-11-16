@@ -746,23 +746,23 @@
             <xsl:choose>
               <xsl:when test="$date-start eq 'no start date'">
                 <xsl:text> before </xsl:text>
-                <xsl:value-of select="$date-end"></xsl:value-of>
+                <xsl:value-of select="abs($date-end)"></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-end)"/>
               </xsl:when>
               <xsl:when test="$date-end eq 'no end date'">
                 <xsl:text> after </xsl:text>
-                <xsl:value-of select='$date-start'></xsl:value-of>
+                <xsl:value-of select='abs($date-start)'></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-start)"></xsl:value-of>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:text> between </xsl:text>
-                <xsl:value-of select="$date-start"></xsl:value-of>
+                <xsl:value-of select="abs($date-start)"></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-start)"></xsl:value-of>
                 <xsl:text> and </xsl:text>
-                <xsl:value-of select="$date-end"></xsl:value-of>
+                <xsl:value-of select="abs($date-end)"></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-end)"></xsl:value-of>
               </xsl:otherwise>
