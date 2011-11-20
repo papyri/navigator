@@ -163,6 +163,7 @@
           <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
         </xsl:if>            
         <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/titledate.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript">
         
           var _gaq = _gaq || [];
@@ -351,47 +352,6 @@
           </div>
           <xi:include href="footer.xml"/>
         </div>
-        <script type="text/javascript" charset="utf-8">
-          $("#controls input").click(
-            function() {
-              if (this.checked) {
-                $("."+this.name).show();
-                if (this.name == "transcription") {
-                  $(".image").css('width','50%');
-                  $(".translation").css('width','50%');
-                }
-              } else {
-                $("."+this.name).hide();
-                if (this.name == "transcription") {
-                  $(".image").css('width','100%');
-                  $(".translation").css('width','100%');
-                }
-              }
-            }
-          );
-          $("#titledate").append(function() {
-            var result = "";
-            result += $(".mdtitle:first").text();
-            if (result != "") {
-              result += " - ";
-            }
-            if ($("div.hgv .mddate").length > 0) {
-              result += $("div.hgv .mddate").map(function (i) {
-                return $(this).text();
-              }).get().join("; ");
-            } else {
-              result += $(".mddate:first").text();
-            }
-            if ($(".mdprov").length > 0) {
-              result += " - ";
-              result += $(".mdprov:first").text();
-            }
-            return result;
-          });
-          $("#history").click( function() {
-            $("#history>ul").toggle("blind");
-          });
-        </script>
       </body>
     </html>
   </xsl:template>
