@@ -94,32 +94,8 @@ public class StringSearchFacet extends Facet{
         html.append("<label for=\"marks\" id=\"marks-label\">ignore diacritics/accents</label>");
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
-               
-        // search type control
-        html.append("<div class=\"stringsearch-section\">");
-        html.append("<p>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.PHRASE.name().toLowerCase());
-        html.append("\" id=\"phrase\"/> ");
-        html.append("<label for=\"phrase\" id=\"phrase-label\">Word/Phrase search</label><br/>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.SUBSTRING.name().toLowerCase());
-        html.append("\" id=\"substring\" checked/> ");
-        html.append("<label for=\"substring\" id=\"substring-label\">Substring search</label><br/>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.LEMMAS.name().toLowerCase());
-        html.append("\" id=\"lemmas\"/> ");
-        html.append("<label for=\"lemmas\" id=\"lemmas-label\">Lemmatized search</label><br/>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.PROXIMITY.name().toLowerCase());
-        html.append("\" id=\"proximity\"/>");
-        html.append("<label for=\"proximity\" id=\"proximity-label\"> Proximity: find within</label>");
-        html.append(" <input type=\"text\" name=\"");
-        html.append(SearchType.WITHIN.name().toLowerCase());
-        html.append("\" value=\"10\" id=\"within\" size=\"2\" style=\"width:1.5em\"/> words");    
-        html.append("</p>");    
-        html.append("</div><!-- closing .stringsearch section -->"); 
         
+                
         // search target control
         html.append("<div class=\"stringsearch-section\">");
         html.append("<p>");
@@ -149,6 +125,31 @@ public class StringSearchFacet extends Facet{
         html.append("\" id=\"all-label\">All</label>");
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
+               
+        // search type control
+        html.append("<div class=\"stringsearch-section\">");
+        html.append("<p>");
+        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
+        html.append(SearchType.PHRASE.name().toLowerCase());
+        html.append("\" id=\"phrase\"/> ");
+        html.append("<label for=\"phrase\" id=\"phrase-label\">Word/Phrase search</label><br/>");
+        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
+        html.append(SearchType.SUBSTRING.name().toLowerCase());
+        html.append("\" id=\"substring\" checked/> ");
+        html.append("<label for=\"substring\" id=\"substring-label\">Substring search</label><br/>");
+        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
+        html.append(SearchType.LEMMAS.name().toLowerCase());
+        html.append("\" id=\"lemmas\"/> ");
+        html.append("<label for=\"lemmas\" id=\"lemmas-label\">Lemmatized search</label><br/>");
+        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
+        html.append(SearchType.PROXIMITY.name().toLowerCase());
+        html.append("\" id=\"proximity\"/>");
+        html.append("<label for=\"proximity\" id=\"proximity-label\"> Proximity: find within</label>");
+        html.append(" <input type=\"text\" name=\"");
+        html.append(SearchType.WITHIN.name().toLowerCase());
+        html.append("\" value=\"10\" id=\"within\" size=\"2\" style=\"width:1.5em\"/> words");    
+        html.append("</p>");    
+        html.append("</div><!-- closing .stringsearch section -->"); 
         html.append("</div><!-- closing .facet-widget -->");
         
         return html.toString();

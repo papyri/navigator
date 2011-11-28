@@ -2,6 +2,7 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -363,11 +364,12 @@ public class IdentifierFacet extends Facet{
                 
                ArrayList<String> values = new ArrayList<String>(Arrays.asList(params.get(ip.name())));
                if(!values.isEmpty()){
-                  
-                   searchConfigurations.get(ip).setConstraint(values.get(0));
+
+                    searchConfigurations.get(ip).setConstraint(values.get(0));
+                    hasConstraint = true;
+
                
                }
-               hasConstraint = true;
                 
             }
             
@@ -487,13 +489,7 @@ public class IdentifierFacet extends Facet{
         return "Locate documents by publication or collection information";
         
     }
-    
-    
-    
-    
-    /**************** PRIVATE CLASSES HERE ************************************/
-    
-    
+       
     
     /**
      * Defines the logic and behavior of individual levels of the classification hierarchy

@@ -163,6 +163,7 @@
           <script src="/js/imageviewer.js" type="text/javascript" charset="utf-8"></script>
         </xsl:if>            
         <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/titledate.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript">
         
           var _gaq = _gaq || [];
@@ -351,47 +352,6 @@
           </div>
           <xi:include href="footer.xml"/>
         </div>
-        <script type="text/javascript" charset="utf-8">
-          $("#controls input").click(
-            function() {
-              if (this.checked) {
-                $("."+this.name).show();
-                if (this.name == "transcription") {
-                  $(".image").css('width','50%');
-                  $(".translation").css('width','50%');
-                }
-              } else {
-                $("."+this.name).hide();
-                if (this.name == "transcription") {
-                  $(".image").css('width','100%');
-                  $(".translation").css('width','100%');
-                }
-              }
-            }
-          );
-          $("#titledate").append(function() {
-            var result = "";
-            result += $(".mdtitle:first").text();
-            if (result != "") {
-              result += " - ";
-            }
-            if ($("div.hgv .mddate").length > 0) {
-              result += $("div.hgv .mddate").map(function (i) {
-                return $(this).text();
-              }).get().join("; ");
-            } else {
-              result += $(".mddate:first").text();
-            }
-            if ($(".mdprov").length > 0) {
-              result += " - ";
-              result += $(".mdprov:first").text();
-            }
-            return result;
-          });
-          $("#history").click( function() {
-            $("#history>ul").toggle("blind");
-          });
-        </script>
       </body>
     </html>
   </xsl:template>
@@ -494,10 +454,12 @@
   </xsl:template>
   
   <xsl:template match="t:TEI" mode="apistrans">
+    <xsl:if test=".//t:div[@type = 'translation']/t:ab">
     <div class="translation data">
       <h2>APIS Translation (English)</h2>
       <p><xsl:value-of select=".//t:div[@type = 'translation']/t:ab"/></p>
     </div>
+    </xsl:if>
   </xsl:template>
   
   <!-- Title -->
@@ -744,23 +706,23 @@
             <xsl:choose>
               <xsl:when test="$date-start eq 'no start date'">
                 <xsl:text> before </xsl:text>
-                <xsl:value-of select="$date-end"></xsl:value-of>
+                <xsl:value-of select="abs($date-end)"></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-end)"/>
               </xsl:when>
               <xsl:when test="$date-end eq 'no end date'">
                 <xsl:text> after </xsl:text>
-                <xsl:value-of select='$date-start'></xsl:value-of>
+                <xsl:value-of select='abs($date-start)'></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-start)"></xsl:value-of>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:text> between </xsl:text>
-                <xsl:value-of select="$date-start"></xsl:value-of>
+                <xsl:value-of select="abs($date-start)"></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-start)"></xsl:value-of>
                 <xsl:text> and </xsl:text>
-                <xsl:value-of select="$date-end"></xsl:value-of>
+                <xsl:value-of select="abs($date-end)"></xsl:value-of>
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="pi:get-era($date-end)"></xsl:value-of>
               </xsl:otherwise>

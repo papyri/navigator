@@ -493,6 +493,7 @@ border:1px solid black;
   margin-left:auto;
   margin-right:auto;
   width:95%;
+  clear: left;  
 }
 .tablehead{
 

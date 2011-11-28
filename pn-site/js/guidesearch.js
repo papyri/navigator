@@ -253,6 +253,8 @@ $(document).ready(
 	    		if(htype == "hidden") filteredels.push(hidden);
 	    	
 	    	}
+	    	
+	    	var params = {};
 			
 			for(var k = 0; k < filteredels.length; k++){
 			
@@ -264,13 +266,21 @@ $(document).ready(
 				
 					name = fel.getAttribute("name");
 					val = fel.getAttribute("value");
+
 				}
 				val = val.replace(/#/g, "^");
-				querystring += name + "=" + val;
-				
-				if(k < filteredels.length - 1) querystring += "&";
+				params[name] = val;
 				
 			}
+			
+			if(mixedsearch){
+			
+				params["type"] = "user_defined";
+				params["target"] = "user_defined";
+			
+			}
+			
+			$.get("http://localhost/search", params);
 
             var current = window.location;
 
@@ -280,8 +290,7 @@ $(document).ready(
 				current = currentbits[0];
 			
 			}
-            if(mixedsearch) querystring += "&type=user_defined&target=user_defined"			
-			var hrefwquery = current + "?" + querystring;
+			var hrefwquery = current + "?" + $.param(params);
 			window.location = hrefwquery;
 			return false;
 
@@ -359,6 +368,10 @@ $(document).ready(
 	    	var newValsWidth = hic.getValsAndRecordsWidth("hide-search");
 	    	$("#facet-wrapper").height(initialHeight);
 	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, 325);
+	    	window.setTimeout(function(){
+	    		$(".title-long").css("display", "block")
+	    		$(".title-short").css("display", "none");
+	    		}, 150);
 	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
 	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, 325, "swing",
 	    		
@@ -404,6 +417,10 @@ $(document).ready(
 			$("#facet-widgets-wrapper").css("left", "-" + newWidgetWidthVal + "px");
 	    	$("#facet-widgets-wrapper").addClass("search-open");
 			var newValsWidth = hic.getValsAndRecordsWidth("show-search");
+			window.setTimeout(function(){
+	    		$(".title-long").css("display", "none");
+	    		$(".title-short").css("display", "block");
+	    	}, 200);
 			$("#facet-widgets-wrapper").animate({ left: 0 }, 325);
 			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal + 23, width: newValsWidth }, 325, 
 			
