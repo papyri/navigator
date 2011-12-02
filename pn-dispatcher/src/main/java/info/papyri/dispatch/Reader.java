@@ -97,12 +97,15 @@ public class Reader extends HttpServlet {
             file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Html");
           }
         }
-
-        if (request.getParameter("q") != null) {
+        if (file == null) {
+          response.sendError(response.SC_NOT_FOUND);
+        } else {
+          if (request.getParameter("q") != null) {
             sendWithHighlight(response, file, request.getParameter("q"));
           } else {
             send(response, file);
           }
+        }
       }
     } else {
       response.sendError(response.SC_NOT_FOUND);
