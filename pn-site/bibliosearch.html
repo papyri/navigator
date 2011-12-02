@@ -71,12 +71,20 @@
 	  <div class="content search">
 	    <h2>Search Bibliography</h2>
 	    <form name="bibsearch" method="get" action="/bibliosearch" id="bibsearch">
-              <div title="Performs a search of bibliographic records.">
-                <p class="ui-corner-all"><input type="text" name="q" size="50" maxlength="250" id="keyword"> <input type="submit" value="Search" id="search" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"></p>
-              </div>				  
-            </form>
+         <div title="Performs a search of bibliographic records.">
+           <p class="ui-corner-all"><input type="text" name="q" size="50" maxlength="250" id="keyword"> <input type="submit" value="Search" id="search" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"></p>
+           <p>To search anywhere within a record enter the word or words in the search box, e.g.: 
+           <span class="code">Bowman</span> or <span class="code">Bowman land</span> (space between words = 'and').</p>
+           <p>To restrict searches to specific fields enter, e.g.: <span class="code">author:Hombert title:bibliographie
+             date:1932</span>. A search <span class="code">title:"land lease"</span> finds all records with the phrase "land lease" or 
+             "land-lease" in the title. A search for <span class="code">title:(land lease)</span> finds all records with the the 
+           word "land" and the word "lease" in the title.</p>
+           <p>Such search constraints work with the following fields: <span class="code">author:, title:, date:, note:, 
+             index:, editor:, pubPlace:, original:</span> (original = the entire original BP record).</p>
+         </div>				  
+      </form>
 	    <!-- Results -->
-          </div>
+    </div>
 	</div>
       </div>
       <div class="footer">

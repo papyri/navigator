@@ -542,6 +542,10 @@ td.kwic {
   margin-left:.5em;
 }
 
+.code {
+  fony-family: "Courier New", Courier, monospace;
+}
+
 
 /* FOOTER STYLES */
 
