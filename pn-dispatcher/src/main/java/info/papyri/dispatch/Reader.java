@@ -78,22 +78,19 @@ public class Reader extends HttpServlet {
         if (item.endsWith("/source")) {
           response.setContentType("application/xml;charset=UTF-8");
           file = util.getXmlFile(collection, item.replace("/source", ""));
-          if (file == null) response.sendError(response.SC_NOT_FOUND);
-          if (!file.exists()) { //use triple store to resolve to source file
+          if (file != null && !file.exists()) { //use triple store to resolve to source file
             file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Xml");
           }
         } else if (page.endsWith("text")) {
           response.setContentType("text/plain;charset=UTF-8");
           file = util.getTextFile(collection, item.replace("/text", ""));
-          if (file == null) response.sendError(response.SC_NOT_FOUND);
-          if (!file.exists()) { //use triple store to resolve to source file
+          if (file != null && !file.exists()) { //use triple store to resolve to source file
             file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Text");
           }
         } else {
           response.setContentType("text/html;charset=UTF-8");
           file = util.getHtmlFile(collection, item);
-          if (file == null) response.sendError(response.SC_NOT_FOUND);
-          if (!file.exists()) { //use triple store to resolve to source file
+          if (file != null && !file.exists()) { //use triple store to resolve to source file
             file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Html");
           }
         }
