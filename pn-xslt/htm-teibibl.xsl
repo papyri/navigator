@@ -3,6 +3,9 @@
   xmlns:t="http://www.tei-c.org/ns/1.0" 
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:pi="http://papyri.info/ns"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:biblio="biblio"
   exclude-result-prefixes="#all"
   version="2.0">
   
@@ -28,7 +31,16 @@
       <h4>Provisional papyri.info output</h4>
       <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="source">xml</a><xsl:text>] [</xsl:text><a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text></p>
     </div>
-    
+    <xsl:if test="count(t:relatedItem[@type='mentions']/t:bibl) &gt; 0">
+      <div class="biblio">
+        <h4>Related Articles</h4>
+        <p>
+          <xsl:call-template name="relatedArticle">
+            <xsl:with-param name="relatedArticle" select="t:relatedItem[@type='mentions']/t:bibl" />
+          </xsl:call-template>
+        </p>
+      </div>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template name="buildCitation">
@@ -135,5 +147,102 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <!-- related articles (TEI:relatedItem of @type »mentions«) -->
+  
+  <xsl:template name="relatedArticle">
+    <xsl:param name="relatedArticle" />
+
+    <xsl:if test="count($relatedArticle) &gt; 0">
+      <xsl:choose>
+        <xsl:when test="count($relatedArticle) &gt; 1">
+          <ul>
+            <xsl:for-each select="$relatedArticle">
+              <li>
+                <xsl:call-template name="relatedArticleRecord">
+                  <xsl:with-param name="series" select="./t:title[@level='s'][@type='short']" />
+                  <xsl:with-param name="volume" select="./t:biblScope[@type='vol']" />
+                  <xsl:with-param name="number" select="./t:biblScope[@type='num']" />
+                  <xsl:with-param name="ddbId" select="./t:idno[@type='ddb']" />
+                  <xsl:with-param name="inventory" select="./t:idno[@type='invNo']" />
+                </xsl:call-template>
+              </li>
+            </xsl:for-each>
+          </ul>
+        </xsl:when>
+        <xsl:otherwise>
+          <p>
+            <xsl:call-template name="relatedArticleRecord">
+              <xsl:with-param name="series" select="$relatedArticle/t:title[@level='s'][@type='short']" />
+              <xsl:with-param name="volume" select="$relatedArticle/t:biblScope[@type='vol']" />
+              <xsl:with-param name="number" select="$relatedArticle/t:biblScope[@type='num']" />
+              <xsl:with-param name="ddbId" select="$relatedArticle/t:idno[@type='ddb']" />
+              <xsl:with-param name="inventory" select="$relatedArticle/t:idno[@type='invNo']" />
+            </xsl:call-template>
+          </p>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    
+  </xsl:template>
+  
+  <xsl:template name="relatedArticleRecord">
+    <xsl:param name="series" />
+    <xsl:param name="volume" />
+    <xsl:param name="number" />
+    <xsl:param name="ddbId" />
+    <xsl:param name="inventory" />
+    
+    <xsl:variable name="s" select="normalize-space($series)" />
+    <xsl:variable name="v" select="normalize-space($volume)" />
+    <xsl:variable name="n" select="normalize-space($number)" />
+    <xsl:variable name="d" select="normalize-space($ddbId)" />
+    <xsl:variable name="i" select="normalize-space($inventory)" />
+
+    <xsl:variable name="link" select="biblio:checkFile($d)"/>
+
+    <xsl:choose>
+      <xsl:when test="string($i)">
+        <xsl:value-of select="$i" />
+      </xsl:when>
+      <xsl:when test="string($s) or string($v) or string($n)">
+        <xsl:value-of select="$s" />
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="$v" />
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="$n" />
+        <xsl:if test="string($d)">
+          <xsl:text> (</xsl:text>
+          
+          <xsl:choose>
+            <xsl:when test="string($link)">
+              <a href="{$link}" title="View in PN">
+                <xsl:value-of select="$d" />
+              </a>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$d" />
+            </xsl:otherwise>
+          </xsl:choose>
+          
+          
+          <xsl:text>)</xsl:text>
+        </xsl:if>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:function name="biblio:checkFile">
+    <xsl:param name="ddb" />
+    <xsl:variable name="link" select="concat('http://papyri.info/ddbdp/', $ddb)" />
+    <xsl:variable name="linkRdf" select="concat($link, '/rdf')" />
+    <xsl:variable name="test" select="document($linkRdf)//dcterms:identifier[1]" />
+
+    <xsl:choose>
+      <xsl:when test="string($test)">
+        <xsl:value-of select="$link" />
+      </xsl:when>
+    </xsl:choose>
+  </xsl:function>
   
 </xsl:stylesheet>
