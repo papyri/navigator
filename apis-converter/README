@@ -1,0 +1,13 @@
+# apis-converter
+
+FIXME: Reads APIS input files and converts them to TEI XML
+
+## Usage
+
+lein run <intake file directory> <xslt file—probably resources/apis2epidoc.xsl> [number of threads, default 10]
+
+## License
+
+Copyright (C) 2011 Hugh Cayless
+
+Distributed under the Eclipse Public License, the same as Clojure.
