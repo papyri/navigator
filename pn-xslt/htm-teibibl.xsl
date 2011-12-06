@@ -33,7 +33,7 @@
     </div>
     <xsl:if test="count(t:relatedItem[@type='mentions']/t:bibl) &gt; 0">
       <div class="biblio">
-        <h4>Related Articles</h4>
+        <h4>Mentioned Texts</h4>
         <p>
           <xsl:call-template name="relatedArticle">
             <xsl:with-param name="relatedArticle" select="t:relatedItem[@type='mentions']/t:bibl" />
@@ -42,7 +42,7 @@
       </div>
     </xsl:if>
   </xsl:template>
-  
+
   <xsl:template name="buildCitation">
     <xsl:variable name="mainWork" select="pi:get-docs(concat(t:relatedItem[@type='appearsIn']//t:ptr/@target, '/source'), 'xml')"/>
     <xsl:variable name="author"><xsl:call-template name="author"/></xsl:variable>
@@ -173,11 +173,11 @@
         <xsl:otherwise>
           <p>
             <xsl:call-template name="relatedArticleRecord">
-              <xsl:with-param name="series" select="$relatedArticle/t:title[@level='s'][@type='short']" />
-              <xsl:with-param name="volume" select="$relatedArticle/t:biblScope[@type='vol']" />
-              <xsl:with-param name="number" select="$relatedArticle/t:biblScope[@type='num']" />
-              <xsl:with-param name="ddbId" select="$relatedArticle/t:idno[@type='ddb']" />
-              <xsl:with-param name="inventory" select="$relatedArticle/t:idno[@type='invNo']" />
+              <xsl:with-param name="series" select="normalize-space($relatedArticle/t:title[@level='s'][@type='short'])" />
+              <xsl:with-param name="volume" select="normalize-space($relatedArticle/t:biblScope[@type='vol'])" />
+              <xsl:with-param name="number" select="normalize-space($relatedArticle/t:biblScope[@type='num'])" />
+              <xsl:with-param name="ddbId" select="normalize-space($relatedArticle/t:idno[@type='ddb'])" />
+              <xsl:with-param name="inventory" select="normalize-space($relatedArticle/t:idno[@type='invNo'])" />
             </xsl:call-template>
           </p>
         </xsl:otherwise>
@@ -192,44 +192,32 @@
     <xsl:param name="number" />
     <xsl:param name="ddbId" />
     <xsl:param name="inventory" />
-    
-    <xsl:variable name="s" select="normalize-space($series)" />
-    <xsl:variable name="v" select="normalize-space($volume)" />
-    <xsl:variable name="n" select="normalize-space($number)" />
-    <xsl:variable name="d" select="normalize-space($ddbId)" />
-    <xsl:variable name="i" select="normalize-space($inventory)" />
 
-    <xsl:variable name="link" select="biblio:checkFile($d)"/>
+    <xsl:variable name="link" select="biblio:checkFile($ddbId)"/>
+    <xsl:variable name="related">
+      <xsl:choose>
+        <xsl:when test="string($inventory)">
+          <xsl:value-of select="$inventory" />
+        </xsl:when>
+        <xsl:when test="string($series) or string($volume) or string($number)">
+          <xsl:value-of select="$series" />
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="$volume" />
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="$number" />
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
 
     <xsl:choose>
-      <xsl:when test="string($i)">
-        <xsl:value-of select="$i" />
+      <xsl:when test="string($link)">
+        <a href="{$link}" title="View in PN"><xsl:value-of select="$related" /></a>
       </xsl:when>
-      <xsl:when test="string($s) or string($v) or string($n)">
-        <xsl:value-of select="$s" />
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="$v" />
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="$n" />
-        <xsl:if test="string($d)">
-          <xsl:text> (</xsl:text>
-          
-          <xsl:choose>
-            <xsl:when test="string($link)">
-              <a href="{$link}" title="View in PN">
-                <xsl:value-of select="$d" />
-              </a>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="$d" />
-            </xsl:otherwise>
-          </xsl:choose>
-          
-          
-          <xsl:text>)</xsl:text>
-        </xsl:if>
-      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$related" />
+      </xsl:otherwise>
     </xsl:choose>
+
   </xsl:template>
   
   <xsl:function name="biblio:checkFile">
