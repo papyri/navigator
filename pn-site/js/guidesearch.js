@@ -42,8 +42,7 @@ $(document).ready(
 		 * can be set
 		 * TODO: needs to be revised in wake of poor user response!
 		 */
-		 
-	    
+		
 	   	hic.configureSearchSettings = function(){
 
 	    	var reqd_disabled = [];
@@ -142,6 +141,9 @@ $(document).ready(
 
             var querystring = "";
 	    	var filteredels = [];
+	    	// mixedsearch refers to string searches of the user-defined type
+	    	// i.e., not necessarily corresponding to the string-search types
+	    	// defined by the interface controls
 	    	var mixedsearch = false;
 	    	
 	    	// if a string is set for search, than the associated text, target, and option
@@ -250,7 +252,20 @@ $(document).ready(
 	    		var htype = hidden.getAttribute("type");
 	    		// note weirdness here - jQuery cannot retrieve attributes from hidden input fields
 	    		// standard js .getAttribute is thus used
-	    		if(htype == "hidden") filteredels.push(hidden);
+	    		if(htype == "hidden"){
+	    		
+	    			// the hidden collection field should be overriden by settings in the
+	    			// control itself
+	    			if(hidden.getAttribute("name") == "COLLECTION"){
+	    			
+	    				var collvalue = $("select[name='COLLECTION']").attr("value");
+	    				if(collvalue != "default") continue;
+	    				
+	    			}
+	    		
+	    			filteredels.push(hidden);			
+	    			
+	    		}
 	    	
 	    	}
 	    	
@@ -295,6 +310,7 @@ $(document).ready(
 			return false;
 
 	    }
+	    
 	    
 	    /**
 	     * Monitors the text being entered into the search box for a variety of inputs:
