@@ -534,12 +534,16 @@ td.kwic {
 }
 
 .collections-column{
-  width: 17%;
+  width: 15%;
   padding-left:1%;
   padding-right:1%;
   float: left;
   margin-top: .5em;
   margin-left:.5em;
+}
+
+.code {
+  font-family: "Courier New", Courier, monospace;
 }
 
 

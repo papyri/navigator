@@ -11,9 +11,15 @@
     <xsl:param name="urls"/>
     <xsl:param name="format"/>
     <xsl:for-each select="$urls">
-      <xsl:if test="doc-available(pi:get-filename(., $format))">
-        <xsl:copy-of select="doc(pi:get-filename(., $format))"/>
-      </xsl:if>
+      <xsl:message><xsl:value-of select="."/></xsl:message>
+      <xsl:choose>
+        <xsl:when test="doc-available(pi:get-filename(., $format))">
+          <xsl:copy-of select="doc(pi:get-filename(., $format))"/>
+        </xsl:when>
+        <xsl:when test="doc-available(.)">
+          <xsl:copy-of select="doc(.)"/>
+        </xsl:when>
+      </xsl:choose>
     </xsl:for-each>
   </xsl:function>
   
@@ -76,10 +82,18 @@
           <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', substring-after($url, 'http://papyri.info/apis/'), 'index.html')"/></xsl:otherwise>
         </xsl:choose>
       </xsl:when>
-      <!-- Like http://papyri.info/biblio/54953 -->
+      <!-- Like http://papyri.info/biblio/54953/source -->
       <xsl:when test="contains($url, 'biblio/')">
-        <xsl:variable name="dir" select="ceiling(number(substring-after($url, 'http://papyri.info/biblio/')) div 1000)"/>
-        <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-after($url, 'http://papyri.info/biblio/'), '.xml')"/>
+        <xsl:choose>
+          <xsl:when test="contains($url, '/source')">
+            <xsl:variable name="dir" select="ceiling(number(substring-before(substring-after($url, 'http://papyri.info/biblio/'), '/source')) div 1000)"/>
+            <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-before(substring-after($url, 'http://papyri.info/biblio/'), '/source'), '.xml')"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:variable name="dir" select="ceiling(number(substring-after($url, 'http://papyri.info/biblio/')) div 1000)"/>
+            <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-after($url, 'http://papyri.info/biblio/'), '.xml')"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:when>
       <xsl:otherwise><xsl:sequence select="string('null')"/></xsl:otherwise>
     </xsl:choose>
