@@ -2,7 +2,6 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +34,13 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  * 
  * Note also that most of the heavy lifting for this class is performed in the inner 
  * <code>SearchConfiguration</code> classes defined at the end of the file.
+ * 
+ * Note further the idiosyncratic use of the terms <i>collection</i> and <i>series</i> here.
+ * In other classes, <i>collection</i> is usually used to refer to the top level of the 
+ * classification hierarchy (i.e., collection -> series -> idno). Here, however, a distinction
+ * must be drawn between the top level of the apis hierarchy, and the top level of the 
+ * ddbdp/hgv hierarchy. <i>Collection</i> in this class thus refers to the top of the apis
+ * hierachy, while <i>series</i> is used for ddbdp/hgv hierarchies.
  * 
  * @author thill
  * @see Facet
@@ -86,11 +92,26 @@ public class IdentifierFacet extends Facet{
     
     private EnumMap<IdParam, SearchConfiguration> searchConfigurations;
     
+    /**
+     * The three *ledOrder members are used in relation to the <code>SolrParam.series_led_order</code>,
+     * <code>SolrParam.volume_led_order</code>, and <code>SolrParam.idno_led_order</code> fields.
+     * 
+     * The reason these fields and associated members are required is that:
+     * (a) without them there is no retrievable connection among the series, volume, and id 
+     * numbers: if a text is identified both as bgu.1.1 and p.louvre.1.4, it is the job of these fields
+     * to correlate the 'bgu', '1', and '1' values with each other (and similarly 'p.louvre', '1', and '4'.
+     * (b) The exigencies of searching with wildcards mean that it is at best unwise to search using a
+     * leading wildcard. Accordingly, all three fields must exist so that efficient searches can be
+     * performed in cases where only one or two of the hierarchy values are given.
+     * 
+     */
+    
     ArrayList<IdParam> idnoLedOrder;
     ArrayList<IdParam> volumeLedOrder;
     ArrayList<IdParam> seriesLedOrder;
     EnumMap<SolrField, ArrayList<IdParam>> orders;
-    
+    private String apisOnlyHTMLValue = "apisonly";
+    private String apisOnlyHTMLLabel = "All APIS records";    
        
     /**
      * Constructor.
@@ -138,7 +159,10 @@ public class IdentifierFacet extends Facet{
         }
         
         if(noConstraints) return solrQuery;
+       
         if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint()){
+            
+            // i.e., if browing APIS records only
             
             solrQuery.addFilterQuery(searchConfigurations.get(IdParam.COLLECTION).buildQueryClause(""));
             solrQuery.addFilterQuery(searchConfigurations.get(IdParam.IDNO).buildQueryClause(""));
@@ -154,15 +178,29 @@ public class IdentifierFacet extends Facet{
         
     }
     
+    /**
+     * Returns the <code>SolrField</code> with the most specific id information available.
+     * 
+     * @return 
+     */
+    
     private SolrField getLeadingField(){
         
         if(searchConfigurations.get(IdParam.IDNO).hasConstraint()) return SolrField.idno_led_path;
         if(searchConfigurations.get(IdParam.SERIES).hasConstraint()) return SolrField.series_led_path;
-        if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return SolrField.volume_led_path;
-        
+        if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return SolrField.volume_led_path;      
         return SolrField.series_led_path;
         
     }
+    
+    /**
+     * Returns an ordered template value string into which actual values may then 
+     * be substituted
+     * 
+     * @param ledPath A <code>SolrField</code> indicating the template component 
+     * (Collection, Series, Volume, or Idno) that is to come first in the ordering.
+     * @see SearchConfiguration#buildQueryClause(java.lang.String) 
+     */
     
     private String getRawSpecifierClause(SolrField ledPath){
         
@@ -180,6 +218,14 @@ public class IdentifierFacet extends Facet{
         
     }
     
+    /**
+     * Returns a string to be used as a search constraint applicable to the
+     * <code>SolrField.series_led_order</code>, <code>SolrField.volume_led_order</code>,
+     * or <code>SolrField.idno_led_order</code> fields.
+     * 
+     * @return 
+     */
+    
     private String getCompleteSpecifierClause(){
         
         SolrField leadField = this.getLeadingField();
@@ -193,6 +239,14 @@ public class IdentifierFacet extends Facet{
         return specifierClause;
         
     }
+    
+    /**
+     * Transforms the <code>specifierClause</code> from wildcard syntax to regex syntax,
+     * and returns it.
+     * 
+     * 
+     * @return 
+     */
     
     public String getSpecifierClauseAsJavaRegex(){
         
@@ -239,9 +293,17 @@ public class IdentifierFacet extends Facet{
             
             
         }
-                
-        
+                        
     }
+    
+    /**
+     * Takes the <code>QueryResponse</code> object, parses its values for the relevant series/volume/idno
+     * information, and distributes this information to the relevant widgets.
+     * 
+     * 
+     * @param queryResponse
+     * @return 
+     */
     
     private Boolean dispersePathData(QueryResponse queryResponse){
         
@@ -269,7 +331,6 @@ public class IdentifierFacet extends Facet{
             Long number = count.getCount();
 
              if(name != null && !"".equals(name) && !"0".equals(name) && !"null".equals(name)  && number != 0){
-
 
                 Matcher matcher = pattern.matcher(name);
 
@@ -463,6 +524,7 @@ public class IdentifierFacet extends Facet{
     @Override
     public String getDisplayValue(String value){
         
+        if(apisOnlyHTMLValue.equals(value)) return apisOnlyHTMLLabel;
         return value.replaceAll("_", " ");
         
     }
@@ -504,7 +566,6 @@ public class IdentifierFacet extends Facet{
      */
     
     private abstract class SearchConfiguration{
-        
         
         String constraint;
         HashMap<String, Long> idValues;
@@ -616,6 +677,7 @@ public class IdentifierFacet extends Facet{
             
             
         }
+        
         public abstract ArrayList<SolrField> getFacetFields();
         public abstract ArrayList<String> getIdValuesAsHTML();
         public abstract String buildQueryClause(String rawClause);
@@ -625,7 +687,7 @@ public class IdentifierFacet extends Facet{
     }
     
     private abstract class CollectionSeriesSearchConfiguration extends SearchConfiguration {
-    
+        
         public CollectionSeriesSearchConfiguration(IdParam ip){
             
             super(ip);
@@ -687,7 +749,7 @@ public class IdentifierFacet extends Facet{
     
     
     private class SeriesSearchConfiguration extends CollectionSeriesSearchConfiguration{
-        
+                
         public SeriesSearchConfiguration(){
             
             super(IdParam.SERIES);
@@ -873,9 +935,12 @@ public class IdentifierFacet extends Facet{
     
     private class CollectionSearchConfiguration extends CollectionSeriesSearchConfiguration{
         
+        private Boolean apisOnly;
+        
         public CollectionSearchConfiguration(){
             
             super(IdParam.COLLECTION);
+            apisOnly = false;
             
         }
         
@@ -895,6 +960,7 @@ public class IdentifierFacet extends Facet{
             
             if(searchConfigurations.get(IdParam.SERIES).hasConstraint()) return fields;
             if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return fields;
+            fields.add(SolrField.collection);
             fields.add(SolrField.apis_series);
             return fields;
             
@@ -913,7 +979,16 @@ public class IdentifierFacet extends Facet{
             
             String queryString = "";
             if(!this.hasConstraint()) return queryString;
-            queryString = SolrField.apis_series + ":" + this.getConstraint();
+            if(getConstraint().equals(apisOnlyHTMLValue)){
+                
+                queryString = SolrField.collection + ":" + "apis";
+                
+            }
+            else{
+           
+                queryString = SolrField.apis_series.name() + ":" + this.getConstraint();
+                
+            }
             return queryString;
             
         }
@@ -934,7 +1009,7 @@ public class IdentifierFacet extends Facet{
                         String name = count.getName();
                         Long number = count.getCount();
 
-                        if(name != null && !"".equals(name) && !"0".equals(name) && !"null".equals(name)  && number != 0){
+                        if(name != null && !"".equals(name) && !"0".equals(name) && !"null".equals(name)  && number != 0 && !name.equals("hgv") && !name.equals("ddbdp")){
                  
                             if(idValues.containsKey(name)){
                                 
@@ -969,13 +1044,19 @@ public class IdentifierFacet extends Facet{
                 String name = entry.getKey();
                 String number = String.valueOf(entry.getValue());
                 String displayName = name.replace("_", " ");
+                if(displayName.equals("apis")){
+                    
+                    name = apisOnlyHTMLValue;
+                    displayName = apisOnlyHTMLLabel;
+                    
+                }
                 displayName = displayName + " (" + number + ")";
                 String openTag = "<option value=\"";
                 openTag += name;
                 openTag += "\">";
                 String stringValue = openTag + displayName + "</option>";
                 
-                if(!this.hasConstraint() || entry.getKey().equals(this.getConstraint())){
+                if((!this.hasConstraint() || entry.getKey().equals(this.getConstraint())) || this.getConstraint().equals(apisOnlyHTMLValue)){
                 
                     stringifiedValues.add(stringValue); 
                     
@@ -996,7 +1077,7 @@ public class IdentifierFacet extends Facet{
                 
             }); 
             
-            if(stringifiedValues.size() != 1){
+            if(stringifiedValues.size() != 1 && !apisOnly){
             
                     String defaultValue = "<option value=\"default\">" + Facet.defaultValue + "</option>";
                     stringifiedValues.add(0, defaultValue);
@@ -1012,9 +1093,26 @@ public class IdentifierFacet extends Facet{
             
             if(searchConfigurations.get(IdParam.SERIES).hasConstraint()) return true;
             if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return true;
-            if(this.hasConstraint()) return true;
+            if(this.hasConstraint() && !apisOnly) return true;
             if(idValues.size() < 2) return true;
             return false;
+            
+        }
+        
+        @Override
+        public void setConstraint(String newConstraint){
+            
+            constraint = newConstraint;
+            if(constraint.equals(apisOnlyHTMLValue)){
+                
+                apisOnly = true;
+            
+            }
+            else{
+                
+                apisOnly = false;
+                
+            }
             
         }
         
