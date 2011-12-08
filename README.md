@@ -63,12 +63,12 @@ Directory Structure
 
 The directory structure is expected to conform to:
 
-/data/papyri.info/solr - for Solr home 
-/data/papyri.info/mulgara/server1 - for numbers server data storage
-/data/papyri.info/git/navigator - holding the gthub-synchronised application files themselves
-/data/papyri.info/idp.data - IDP XML files (the 'mothership' repository), as given at <https://github.com/papyri/idp.data>
-/data/papyri.info/PN/idp.html - the IDP HTML files generated from the files in /data/papyri.info/idp.data
-/data.papyri.info/PN/home - the HTML, CSS, JS, and image files used throughout the site and in interactive interfaces. This directory can consist simply of a symlink to /data/papyri.info/git/navigator/pn-site.
+/data/papyri.info/solr - for Solr home  
+/data/papyri.info/mulgara/server1 - for numbers server data storage  
+/data/papyri.info/git/navigator - holding the gthub-synchronised application files themselves  
+/data/papyri.info/idp.data - IDP XML files (the 'mothership' repository), as given at <https://github.com/papyri/idp.data>  
+/data/papyri.info/PN/idp.html - the IDP HTML files generated from the files in /data/papyri.info/idp.data  
+/data.papyri.info/PN/home - the HTML, CSS, JS, and image files used throughout the site and in interactive interfaces. This directory can consist simply of a symlink to /data/papyri.info/git/navigator/pn-site.  
 
 
 Building and Running
