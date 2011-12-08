@@ -87,6 +87,7 @@
     </xsl:choose>
   </xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
+  <xsl:variable name="resolve-uris">false</xsl:variable>
   
   <xsl:template name="collection-hierarchy">
     <xsl:param name="all-ancestors"></xsl:param>

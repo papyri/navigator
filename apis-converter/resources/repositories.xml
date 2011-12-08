@@ -1,0 +1,26 @@
+<?oxygen RNGSchema="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="xml"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>APIS Institutions</title>
+            </titleStmt>
+            <publicationStmt>
+                <p>Publication Information</p>
+            </publicationStmt><sourceDesc>
+                <p>Information about the source</p>
+            </sourceDesc></fileDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <listBibl>
+                <bibl>
+                    <msIdentifier xml:id="michigan">
+                        <institution>University of Michigan</institution>
+                        <repository>University of Michigan University Library</repository>
+                    </msIdentifier>
+                </bibl>
+            </listBibl>
+        </body>
+    </text>
+</TEI>

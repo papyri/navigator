@@ -60,6 +60,7 @@
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="line-inc">1</xsl:variable>
+  <xsl:variable name="resolve-uris" select="false()"/>
 
   <xsl:template match="/">
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
