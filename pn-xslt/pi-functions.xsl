@@ -16,7 +16,7 @@
         <xsl:when test="doc-available(pi:get-filename(., $format))">
           <xsl:copy-of select="doc(pi:get-filename(., $format))"/>
         </xsl:when>
-        <xsl:when test="doc-available(.)">
+        <xsl:when test="$resolve-uris and doc-available(.)">
           <xsl:copy-of select="doc(.)"/>
         </xsl:when>
       </xsl:choose>
