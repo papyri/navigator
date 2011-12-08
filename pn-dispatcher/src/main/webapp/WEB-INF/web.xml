@@ -84,10 +84,6 @@
             <param-value>/data/papyri.info/pn/home</param-value>
         </init-param>
         <init-param>
-            <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/</param-value>
-        </init-param>
-        <init-param>
             <param-name>sparqlUrl</param-name>
             <param-value>http://localhost:8090</param-value>
         </init-param>
