@@ -55,7 +55,7 @@
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
   <xsl:variable name="line-inc">5</xsl:variable>
-  <xsl:variable name="resolve-uris">false</xsl:variable>
+  <xsl:variable name="resolve-uris" select="false()"/>
 
   <xsl:include href="pi-functions.xsl"/>
 
