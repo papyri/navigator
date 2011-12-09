@@ -47,9 +47,11 @@ abstract public class Facet {
     /** The label displayed to the user */
     String displayName;
     
-    // TODO: Change this and make non-static so that all <code>Facet</code>s have their own
-    // default value. The current set-up is useful only with drop down <code>SELECT</code> 
-    //  elements
+    /** Default value to be displayed if no value set
+     * 
+     *  Note that this value is only applicable for drop-down selectors; some
+     *  subclasses may require a different default to be specified
+     */
     static String defaultValue = "--- All values ---";
     
     /**
@@ -79,7 +81,7 @@ abstract public class Facet {
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         solrQuery.addFacetField(field.name());
-        solrQuery.setFacetLimit(-1);                // = no limit; many facets have > 100 values, the default
+        solrQuery.setFacetLimit(-1);                // = no limit
         
         Iterator<String> cit = facetConstraints.iterator();
         
@@ -338,12 +340,55 @@ abstract public class Facet {
         
     }
      
+     /**
+      * Returns the value(s) to be used for the name attribute on HTML form controls.
+      * 
+      * In most cases only one value is required, and will be tat of the <code>formName</code>
+      * member. However, some facets have more than one HTML control - hence the need for 
+      * this method to return an array of Strings, rather than a String.
+      * 
+      * @return 
+      */
+     
+    public String[] getFormNames(){
+        
+        String[] formNames = {formName.name()};
+        
+        return formNames;
+          
+    }
+    
+    /**
+     * Returns the <code>formName</code> member in lower case, to be used as an id value for
+     * the HTML form control
+     * 
+     * @return 
+     */
+    
     public String getCSSSelectorID(){
         
         return this.formName.name().toLowerCase();
         
     }
-     
+
+    /**
+     * Takes a raw facet value and formats it appropriately for display in the facet's 
+     * HTML form control.
+     * 
+     * Under most circumstances, the passed value itself will be appropriate for display;
+     * some subclasses, however, may need to override this method to cope with particular
+     * values requiring special treatment.
+     * 
+     * 
+     * @param value
+     * @return 
+     */
+    
+    public String getDisplayValue(String value){
+        
+        return value;
+        
+    }
     
      /* getters and setters below */
     
@@ -362,21 +407,6 @@ abstract public class Facet {
     public String getDisplayName(String facetParam, java.lang.String facetValue){
         
         return displayName;
-        
-    }
-    
-    public String getDisplayValue(String value){
-        
-        return value;
-        
-    }
-    
-    public String[] getFormNames(){
-        
-        String[] formNames = {formName.name()};
-        
-        return formNames;
-        
         
     }
     

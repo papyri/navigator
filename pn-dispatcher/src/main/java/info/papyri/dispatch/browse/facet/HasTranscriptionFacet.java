@@ -7,7 +7,7 @@ import info.papyri.dispatch.browse.SolrField;
  * record.
  * 
  * Note that, although this <code>Facet</code> is logically and in appearance a 
- * <code>BooeleanFacet</code>, the transcription field is not in fact a Boolean one.
+ * <code>BooleanFacet</code>, the transcription field is not in fact a Boolean one.
  * This <code>Facet</code> accordingly tests whether or not the field has a value 
  * associated with it at all, treating absence of a value as 'false' and presence as
  * 'true'. It might thus be termed a 'pseudo-Boolean'.

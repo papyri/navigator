@@ -27,19 +27,64 @@ import org.apache.solr.common.SolrDocumentList;
  * Note that although the algorithm used for the search process is intended to
  * replicate that defined in <code>info.papyri.dispatch.Search</code> it is implemented
  * very differently. The logic for string-handling is all encapsulated in the inner 
- * SearchConfiguration class, below and more specific documentation is provided there.
+ * SearchConfiguration class, below, and more specific documentation is provided there.
+ * 
+ * One important difference between this subclass and other <code>Facet</code> subclasses
+ * is that repeated complex (that is to say, involving more than one request parameter)
+ * searches are possible. This means that search parameters must be ordered, both to 
+ * ensure that they remain correctly correlated with each other (so that for example the
+ * IGNORE_CAPS setting used in one search is not mistakenly applied to another) and so
+ * that they can be displayed correctly. Most of the methods overriding <code>Facet</code> 
+ * methods do so in order to provide this ordering functionality.
  * 
  * @author thill
  * @version 2011.08.19
  * @see info.papyri.dispatch.Search
+ * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration
  */
 public class StringSearchFacet extends Facet{
-    
+    /**
+     * The type of search being performed.
+     * 
+     * PROXIMITY and WITHIN values are both used for proximity searches- PROXIMITY indicating
+     * that a 'slop search' is desired, and WITHIN to specify slop-distance
+     * 
+     * USER_DEFINED is used for searches in which the user bypasses the standard HTML
+     * form controls to specify the search using string-input only.
+     * 
+     */
     enum SearchType{ PHRASE, SUBSTRING, LEMMAS, PROXIMITY, WITHIN, USER_DEFINED  };
+    
+    /**
+     * Values indicating the fields to search
+     * 
+     * Note that these values do not correspond directly to Solr fields; the Solr field
+     * to search is determined by inspecting the submitted SearchTarget, along with 
+     * the submitted SearchOption(s) and SearchType.
+     * 
+     */
     enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATION, USER_DEFINED };
+    /**
+     * Values indicating whether or not capitalisation and diacritics should be considered
+     * significant for the search
+     * 
+     */
     enum SearchOption{ NO_CAPS, NO_MARKS };
-
+    /** A collection from which <code>SearchConfiguration</code>s can be retrieved in an
+     *  ordered manner.
+     * 
+     * Ordering is important because, unlike other facets, additional string-search
+     * constraints can be added arbitrarily and repeatedly by the user. Some means is 
+     * therefore required to both:
+     * (a) correlate the parameters given in the query-string with each other(so that,
+     * say, the 'ignore caps' setting used for one search is not mistakenly applied to a
+     * subsequent search) and;
+     * (b) retain the order of submission for display purposes.
+     * 
+     */
     private HashMap<Integer, SearchConfiguration> searchConfigurations = new HashMap<Integer, SearchConfiguration>();
+    
+    /** The path to the Solr index for lemmatisated searches */
     private static String morphSearch = "morph-search/";
 
     public StringSearchFacet(){
@@ -160,7 +205,6 @@ public class StringSearchFacet extends Facet{
     public Boolean addConstraints(Map<String, String[]> params){
         
         searchConfigurations = pullApartParams(params);
-        
         return !searchConfigurations.isEmpty();
         
         
@@ -242,6 +286,16 @@ public class StringSearchFacet extends Facet{
         return html.toString();
         
     }
+    
+    /**
+     * Parses the request for string-search parameters, uses these to create appropriate
+     * <code>SearchConfiguration</code> objects, and populates a <code>HashMap</code> with them,
+     * the keys of which are <code>Integer</code>s which allow the <code>SearchConfigurations</code>
+     * to be retrieved in an ordered manner.
+     * 
+     * @param params
+     * @return 
+     */
     
     HashMap<Integer, SearchConfiguration> pullApartParams(Map<String, String[]> params){
         
@@ -446,6 +500,14 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    /**
+     * Reconstitutes a query-string from the members of the passed <code>SearchConfiguration</code> object.
+     * 
+     * 
+     * @param pn
+     * @param config
+     * @return 
+     */
     
     private String getConfigurationAsQueryString(Integer pn, SearchConfiguration config){
         
@@ -551,6 +613,12 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    /**
+     * Returns the text to be highlighted for each of the <code>SearchConfiguration</code> objects. 
+     * 
+     * @return 
+     */
+    
     public String getHighlightString(){
         
         String highlightString = "";
@@ -614,13 +682,11 @@ public class StringSearchFacet extends Facet{
          * otherwise.
          */
         private Boolean ignoreMarks;
-        /**
-         * The SolrField that should be used in the search
-         * 
-         */
+        /** The SolrField that should be used in the search */
         private SolrField field;
-        
+        /** Array of search operators potentially entered by  user */
         private String[] SEARCH_OPERATORS = {"AND", "OR", "NOT", "&&", "||", "+", "-", "WITHIN", "BEFORE", "AFTER", "IMMEDIATELY-BEFORE", "IMMEDIATELY-AFTER"};
+        /** Map for correlating human-entered operators with Solr operators  */
         private HashMap<String, String> STRINGOPS_TO_SOLROPS = new HashMap<String, String>();
         
         SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean caps, Boolean marks, int wi){
@@ -636,6 +702,22 @@ public class StringSearchFacet extends Facet{
             STRINGOPS_TO_SOLROPS.put("WITHIN", "~");
         }
         
+        /**
+         * Applies whatever transformations are required to the search string before it can be 
+         * used as a Solr query.
+         * 
+         * Note the order of processing here:
+         * (1) The keywords submitted are identified
+         * (2) These keywords are then transformed depending on the lemmatisation, caps, and marks settings
+         * (3) The transformed keywords are substituted for the originals in the search string
+         * (4) User-entered operators are replaced by Solr operators
+         * (5) User-entered field names are replaced by Solr field names
+         * (6) The '#' word-boundary delimiter character is replaced with '^'
+         * (7) Backslash-escaping is performed
+         * 
+         * @return 
+         */
+        
         String transformSearchString(){
             
             checkBetacodeSlip();
@@ -650,21 +732,41 @@ public class StringSearchFacet extends Facet{
             
         }
         
+        /**
+         * Checks to ensure that latin-alphabet search operators haven't been 
+         * accidentally transformed into greek-alphabet gibberish through betacode conversion 
+         * 
+         */
+        
         private void checkBetacodeSlip(){
             
             rawString = rawString.replaceAll(" ΑΝΔ ", " AND ").replaceAll(" ΟΡ ", " OR ").replaceAll(" ΝΟΤ ", " NOT ");
             
         }
         
+        /**
+         * Extracts the keywords submitted by the user from the rest of the search-string.
+         * 
+         * That is to say, this method returns the terms remaining after all search fields, 
+         * operators, and other search syntax has been removed.
+         * 
+         * 
+         * @param rawInput
+         * @return 
+         */
+        
         ArrayList<String> harvestKeywords(String rawInput){
             
             if(rawInput == null) return new ArrayList<String>();
             
             String cleanedInput = rawInput;
-
+            
+            // strip out word-boundary markers
             cleanedInput = cleanedInput.replaceAll("[()#^]", " ");
+            // strip out proximity-search info
             cleanedInput = cleanedInput.replaceAll("~[\\s]*[\\d]+", " ");
             
+            // get rid of all search operators
             for(String operator : this.SEARCH_OPERATORS){
                 
                 try{
@@ -690,14 +792,22 @@ public class StringSearchFacet extends Facet{
                 }
                 
             }
-
+            // strip out fiels names
             cleanedInput = cleanedInput.replaceAll("[^\\s]+?:", " ");
+            // tidy excess whitespace
             cleanedInput = cleanedInput.trim();
+            // tokenise on whitespace
             ArrayList<String> inputBits = new ArrayList<String>(Arrays.asList(cleanedInput.split("(\\s)+")));
             return inputBits;
             
         }
         
+        /**
+         * Transforms the passed keywords in accordance with caps, marks, and lemmatisation settings
+         * 
+         * @param keywords
+         * @return 
+         */
         ArrayList<String> transformKeywords(ArrayList<String> keywords){
             
             ArrayList<String> transformedKeywords = new ArrayList<String>();
@@ -729,6 +839,7 @@ public class StringSearchFacet extends Facet{
                     
                 }
                 if(ignoreMarks) keyword = FileUtils.stripDiacriticals(keyword);
+                // note: Solr index uses medial sigma only, even at the ends of words
                 keyword = keyword.replaceAll("ς", "σ");  
                 transformedKeywords.add(keyword);
                 counter++;
@@ -740,37 +851,13 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        String substituteOperators(String expandedString){
-            
-            String smallString = expandedString;
-            if(type.equals(SearchType.PROXIMITY)){
-                
-                smallString = smallString + "~" + String.valueOf(proximityDistance);
-                
-            }
-            
-            smallString = transformProximitySearch(smallString);
-            return smallString;
-            
-            
-        }
-        
-        String transformProximitySearch(String searchString){
-            
-            if(!searchString.contains("~")) return searchString;
-            searchString = searchString.replaceAll("\\s*~\\s*(\\d+)", "~$1");
-            String[] searchBits = searchString.split("~");
-            if(searchBits.length < 2) return searchString;
-            String prelimSearchTerms = searchBits[0];
-            String[] medSearchTerms = prelimSearchTerms.split(" ");
-            if(medSearchTerms.length < 2) return searchString;
-            String searchTerms = medSearchTerms[medSearchTerms.length - 2] + " " + medSearchTerms[medSearchTerms.length - 1];
-            if(searchTerms.indexOf("\"") != 0) searchTerms = "\"" + searchTerms;
-            if(searchTerms.lastIndexOf("\"") != (searchTerms.length() - 1)) searchTerms = searchTerms + "\"";
-            String newSearchString = searchTerms + "~" + searchBits[1];
-            return newSearchString;
-                     
-        }
+        /**
+         * Substitutes transformed terms into the original search-string in order.
+         * 
+         * @param initialTerms
+         * @param transformedTerms
+         * @return 
+         */
         
         String substituteTerms(ArrayList<String> initialTerms, ArrayList<String> transformedTerms){
             
@@ -798,6 +885,75 @@ public class StringSearchFacet extends Facet{
             return swapString;
             
         }
+        
+        /**
+         * In theory, this method should swap human-entered search operators for those
+         * which make sense to Solr.
+         * 
+         * At the moment, however, it is only handlng proximity searches. 
+         * 
+         * @param expandedString
+         * @return 
+         */     
+        //TODO: revisit the question of operator substitution once string-search work is
+        // more advanced
+        // TODO: this won't work with user-defined settings
+        String substituteOperators(String expandedString){
+            
+            String smallString = expandedString;
+            if(type.equals(SearchType.PROXIMITY)){
+                
+                smallString = smallString + "~" + String.valueOf(proximityDistance);
+                
+            }
+            
+            smallString = transformProximitySearch(smallString);
+            return smallString;
+            
+            
+        }
+        
+        /**
+         * Ensures correct syntax for proximity searches
+         * 
+         * @param searchString
+         * @return 
+         */
+        
+        // TODO: this is a bit fubarred. Revisit once the larger quesion of user-defined
+        // searches has been addressed
+        String transformProximitySearch(String searchString){
+            
+            if(!searchString.contains("~")) return searchString;
+            // tidy proximity syntax
+            searchString = searchString.replaceAll("\\s*~\\s*(\\d+)", "~$1");
+            String[] searchBits = searchString.split("~");
+            if(searchBits.length < 2) return searchString;
+            // retrieve everything prior to proximity setting
+            String prelimSearchTerms = searchBits[0];
+            // tokenise on whitespace
+            String[] medSearchTerms = prelimSearchTerms.split(" ");
+            // if only one term is involved, return unchanged, as proximity search 
+            // only makes sense with two-and-only-two terms
+            if(medSearchTerms.length < 2) return searchString;
+            // reconstitute search terms
+            String searchTerms = medSearchTerms[medSearchTerms.length - 2] + " " + medSearchTerms[medSearchTerms.length - 1];
+            // wrap in quotation marks
+            if(searchTerms.indexOf("\"") != 0) searchTerms = "\"" + searchTerms;
+            if(searchTerms.lastIndexOf("\"") != (searchTerms.length() - 1)) searchTerms = searchTerms + "\"";
+            // restore proximity setting to end of string
+            String newSearchString = searchTerms + "~" + searchBits[1];
+            return newSearchString;
+                     
+        }
+        
+        /**
+         * Substitutes user field names provided as a convenience with actual gory Solr fields.
+         * 
+         * 
+         * @param fieldString
+         * @return 
+         */
         
         String substituteFields(String fieldString){
             
@@ -883,6 +1039,13 @@ public class StringSearchFacet extends Facet{
             
         }
         
+        /**
+         * Returns a Boolean regarding whether or not to lemmatise a token.
+         * 
+         * @param keywords
+         * @param currentIteration
+         * @return 
+         */
                 
         Boolean lemmatizeWord(ArrayList<String> keywords, int currentIteration){
             
@@ -920,18 +1083,15 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        private String extractLemmaWord(String rawInput){
-            
-            String lemmaWord = rawString;
-            lemmaWord = lemmaWord.replaceAll("#", "^");
-            lemmaWord = lemmaWord.replaceAll("\\^", "\\\\^");
-            if(!lemmaWord.contains("lem:")) return "";
-            String lemmaWordStart = lemmaWord.substring(lemmaWord.indexOf("lem:") + "lem:".length());
-            if(!lemmaWordStart.contains(" ")) return lemmaWordStart;
-            lemmaWord = lemmaWordStart.substring(0, lemmaWordStart.indexOf(" "));
-            return lemmaWord;
-            
-        }
+        /**
+         * Expands the given query string with its lemmas in a form usable for querying Solr
+         * 
+         * 
+         * @param query
+         * @return
+         * @throws MalformedURLException
+         * @throws SolrServerException 
+         */
         
         public String expandLemmas(String query) throws MalformedURLException, SolrServerException {
             
@@ -968,9 +1128,6 @@ public class StringSearchFacet extends Facet{
         public String getHighlightString(){ 
             
             String highlightString = searchString;
-            
-            
-            
             return highlightString;
         
         }

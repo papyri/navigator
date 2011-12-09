@@ -6,7 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Compares id values to order them both numerically and alphabetically.
+ * 
+ * ID values may consist of any sequence of alphanumeric and punctuation characters, 
+ * which makes them challenging to order. The <code>IdComparator</code> breaks
+ * the ids up into numeric and alphabetic components for ordering, discarding any
+ * punctuation characters.
+ * 
+ * 
  * @author thill
  */
 public class IdComparator implements Comparator {
