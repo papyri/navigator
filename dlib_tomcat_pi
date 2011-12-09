@@ -1,0 +1,171 @@
+
+#!/bin/bash
+# chkconfig: 345 86 16
+# description: Apache Tomcat servlet container
+#------------------------------------------------------------------------------
+# $Id$
+#
+# tomcat control script
+#
+# 2007-02-28 -- jgp -- need to use "su tomcat -c" (for each command)
+# 2007-02-27 -- jgp -- originated script
+#
+#------------------------------------------------------------------------------
+export JAVA_HOME=/usr/java/latest
+#export JAVA_OPTS="-Xms1500 -Xmx1500m -XX:MaxPermSize=256m -XX:+CMSClassUnloadingEnabled -verbose:gc -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Djruby.objectspace.enabled=false -Djruby.thread.pooling=true"
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
+CATALINA_SH=/usr/local/tomcat/bin/catalina.sh
+SOLR_SH=/usr/local/tomcat-solr/bin/catalina.sh
+export SOLR_PID=/usr/local/tomcat-solr/bin/tomcat.pid
+MULGARA_JAR=/usr/local/mulgara/mulgara-2.1.9.jar
+#export CATALINA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8765 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=fred"
+#-Dsolr.solr.home=/data/papyri.info/solr
+
+starttc () {
+        export CATALINA_PID=/usr/local/tomcat/bin/tomcat.pid
+        export JAVA_OPTS="$JAVA_OPTS -Xms768m -Xmx768m -XX:MaxPermSize=128m -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Djruby.objectspace.enabled=false -Djruby.thread.pooling=true"
+        su tomcat -c "$CATALINA_SH start"
+}
+
+stoptc () {
+        export CATALINA_PID=/usr/local/tomcat/bin/tomcat.pid
+        su tomcat -c "$CATALINA_SH stop"
+        sleep 10
+        if [ -e "$CATALINA_PID" ]
+        then
+                kill -TERM `cat $CATALINA_PID`
+                sleep 6
+                if [ -e "CATALINA_PID" ]
+                then
+                        kill -9 `cat $CATALINA_PID`
+                fi
+                rm $CATALINA_PID
+        fi
+}
+
+startsolr () {
+        export CATALINA_PID=/usr/local/tomcat-solr/bin/tomcat.pid
+        export JAVA_OPTS="$JAVA_OPTS -Xms768m -Xmx768m -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Dsolr.solr.home=/data/papyri.info/solr"
+       su tomcat -c "$SOLR_SH start"
+}
+
+stopsolr () {
+        export CATALINA_PID=/usr/local/tomcat-solr/bin/tomcat.pid
+        su tomcat -c "$SOLR_SH stop"
+        sleep 10
+        if [ -e "$SOLR_PID" ]
+        then
+                kill -TERM `cat $SOLR_PID`
+                sleep 6
+                if [ -e "SOLR_PID" ]
+                then
+                        kill -9 `cat $SOLR_PID`
+                fi
+                rm $SOLR_PID
+        fi
+}
+
+startmulgara () {
+        cd /usr/local/mulgara
+        su tomcat -c "java -Xmx512m -jar $MULGARA_JAR -p 8090 -a /data/papyri.info/mulgara &> /usr/local/mulgara/mulgara.out" &
+}
+
+stopmulgara () {
+        java -jar $MULGARA_JAR -x
+}
+
+startxsugar () {
+        #cd /data/papyri.info/sosol/editor/vendor/plugins/rxsugar/src/standalone
+        cd /data/papyri.info/sosol/xsugar/src/standalone
+        su tomcat -c "JAVA_TOOL_OPTIONS=\"-Xms1024m -Xmx1024m -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Dorg.eclipse.jetty.server.Request.maxFormContentSize=-1 -Dfile.encoding=UTF8\" /usr/local/apache-maven-3.0.3/bin/mvn jetty:run &> /data/papyri.info/sosol/xsugar.log" &
+}
+
+stopxsugar () {
+        #cd /data/papyri.info/sosol/editor/vendor/plugins/rxsugar/src/standalone
+        cd /data/papyri.info/sosol/xsugar/src/standalone
+        su tomcat -c "/usr/local/apache-maven-3.0.3/bin/mvn jetty:stop"
+}
+
+case "$1" in
+'start')
+        startxsugar
+        startmulgara
+        echo "waiting 5 seconds for mulgara to start..."
+        sleep 6
+        startsolr
+        starttc
+        ;;
+
+'stop')
+        stoptc
+        stopsolr
+        stopmulgara
+        stopxsugar
+        ;;
+
+'restart')
+        stoptc
+        stopsolr
+        stopmulgara
+        stopxsugar
+        sleep 5
+        startxsugar
+        startmulgara
+        echo "waiting 5 seconds for mulgara to start..."
+        sleep 6
+        starttc
+        startsolr
+        #fi
+        #su tomcat -c "$CATALINA_SH start"
+        ;;
+
+'start-tc')
+        starttc
+        #su tomcat -c "$CATALINA_SH start"
+        ;;
+
+'stop-tc')
+        stoptc
+        #su tomcat -c "$CATALINA_SH stop"
+        #sleep 6
+        #if [ -e "$CATALINA_PID" ]
+        #then
+        #        kill -TERM `cat $CATALINA_PID`
+        #       rm $CATALINA_PID
+        #fi
+        ;;
+
+'start-solr')
+        startsolr
+        ;;
+
+'stop-solr')
+        stopsolr
+        ;;
+
+'start-m')
+        startmulgara
+        ;;
+
+'stop-m')
+        stopmulgara
+        ;;
+
+'start-xs')
+        startxsugar
+        ;;
+
+'stop-xs')
+        stopxsugar
+        ;;
+
+*)
+        echo "Usage: $0 { start | stop | restart | start-tc | stop-tc | start-m | stop-m | start-xs | stop-xs }"
+        exit 1
+        ;;
+esac
+
+
+#------------------------------------------------------------------------------
+# END OF SCRIPT
+#------------------------------------------------------------------------------

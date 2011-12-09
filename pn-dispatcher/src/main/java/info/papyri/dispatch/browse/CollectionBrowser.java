@@ -14,40 +14,33 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Servlet enabling collection-browsing functionality
  * 
- * Note that the nomenclature throughout this code is distinctive in the following ways:
- * (i) The entities to be displayed are thought of as consisting of either <i>documents</i>, 
- * or <i>collections</i> of documents - and note that the latter may have intermediate collections
- * between them and the documents that comprise them. The former are modelled using the
- * <code>DocumentBrowseRecord</code> and <code>DocumentCollectionBrowseRecord</code>s respectively.
- * (ii) To reflect this hierarchical relationship, the standard generational parent -> child 
- * metaphor is used. Collections, then, may be parents of other collections, or of documents; 
- * they may also be children of other collections; and all documents are children of collections.
- * (iii) Perhaps confusingly, the term <i>collection</i> is also used to refer to the top 
- * level of this hierarchy - i.e., to the ddbdp, hgv, or apis collections. The hierarchy
- * as a whole runs collection -> series -> volume -> item
+ * The design of this servlet is very simple: it parses the request for paths of the form
+ * /[collection][/series]?[/volume]? and translates these into SPARQL queries. The only wrinkle
+ * in this process is the irregularity of document collection hierarchies: while some series are
+ * subdivided into volumes, others are not. In order to negotiate this irregularity, an optional
+ * SPARQL clause checking whether the children of the current collection's contents are documents 
+ * or collections of documents is added.
+ * 
+ * When the display reaches document level the user is rerouted to the faceted browser; i.e.,
+ * when the display is at one level *above* document level, the links provided for drilling
+ * deeper into the collections are to the faceted browser, with appropriate query-string
+ * arguments.
+ * 
  * 
  * @author thill
- * @see DocumentBrowseRecord
+ * @see CollectionBrowser#parseUriToCollectionRecord(java.util.LinkedHashMap, java.lang.String, java.lang.String, java.lang.String)  
  * @see DocumentCollectionBrowseRecord
  */
 @WebServlet(name = "CollectionBrowser", urlPatterns = {"/browse"})
@@ -57,19 +50,18 @@ public class CollectionBrowser extends HttpServlet {
     static String home;
     /** HTML output is by injection; the browseURL member provides the html page for this */
     static URL browseURL;
-    /** Pagination constant */
-    static int docsPerPage = 50;
-    static String SPARQL_GRAPH;
-    static String SOLR_URL;
+    /** SPARQL-point URL */
     static String SPARQL_URL;
-    static String BROWSE_SERVLET;
-    static String PN_SEARCH;
-    static String BASE;
+    /** Name of the SPARQL graph to be queried */
+    static String SPARQL_GRAPH;
+    /** URL of this servlet */
+    static String BROWSE_SERVLET; 
+    /** Faceted browser servlet URL*/
     static String FACET_SERVLET;
     /* an ordered list of the classification hierarchy: collection (ddbdp | hgv | apis), series, volume, and item identifer.
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
-    static ArrayList<SolrField> SOLR_FIELDS = new ArrayList<SolrField>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume, SolrField.item));
+    static ArrayList<SolrField> ORG_HIERARCHY = new ArrayList<SolrField>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume));
     static ArrayList<String> COLLECTIONS = new ArrayList<String>(Arrays.asList("ddbdp", "hgv", "apis"));
     
     @Override
@@ -77,14 +69,11 @@ public class CollectionBrowser extends HttpServlet {
         
         super.init(config);
 
-        SOLR_URL = config.getInitParameter("solrUrl");
         SPARQL_URL = config.getInitParameter("sparqlUrl");
         SPARQL_GRAPH = "<" + config.getInitParameter("sparqlGraph") + ">";
         BROWSE_SERVLET = config.getInitParameter("browseServletPath");
         FACET_SERVLET = config.getInitParameter("facetBrowserPath");
         home = config.getInitParameter("home");
-        BASE = config.getInitParameter("htmlPath");
-        PN_SEARCH = config.getInitParameter("pnSearchPath");
         try {
             
             browseURL = new URL("file://" + home + "/" + "browse.html");
@@ -109,55 +98,21 @@ public class CollectionBrowser extends HttpServlet {
         
             response.setContentType("text/html;charset=UTF-8");
             request.setCharacterEncoding("UTF-8");        
-            int page = getPageNumber(request);
             LinkedHashMap<SolrField, String> pathParts = parseRequest(request);
-            ArrayList<BrowseRecord> records = new ArrayList<BrowseRecord>();
-            long totalDocumentResults = 0;
-            if(page == 0){
-                
-                String sparqlQuery = buildSparqlQuery(pathParts);
-                JsonNode resultNode = runSparqlQuery(sparqlQuery);
-                records = buildCollectionList(pathParts, resultNode);
-                
-            }
-            else{
-                
-                 SolrQuery sq = buildSolrQuery(pathParts, page);
-                 QueryResponse qr = runSolrQuery(sq);
-                 records = parseSolrResponseIntoDocuments(pathParts, qr); 
-                 totalDocumentResults = getTotalResultsReturned(qr);
-                
-            }
-            String html = this.buildHTML(pathParts, records, page, totalDocumentResults);
+            ArrayList<DocumentCollectionBrowseRecord> records = new ArrayList<DocumentCollectionBrowseRecord>();
+            String sparqlQuery = buildSparqlQuery(pathParts);
+            JsonNode resultNode = runSparqlQuery(sparqlQuery);
+            records = buildCollectionList(pathParts, resultNode);    
+            String html = this.buildHTML(pathParts, records);
             displayBrowseResult(response, html);
 
     }
     
     /**
-     * Parses the request for the page number of the results requested
-     * 
-     * 
-     * @param request The HttpServletRequest object submitted to the servet
-     * @return The page number
-     */
-    
-    private int getPageNumber (HttpServletRequest request){
-        
-        String queryParam = request.getParameter("q");
-        Pattern pattern = Pattern.compile(".+page([\\d]+)$");
-        Matcher matcher = pattern.matcher(queryParam);
-        if(matcher.matches()) return Integer.valueOf(matcher.group(1));
-        return 0;
-        
-    }
-    
-    /**
      * Parses the request parameter into a data structure correlating the passed values to the relevant
-     * level of the collection hierarchy (collection -> series -> volume -> item).
+     * levels of the collection hierarchy (collection -> series -> volume).
      * 
-     * The request parameter will be of the form /[collection]/[series]?/[volume]?/[documents/page[\d+]]?,
-     * with documents/page[\d+] being present iff the page is a list of documents (rather than, e.g., 
-     * series or volumes)
+     * The request parameter will be of the form /[collection][/series]?[/volume]?
      * 
      * @param request the HttpServletRequest made to the servlet
      * @return A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
@@ -177,37 +132,12 @@ public class CollectionBrowser extends HttpServlet {
         
         for(int i = 0; i < pathParts.length; i++){
 
-            pathComponents.put(SOLR_FIELDS.get(i), pathParts[i]);
+            pathComponents.put(ORG_HIERARCHY.get(i), pathParts[i]);
             
         }
         
         return pathComponents;
            
-    }
-    
-    
-    /**
-     * Retrieves the name of the collection (ddbdp | hgv | apis) currently being browsed and
-     * modifies it so that it can be prepended to Solr field names for retrieval purposes.
-     * 
-     * This method is required because collection and document identifiers are collection-
-     * specific, and there Solr fields thus have names like ddbdp_series, apis_series,
-     * hgv_volume, etc.
-     * 
-     * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
-     * of the collection hierarchy
-     * @return The value associated with the <code>collection</code> key of the <code>LinkedHashMap</code>,
-     * appended with a slash.
-     */
-    
-    String getCollectionPrefix(LinkedHashMap<SolrField, String> pathParts){
-        
-        String collection = pathParts.get(SolrField.collection);
-        
-        if(!COLLECTIONS.contains(collection)) collection = "ddbdp";
-        
-       return collection + "_";
-              
     }
     
     /**
@@ -293,10 +223,6 @@ public class CollectionBrowser extends HttpServlet {
     /**
      * Parses the root JsonNode into a list of <code>DocumentCollectionBrowseRecord</code>s.
      * 
-     * Note that the returned type is a list of <code>BrowseRecord</code>s (the supertype), rather than
-     * <code>DocumentCollectionBrowseRecord</code>s. This is for polymorphic functioning for HTML display 
-     * in the <code>processRequest</code> method
-     * 
      * @param A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
      * of the collection hierarchy
      * @param resultNode The root JsonNode returned by Mulgara
@@ -307,9 +233,9 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    ArrayList<BrowseRecord> buildCollectionList(LinkedHashMap<SolrField, String> pathParts, JsonNode resultNode){
+    ArrayList<DocumentCollectionBrowseRecord> buildCollectionList(LinkedHashMap<SolrField, String> pathParts, JsonNode resultNode){
         
-        ArrayList<BrowseRecord> records = new ArrayList<BrowseRecord>();
+        ArrayList<DocumentCollectionBrowseRecord> records = new ArrayList<DocumentCollectionBrowseRecord>();
         Iterator<JsonNode> rnit = resultNode.iterator();
         ArrayList<String> childLog = new ArrayList<String>();
         while(rnit.hasNext()){
@@ -333,6 +259,14 @@ public class CollectionBrowser extends HttpServlet {
         Collections.sort(records);
         return records;
     }
+    
+    /**
+     * Converts strings from the unicode-escaping used by mulgara to 
+     * 
+     * 
+     * @param lbl
+     * @return 
+     */
     
     private String stringifyUnicodeLiterals(String lbl){
         
@@ -414,7 +348,7 @@ public class CollectionBrowser extends HttpServlet {
         
         if(significantChildSubstring.startsWith("/")) significantChildSubstring = significantChildSubstring.substring(1);
         
-        if(pathParts.size() == SOLR_FIELDS.indexOf(SolrField.series)){
+        if(pathParts.size() == ORG_HIERARCHY.indexOf(SolrField.series)){
              
              return new DocumentCollectionBrowseRecord(collection, significantChildSubstring, grandchildIsDocument, seriesLabel);
 
@@ -430,309 +364,7 @@ public class CollectionBrowser extends HttpServlet {
 
         
     }
-    
-    /**
-     * Creates a SolrQuery object based on the values stored in the passed LinkedHashMap object.
-     * 
-     * @param A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
-     * of the collection hierarchy
-     * @return SolrQuery The SolrQuery object
-     */
-    SolrQuery buildSolrQuery(LinkedHashMap<SolrField, String> pathParts, int page){
-        
-        SolrQuery sq = new SolrQuery();
-        sq.setStart((page - 1) * docsPerPage);
-        sq.setRows(docsPerPage);
-        
-        String query = "";
-        for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
-        
-            SolrField field = entry.getKey();
-            String value = entry.getValue();
-            
-            if(field.equals(SolrField.collection)){
-                
-                // optimization - filter queries are cached
-                sq.addFilterQuery(field.name() + ":" + value);
-                
-            }
-            else{
-                
-                String collField = getCollectionPrefix(pathParts) + field.name();
-                query += " +" + collField + ":" + value;
-                
-            }
-        
-        }
-        if(!query.isEmpty()) sq.setQuery(query);
-        sq.addSortField(getCollectionPrefix(pathParts) + SolrField.item.name(), SolrQuery.ORDER.asc);
-        sq.addSortField(getCollectionPrefix(pathParts) + SolrField.item_letter.name(), SolrQuery.ORDER.asc);
-        return sq;
-    }
-    
-    /**
-     * Queries the Solr server and returns the response
-     * 
-     * @param sq A SolrQuery object
-     * @return QueryResponse The response returned from the Solr server
-     * 
-     */
-    
-      QueryResponse runSolrQuery(SolrQuery sq){
-        
-        try{
-        
-            SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
-            QueryResponse qr = solrServer.query(sq);
-            return qr;
-            
-        }
-        catch(MalformedURLException mule){
-            
-            mule.printStackTrace();
-            return null;
-        }
-        catch(SolrServerException sse){
-            
-            sse.printStackTrace();
-            return null;
-        }
        
-        
-    }
-      
-    /**
-       * Determines the total number of results matching the query in the Solr store.
-       * 
-       * @param qr The <code>QueryRespone</code> returned from the server
-       * @return The number of results contained in that <code>QueryResponse</code>.
-       */  
-      
-    long getTotalResultsReturned(QueryResponse qr){
-        
-        return qr.getResults().getNumFound();      
-        
-    }
-      
-    /**
-       * Parses the response returned by the Solr server into a list of <code>DocumentBrowseRecord</code>s.
-       * 
-       * Note that the returned type is a list of <code>BrowseRecord</code>s (the supertype), rather than
-       * <code>DocumentBrowseRecord</code>s. This is for polymorphic functioning for HTML display 
-       * in the <code>processRequest</code> method
-       * 
-       * @param qr The QueryResponse returned by the Solr server
-       * @return ArrayList<BrowseRecord> A list of the <code>DocumentBrowseRecord</code>s
-       * @see BrowseRecord
-       * @see DocumentBrowseRecord
-       */  
-    
-    ArrayList<BrowseRecord> parseSolrResponseIntoDocuments(LinkedHashMap<SolrField, String> pathParts, QueryResponse qr){
-        
-        ArrayList<BrowseRecord> records = new ArrayList<BrowseRecord>();
-        ArrayList<String> previousIds = new ArrayList<String>();
-                     
-        for(SolrDocument doc : qr.getResults()){
-            
-            try{
-                   
-                DocumentBrowseRecord record;
-                ArrayList<String> allIds = this.getAllIds(doc);
-                String preferredId = this.getPreferredId(pathParts, allIds, doc);
-                sortIds(allIds);
-                URL url = new URL((String)doc.getFieldValue(SolrField.id.name()));
-                Boolean titleIsNull = doc.getFieldValue(SolrField.title.name()) == null;
-                ArrayList<String> documentTitles = titleIsNull ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.title.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-                Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
-                String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());
-                Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
-                String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());
-                Boolean languageIsNull = doc.getFieldValue(SolrField.facet_language.name()) == null;
-                String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("[\\[\\]]", "");
-                Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
-                String translationLanguages = noTranslationLanguages ? "None" : doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");     
-                ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-                Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
-                if(!previousIds.contains(preferredId)){
-                
-                    previousIds.add(preferredId);
-                    allIds.remove(preferredId);
-                    record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, "");
-                    records.add(record);
-                
-                }
-                
-            } catch(MalformedURLException mui){
-                
-                System.out.println("URL malformed or missing " + mui.getMessage());
-                
-            }
-            
-                 
-        }
-        Collections.sort(records);
-        return records;          
-        
-    }
-     
-    
-    ArrayList<String> getAllIds(SolrDocument doc){
-        
-        ArrayList<String> allIds = new ArrayList<String>();
-        ArrayList<String> collections = doc.getFieldValue(SolrField.collection.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.collection.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-        Iterator<String> cit = collections.iterator();
-        
-        while(cit.hasNext()){
-            
-            String collection = cit.next().toLowerCase().trim();
-            String collectionPrefix = collection + "_";
-            ArrayList<String> series = doc.getFieldValue(collectionPrefix + SolrField.series.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.series.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-            ArrayList<String> volumes = doc.getFieldValue(collectionPrefix + SolrField.volume.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-            ArrayList<String> itemIds = doc.getFieldValue(collectionPrefix + SolrField.full_identifier.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(collectionPrefix + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-            
-            if(series != null){
-                
-                for(int i = 0; i < series.size(); i++){
-                    
-                    try{
-                        
-                        if(itemIds.size() != series.size() || (volumes != null && volumes.size() != series.size())) throw new MismatchedIdsException(series.size(), volumes == null ? 0 : volumes.size(), itemIds.size());
-                        
-                        String nowSeries = series.get(i).replaceAll("_", " ").trim();
-                        String nowVolume = (volumes == null || i > volumes.size() - 1) ? "0" : volumes.get(i).replaceAll("_", " ").trim();
-
-                        String nowItem = itemIds.get(i).replaceAll("_", " ").trim();
-                        
-                        String allInfo = collection + " " + nowSeries + " " + nowVolume + " " + nowItem;
-                        allIds.add(allInfo);
-                        
-                    } catch(MismatchedIdsException mie){
-                        
-                        allIds.add("Individual id length error: " + mie.getError());
-
-                        
-                    } catch(NullPointerException npe){
-                        
-                        allIds.add("Individual item id missing error: " + npe.getMessage());
-                        
-                        
-                    }
-                        
-                }
-            }            
-            
-        }
-        
-        ArrayList<String> apisInventory = doc.getFieldValue(SolrField.apis_inventory.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_inventory.name()).toString().replaceAll("\\[\\]", "").split(",")));
-        ArrayList<String> apisPublicationId = doc.getFieldValue(SolrField.apis_publication_id.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_publication_id.name()).toString().replaceAll("\\[\\]", "").split(",")));
-
-        if(apisInventory != null) allIds.addAll(apisInventory);
-        if(apisPublicationId != null) allIds.addAll(apisPublicationId);
-        
-        if(allIds.size() == 0){
-            
-            allIds.add("All item ids missing error");
-            
-        }
-        
-        return allIds;
-        
-    }
-    
-    String getPreferredId(LinkedHashMap<SolrField, String> pathParts, ArrayList<String> allIds, SolrDocument doc){
-        
-        if(pathParts.get(SolrField.collection) == null || pathParts.get(SolrField.series) == null) return "SERIOUS ERROR: Document hierarchy incorrectly defined.";
-        
-        ArrayList<String> candidates = new ArrayList<String>();
-        
-        if(pathParts.get(SolrField.collection).toLowerCase().equals("apis")){
-            
-            ArrayList<String> publicationIds = doc.getFieldValue(SolrField.apis_publication_id.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_publication_id.name()).toString().replaceAll("\\[\\]", "").split(",")));
-            
-            if(publicationIds != null){
-                
-                candidates.addAll(publicationIds);
-                
-            }
-            else{
-                
-                ArrayList<String> inventoryIds = doc.getFieldValue(SolrField.apis_inventory.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_inventory.name()).toString().replaceAll("\\[\\]", "").split(",")));
-                
-                if(inventoryIds != null){
-                    
-                    candidates.addAll(inventoryIds);
-                    
-                }
-                else{
-                    
-                   String searchPattern = "apis " + pathParts.get(SolrField.series) + " 0 ";
-                   
-                   Iterator<String> ait = allIds.iterator();
-                   
-                   while(ait.hasNext()){
-                       
-                       String id = ait.next();
-                       
-                       if(id.contains(searchPattern)) candidates.add(id);
-                       
-                       
-                   }
-                    
-                    
-                }
-                
-            }
-            
-        }
-        else{
-            
-            String searchCollection = pathParts.get(SolrField.collection);
-            String searchSeries = pathParts.get(SolrField.series).replaceAll("_", " ").trim();
-            String searchVolume = pathParts.get(SolrField.volume) == null ? "0" : pathParts.get(SolrField.volume).replaceAll("_", " ").trim();
-            String searchPattern = searchCollection + " " + searchSeries + " " + searchVolume;
-            Iterator<String> ait = allIds.iterator();
-            while(ait.hasNext()){
-                
-                String id = ait.next();
-                
-                if(id.contains(searchPattern)) candidates.add(id);
-                
-            }
-                  
-        }
-        
-        if(candidates.size() == 0){
-            
-            String errorMessages = "ERROR: ";
-            
-            if(allIds.size() > 0){
-                
-                Iterator<String> ait = allIds.iterator();
-                while(ait.hasNext()){
-                    
-                    errorMessages += ait.next();
-                    if(ait.hasNext()) errorMessages += ", ";
-                    
-                    
-                }
-                
-            }
-            else{
-                
-                errorMessages += " No ids supplied";
-                
-            }
-            
-            candidates.add(errorMessages);
-            
-        }
-        
-        candidates = filterIds(candidates);
-        return candidates.get(0);
-        
-        
-    }
-    
     /**
      * Injects the <code>Record</code> HTML into the browse page.
      * 
@@ -764,11 +396,7 @@ public class CollectionBrowser extends HttpServlet {
             } 
         
         }
-        catch(Exception e){
-            
-            
-            
-        }
+        catch(Exception e){ }
         
     }
     
@@ -807,12 +435,12 @@ public class CollectionBrowser extends HttpServlet {
      * @param records The list of records to be displayed
      * @return String A String of html
      */
-    String buildHTML(LinkedHashMap<SolrField, String> pathParts, ArrayList<BrowseRecord> records, int page, long totalResults){
+    String buildHTML(LinkedHashMap<SolrField, String> pathParts, ArrayList<DocumentCollectionBrowseRecord> records){
         
         StringBuilder html = new StringBuilder("<h2>");
         html.append(pathParts.get(SolrField.collection));
         html.append("</h2>"); 
-        html = page != 0 ?  buildDocumentsHTML(pathParts, html, records, totalResults) : buildCollectionsHTML(html, records);
+        html = buildCollectionsHTML(html, records);
         return html.toString();
         
     }
@@ -827,7 +455,7 @@ public class CollectionBrowser extends HttpServlet {
      * @see DocumentCollectionBrowseRecord#getHTML() 
      */
     
-    private StringBuilder buildCollectionsHTML(StringBuilder html, ArrayList<BrowseRecord> records){
+    private StringBuilder buildCollectionsHTML(StringBuilder html, ArrayList<DocumentCollectionBrowseRecord> records){
        
         int numColumns = records.size() > 20 ? 5 : 1;
         int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
@@ -856,104 +484,7 @@ public class CollectionBrowser extends HttpServlet {
         
         return html;
         
-    }
-    
-    /**
-     * Generates the HTML for the display of document summaries.
-     * 
-     * Note a dependency here - the html table code here must line up with the html <tr>
-     * output of  <code>DocumentBrowseRecord</code>.
-     * 
-     * @param html A <code>StringBuffer</code> to store the HTML, and with opening tags already in place
-     * @param records The <code>ArrayList</code> of <code>BrowseRecord</code>s to be displayed
-     * @return A <code>StringBuffer</code> holding the generated HTML
-     * @see DocumentBrowseRecord#getHTML() 
-     */
-    
-    private StringBuilder buildDocumentsHTML(LinkedHashMap<SolrField, String> pathParts, StringBuilder html, ArrayList<BrowseRecord> records, long totalResultSetSize){
-        
-        html.append("<table>");
-        html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Location</td><td>Date</td><td>Languages</td><td>Translations</td><td>Images</td></tr>");
-        Iterator<BrowseRecord> rit = records.iterator();
-        
-        while(rit.hasNext()){
-            
-            BrowseRecord rec = rit.next();
-            html.append(rec.getHTML());   
-            
-        }
-        html.append("</table>");
-       
-        if(totalResultSetSize > docsPerPage){
-            
-            double rawTotal = (double)totalResultSetSize;
-            
-            long numPages = (long) Math.ceil(rawTotal / docsPerPage);
-
-            html.append("<div id=\"pagination\">");
-                    
-            // pagination
-            
-            String pathBase = BROWSE_SERVLET + "/";
-            for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
-            
-                pathBase += entry.getValue() + "/";
-            
-            }
-            
-            pathBase += "documents/page";
-            
-            for(int i = 1; i <= numPages; i++){
-                
-                html.append("<div class=\"page\">");
-                html.append("<a href=\"");
-                html.append(pathBase);
-                html.append(String.valueOf(i));
-                html.append("\">");
-                html.append(String.valueOf(i));
-                html.append("</a></div>");   
-                
-            }
-            
-            html.append("</div>");
-       
-            
-        }
-        
-        return html;
-        
-    }
-    
-    ArrayList<String> filterIds(ArrayList<String> rawIds){
-        
-        ArrayList<String> acceptedIds = new ArrayList<String>();
-        
-        // weed out duplicates and empties
-        
-        Iterator<String> rit = rawIds.iterator();
-        
-        while(rit.hasNext()){
-        
-            String id = rit.next();
-            
-            if(id != null && !id.matches("^\\s*$") && !acceptedIds.contains(id)) acceptedIds.add(id);
-        
-        }
-        
-        
-       return acceptedIds;
-       
-       
-    }
-    
-    
-    void sortIds(ArrayList<String> rawIds){
-        
-        IdComparator idComparator = new IdComparator();
-        Collections.sort(rawIds, idComparator);
-        
-    }
-
+    } 
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
