@@ -15,7 +15,7 @@ In broad outline, the packages below have the following tasks:
 4. **pn-mapping** - parses the XML files in order to resolve identifiers and retrieve collation and collection information; stores the result as triples in the Numbers Server.
 5. **pn-site** - HTML, JS, CSS, and img files for the Navigator site
 6. **pn-solr** - config and other required files for the Solr index
-7. 
+7. **pn-sync** - synchronises the contents of the numbers server and Solr index with the contents of the 'mothership' repository (i.e., publishes texts entered via the editor to the navigator)
 8. **pn-xslt** - XSLT stylesheets used for HTML display and Solr indexing.
 
 Environment
