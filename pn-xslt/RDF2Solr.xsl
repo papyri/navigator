@@ -920,7 +920,7 @@
       </xsl:when>
 
       <xsl:when test="local-name() = 'choice' and child::t:reg and child::t:orig">
-        <xsl:apply-templates select="t:orig/node()"/>
+        <xsl:apply-templates select="t:reg/node()"/>
       </xsl:when>
 
       <!-- subst -->
