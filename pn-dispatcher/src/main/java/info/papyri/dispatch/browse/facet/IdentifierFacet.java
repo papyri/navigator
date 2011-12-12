@@ -43,8 +43,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  * hierachy, while <i>series</i> is used for ddbdp/hgv hierarchies.
  * 
  * @author thill
- * @see Facet
- * @see SearchConfiguration
+ * @see info.papyri.dispatch.browse.facet.Facet
+ * @see info.papyri.dispatch.browse.facet.SearchConfiguration
  */
 public class IdentifierFacet extends Facet{
 
@@ -68,17 +68,9 @@ public class IdentifierFacet extends Facet{
     
         private final String label;
         
-        IdParam(String msg){
-            
-            label = msg;
-            
-        }
+        IdParam(String msg){ label = msg; }
         
-        public String getLabel(){
-            
-            return label;
-            
-        }
+        public String getLabel(){ return label; }
     
     }  
     
@@ -299,8 +291,7 @@ public class IdentifierFacet extends Facet{
     /**
      * Takes the <code>QueryResponse</code> object, parses its values for the relevant series/volume/idno
      * information, and distributes this information to the relevant widgets.
-     * 
-     * 
+     *  
      * @param queryResponse
      * @return 
      */
@@ -551,24 +542,48 @@ public class IdentifierFacet extends Facet{
         return "Locate documents by publication or collection information";
         
     }
+    
+    /**
+     * Determines whether a constraint has been set on the <code>Facet</code> as a whole,
+     * as opposed to simply on the particular <code>SearchConfiguration</code>
+     * 
+     * @return 
+     */
+
+    public Boolean anyConstraintSet(){
+
+        for(SearchConfiguration sc : searchConfigurations.values()){
+
+            if(sc.hasConstraint()) return true;
+
+        }
+
+        return false;
+
+    }
        
     
     /**
-     * Defines the logic and behavior of individual levels of the classification hierarchy
+     * Inner class defining the logic and behavior of individual levels of the classification hierarchy
      * 
      * These classes are in themselves simple, and their members names and purpose should in 
-     * most cases be self-evident. In most cases the methods are simply devolved versions of
+     * most cases be self-evident. In general the methods are simply devolved versions of
      * methods normally more amply defined in the <code>Facet</code> class and its subclasses.
-     * The difficult aspects relate chiefly to interactions among these 
-     * various controls, and notes are made of this where appropriate.
-     * 
+     * More complex considerations arise chiefly in regard to interactions among these various 
+     * controls, and notes are made of this where appropriate.
      * 
      */
     
     private abstract class SearchConfiguration{
         
+        /** The constraint, if any, applied to the SearchConfiguration */
         String constraint;
+       /**
+         * The list of values, and corresponding counts, associated with the SearchConfiguration
+         * 
+         */
         HashMap<String, Long> idValues;
+        /** @see info.papyri.dispatch.browse.facet.IdentifierFacet.IdParam */
         IdParam param;
         
         public SearchConfiguration(IdParam ip){
@@ -579,42 +594,15 @@ public class IdentifierFacet extends Facet{
                    
         }
         
-        public void setConstraint(String newConstraint){
-            
-            constraint = newConstraint;
-            
-        }
+        public void setConstraint(String newConstraint){ constraint = newConstraint; }
         
-        public String getConstraint(){
-            
-            return constraint;
-            
-        }
+        public String getConstraint(){ return constraint; }
         
-        public Boolean hasConstraint(){
-            
-            return !"".equals(constraint);
-            
-        }
+        public Boolean hasConstraint(){ return !"".equals(constraint); }
         
-        public HashMap<String, Long> getIdValues(){ 
+        public HashMap<String, Long> getIdValues(){  return idValues; }
         
-               return idValues;
-            
-        }
-        
-        public Boolean anyConstraintSet(){
-        
-            for(SearchConfiguration sc : searchConfigurations.values()){
-            
-                if(sc.hasConstraint()) return true;
-            
-            
-            }
-        
-            return false;
-        
-        }
+        public String getCSSSelector(){ return "id-" + param.name().toLowerCase(); }
         
         public void setIdValues(QueryResponse queryResponse, ArrayList<String> rawValues){
             
@@ -671,12 +659,6 @@ public class IdentifierFacet extends Facet{
             
         }
 
-        public String getCSSSelector(){
-            
-            return "id-" + param.name().toLowerCase();
-            
-            
-        }
         
         public abstract ArrayList<SolrField> getFacetFields();
         public abstract ArrayList<String> getIdValuesAsHTML();
@@ -685,6 +667,19 @@ public class IdentifierFacet extends Facet{
         public abstract Boolean isDisabled();
     
     }
+    
+    /**
+     * Superclass for the <code>CollectionSearchConfiguration</code> and <code>SeriesSearchConfiguration</code>
+     * classes.
+     * 
+     * These classes differ from <code>VolumeIdnoSearchConfiguration</code> and its subclasses chiefly in:
+     * (a) their HTML form controls - drop-down selectors in the case of the former, input boxes for the latter
+     * (b) their population - the latter are populated only once a constraint has been set upon the former (because
+     * there are simply too many individual id and volume numbers for this to be practical with a prior constraint
+     * limiting the search space.
+     * 
+     * 
+     */
     
     private abstract class CollectionSeriesSearchConfiguration extends SearchConfiguration {
         
@@ -745,7 +740,13 @@ public class IdentifierFacet extends Facet{
     }
     
     
-    /*********************** SERIESSEARCHCONFIGURATION ************************/
+    /**
+     * <code>SearchConfiguration</code> for browsing by DDbDP / HGV series
+     * 
+     * Note that browsing by DDbDP/HGV series is incompatible with browsing by APIS collection - 
+     * only one of <code>SeriesSearchConfiguration</code> and <code>CollectionSearchConfiguration</code>
+     * may be active at any given time.
+     */
     
     
     private class SeriesSearchConfiguration extends CollectionSeriesSearchConfiguration{
@@ -763,15 +764,14 @@ public class IdentifierFacet extends Facet{
             return "id-" + IdParam.SERIES.name().toLowerCase();
 
         }
-        /**
+        /*
          * 
-         * We do not want faceted for this facet if:
+         * Note that we do not want standard faceting for this facet if:
          * (i) the COLLECTION facet has a constraint (in which case this facet is disabled
          * (ii) it itself has a constraint (in which case this is the only value it can have)
          * (iii) VOLUME or IDNO have a constraint set, in which case the *_led_path fields must be used
          * instead of the standard faceting mechanism
          * 
-         * @return 
          */
         @Override
         public ArrayList<SolrField> getFacetFields(){
@@ -931,7 +931,15 @@ public class IdentifierFacet extends Facet{
    
     }
     
-    /********************** COLLECTIONSEARCHCONFIGURATION *********************/
+    /**
+     * <code>SearchConfiguration</code> for browsing by APIS collection
+     * 
+     * Note that browsing by DDbDP/HGV series is incompatible with browsing by APIS collection - 
+     * only one of <code>SeriesSearchConfiguration</code> and <code>CollectionSearchConfiguration</code>
+     * may be active at any given time. In addition, APIS collections do not use volume numbers,
+     * so only on of <code>CollectionSearchConfiguration</code> and <code>VolumeSearchConfiguration</code>
+     * may be active at any one time.
+     */
     
     private class CollectionSearchConfiguration extends CollectionSeriesSearchConfiguration{
         
@@ -943,15 +951,6 @@ public class IdentifierFacet extends Facet{
             apisOnly = false;
             
         }
-        
-        /**
-         * 
-         * Browsing by APIS collection is incompatible with browsing by HGV/DDbDP series,
-         * and APIS collections do not use volumes. Accordingly, if either series or 
-         * volume has been set, the APIS facet is disabled.
-         *
-         * @return 
-         */
         
         @Override
         public ArrayList<SolrField> getFacetFields(){
@@ -1118,8 +1117,15 @@ public class IdentifierFacet extends Facet{
         
     }
     
-    /*********************** VOLUMEIDNOSEARCHCONFIGURATION ********************/
+    /**
+     * Superclass for <code>VolumeSearchConfiguration</code> and <code>IdnoSearchConfiguration</code>.
+     * 
+     * The two subclasses are distinguished from <code>CollectionSeriesSearchConfiguration</code> and
+     * its subclasses chiefly by their HTML controls - text inputs rather than drop-downs, and by the 
+     * fact that they are populated only once other constraints have been set.
+     */
     
+
     private abstract class VolumeIdnoSearchConfiguration extends SearchConfiguration{
         
         public VolumeIdnoSearchConfiguration(IdParam ip){
@@ -1196,8 +1202,14 @@ public class IdentifierFacet extends Facet{
         
     } 
     
-    /******************** VOLUMESEARCHCONFIGURATION **************************/
-    
+   /**
+     * <code>SearchConfiguration</code> for browsing by volume number.
+     * 
+     * Note that this <code>SearchConfiguration</code> is never applicable when browsing by
+     * APIS collection.
+     * 
+     */
+        
     private class VolumeSearchConfiguration extends VolumeIdnoSearchConfiguration{
         
         public VolumeSearchConfiguration(){

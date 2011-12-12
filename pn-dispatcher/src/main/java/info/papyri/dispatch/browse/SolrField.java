@@ -1,7 +1,7 @@
 package info.papyri.dispatch.browse;
 
-    /* Names of fields indexed in Solr. Note that some may have the collectionPrefix prepended to 
-     * them in actual use.
+    /* Names of fields indexed in Solr and used by the <code>FacetBrowser</code>,
+     * <code>CollectionBrowser</code>, and <code>AtomFeedServlet</code> servlets.
      * 
      * @author: thill 
      */
