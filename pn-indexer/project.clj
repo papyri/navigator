@@ -1,8 +1,8 @@
 (defproject pn-indexer "1.0-SNAPSHOT"
   :repositories {"papyri.info" "http://dev.papyri.info/maven"}
   :jvm-opts ["-Xmx1g"]
-  :dependencies [[org.clojure/clojure "1.2.0"]
-                 [org.clojure/clojure-contrib "1.2.0"]
+  :dependencies [[org.clojure/clojure "1.3.0"]
+                 [org.clojure/clojure-contrib "1.3.0"]
                  [ant/ant-launcher "1.6.2"]
                  [org.apache.maven/maven-ant-tasks "2.0.10"]
                  [org.apache.solr/solr-core "3.3.0"]
