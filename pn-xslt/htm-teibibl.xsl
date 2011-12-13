@@ -70,7 +70,7 @@
   <xsl:template name="articleTitle">
     <xsl:choose>
       <xsl:when test="t:title[@level='a']"><xsl:value-of select="t:title[@level='a']"/></xsl:when>
-      <xsl:when test="@type='review'">Review of <xsl:for-each select="pi:get-docs(concat(t:relatedItem[@type='reviews']//t:ptr/@target, '/source'), 'xml')/t:bibl"><a href="/biblio/{t:idno[@type='pi']}/"><xsl:call-template name="buildCitation"/></a></xsl:for-each><xsl:text>, </xsl:text></xsl:when>
+      <xsl:when test="@type='review'">Review of <xsl:for-each select="t:relatedItem[@type='reviews']"><xsl:for-each select="pi:get-docs(concat(.//t:ptr/@target, '/source'), 'xml')/t:bibl"><a href="/biblio/{t:idno[@type='pi']}/"><xsl:call-template name="buildCitation"/></a></xsl:for-each></xsl:for-each><xsl:text>, </xsl:text></xsl:when>
     </xsl:choose>
   </xsl:template>
   
