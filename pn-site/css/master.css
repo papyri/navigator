@@ -59,8 +59,12 @@ font-size: 100%;
 font-style:normal;
 color:white;
 position:absolute;
-top:5px;
+top:-15px;
 right:1em;
+}
+
+h2#login a {
+color:white;
 }
 
 div.content {

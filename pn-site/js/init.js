@@ -32,9 +32,17 @@ function init() {
             closingDelay: 500
         });
     });
-    jQuery.getJSON("/editor/user/info", function(data) {
-      if (data.user) {
-        jQuery("#login").html(data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+    jQuery.ajax({
+      type: "GET",
+      url: "/editor/user/info", 
+      dataType: "json",
+      success: function(data, status, xhr) {
+        if (data.user) {
+         jQuery("#login").html(data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+        }
+      },
+      error: function (data, status, xhr) {
+        jQuery("#login").html("Editor not available.");
       }
     });
     jQuery.getJSON("/mulgara/sparql/?query="
