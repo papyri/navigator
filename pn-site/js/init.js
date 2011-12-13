@@ -32,6 +32,11 @@ function init() {
             closingDelay: 500
         });
     });
+    jQuery.getJSON("/editor/user/info", function(data) {
+      if (data.user) {
+        jQuery("#login").html(data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+      }
+    });
     jQuery.getJSON("/mulgara/sparql/?query="
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
         + "select ?subject "
