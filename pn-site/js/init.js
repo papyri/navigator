@@ -38,7 +38,7 @@ function init() {
       dataType: "json",
       success: function(data, status, xhr) {
         if (data.user) {
-         jQuery("#login").html(data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\">home</a> | " + data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
         }
       },
       error: function (data, status, xhr) {
