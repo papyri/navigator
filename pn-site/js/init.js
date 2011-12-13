@@ -43,7 +43,8 @@ function init() {
       },
       error: function (data, status, xhr) {
         jQuery("#login").html("Editor not available.");
-      }
+      },
+      timeout: 10000
     });
     jQuery.getJSON("/mulgara/sparql/?query="
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
