@@ -90,7 +90,7 @@ public class BiblioSearch extends HttpServlet {
           } catch (Exception e) {}
           SolrQuery sq = new SolrQuery();
           try {
-            sq.setQuery(q);
+            sq.setQuery(q.toLowerCase());
             sq.setStart(start);
             sq.setRows(rows);
             sq.addSortField("date", SolrQuery.ORDER.asc);

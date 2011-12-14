@@ -224,13 +224,10 @@
     <xsl:param name="ddb" />
     <xsl:variable name="link" select="concat('http://papyri.info/ddbdp/', $ddb)" />
     <xsl:variable name="linkRdf" select="concat($link, '/rdf')" />
-    <xsl:variable name="test" select="document($linkRdf)//dcterms:identifier[1]" />
-
-    <xsl:choose>
-      <xsl:when test="string($test)">
-        <xsl:value-of select="$link" />
-      </xsl:when>
-    </xsl:choose>
+    <xsl:variable name="test" select="doc-available($linkRdf)"/>
+    <xsl:if test="$test">
+      <xsl:value-of select="$link" />
+    </xsl:if>
   </xsl:function>
   
 </xsl:stylesheet>
