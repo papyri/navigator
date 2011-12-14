@@ -5,7 +5,6 @@
   xmlns:pi="http://papyri.info/ns"
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:biblio="biblio"
   exclude-result-prefixes="#all"
   version="2.0">
   
@@ -193,7 +192,7 @@
     <xsl:param name="ddbId" />
     <xsl:param name="inventory" />
 
-    <xsl:variable name="link" select="biblio:checkFile($ddbId)"/>
+    <xsl:variable name="link" select="pi:checkFile($ddbId)"/>
     <xsl:variable name="related">
       <xsl:choose>
         <xsl:when test="string($inventory)">
@@ -220,11 +219,10 @@
 
   </xsl:template>
   
-  <xsl:function name="biblio:checkFile">
+  <xsl:function name="pi:checkFile">
     <xsl:param name="ddb" />
-    <xsl:variable name="link" select="concat('http://papyri.info/ddbdp/', $ddb)" />
-    <xsl:variable name="linkRdf" select="concat($link, '/rdf')" />
-    <xsl:variable name="test" select="doc-available($linkRdf)"/>
+    <xsl:variable name="link" select="concat('http://papyri.info/ddbdp/', $ddb, '/source')" />
+    <xsl:variable name="test" select="doc-available(pi:get-filename($link, 'xml'))"/>
     <xsl:if test="$test">
       <xsl:value-of select="$link" />
     </xsl:if>
