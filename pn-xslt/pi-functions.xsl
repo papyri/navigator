@@ -11,7 +11,6 @@
     <xsl:param name="urls"/>
     <xsl:param name="format"/>
     <xsl:for-each select="$urls">
-      <xsl:message><xsl:value-of select="."/></xsl:message>
       <xsl:choose>
         <xsl:when test="doc-available(pi:get-filename(., $format))">
           <xsl:copy-of select="doc(pi:get-filename(., $format))"/>
