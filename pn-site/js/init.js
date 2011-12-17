@@ -75,6 +75,21 @@ function getPath() {
     return result;
 }
 
+/* The following functions are all concerned with linear browse - that is to say,
+   allowing users to traverse to the next or previous record in the result set 
+   without first returning to the initial search page listing results */
+
+/**
+ * Initiates the sequence of events that queries the Solr server and adds
+ * next, previous, and back-to-results controls as appropriate.
+ *
+ * Of the parameters passed in the query string, "p" refers to the records position
+ * in the entire result set; "t" is the total number of records in the result set;
+ * 'q' is the searched-for string used in highlighting (and thus must be filtered out 
+ * for search purposes); and the remainder are all parameters for direct use by the 
+ * Solr server
+ *
+ */
 function addLinearBrowseControls(){
 
 	var position = $(document).getUrlParam("p");
@@ -85,12 +100,23 @@ function addLinearBrowseControls(){
 	
 }
 
+/**
+ * Transforms the passed querystring into a querystring usable in querying the Solr
+ * server.
+ *
+ * The purpose of this query is to determine the next and previous records to which
+ * the 'next' and 'previous' controls should point.
+ *
+ */
+
 function buildSolrQueryString(){
 
 	var querystring = window.location.search;
+	// get rid of values not used by Solr: t, d, and q (which is used only for highlighting)
 	querystring = querystring.replace(/[&?]t=\d+/, "");
 	querystring = querystring.replace(/[&?]p=\d+/, "");
 	var highlightstring = $(document).getUrlParam("q");
+	// but *some* value for q is required, so the 'select all' wildcard (*:*) is given
 	if(highlightstring == null || highlightstring == ""){
 	
 		querystring = querystring += "&q=*:*";
@@ -105,6 +131,9 @@ function buildSolrQueryString(){
 	return querystring;
 
 }
+/**
+ * Queries the Solr server
+ */
 
 function querySolrServer(query, position, total, rows, querystring){
 
@@ -116,6 +145,12 @@ function querySolrServer(query, position, total, rows, querystring){
 			"xml");
 
 }
+
+/**
+ * Manager function for generating the 'Previous', 'Next', and 'Back to search results' 
+ * HTML controls.
+ */
+
 
 function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 
@@ -160,6 +195,10 @@ function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
 function addBackToFacetBrowse(wrapper){
 
+	// note that unlike the 'previous' and 'next' HTML controls, persistence here is
+	// achieved not by passing a query string around, but through 
+	// a cookie ("lbpersist")
+
 	var searchstring = getCookie("lbpersist");
 	if(searchstring == null) return;
 	var prevpageURL = window.location.protocol + "//" + window.location.host + "/search" + searchstring;
@@ -195,6 +234,14 @@ function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 	wrapper.append(arrowWrapper);
 	
 }
+/**
+ * Alters the query string used by the presently-displayed page so that it is suitable for use
+ * by the next or previous record in the result set. 
+ * 
+ * This will typically be by advancing or reducing the start value of the query, though 
+ * special considerations apply when the first or last record is reached.
+ *
+ */
 
 function buildSolrQueryLinkString(direction, querystring, position, total, rows){
 
@@ -255,7 +302,7 @@ function buildSolrQueryLinkString(direction, querystring, position, total, rows)
 }
 
 
-// TODO: Should probably hive this off into a separate file
+// TODO: Should probably hive this off into a separate file at some point
 
 /* Copyright (c) 2006-2007 Mathias Bank (http://www.mathias-bank.de)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) 

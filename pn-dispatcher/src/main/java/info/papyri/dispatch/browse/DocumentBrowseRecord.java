@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.solr.client.solrj.SolrQuery;
 
 /**
  * The <code>DocumentBrowseRecord</code> class stores summary information regarding
@@ -18,8 +19,8 @@ import java.util.List;
  */
 public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
-  private String preferredId;
   private ArrayList<String> itemIds = new ArrayList<String>();
+  private String preferredId;
   private URL url;
   private String documentTitle;
   private String place;
@@ -29,6 +30,9 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private ArrayList<String> imagePaths;
   private Boolean hasIllustration;
   private String highlightString;
+  private String solrQueryString;
+  private Long position;
+  private Long total;
   
   private static IdComparator documentComparator = new IdComparator();
   
@@ -53,8 +57,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
     StringBuilder anchor = new StringBuilder();
     anchor.append("<a href='");
-    anchor.append(url.toString().substring("http://papyri.info".length()));
-    anchor.append(this.getHighlightString());
+    anchor.append(generateLink());    
     anchor.append("'>");
     anchor.append(getDisplayId());
     anchor.append("</a>");
@@ -86,8 +89,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     return html.toString();
 
   }
-
-  // TODO: Change in line with trac http://idp.atlantides.org/trac/idp/ticket/828
   
   public String getDisplayId() {
      
@@ -349,4 +350,78 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       return imageHTML; 
   
   }
+  
+  private String generateLink(){
+      
+      StringBuilder html = new StringBuilder();
+      
+      html.append(url.toString().substring("http://papyri.info".length()));
+      html.append(this.getHighlightString());      
+      html.append(getSolrQueryString());
+      
+      return html.toString();
+      
+  }
+  
+  /**
+   * Sets the Solr data required for the document to generate a Solr query string
+   * returning itself and its immediate neighbours in the result set.
+   * 
+   * Used for linear browsing functionality
+   * 
+   * @param sq A Solr querystring retrieving the current record and its immediate neighbour(s)
+   * @param position The position of this record in the current resultset
+   * @param total The total number of records in the current resultset
+   */
+  
+  public void setSolrData(SolrQuery sq, long position, long total){
+      
+      setSolrQueryString(sq);
+      setPosition(position);
+      setTotal(total);
+      
+      
+  }
+  
+  private void setSolrQueryString(SolrQuery sq){
+      
+      if(sq == null){
+          
+          solrQueryString = "";
+          return;
+          
+      }
+      
+      solrQueryString = sq.toString();
+      
+  }
+  
+  /**
+   * Formats the 
+   * 
+   * @return 
+   */
+  
+  private String getSolrQueryString(){
+      
+      if("".equals(solrQueryString)) return "";
+      String sq = ("".equals(highlightString) ? "?" : "&") + solrQueryString;
+      sq += "&p=" + String.valueOf(position) + "&t=" + String.valueOf(total); 
+      return sq;
+      
+  }
+
+  private void setPosition(long p){
+      
+      position = p;
+      
+  }
+  
+  private void setTotal(long t){
+      
+      total = t;
+      
+  }
+  
+   
 }

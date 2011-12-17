@@ -51,7 +51,7 @@ public class FacetBrowser extends HttpServlet {
     static private URL FACET_URL;
     /** path to servlet */
     static private String FACET_PATH;
-    /** Default umber of records to show per page */
+    /** Default number of records to show per page */
     static private int defaultDocumentsPerPage = 15;
     /** Utility class providing lemma expansion */
     static SolrUtils SOLR_UTIL;
@@ -131,7 +131,7 @@ public class FacetBrowser extends HttpServlet {
          
         /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
            of which represents one returned document. */
-        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse, facets);
+        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(solrQuery, queryResponse, facets);
         
                 
         /* Determine the number of results returned. 
@@ -318,7 +318,7 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse, ArrayList<Facet> facets){
+    ArrayList<DocumentBrowseRecord> retrieveRecords(SolrQuery solrQuery, QueryResponse queryResponse, ArrayList<Facet> facets){
         
         String highlightString = this.generateHighlightString(facets);
 
@@ -326,6 +326,8 @@ public class FacetBrowser extends HttpServlet {
         
         if(queryResponse.getResults() == null) return records;
         
+        int counter = 0;
+                
         for(SolrDocument doc : queryResponse.getResults()){
             
            try{ 
@@ -346,7 +348,9 @@ public class FacetBrowser extends HttpServlet {
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
                 DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, highlightString);
+                setLinearBrowseData(solrQuery, queryResponse, counter, record);
                 records.add(record);
+                counter++;
                 
            }
            catch (MalformedURLException mue){
@@ -1022,8 +1026,57 @@ public class FacetBrowser extends HttpServlet {
         }        
         
        return acceptedIds;
-       
-       
+         
+    }
+    
+    /**
+     * Creates, starting from the <code>SolrQuery</code> object used for the current result set,
+     * a new <code>SolrQuery</code> capable of returning the immediate neighbour(s) of the passed
+     * <code>DocumentBrowseRecord</code> in that result set, in order to support linear-browsing 
+     * functionality.
+     * 
+     * @param bigQuery
+     * @param qr
+     * @param recordPosition
+     * @param record 
+     */
+    
+    private void setLinearBrowseData(SolrQuery bigQuery, QueryResponse qr, int recordPosition, DocumentBrowseRecord record){
+
+        SolrQuery newQuery = new SolrQuery();  
+        
+        String[] filterQueries = bigQuery.getFilterQueries();
+        String[] sortFields = bigQuery.getSortFields();
+        
+        try{
+            
+            Long currentPosition = Long.valueOf(bigQuery.getStart() + recordPosition);
+            Long lastRecord = qr.getResults().getNumFound() - 1;
+            newQuery.setRows((currentPosition == 0 || currentPosition == lastRecord) ? 2 : 3);
+            int startValue = (int)(currentPosition == 0 ? 0 : currentPosition - 1);
+            newQuery.setStart(startValue);
+            newQuery.addField("id");
+            newQuery.addField("title");
+        
+            for(int i = 0; i < filterQueries.length; i++){
+
+                String filterQuery = filterQueries[i];
+                if(!"".equals(filterQuery)) newQuery.addFilterQuery(filterQuery);
+
+            }
+
+            for(int j = 0; j < sortFields.length; j++){
+
+                String[] sortBits = sortFields[j].split(" ");
+                if(sortBits.length == 2) newQuery.addSortField(sortBits[0], SolrQuery.ORDER.valueOf(sortBits[1]));
+
+            }
+            
+            record.setSolrData(newQuery, currentPosition, lastRecord);
+            
+            
+        } catch(Exception e){  }
+        
     }
     
     /**
