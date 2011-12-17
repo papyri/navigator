@@ -758,5 +758,64 @@ div.more-like-this a:after{
 
 /* END MORE-LIKE-THIS ADDITIONS */
 
+/* LINEAR BROWSING ADDITIONS THILL 2011.12.16 */
 
+#linear-browse-wrapper{
+    
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    clear: both;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 90%;
+    height: 25px;
+    position: relative;
+    
+}
+
+#linear-previous-record{
+    
+    float: left;
+    
+    }
+
+#linear-next-record{
+    
+    float: right;
+}
+
+#linear-back{
+    
+    position: absolute;
+    left: 42%;
+    
+}
+
+#linear-back a{
+    
+    color: #162A5C;
+    
+}
+
+#linear-browse-wrapper a{
+    
+    text-decoration: none;
+    
+}
+
+#linear-browse-wrapper a:hover{
+    
+    text-decoration: underline;
+    
+}
+
+.deadlink{
+    
+    color: #777;
+    font-style: italic;
+    
+}
+
+/* END LINEAR BROWSING ADDITIONS */
 

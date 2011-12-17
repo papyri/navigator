@@ -571,6 +571,18 @@ $(document).ready(
 			}
 		
 		});
+		
+		hic.setCookie = function(name,value,hours) {
+		
+    		if (hours) {
+        		var date = new Date();
+       			date.setTime(date.getTime()+(hours*60*60*1000));
+        		var expires = "; expires="+date.toGMTString();
+    	}
+    	else var expires = "";
+    	document.cookie = name+"="+value+expires+"; path=/";
+		}
+		
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		// select substring as default
@@ -591,6 +603,11 @@ $(document).ready(
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		// ... unless checks need to be in place first
 		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").change(hic.tidyQueryString);
+		// sets cookie on click to record to allow reversion to current search results
+		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
+	
 	}
+	
+
 
 );
