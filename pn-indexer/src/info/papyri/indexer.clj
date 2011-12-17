@@ -51,9 +51,9 @@
 (def words (ref (ConcurrentSkipListSet.)))
 (def solr (ref nil))
 (def solrbiblio (ref nil))
-(def *current*)
-(def *doc*)
-(def *index*)
+(def ^:dynamic *current*)
+(def ^:dynamic *doc*)
+(def ^:dynamic *index*)
 
 (defn add-words [words]
   (let [word-arr (.split words "\\s+")]

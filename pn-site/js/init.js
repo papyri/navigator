@@ -32,6 +32,20 @@ function init() {
             closingDelay: 500
         });
     });
+    jQuery.ajax({
+      type: "GET",
+      url: "/editor/user/info", 
+      dataType: "json",
+      success: function(data, status, xhr) {
+        if (data.user) {
+         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\">home</a> | " + data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+        }
+      },
+      error: function (data, status, xhr) {
+        jQuery("#login").html("Editor not available.");
+      },
+      timeout: 10000
+    });
     jQuery.getJSON("/mulgara/sparql/?query="
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
         + "select ?subject "

@@ -53,6 +53,20 @@ width: 100%;
 text-align: center;
 }
 
+h2#login {
+font-family: Georgia, serif;
+font-size: 100%;
+font-style:normal;
+color:white;
+position:absolute;
+top:-15px;
+right:1em;
+}
+
+h2#login a {
+color:white;
+}
+
 div.content {
 background: #f8f6f4;
 float:left;
