@@ -259,7 +259,17 @@ $(document).ready(
 	    			if(hidden.getAttribute("name") == "COLLECTION"){
 	    			
 	    				var collvalue = $("select[name='COLLECTION']").attr("value");
-	    				if(collvalue != "default") continue;
+	    				if(collvalue != "default"){
+	    				
+	    					filteredels.push($("select[name='COLLECTION']"));
+	    					continue;
+	    						
+	    				}
+	    				else{
+	    				
+	    					filteredels.push(hidden);
+	    				
+	    				}
 	    				
 	    			}
 	    		
