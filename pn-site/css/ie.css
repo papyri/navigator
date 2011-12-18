@@ -17,6 +17,17 @@
     
     height: 50px;
     clear: left; 
+     
+}
+
+#text-search-widget{
     
+    height: 350px;
+    
+}
+
+#img-select{
+    
+    height: 100px;
     
 }
