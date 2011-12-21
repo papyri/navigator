@@ -525,7 +525,11 @@
                         <xsl:variable name="curstep-id" select="generate-id($step)"/>
                         <xsl:choose>
                            <xsl:when test="matches(., '[\s\n\r\t]')"/>
-                          <xsl:when test="matches(following::text()[generate-id(ancestor::node()[1])=$curstep-id][1], '[\s\n\r\t]')">
+                           <xsl:when test="for $i in following::text()[generate-id(ancestor::node()[1])=$curstep-id]
+                                           return
+                                             if (matches($i, '[\s\n\r\t]'))
+                                                then false()
+                                                else true()">
                               <xsl:call-template name="recurse_down_back">
                                  <xsl:with-param name="step" select="following-sibling::node()[1]"/>
                                  <xsl:with-param name="buildup" select="buildup"/>

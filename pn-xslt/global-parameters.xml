@@ -16,7 +16,7 @@
     <value>edh-web</value>
     <value>ila</value>
     <value>london</value>
-    <value>panciera</value>
+    <value on="yes">panciera</value>
     <value>petrae</value>
     <value>rib</value>
     <value>seg</value>
