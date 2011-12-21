@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teiabbrandexpan.xsl 1542 2011-08-22 18:09:22Z gabrielbodard $ -->
+<!-- $Id: teiabbrandexpan.xsl 1647 2011-11-16 10:11:47Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t"  version="2.0">
    <!-- Contains templates for expan and abbr -->
@@ -15,8 +15,11 @@
       <xsl:if test="not(ancestor::t:expan) and not($edition-type='diplomatic')">
          <xsl:text>(</xsl:text>
          <xsl:choose>
-            <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+            <xsl:when test="$leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch'">
                <xsl:text>&#xa0;&#xa0;</xsl:text>
+            </xsl:when>
+            <xsl:when test="$leiden-style = 'rib'">
+               <xsl:text> . . . </xsl:text>
             </xsl:when>
             <xsl:otherwise>
                <xsl:text>- - -</xsl:text>

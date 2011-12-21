@@ -20,7 +20,7 @@
         <xsl:call-template name="reprint-text">
                <xsl:with-param name="direction" select="'in'"/>
             </xsl:call-template>
-            </xsl:when>
+         </xsl:when>
          <xsl:when test="@type = 'Perseus'">
             <xsl:variable name="col" select="substring-before(@href, ';')"/>
             <xsl:variable name="vol" select="substring-before(substring-after(@href,';'),';')"/>
