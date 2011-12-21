@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-tpl-apparatus.xsl 1691 2011-12-12 18:53:31Z gabrielbodard $ -->
+<!-- $Id: htm-tpl-apparatus.xsl 1597 2011-10-21 15:22:07Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -26,34 +26,63 @@
                or self::t:add[@place='inline']][1][local-name()=('reg','corr','del','rdg')])] |
            .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
                
+               <!--<xsl:variable name="preclbn" select="preceding::t:lb[1]/@n"/>
+               <xsl:variable name="preclbid" select="generate-id(preceding::t:lb[1])"/>-->
+               
+               <!--<xsl:if test="not(following-sibling::t:*[local-name()=('choice','subst','app') or 
+                  self::t:hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')]][preceding::t:lb[1]/@n = $preclbn])">
+                <xsl:call-template name="app-link">
+                   <xsl:with-param name="location" select="'apparatus'"/>
+                </xsl:call-template>
+             </xsl:if>-->
                <!-- Found in tpl-apparatus.xsl -->
-               <xsl:call-template name="ddbdp-app">
-                  <xsl:with-param name="apptype">
-                     <xsl:choose>
-                        <xsl:when test="self::t:choice[child::t:orig and child::t:reg]">
-                           <xsl:text>origreg</xsl:text>
-                        </xsl:when>
-                        <xsl:when test="self::t:choice[child::t:sic and child::t:corr]">
-                           <xsl:text>siccorr</xsl:text>
-                        </xsl:when>
-                        <xsl:when test="self::t:subst">
-                           <xsl:text>subst</xsl:text>
-                        </xsl:when>
-                        <xsl:when test="self::t:app[@type='alternative']">
-                           <xsl:text>appalt</xsl:text>
-                        </xsl:when>
-                        <xsl:when test="self::t:app[@type='editorial'][starts-with(t:lem/@resp,'BL ')]">
-                           <xsl:text>appbl</xsl:text>
-                        </xsl:when>
-                        <xsl:when test="self::t:app[@type='editorial'][starts-with(t:lem/@resp,'PN ')]">
-                           <xsl:text>apppn</xsl:text>
-                        </xsl:when>
-                        <xsl:when test="self::t:app[@type='editorial']">
-                           <xsl:text>apped</xsl:text>
-                        </xsl:when>
-                     </xsl:choose>
-                  </xsl:with-param>
-               </xsl:call-template>
+          <xsl:call-template name="ddbdp-app">
+             <xsl:with-param name="apptype">
+                <xsl:choose>
+                   <xsl:when test="self::t:choice[child::t:orig and child::t:reg]">
+                      <xsl:text>origreg</xsl:text>
+                   </xsl:when>
+                   <xsl:when test="self::t:choice[child::t:sic and child::t:corr]">
+                      <xsl:text>siccorr</xsl:text>
+                   </xsl:when>
+                   <xsl:when test="self::t:subst">
+                      <xsl:text>subst</xsl:text>
+                   </xsl:when>
+                   <xsl:when test="self::t:app[@type='alternative']">
+                      <xsl:text>appalt</xsl:text>
+                   </xsl:when>
+                   <xsl:when test="self::t:app[@type='editorial']">
+                      <xsl:text>apped</xsl:text>
+                   </xsl:when>
+                   <xsl:when test="self::t:app[@type='BL']">
+                      <xsl:text>appbl</xsl:text>
+                   </xsl:when>
+                   <xsl:when test="self::t:app[@type='SoSOL']">
+                      <xsl:text>appsosol</xsl:text>
+                   </xsl:when>
+                </xsl:choose>
+             </xsl:with-param>
+          </xsl:call-template>
+
+               <!-- Does not create newline for two apps on same line nesting -->
+          <!--<xsl:choose>
+             <!-\-<xsl:when test="following-sibling::t:*[local-name()=('choice','subst','app') or 
+                (local-name()='hi' and @rend=('diaeresis','grave','acute','asper','lenis','circumflex'))]
+                [not(descendant::t:lb)][preceding::t:lb[1][generate-id(.)=$preclbid]]">-\->
+             <xsl:when test="following-sibling::t:choice[not(descendant::t:lb)][preceding::t:lb[1][generate-id(.)=$preclbid]]
+                or following-sibling::t:subst[not(descendant::t:lb)][preceding::t:lb[1][generate-id(.)=$preclbid]]
+                or following-sibling::t:app[not(descendant::t:lb)][preceding::t:lb[1][generate-id(.)=$preclbid]]
+                or following-sibling::hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')]
+                [not(descendant::t:lb)][preceding::t:lb[1][generate-id(.)=$preclbid]]">
+                     <xsl:text>; </xsl:text>
+                <!-\-<xsl:value-of select="following-sibling::t:*[local-name()=('choice','subst','app') or 
+                   (local-name()='hi' and @rend=('diaeresis','grave','acute','asper','lenis','circumflex'))]
+                   [not(descendant::t:lb)][1]/preceding::t:lb[1]/local-name()"/>-\->
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <br/>
+                  </xsl:otherwise>
+               </xsl:choose>-->
             </xsl:for-each>
          </div>
       </xsl:if>
@@ -96,7 +125,7 @@
                 <xsl:text>#to-app-</xsl:text>
                 <xsl:value-of select="$app-num"/>
              </xsl:attribute>
-             <xsl:attribute name="id">
+             <xsl:attribute name="xml:id">
                 <xsl:text>from-app-</xsl:text>
                 <xsl:value-of select="$app-num"/>
              </xsl:attribute>
@@ -105,7 +134,7 @@
        </xsl:when>
        <xsl:when test="$location = 'apparatus'">
           <a>
-             <xsl:attribute name="id">
+             <xsl:attribute name="xml:id">
                 <xsl:text>to-app-</xsl:text>
                 <xsl:value-of select="$app-num"/>
              </xsl:attribute>

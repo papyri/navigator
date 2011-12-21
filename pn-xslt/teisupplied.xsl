@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teisupplied.xsl 1667 2011-11-24 16:39:06Z gabrielbodard $ -->
+<!-- $Id: teisupplied.xsl 1636 2011-10-26 13:08:32Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0" 
    xmlns:EDF="http://epidoc.sourceforge.net/ns/functions"
-                exclude-result-prefixes="t EDF" 
+   exclude-result-prefixes="t EDF" 
                 version="2.0">
 
   <xsl:template match="t:supplied[@reason='lost']">
@@ -17,8 +17,7 @@
          </xsl:when>
          <xsl:otherwise>
         <!-- Found in tpl-reasonlost.xsl -->
-        <!--<xsl:call-template name="lost-opener"/>-->
-            <xsl:text>[</xsl:text>
+        <xsl:call-template name="lost-opener"/>
             <xsl:choose>
                <xsl:when test="$edition-type = 'diplomatic'">
                   <xsl:variable name="supplied-content">
@@ -62,8 +61,7 @@
                </xsl:if>
             </xsl:if>
             <!-- Found in tpl-reasonlost.xsl -->
-        <!--<xsl:call-template name="lost-closer"/>-->
-            <xsl:text>]</xsl:text>
+        <xsl:call-template name="lost-closer"/>
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>

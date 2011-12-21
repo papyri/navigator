@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teigap.xsl 1680 2011-12-05 16:25:02Z rviglianti $ -->
+<!-- $Id: teigap.xsl 1463 2011-07-11 16:31:59Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -102,10 +102,7 @@
          <xsl:text>?</xsl:text>
       </xsl:if>
 
-      <xsl:if test="not(preceding::node()[1][self::text()][normalize-space(.)=''][preceding-sibling::node()[1][self::t:gap[@reason='illegible']]])
-         and not(preceding::node()[1][self::t:gap[@reason='illegible']])">
-         <xsl:call-template name="extent-string"/>
-      </xsl:if>
+      <xsl:call-template name="extent-string"/>
    </xsl:template>
 
 
@@ -119,8 +116,7 @@
          </xsl:when>
          <xsl:otherwise>            
             <!-- Found in tpl-reasonlost.xsl -->
-            <!--<xsl:call-template name="lost-opener"/>-->
-            <xsl:text>[</xsl:text>
+            <xsl:call-template name="lost-opener"/>
          </xsl:otherwise>
       </xsl:choose>
       <xsl:if
@@ -133,11 +129,7 @@
             <xsl:call-template name="verse-string"/>
          </xsl:when>
          <xsl:otherwise>
-            <!-- Don't display again if there is a preceding adjecent gap of the same kind -->
-            <xsl:if test="not(preceding::node()[1][self::text()][normalize-space(.)=''][preceding-sibling::node()[1][self::t:gap[@reason='lost']]])
-               and not(preceding::node()[1][self::t:gap[@reason='lost']])">
-               <xsl:call-template name="extent-string"/>
-            </xsl:if>
+            <xsl:call-template name="extent-string"/>
          </xsl:otherwise>
       </xsl:choose>
 
@@ -167,8 +159,7 @@
          </xsl:when>
          <xsl:otherwise>
             <!-- Found in tpl-reasonlost.xsl -->
-            <!--<xsl:call-template name="lost-closer"/>-->
-            <xsl:text>]</xsl:text>
+            <xsl:call-template name="lost-closer"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
