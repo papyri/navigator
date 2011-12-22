@@ -1,6 +1,29 @@
-;; Recursively read a directory full of XML and convert the files therein to RDF, using a provided XSLT.
-;; Then load the RDF data into a triplestore
-
+;; ## PN Mapper
+;; The PN Mapper provides functions for loading data into the PN's triple store, which uses 
+;; [Mulgara](http://www.mulgara.org/). It uses XSLT to transform XML files into RDF for loading
+;; into the triple store and does some inferencing to fill out the graph of relationships
+;; harvested from the XML. When compiled into a JAR, it exposes several static methods that can be
+;; called by external Java processes. 
+;;
+;; ### Usage:
+;; (from Leiningen)
+;;
+;; * `map-all [<directory>]` — runs the mapping process over either the files in the directory provided, or over the predefined PN directories
+;; * `map-files <files>` — processes the list of files provided
+;; * `load-file <file>` — convenience function for loading a file containing triples
+;; * `delete-graph` — drops the papyri.info graph
+;; * `delete-uri` — deletes triples where the given URI is the subject or object
+;; * `insert-inferences [<uri>]` — runs the inferencing process just for the given URI, or for the whole dataset.
+;;
+;; (from Java)
+;;
+;; * `info.papyri.map.mapAll(String dir)` (dir can be null)
+;; * `info.papyri.map.mapFiles(List<String> files)`
+;; * `info.papyri.map.loadFile(String file)`
+;; * `info.papyri.map.deleteGraph()`
+;; * `info.papyri.map.deleteUri(String uri)`
+;; * `info.papyri.map.insertInferences(String file)` (file can be null)
+;;
 (ns info.papyri.map
   (:gen-class
    :name info.papyri.map
@@ -35,7 +58,7 @@
 (def server (URI/create "rmi://localhost/server1"))
 (def graph (URI/create "rmi://localhost/papyri.info#pi"))
 (def param (ref nil))
-;; NOTE hard-coded file and directory locations
+;; NOTE: hard-coded file and directory locations
 (def xslts {"DDB_EpiDoc_XML" "/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
       "HGV_meta_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
@@ -44,14 +67,20 @@
 (def idproot "/data/papyri.info/idp.data")
 (def ddbroot "/data/papyri.info/idp.data/DDB_EpiDoc_XML")
 (def help (str "Usage: <function> [<params>]\n"
-     "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
-     "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
+     "Functions: map-all [<directory>], map-files <file list>, load-file <file>, "
+     "delete-graph, delete-uri <uri>, insert-inferences <file>."))
      
+;; ## Utility functions
+
 (defn substring-before
+  "Returns the portion of the first string parameter that occurs before the string in the second
+  parameter, or the whole string if the second parameter does not occur in the first."
   [string1 string2]
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
-(defn flush-buffer [n]
+(defn flush-buffer 
+  "Writes the queued-up RDF triples to Mulgara."
+  [n]
   (println (str "Loading " n " records to " server))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 500)
@@ -75,7 +104,10 @@
         (doto conn
           (.close))))))
 
+;; ##XSLT Functions
+ 
 (defn transform
+  "Performs the XSLT transform defined by *init-xslt* on the file passed as a parameter."
   [file]
   (let [transformer (.newTransformer @pxslt)
         out (StringWriter.)
@@ -91,6 +123,8 @@
         (.println *err* (str (.getMessage e) " processing file " file))))))
 
 (defn init-xslt
+  "Initializes the provided XSLT file, compiles it into a PreparedStylesheet and stores
+ that in a ref." 
     [xslt]
   (when (not= xslt @xsl)
     (dosync (ref-set xsl xslt))
@@ -108,6 +142,7 @@
         (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
           
 (defn choose-xslt
+  "Picks the correct XSLT for the provided file."
   [file]
   (cond (.contains (str file) "DDB_EpiDoc_XML") (xslts "DDB_EpiDoc_XML")
     (.contains (str file) "HGV_meta_EpiDoc") (xslts "HGV_meta_EpiDoc")
@@ -115,29 +150,41 @@
     (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")
     (.contains (str file) "Biblio") (xslts "Biblio")))
     
+;; ##Mulgara Functions
+
 (defn format-url-query
+  "Creates a SPARQL query to lookup a URI given the filename (which is stored as
+  an identifier."
   [filename] 
   (format 
     "prefix dc: <http://purl.org/dc/terms/> 
     select ?uri
     from <rmi://localhost/papyri.info#pi>
-    where {?uri dc:identifier \"%s\"}"))
+    where {?uri dc:identifier \"%s\"}" filename))
     
 (defn execute-query
+  "Executes a SPARQL Query in Mulgara."
   [query]
   (let [interpreter (SparqlInterpreter.)]
     (.execute (.parseQuery interpreter query) (.newConnection (ConnectionFactory.) server))))
     
 (defn get-filename 
+  "Extracts the filename id portion of a file path."
   [file]
   (substring-before (.substring (inc (.lastIndexOf file "/"))) ".xml"))
     
 (defn url-from-file
+  "Executes a SPARQL query to resolve the papyri.info URI from a given filename."
   [file]
-  (let [answer (execute-query (format-url-query (get-filename file)))]
-    (.toString (.getObject answer 0))))
+  (when file
+    (let [answer (execute-query (format-url-query (get-filename file)))]
+    (.toString (.getObject answer 0)))))
           
+;; ### Class Methods
+;; The following methods are callable from Java using the generated class.
+
 (defn -deleteGraph
+  "Drops the whole graph. Use when you need to clear out the database completely."
   []
   (let [factory (ConnectionFactory.)
         conn (.newConnection factory server)
@@ -146,6 +193,7 @@
       (.close conn)))
       
 (defn -deleteUri
+  "Deletes relations where the provided URI is the subject or the object."
   [uri]
   (let [deletesub (str "construct { <" uri "> ?p ?r }
                         from <rmi://localhost/papyri.info#pi>
@@ -162,6 +210,7 @@
     (.close conn))))
     
 (defn -deleteRelation
+  "Deletes relations where the predicate is the provided URI."
   [uri]
   (let [deleterel (str "construct { ?s <" uri "> ?r }
                         from <rmi://localhost/papyri.info#pi>
@@ -174,6 +223,7 @@
     (.close conn))))
     
 (defn -loadFile
+  "Loads data from the provided file into the database."
   [f]
   (let [factory (ConnectionFactory.)
         conn (.newConnection factory server)
@@ -183,11 +233,15 @@
       (.close conn)))
     
 (defn -insertInferences
-  [url]
-  (if (not (nil? url))
+  "Does some inferencing to fill out the graph, either for the provided URL only,
+  or for the whole database if no URI is provided."
+  [file]
+  (if-let [url (url-from-file file)]
+    ;; insertions run on a provided URI
     (let [factory (ConnectionFactory.)
-    conn (.newConnection factory server)
-    interpreter (SparqlInterpreter.)]
+          conn (.newConnection factory server)
+          interpreter (SparqlInterpreter.)
+          ]
       (.execute conn (CreateGraph. graph))
       (.execute
        (Insertion. graph,
@@ -213,17 +267,25 @@
              "?o1 dc:relation ?o2 "
              "filter (!sameTerm(<" url ">, ?o2))}"))) conn)
       (.close conn))
+
+    ;; insertions run on the whole data set
     (let [factory (ConnectionFactory.)
           conn (.newConnection factory server)
-    interpreter (SparqlInterpreter.)]
+          interpreter (SparqlInterpreter.)]
+
+      ;; get dc:hasPart relations for every dc:isPartOf that exists
       (def hasPart (str "prefix dc: <http://purl.org/dc/terms/> "
       "construct{?s dc:hasPart ?o} "
       "from <rmi://localhost/papyri.info#pi> "
       "where { ?o dc:isPartOf ?s}"))
+
+      ;; reciprocal dc:relations
       (def relation "prefix dc: <http://purl.org/dc/terms/> 
       construct{?s dc:relation ?o} 
       from <rmi://localhost/papyri.info#pi> 
       where { ?o dc:relation ?s}")
+
+      ;; inserts <dc:relation>s for translation URIs
       (def translations "prefix dc: <http://purl.org/dc/terms/>
       construct { ?r1 <http://purl.org/dc/terms/relation> ?r2 }
       from <rmi://localhost/papyri.info#pi>
@@ -233,6 +295,8 @@
       FILTER  regex(str(?i), \"^http://papyri.info/hgv\") 
       FILTER  regex(str(?r1), \"^http://papyri.info/ddbdp\")
       FILTER  regex(str(?r2), \"^http://papyri.info/hgvtrans\")}")
+
+      ;; inserts <dc:relation>s for image URIs
       (def images "prefix dc: <http://purl.org/dc/terms/>
       construct { ?r1 <http://purl.org/dc/terms/relation> ?r2 }
       from <rmi://localhost/papyri.info#pi>
@@ -243,6 +307,8 @@
       ?i dc:relation ?r2 .
       FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\")) 
       FILTER  regex(str(?r2), \"^http://papyri.info/images\")}")
+
+      ;; A <dc:relation> B; B <dc:relation> C -> A <dc:relation> C
       (def transitive-rels 
         (if (nil? url) (str "prefix dc: <http://purl.org/dc/terms/>
                              construct{?s dc:relation ?o2}
@@ -266,6 +332,7 @@
       (.close conn))))
       
 (defn load-map 
+  "Runs the mapping process over a directory full of files."
   [file]
   (def nthreads 5)
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
@@ -291,6 +358,7 @@
   (flush-buffer (count @buffer)))
     
 (defn -mapFiles
+  "Maps a list of files"
   [files]
   (println (str "Mapping " (.size files) " files."))
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
@@ -303,6 +371,7 @@
    
 
 (defn -mapAll
+  "Maps the whole dataset or every file in the provided directory."
   [args]
   (if (> (count args) 0) 
     (load-map (first args)))
