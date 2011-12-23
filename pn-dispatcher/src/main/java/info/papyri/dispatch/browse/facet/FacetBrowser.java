@@ -615,19 +615,18 @@ public class FacetBrowser extends HttpServlet {
      */
     
     private StringBuilder assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams, int docsPerPage){
-          
-        StringBuilder previousValuesHTML = new StringBuilder("<div id=\"previous-values\">");
+        
+        
+        StringBuilder previousHTMLValues = new StringBuilder("<div id=\"previous-values\">");
         Iterator<Facet> fit = facets.iterator();
         
         while(fit.hasNext()){
             
             Facet facet = fit.next();      
             
-            String[] params = facet.getFormNames();
+            String[] params = facet.getFormNames(); 
             
-            previousValuesHTML.append("<div class='prev-constraint-wrapper' id='prev-constraint-");
-            previousValuesHTML.append(facet.getCSSSelectorID());
-            previousValuesHTML.append("'>");  
+            StringBuilder values = new StringBuilder();
                             
             for(int i = 0; i < params.length; i++){
             
@@ -645,37 +644,48 @@ public class FacetBrowser extends HttpServlet {
                         String displayName = facet.getDisplayName(param, facetValue);
                         String displayFacetValue = facet.getDisplayValue(facetValue);
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue, docsPerPage);
-                        previousValuesHTML.append("<div class='facet-constraint constraint-");
-                        previousValuesHTML.append(param.toLowerCase());
-                        previousValuesHTML.append("'>");
-                        previousValuesHTML.append("<div class='constraint-label'>");
-                        previousValuesHTML.append(displayName);
-                        previousValuesHTML.append("<span class='semicolon'>:</span> ");
-                        previousValuesHTML.append(displayFacetValue);
-                        previousValuesHTML.append("</div><!-- closing .constraint-label -->");
-                        previousValuesHTML.append("<div class='constraint-closer'>");
-                        previousValuesHTML.append("<a href='");
-                        previousValuesHTML.append(FACET_PATH);
-                        previousValuesHTML.append("".equals(queryString) ? "" : "?");
-                        previousValuesHTML.append(queryString);
-                        previousValuesHTML.append("' title ='Remove facet value'>X</a>");
-                        previousValuesHTML.append("</div><!-- closing .constraint-closer -->");
-                        previousValuesHTML.append("<div class='spacer'></div>");
-                        previousValuesHTML.append("</div><!-- closing .facet-constraint -->");
+                        values.append("<div class='facet-constraint constraint-");
+                        values.append(param.toLowerCase());
+                        values.append("'>");
+                        values.append("<div class='constraint-label'>");
+                        values.append(displayName);
+                        values.append("<span class='semicolon'>:</span> ");
+                        values.append(displayFacetValue);
+                        values.append("</div><!-- closing .constraint-label -->");
+                        values.append("<div class='constraint-closer'>");
+                        values.append("<a href='");
+                        values.append(FACET_PATH);
+                        values.append("".equals(queryString) ? "" : "?");
+                        values.append(queryString);
+                        values.append("' title ='Remove facet value'>X</a>");
+                        values.append("</div><!-- closing .constraint-closer -->");
+                        values.append("<div class='spacer'></div>");
+                        values.append("</div><!-- closing .facet-constraint -->");
                     }
                                         
                 }
             
             }
             
-            previousValuesHTML.append("</div><!-- closing .prev-constraint-wrapper -->");
+            String valueString = values.toString();
+            if(valueString.length() > 0){
+                
+               previousHTMLValues.append("<div class='prev-constraint-wrapper' id='prev-constraint-");
+               previousHTMLValues.append(facet.getCSSSelectorID());
+               previousHTMLValues.append("'>");              
+               previousHTMLValues.append(values); 
+               previousHTMLValues.append("</div><!-- closing .prev-constraint-wrapper -->");
+                
+                
+            }
+            
 
                      
         }
         
-        previousValuesHTML.append("<div class='spacer'></div>");
-        previousValuesHTML.append("</div><!-- closing #previous-values -->");
-        html.append(previousValuesHTML.toString());
+        previousHTMLValues.append("<div class='spacer'></div>");
+        previousHTMLValues.append("</div><!-- closing #previous-values -->");
+        html.append(previousHTMLValues.toString());
         return html;
         
     }
