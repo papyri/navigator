@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: tpl-apparatus.xsl 1703 2011-12-14 12:05:13Z rviglianti $ -->
+<!-- $Id: tpl-apparatus.xsl 1637 2011-10-26 13:23:06Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -68,14 +68,14 @@
                   <xsl:when test="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='alternative']">
                      <xsl:text>appalt</xsl:text>
                   </xsl:when>
-                  <xsl:when test="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial'][starts-with(@resp,'BL ')]">
-                     <xsl:text>appbl</xsl:text>
-                  </xsl:when>
-                  <xsl:when test="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial'][starts-with(@resp,'PN ')]">
-                     <xsl:text>apppn</xsl:text>
-                  </xsl:when>
                   <xsl:when test="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']">
                      <xsl:text>apped</xsl:text>
+                  </xsl:when>
+                  <xsl:when test="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='BL']">
+                     <xsl:text>appbl</xsl:text>
+                  </xsl:when>
+                  <xsl:when test="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='SoSOL']">
+                     <xsl:text>appsosol</xsl:text>
                   </xsl:when>
                </xsl:choose>
             </xsl:with-param>
@@ -119,677 +119,156 @@
       <xsl:param name="apptype"/>
       <xsl:param name="childtype"/>
       <xsl:choose>
-          <!-- *REG*  (repeatable) -->
-         <xsl:when test="$childtype='origreg'">
-            <xsl:for-each select="child::t:*[local-name()=('orig','sic','add','lem')]/t:choice/t:reg">
-               <xsl:sort select="position()" order="descending"/>
-               <xsl:call-template name="multreg"/>
-            </xsl:for-each>
-            <xsl:text>,</xsl:text>
-         </xsl:when>
-         <!-- *CORR* -->
-         <xsl:when test="$childtype=('siccorr')">
-            <xsl:text>l. </xsl:text>
-            <xsl:apply-templates select="child::t:*[local-name()=('orig','sic','add','lem')]/t:choice/t:corr/node()"/>
-            <xsl:text> (corr)</xsl:text>
-            <xsl:text>,</xsl:text>
-         </xsl:when>
-         <!-- *SUBST* -->
-         <xsl:when test="$childtype='subst'">
-            <xsl:call-template name="resolvesubst">
-               <xsl:with-param name="delpath" select="child::t:*[local-name()=('orig','sic','add','lem')]/t:subst/t:del/node()"/>
-               <xsl:with-param name="addpath" select="child::t:*[local-name()=('orig','sic','add','lem')]/t:subst/t:add/node()"/>
+         <xsl:when test="$childtype=('origreg','siccorr') and @xml:lang!=ancestor::t:*[@xml:lang][1]/@xml:lang">
+            <xsl:text> i.e. </xsl:text>
+            <xsl:call-template name="reglang">
+               <xsl:with-param name="lang" select="@xml:lang"/>
             </xsl:call-template>
-            <xsl:text>,</xsl:text>
          </xsl:when>
-         <!-- *ALT* (repeatable) -->
-         <xsl:when test="$childtype='appalt'">
-            <xsl:for-each select="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='alternative']/t:rdg">
-               <xsl:if test="position()!=1">
-                  <xsl:text>,</xsl:text>
-               </xsl:if>
-               <xsl:text> or </xsl:text>
-               <xsl:if test="not(.//text())">
-                  <xsl:text>not </xsl:text>
-                  <xsl:apply-templates select="preceding-sibling::t:lem"/>
-               </xsl:if>
-               <xsl:apply-templates/>
-            </xsl:for-each>
+         <xsl:when test="$childtype=('origreg','siccorr')">
+            <xsl:text>l. </xsl:text>
          </xsl:when>
-         <!-- *ED* (repeatable) -->
-         <xsl:when test="$childtype=('appbl','apppn','apped')">
-            <xsl:if test="starts-with(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'BL ')">
-               <xsl:if test="starts-with(substring-after(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'BL '),'cf.')">
-                  <xsl:text> cf.</xsl:text>
-               </xsl:if>
-               <xsl:text> BL </xsl:text>
-            </xsl:if>
-            <xsl:choose>
-               <xsl:when test="starts-with(substring-after(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'BL '),'cf.')">
-                  <xsl:value-of select="substring-after(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'cf.')"/>
-                  <xsl:text> : </xsl:text>
-               </xsl:when>
-               <xsl:when test="starts-with(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'BL ')">
-                  <xsl:value-of select="substring-after(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'BL ')"/>
-                  <xsl:text> : </xsl:text>
-               </xsl:when>
-               <xsl:when test="starts-with(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'PN ')">
-                  <xsl:value-of select="substring-after(child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp,'PN ')"/>
-                  <xsl:text> (via PN) : </xsl:text>
-               </xsl:when>
-               <xsl:when test="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp">
-                  <xsl:value-of select="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:lem/@resp"/>
-                  <xsl:text> : </xsl:text>
-               </xsl:when>
-               <xsl:otherwise/>
-            </xsl:choose>
-            <xsl:for-each select="child::t:*[local-name()=('orig','sic','add','lem')]/t:app[@type='editorial']/t:rdg">
-               <!-- found below -->
-               <xsl:call-template name="app-ed-mult"/>
-            </xsl:for-each>
-         </xsl:when>
-      </xsl:choose>
-      <xsl:text> </xsl:text>
-   </xsl:template>
-   
-   <xsl:template name="resolvesubst">
-      <!-- Deals with old/new encoding of subst -->
-      <!-- Used by: txPtchild, appcontent, teiaddanddel.xsl#t:add -->
-      <xsl:param name="addpath" select="''"/>
-      <xsl:param name="delpath"/>
-      
-      <xsl:choose>
-         <!-- Old encoding: (stil supported) -->
-         <xsl:when test="(
-            not(preceding-sibling::node())
-            or matches(preceding-sibling::node()[1][self::text()], '[\s\n\r\t]')
-            or preceding-sibling::node()[1][self::t:lb]
-            )   
-            and
-            (
-            not(following-sibling::node())
-            or matches(following-sibling::node()[1][self::text()], '[\s\n\r\t]')
-            )
-            ">
+         <xsl:when test="$childtype='subst'">
             <xsl:text> corr. ex </xsl:text>
-            <xsl:apply-templates select="$delpath"/>
          </xsl:when>
-         <!-- New encoding (introduced in Nov/Dec 2011) -->
-         <!-- get full word --> 
-         <xsl:otherwise>
-            <xsl:variable name="fullword">
-               <xsl:call-template name="recurse_back">
-                  <xsl:with-param name="step" select="preceding-sibling::node()[1]"/>
-               </xsl:call-template>
-               <xsl:apply-templates select="t:add/node()"/>
-               <xsl:call-template name="recurse_forward">
-                  <xsl:with-param name="step" select="following-sibling::node()[1]"/>
-               </xsl:call-template>
-            </xsl:variable>
-            <xsl:value-of select="$fullword"/>
-            <xsl:text> </xsl:text>
-            <!-- Check that $addpath has been passed (might be excluded, see template matching t:add in teiaddanddel.xsl-->
+         <xsl:when test="$childtype='appalt'">
+            <xsl:text> or </xsl:text>
+            <xsl:if test="not(string(child::t:rdg))">
+               <xsl:text>not </xsl:text>
+               <xsl:apply-templates select="child::t:lem"/>
+            </xsl:if>
+         </xsl:when>
+         <xsl:when test="$childtype='appbl' and t:lem/@resp">
+            <xsl:if test="starts-with(child::t:*[local-name()=('orig','sic','add','lem')]/t:app/t:lem/t:lem/@resp,'cf.')">
+               <xsl:text> cf.</xsl:text>
+            </xsl:if>
+            <xsl:text> BL </xsl:text>
             <xsl:choose>
-               <xsl:when test="$addpath=''"/>
+               <xsl:when test="starts-with(child::t:*[local-name()=('orig','sic','add','lem')]/t:app/t:lem/t:lem/@resp,'cf.')">
+                  <xsl:value-of select="substring-after(child::t:*[local-name()=('orig','sic','add','lem')]/t:app/t:lem/t:lem/@resp,'cf.')"/>
+               </xsl:when>
                <xsl:otherwise>
-                  <xsl:call-template name="trans-string">
-                     <xsl:with-param name="trans-text">
-                        <xsl:apply-templates select="$addpath"/>
-                     </xsl:with-param>
-                  </xsl:call-template>
+                  <xsl:value-of select="child::t:*[local-name()=('orig','sic','add','lem')]/t:app/t:lem/t:lem/@resp"/>
                </xsl:otherwise>
             </xsl:choose>
-            <xsl:text> corr. ex </xsl:text>
-            <xsl:call-template name="trans-string">
-               <xsl:with-param name="trans-text">
-                  <xsl:apply-templates select="$delpath"/>
-               </xsl:with-param>
-            </xsl:call-template>
-         </xsl:otherwise>
+            <xsl:text> : </xsl:text>
+         </xsl:when>
+         <xsl:when test="$childtype=('apped','appsosol') and child::t:*[local-name()=('orig','sic','add','lem')]/t:app/t:lem/@resp">
+            <xsl:value-of select="child::t:*[local-name()=('orig','sic','add','lem')]/t:app/t:lem/@resp"/>
+            <xsl:if test="$childtype='appsosol'">
+               <xsl:text> (via PE)</xsl:text>
+            </xsl:if>
+            <xsl:text> : </xsl:text>
+         </xsl:when>
       </xsl:choose>
+      <xsl:apply-templates select="child::t:*[local-name()=('orig','sic','add','lem')]/t:*[local-name()=('choice','subst','app')]/
+         t:*[local-name()=('reg','corr','del','rdg')]/node()"/>
+      <xsl:choose>
+         <xsl:when test="$childtype='siccorr'">
+            <xsl:text> (corr)</xsl:text>
+         </xsl:when>
+         <xsl:when test="$childtype=('appbl','apped','appsosol')">
+            <xsl:text> prev. ed.</xsl:text>
+         </xsl:when>
+      </xsl:choose>
+      <xsl:if test="$apptype=('origreg','siccorr','subst')">
+         <xsl:text>,</xsl:text>
+      </xsl:if>
+      <xsl:text> </xsl:text>
    </xsl:template>
    
    <xsl:template name="appcontent">
       <!-- prints the content of apparatus; called by ddb-apparatus or by individual elements if nested -->
       <xsl:param name="apptype"/>
       <xsl:choose>
-         <!-- *REG*  (repeatable) -->
-         <xsl:when test="$apptype='origreg'">
-            <xsl:for-each select="t:reg">
+         <xsl:when test="$apptype='origreg' and child::t:reg[2]">
+            <xsl:for-each select="child::t:reg">
                <xsl:sort select="position()" order="descending"/>
                <xsl:call-template name="multreg"/>
             </xsl:for-each>
          </xsl:when>
-         <!-- *CORR* -->
-         <xsl:when test="$apptype=('siccorr')">
-            <xsl:text>l. </xsl:text>
-            <xsl:apply-templates select="t:corr/node()"/>
-            <xsl:text> (corr)</xsl:text>
-         </xsl:when>
-         <!-- *SUBST* -->
-         <xsl:when test="$apptype='subst'">
-            <xsl:call-template name="resolvesubst">
-               <xsl:with-param name="delpath" select="t:del/node()"/>
-               <xsl:with-param name="addpath" select="t:add/node()"/>
-            </xsl:call-template>
-         </xsl:when>
-         <!-- *ALT* (repeatable) -->
-         <xsl:when test="$apptype='appalt'">
-            <xsl:for-each select="t:rdg">
+         <xsl:when test="$apptype='appalt' and child::t:rdg[2]">
+            <xsl:for-each select="child::t:rdg">
                   <xsl:if test="position()!=1">
-                     <xsl:text>,</xsl:text>
+                     <xsl:text>, or </xsl:text>
                   </xsl:if>
-               <xsl:text> or </xsl:text>
-               <xsl:if test="not(.//text())">
+               <xsl:if test="not(string(.))">
                   <xsl:text>not </xsl:text>
                   <xsl:apply-templates select="preceding-sibling::t:lem"/>
                </xsl:if>
                <xsl:apply-templates/>
             </xsl:for-each>
          </xsl:when>
-         <!-- *ED* (repeatable) -->
-         <xsl:when test="$apptype=('appbl','apppn','apped')">
-            <xsl:if test="starts-with(t:lem/@resp,'BL ')">
-               <xsl:if test="starts-with(substring-after(t:lem/@resp,'BL '),'cf.')">
-                  <xsl:text> cf.</xsl:text>
-               </xsl:if>
-               <xsl:text> BL </xsl:text>
-            </xsl:if>
-            <xsl:choose>
-               <xsl:when test="starts-with(substring-after(t:lem/@resp,'BL '),'cf.')">
-                  <xsl:value-of select="substring-after(t:lem/@resp,'cf.')"/>
-                  <xsl:text> : </xsl:text>
-               </xsl:when>
-               <xsl:when test="starts-with(t:lem/@resp,'BL ')">
-                  <xsl:value-of select="substring-after(t:lem/@resp,'BL ')"/>
-                  <xsl:text> : </xsl:text>
-               </xsl:when>
-               <xsl:when test="starts-with(t:lem/@resp,'PN ')">
-                  <xsl:value-of select="substring-after(t:lem/@resp,'PN ')"/>
-                  <xsl:text> (via PN) : </xsl:text>
-               </xsl:when>
-               <xsl:when test="t:lem/@resp">
-                  <xsl:value-of select="t:lem/@resp"/>
-                  <xsl:text> : </xsl:text>
-               </xsl:when>
-               <xsl:otherwise/>
-            </xsl:choose>
-            <xsl:for-each select="t:rdg">
-               <!-- found below -->
-               <xsl:call-template name="app-ed-mult"/>
-            </xsl:for-each>
-         </xsl:when>
-      </xsl:choose>
-   </xsl:template>
-      
-   <xsl:template name="recurse_back">
-      <!-- Recurse trhough preceding sibling nodes until a space or carriage return is found -->
-      <!-- Used by hirend, appcontent -->
-      <!-- When used by hirend ($origin='hi'), will strip diacritics -->
-      <xsl:param name="step"/>
-      <xsl:param name="buildup"/>
-      
-      <xsl:variable name="origin" select="name()"/>
-      
-      <xsl:choose>
-         <xsl:when test="$step[self::t:lb[not(@break='no')]]">
-            <xsl:copy-of select="$buildup"/>
-         </xsl:when>
-         <xsl:when test="$step[self::text()]">
-            <xsl:choose>
-               <xsl:when test="matches($step, '[\s\n\r\t]')">
-                  <xsl:copy-of select="$buildup"/>                  
-               </xsl:when>
-               <!-- if the text node is a first child and a space hasn't been located yet... -->
-               <xsl:when test="not($step/preceding-sibling::node()[1])">
-                  <xsl:variable name="temp-buildup">
-                     <xsl:choose>
-                        <xsl:when test="$origin='hi'">
-                           <xsl:call-template name="trans-string">
-                              <xsl:with-param name="trans-text">
-                                 <xsl:call-template name="string-after-space">
-                                    <xsl:with-param name="test-string"
-                                       select="$step"/>
-                                 </xsl:call-template>
-                              </xsl:with-param>
-                           </xsl:call-template>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:call-template name="string-after-space">
-                              <xsl:with-param name="test-string"
-                                 select="$step"/>
-                           </xsl:call-template>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                     <xsl:copy-of select="$buildup"/>
-                  </xsl:variable>
-                  
-                  <xsl:for-each select="$step/ancestor::*[preceding-sibling::node()][1]">
-                     <xsl:call-template name="recurse_back">
-                        <xsl:with-param name="step" select="preceding-sibling::node()[1]"/>
-                        <xsl:with-param name="buildup" select="$temp-buildup"/>
-                     </xsl:call-template>
-                  </xsl:for-each>
-                  
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:variable name="temp-buildup">
-                     <xsl:choose>
-                        <xsl:when test="$origin='hi'">
-                           <xsl:call-template name="trans-string">
-                              <xsl:with-param name="trans-text">
-                                 <xsl:call-template name="string-after-space">
-                                    <xsl:with-param name="test-string"
-                                       select="$step"/>
-                                 </xsl:call-template>
-                              </xsl:with-param>
-                           </xsl:call-template>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:call-template name="string-after-space">
-                              <xsl:with-param name="test-string"
-                                 select="$step"/>
-                           </xsl:call-template>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                     <xsl:copy-of select="$buildup"/>
-                  </xsl:variable>
-                  <xsl:call-template name="recurse_back">
-                     <xsl:with-param name="step" select="$step/preceding-sibling::node()[1]"/>
-                     <xsl:with-param name="buildup" select="$temp-buildup"/>
-                  </xsl:call-template>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:when>
-         <!-- if the element is nested and a space hasn't been located yet... -->
-         <xsl:when test="not($step/preceding-sibling::node()[1])">
-            <xsl:for-each select="$step/ancestor::*[preceding-sibling::node()][1]">
-               <xsl:call-template name="recurse_back">
-                  <xsl:with-param name="step" select="preceding-sibling::node()[1]"/>
-                  <xsl:with-param name="buildup" select="$buildup"/>
-               </xsl:call-template>
-            </xsl:for-each>
-         </xsl:when>
-         <xsl:otherwise>
-              <xsl:choose>
-               <xsl:when test="$step[self::t:hi]">
-                  <xsl:call-template name="recurse_back">
-                     <xsl:with-param name="step" select="$step/preceding-sibling::node()[1]"/>
-                  </xsl:call-template>
-                  <xsl:for-each select="$step">
-                     <xsl:call-template name="hirend_print"/>
-                  </xsl:for-each>
-                  <xsl:copy-of select="$buildup"/>
-               </xsl:when>
-                 <xsl:when test="$step[self::t:subst]">
-                    <xsl:call-template name="recurse_back">
-                       <xsl:with-param name="step" select="$step/preceding-sibling::node()[1]"/>
-                    </xsl:call-template>
-                    <xsl:call-template name="trans-string">
-                       <xsl:with-param name="trans-text">
-                          <xsl:apply-templates select="$step//t:add/node()"/>
-                       </xsl:with-param>
-                    </xsl:call-template>
-                    <xsl:copy-of select="$buildup"/>
-                 </xsl:when>
-               <xsl:when test="($step[self::text] or $step[self::*]) and matches($step, '[\s\n\r\t]')">
-                  <xsl:variable name="builddown">
-                     <xsl:call-template name="recurse_down_back">
-                        <xsl:with-param name="step" select="$step"/>
-                        <xsl:with-param name="buildup" select="$buildup"/>
-                        <xsl:with-param name="origin" select="$origin"/>
-                     </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:apply-templates select="$builddown"/>
-                  <xsl:copy-of select="$buildup"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:variable name="temp-buildup">
-                     <xsl:apply-templates select="$step"/>
-                     <xsl:copy-of select="$buildup"/>
-                  </xsl:variable>
-                  <xsl:call-template name="recurse_back">
-                     <xsl:with-param name="step" select="$step/preceding-sibling::node()[1]"/>
-                     <xsl:with-param name="buildup" select="$temp-buildup"/>
-                  </xsl:call-template>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:otherwise>
-      </xsl:choose>
-      
+        <xsl:otherwise>
+           <xsl:choose>
+              <xsl:when test="$apptype=('origreg','siccorr') and t:reg/@xml:lang!=ancestor-or-self::t:*[@xml:lang][1]/@xml:lang">
+                 <xsl:text> i.e. </xsl:text>
+                 <xsl:call-template name="reglang">
+                    <xsl:with-param name="lang" select="t:reg/@xml:lang"/>
+                 </xsl:call-template>
+              </xsl:when>
+              <xsl:when test="$apptype=('origreg','siccorr')">
+                 <xsl:text>l. </xsl:text>
+              </xsl:when>
+              <xsl:when test="$apptype='subst'">
+                 <xsl:text> corr. ex </xsl:text>
+              </xsl:when>
+              <xsl:when test="$apptype='appalt'">
+                 <xsl:text> or </xsl:text>
+                 <xsl:if test="not(string(t:rdg))">
+                    <xsl:text>not </xsl:text>
+                    <xsl:apply-templates select="t:lem"/>
+                 </xsl:if>
+              </xsl:when>
+              <xsl:when test="$apptype='appbl' and t:lem/@resp">
+                 <xsl:if test="starts-with(t:lem/@resp,'cf.')">
+                    <xsl:text> cf.</xsl:text>
+                 </xsl:if>
+                 <xsl:text> BL </xsl:text>
+                 <xsl:choose>
+                    <xsl:when test="starts-with(t:lem/@resp,'cf.')">
+                       <xsl:value-of select="substring-after(t:lem/@resp,'cf.')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                       <xsl:value-of select="t:lem/@resp"/>
+                    </xsl:otherwise>
+                 </xsl:choose>
+                 <xsl:text> : </xsl:text>
+              </xsl:when>
+              <xsl:when test="$apptype=('apped','appsosol') and t:lem/@resp">
+                 <xsl:value-of select="t:lem/@resp"/>
+                 <xsl:if test="$apptype='appsosol'">
+                    <xsl:text> (via PE)</xsl:text>
+                 </xsl:if>
+                 <xsl:text> : </xsl:text>
+              </xsl:when>
+           </xsl:choose>
+           <xsl:apply-templates select="t:*[local-name()=('reg','corr','del','rdg')]/node()"/>
+           <xsl:choose>
+              <xsl:when test="$apptype='siccorr'">
+                 <xsl:text> (corr)</xsl:text>
+              </xsl:when>
+              <xsl:when test="$apptype=('apped','appsosol','appbl') and not(t:*[local-name()=('reg','corr','del','rdg')][child::t:app[child::t:lem[@resp]]])">
+                 <xsl:text> prev. ed.</xsl:text>
+              </xsl:when>
+           </xsl:choose>
+        </xsl:otherwise>
+     </xsl:choose>
    </xsl:template>
    
-   <xsl:template name="recurse_down_back">
-      <!-- Recurse through child nodes until a space or carriage return is found. Re-create elements when necessary -->
-      <!-- Used by recurse_back -->
-      <!-- Handles buidlup for right-to-left space/return search -->
-      <xsl:param name="step"/>
-      <xsl:param name="buildup"/>
-      <xsl:param name="origin"/>
-      
-      <xsl:choose>
-         <xsl:when test="$step[self::text()]">
-            <xsl:choose>
-               <xsl:when test="$origin='hi'">
-                  <xsl:call-template name="trans-string">
-                     <xsl:with-param name="trans-text">
-                        <xsl:call-template name="string-after-space">
-                           <xsl:with-param name="test-string"
-                              select="$step"/>
-                        </xsl:call-template>
-                     </xsl:with-param>
-                  </xsl:call-template>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:call-template name="string-after-space">
-                     <xsl:with-param name="test-string"
-                        select="$step"/>
-                  </xsl:call-template>
-               </xsl:otherwise>
-            </xsl:choose>
-            <xsl:copy-of select="buildup"/>
-         </xsl:when>
-         <xsl:when test="$step[self::t:hi]">
-            <xsl:for-each select="$step">
-               <xsl:call-template name="hirend_print"/>
-            </xsl:for-each>
-            <xsl:copy-of select="$buildup"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:element name="{$step/name()}" xmlns="http://www.tei-c.org/ns/1.0">
-               <xsl:sequence select="$step/@*" />
-               <xsl:choose>
-                  <xsl:when test="$step/text() and not($step/*)">
-                     <xsl:choose>
-                        <xsl:when test="$origin='hi'">
-                           <xsl:call-template name="trans-string">
-                              <xsl:with-param name="trans-text">
-                                 <xsl:call-template name="string-after-space">
-                                    <xsl:with-param name="test-string"
-                                       select="$step/text()"/>
-                                 </xsl:call-template>
-                              </xsl:with-param>
-                           </xsl:call-template>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:call-template name="string-after-space">
-                              <xsl:with-param name="test-string"
-                                 select="$step/text()"/>
-                           </xsl:call-template>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                     <xsl:copy-of select="buildup"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <xsl:for-each select="$step/node()">
-                        <xsl:variable name="curstep-id" select="generate-id($step)"/>
-                        <xsl:choose>
-                           <xsl:when test="matches(., '[\s\n\r\t]')"/>
-                          <xsl:when test="matches(following::text()[generate-id(ancestor::node()[1])=$curstep-id][1], '[\s\n\r\t]')">
-                              <xsl:call-template name="recurse_down_back">
-                                 <xsl:with-param name="step" select="following-sibling::node()[1]"/>
-                                 <xsl:with-param name="buildup" select="buildup"/>
-                                 <xsl:with-param name="origin" select="$origin"/>
-                              </xsl:call-template>
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <xsl:call-template name="recurse_down_back">
-                                 <xsl:with-param name="step" select="."/>
-                                 <xsl:with-param name="buildup" select="buildup"/>
-                                 <xsl:with-param name="origin" select="$origin"/>
-                              </xsl:call-template>
-                           </xsl:otherwise>
-                        </xsl:choose>
-                     </xsl:for-each>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </xsl:element>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
-   
-   <xsl:template name="recurse_forward">
-      <!-- Recurse trhough following sibling nodes until a space or carriage return is found -->
-      <!-- Used by hirend, appcontent -->
-      <xsl:param name="step"/>
-            
-      <xsl:variable name="origin" select="name()"/>
-            
-      <xsl:choose>
-         <xsl:when test="$step[self::t:lb[not(@break='no')]]"/>
-         <xsl:when test="$step[self::text()]">
-            <xsl:choose>
-               <xsl:when test="matches($step, '[\s\n\r\t]')">
-                  <xsl:choose>
-                     <xsl:when test="$origin='hi'">
-                        <xsl:call-template name="trans-string">
-                           <xsl:with-param name="trans-text">
-                              <xsl:call-template name="string-before-space">
-                                 <xsl:with-param name="test-string"
-                                    select="$step"/>
-                              </xsl:call-template>
-                           </xsl:with-param>
-                        </xsl:call-template>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:call-template name="string-before-space">
-                           <xsl:with-param name="test-string"
-                              select="$step"/>
-                        </xsl:call-template>
-                     </xsl:otherwise>
-                  </xsl:choose>
-               </xsl:when>
-               <!-- if the text node is a first child and a space hasn't been located yet... -->
-               <xsl:when test="not($step/preceding-sibling::node()[1])">
-                  <xsl:choose>
-                     <xsl:when test="$origin='hi'">
-                        <xsl:call-template name="trans-string">
-                           <xsl:with-param name="trans-text">
-                              <xsl:call-template name="string-before-space">
-                                 <xsl:with-param name="test-string"
-                                    select="$step"/>
-                              </xsl:call-template>
-                           </xsl:with-param>
-                        </xsl:call-template>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:call-template name="string-before-space">
-                           <xsl:with-param name="test-string"
-                              select="$step"/>
-                        </xsl:call-template>
-                     </xsl:otherwise>
-                  </xsl:choose>
-                  <xsl:for-each select="$step/ancestor::*[following-sibling::node()][1]">
-                     <xsl:call-template name="recurse_forward">
-                        <xsl:with-param name="step" select="following-sibling::node()[1]"/>
-                     </xsl:call-template>
-                  </xsl:for-each>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:choose>
-                     <xsl:when test="$origin='hi'">
-                        <xsl:call-template name="trans-string">
-                           <xsl:with-param name="trans-text">
-                              <xsl:call-template name="string-before-space">
-                                 <xsl:with-param name="test-string"
-                                    select="$step"/>
-                              </xsl:call-template>
-                           </xsl:with-param>
-                        </xsl:call-template>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:call-template name="string-before-space">
-                           <xsl:with-param name="test-string"
-                              select="$step"/>
-                        </xsl:call-template>
-                     </xsl:otherwise>
-                  </xsl:choose>
-                  <xsl:call-template name="recurse_forward">
-                     <xsl:with-param name="step" select="$step/following-sibling::node()[1]"/>
-                  </xsl:call-template>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:when>
-         <xsl:when test="not($step/following-sibling::node()[1])">
-            <xsl:for-each select="$step/ancestor::*[following-sibling::node()][1]">
-               <xsl:call-template name="recurse_forward">
-                  <xsl:with-param name="step" select="following-sibling::node()[1]"/>
-               </xsl:call-template>
-            </xsl:for-each>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:choose>
-               <xsl:when test="$step[self::t:hi]">
-                  <xsl:for-each select="$step">
-                     <xsl:call-template name="hirend_print"/>
-                  </xsl:for-each>
-                  <xsl:call-template name="recurse_forward">
-                     <xsl:with-param name="step" select="$step/following-sibling::node()[1]"/>
-                  </xsl:call-template>
-               </xsl:when>
-               <xsl:when test="$step[self::t:subst]">
-                  <xsl:call-template name="trans-string">
-                     <xsl:with-param name="trans-text">
-                        <xsl:apply-templates select="$step//t:add/node()"/>
-                     </xsl:with-param>
-                  </xsl:call-template>
-                  <xsl:call-template name="recurse_forward">
-                     <xsl:with-param name="step" select="$step/following-sibling::node()[1]"/>
-                  </xsl:call-template>
-               </xsl:when>
-               <xsl:when test="($step[self::text] or $step[self::*]) and matches($step, '[\s\n\r\t]')">
-                  <xsl:variable name="buildown">
-                     <xsl:call-template name="recurse_down">
-                     <xsl:with-param name="step" select="$step"/>
-                     <xsl:with-param name="origin" select="$origin"/>
-                     </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:variable name="resolve"><xsl:apply-templates select="$buildown"/></xsl:variable>
-                  <xsl:value-of select="$resolve"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:apply-templates select="$step"/>                     
-                  <xsl:call-template name="recurse_forward">
-                     <xsl:with-param name="step" select="$step/following-sibling::node()[1]"/>
-                  </xsl:call-template>
-               </xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
-      </xsl:choose>
-      
-   </xsl:template>
-   
-   <xsl:template name="recurse_down">
-      <!-- Recurse through child nodes until a space or carriage return is found. Re-create elements when necessary -->
-      <!-- Used by recurse_forward -->
-      <xsl:param name="step"/>
-      <xsl:param name="origin"/>
-      
-      <xsl:choose>
-         <xsl:when test="$step[self::text()]">
-            <xsl:call-template name="trans-string">
-               <xsl:with-param name="trans-text">
-                  <xsl:call-template name="string-before-space">
-                     <xsl:with-param name="test-string"
-                        select="$step"/>
-                  </xsl:call-template>
-               </xsl:with-param>
-            </xsl:call-template>
-         </xsl:when>
-         <xsl:when test="$step[self::t:hi]">
-            <xsl:for-each select="$step">
-               <xsl:call-template name="hirend_print"/>
-            </xsl:for-each>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:element name="{$step/name()}" xmlns="http://www.tei-c.org/ns/1.0">
-               <xsl:sequence select="$step/@*" />
-               <xsl:choose>
-                  <xsl:when test="$step/text() and not($step/*)">
-                     <xsl:choose>
-                        <xsl:when test="$origin='hi'">
-                           <xsl:call-template name="trans-string">
-                              <xsl:with-param name="trans-text">
-                                 <xsl:call-template name="string-before-space">
-                                    <xsl:with-param name="test-string"
-                                       select="$step/text()"/>
-                                 </xsl:call-template>
-                              </xsl:with-param>
-                           </xsl:call-template>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:call-template name="string-before-space">
-                              <xsl:with-param name="test-string"
-                                 select="$step/text()"/>
-                           </xsl:call-template>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <xsl:for-each select="$step/node()">
-                        <xsl:call-template name="recurse_down">
-                           <xsl:with-param name="step" select="."/>
-                           <xsl:with-param name="origin" select="$origin"/>
-                        </xsl:call-template>
-                     </xsl:for-each>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </xsl:element>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
-      
    <xsl:template name="hirend">
-      <!-- prints the value of diacritical <hi> values, either in text (with full word context, called from teihi.xsl) or in app (highlighted character only) -->
+      <!-- prints the value of diacritical <hi> values, either in text (with full word context) or in app (highlighted character only) -->
       <xsl:param name="hicontext" select="'yes'"/>
       <xsl:if test="$hicontext != 'no'">
-         
-         <xsl:variable name="text-before">
-            <xsl:choose>
-               <xsl:when test="not(preceding-sibling::node()[1])">
-                  <xsl:call-template name="recurse_back">
-                     <xsl:with-param name="step" select="parent::*"/>
-                  </xsl:call-template>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:call-template name="recurse_back">
-                     <xsl:with-param name="step" select="preceding-sibling::node()[1]"/>
-                  </xsl:call-template>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:variable>
-         
-         <!-- This removes unnecessary line breaks that could've come through -->
-         <xsl:value-of select="normalize-space($text-before)"/>
-         
+      <xsl:call-template name="trans-string">
+         <xsl:with-param name="trans-text">
+            <xsl:call-template name="string-after-space">
+               <xsl:with-param name="test-string"
+                  select="preceding-sibling::node()[1][self::text()]"/>
+            </xsl:call-template>
+         </xsl:with-param>
+      </xsl:call-template>
       </xsl:if>
-      
-      <xsl:call-template name="hirend_print"/>
-      
-      <xsl:if test="$hicontext != 'no'">
-         
-         <xsl:choose>
-            <xsl:when test="not(preceding-sibling::node()[1])">
-               <xsl:call-template name="recurse_forward">
-                  <xsl:with-param name="step" select="parent::*"/>
-               </xsl:call-template>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:call-template name="recurse_forward">
-                  <xsl:with-param name="step" select="following-sibling::node()[1]"/>
-               </xsl:call-template>
-            </xsl:otherwise>
-         </xsl:choose>
-        
-          <!-- found below: inserts "papyrus" or "ostrakon" depending on filename -->
-          <xsl:call-template name="support"/>
-      </xsl:if>
-      
-   </xsl:template>
-   
-   <xsl:template name="hirend_print">
-      <!-- Determines the value of diacritical <hi> values -->
-      <!-- Used by hirend -->
       <xsl:choose>
          <xsl:when test="@rend = 'diaeresis'">
             <xsl:call-template name="trans-string"/>
@@ -846,15 +325,26 @@
             <xsl:if test="t:gap[@reason='lost']"><xsl:text>]</xsl:text></xsl:if>
          </xsl:when>
       </xsl:choose>
+      
+      <xsl:if test="$hicontext != 'no'">
+          <xsl:call-template name="trans-string">
+             <xsl:with-param name="trans-text">
+                <xsl:call-template name="string-before-space">
+                   <xsl:with-param name="test-string"
+                      select="following-sibling::node()[1][self::text()]"/>
+                </xsl:call-template>
+             </xsl:with-param>
+          </xsl:call-template>
+          <!-- found below: inserts "papyrus" or "ostrakon" depending on filename -->
+          <xsl:call-template name="support"/>
+      </xsl:if>
+      
    </xsl:template>
    
    <xsl:template name="multreg">
       <!-- prints multiple regs in a single choice in sequence -->
       <xsl:choose>
          <xsl:when test="position()!=1">
-            <xsl:text>i.e. </xsl:text>
-         </xsl:when>
-         <xsl:when test="@xml:lang != ancestor::t:*[@xml:lang][1]/@xml:lang">
             <xsl:text>i.e. </xsl:text>
          </xsl:when>
          <xsl:otherwise>
@@ -887,46 +377,14 @@
          </xsl:when>
       </xsl:choose>
    </xsl:template>
-   
-   <xsl:template name="app-ed-mult">
-      <xsl:apply-templates/>
-      <xsl:if test="starts-with(@resp,'BL ')">
-         <xsl:if test="starts-with(substring-after(@resp,'BL '),'cf.')">
-            <xsl:text> cf.</xsl:text>
-         </xsl:if>
-         <xsl:text> BL</xsl:text>
-      </xsl:if>
-      <xsl:text> </xsl:text>
-      <xsl:choose>
-         <xsl:when test="starts-with(substring-after(@resp,'BL '),'cf.')">
-            <xsl:value-of select="substring-after(@resp,'cf.')"/>
-         </xsl:when>
-         <xsl:when test="starts-with(@resp,'BL ')">
-            <xsl:value-of select="substring-after(@resp,'BL ')"/>
-         </xsl:when>
-         <xsl:when test="starts-with(@resp,'PN ')">
-            <xsl:value-of select="substring-after(@resp,'PN ')"/>
-            <xsl:text> (via PN)</xsl:text>
-         </xsl:when>
-         <xsl:when test="string(@resp)">
-            <xsl:value-of select="@resp"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:text> prev. ed.</xsl:text>
-         </xsl:otherwise>
-      </xsl:choose>
-      <xsl:if test="position()!=last()">
-         <xsl:text> : </xsl:text>
-      </xsl:if>
-   </xsl:template>
 
    <xsl:template name="string-after-space">
-      <!-- finds all text content before hi up to the preceding space -->
+      <!-- finds all text content before hi up to the preceding space (or markup) -->
       <xsl:param name="test-string"/>
       <xsl:choose>
-         <xsl:when test="matches($test-string, '[\s\n\t\r]')">
+         <xsl:when test="contains($test-string, ' ')">
             <xsl:call-template name="string-after-space">
-               <xsl:with-param name="test-string" select="tokenize($test-string, '[\s\n\t\r]')[last()]"/>
+               <xsl:with-param name="test-string" select="substring-after($test-string, ' ')"/>
             </xsl:call-template>
          </xsl:when>
          <xsl:otherwise>
@@ -936,12 +394,12 @@
    </xsl:template>
 
    <xsl:template name="string-before-space">
-      <!-- finds all text content after hi up to the next space -->
+      <!-- finds all text content after hi up to the next space (or markup) -->
       <xsl:param name="test-string"/>
       <xsl:choose>
-         <xsl:when test="matches($test-string, '[\s\n\t\r]')">
+         <xsl:when test="contains($test-string, ' ')">
             <xsl:call-template name="string-before-space">
-               <xsl:with-param name="test-string" select="tokenize($test-string, '[\s\n\t\r]')[1]"/>
+               <xsl:with-param name="test-string" select="substring-before($test-string, ' ')"/>
             </xsl:call-template>
          </xsl:when>
          <xsl:otherwise>

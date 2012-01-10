@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: txt-teilb.xsl 1676 2011-12-05 16:21:49Z rviglianti $ -->
+<!-- $Id: txt-teilb.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0" version="2.0">
    <!-- Actual display and increment calculation found in teilb.xsl -->
@@ -23,29 +23,11 @@
                </xsl:if>
             </xsl:variable>
             <xsl:if
-               test="(@break='no' or @type='inWord')">
-               
-               <xsl:choose>
-                  <!--    *unless* diplomatic edition  -->
-                  <xsl:when test="$edition-type='diplomatic'"/>
-                  <!--    *or unless* the lb is first in its ancestor div  -->
-                  <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1])"/>
-                  <!--   *or unless* the second part of an app in ddbdp  -->
-                  <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and
-                     (ancestor::t:corr or ancestor::t:reg or ancestor::t:rdg or ancestor::t:del[parent::t:subst])"/>
-                  <!--  *unless* previous line ends with space / g / supplied[reason=lost]  -->
-                  <!-- in which case the hyphen will be inserted before the space/g r final ']' of supplied
-                     (tested by EDF:f-wwrap in teig.xsl, which is called by teisupplied.xsl, teig.xsl and teispace.xsl) -->
-                  <xsl:when test="preceding-sibling::node()[1][local-name() = 'space' or
-                     local-name() = 'g' or (local-name()='supplied' and @reason='lost') or
-                     (normalize-space(.)='' 
-                     and preceding-sibling::node()[1][local-name() = 'space' or
-                     local-name() = 'g' or (local-name()='supplied' and @reason='lost')])]"/>
-                  <xsl:otherwise>
-                     <xsl:text>-</xsl:text>
-                  </xsl:otherwise>
-               </xsl:choose>
-               
+               test="(@break='no' or @type='inWord') and preceding::node()[1][not(local-name() = 'space' or local-name() = 'g'
+               or @reason='lost')]
+               and not(starts-with($leiden-style, 'edh'))
+               and not($edition-type='diplomatic')">
+               <xsl:text>-</xsl:text>
             </xsl:if>
             <xsl:choose>
                <xsl:when test="starts-with($leiden-style, 'edh')">

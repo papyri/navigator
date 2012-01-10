@@ -8,4 +8,5 @@
                  [xml-apis/xml-apis "1.3.04"]
                  [xml-resolver/xml-resolver "1.2"]
                  [papyri.info.mulgara/querylang "2.1.9"]]
+  :dev-dependencies [[lein-marginalia "0.7.0-SNAPSHOT"]]
   :main info.papyri.map)
