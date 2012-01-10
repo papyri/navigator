@@ -18,6 +18,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
+import org.apache.abdera.model.Person;
 import org.apache.abdera.writer.Writer;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -69,7 +70,8 @@ public class AtomFeedServlet extends HttpServlet{
         id,
         metadata,
         display_place,
-        display_date
+        display_date,
+        last_editor
     
     
     }
@@ -335,13 +337,7 @@ public class AtomFeedServlet extends HttpServlet{
         selfLink.setRel("self");
         selfLink.setMimeType("application/atom+xml");
         feed.addLink(selfLink);
-        // TODO: Right now the 'updated' date is equal to the 'updated' field
-        // of the most recently updated document in the feed. Is this useful/correct?
         feed.setUpdated((Date)results.get(0).getFieldValue(SolrField.last_revised.name()));
-        // TODO: Is this a sensible value for the author field?
-        // TODO: Should author fields be attached instead to individual records?
-        // TODO: If so, these will need to be indexed.
-        // TODO: Should the additional available members be assigned to the author element
         feed.addAuthor("http://papyri.info");
         return feed;
         
@@ -410,6 +406,12 @@ public class AtomFeedServlet extends HttpServlet{
             Date modified = (Date) doc.getFieldValue(SolrField.last_revised.name());
             Date published = (Date) doc.getFieldValue(SolrField.first_revised.name());
             String summary = getSummary(doc);
+            String contributorURI = (String) doc.getFieldValue(SolrField.last_editor.name());
+            String[] contributorBits = contributorURI.split("/");
+            String contributorName = contributorBits.length > 0 ? contributorBits[contributorBits.length - 1] : "Papyri.info";         
+            Person contributor = abdera.getFactory().newContributor();
+            contributor.setName(contributorName);
+            contributor.setUri(contributorURI);
             Entry newEntry = feed.addEntry();
             Link contentLink = abdera.getFactory().newLink();
             contentLink.setHref(id);
@@ -419,6 +421,7 @@ public class AtomFeedServlet extends HttpServlet{
             newEntry.setId(id);
             newEntry.setTitle(title);
             newEntry.setUpdated(modified);
+            newEntry.addContributor(contributor);
             newEntry.setPublished(published);
             Link rightsLink = abdera.getFactory().newLink();
             rightsLink.setRel("license");

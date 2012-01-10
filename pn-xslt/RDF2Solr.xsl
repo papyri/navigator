@@ -909,6 +909,7 @@
   <xsl:if test="matches($first-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z') and matches($last-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
   <field name="first_revised"><xsl:value-of select="$first-revised"></xsl:value-of></field>
   <field name="last_revised"><xsl:value-of select="$last-revised"></xsl:value-of></field>
+  <field name="last_editor"><xsl:value-of select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when=replace($last-revised, $date-suffix, '')][1]/@who"></xsl:value-of></field>
   </xsl:if>
   </xsl:template>
 

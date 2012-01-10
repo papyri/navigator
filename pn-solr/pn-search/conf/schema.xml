@@ -135,6 +135,7 @@
     <field name="title" type="text" indexed="false" stored="true" multiValued="false"/>
     <field name="first_revised" type="date" indexed="true" stored="true" multiValued="false"></field> 
     <field name="last_revised" type="date" indexed="true" stored="true" multiValued="false"></field>
+    <field name="last_editor" type="string" indexed="false" stored="true" multiValued="false"></field>
   </fields>
 
 
