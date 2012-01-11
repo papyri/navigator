@@ -21,5 +21,6 @@
                  [commons-logging/commons-logging "1.1.1"]
                  [commons-codec/commons-codec "1.5"]
                  [papyri.info.mulgara/querylang "2.1.9"]]
-  :dev-dependencies [[lein-marginalia "0.7.0-SNAPSHOT"]]
+  :dev-dependencies [[lein-marginalia "0.7.0-SNAPSHOT" :exclusions 
+                       [org.clojure/clojure]]]
   :main info.papyri.indexer)
