@@ -78,7 +78,7 @@ abstract public class Facet {
      * @see FacetBrowser#buildFacetQuery(int, java.util.ArrayList) 
      */
     
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
         
         solrQuery.addFacetField(field.name());
         solrQuery.setFacetLimit(-1);                // = no limit

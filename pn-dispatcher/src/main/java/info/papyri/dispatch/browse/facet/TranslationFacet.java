@@ -55,7 +55,7 @@ public class TranslationFacet extends Facet {
     }
     
     @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
         
         solrQuery.addFacetField(field.name());
         solrQuery.setFacetLimit(-1);

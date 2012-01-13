@@ -59,9 +59,9 @@ public class StringSearchFacetTest extends TestCase {
         mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase(), new String[]{"on"});
         mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase(), new String[]{"on"});
         
-        HashMap<Integer, SearchConfiguration> configs = testInstance.pullApartParams(mockParams);
+        HashMap<Integer, StringSearchFacet.ISearchStringRetrievable> configs = testInstance.pullApartParams(mockParams);
         assertEquals(1, configs.size());
-        SearchConfiguration config = configs.get(0);
+        StringSearchFacet.ISearchStringRetrievable config = configs.get(0);
         assertEquals("orator", config.getRawString());
         assertEquals(StringSearchFacet.SearchType.SUBSTRING, config.getSearchType());
         assertEquals(StringSearchFacet.SearchTarget.TEXT, config.getSearchTarget());
@@ -80,7 +80,7 @@ public class StringSearchFacetTest extends TestCase {
         configs = testInstance.pullApartParams(mockParams);
         
         assertEquals(1, configs.size());
-        SearchConfiguration config2 = configs.get(2);
+        StringSearchFacet.ISearchStringRetrievable config2 = configs.get(2);
         assertEquals("τοῦ", config2.getRawString());
         assertEquals(StringSearchFacet.SearchTarget.METADATA, config2.getSearchTarget());
         assertEquals(StringSearchFacet.SearchType.PROXIMITY, config2.getSearchType());
@@ -118,7 +118,7 @@ public class StringSearchFacetTest extends TestCase {
         configs.clear();
         configs = testInstance.pullApartParams(mockParams);
         assertEquals(1, configs.size());
-        SearchConfiguration config3 = configs.get(4);
+        StringSearchFacet.ISearchStringRetrievable config3 = configs.get(4);
         assertEquals("cupid", config3.getRawString());
         assertEquals(StringSearchFacet.SearchType.PHRASE, config3.getSearchType());
         assertEquals(StringSearchFacet.SearchTarget.ALL, config3.getSearchTarget());
@@ -517,59 +517,22 @@ public class StringSearchFacetTest extends TestCase {
         
         
     }
+   
     
-    public void testTerms(){
+    public void testRegexSearch(){
         
+        StringSearchFacet.RegexSearchConfiguration tinstance = testInstance.new RegexSearchConfiguration("regex:ψινα\\p{L}+");
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         try{
-        
-            System.out.println("Entering terms test");
-            SolrServer solrServer = new CommonsHttpSolrServer("http://localhost:8083/solr/pn-search/");
-            SolrQuery sq = new SolrQuery();
-            sq.setParam(CommonParams.QT, "/terms");
-            sq.setTerms(true);
-            sq.setTermsLimit(10);
-            sq.addTermsField("transcription_ia");
-            sq.setTermsRegex(".*(?<!δ)ικοσ.*");
-            sq.setQuery("*:*");
-            System.out.println("Query is " + sq.toString());
-            QueryResponse qr = solrServer.query(sq, METHOD.POST);
-            TermsResponse termResponse = qr.getTermsResponse();
-            for(Term term : termResponse.getTerms("transcription_ia")){
-                
-                System.out.println("Term is " + term.getTerm());
-                
-            }
-            
-            String test1 = "cab";
-            if(test1.matches(".*(?<!b)b")){
-                
-                System.out.println("Test 1 matches");
-                
-            }
-            else{
-                
-                System.out.println("Test 1 doesn't match");
-                
-            }
-            
-            
-            
-
+            String regexString = tinstance.getSearchString();
+            System.out.println(regexString);
         }
-        catch(MalformedURLException mue){
+        catch(InternalQueryException iqe){
             
-            System.out.println("Could not access solr server: " + mue.getMessage());
-            
+            System.out.println(iqe.getMessage());
             
         }
-        catch(SolrServerException sse){
-            
-            System.out.println("Query error: " + sse.getCause());
-            
-        }
-        
-        
-        
+        System.out.print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         
         
     }

@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import org.apache.solr.client.solrj.SolrQuery;
 import java.net.MalformedURLException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.SolrServer;
@@ -124,6 +125,8 @@ public class FacetBrowserTest extends TestCase {
     public void testRetrieveRecords(){
         
         QueryResponse mockQueryResponse = createStrictMock(QueryResponse.class);
+        
+        SolrQuery dummyQuery = new SolrQuery();
                 
         // requirements:
         
@@ -137,7 +140,7 @@ public class FacetBrowserTest extends TestCase {
         expect(mockQueryResponse.getResults()).andReturn(solrDocumentList).anyTimes();
         replay(mockQueryResponse);
 
-        assertEquals(0, testInstance.retrieveRecords(mockQueryResponse, testInstance.getFacets()).size());
+        assertEquals(0, testInstance.retrieveRecords(dummyQuery, mockQueryResponse, testInstance.getFacets()).size());
         
         verify(mockQueryResponse);
         
@@ -151,7 +154,7 @@ public class FacetBrowserTest extends TestCase {
         
         expect(mockQueryResponse2.getResults()).andReturn(solrDocumentList).anyTimes();
         replay(mockQueryResponse2);
-        assertEquals(1, testInstance.retrieveRecords(mockQueryResponse2, testInstance.getFacets()).size());
+        assertEquals(1, testInstance.retrieveRecords(dummyQuery, mockQueryResponse2, testInstance.getFacets()).size());
         verify(mockQueryResponse2);
         
         

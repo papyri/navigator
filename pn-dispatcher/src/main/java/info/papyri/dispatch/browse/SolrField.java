@@ -58,4 +58,5 @@ public enum SolrField {
         idno_led_path,
         title
         
+        
 }

@@ -189,7 +189,7 @@ public class HasImagesFacet extends Facet {
     }
     
     @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
                 
         for(int i = 0; i < ImageParam.values().length; i++){
             
