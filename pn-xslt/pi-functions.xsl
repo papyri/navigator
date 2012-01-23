@@ -4,6 +4,7 @@
   xmlns:dc="http://purl.org/dc/terms/" 
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
   xmlns:pi="http://papyri.info/ns"
+  xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:t="http://www.tei-c.org/ns/1.0"
   exclude-result-prefixes="xs"
   xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" version="2.0">
   
@@ -361,6 +362,45 @@
         </xsl:choose>
       </xsl:otherwise>
       </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="pi:get-latest-editor">
+    <xsl:param name="date-seq"></xsl:param>
+    <xsl:param name="current"></xsl:param>
+    <xsl:choose>
+      <xsl:when test="count($date-seq) = 0">
+        <xsl:sequence select="$current"></xsl:sequence>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="current-as-num" select="number(replace($current, '-', ''))"></xsl:variable>
+        <xsl:variable name="comp-as-num" select="number(replace($date-seq[1], '-', ''))"></xsl:variable>
+        <xsl:choose>
+          <xsl:when test="$current-as-num gt $comp-as-num">
+            <xsl:sequence select="pi:get-latest-date(remove($date-seq, 1), $current)"></xsl:sequence>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:sequence select="pi:get-latest-date(remove($date-seq, 1), $date-seq[1])"></xsl:sequence>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="pi:get-identifier">
+    <xsl:param name="collection"></xsl:param>
+    <xsl:param name="pub-stmt"></xsl:param>
+    <xsl:choose>
+      <xsl:when test="$collection='ddbdp'">
+       <xsl:sequence select="concat('http://papyri.info/ddbdp/', $pub-stmt/t:idno[@type = 'ddb-hybrid'])"></xsl:sequence>      
+      </xsl:when>
+      <xsl:when test="$collection='hgv'">
+        <xsl:sequence select="concat('http://papyri.info/hgv/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="concat('http://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>
+      </xsl:otherwise>
+    </xsl:choose> 
+    
   </xsl:function>
 
 </xsl:stylesheet>

@@ -18,7 +18,7 @@
   <xsl:import href="txt-teilgandl.xsl"/>
   <xsl:import href="txt-teilistanditem.xsl"/>
   <xsl:import href="txt-teilistbiblandbibl.xsl"/>
-  <xsl:import href="txt-teimilestone.xsl"/>
+  <xsl:import href="txt-teimilestone.xsl"/> 
   <xsl:import href="txt-teinote.xsl"/>
   <xsl:import href="txt-teip.xsl"/>
   <xsl:import href="txt-teispace.xsl"/>
@@ -78,12 +78,10 @@
         <xsl:if test="$apis = true()">
           <field name="collection">apis</field>
         </xsl:if>
-
+        <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
           <xsl:when test="$collection = 'ddbdp'">
-            <field name="id">http://papyri.info/ddbdp/<xsl:value-of
-                select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']"
-              /></field>
+            <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type != 'HGV']">
               <xsl:choose>
@@ -143,10 +141,9 @@
             <field name="transcription_ic">
               <xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"/>
             </field>
+            <xsl:variable name="transcription_ia" select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"></xsl:variable>
             <field name="transcription_ia">
-              <xsl:value-of
-                select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"
-              />
+              <xsl:value-of select="$transcription_ia"/>
             </field>
             <!--
             <field name="transcription_ngram">
@@ -174,6 +171,9 @@
                   <xsl:text>^ </xsl:text>
                 </xsl:if>
               </xsl:for-each>
+            </field>
+            <field name="untokenized_ia">
+              <xsl:value-of select="concat($id, ' ', $transcription_ia)"></xsl:value-of>
             </field>
             <xsl:if test="string-length($textnfd) > 0">
               <field name="has_transcription">true</field>
@@ -235,9 +235,7 @@
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
-            <field name="id">http://papyri.info/hgv/<xsl:value-of
-                select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"
-              /></field>
+            <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'TM']">
               <field name="identifier">
@@ -271,9 +269,7 @@
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
-            <field name="id">http://papyri.info/apis/<xsl:value-of
-                select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']"
-              /></field>
+            <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="facetfields">
               <xsl:with-param name="docs" select="/"/>
               <xsl:with-param name="alterity">self</xsl:with-param>
@@ -911,7 +907,9 @@
   <field name="last_revised"><xsl:value-of select="$last-revised"></xsl:value-of></field>
   <field name="last_editor"><xsl:value-of select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when=replace($last-revised, $date-suffix, '')][1]/@who"></xsl:value-of></field>
   </xsl:if>
-  </xsl:template>
+</xsl:template>
+  
+
 
   <xsl:template name="ddbdp-app">
     <xsl:choose>
