@@ -384,15 +384,18 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   }
   
   private void setSolrQueryString(SolrQuery sq){
+          
+      int browserLimit = 2000;
+      String sqs = sq.toString();
       
-      if(sq == null){
+      if(sq == null || sqs.length() > browserLimit){
           
           solrQueryString = "";
           return;
           
       }
       
-      solrQueryString = sq.toString();
+      solrQueryString = sqs;
       
   }
   

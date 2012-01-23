@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
@@ -92,6 +93,7 @@ public class StringSearchFacet extends Facet{
     
     /** The path to the Solr index for lemmatised searches */
     private static String morphSearch = "morph-search/";
+    private SolrQuery otherConstraints = new SolrQuery();
 
     public StringSearchFacet(){
         
@@ -102,6 +104,7 @@ public class StringSearchFacet extends Facet{
     @Override
     public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
         
+        otherConstraints = solrQuery;
         Iterator<ISearchStringRetrievable> scit = searchConfigurations.values().iterator();
         while(scit.hasNext()){
             
@@ -239,8 +242,6 @@ public class StringSearchFacet extends Facet{
                 html.append(formName.name());
                 html.append(String.valueOf(counter));
                 html.append(v);
-                html.append(SearchType.REGEX.toString());
-                html.append(":");
                 html.append(rxconfig.getRawString());
                 html.append(c);
                 
@@ -359,9 +360,19 @@ public class StringSearchFacet extends Facet{
                 if(keyword == null || "".equals(keyword)) continue;
                 if(keyword.toLowerCase().contains("regex:")){
                     
-                    RegexSearchConfiguration regexSearchConfig = new RegexSearchConfiguration(keyword);
-                    configs.put(matchNumber, regexSearchConfig);
-                    continue;
+                    try{
+                    
+                        RegexSearchConfiguration regexSearchConfig = new RegexSearchConfiguration(keyword);
+                        configs.put(matchNumber, regexSearchConfig);
+                        
+                    }
+                    catch(MalformedURLException mue){} //TODO;Need to throw appropriate error here
+                    finally{
+                        
+                        continue;
+                        
+                    }
+                    
                     
                 }
                 String rawSearchType = params.get(typeGetter)[0].toUpperCase();
@@ -1202,72 +1213,125 @@ public class StringSearchFacet extends Facet{
         
         String rawRegex;
         String regex;
-        final static String SEARCH_FIELD = "transcription_ia"; 
-        final static String TERMS_FIELD = "untokenized_ia";
+        ArrayList<String> identifiers = new ArrayList<String>();
         
-        public RegexSearchConfiguration(String rawString){
+        final static String SEARCH_FIELD = "untokenized_ia"; 
+        final static String TERMS_FIELD = "untokenized_ia";
+        //TODO: Stop hardcoding this
+        final static String solrServerURL = "http://localhost:8083/solr/pn-search";
+        SolrServer solrServer;
+        
+        public RegexSearchConfiguration(String rawString) throws MalformedURLException{
             
             rawRegex = rawString;
             regex = rawString.replaceFirst("(?i)regex:", "");
-            System.out.println("Regex is: " + regex);
-           /* try{
-            regex = URLDecoder.decode(regex, "UTF-8");
-            }
-            catch(UnsupportedEncodingException uee){}
-            */
+            solrServer = new CommonsHttpSolrServer(solrServerURL);
+
+
         }
         
         private TermsResponse doRegexSearch()throws MalformedURLException, SolrServerException{
             
-            /*String solrServerURL = FacetBrowser.SOLR_URL + FacetBrowser.PN_SEARCH;
-            solrServerURL += "/terms";*/
-            String solrServerURL = "http://localhost:8083/solr/pn-search";
-            System.out.append("SSURL is " + solrServerURL);
+            identifiers = getIdentifierPrefixes();
             SolrQuery sq = new SolrQuery();
             sq.setQueryType("/terms");
             sq.setTerms(true);
             sq.setTermsLimit(-1);                   // no limit
-            sq.setTermsRegex(".*" + regex + ".*");
+            String idPrefixes = getAllIdsAsQueryValue();
+            sq.setTermsRegex(idPrefixes + ".*" + regex + ".*");
             sq.addTermsField(TERMS_FIELD);
-            sq.setTimeAllowed(2500);
-            SolrServer solrServer = new CommonsHttpSolrServer(solrServerURL);
-            QueryResponse qr = solrServer.query(sq);
+            //sq.setTimeAllowed(2500);
+            QueryResponse qr = solrServer.query(sq, METHOD.POST);
             return qr.getTermsResponse();
+            
+        }
+        
+        private ArrayList<String> getIdentifierPrefixes(){
+            
+            ArrayList<String> allids = new ArrayList<String>();
+            if(otherConstraints.getFilterQueries() != null && otherConstraints.getFilterQueries().length > 0){
+                
+                try{
+                
+                    QueryResponse qr = solrServer.query(buildSubQuery(), METHOD.POST);
+                    SolrDocumentList results = qr.getResults();
+                    
+                    Iterator<SolrDocument> rit = results.iterator();
+                    while(rit.hasNext()){
+                        
+                        String id = ((String)rit.next().getFieldValue("id"));
+                        if(!allids.contains(id)) allids.add(id);
+                           
+                    }
+            
+                }
+                catch(SolrServerException sse){ System.out.println("SolrServerException " + sse.getMessage() + " " + otherConstraints.toString() );} // TODO: Do something intelligent here
+                 
+          
+            }
+
+            return allids;
+            
+        }
+        
+        private String getAllIdsAsQueryValue(){
+            
+            if(identifiers.size() <= 0) return "";
+            
+            StringBuilder ids = new StringBuilder("(");
+            Iterator<String> idit = identifiers.iterator();
+            while(idit.hasNext()){
+                
+                String id = idit.next();
+                ids.append(id);
+                if(idit.hasNext()) ids.append("|");
+                
+            }
+            ids.append(")");
+            return ids.toString();
+            
+        }
+        
+        private SolrQuery buildSubQuery(){
+            
+            String[] fqs = otherConstraints.getFilterQueries();
+            SolrQuery sq = new SolrQuery();
+            if(fqs == null || fqs.length < 1 ) return sq;
+            sq.setQuery("*:*");
+            sq.setRows(100000);         // is there any way to remove the cap entirely?
+            sq.addField("id");
+            
+            for(int i = 0; i < fqs.length; i++){
+
+                sq.addFilterQuery(fqs[i]);
+            
+            }
+            
+            return sq;
             
         }
         
         @Override
         public String getSearchString() throws InternalQueryException{
             
-            StringBuilder searchString = new StringBuilder(SEARCH_FIELD + ":");
-            ArrayList<String> resolvedRegexes = new ArrayList<String>();
+            StringBuilder searchString = new StringBuilder();
             
             try{
                 
                 TermsResponse termsResponse = doRegexSearch();
                 List<Term> terms = termsResponse.getTerms(TERMS_FIELD);
                 Iterator<Term> trit = terms.iterator();
-                Pattern pattern = Pattern.compile(".*(" + regex + ").*");
+                Pattern escaper = Pattern.compile(":");
                 while(trit.hasNext()){
                     
                     Term term = trit.next();
-                    String termContent = term.getTerm();
-                    Matcher matcher = pattern.matcher(termContent);
-                    if(matcher.matches()){
-                        
-                        String resolvedRegex = matcher.group(1);
-                        if(!resolvedRegexes.contains(resolvedRegex)) resolvedRegexes.add(resolvedRegex);
-                        
-                    }
-                   else{
-                        // TODO: work out why the matcher.matches() call is req'd at all
-                        // the group() call doesn't work unless matches() is called
-                        // but if it *is* called it never fails, indicating that 
-                        // the problem isn't in fact of failed matching
-                        System.out.println("&&&&&&&&&&\nParadox: no match found\n&&&&&&&&&&&&");
-                        
-                    }
-                    
+                    String content = term.getTerm();
+                    String id = content.substring(0, content.indexOf(" "));    
+                    if(searchString.length() > 0) searchString.append(" OR ");
+                    Matcher escapeMatcher = escaper.matcher(id);
+                    id = escapeMatcher.replaceAll("\\\\:");
+                    searchString.append(id);
+                           
                 }
                 
             }
@@ -1278,16 +1342,14 @@ public class StringSearchFacet extends Facet{
             
             }
             
-            Iterator<String> rrit = resolvedRegexes.iterator();
-            while(rrit.hasNext()){
+            if(searchString.length() > 0){
                 
-                String resolvedRegex = rrit.next();
-                searchString.append(resolvedRegex);
-                if(rrit.hasNext()) searchString.append(" OR ");
-                
+                searchString.insert(0, "id:(");
+                searchString.append(")");
                 
                 
             }
+            
             return searchString.toString();
         }
         
@@ -1296,7 +1358,7 @@ public class StringSearchFacet extends Facet{
 
         @Override
         public String getRawString() {
-            return regex;
+            return rawRegex.replaceFirst("regex", "REGEX");
         }
 
         @Override
@@ -1326,7 +1388,7 @@ public class StringSearchFacet extends Facet{
             // TODO: Supporting this properly is going to be a bugger
            return "";
         }
-        
+                
     }
     
 }
