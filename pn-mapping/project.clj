@@ -7,5 +7,5 @@
                  [xerces/xercesImpl "2.9.1"]
                  [xml-apis/xml-apis "1.3.04"]
                  [xml-resolver/xml-resolver "1.2"]
-                 [papyri.info.mulgara/querylang "2.1.9"]]
+                 [papyri.info.mulgara/querylang "2.1.13"]]
   :main info.papyri.map)
