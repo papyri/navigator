@@ -172,9 +172,11 @@
                 </xsl:if>
               </xsl:for-each>
             </field>
+            <!--
             <field name="untokenized_ia">
               <xsl:value-of select="concat($id, ' ', $transcription_ia)"></xsl:value-of>
             </field>
+            -->
             <xsl:if test="string-length($textnfd) > 0">
               <field name="has_transcription">true</field>
             </xsl:if>

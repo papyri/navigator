@@ -112,12 +112,8 @@ font-size: 96%;
 font-weight: bold;
 }
 
-div#search {
-font-size:100%;
-margin-bottom: 2em;
-padding-top: 20px;
-text-align: center;
-height: 50px;
+div.search {
+font-size:93%;
 }
 
 div.search p {

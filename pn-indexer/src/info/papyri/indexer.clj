@@ -475,12 +475,14 @@
   (let [interpreter (SparqlInterpreter.)
         answerlist (ArrayList.)
         conn (.newConnection (ConnectionFactory.) server)]
+    (try
     (with-open [answer (.execute (.parseQuery interpreter query) conn)]
       (loop [result []]
         (if (.next answer)
           (recur (conj result
                        (collect-row answer)))
-          result)))))
+          result)))
+    (catch Exception e (println query)))))
 
 ;; ## Data queueing functions
 
