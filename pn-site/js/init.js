@@ -138,7 +138,7 @@ function buildSolrQueryString(){
 function querySolrServer(query, position, total, rows, querystring){
 
 	var that = this;
-	var serverUrl = "http://localhost/solr/select/";
+	var serverUrl = "http://" + location.host + "/solr/select/";
 	$.get(	serverUrl,
 			query, 
 			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); }, 
