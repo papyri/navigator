@@ -1,21 +1,10 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import junit.framework.TestCase;
-import org.apache.lucene.search.TermQuery;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrRequest.METHOD;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.TermsResponse;
-import org.apache.solr.client.solrj.response.TermsResponse.Term;
-import org.apache.solr.common.params.CommonParams;
 
 
 
@@ -59,9 +48,9 @@ public class StringSearchFacetTest extends TestCase {
         mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase(), new String[]{"on"});
         mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase(), new String[]{"on"});
         
-        HashMap<Integer, StringSearchFacet.ISearchStringRetrievable> configs = testInstance.pullApartParams(mockParams);
+        HashMap<Integer, SearchConfiguration> configs = testInstance.pullApartParams(mockParams);
         assertEquals(1, configs.size());
-        StringSearchFacet.ISearchStringRetrievable config = configs.get(0);
+        SearchConfiguration config = configs.get(0);
         assertEquals("orator", config.getRawString());
         assertEquals(StringSearchFacet.SearchType.SUBSTRING, config.getSearchType());
         assertEquals(StringSearchFacet.SearchTarget.TEXT, config.getSearchTarget());
@@ -80,7 +69,7 @@ public class StringSearchFacetTest extends TestCase {
         configs = testInstance.pullApartParams(mockParams);
         
         assertEquals(1, configs.size());
-        StringSearchFacet.ISearchStringRetrievable config2 = configs.get(2);
+        SearchConfiguration config2 = configs.get(2);
         assertEquals("τοῦ", config2.getRawString());
         assertEquals(StringSearchFacet.SearchTarget.METADATA, config2.getSearchTarget());
         assertEquals(StringSearchFacet.SearchType.PROXIMITY, config2.getSearchType());
@@ -118,7 +107,7 @@ public class StringSearchFacetTest extends TestCase {
         configs.clear();
         configs = testInstance.pullApartParams(mockParams);
         assertEquals(1, configs.size());
-        StringSearchFacet.ISearchStringRetrievable config3 = configs.get(4);
+        SearchConfiguration config3 = configs.get(4);
         assertEquals("cupid", config3.getRawString());
         assertEquals(StringSearchFacet.SearchType.PHRASE, config3.getSearchType());
         assertEquals(StringSearchFacet.SearchTarget.ALL, config3.getSearchTarget());
@@ -300,7 +289,7 @@ public class StringSearchFacetTest extends TestCase {
         
         // translation search -
         // field should be translation
-         StringSearchFacet.SearchConfiguration tinstance6 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TRANSLATION, StringSearchFacet.SearchType.PHRASE, false, false, 0);
+         StringSearchFacet.SearchConfiguration tinstance6 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TRANSLATIONS, StringSearchFacet.SearchType.PHRASE, false, false, 0);
          assertEquals("translation:(λόγιος)", tinstance6.substituteFields("λόγιος"));
          
         // all search -
@@ -517,25 +506,8 @@ public class StringSearchFacetTest extends TestCase {
         
         
     }
-   
     
-    public void testRegexSearch(){
-        
-        StringSearchFacet.RegexSearchConfiguration tinstance = testInstance.new RegexSearchConfiguration("regex:ψινα\\p{L}+");
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        try{
-            String regexString = tinstance.getSearchString();
-            System.out.println(regexString);
-        }
-        catch(InternalQueryException iqe){
-            
-            System.out.println(iqe.getMessage());
-            
-        }
-        System.out.print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        
-        
-    }
+
 
 
 }
