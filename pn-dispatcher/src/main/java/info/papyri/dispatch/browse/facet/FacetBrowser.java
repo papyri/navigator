@@ -235,11 +235,13 @@ public class FacetBrowser extends HttpServlet {
         sq.setStart((pageNumber - 1) * docsPerPage); 
         
         // iterate through facets, adding their contributions to solr query
-        Iterator<Facet> fit = facets.iterator();
-        while(fit.hasNext()){
+        // TODO: this is a cheap hack right now, to ensure that the StringSearchFacet
+        // is passed a SolrQuery object with as many clauses as possible attached
+        // i.e., with the search space narrowed as far as possible
+        // this should probably be implemented in a more systematic way
+        for(int i = facets.size() - 1; i >= 0; i--){
             
-            Facet facet = fit.next();
-            
+            Facet facet = facets.get(i);
             try{
             
                 sq = facet.buildQueryContribution(sq);
