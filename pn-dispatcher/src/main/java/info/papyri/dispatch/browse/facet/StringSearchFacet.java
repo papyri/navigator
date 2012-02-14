@@ -2,6 +2,11 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.SolrField;
+import info.papyri.dispatch.browse.facet.customexceptions.IncompleteClauseException;
+import info.papyri.dispatch.browse.facet.customexceptions.MalformedProximitySearchException;
+import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketException;
+import info.papyri.dispatch.browse.facet.customexceptions.RegexCompilationException;
+import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +61,7 @@ public class StringSearchFacet extends Facet{
      * form controls to specify the search using string-input only.
      * 
      */
-    enum SearchType{ PHRASE, SUBSTRING, REGEX, LEMMA, USER_DEFINED };
+    enum SearchType{ PHRASE, SUBSTRING, REGEX, LEMMA, USER_DEFINED, PROXIMITY };
     
     enum SearchUnit{ WORDS, CHARS };
     
@@ -75,6 +80,10 @@ public class StringSearchFacet extends Facet{
      * 
      */
     enum SearchOption{ NO_CAPS, NO_MARKS, PROXCOUNT, PROXUNIT };
+    
+    enum ClauseRole{LEMMA, REGEX, START_PROX, END_PROX, AND, OR, NOT, OPERATOR, DEFAULT };
+    
+    enum SearchOperator{AND, OR, REGEX, THEN, NEAR, NOT, LEX };
     
     enum SearchButton{
         
@@ -99,7 +108,7 @@ public class StringSearchFacet extends Facet{
         
     }
     
-    enum Handler{
+    enum SearchHandler{
         
         SURROUND,
         REGEXP,
@@ -107,6 +116,10 @@ public class StringSearchFacet extends Facet{
         
         
     }
+    
+    static Pattern PROX_OPERATOR_REGEX = Pattern.compile("\\d{1,2}(w|n|wc|nc)");
+    
+    SearchClauseFactory CLAUSE_FACTORY = new SearchClauseFactory();
     
     /** A collection from which <code>SearchConfiguration</code>s can be retrieved in an
      *  ordered manner.
@@ -669,6 +682,735 @@ public class StringSearchFacet extends Facet{
         return highlightString;
     }
     
+    final class SearchClauseFactory{
+        
+        Pattern proxClauseDetect = Pattern.compile(".*(\\bNEAR\\b|\\bTHEN\\b).*", Pattern.CASE_INSENSITIVE);
+        Pattern proxMetricsDetect = Pattern.compile(".*(~(\\d{1,2})([\\w]+)?)\\s*$");
+        Pattern justMetricsDetect = Pattern.compile("(~(\\d{1,2})([\\w]+)?)\\s*$");
+                
+        ArrayList<SearchClause> buildSearchClauses(String searchString, SearchTarget target, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+            
+            if(searchString == null) return null;
+            ArrayList<SearchClause> clauses = new ArrayList<SearchClause>();
+            
+            // normalize whitespace
+            searchString = searchString.replaceAll("\\s+", " ");
+            searchString = searchString.trim();
+            if(searchString.length() == 0) return null;
+            
+            searchString = swapInProxperators(searchString);
+            // strip enclosing parens if present
+            searchString = trimEnclosingBrackets(searchString);
+
+            Pattern subClauseRegex = Pattern.compile("^\\(.*\\)$");
+            
+            while(searchString.length() > 0){
+
+                String nowChar = Character.toString(searchString.charAt(0));
+                int endIndex = getMatchingIndex(nowChar, searchString);
+                if(endIndex == -1){
+                    
+                    if(nowChar.equals("(")){
+                        
+                        throw new MismatchedBracketException();
+                        
+                    }
+                    else{
+                        
+                        endIndex = searchString.length() - 1;
+                        
+                    }
+                    
+                }
+                endIndex = endIndex + 1;
+                Matcher metricsMatch = justMetricsDetect.matcher(searchString.substring(endIndex).trim());
+                if(metricsMatch.matches()){ endIndex += (metricsMatch.group(1).length()); }
+                String nowWord = searchString.substring(0, endIndex).trim();
+                SearchClause newClause = subClauseRegex.matcher(nowWord).matches() ? new SubClause(nowWord, target, caps, marks) : new SearchTerm(nowWord, target, caps, marks);
+                clauses.add(newClause);
+                searchString = searchString.substring(endIndex).trim();
+                               
+            }
+            
+            return clauses;
+            
+        }
+        
+        String swapInProxperators(String fullString) throws MalformedProximitySearchException, MismatchedBracketException{
+
+            String searchString = fullString;
+            ArrayList<String> subclauses = suckOutSubClauses(searchString);
+            Iterator<String> sit = subclauses.iterator();
+            while(sit.hasNext()){
+                
+                   searchString = searchString.replace(sit.next(), "()");
+                   
+            }
+
+            Matcher proxMatch = proxClauseDetect.matcher(searchString);
+            Matcher metricsMatch = proxMetricsDetect.matcher(searchString);
+            if(!proxMatch.matches()){
+                
+                if(metricsMatch.matches()){
+    
+                    throw new MalformedProximitySearchException();
+                    
+                }
+                return fullString;
+                
+            }
+            String operator = proxMatch.group(1).toUpperCase().equals("NEAR") ? "n" : "w"; 
+            String num = metricsMatch.matches() && metricsMatch.group(2) != null && metricsMatch.group(2).length() > 0? metricsMatch.group(2) : "1";
+            String unit = metricsMatch.matches() && metricsMatch.group(3) != null && metricsMatch.group(3).length() > 0 && metricsMatch.group(3).equals("chars") ? "c" : "";
+            
+            String proxOperator = num + operator + unit;
+
+            searchString = searchString.replace(proxMatch.group(1), proxOperator);
+
+            if(metricsMatch.matches() && metricsMatch.group(1) != null && metricsMatch.group(1).length() > 0){
+                
+                searchString = searchString.replace(metricsMatch.group(1), "");
+            }
+
+            Iterator<String> sit2 = subclauses.iterator();
+            while(sit2.hasNext()){
+
+                searchString = searchString.replaceFirst("\\(\\)", sit2.next());
+                
+                
+            }
+
+            return searchString;
+            
+        }
+        
+        ArrayList<String> suckOutSubClauses(String searchString) throws MismatchedBracketException{
+           
+            String trimmedString = searchString.trim();//.replaceAll("~\\d{1,2}([^\\s\\d]+)?\\s*$", "");
+
+            if(Character.toString(trimmedString.charAt(0)).equals("(")){
+                
+                int endIndex = getIndexOfMatchingCloseBracket(trimmedString);
+                if(endIndex == -1) throw new MismatchedBracketException();
+                trimmedString =  trimmedString.substring(1, endIndex);
+            }
+            ArrayList<String> subclauses = new ArrayList<String>();
+            while(trimmedString.indexOf("(") != -1){
+                
+                Integer firstBracketIndex = trimmedString.indexOf("(");
+                Integer endBracketIndex = firstBracketIndex + getIndexOfMatchingCloseBracket(trimmedString.substring(firstBracketIndex));
+                endBracketIndex += 1;
+                String clause = trimmedString.substring(firstBracketIndex, endBracketIndex);
+                subclauses.add(clause);
+                trimmedString = trimmedString.substring(endBracketIndex).trim();
+                   
+            }
+            return subclauses;
+        }
+        
+        String trimEnclosingBrackets(String searchString) throws MismatchedBracketException{
+            
+            if(!Character.toString(searchString.charAt(0)).equals("(")) return searchString;
+            int endBracketIndex = getIndexOfMatchingCloseBracket(searchString);
+            if(endBracketIndex == -1){ throw new MismatchedBracketException(); }
+            if(endBracketIndex == searchString.length() - 1){
+                
+                return searchString.substring(1, endBracketIndex);
+                
+            }
+            
+            return searchString;
+                   
+        }
+        
+        Integer getMatchingIndex(String startChar, String remainder){
+            
+            if("(".equals(startChar)) return getIndexOfMatchingCloseBracket(remainder);
+            if("\"".equals(startChar) || "'".equals(startChar)){
+                
+                int endIndex = remainder.indexOf(startChar, 1);
+                if(endIndex != -1) return endIndex;
+                
+            }
+            
+            return remainder.indexOf(" ", 1);
+            
+        }
+        
+        Integer getIndexOfMatchingCloseBracket(String remainder){
+        
+            int pos = -1;
+            int bracketCount = 1;
+            for(int i = 1; i < remainder.length(); i++){
+                
+                String nowChar = Character.toString(remainder.charAt(i));
+                if("(".equals(nowChar)){
+                    bracketCount += 1;
+                } else if(")".equals(nowChar)) {
+
+                    bracketCount -= 1;
+                }
+                if(bracketCount == 0 && pos == -1){
+                    
+                    pos = i;
+                }
+                
+                
+            }
+            if(bracketCount != 0) return -1;
+            return pos;
+        
+        }
+                
+    }
+    
+    
+    abstract class SearchClause{
+        
+        String originalString;
+        String transformedString;
+        ArrayList<SearchClause> clauseComponents;
+        ArrayList<ClauseRole> clauseRoles;
+        Boolean ignore_caps;
+        Boolean ignore_marks;
+        SearchTarget target;
+        Pattern charProxRegex = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
+        private String LEX_MARKER = "LEX ";
+        private String REGEX_MARKER = "REGEX";
+        private String SUBSTRING_MARKER = "#";
+        private String PHRASE_MARKER_REGEX = ".*(\"|')[\\p{L}]*\\s[\\p{L}]*(\\1).*";
+        
+        SearchClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+            
+            originalString = rs;
+            target = tg;
+            ignore_caps = caps;
+            ignore_marks = marks;
+            clauseComponents = hasSubComponents(rs) ? clauseComponents = CLAUSE_FACTORY.buildSearchClauses(rs, tg, caps, marks) : new ArrayList<SearchClause>();
+            clauseRoles = new ArrayList<ClauseRole>();
+            addClauseRole(ClauseRole.DEFAULT);
+        }
+        
+       final Boolean hasSubComponents(String rs){
+           
+           rs = rs.trim();
+           String startChar = Character.toString(rs.charAt(0));
+           // quote-delimited means false
+           if(startChar.equals("\"") || startChar.equals("'")){
+               
+               if(Character.toString(rs.charAt(rs.length() - 1)).equals(startChar)) return false;
+               
+           }
+           // non-quote-delimited with internal whitespace means true
+           if(rs.contains(" ")) return true;
+           // internal brackets means true
+           if(rs.contains("(")||rs.contains(")")) return true;
+           return false;
+           
+       }
+       
+        
+       ArrayList<ClauseRole> getClauseRoles(){
+            
+           return clauseRoles;
+            
+       }
+       
+
+       
+       ArrayList<ClauseRole> getAllClauseRoles(){
+           
+           ArrayList<ClauseRole> allRoles = new ArrayList<ClauseRole>();
+           Iterator<ClauseRole> scrit = clauseRoles.iterator();
+           while(scrit.hasNext()){
+               
+               ClauseRole scr = scrit.next();
+               if(!allRoles.contains(scr)) allRoles.add(scr);
+              
+           }
+           ArrayList<ClauseRole> subRoles = getSubordinateClauseRoles();
+           Iterator<ClauseRole> srit = subRoles.iterator();
+           while(srit.hasNext()){
+               
+               ClauseRole sr = srit.next();
+               if(!allRoles.contains(sr)) allRoles.add(sr);
+               
+           }
+           
+           return allRoles;
+           
+       }
+       
+       String getOriginalString(){
+           
+           return originalString;
+           
+       }
+       
+       ArrayList<SearchClause> getClauseComponents(){
+           
+           return clauseComponents;
+           
+       }
+       
+       final void addClauseRole(ClauseRole role){
+           
+           if(!clauseRoles.contains(role)){
+               
+               clauseRoles.add(role);
+               
+               if(clauseRoles.contains(ClauseRole.DEFAULT) && role != ClauseRole.DEFAULT){
+                   
+                   clauseRoles.remove(ClauseRole.DEFAULT);
+                   
+               }
+               
+           }
+           
+       }
+       
+       Integer getIndexOfNextOperand(Integer start, ArrayList<SearchClause> clauses){
+           
+           for(int i = start; i < clauses.size(); i++){
+               
+               SearchClause clause = clauses.get(i);
+               if(!clause.isOperator()) return i;            
+               
+           }
+           
+           return -1;
+           
+       }
+       
+       Integer getIndexOfPreviousOperand(Integer start, ArrayList<SearchClause> clauses){
+           
+           
+           for(int i = start; i >= 0; i--){
+               
+               SearchClause clause = clauses.get(i);
+               if(!clause.isOperator()) return i;
+               
+           }
+           
+           return -1;
+           
+       }
+       
+       Boolean isOperator(){
+           
+           try{
+               
+               SearchOperator.valueOf(getOriginalString());
+               return true;
+               
+           }
+           catch(IllegalArgumentException iae){
+               
+               Matcher proxMatcher = PROX_OPERATOR_REGEX.matcher(getOriginalString());
+               if(proxMatcher.matches()) return true;
+               
+               
+           }
+           
+           return false;
+           
+       }  
+       
+       SearchType parseForSearchType(){
+           
+            SearchType type = SearchType.SUBSTRING;
+            if(SearchTarget.USER_DEFINED == target) return SearchType.USER_DEFINED;
+            if(SearchTarget.METADATA == target || SearchTarget.TRANSLATION == target) return SearchType.PHRASE;
+            ArrayList<ClauseRole> allRoles = getAllClauseRoles();
+            if(allRoles.contains(ClauseRole.LEMMA)) return SearchType.LEMMA;
+            if(allRoles.contains(ClauseRole.REGEX)) return SearchType.REGEX;
+            if(allRoles.contains(ClauseRole.START_PROX)) return SearchType.PROXIMITY;
+            if(originalString.matches(PHRASE_MARKER_REGEX)) return SearchType.PHRASE;
+            return type;
+           
+           
+       }
+       
+       SolrField parseForField(SearchType searchType, SearchTarget searchTarget, Boolean caps, Boolean marks){
+           
+           if(searchType == SearchType.USER_DEFINED) return null;
+           if(searchTarget == SearchTarget.METADATA) return SolrField.metadata;
+           if(searchTarget == SearchTarget.TRANSLATION) return SolrField.translation;
+           if(searchType == SearchType.LEMMA) return SolrField.transcription_ia;
+           String suffix = (caps && marks) ? "_ia" : (caps ? "_ic" : "_id" );
+           String prefix = "transcription";
+           if(searchType == SearchType.SUBSTRING){
+               
+               prefix = "transcription_ngram";
+               
+           }
+           else if(searchType == SearchType.REGEX){
+               
+               prefix = "untokenized";
+               
+           }
+           
+           try{
+               
+               return SolrField.valueOf(prefix + suffix);
+               
+           }
+           catch(IllegalArgumentException iae){
+               
+               return SolrField.transcription_ngram_ia;
+               
+           }
+               
+           
+       }
+       
+       SearchHandler parseForSearchHandler(ArrayList<ClauseRole> roles){
+           
+           if(roles.size() < 1) return null;
+           if(roles.contains(ClauseRole.REGEX)) return SearchHandler.REGEXP;
+           if(roles.contains(ClauseRole.START_PROX)) return SearchHandler.SURROUND;
+           return SearchHandler.DEFAULT;
+           
+       }
+       
+       String getQueryPrefix(SearchHandler sh, SolrField field){
+           
+           if(field == null) return "";
+           if(sh == SearchHandler.REGEXP || sh == SearchHandler.SURROUND){
+               
+               StringBuilder prefix = new StringBuilder();
+               prefix.append("{!");
+               prefix.append(sh.name().toLowerCase());
+               prefix.append(" cache=false qf=\"");
+               prefix.append(field.name().toLowerCase());
+               prefix.append("\"}");
+               return prefix.toString();
+               
+           }
+           String prefix = field.name().toLowerCase();
+           prefix += ":"; 
+           return prefix;
+           
+       }
+       
+
+       SolrQuery buildQuery(SolrQuery sq) throws SolrServerException, MalformedURLException, IncompleteClauseException, RegexCompilationException{
+           
+           SearchType type = parseForSearchType();
+           SolrField field = parseForField(type, target, ignore_caps, ignore_marks);
+           SearchHandler handler = parseForSearchHandler(getAllClauseRoles());
+           String queryPrefix = getQueryPrefix(handler, field);
+           String queryBody = buildTransformedString();
+           sq.addFilterQuery(queryPrefix + queryBody);
+           return sq;
+           
+       }
+       
+       
+       abstract void assignClauseRoles() throws IncompleteClauseException;
+              
+       abstract ArrayList<ClauseRole> getSubordinateClauseRoles();
+       
+       abstract Boolean isCharactersProxTerm();
+             
+       abstract String buildTransformedString() throws SolrServerException, MalformedURLException, IncompleteClauseException, RegexCompilationException;
+        
+        
+    }
+    
+    class SubClause extends SearchClause{
+            
+        ArrayList<SearchClause> transformedClauses = new ArrayList<SearchClause>();
+        
+        SubClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+            
+            super(rs, tg, caps, marks);
+            assignClauseRoles();
+            transformedClauses = doCharsProxTransform(clauseComponents);
+        }
+        
+        @Override
+        String buildTransformedString() throws SolrServerException, MalformedURLException, IncompleteClauseException, RegexCompilationException{
+            
+            StringBuilder transformed = new StringBuilder();
+            Iterator<SearchClause> scit = transformedClauses.iterator();
+            while(scit.hasNext()){
+                
+                SearchClause clause = scit.next();
+                String clauseContent = clause.buildTransformedString().trim();
+                transformed.append(clauseContent);
+                if(!clauseContent.equals("")) transformed.append(" ");
+                
+                
+            }
+            
+            return transformed.toString().trim();
+            
+        }
+        
+        final ArrayList<SearchClause> doCharsProxTransform(ArrayList<SearchClause> clauses) throws IncompleteClauseException, RegexCompilationException{
+            
+            Integer chpIndex = getCharsProxIndex(clauses);
+            if(chpIndex == -1) return clauses;
+            ArrayList<SearchClause> proxClauses = new ArrayList<SearchClause>();
+            Integer startIndex = getProxStartTerm(chpIndex, clauses);
+            Integer endIndex = getProxPostTerm(chpIndex, clauses);
+            if(startIndex == -1 || endIndex == -1) throw new IncompleteClauseException();
+            for(int i = 0; i < startIndex; i++){
+                
+                proxClauses.add(clauses.get(i));
+                
+            }
+            String regex = convertCharProxToRegexSyntax(clauses.get(startIndex).originalString, clauses.get(endIndex).originalString, clauses.get(chpIndex).originalString);
+
+            try{
+            
+                SearchTerm regexSearchTerm = new SearchTerm(regex, target, ignore_caps, ignore_marks);
+                regexSearchTerm.addClauseRole(ClauseRole.REGEX);
+                proxClauses.add(regexSearchTerm);
+                
+            } catch(StringSearchParsingException sspe){
+                
+                throw new RegexCompilationException();
+                
+            }
+            for(int k = endIndex + 1; k < clauses.size(); k++){
+                
+                proxClauses.add(clauses.get(k));
+            
+            }
+            return proxClauses;
+            
+        }
+        
+        @Override
+        final void assignClauseRoles() throws IncompleteClauseException{
+                      
+           for(int i = 0; i < clauseComponents.size(); i++){
+               
+               SearchClause clause = clauseComponents.get(i);
+               if(clause.isOperator()){
+                   
+                   clause.addClauseRole(ClauseRole.OPERATOR);
+                   
+                   try{
+                       
+                       SearchOperator op = SearchOperator.valueOf(clause.getOriginalString().trim());
+                       if(op == SearchOperator.OR){
+                           
+                           int prevOperand = getIndexOfPreviousOperand(i, clauseComponents);
+                           int nextOperand = getIndexOfNextOperand(i, clauseComponents);
+                           if(prevOperand == -1 || nextOperand == -1) throw new IncompleteClauseException();
+                           clauseComponents.get(prevOperand).addClauseRole(ClauseRole.OR);
+                           clauseComponents.get(nextOperand).addClauseRole(ClauseRole.OR);
+                           
+                       }
+                       else{
+
+                           int nextOperand = getIndexOfNextOperand(i, clauseComponents);
+                           if(nextOperand == -1) throw new IncompleteClauseException();
+                           String opName = op.name();
+                           if(opName.equals(SearchOperator.LEX.name())) opName = ClauseRole.LEMMA.name();
+                           ClauseRole role = ClauseRole.valueOf(opName);
+                           clauseComponents.get(nextOperand).addClauseRole(role);
+                           
+                       }
+                       
+                   }
+                   catch(IllegalArgumentException iae){
+                       
+                       int prevOperand = getIndexOfPreviousOperand(i, clauseComponents);
+                       int nextOperand = getIndexOfNextOperand(i, clauseComponents);
+                       if(prevOperand == -1 || nextOperand == -1) throw new IncompleteClauseException();
+                       clauseComponents.get(prevOperand).addClauseRole(ClauseRole.START_PROX);
+                       clauseComponents.get(nextOperand).addClauseRole(ClauseRole.END_PROX);                   
+                       
+                   }
+                    
+               }
+               else{
+                   
+                   clause.assignClauseRoles();              
+                   
+               }
+               
+               
+           }
+           
+       }
+        
+        String convertCharProxToRegexSyntax(String prevTerm, String nextTerm, String charProx) throws RegexCompilationException{
+            
+            Matcher charProxMatcher = charProxRegex.matcher(charProx);
+            if(!charProxMatcher.matches()) throw new RegexCompilationException();
+            String numChars = charProxMatcher.group(1);
+            String unit = charProxMatcher.group(2);
+            String distRegex = ".{1," + numChars + "}";
+            prevTerm = convertWildcardToRegexSyntax(prevTerm);
+            nextTerm = convertWildcardToRegexSyntax(nextTerm);
+            String regex = prevTerm.trim() + distRegex + nextTerm.trim();
+            if(unit.equals("w")) return regex;
+            String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
+            String nearRegex = "(" + revRegex + "|" + regex + ")";
+            return nearRegex;
+            
+        }
+        
+        String convertWildcardToRegexSyntax(String wildcard){
+            
+            String regex = wildcard.replaceAll("\\*", ".*");
+            regex = regex.replaceAll("\\?", ".");
+            return regex;
+            
+            
+        }
+        
+        Integer getCharsProxIndex(ArrayList<SearchClause> clauses){
+            
+            for(int i = 0; i < clauses.size(); i++){
+                
+                if(clauses.get(i).isCharactersProxTerm()) return i;
+                
+            }
+            
+            return -1;
+            
+        }
+        
+        Integer getProxStartTerm(Integer start, ArrayList<SearchClause> clauses){
+            
+            for(int i = start; i >= 0; i--){
+                
+                if(clauses.get(i).getClauseRoles().contains(ClauseRole.START_PROX)) return i;
+                
+            }
+            
+            return -1;
+            
+        }
+        
+        Integer getProxPostTerm(Integer start, ArrayList<SearchClause> clauses){
+            
+            for(int i = start; i < clauses.size(); i++){
+                
+                if(clauses.get(i).getClauseRoles().contains(ClauseRole.END_PROX)) return i;
+                
+            }
+            
+            return -1;
+        }
+        
+        @Override
+        ArrayList<ClauseRole> getSubordinateClauseRoles(){
+           
+           ArrayList<ClauseRole> subroles = new ArrayList<ClauseRole>();
+           
+           Iterator<SearchClause> scit = transformedClauses.iterator();
+           while(scit.hasNext()){
+               
+               SearchClause clause = scit.next();
+               Iterator<ClauseRole> scrit = clause.getClauseRoles().iterator();
+               while(scrit.hasNext()){
+                   
+                   ClauseRole scrole = scrit.next();
+                   if(!subroles.contains(scrole)) subroles.add(scrole);
+                                   
+               }             
+               
+           }
+           
+           return subroles;
+           
+       }
+        
+        @Override
+        Boolean isCharactersProxTerm(){ return false; }
+        
+        
+        
+    }
+    
+    class SearchTerm extends SearchClause{
+        
+        Pattern charProxTermRegex = Pattern.compile("\\d{1,2}(w|n)c");
+        
+        SearchTerm(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+            
+            super(rs, tg, caps, marks);
+            
+        }
+        
+        @Override
+        void assignClauseRoles(){}
+        
+        @Override
+        String buildTransformedString() throws SolrServerException, MalformedURLException{
+            
+            String transformed = originalString;
+            
+            if(transformed.equals(StringSearchFacet.SearchOperator.LEX.name())) return "";
+            if(transformed.equals(StringSearchFacet.SearchOperator.REGEX.name())) return "";
+            if(clauseRoles.contains(ClauseRole.LEMMA)){
+                
+                transformed = expandLemma(transformed);
+                return transformed;
+                
+            }
+            if(target != SearchTarget.TEXT){
+                
+                transformed = transformed.toLowerCase();
+                return transformed;
+                
+            }
+            if(ignore_caps) transformed = transformed.toLowerCase();
+            if(ignore_marks) transformed = FileUtils.stripDiacriticals(transformed);
+            transformed = transformed.replaceAll("ς", "σ");  
+            transformed = transformed.replaceAll("#", "^");
+            transformed = transformed.replaceAll("\\^", "\\^");                
+            return transformed;
+            
+        }
+        
+        String expandLemma(String declinedForm) throws SolrServerException, MalformedURLException{
+           
+           
+           SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
+           // TODO: stop hard-coding string for prodo!
+           String searchTerm = "lemma:" + declinedForm;
+           SolrQuery sq = new SolrQuery();
+           sq.setQuery(searchTerm);
+           sq.setRows(1000);
+           QueryResponse qr = solr.query(sq);
+           SolrDocumentList forms = qr.getResults();
+           Set<String> formSet = new HashSet<String>();
+           if (forms.size() > 0) {
+              for (int i = 0; i < forms.size(); i++) {
+                formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
+              }
+             declinedForm = FileUtils.interpose(formSet, " OR ");
+             
+            } 
+           declinedForm = "(" + declinedForm + ")";
+           return declinedForm;
+           
+       }
+        
+        @Override
+        ArrayList<ClauseRole> getSubordinateClauseRoles(){
+            
+            return new ArrayList<ClauseRole>();
+            
+        }
+        
+        @Override
+        Boolean isCharactersProxTerm(){
+            
+            return charProxTermRegex.matcher(originalString).matches();
+            
+        }
+        
+    }
+    
     /**
      * This inner class handles the logic for string-searching previously found
      * in <code>info.papyri.dispatch.Search</code>.
@@ -723,7 +1465,7 @@ public class StringSearchFacet extends Facet{
         /** The SolrField that should be used in the search */
         private SolrField field;
         
-        private Handler handler;
+        private SearchHandler handler;
         
         private Integer proxCount;
         
@@ -806,12 +1548,12 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        final Handler parseForHandler(){
+        final SearchHandler parseForHandler(){
             
-            if(SearchUnit.WORDS.equals(proxUnit)) return Handler.SURROUND;
-            if(SearchUnit.CHARS.equals(proxUnit)) return Handler.REGEXP;
-            if(SearchType.REGEX.equals(searchType)) return Handler.REGEXP;
-            return Handler.DEFAULT;
+            if(SearchUnit.WORDS.equals(proxUnit)) return SearchHandler.SURROUND;
+            if(SearchUnit.CHARS.equals(proxUnit)) return SearchHandler.REGEXP;
+            if(SearchType.REGEX.equals(searchType)) return SearchHandler.REGEXP;
+            return SearchHandler.DEFAULT;
             
         }
 

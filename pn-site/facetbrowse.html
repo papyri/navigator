@@ -23,6 +23,8 @@
     <!-- typegreek code written by Randy Hoyt, http://www.typegreek.com/overview/. Used with gratitude and permission -->
     <script src="/js/typegreek.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/guidesearch.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/stringsearch.js" type="text/javascript" charset="utf-8"></script>
+
    <style type="text/css">
 
       body, html{
@@ -31,6 +33,13 @@
 		
       } 
 
+      select, input, label, button, textarea, button, .option-label, #img-selector-lbl{
+      
+        font-size:90%;
+        font-family: Georgia, serif;
+      
+      }
+	  
 	  
 	  #sparql-wrap{
 	  
@@ -64,8 +73,32 @@
         margin-right: 25px;
         padding-bottom: 50px;
         min-height: 100%;
-        width: 500px; 
-        min-width: 500px;
+        width: 450px; 
+        min-width: 450px;
+        padding-top: 0.5em;
+      }
+      
+      
+      div.stringsearch-top-controls:first-child p.facet-stringsearch-wrapper{
+      
+        margin-top: 3em;
+      
+      }
+      
+	div.stringsearch-top-controls p.facet-stringsearch-wrapper{
+      
+        margin-top: 1em;
+      
+      }
+      
+      .stringsearch-top-controls p.facet-stringsearch-wrapper{
+      
+        width: 400px;
+        margin-bottom: 0.5em;
+    	background:white;
+    	border:thin solid silver;
+    	padding:1em;
+      
       }
       
       #facet-widgets-wrapper.search-closed{
@@ -161,6 +194,12 @@
         margin-left: 7.5px;
       
       }
+      
+      div.search h2{
+      
+        font-size: 133%;
+      
+      }
 
       #vals-and-records-wrapper{
       
@@ -171,13 +210,6 @@
         min-height: 1100px;
         /*min-width: 400px;*/
 
-      }
-      
-      #facet-stringsearch-wrapper{
-      
-      	width: 450px;
-      
-      
       }
       
       td.doc-title{
@@ -400,6 +432,29 @@
       
       }
       
+      
+      
+      .keyword{
+      
+      	margin-right: 5px;
+      
+      }
+      
+      .prx{
+      
+      	display: inline-block;
+      
+      }
+      
+      .str-operator{
+      
+      	display: inline-block;
+      	width: 40px;
+      	padding-right: 5px;
+
+      
+      }
+      
       .spacer{
       
         height: 1px;
@@ -416,16 +471,48 @@
       
       }
       
-      div.stringsearch-section:last-child p{
+      #str-search-controls{
       
-      	padding-bottom: 4px;
-      	border-bottom: none;
+      	position: relative;
+        padding-left: 1em;
+        clear: both;
       
       }
+
+	  #str-search-controls input{
+	  
+	  	float: right;
+	  	margin-right: 0;
+	  	margin-left: 7.5px;
+	  
+	  }
+	  
+	  #str-search-controls:after{
+	  
+	  	content:".";
+	  	display: block;
+	  	height: 0px;
+	  	font-size: 0;
+	  	clear: both;
+	  	visibility: hidden;
+	  
+	  }
       
       #marks, #caps, #beta-on{
       
       	margin-left: 1em;
+      
+      }
+      
+      #place-search-widget{
+      
+      	margin-bottom: 0px;
+      
+      }
+      
+      #place-search-widget p{
+      
+      	margin-bottom: 0.3em;
       
       }
       
@@ -454,6 +541,18 @@
       
 		display: none;
 	
+      }
+      
+      .ui-autocomplete{
+      
+      	text-align: left;
+      
+      }
+      
+      .ui-menu-item{
+      
+      	font-size: 72%;
+      
       }
       
       #search-reset-wrapper{
@@ -570,7 +669,14 @@
       #docs-per-page label{
       
       	font-size: 85%;
-		padding-right: 10px;      
+		    padding-right: 10px;  
+		    
+      }
+      
+      .ui-widget{
+      
+        font-size: 92%;
+      
       }
     </style>
 

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.abdera.Abdera;
+import org.apache.abdera.i18n.text.InvalidCharacterException;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
@@ -238,7 +239,7 @@ public class AtomFeedServlet extends HttpServlet{
         }       
         sq.setQuery(q);
         return sq;
-        
+            
     }
     
     /**
@@ -406,13 +407,20 @@ public class AtomFeedServlet extends HttpServlet{
             Date modified = (Date) doc.getFieldValue(SolrField.last_revised.name());
             Date published = (Date) doc.getFieldValue(SolrField.first_revised.name());
             String summary = getSummary(doc);
-            String contributorURI = (String) doc.getFieldValue(SolrField.last_editor.name());
-            String[] contributorBits = contributorURI.split("/");
-            String contributorName = contributorBits.length > 0 ? contributorBits[contributorBits.length - 1] : "Papyri.info";         
-            Person contributor = abdera.getFactory().newContributor();
-            contributor.setName(contributorName);
-            contributor.setUri(contributorURI);
+            String contributorURI = ((String) doc.getFieldValue(SolrField.last_editor.name()));
             Entry newEntry = feed.addEntry();
+
+            if(contributorURI != null){
+                
+                contributorURI = contributorURI.replaceAll("\\s", "");
+                String[] contributorBits = contributorURI.split("/");
+                String contributorName = contributorBits.length > 0 ? contributorBits[contributorBits.length - 1] : "Papyri.info";
+                Person contributor  = abdera.getFactory().newContributor();
+                contributor.setUri(contributorURI);
+                contributor.setName(contributorName);
+                newEntry.addContributor(contributor);
+                       
+            }
             Link contentLink = abdera.getFactory().newLink();
             contentLink.setHref(id);
             contentLink.setRel("alternate");
@@ -421,7 +429,6 @@ public class AtomFeedServlet extends HttpServlet{
             newEntry.setId(id);
             newEntry.setTitle(title);
             newEntry.setUpdated(modified);
-            newEntry.addContributor(contributor);
             newEntry.setPublished(published);
             Link rightsLink = abdera.getFactory().newLink();
             rightsLink.setRel("license");

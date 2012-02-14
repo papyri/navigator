@@ -1,5 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
+import info.papyri.dispatch.browse.facet.customexceptions.FacetNotFoundException;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;

@@ -141,8 +141,8 @@
     <field name="first_revised" type="date" indexed="true" stored="true" multiValued="false"></field> 
     <field name="last_revised" type="date" indexed="true" stored="true" multiValued="false"></field>
     <field name="last_editor" type="string" indexed="false" stored="true" multiValued="false"></field>
-    <!--<field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="false"></field> -->
     <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="false"></field>
+    <field name="tokenized_ia" type="lctext" indexed="true" stored="false" multiValued="false"></field>
   </fields>
 
 
@@ -160,5 +160,5 @@
   <copyField source="apis_metadata" dest="all"/>
   <copyField source="hgv_metadata" dest="metadata"/>
   <copyField source="apis_metadata" dest="metadata"/>
-  <!-- <copyField source="transcription" dest="untokenized"/> --> 
+  <copyField source="untokenized_ia" dest="tokenized_ia"/>
 </schema>
