@@ -135,7 +135,7 @@ public class IdentifierFacet extends Facet{
     }    
     
     @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         Boolean noConstraints = true;
         

@@ -19,7 +19,7 @@ public class PlaceFacet extends Facet {
         
     }
     
-     @Override
+ /*    @Override
      public String generateWidget() {
         
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" id=\"place-search-widget\" title=\"");
@@ -65,7 +65,7 @@ public class PlaceFacet extends Facet {
 
         return html.toString();
         
-    }
+    }*/
     
     @Override
     String getToolTipText() {

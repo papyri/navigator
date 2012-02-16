@@ -1,35 +1,15 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
-import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration;
-import info.papyri.dispatch.browse.facet.customexceptions.IncompleteClauseException;
 import info.papyri.dispatch.browse.facet.customexceptions.MalformedProximitySearchException;
 import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import junit.framework.TestCase;
-import org.apache.lucene.search.TermQuery;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrRequest.METHOD;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.TermsResponse;
-import org.apache.solr.client.solrj.response.TermsResponse.Term;
-import org.apache.solr.common.params.CommonParams;
 
 
 
@@ -66,91 +46,113 @@ public class StringSearchFacetTest extends TestCase {
         
         // basic functionality - needs to pull out one or two
         // complete SearchConfiguration objects as appropriate
-        
-        mockParams.put("STRING", new String[]{"orator"});
-        mockParams.put("target", new String[]{ StringSearchFacet.SearchTarget.TEXT.name()});
-        mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase(), new String[]{"on"});
-        mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase(), new String[]{"on"});
-        
-        HashMap<Integer, ArrayList<StringSearchFacet.SearchConfiguration>> configs = testInstance.pullApartParams(mockParams);
-        assertEquals(1, configs.size());
-        StringSearchFacet.SearchConfiguration config = configs.get(0).get(0);
-        assertEquals("orator", config.getRawString());
-        assertEquals(StringSearchFacet.SearchType.SUBSTRING, config.getSearchType());
-        assertEquals(StringSearchFacet.SearchTarget.TEXT, config.getSearchTarget());
-        assertTrue(config.getIgnoreCaps());
-        assertTrue(config.getIgnoreMarks());
-        
-        mockParams.clear();
-        
-        mockParams.put("STRING2", new String[]{"τοῦ και"});
-        mockParams.put("target2", new String[]{StringSearchFacet.SearchTarget.METADATA.name()});
-        
-        configs.clear();
-        configs = testInstance.pullApartParams(mockParams);
-        
-        assertEquals(1, configs.size());
-        StringSearchFacet.SearchConfiguration config2 = configs.get(2).get(0);
-        assertEquals("τοῦ και", config2.getRawString());
-        assertEquals(StringSearchFacet.SearchTarget.METADATA, config2.getSearchTarget());
-        assertTrue(config2.getIgnoreCaps());
-        assertTrue(config2.getIgnoreMarks());
-        
-        
-        // missing keyword, target parameters should cause the entire SC object not to be instantiated
-        mockParams.clear();
-        mockParams.put("STRING3", new String[]{"apuleius"});
-        mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "3", new String[]{"on"});
-        mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase() + "3", new String[]{"on"});
-        
-        configs.clear();
-        configs = testInstance.pullApartParams(mockParams);
-        assertEquals(0, configs.size());
-        
-        // malformed search type or target parameters should cause the entire sc object not to be instantiated
-        mockParams.clear();
-        mockParams.put("STRING5", new String[]{"querunculus"});
-        mockParams.put("target5", new String[]{"DUMMY_VALUE2"}); 
-        
-        configs.clear();
-        configs = testInstance.pullApartParams(mockParams);
-        assertEquals(0, configs.size());
-        
-        // multiple parameter values are ignored
-        
-        mockParams.clear();
-        mockParams.put("STRING4",new String[]{"cupid", "psyche"});
-        mockParams.put("target4", new String[]{StringSearchFacet.SearchTarget.ALL.name().toLowerCase(), StringSearchFacet.SearchTarget.TEXT.name().toLowerCase()});
-        configs.clear();
-        configs = testInstance.pullApartParams(mockParams);
-        assertEquals(1, configs.size());
-        StringSearchFacet.SearchConfiguration config3 = configs.get(4).get(0);
-        assertEquals("cupid", config3.getRawString());
-        assertEquals(StringSearchFacet.SearchType.SUBSTRING, config3.getSearchType());
-        assertEquals(StringSearchFacet.SearchTarget.ALL, config3.getSearchTarget());
-        
-        // n submitted clauses results in n search configurations being created
-        
-        configs.clear();;
-        mockParams.clear();
-        
-        mockParams.put("STRING6", new String[]{"((και AND ουκ)¤(\"ο στρατηγος\" THEN \"ο καισαροσ\")~5words¤(αι# OR #ου)¤(νερ NEAR τι)~10chars¤(LEX λυω)"});
-        mockParams.put("target6", new String[]{"TEXT"});
-        mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "6", new String[]{"on"});
-        configs = testInstance.pullApartParams(mockParams);
-        ArrayList<SearchConfiguration> firstConfig = configs.get(6);
-        assertEquals(1, configs.size());
-        assertEquals(5, firstConfig.size());
-        assertTrue(firstConfig.get(0).getIgnoreCaps());
-        
-        // Search type should default to substring
-        assertEquals(StringSearchFacet.SearchType.SUBSTRING, firstConfig.get(0).getSearchType());
-        assertEquals(StringSearchFacet.SearchType.PHRASE, firstConfig.get(1).getSearchType());
-        assertEquals(StringSearchFacet.SearchType.SUBSTRING, firstConfig.get(2).getSearchType());
-        assertEquals(StringSearchFacet.SearchType.REGEX, firstConfig.get(3).getSearchType());
-        assertEquals(StringSearchFacet.SearchType.LEMMA, firstConfig.get(4).getSearchType());
+        try{
+            
+            mockParams.put("STRING", new String[]{"orator"});
+            mockParams.put("target", new String[]{ StringSearchFacet.SearchTarget.TEXT.name()});
+            mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase(), new String[]{"on"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase(), new String[]{"on"});
 
-       
+            HashMap<Integer, ArrayList<StringSearchFacet.SearchClause>> configs = testInstance.pullApartParams(mockParams);
+            assertEquals(1, configs.size());
+            StringSearchFacet.SearchClause config = configs.get(0).get(0);
+            assertEquals("orator", config.getOriginalString());
+            assertEquals(StringSearchFacet.SearchType.SUBSTRING, config.parseForSearchType());
+            assertEquals(StringSearchFacet.SearchTarget.TEXT, config.getSearchTarget());
+            assertTrue(config.getIgnoreCaps());
+            assertTrue(config.getIgnoreMarks());
+
+            mockParams.clear();
+
+            mockParams.put("STRING2", new String[]{"Τοῦ Και"});
+            mockParams.put("target2", new String[]{StringSearchFacet.SearchTarget.METADATA.name()});
+
+            configs.clear();
+            configs = testInstance.pullApartParams(mockParams);
+
+            assertEquals(1, configs.size());
+            StringSearchFacet.SearchClause config2 = configs.get(2).get(0);
+            assertEquals("Τοῦ Και", config2.getOriginalString());
+            assertEquals("τοῦ και", config2.buildTransformedString());
+            assertEquals(StringSearchFacet.SearchTarget.METADATA, config2.getSearchTarget());
+
+
+            // missing keyword, target parameters should cause the entire SC object not to be instantiated
+            mockParams.clear();
+            mockParams.put("STRING3", new String[]{"apuleius"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "3", new String[]{"on"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase() + "3", new String[]{"on"});
+
+            configs.clear();
+            configs = testInstance.pullApartParams(mockParams);
+            assertEquals(0, configs.size());
+
+            // malformed search type or target parameters should cause the entire sc object not to be instantiated
+            mockParams.clear();
+            mockParams.put("STRING5", new String[]{"querunculus"});
+            mockParams.put("target5", new String[]{"DUMMY_VALUE2"}); 
+
+            configs.clear();
+            configs = testInstance.pullApartParams(mockParams);
+            assertEquals(0, configs.size());
+
+            // multiple parameter values are ignored
+
+            mockParams.clear();
+            mockParams.put("STRING4",new String[]{"cupid", "psyche"});
+            mockParams.put("target4", new String[]{StringSearchFacet.SearchTarget.TEXT.name().toLowerCase(), StringSearchFacet.SearchTarget.TEXT.name().toLowerCase()});
+            configs.clear();
+            configs = testInstance.pullApartParams(mockParams);
+            assertEquals(1, configs.size());
+            StringSearchFacet.SearchClause config3 = configs.get(4).get(0);
+            assertEquals("cupid", config3.getOriginalString());
+            assertEquals(StringSearchFacet.SearchType.SUBSTRING, config3.parseForSearchType());
+            assertEquals(StringSearchFacet.SearchTarget.TEXT, config3.getSearchTarget());
+
+            // n submitted clauses results in n search configurations being created
+
+            configs.clear();;
+            mockParams.clear();
+
+            mockParams.put("STRING6", new String[]{"(και AND ουκ)¤(\"ο στρατηγος\" THEN \"ο καισαροσ\")~5words¤(αι# OR #ου)¤(νερ NEAR τι)~10chars¤(LEX λυω)"});
+            mockParams.put("target6", new String[]{"TEXT"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "6", new String[]{"on"});
+            configs = testInstance.pullApartParams(mockParams);
+            ArrayList<StringSearchFacet.SearchClause> firstConfig = configs.get(6);
+            assertEquals(1, configs.size());
+            assertEquals(5, firstConfig.size());
+            assertTrue(firstConfig.get(0).getIgnoreCaps());           
+
+            // Search type should default to substring
+            assertEquals(StringSearchFacet.SearchType.SUBSTRING, firstConfig.get(0).parseForSearchType());
+            assertEquals(StringSearchFacet.SearchType.PROXIMITY, firstConfig.get(1).parseForSearchType());
+            assertEquals(StringSearchFacet.SearchType.SUBSTRING, firstConfig.get(2).parseForSearchType());
+            assertEquals(StringSearchFacet.SearchType.REGEX, firstConfig.get(3).parseForSearchType());
+            assertEquals(StringSearchFacet.SearchType.LEMMA, firstConfig.get(4).parseForSearchType());
+            
+            mockParams.clear();
+            configs.clear();
+            System.out.println("************************");
+            mockParams.put("STRING7", new String[]{"REGEX και.{1,5}\\b"});
+            mockParams.put("target7", new String[]{"TEXT"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "7", new String[]{"on"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase() + "7", new String[]{"on"});
+            configs = testInstance.pullApartParams(mockParams);
+            ArrayList<StringSearchFacet.SearchClause> sevenConfig = configs.get(7);
+            assertEquals(1, sevenConfig.size());
+            StringSearchFacet.SearchClause regex = sevenConfig.get(0);
+            System.out.println(regex.getOriginalString());
+            System.out.println(regex.buildTransformedString());
+            System.out.println(regex.buildQuery(new SolrQuery()).toString());
+            System.out.println("************************");
+         
+
+        }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in pullApartParams test: " + e.getMessage());
+            
+        }
     }
     
     public void testGetFacetConstraints(){
@@ -314,13 +316,11 @@ public class StringSearchFacetTest extends TestCase {
         }
         catch(MalformedProximitySearchException mpse){
             
-            System.out.println("MalformedProximitySearchException wrongly thrown in proxperator test");
             fail("MalformedProximitySearchException wrongly thrown in proxperator test");
             
         }
         catch(MismatchedBracketException mbe){
             
-            System.out.println("MismatchedBracketException wrongly thrown in proxperator test");
             fail("MismatchedBracketException wrongly thrown in proxperator test");
             
         }
@@ -335,7 +335,6 @@ public class StringSearchFacetTest extends TestCase {
         } catch(MalformedProximitySearchException mpse){}
         catch(MismatchedBracketException mbe){ 
             
-            System.out.println("MismatchedBracketException wrongly thrown in proxperator test");
             fail("MismatchedBracketException wrongly thrown in proxperator test");
         }
         
@@ -470,7 +469,7 @@ public class StringSearchFacetTest extends TestCase {
             // regex means no transformation
             String origString2 = "REGEX κ.+ι";
             StringSearchFacet.SubClause term2 = testInstance.new SubClause(origString2, t, false, false);
-            assertEquals("κ.+ι", term2.buildTransformedString());
+            assertEquals("^.*κ.+ι.*$", term2.buildTransformedString());
 
             // ignore_caps results in lower-casing
             String origString3 = "ΚάΙ";
@@ -514,21 +513,21 @@ public class StringSearchFacetTest extends TestCase {
             // replace hash-mark \b markers with caret \b markers
             String origString11 = "#kai# #tou";
             StringSearchFacet.SubClause term11 = testInstance.new SubClause(origString11, t, true, true);
-            assertEquals("^kai^ ^tou", term11.buildTransformedString());
+            assertEquals("\\^kai\\^ \\^tou", term11.buildTransformedString());
             
             // character-proximity searches transformed into appropriate regex
             String origString12 = "(kai THEN ouk)~10chars";
             StringSearchFacet.SubClause term12 = testInstance.new SubClause(origString12, t, true, true);
-            assertEquals("kai.{1,10}ouk", term12.buildTransformedString());
+            assertEquals("^.*kai.{1,10}ouk.*$", term12.buildTransformedString());
             
 
             String origString13 = "(kai 10wc ouk)";
             StringSearchFacet.SubClause term13 = testInstance.new SubClause(origString13, t, true, true);
-            assertEquals("kai.{1,10}ouk", term13.buildTransformedString());  
+            assertEquals("^.*kai.{1,10}ouk.*$", term13.buildTransformedString());  
             
             String origString14 = "(kai 12nc ouk)";
             StringSearchFacet.SubClause term14 = testInstance.new SubClause(origString14, t, true, true);
-            assertEquals("(ouk.{1,12}kai|kai.{1,12}ouk)", term14.buildTransformedString());
+            assertEquals("^.*(ouk.{1,12}kai|kai.{1,12}ouk).*$", term14.buildTransformedString());
             
             // TODO: test nested queries etc.
             
@@ -572,7 +571,7 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals(1, proxThenClauses.size());
             assertEquals(1, proxThenClauses.get(0).getClauseRoles().size());
             assertTrue(proxThenClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
-            assertEquals("kai.{1,5}ouk", proxThenClauses.get(0).getOriginalString());
+            assertEquals("^.*kai.{1,5}ouk.*$", proxThenClauses.get(0).buildTransformedString());
 
             // if NEAR search with chars as unit, return appropriate regex
             String nearClause = "kai 5nc ouk";
@@ -582,7 +581,7 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals(1, proxNearClauses.size());
             assertEquals(1, proxNearClauses.get(0).getClauseRoles().size());
             assertTrue(proxNearClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
-            assertEquals("(ouk.{1,5}kai|kai.{1,5}ouk)", proxNearClauses.get(0).getOriginalString());
+            assertEquals("^.*(ouk.{1,5}kai|kai.{1,5}ouk).*$", proxNearClauses.get(0).buildTransformedString());
             
             // wildcards converted to regex syntax
             String wildClause = "k?i 5wc ou*";
@@ -592,7 +591,7 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals(1, proxWildClauses.size());
             assertEquals(1, proxWildClauses.get(0).getClauseRoles().size());
             assertTrue(proxWildClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
-            assertEquals("k.i.{1,5}ou.*", proxWildClauses.get(0).getOriginalString());            
+            assertEquals("^.*k.i.{1,5}ou.*$", proxWildClauses.get(0).buildTransformedString());            
 
         } catch(Exception e){
             
@@ -779,7 +778,7 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals("{!regexp cache=false qf=\"untokenized_ia\"}", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.REGEXP, SolrField.untokenized_ia));
 
             // SURROUND search handler returns appropriately formatted  prefix
-            assertEquals("{!surround cache=false qf=\"transcription_ic\"}", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.SURROUND, SolrField.transcription_ic));
+            assertEquals("{!surround cache=false}transcription_ic:", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.SURROUND, SolrField.transcription_ic));
 
             // DEFAULT search handler simply returns field name followed by colon
             assertEquals("transcription_ngram_ia:", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.DEFAULT, SolrField.transcription_ngram_ia));
@@ -793,6 +792,45 @@ public class StringSearchFacetTest extends TestCase {
         }
     }
     
+    public void testAnchorRegex(){
+        
+      
+        try{
+        
+            StringSearchFacet.SearchTerm testTerm = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, false);
+            
+            // multi-character and anchors bracket unanchored expressions
+            String test1 = "και";
+            assertEquals("^.*και.*$", testTerm.anchorRegex(test1));
+            
+            // if already anchored, returned unchanged
+            String test2 = "^και$";
+            assertEquals(test2, testTerm.anchorRegex(test2));
+            
+            // if anchored on only one side, the other side is anchored with multi-character and anchor
+            String test3 = "^και";
+            assertEquals("^και.*$", testTerm.anchorRegex(test3));
+            
+            String test4 = "και.*$";
+            assertEquals("^.*και.*$", testTerm.anchorRegex(test4));
+            
+            // if already multi-charactered, add anchors
+            String test5 = ".*και.*";
+            assertEquals("^.*και.*$", testTerm.anchorRegex(test5));
+            
+            // .+ is considered equivalent to .* for the purposes of anchoring
+            String test6 = ".+και";
+            assertEquals("^.+και.*$", testTerm.anchorRegex(test6));
+        
+        }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown instantiating testTerm in anchorRegex test: " + e.getMessage());
+            
+        }
+        
+    }
+    
     public void testBuildQuery(){
         
         StringSearchFacet.SearchTarget t = StringSearchFacet.SearchTarget.TEXT;
@@ -802,57 +840,56 @@ public class StringSearchFacetTest extends TestCase {
             // single-word substring search, no caps
             String test1 = "ΚάΙ";
             StringSearchFacet.SearchTerm clause1 = testInstance.new SearchTerm(test1, t, true, false);
-            assertEquals("fq=transcription_ngram_ic:κάι", URLDecoder.decode(clause1.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ngram_ic:(κάι)", URLDecoder.decode(clause1.buildQuery(new SolrQuery()).toString(), "UTF-8"));
                         
             // user-defined, caps and marks set
             String test2 = "transcription_ia:και";
             StringSearchFacet.SearchTerm clause2 = testInstance.new SearchTerm(test2, StringSearchFacet.SearchTarget.USER_DEFINED, true, true);
-            assertEquals("fq=transcription_ia:και", URLDecoder.decode(clause2.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=(transcription_ia:και)", URLDecoder.decode(clause2.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // substring search, caps and marks
             String test3 = "ΚΆΙ";
             StringSearchFacet.SearchTerm clause3 = testInstance.new SearchTerm(test3, t, true, true);
-            assertEquals("fq=transcription_ngram_ia:και", URLDecoder.decode(clause3.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ngram_ia:(και)", URLDecoder.decode(clause3.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // phrase search on text field, no marks
             String test4 = "\"κάι οὐκ\"";
             StringSearchFacet.SearchTerm clause4 = testInstance.new SearchTerm(test4, t, false, true);
-            assertEquals("fq=transcription_id:\"και ουκ\"", URLDecoder.decode(clause4.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_id:(\"και ουκ\")", URLDecoder.decode(clause4.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // quote-delimited with substring markers, no caps or marks
             String test5 = "\"#κάι# #οὐ\"";
             StringSearchFacet.SearchTerm clause5 = testInstance.new SearchTerm(test5, t, true, true);
-            assertEquals("fq=transcription_ngram_ia:\"^και^ ^ου\"", URLDecoder.decode(clause5.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ngram_ia:(\"\\^και\\^ \\^ου\")", URLDecoder.decode(clause5.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // regex, no marks
             String test6 = "REGEX κ.ι\\s";
             StringSearchFacet.SubClause clause6 = testInstance.new SubClause(test6, t, false, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_id\"}κ.ι\\s", URLDecoder.decode(clause6.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_id\"}(^.*κ.ι\\s.*$)", URLDecoder.decode(clause6.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // proximity, words unit, no caps
-            String test7 = "(ΚἈ? THEN ΟΎΚ)~8words";
+            String test7 = "(ΚἈΙ? THEN ΟΎΚ)~8words";
             StringSearchFacet.SubClause clause7 = testInstance.new SubClause(test7, t, true, false);
-            assertEquals("fq={!surround cache=false qf=\"transcription_ic\"}κἀ? 8w ούκ", URLDecoder.decode(clause7.buildQuery(new SolrQuery()).toString(), "UTF-8"));  
+            assertEquals("fq={!surround cache=false}transcription_ic:(κἀι? 8w ούκ)", URLDecoder.decode(clause7.buildQuery(new SolrQuery()).toString(), "UTF-8"));  
             
             // proximity, chars unit, no caps or marks
             String test8 = "(ΚἈ? NEAR ΟΎΚ)~8chars";
             StringSearchFacet.SubClause clause8 = testInstance.new SubClause(test8, t, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(ουκ.{1,8}κα.|κα..{1,8}ουκ)", URLDecoder.decode(clause8.buildQuery(new SolrQuery()).toString() ,"UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*(ουκ.{1,8}κα.|κα..{1,8}ουκ).*$)", URLDecoder.decode(clause8.buildQuery(new SolrQuery()).toString() ,"UTF-8"));
             
             // lemmatised, caps and marks
             String test9 = "LEX λύω";
             StringSearchFacet.SubClause clause9 = testInstance.new SubClause(test9, t, false, false);
-            Pattern lemmaOutput = Pattern.compile("fq=transcription_ia:\\((\\s*\\S+\\s+OR\\s+)+\\S+\\s*\\)");
+            Pattern lemmaOutput = Pattern.compile("fq=transcription_ia:(\\((\\s*\\S+\\s+OR\\s+)+\\S+\\s*\\))");
             assertTrue(lemmaOutput.matcher(URLDecoder.decode(clause9.buildQuery(new SolrQuery()).toString(), "UTF-8")).matches());
             
             // metadata search
            StringSearchFacet.SearchTerm clause10 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.METADATA, false, false);
-            assertEquals("fq=metadata:κάι", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=metadata:(κάι)", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // translation search
             StringSearchFacet.SearchTerm clause11 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.TRANSLATION, false, false);
-            assertEquals("fq=translation:κάι", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), "UTF-8"));
-          
+            assertEquals("fq=translation:(κάι)", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), "UTF-8"));          
             
             
             

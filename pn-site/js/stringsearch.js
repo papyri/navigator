@@ -41,13 +41,18 @@ $(document).ready(
 		// filtration functions
 		
 		var whitespaceOnlyRegExp = new RegExp(/^\s*$/);
-		var lastWordIsKeywordRegExp = new RegExp(/(AND|OR|NOT|(LEX(:?))|THEN|NEAR)\s*$/);
-		var lastWordIsLexNotAndNearOrRegExp = new RegExp(/(NOT|AND|NEAR|LEX|OR)\s*$/);
-		var lastWordIsKeywordNotNotRegExp = new RegExp(/(AND|OR|LEX|THEN|NEAR)\s*$/);
-		var alreadyContainsProximityRegExp = new RegExp(/(THEN|NEXT)/);
+		var lastWordIsKeywordRegExp = new RegExp(/(AND|OR|NOT|(LEX(:?))|THEN|NEAR|REGEX)\s*$/);
+		// var lastWordIsLexNotAndNearOrRegexRegExp = new RegExp(/(NOT|AND|NEAR|LEX|OR|REGEX)\s*$/);
+		var lastWordIsKeywordNotNotRegExp = new RegExp(/(AND|OR|LEX|THEN|NEAR|REGEX)\s*$/);
+		var alreadyContainsProximityRegExp = new RegExp(/(THEN|NEAR)/);
 		var notNotPrecededRegExp = new RegExp(/^\s*NOT\s*$/);
 		var proxCountRegExp = new RegExp(/^\d{1,2}$/);
 		var proxRegExp = new RegExp(/(THEN|NEAR)\s+\S+/);
+		var alreadyContainsRegexRegExp = new RegExp(/REGEX/);
+		var alreadyContainsNotRegExp = new RegExp(/NOT/);
+		var alreadyContainsConjunctionRegExp = new RegExp(/(AND|OR)/);
+		var alreadyContainsLexRegExp = new RegExp(/LEX/);
+		
 		
 		/*************************
 		 * filtration functions  *
@@ -60,6 +65,27 @@ $(document).ready(
 		
 		}
 		
+		hic.textBoxHasContent = function(boxval, controls){
+		
+			if(!boxval.match(whitespaceOnlyRegExp)) return true;
+			return false;
+		
+		}
+		
+		hic.alreadyContainsRegex = function(boxval, controls){
+		
+			if(boxval.match(alreadyContainsRegexRegExp)) return true;
+			return false;
+		
+		}
+		
+		hic.alreadyContainsNot = function(boxval, controls){
+		
+			if(boxval.match(alreadyContainsNotRegExp)) return true
+			return false;
+		
+		}
+		
 		hic.lastWordIsKeyword = function(boxval, controls){
 		
 			if(boxval.match(lastWordIsKeywordRegExp)) return true;
@@ -67,13 +93,21 @@ $(document).ready(
 		
 		}
 		
-		hic.lastWordIsNotOrLexOrAndOrNear = function(boxval, controls){
+		hic.lastWordIsWordButNotKeyword = function(boxval, controls){
 		
-			if(boxval.match(lastWordIsLexNotAndNearOrRegExp)) return true;
-			return false;		
+			if(boxval.trim().length > 0 && !hic.lastWordIsKeyword(boxval, controls)) return true;
+			return false;
+		
 		
 		}
 		
+	/*	hic.lastWordIsNotOrLexOrAndOrNearOrRegex = function(boxval, controls){
+		
+			if(boxval.match(lastWordIsLexNotAndNearOrRegexRegExp)) return true;
+			return false;		
+		
+		}
+	*/	
 		hic.lastWordIsKeywordOtherThanNot = function(boxval, controls){
 		
 			if(boxval.match(lastWordIsKeywordNotNotRegExp)) return true;
@@ -91,6 +125,20 @@ $(document).ready(
 		hic.notAloneNotPreceded = function(boxval, controls){
 		
 			if(boxval.match(notNotPrecededRegExp)) return true;
+			return false;
+		
+		}
+		
+		hic.alreadyContainsConjunction = function(boxval, controls){
+		
+			if(boxval.match(alreadyContainsConjunctionRegExp)) return true;
+			return false;
+		
+		}
+		
+		hic.alreadyContainsLex = function(boxval, controls){
+		
+			if(boxval.match(alreadyContainsLexRegExp)) return true;
 			return false;
 		
 		}
@@ -122,12 +170,13 @@ $(document).ready(
 		// build filtration data structure
 		
 		hic.activationRules = {};
-		hic.activationRules["AND"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.isAwaitingProximityInput];
-		hic.activationRules["OR"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.isAwaitingProximityInput];
-		hic.activationRules["NOT"] = [hic.lastWordIsNotOrLexOrAndOrNear, hic.isAwaitingProximityInput];
-		hic.activationRules["LEX"] = [hic.lastWordIsKeyword, hic.isAwaitingProximityInput];
-		hic.activationRules["THEN"] = [hic.textBoxIsEmpty, hic.alreadyContainsProximity, hic.lastWordIsKeyword, hic.isAwaitingProximityInput ];
-		hic.activationRules["NEAR"] = [hic.textBoxIsEmpty, hic.alreadyContainsProximity, hic.lastWordIsKeywordOtherThanNot, hic.notAloneNotPreceded, hic.isAwaitingProximityInput];
+		hic.activationRules["AND"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction, hic.alreadyContainsProximity];
+		hic.activationRules["OR"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction, hic.alreadyContainsProximity];
+		hic.activationRules["NOT"] = [hic.textBoxHasContent];
+		hic.activationRules["LEX"] = [hic.lastWordIsWordButNotKeyword, hic.isAwaitingProximityInput, hic.alreadyContainsRegex, hic.alreadyContainsLex];
+		hic.activationRules["THEN"] = [hic.textBoxIsEmpty, hic.alreadyContainsNot, hic.alreadyContainsProximity, hic.lastWordIsKeyword, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction];
+		hic.activationRules["NEAR"] = [hic.textBoxIsEmpty, hic.alreadyContainsNot, hic.alreadyContainsProximity, hic.lastWordIsKeywordOtherThanNot, hic.notAloneNotPreceded, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction];
+		hic.activationRules["REGEX"] = [hic.textBoxHasContent];
 		hic.activationRules["CLEAR"] = [hic.textBoxIsEmpty];
 		hic.activationRules["ADD"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.isAwaitingProximityInput];
 		hic.activationRules["REMOVE"] = [hic.onlyOneTextInput];	
@@ -284,15 +333,18 @@ $(document).ready(
 			var controls = $(this).parents(topSelector);
 			var val = $(this).val();
 			val += evt.type.indexOf("key") == -1 ? "" : evt.which;
+			if(evt.which == 8){
+				
+				val = val.substring(0, val.length - 2);
+			
+			}
 			hic.doButtonActivationCheck(val, controls);
 			hic.doProxControlsActivationCheck(val, controls);
 			
 		}
 	
 		/* TODO: live() now deprecated; replace with on() syntax */
-		$(".keyword").live("focus", hic.analyzeTextInput);
-		$(".keyword").live("keypress", hic.analyzeTextInput);
-		$(".keyword").live("keyup", hic.analyzeTextInput);
+		$(".keyword").live("focus keypress keyup keydown", hic.analyzeTextInput);
 		$(".prxcount").live("click keypress keyup", function(){ hic.checkProxUnitActivate($(this).val(), $(this).parents(".prx")); });
 		$(".prxunit").live("change", function(evt){ 
 
