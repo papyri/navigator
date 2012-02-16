@@ -5,9 +5,9 @@
                  [org.clojure/clojure-contrib "1.1.0"]
                  [ant/ant-launcher "1.6.2"]
                  [org.apache.maven/maven-ant-tasks "2.0.10"]
-                 [org.apache.solr/solr-core "3.3.0"]
-                 [org.apache.solr/solr-solrj "3.3.0"]
-                 [org.apache.solr/solr-commons-csv "3.3.0"]
+                 [org.apache.solr/solr-core "3.5.0"]
+                 [org.apache.solr/solr-solrj "3.5.0"]
+                 [org.apache.solr/solr-commons-csv "3.5.0"]
                  [com.hp.hpl.jena/jena "2.6.4"]
                  [com.hp.hpl.jena/iri "0.8"]
                  [net.sf.saxon/saxon-he "9.2.0.2"]
@@ -20,7 +20,7 @@
                  [commons-httpclient/commons-httpclient "3.1"]
                  [commons-logging/commons-logging "1.1.1"]
                  [commons-codec/commons-codec "1.5"]
-                 [papyri.info.mulgara/querylang "2.1.9"]]
+                 [papyri.info.mulgara/querylang "2.1.13"]]
   :dev-dependencies [[lein-marginalia "0.7.0-SNAPSHOT" :exclusions 
                        [org.clojure/clojure]]]
   :main info.papyri.indexer)

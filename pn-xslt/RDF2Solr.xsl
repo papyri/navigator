@@ -169,9 +169,10 @@
                 </xsl:if>
               </xsl:for-each>
             </field>
-          <!--  <field name="untokenized">
+        <!--   <field name="untokenized">
               <xsl:value-of select="translate($textnfc, 'ς', 'σ')"></xsl:value-of>
             </field>
+
             <field name="untokenized_ia">
               <xsl:value-of select="$transcription_ia"></xsl:value-of>
             </field>

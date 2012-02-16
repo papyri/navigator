@@ -46,6 +46,7 @@ public class StringSearchFacetTest extends TestCase {
         
         // basic functionality - needs to pull out one or two
         // complete SearchConfiguration objects as appropriate
+<<<<<<< HEAD
         try{
             
             mockParams.put("STRING", new String[]{"orator"});
@@ -153,6 +154,102 @@ public class StringSearchFacetTest extends TestCase {
             fail("Exception erroneously thrown in pullApartParams test: " + e.getMessage());
             
         }
+=======
+        
+        mockParams.put("STRING", new String[]{"orator"});
+        mockParams.put("type", new String[]{ StringSearchFacet.SearchType.SUBSTRING.name()});
+        mockParams.put("target", new String[]{ StringSearchFacet.SearchTarget.TEXT.name()});
+        mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase(), new String[]{"on"});
+        mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase(), new String[]{"on"});
+        
+        HashMap<Integer, SearchConfiguration> configs = testInstance.pullApartParams(mockParams);
+        assertEquals(1, configs.size());
+        SearchConfiguration config = configs.get(0);
+        assertEquals("orator", config.getRawString());
+        assertEquals(StringSearchFacet.SearchType.SUBSTRING, config.getSearchType());
+        assertEquals(StringSearchFacet.SearchTarget.TEXT, config.getSearchTarget());
+        assertTrue(config.getIgnoreCaps());
+        assertTrue(config.getIgnoreMarks());
+        
+        mockParams.clear();
+        
+        mockParams.put("STRING2", new String[]{"τοῦ"});
+        mockParams.put("type2", new String[]{ StringSearchFacet.SearchType.PROXIMITY.name()}); 
+        mockParams.put("target2", new String[]{StringSearchFacet.SearchTarget.METADATA.name()});
+        mockParams.put(StringSearchFacet.SearchType.WITHIN.name().toLowerCase() + "2", new String[]{"10"});
+
+        
+        configs.clear();
+        configs = testInstance.pullApartParams(mockParams);
+        
+        assertEquals(1, configs.size());
+        SearchConfiguration config2 = configs.get(2);
+        assertEquals("τοῦ", config2.getRawString());
+        assertEquals(StringSearchFacet.SearchTarget.METADATA, config2.getSearchTarget());
+        assertEquals(StringSearchFacet.SearchType.PROXIMITY, config2.getSearchType());
+        assertFalse(config2.getIgnoreCaps());
+        assertFalse(config2.getIgnoreMarks());
+        
+        
+        // missing keyword, type, or target parameters should cause the entire SC object not to be instantiated
+        
+        mockParams.put("STRING3", new String[]{"apuleius"});
+        mockParams.put("type3", new String[]{StringSearchFacet.SearchType.PHRASE.name().toLowerCase()});
+        mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "3", new String[]{"on"});
+        mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase() + "3", new String[]{"on"});
+        
+        configs.clear();
+        configs = testInstance.pullApartParams(mockParams);
+        assertEquals(1, configs.size());
+        
+        // malformed search type or target parameters should cause the entire sc object not to be instantiated
+        
+        mockParams.put("STRING5", new String[]{"querunculus"});
+        mockParams.put("type5", new String[]{"DUMMY_VALUE"});
+        mockParams.put("target5", new String[]{"DUMMY_VALUE2"}); 
+        
+        configs.clear();
+        configs = testInstance.pullApartParams(mockParams);
+        assertEquals(1, configs.size());
+        
+        // multiple parameter values are ignored
+        
+        mockParams.clear();
+        mockParams.put("STRING4",new String[]{"cupid", "psyche"});
+        mockParams.put("type4", new String[]{StringSearchFacet.SearchType.PHRASE.name().toLowerCase(), StringSearchFacet.SearchType.SUBSTRING.name().toLowerCase()});
+        mockParams.put("target4", new String[]{StringSearchFacet.SearchTarget.ALL.name().toLowerCase(), StringSearchFacet.SearchTarget.TEXT.name().toLowerCase()});
+        configs.clear();
+        configs = testInstance.pullApartParams(mockParams);
+        assertEquals(1, configs.size());
+        SearchConfiguration config3 = configs.get(4);
+        assertEquals("cupid", config3.getRawString());
+        assertEquals(StringSearchFacet.SearchType.PHRASE, config3.getSearchType());
+        assertEquals(StringSearchFacet.SearchTarget.ALL, config3.getSearchTarget());
+        
+        // setting proximity search type without a within parameter causes within to set itself to zero
+        
+        mockParams.clear();
+        mockParams.put("STRING6", new String[]{"test"});
+        mockParams.put("type6", new String[]{ StringSearchFacet.SearchType.PROXIMITY.name().toLowerCase() });
+        mockParams.put("target6", new String[]{ StringSearchFacet.SearchTarget.TEXT.name().toLowerCase() });
+        configs.clear();
+        configs = testInstance.pullApartParams(mockParams);
+        assertEquals(1, configs.size());
+        assertEquals(0, configs.get(6).getProximityDistance());
+        
+        mockParams.clear();
+        
+        mockParams.put("STRING7", new String[]{"γγελιας# γους#"});
+        mockParams.put("type7", new String[]{ StringSearchFacet.SearchType.SUBSTRING.name()});
+        mockParams.put("target7", new String[]{ StringSearchFacet.SearchTarget.TEXT.name()});
+        mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase(), new String[]{"on"});
+        mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase(), new String[]{"on"});
+        configs.clear();
+        configs = testInstance.pullApartParams(mockParams);
+
+        mockParams.clear();
+       
+>>>>>>> e1ecf63f5654b87483a3fccbc92aa3ac8c53e199
     }
     
     public void testGetFacetConstraints(){
@@ -341,6 +438,73 @@ public class StringSearchFacetTest extends TestCase {
        
     }
     
+<<<<<<< HEAD
+=======
+    public void testSubstituteFields(){
+        
+        // sanity check - no transformation required
+        StringSearchFacet.SearchConfiguration tinstance = testInstance.new SearchConfiguration("transcription:λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, 0);
+        assertEquals("transcription:λόγιος", tinstance.substituteFields("transcription:λόγιος"));
+        
+        // HTML control searches - need always to wrap in brackets
+        // substring search -
+        // field should be transcription_ngram_ia
+         StringSearchFacet.SearchConfiguration tinstance2 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.SUBSTRING, false, false, 0);
+         assertEquals("transcription_ngram_ia:(λόγιος)", tinstance2.substituteFields("λόγιος"));
+        
+        // lemma search -
+        // field should be transcription_ia
+        StringSearchFacet.SearchConfiguration tinstance3 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.LEMMAS, false, false, 0);
+         assertEquals("transcription_ia:(λόγιος)", tinstance3.substituteFields("λόγιος"));
+        
+        // phrase search
+        // field should be transcription
+         StringSearchFacet.SearchConfiguration tinstance4 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, false, 0);
+         assertEquals("transcription:(λόγιος)", tinstance4.substituteFields("λόγιος"));
+         
+        // metadata search - 
+        // field should be metadata (for present)
+         StringSearchFacet.SearchConfiguration tinstance5 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.METADATA, StringSearchFacet.SearchType.PHRASE, false, false, 0);
+         assertEquals("metadata:(λόγιος)", tinstance5.substituteFields("λόγιος"));
+        
+        // translation search -
+        // field should be translation
+         StringSearchFacet.SearchConfiguration tinstance6 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TRANSLATIONS, StringSearchFacet.SearchType.PHRASE, false, false, 0);
+         assertEquals("translation:(λόγιος)", tinstance6.substituteFields("λόγιος"));
+         
+        // all search -
+        // field should be all
+          StringSearchFacet.SearchConfiguration tinstance7 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.ALL, StringSearchFacet.SearchType.PHRASE, false, false, 0);
+         assertEquals("all:(λόγιος)", tinstance7.substituteFields("λόγιος"));
+         
+        // if no caps and no marks
+        // field should be transcription_ia
+         StringSearchFacet.SearchConfiguration tinstance8 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, true, true, 0);
+         assertEquals("transcription_ia:(λόγιος)", tinstance8.substituteFields("λόγιος"));
+        
+        // if no caps only
+        // field should be transcription_ic
+         StringSearchFacet.SearchConfiguration tinstance9 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, true, false, 0);
+         assertEquals("transcription_ic:(λόγιος)", tinstance9.substituteFields("λόγιος"));        
+        
+        // if no marks only
+        // field should be transcription_id
+         StringSearchFacet.SearchConfiguration tinstance10 = testInstance.new SearchConfiguration("λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.PHRASE, false, true, 0);
+         assertEquals("transcription_id:(λόγιος)", tinstance10.substituteFields("λόγιος"));
+         
+        // USER-DEFINED SEARCHES
+        
+        // lem indicators need to be replaced with transcription_ia
+        // pure
+        StringSearchFacet.SearchConfiguration tinstance11 = testInstance.new SearchConfiguration("lem:λόγιος", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, 0);
+         assertEquals("transcription_ia:λόγιος", tinstance11.substituteFields("lem:λόγιος"));
+         
+         StringSearchFacet.SearchConfiguration tinstance12 = testInstance.new SearchConfiguration("lem:λόγιος AND lem:του", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, 0);
+         assertEquals("transcription_ia:λόγιος AND transcription_ia:του", tinstance12.substituteFields("lem:λόγιος AND lem:του"));
+        // mixed
+         StringSearchFacet.SearchConfiguration tinstance13 = testInstance.new SearchConfiguration("lem:λόγιος AND transcription:του", 0,  StringSearchFacet.SearchTarget.TEXT, StringSearchFacet.SearchType.USER_DEFINED, false, false, 0);
+         assertEquals("transcription_ia:λόγιος AND transcription:του", tinstance13.substituteFields("lem:λόγιος AND transcription:του"));
+>>>>>>> e1ecf63f5654b87483a3fccbc92aa3ac8c53e199
     
     public void testBreakIntoComponents(){
         
@@ -831,6 +995,7 @@ public class StringSearchFacetTest extends TestCase {
         
     }
     
+<<<<<<< HEAD
     public void testBuildQuery(){
         
         StringSearchFacet.SearchTarget t = StringSearchFacet.SearchTarget.TEXT;
@@ -907,6 +1072,9 @@ public class StringSearchFacetTest extends TestCase {
 }
    
     
+=======
+
+>>>>>>> e1ecf63f5654b87483a3fccbc92aa3ac8c53e199
 
         
     
