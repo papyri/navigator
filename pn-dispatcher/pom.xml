@@ -35,10 +35,12 @@
       <url>http://snapshots.maven.codehaus.org/maven2</url>
       <layout>default</layout>
     </repository>
+    <!--
     <repository> 
       <id>solr-trunk</id> 
       <url>https://hudson.apache.org/hudson/job/Lucene-Solr-Maven-trunk/lastSuccessfulBuild/artifact/maven_artifacts/</url> 
     </repository> 
+    -->
   </repositories>
   <dependencies>
     <dependency>
@@ -60,12 +62,12 @@
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
-      <version>4.0-SNAPSHOT</version>
+      <version>3.5.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-core</artifactId>
-      <version>4.0-SNAPSHOT</version>
+      <version>3.5.0</version>
     </dependency>
     <dependency>
       <groupId>edu.unc.epidoc</groupId>
@@ -90,12 +92,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.6.4</version>
+      <version>1.6.0</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.6.4</version>
+      <version>1.6.0</version>
     </dependency>
     <!-- Test Dependencies -->
     <dependency>
