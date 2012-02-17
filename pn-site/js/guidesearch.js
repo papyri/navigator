@@ -30,12 +30,9 @@ $(document).ready(
 		// switched on or off onclick.
 
 		hic.reqd_on["target-metadata"] = ["#caps", "#marks"];
-		hic.reqd_off["target-metadata"] = ["#beta-on", "#substring", "#lemmas"];
+		hic.reqd_off["target-metadata"] = ["#beta-on"];
 		hic.reqd_on["target-translations"] = ["#caps", "#marks"];
-		hic.reqd_off["target-translations"] = ["#beta-on", "#substring", "#lemmas"];
-		hic.reqd_on["target-all"] = ["#caps", "#marks"];
-		//hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
-		//hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
+		hic.reqd_off["target-translations"] = ["#beta-on"];
 		
 		/**
 		 * Restricts user options so that only possible string-search configurations
@@ -44,90 +41,26 @@ $(document).ready(
 		 */
 		
 	   	hic.configureSearchSettings = function(){
-
-	    	var reqd_disabled = [];
-
-	    	var eltype = $(this).attr("name");
+	   	
+	   		var val = $(this).val();
+	   		
+	   		if(val == "text"){
+	   		
+	   			$("#beta-on, #caps, #marks").removeAttr("disabled", "disabled");
+	   			
+	   			
+	   		} 
+	   		else{
+	   		
+	   			$("#beta-on").removeAttr("checked");
+	   			$("#beta-on").attr("disabled", "disabled");
+	   			$("#caps").attr("checked", "checked");
+	   			$("#caps").attr("disabled", "disabled");
+	   			$("#marks").attr("checked", "checked");
+	   			$("#marks").attr("disabled", "disabled");	   			
+	   		
+	   		}
 	    	
-	    	// these two conditionals build an array (reqd_disabled) of all elements that
-	    	// *must* be disabled given the new setting
-	    	
-	    	if(eltype == "type"){
-	    		
-	    		var target = $("#text-search-widget").find("input[name='target']:checked").attr("id");
-	    		if(hic.reqd_on[target]) jQuery.merge(reqd_disabled, hic.reqd_on[target]); 
-	    		if(hic.reqd_off[target]) jQuery.merge(reqd_disabled, hic.reqd_off[target]); 
-	    	
-	    	}
-	    	else if(eltype == "target"){
-	    	
-	    		var type = $("#text-search-widget").find("input[name='type']:checked").attr("id");
-	    		if(hic.reqd_on[type]) jQuery.merge(reqd_disabled, hic.reqd_on[type]);
-	    		if(hic.reqd_off[type]) jQuery.merge(reqd_disabled, hic.reqd_off[type]);
-	    		
-	    	}
-
-	    	// then enable all currently disabled elements not found in the
-	    	// reqd_disabled array
-
-	    	var disableds = $("#text-search-widget input:disabled");
-	    	
-	    	for(var i = 0; i < disableds.length; i++){
-
-	    		var dis = disableds[i];
-	    		
-	    		var disid = $(dis).attr("id");
-	    		disid = "#" + disid;
-	    		
-	    		var foundInArray = false;
-	    		
-	    		for(var j = 0; j < reqd_disabled.length; j++){
-
-	    			if(disid == reqd_disabled[j]) foundInArray = true;
-	    		
-	    		}
-	    		
-	    		if(!foundInArray) $(disid).removeAttr("disabled"); 
-	    	
-	    	}
-	    
-	    	// now, check and/or disabled all reqd elements
-	    
-			var id = $(this).attr("id");
-			
-			var onanda = hic.reqd_on[id];
-			
-			if(onanda){
-			
-				for(var i = 0; i < onanda.length; i++){
-				
-					$(onanda[i]).attr("checked", "checked");
-					$(onanda[i]).attr("disabled", "disabled");
-				
-				}
-		
-			}
-	    	
-	    	var offanda = hic.reqd_off[id];
-	    	
-	    	if(offanda){
-	    	
-	    		for(var i = 0; i < offanda.length; i++){
-	    		
-	    			$(offanda[i]).removeAttr("checked");
-	    			$(offanda[i]).attr("disabled", "disabled");
-	    		
-	    		}
-	    	
-	    	}
-	    	
-	    	// check whether a search-type is now selected
-	    	// if not, default to 'Word/Phrase' search
-	    	if($("input[name='type']:checked").length == 0){
-	    		
-	    		$("#phrase").attr("checked", "checked");
-	    	
-	    	}
 	    }
 	    
 	    /**
@@ -149,11 +82,13 @@ $(document).ready(
 	    	// if a string is set for search, than the associated text, target, and option
 	    	// fields must also be set.
 	    	
-	    	var textel = $("input[name='STRING']");
-	    	if(!textel.attr("value").match(/^\s*$/)){
+	    	var textval = hic.buildTextSearchString();
+	    	if(!textval.match(/^\s*$/)){
 
-				if(textel.attr("value").indexOf(":") != -1) mixedsearch = true;
+				if(textval.indexOf(":") != -1) mixedsearch = true;
 				
+				var textel = $("<input type=\"text\" name=\"STRING\"></input>");
+				textel.val(textval);
                 filteredels.push(textel);
 	    		var betas = $("#betaYes:checked");
 	    		if(betas.length > 0) filteredels.push(betas);
@@ -165,16 +100,8 @@ $(document).ready(
 	    		if(marks.length > 0) filteredels.push(marks);
 
                 if(!mixedsearch){
-                
-	    		     var type = $("input[name='type']").filter(":checked");
-	    		     filteredels.push(type);
+                 
 				     filteredels.push($("input[name='target']").filter(":checked"));	
-	    		
-	    		     if(type.val() == "proximity"){
-	    		
-	    			    filteredels.push($("input[name='within']"));
-	    		
-	    		     }
 	    		
 	    		}
 	    	
@@ -300,7 +227,6 @@ $(document).ready(
 			
 			if(mixedsearch){
 			
-				params["type"] = "user_defined";
 				params["target"] = "user_defined";
 			
 			}
@@ -318,9 +244,36 @@ $(document).ready(
 			var hrefwquery = current + "?" + $.param(params);
 			window.location = hrefwquery;
 			return false;
-
 	    }
 	    
+	    hic.buildTextSearchString = function(){
+	    
+	    	var proxRegExp = new RegExp(/\s+(THEN|NEAR)\s+/);
+	    	var totalSearchString = "";
+	    	var stringcontrols = $(".stringsearch-top-controls");
+
+	    	for(var i = 0; i < stringcontrols.length; i++){
+	    	
+	    		var keyword = $(stringcontrols[i]).find(".keyword").val();
+	    		var searchString = keyword.replace(/(\s+)/g, " ");
+	    		searchString = $.trim(searchString);	    		
+	    		if(searchString.length == 0) continue;
+	    		searchString = "(" + searchString + ")";
+	    		if(keyword.match(proxRegExp)){
+	    		
+	    			var proxcount = $(stringcontrols[i]).find(".prxcount").val().match(/^\d{1,2}$/) ? $(stringcontrols[i]).find(".prxcount").val() : "1";
+	    			var proxunit = $(stringcontrols[i]).find(".prxunit").val() == "chars" ? "chars" : "words";	// default to 'words'
+	    			searchString += "~" + proxcount + proxunit;
+	    		
+	    		}	 
+	    		searchString = i == 0 ? searchString : "¤" + searchString;
+	    		totalSearchString += searchString;
+	    	
+	    	}
+
+	    	return totalSearchString;
+	    
+	    }
 	    
 	    /**
 	     * Monitors the text being entered into the search box for a variety of inputs:
@@ -582,6 +535,28 @@ $(document).ready(
 		
 		});
 		
+		/**
+		 * Autocomplete for provenance
+		 */
+		
+		$("#id-place").autocomplete({
+		
+			//source: $("#place-autocomplete").text().split('¤'),
+			source: function(req, responseFn){
+			
+				var re = $.ui.autocomplete.escapeRegex(req.term);
+				var matcher = new RegExp( "^" + re, "i" );
+				var a = $.grep(  $("#place-autocomplete").text().split('¤'), function(item,index){ return matcher.test(item);});
+        		responseFn( a );				
+			
+			},
+			select: function(event, ui){
+			
+				$("#id-place").val(ui.item.value);
+				hic.tidyQueryString();
+			}
+		
+		});		
 		hic.setCookie = function(name,value,hours) {
 		
     		if (hours) {
@@ -594,7 +569,6 @@ $(document).ready(
 		}
 		
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
-		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		// select substring as default
 		$("#substring").click();
 		$(".toggle-open").click(hic.hideSearch);
@@ -605,14 +579,14 @@ $(document).ready(
 		// changing date mode causes tidy and submit
 		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
 		// turning betacode on/off selects text input
-		$("#beta-on").change(function(){$("#keyword").focus();});
+		$("#beta-on").change(function(){$(".stringsearch-top-controls:last .keyword").focus();});
 		// entry into string search triggers text monitoring 
-		$("#keyword").focus(hic.monitorTextInput);
-		 $("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
+		$(".stringsearch-top-controls:last .keyword").live("focus", hic.monitorTextInput);
+		//$(".stringsearch-top-controls:last .keyword").live("blur", function(){ $("#keyword").focus(hic.monitorTextInput) });
 		// submit triggers tidy ...
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		// ... unless checks need to be in place first
-		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").change(hic.tidyQueryString);
+		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").change(hic.tidyQueryString);
 		// sets cookie on click to record to allow reversion to current search results
 		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
 	
