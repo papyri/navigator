@@ -1018,7 +1018,9 @@
   <!-- example of registering a query parser
   <queryParser name="lucene" class="org.apache.solr.search.LuceneQParserPlugin"/>
   -->
-
+  <queryParser name="surround" class="info.papyri.thenfunc.SurroundQParserPlugin"/>
+  <queryParser name="regexp" class="info.papyri.solr.regex.RegexQParserPlugin"/>
+  
   <!-- example of registering a custom function parser 
   <valueSourceParser name="myfunc" class="com.mycompany.MyValueSourceParser" />
   -->

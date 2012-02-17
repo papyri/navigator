@@ -2,38 +2,36 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.SolrField;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URLDecoder;
+import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
+import info.papyri.dispatch.browse.facet.customexceptions.IncompleteClauseException;
+import info.papyri.dispatch.browse.facet.customexceptions.InsufficientSpecificityException;
+import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
+import info.papyri.dispatch.browse.facet.customexceptions.MalformedProximitySearchException;
+import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketException;
+import info.papyri.dispatch.browse.facet.customexceptions.RegexCompilationException;
+import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.TermsResponse;
-import org.apache.solr.client.solrj.response.TermsResponse.Term;
-import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 /**
  * Replicates the functioning of <code>info.papyri.dispatch.Search</code> in a 
  * manner compatible with the faceted browse framework and codebase.
  * 
- * Note that although the search functionality is broadly intended to
+ * Note that although the algorithm used for the search process is intended to
  * replicate that defined in <code>info.papyri.dispatch.Search</code> it is implemented
- * very differently here. The logic for string-handling is all encapsulated in the inner 
+ * very differently. The logic for string-handling is all encapsulated in the inner 
  * SearchConfiguration class, below, and more specific documentation is provided there.
  * 
  * One important difference between this subclass and other <code>Facet</code> subclasses
@@ -50,6 +48,9 @@ import org.apache.solr.common.SolrDocumentList;
  * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration
  */
 public class StringSearchFacet extends Facet{
+    
+    final public String SUBFIELD_SEPARATOR = "¤";
+    
     /**
      * The type of search being performed.
      * 
@@ -60,7 +61,9 @@ public class StringSearchFacet extends Facet{
      * form controls to specify the search using string-input only.
      * 
      */
-    enum SearchType{ PHRASE, SUBSTRING, LEMMAS, PROXIMITY, WITHIN, USER_DEFINED, REGEX  };
+    public enum SearchType{ PHRASE, SUBSTRING, REGEX, LEMMA, USER_DEFINED, PROXIMITY };
+    
+    enum SearchUnit{ WORDS, CHARS };
     
     /**
      * Values indicating the fields to search
@@ -70,13 +73,58 @@ public class StringSearchFacet extends Facet{
      * the submitted SearchOption(s) and SearchType.
      * 
      */
-    enum SearchTarget{ ALL, METADATA, TEXT, TRANSLATION, USER_DEFINED, REGEX };
+    enum SearchTarget{ METADATA, TEXT, TRANSLATION, USER_DEFINED };
     /**
      * Values indicating whether or not capitalisation and diacritics should be considered
      * significant for the search
      * 
      */
-    enum SearchOption{ NO_CAPS, NO_MARKS };
+    enum SearchOption{ NO_CAPS, NO_MARKS, PROXCOUNT, PROXUNIT };
+    
+    public enum ClauseRole{LEMMA, REGEX, START_PROX, END_PROX, AND, OR, NOT, OPERATOR, DEFAULT };
+    
+    enum SearchOperator{AND, OR, REGEX, THEN, NEAR, NOT, LEX };
+    
+    enum SearchButton{
+        
+        AND("and"),
+        OR("or"),
+        NOT("not"),
+        LEX("lex"),
+        THEN("then"),
+        NEAR("near"),
+        REGEX("regex"),
+        CLEAR("clear"),
+        ADD("+"),
+        REMOVE("-");
+
+        String label;
+        
+        SearchButton(String lbl){
+            
+            label = lbl;
+            
+        }
+        
+    }
+    
+    enum SearchHandler{
+        
+        SURROUND,
+        REGEXP,
+        DEFAULT
+        
+        
+    }
+    
+    static Pattern PROX_OPERATOR_REGEX = Pattern.compile("\\d{1,2}(w|n|wc|nc)");
+    
+    static String PHRASE_MARKER = ".*(\"|')[\\p{L}]*\\s[\\p{L}]*(\\1).*";
+            
+    static Pattern WHITESPACE_DETECTOR = Pattern.compile("^.*\\s+.*$");
+   
+    SearchClauseFactory CLAUSE_FACTORY = new SearchClauseFactory();
+    
     /** A collection from which <code>SearchConfiguration</code>s can be retrieved in an
      *  ordered manner.
      * 
@@ -89,27 +137,45 @@ public class StringSearchFacet extends Facet{
      * (b) retain the order of submission for display purposes.
      * 
      */
-    private HashMap<Integer, ISearchStringRetrievable> searchConfigurations = new HashMap<Integer, ISearchStringRetrievable>();
+    private HashMap<Integer, ArrayList<SearchClause>> searchConfigurations = new HashMap<Integer, ArrayList<SearchClause>>();
     
-    /** The path to the Solr index for lemmatised searches */
+    /** The path to the Solr index for lemmatisated searches */
     private static String morphSearch = "morph-search/";
-    private SolrQuery otherConstraints = new SolrQuery();
+    
+    ArrayList<CustomApplicationException> exceptionLog;
 
     public StringSearchFacet(){
         
         super(SolrField.transcription_ngram_ia, FacetParam.STRING, "String search");
+        exceptionLog = new ArrayList<CustomApplicationException>();
              
     }
     
     @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
-        otherConstraints = solrQuery;
-        Iterator<ISearchStringRetrievable> scit = searchConfigurations.values().iterator();
-        while(scit.hasNext()){
+        Iterator<ArrayList<SearchClause>> scait = searchConfigurations.values().iterator();
+        while(scait.hasNext()){
             
-            ISearchStringRetrievable nowConfig = scit.next();          
-            solrQuery.addFilterQuery(nowConfig.getSearchString()); 
+            ArrayList<SearchClause> nowConfigs = scait.next();
+            
+            Iterator<SearchClause> scit = nowConfigs.iterator();
+            while(scit.hasNext()){
+                
+                   SearchClause nowConfig = scit.next();
+                   
+                   try{
+                   
+                        nowConfig.buildQuery(solrQuery);
+                        
+                   }
+                   catch(CustomApplicationException cpe){
+                       
+                       exceptionLog.add(cpe);
+                       
+                   }
+                   
+            }
                      
         }
         
@@ -123,15 +189,26 @@ public class StringSearchFacet extends Facet{
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" id=\"text-search-widget\" title=\"");
         html.append(getToolTipText());
         html.append("\">");
-        html.append(generateHiddenFields());
+        
+        html.append("<div class=\"stringsearch-top-controls\">");
         
         // textbox HTML
-        html.append("<p class=\"ui-corner-all\" id=\"facet-stringsearch-wrapper\">");
+        html.append("<p class=\"ui-corner-all facet-stringsearch-wrapper\">");
+        html.append("<span class=\"str-operator\"></span>");
         html.append("<input type=\"text\" name=\"");
         html.append(formName.name());
-        html.append("\" size=\"50\" maxlength=\"250\" id=\"keyword\"></input>");
-
+        html.append("\" size=\"37\" maxlength=\"250\" class=\"keyword\"></input>");
+        html.append("<span class=\"prx\">");
+        html.append("<input type=\"text\" name=\"prxcount\" class=\"prxcount\" size=\"2\" maxlength=\"2\" disabled=\"disabled\"/>");
+        html.append(" <select name=\"prxunit\" class=\"prxunit\" disabled=\"disabled\">");
+        html.append("<option selected=\"selected\" value=\"none\">---</option>");
+        html.append("<option value=\"words\">words</option>");
+        html.append("<option value=\"chars\">chars</option>");
+        html.append("</select>");
+        html.append("</span>");
         html.append("</p>");
+        html.append(this.generateSearchButtons());
+        html.append("</div><!-- closing .stringsearch-top-controls -->");
 
         // search options control
         html.append("<div class=\"stringsearch-section\">");
@@ -171,43 +248,34 @@ public class StringSearchFacet extends Facet{
         html.append("<label for=\"");
         html.append(SearchTarget.TRANSLATION.name().toLowerCase());
         html.append("\" id=\"translation-label\">Translations</label>");
-        html.append("<input type=\"radio\" name=\"target\" value=\"");
-        html.append(SearchTarget.ALL.name().toLowerCase());
-        html.append("\" value=\"on\" id=\"target-all\" class=\"target\"/>");
-        html.append("<label for=\"");
-        html.append(SearchTarget.ALL.name().toLowerCase());
-        html.append("\" id=\"all-label\">All</label>");
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
-               
-        // search type control
-        html.append("<div class=\"stringsearch-section\">");
-        html.append("<p>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.PHRASE.name().toLowerCase());
-        html.append("\" id=\"phrase\"/> ");
-        html.append("<label for=\"phrase\" id=\"phrase-label\">Word/Phrase search</label><br/>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.SUBSTRING.name().toLowerCase());
-        html.append("\" id=\"substring\" checked/> ");
-        html.append("<label for=\"substring\" id=\"substring-label\">Substring search</label><br/>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.LEMMAS.name().toLowerCase());
-        html.append("\" id=\"lemmas\"/> ");
-        html.append("<label for=\"lemmas\" id=\"lemmas-label\">Lemmatized search</label><br/>");
-        html.append("<input class=\"type\" type=\"radio\" name=\"type\" value=\"");
-        html.append(SearchType.PROXIMITY.name().toLowerCase());
-        html.append("\" id=\"proximity\"/>");
-        html.append("<label for=\"proximity\" id=\"proximity-label\"> Proximity: find within</label>");
-        html.append(" <input type=\"text\" name=\"");
-        html.append(SearchType.WITHIN.name().toLowerCase());
-        html.append("\" value=\"10\" id=\"within\" size=\"2\" style=\"width:1.5em\"/> words");    
-        html.append("</p>");    
-        html.append("</div><!-- closing .stringsearch section -->"); 
+        html.append(generateHiddenFields());
+       
         html.append("</div><!-- closing .facet-widget -->");
         
         return html.toString();
         
+    }
+    
+    private String generateSearchButtons(){
+        
+       StringBuilder html = new StringBuilder();
+       html.append("<div id=\"str-search-controls\">");
+       
+       for(SearchButton sb : SearchButton.values()){
+        
+           String label = sb.label;
+           String className = "syntax-" + sb.name().toLowerCase();
+           html.append("<input type=\"button\" disabled=\"disabled\" class=\"ui-widget ui-button ui-corner-all ui-state-disabled syntax ");
+           html.append(className);
+           html.append("\" value=\"");
+           html.append(label);
+           html.append("\"></input>");
+        
+       } 
+       html.append("</div><!-- closing #str-search-controls -->");
+       return html.toString();
     }
     
     @Override
@@ -224,93 +292,91 @@ public class StringSearchFacet extends Facet{
         
         StringBuilder html = new StringBuilder();
         
-        Iterator<ISearchStringRetrievable> scit = searchConfigurations.values().iterator();
+        int counter = 0;
+        int index = 1;
         
-        int counter = 1;                
-        
-        while(scit.hasNext()){
+        while(index <= searchConfigurations.size()){
+            
+            ArrayList<SearchClause> configs = searchConfigurations.get(counter);
+            counter++;
+            if(configs == null) continue;
+            String concatenatedStringQuery = this.concatenateConfigs(configs);
             
             String inp = "<input type='hidden' name='";
             String v = "' value='";
             String c = "'/>";
-            ISearchStringRetrievable issr = scit.next();
-            if(issr.getSearchType().equals(SearchType.REGEX)){
-                
-                RegexSearchConfiguration rxconfig = (RegexSearchConfiguration) issr;
+            html.append(inp);
+            html.append(formName.name());
+            html.append(String.valueOf(index));
+            html.append(v);
+            html.append(concatenatedStringQuery);
+            html.append(c);
+            
+            html.append(inp);
+            html.append("target");
+            html.append(String.valueOf(index));
+            html.append(v);
+            html.append(configs.get(0).getSearchTarget().name());
+            html.append(c);
+            
+            if(configs.get(0).getIgnoreCaps()){
                 
                 html.append(inp);
-                html.append(formName.name());
-                html.append(String.valueOf(counter));
+                html.append(SearchOption.NO_CAPS.name().toLowerCase());
+                html.append(String.valueOf(index));                
                 html.append(v);
-                html.append(rxconfig.getRawString());
+                html.append("on");
                 html.append(c);
                 
             }
-            else{
+            
+            if(configs.get(0).getIgnoreMarks()){
                 
-                SearchConfiguration config = (SearchConfiguration) issr;
-
                 html.append(inp);
-                html.append(formName.name());
-                html.append(String.valueOf(counter));
+                html.append(SearchOption.NO_MARKS.name().toLowerCase());
+                html.append(String.valueOf(index));
                 html.append(v);
-                html.append(config.getRawString());
+                html.append("on");
                 html.append(c);
-
-                html.append(inp);
-                html.append("target");
-                html.append(String.valueOf(counter));
-                html.append(v);
-                html.append(config.getSearchTarget());
-                html.append(c);
-
-                html.append(inp);
-                html.append("type");
-                html.append(String.valueOf(counter));
-                html.append(v);
-                html.append(config.getSearchType());
-                html.append(c);
-
-                if(config.getSearchType().equals(SearchType.PROXIMITY)){
-
-                    html.append(inp);
-                    html.append(SearchType.WITHIN.name().toLowerCase());
-                    html.append(String.valueOf(counter));               
-                    html.append(v);
-                    html.append(String.valueOf(config.getProximityDistance()));
-                    html.append(c);
-
-                }
-
-                if(config.getIgnoreCaps()){
-
-                    html.append(inp);
-                    html.append(SearchOption.NO_CAPS.name().toLowerCase());
-                    html.append(String.valueOf(counter));                
-                    html.append(v);
-                    html.append("on");
-                    html.append(c);
-
-                }
-
-                if(config.getIgnoreMarks()){
-
-                    html.append(inp);
-                    html.append(SearchOption.NO_MARKS.name().toLowerCase());
-                    html.append(String.valueOf(counter));
-                    html.append(v);
-                    html.append("on");
-                    html.append(c);
-
-                }
-            
-            }
-            
-            counter++;
+                
+            }  
+            index++;
             
         }
         
         return html.toString();
+        
+    }
+    
+    private String concatenateConfigs(ArrayList<SearchClause> configs){
+        
+        StringBuilder query = new StringBuilder();
+        Iterator<SearchClause> scit = configs.iterator();
+        while(scit.hasNext()){
+        
+            SearchClause nowConfig = scit.next();
+            query.append(nowConfig.getOriginalString());
+            if(scit.hasNext()) query.append(SUBFIELD_SEPARATOR);
+        
+            
+        }
+        return query.toString();
+        
+    }
+    
+    private String concatenateConfigDisplayValues(ArrayList<SearchClause> configs){
+        
+        StringBuilder query = new StringBuilder();
+        Iterator<SearchClause> scit = configs.iterator();
+        while(scit.hasNext()){
+        
+            SearchClause nowConfig = scit.next();
+            query.append(nowConfig.getDisplayString());
+            if(scit.hasNext()) query.append(" AND ");
+        
+            
+        }
+        return query.toString();
         
     }
     
@@ -324,9 +390,9 @@ public class StringSearchFacet extends Facet{
      * @return 
      */
     
-    HashMap<Integer, ISearchStringRetrievable> pullApartParams(Map<String, String[]> params){
+    HashMap<Integer, ArrayList<SearchClause>> pullApartParams(Map<String, String[]> params){
         
-        HashMap<Integer, ISearchStringRetrievable> configs = new HashMap<Integer, ISearchStringRetrievable>();
+        HashMap<Integer, ArrayList<SearchClause>> configs = new HashMap<Integer, ArrayList<SearchClause>>();
         
         Pattern pattern = Pattern.compile(formName.name() + "([\\d]*)");
         
@@ -340,75 +406,68 @@ public class StringSearchFacet extends Facet{
             
             if(matcher.matches()){
             
-                // note the various points at which checks for incomplete or malformed data
-                // are performed: no SearchConfiguration will be created in these cases
-                // and the search will fail silently
-                
                 String matchSuffix = matcher.group(1);                        
-                Integer matchNumber = matchSuffix.equals("") ? 0 : Integer.valueOf(matchSuffix);
 
                 String keywordGetter = formName.name() + matchSuffix;
-                String typeGetter = "type" + matchSuffix;
-                String withinGetter = SearchType.WITHIN.name().toLowerCase() + matchSuffix;
                 String targetGetter = "target" + matchSuffix;
                 String capsGetter = SearchOption.NO_CAPS.name().toLowerCase() + matchSuffix;
                 String marksGetter = SearchOption.NO_MARKS.name().toLowerCase() + matchSuffix;
 
-                if(!params.containsKey(typeGetter) || !params.containsKey(targetGetter)) continue;
-
+                if(!params.containsKey(targetGetter)) continue;
                 String keyword = params.get(keywordGetter)[0];
                 if(keyword == null || "".equals(keyword)) continue;
-                if(keyword.toLowerCase().contains("regex:")){
-                    
-                    try{
-                    
-                        RegexSearchConfiguration regexSearchConfig = new RegexSearchConfiguration(keyword);
-                        configs.put(matchNumber, regexSearchConfig);
-                        
-                    }
-                    catch(MalformedURLException mue){} //TODO;Need to throw appropriate error here
-                    finally{
-                        
-                        continue;
-                        
-                    }
-                    
-                    
-                }
-                String rawSearchType = params.get(typeGetter)[0].toUpperCase();
                 String rawSearchTarget = params.get(targetGetter)[0].toUpperCase();
-                
-                SearchType ty = null;
                 SearchTarget trgt = null;
                 
-                try{
-                    
-                    ty = SearchType.valueOf(rawSearchType);
-                    trgt = SearchTarget.valueOf(rawSearchTarget);
-                    
-                } catch(IllegalArgumentException iae){
-                    
-                    continue;
-                    
-                }
-                
+                try{ trgt = SearchTarget.valueOf(rawSearchTarget); } 
+                catch(IllegalArgumentException iae){ continue; }
+
                 String[] rawCaps = params.get(capsGetter);
                 String[] rawMarks = params.get(marksGetter);
-                String[] rawDistance = params.get(withinGetter);
-
-                int distance = rawDistance == null ? 0 : rawDistance[0].matches("\\d+") ? Integer.valueOf(rawDistance[0]) : 0;    
 
                 Boolean caps = rawCaps == null ? false : "on".equals(rawCaps[0]);
                 Boolean marks = rawMarks == null ? false : "on".equals(rawMarks[0]);
-                SearchConfiguration searchConfig = new SearchConfiguration(keyword, matchSuffix.equals("") ? 0 : Integer.valueOf(matchSuffix), trgt, ty, caps, marks, distance);
-                configs.put(matchNumber, searchConfig);
+                
+                ArrayList<SearchClause> fieldConfigs = new ArrayList<SearchClause>();
+                ArrayList<String> clauses = new ArrayList<String>(Arrays.asList(keyword.split(SUBFIELD_SEPARATOR)));
+
+                Iterator<String> cit = clauses.iterator();
+                while(cit.hasNext()){
+                    
+                    String clause = cit.next();
+                    
+                    try{
+                    
+                        SearchClause searchClause = isTerm(clause) ? new SearchTerm(clause, trgt, caps, marks) : new SubClause(clause, trgt, caps, marks);
+                        fieldConfigs.add(searchClause);                   
+                        
+                    }
+                    catch(CustomApplicationException cpe){ exceptionLog.add(cpe);}
+                    
+                }
+                Integer matchNumber = matchSuffix.equals("") ? 0 : Integer.valueOf(matchSuffix);
+                if(fieldConfigs.size() > 0) configs.put(matchNumber, fieldConfigs);
                 
             }
             
         }
         
-        
         return configs;
+        
+    }
+    
+    Boolean isTerm(String clause){
+        
+        if(!WHITESPACE_DETECTOR.matcher(clause).matches()) return true;
+        String firstChar = clause.substring(0, 1);
+        if(!firstChar.equals("\"") && !firstChar.equals("'")) return false;
+        String lastChar = clause.substring(clause.length() - 1);
+        if(!lastChar.equals(firstChar)) return false;
+        String test = clause.substring(1, clause.length() - 1);
+        if(!test.contains(firstChar)) return true;
+        return false;
+        
+        
         
     }
     
@@ -436,36 +495,33 @@ public class StringSearchFacet extends Facet{
         Integer k = Integer.valueOf(facetValue);
         if(!searchConfigurations.containsKey(k)) return "Facet value not found";
         
-        ISearchStringRetrievable config = searchConfigurations.get(k);
-        String rs = config.getRawString();
-        
-        Pattern pattern = Pattern.compile(".*identifier:([\\d]+).*");
-        Matcher matcher = pattern.matcher(rs);
-        
-        if(matcher.matches()) return getTrismegistosDisplayValue(matcher);
+        ArrayList<SearchClause> configs = searchConfigurations.get(k);
+        SearchClause leadConfig = configs.get(0);
+        String displaySearchString = this.concatenateConfigDisplayValues(configs);
         
         StringBuilder dv = new StringBuilder();
-        dv.append(rs.replaceAll("\\^", "#"));
+        dv.append(displaySearchString.replaceAll("\\^", "#"));   // shouldn't this be dealt with in the indexer?
         dv.append("<br/>");
         dv.append("Target: ");
-        dv.append(config.getSearchTarget().name().toLowerCase().replace("_", "-"));
+        dv.append(leadConfig.getSearchTarget().name().toLowerCase().replace("_", "-"));
         dv.append("<br/>");
         
-        if(config.getIgnoreCaps()) dv.append("No Caps: On<br/>");
-        if(config.getIgnoreMarks()) dv.append("No Marks: On<br/>");
-        if(config.getSearchType().equals(SearchType.PROXIMITY)){
-            
+        if(leadConfig.getIgnoreCaps()) dv.append("No Caps: On<br/>");
+        if(leadConfig.getIgnoreMarks()) dv.append("No Marks: On<br/>");
+   /*     if(leadConfig.getSearchType().equals(SearchType.PROXIMITY)){
+           // TODO: SHIFT THIS FUNCTIONALITY INTO CONCATENATECONFIGDISPLAYVALUE 
             dv.append("Within: ");
             dv.append(String.valueOf(config.getProximityDistance()));
             
-        }
+        }*/
         
         return dv.toString();
         
     }
     
-    String getTrismegistosDisplayValue(Matcher matcher){
-        
+   /* String getTrismegistosDisplayValue(Matcher matcher){
+       
+     *  // TODO: shift this down to SearchConfiguration
         String tmNumber = matcher.group(1);
         StringBuilder tmsb = new StringBuilder();
         tmsb.append("Trismegistos Identifier: ");
@@ -473,11 +529,12 @@ public class StringSearchFacet extends Facet{
         return tmsb.toString();
         
         
-    }
+    }*/
     
     @Override
     public String getDisplayName(String param, java.lang.String facetValue){
         
+                
         String paramNumber = "0";
         Pattern pattern = Pattern.compile(this.formName.toString() + "(\\d+)$");
         Matcher matcher = pattern.matcher(param);
@@ -487,9 +544,9 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        ISearchStringRetrievable config = searchConfigurations.get(Integer.valueOf(paramNumber));
+        SearchClause config = searchConfigurations.get(Integer.valueOf(paramNumber)).get(0);
         
-        String searchType = config.getSearchType().name().toLowerCase().replaceAll("_", "-");
+        String searchType = config.parseForSearchType().name().toLowerCase();
            
         String firstCap = searchType.substring(0, 1).toUpperCase();
         return firstCap + searchType.substring(1, searchType.length());
@@ -503,14 +560,16 @@ public class StringSearchFacet extends Facet{
         if(searchConfigurations.size() < 1) return "";
         
         StringBuilder qs = new StringBuilder();
-        
-        for(Map.Entry<Integer, ISearchStringRetrievable> entry : searchConfigurations.entrySet()){
+        int counter = 0;
+        int index = 1;
+        while(index <= searchConfigurations.size()){
             
-            Integer paramNumber = entry.getKey();
-            ISearchStringRetrievable config = entry.getValue();
-         
-            qs.append(getConfigurationAsQueryString(paramNumber, config));
+            ArrayList<SearchClause> configs = searchConfigurations.get(counter);
+            counter++;
+            if(configs == null) continue;
+            qs.append(getConfigurationAsQueryString(index, configs));
             qs.append("&");
+            index++;
             
         }
         
@@ -525,16 +584,21 @@ public class StringSearchFacet extends Facet{
         // filterValue is index to search configuration
         
         StringBuilder qs = new StringBuilder();
+        int filteredLength = searchConfigurations.size() - 1;
+        int counter = 0;
+        int index = 1;
         
-        for(Map.Entry<Integer, ISearchStringRetrievable> entry : searchConfigurations.entrySet()){
+        while(index <= filteredLength){
             
-            Integer paramNumber = entry.getKey();
+            ArrayList<SearchClause> configs = searchConfigurations.get(counter);
+            counter++;
+            if(configs == null) continue;
             
-            if(!String.valueOf(paramNumber).equals(filterValue)){
+            if(!String.valueOf(counter - 1).equals(filterValue)){
             
-                ISearchStringRetrievable config = entry.getValue();
-                qs.append(getConfigurationAsQueryString(paramNumber, config));
+                qs.append(getConfigurationAsQueryString(index, configs));
                 qs.append("&");
+                index++;
                 
             }
             
@@ -555,28 +619,26 @@ public class StringSearchFacet extends Facet{
      * @return 
      */
     
-    private String getConfigurationAsQueryString(Integer pn, ISearchStringRetrievable config){
+    private String getConfigurationAsQueryString(Integer pn, ArrayList<SearchClause> configs){
         
             String paramNumber = pn == 0 ? "" : String.valueOf(pn);
         
             StringBuilder qs = new StringBuilder();
             String kwParam = formName.name() + paramNumber;
-            String typeParam = "type" + paramNumber;
             String targetParam = "target" + paramNumber;
             
             qs.append(kwParam);
             qs.append("=");
-            qs.append(config.getRawString());
-            qs.append("&");
-            qs.append(typeParam);
-            qs.append("=");
-            qs.append(config.getSearchType().name());
+            qs.append(this.concatenateConfigs(configs));
+            
+            SearchClause leadConfig = configs.get(0);
+            
             qs.append("&");
             qs.append(targetParam);
             qs.append("=");
-            qs.append(config.getSearchTarget().name());
+            qs.append(leadConfig.getSearchTarget().name());
             
-            if(config.getIgnoreCaps()){
+            if(leadConfig.getIgnoreCaps()){
                 
                 qs.append("&");
                 qs.append(SearchOption.NO_CAPS.name().toLowerCase());
@@ -584,7 +646,7 @@ public class StringSearchFacet extends Facet{
                 qs.append("=on");
                 
             }
-            if(config.getIgnoreMarks()){
+            if(leadConfig.getIgnoreMarks()){
                 
                 qs.append("&");
                 qs.append(SearchOption.NO_MARKS.name().toLowerCase());
@@ -592,18 +654,6 @@ public class StringSearchFacet extends Facet{
                 qs.append("=on");
                 
             }
-            if(config.getSearchType().equals(SearchType.PROXIMITY)){
-                
-                qs.append("&");
-                qs.append(SearchType.PROXIMITY.name().toLowerCase());
-                qs.append(paramNumber);
-                qs.append("=on");            
-                qs.append("&");
-                qs.append(SearchType.WITHIN.name().toLowerCase());
-                qs.append(paramNumber);
-                qs.append("=");
-                qs.append(String.valueOf(config.getProximityDistance()));
-            } 
         
         return qs.toString();
         
@@ -628,22 +678,17 @@ public class StringSearchFacet extends Facet{
     @Override
     public String[] getFormNames(){
 
-        String[] formNames = new String[searchConfigurations.size()];
+        String[] formNames = new String[searchConfigurations.size() + 1];
         
-        Iterator<Integer> pnit = searchConfigurations.keySet().iterator();
-        int counter = 0;
-        
-        while(pnit.hasNext()){
+        for(int i = 0; i <= searchConfigurations.size(); i++){
             
-            Integer paramNumber = pnit.next();
+            String suffix = i == 0 ? "" : String.valueOf(i);
+            String form = formName.name().toString() + suffix;
+            formNames[i] = form;
             
-            String paramSuffix = paramNumber.equals(0) ? "" : String.valueOf(paramNumber);
-            String param = formName.name().toString() + paramSuffix;
-            formNames[counter] = param;
-            counter++;
             
         }
-
+        
         return formNames;
         
     }
@@ -666,729 +711,897 @@ public class StringSearchFacet extends Facet{
      */
     
     public String getHighlightString(){
-        
+        // TODO: this isn't going to work as it stands
         String highlightString = "";
-
-        for(ISearchStringRetrievable searchConfiguration : searchConfigurations.values()){
+        
+        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchConfigurations.entrySet()){
             
-            highlightString += searchConfiguration.getHighlightString();
+            ArrayList<SearchClause> values = entry.getValue();
+            Iterator<SearchClause> vit = values.iterator();
+            while(vit.hasNext()){
             
+                SearchClause config = vit.next();
+                highlightString += config.getOriginalString();  // might need to replace this with bespoke highlight string
+                   
+            }
         }
         
         return highlightString;
     }
     
-    /**
-     * This inner class handles the logic for string-searching previously found
-     * in <code>info.papyri.dispatch.Search</code>.
-     * 
-     * Note that while the logic is intended to be the same, the implementation
-     * is very different. In particular, the search query is understood to be made
-     * up of three parts, which are dealt with separately, as far as this is possible.
-     * (1) The search type (substring, phrase, lemmatised, or proximity)
-     * (2) The search target (text, metadata, translations, or all three)
-     * (3) Transformations to be made to the string itself (e.g., because it is in 
-     * betacode format, caps should be ignored, etc.)
-     * 
-     * In practice these three are inter-related in a cascading fashion - the search type
-     * affects the possible search targets and relevant transformations, while
-     * the search target affects the possible transformations.
-     * 
-     * 
-     */
-    
-    interface ISearchStringRetrievable{
+    public ArrayList<SearchTerm> getAllSearchTerms(){
         
-        public String getSearchString() throws InternalQueryException;
-        public SearchType getSearchType();
-        public String getRawString();
-        public SearchTarget getSearchTarget();
-        public Boolean getIgnoreCaps();
-        public Boolean getIgnoreMarks();
-        public int getProximityDistance();
-        public String getHighlightString();
+        
+        ArrayList<SearchTerm> allTerms = new ArrayList<SearchTerm>();
+        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchConfigurations.entrySet()){
+            
+            ArrayList<SearchClause> clauses = entry.getValue();
+            Iterator<SearchClause> scit = clauses.iterator();
+            while(scit.hasNext()){
+                
+                SearchClause clause = scit.next();
+                ArrayList<SearchTerm> someTerms = clause.getConstituentTerms(new ArrayList<SearchTerm>());
+                Iterator<SearchTerm> stit = someTerms.iterator();
+                while(stit.hasNext()){
+                    
+                    allTerms.add(stit.next());
+                    
+                }
+                
+            }
+            
+        }
+        
+        return allTerms;
+              
+    }
+    
+    
+    
+    @Override
+    public ArrayList<CustomApplicationException> getExceptionLog(){
+        
+        return exceptionLog;
         
     }
     
-    final class SearchConfiguration implements ISearchStringRetrievable{
+    final class SearchClauseFactory{
         
-        /** 
-         * The search string as submitted by the user 
-         */
-        private String rawString;
-        /** 
-         * The search string: i.e., the rawWord, after it has been
-         * subjected to the relevant transformations
-         */
-        private String searchString;
-        /**
-         * The search target (text, metadata, translation, or all three) 
-         */
-        private SearchTarget target;
-        /**
-         * The search type (phrase, substring, lemmatized, proximity)
-         */
-        private SearchType type;
-        /**
-         * The search window used for proximity searches; defaults to 0 for
-         * non-proximity searches
-         */
-        private int proximityDistance;
-
-        /** <code>True</code> if capitalisation is to be ignored; <code>False</code>
-         *  otherwise.
-         */
-        private Boolean ignoreCaps;
-        /**
-         * <code>True</code> if diacritics are to be ignored; <code>False</code>
-         * otherwise.
-         */
-        private Boolean ignoreMarks;
-        /** The SolrField that should be used in the search */
-        private SolrField field;
-        /** Array of search operators potentially entered by  user */
-        private String[] SEARCH_OPERATORS = {"AND", "OR", "NOT", "&&", "||", "+", "-", "WITHIN", "BEFORE", "AFTER", "IMMEDIATELY-BEFORE", "IMMEDIATELY-AFTER"};
-        /** Map for correlating human-entered operators with Solr operators  */
-        private HashMap<String, String> STRINGOPS_TO_SOLROPS = new HashMap<String, String>();
-        
-        SearchConfiguration(String kw, Integer no, SearchTarget tgt, SearchType ty, Boolean caps, Boolean marks, int wi){
+        Pattern proxClauseDetect = Pattern.compile(".*(\\bNEAR\\b|\\bTHEN\\b).*", Pattern.CASE_INSENSITIVE);
+        Pattern proxMetricsDetect = Pattern.compile(".*(~(\\d{1,2})([\\w]+)?)\\s*$");
+        Pattern justMetricsDetect = Pattern.compile("(~(\\d{1,2})([\\w]+)?)\\s*$");
+                
+        ArrayList<SearchClause> buildSearchClauses(String searchString, SearchTarget target, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
             
-            target = tgt;
-            type = ty;
+            if(searchString == null) return null;
+            ArrayList<SearchClause> clauses = new ArrayList<SearchClause>();
+            
+            // normalize whitespace
+            searchString = searchString.replaceAll("\\s+", " ");
+            searchString = searchString.trim();
+            if(searchString.length() == 0) return null;
+            
+            searchString = swapInProxperators(searchString);
+            // strip enclosing parens if present
+            searchString = trimEnclosingBrackets(searchString);
+
+            Pattern subClauseRegex = Pattern.compile("^\\(.*\\)$");
+            
+            while(searchString.length() > 0){
+
+                String nowChar = Character.toString(searchString.charAt(0));
+                int endIndex = getMatchingIndex(nowChar, searchString);
+                if(endIndex == -1){
+                    
+                    if(nowChar.equals("(")){
+                        
+                        throw new MismatchedBracketException();
+                        
+                    }
+                    else{
+                        
+                        endIndex = searchString.length() - 1;
+                        
+                    }
+                    
+                }
+                endIndex = endIndex + 1;
+                Matcher metricsMatch = justMetricsDetect.matcher(searchString.substring(endIndex).trim());
+                if(metricsMatch.matches()){ endIndex += (metricsMatch.group(1).length()); }
+                String nowWord = searchString.substring(0, endIndex).trim();
+                SearchClause newClause = subClauseRegex.matcher(nowWord).matches() ? new SubClause(nowWord, target, caps, marks) : new SearchTerm(nowWord, target, caps, marks);
+                clauses.add(newClause);
+                searchString = searchString.substring(endIndex).trim();
+                               
+            }
+            
+            return clauses;
+            
+        }
+        
+        String swapInProxperators(String fullString) throws MalformedProximitySearchException, MismatchedBracketException{
+
+            String searchString = fullString;
+            ArrayList<String> subclauses = suckOutSubClauses(searchString);
+            Iterator<String> sit = subclauses.iterator();
+            while(sit.hasNext()){
+                
+                   searchString = searchString.replace(sit.next(), "()");
+                   
+            }
+
+            Matcher proxMatch = proxClauseDetect.matcher(searchString);
+            Matcher metricsMatch = proxMetricsDetect.matcher(searchString);
+            if(!proxMatch.matches()){
+                
+                if(metricsMatch.matches()){
+    
+                    throw new MalformedProximitySearchException();
+                    
+                }
+                return fullString;
+                
+            }
+            String operator = proxMatch.group(1).toUpperCase().equals("NEAR") ? "n" : "w"; 
+            String num = metricsMatch.matches() && metricsMatch.group(2) != null && metricsMatch.group(2).length() > 0? metricsMatch.group(2) : "1";
+            String unit = metricsMatch.matches() && metricsMatch.group(3) != null && metricsMatch.group(3).length() > 0 && metricsMatch.group(3).equals("chars") ? "c" : "";
+            
+            String proxOperator = num + operator + unit;
+
+            searchString = searchString.replace(proxMatch.group(1), proxOperator);
+
+            if(metricsMatch.matches() && metricsMatch.group(1) != null && metricsMatch.group(1).length() > 0){
+                
+                searchString = searchString.replace(metricsMatch.group(1), "");
+            }
+
+            Iterator<String> sit2 = subclauses.iterator();
+            while(sit2.hasNext()){
+
+                searchString = searchString.replaceFirst("\\(\\)", sit2.next());
+                
+                
+            }
+
+            return searchString;
+            
+        }
+        
+        ArrayList<String> suckOutSubClauses(String searchString) throws MismatchedBracketException{
+           
+            String trimmedString = searchString.trim();//.replaceAll("~\\d{1,2}([^\\s\\d]+)?\\s*$", "");
+
+            if(Character.toString(trimmedString.charAt(0)).equals("(")){
+                
+                int endIndex = getIndexOfMatchingCloseBracket(trimmedString);
+                if(endIndex == -1) throw new MismatchedBracketException();
+                trimmedString =  trimmedString.substring(1, endIndex);
+            }
+            ArrayList<String> subclauses = new ArrayList<String>();
+            while(trimmedString.indexOf("(") != -1){
+                
+                Integer firstBracketIndex = trimmedString.indexOf("(");
+                Integer endBracketIndex = firstBracketIndex + getIndexOfMatchingCloseBracket(trimmedString.substring(firstBracketIndex));
+                endBracketIndex += 1;
+                String clause = trimmedString.substring(firstBracketIndex, endBracketIndex);
+                subclauses.add(clause);
+                trimmedString = trimmedString.substring(endBracketIndex).trim();
+                   
+            }
+            return subclauses;
+        }
+        
+        String trimEnclosingBrackets(String searchString) throws MismatchedBracketException{
+            
+            if(!Character.toString(searchString.charAt(0)).equals("(")) return searchString;
+            int endBracketIndex = getIndexOfMatchingCloseBracket(searchString);
+            if(endBracketIndex == -1){ throw new MismatchedBracketException(); }
+            if(endBracketIndex == searchString.length() - 1){
+                
+                return searchString.substring(1, endBracketIndex);
+                
+            }
+            
+            return searchString;
+                   
+        }
+        
+        Integer getMatchingIndex(String startChar, String remainder){
+            
+            if("(".equals(startChar)) return getIndexOfMatchingCloseBracket(remainder);
+            if("\"".equals(startChar) || "'".equals(startChar)){
+                
+                int endIndex = remainder.indexOf(startChar, 1);
+                if(endIndex != -1) return endIndex;
+                
+            }
+            
+            return remainder.indexOf(" ", 1);
+            
+        }
+        
+        Integer getIndexOfMatchingCloseBracket(String remainder){
+        
+            int pos = -1;
+            int bracketCount = 1;
+            for(int i = 1; i < remainder.length(); i++){
+                
+                String nowChar = Character.toString(remainder.charAt(i));
+                if("(".equals(nowChar)){
+                    bracketCount += 1;
+                } else if(")".equals(nowChar)) {
+
+                    bracketCount -= 1;
+                }
+                if(bracketCount == 0 && pos == -1){
+                    
+                    pos = i;
+                }
+                
+                
+            }
+            if(bracketCount != 0) return -1;
+            return pos;
+        
+        }
+                
+    }
+    
+    
+    public abstract class SearchClause{
+        
+        String originalString;
+        String transformedString;
+        ArrayList<SearchClause> clauseComponents;
+        ArrayList<ClauseRole> clauseRoles;
+        Boolean ignoreCaps;
+        Boolean ignoreMarks;
+        SearchTarget target;
+        Pattern charProxRegex = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
+        private String LEX_MARKER = "LEX";
+        private String REGEX_MARKER = "REGEX";
+       // private String SUBSTRING_MARKER = "#";
+        
+        SearchClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+            
+            originalString = rs;
+            target = tg;
             ignoreCaps = caps;
             ignoreMarks = marks;
-            proximityDistance = wi;
-            rawString = kw;  
-            searchString = transformSearchString();
-            STRINGOPS_TO_SOLROPS.put("NOT", "-");
-            STRINGOPS_TO_SOLROPS.put("WITHIN", "~");
-            
+            clauseComponents = hasSubComponents(rs) ? clauseComponents = CLAUSE_FACTORY.buildSearchClauses(rs, tg, caps, marks) : new ArrayList<SearchClause>();
+            clauseRoles = new ArrayList<ClauseRole>();
+            addClauseRole(ClauseRole.DEFAULT);
         }
         
-        /**
-         * Applies whatever transformations are required to the search string before it can be 
-         * used as a Solr query.
-         * 
-         * Note the order of processing here:
-         * (1) The keywords submitted are identified
-         * (2) These keywords are then transformed depending on the lemmatisation, caps, and marks settings
-         * (3) The transformed keywords are substituted for the originals in the search string
-         * (4) User-entered operators are replaced by Solr operators
-         * (5) User-entered field names are replaced by Solr field names
-         * (6) The '#' word-boundary delimiter character is replaced with '^'
-         * (7) Backslash-escaping is performed
-         * 
-         * @return 
-         */
+       final Boolean hasSubComponents(String rs){
+           
+           rs = rs.trim();
+           String startChar = Character.toString(rs.charAt(0));
+           // quote-delimited means false
+           if(startChar.equals("\"") || startChar.equals("'")){
+               
+               if(Character.toString(rs.charAt(rs.length() - 1)).equals(startChar)) return false;
+               
+           }
+           // non-quote-delimited with internal whitespace means true
+           if(rs.contains(" ")) return true;
+           // internal brackets means true
+           if(rs.contains("(")||rs.contains(")")) return true;
+           return false;
+           
+       }
+       
         
-        String transformSearchString(){
+       public ArrayList<ClauseRole> getClauseRoles(){
             
-            checkBetacodeSlip();
-            ArrayList<String> keywords = harvestKeywords(this.rawString);
-            ArrayList<String> transWords = transformKeywords(keywords);
-            String swappedTerms = substituteTerms(keywords, transWords);
-            String swappedOps = substituteOperators(swappedTerms);
-            String swappedFields = substituteFields(swappedOps);
-            swappedFields = swappedFields.replaceAll("#", "^");
-            swappedFields = swappedFields.replaceAll("\\^", "\\\\^"); 
-            return swappedFields;
+           return clauseRoles;
             
-        }
-        
-        /**
-         * Checks to ensure that latin-alphabet search operators haven't been 
-         * accidentally transformed into greek-alphabet gibberish through betacode conversion 
-         * 
-         */
-        
-        private void checkBetacodeSlip(){
-            
-            rawString = rawString.replaceAll(" ΑΝΔ ", " AND ").replaceAll(" ΟΡ ", " OR ").replaceAll(" ΝΟΤ ", " NOT ");
-            
-        }
-        
-        /**
-         * Extracts the keywords submitted by the user from the rest of the search-string.
-         * 
-         * That is to say, this method returns the terms remaining after all search fields, 
-         * operators, and other search syntax has been removed.
-         * 
-         * 
-         * @param rawInput
-         * @return 
-         */
-        
-        ArrayList<String> harvestKeywords(String rawInput){
-            
-            if(rawInput == null) return new ArrayList<String>();
-            
-            String cleanedInput = rawInput;
-            
-            // strip out word-boundary markers
-            cleanedInput = cleanedInput.replaceAll("[()#^]", " ");
-            // strip out proximity-search info
-            cleanedInput = cleanedInput.replaceAll("~[\\s]*[\\d]+", " ");
-            
-            // get rid of all search operators
-            for(String operator : this.SEARCH_OPERATORS){
-                
-                try{
-                     String operatorPattern = operator;
-                     if("||".equals(operator)){
-                         
-                         operatorPattern = "\\|\\|";
-                         
-                     }
-                     else if(operator.matches("[A-Z-]+") && !operator.equals("-")){
-                         
-                         operatorPattern = "\\b" + operator + "\\b";
-                         
-                     }
-                     cleanedInput = cleanedInput.replaceAll(operatorPattern, " ");
-                    
-                }
-                catch(PatternSyntaxException pse){
-                    
-                    String operatorPattern = "\\" + operator;
-                    cleanedInput = cleanedInput.replaceAll(operatorPattern, " ");
-                    
-                }
-                
-            }
-            // strip out field names
-            cleanedInput = cleanedInput.replaceAll("[^\\s]+?:", " ");
-            // tidy excess whitespace
-            cleanedInput = cleanedInput.trim();
-            // tokenise on whitespace
-            ArrayList<String> inputBits = new ArrayList<String>(Arrays.asList(cleanedInput.split("(\\s)+")));
-            return inputBits;
-            
-        }
-        
-        /**
-         * Transforms the passed keywords in accordance with caps, marks, and lemmatisation settings
-         * 
-         * @param keywords
-         * @return 
-         */
-        ArrayList<String> transformKeywords(ArrayList<String> keywords){
-            
-            ArrayList<String> transformedKeywords = new ArrayList<String>();
-            
-            if(keywords == null) return transformedKeywords;
-            int counter = 0;
-            
-            for(String keyword : keywords){
-            
-                if(ignoreCaps){
-                    
-                    keyword = keyword.toLowerCase();
-                    
-                }
+       }
+       
 
-                if(lemmatizeWord(keywords, counter)){
+       
+       ArrayList<ClauseRole> getAllClauseRoles(){
+           
+           ArrayList<ClauseRole> allRoles = new ArrayList<ClauseRole>();
+           Iterator<ClauseRole> scrit = clauseRoles.iterator();
+           while(scrit.hasNext()){
+               
+               ClauseRole scr = scrit.next();
+               if(!allRoles.contains(scr)) allRoles.add(scr);
+              
+           }
+           ArrayList<ClauseRole> subRoles = getSubordinateClauseRoles();
+           Iterator<ClauseRole> srit = subRoles.iterator();
+           while(srit.hasNext()){
+               
+               ClauseRole sr = srit.next();
+               if(!allRoles.contains(sr)) allRoles.add(sr);
+               
+           }
+           
+           return allRoles;
+           
+       }
+       
+       String getOriginalString(){
+           
+           return originalString;
+           
+       }
+       
+       ArrayList<SearchClause> getClauseComponents(){
+           
+           return clauseComponents;
+           
+       }
+       
+       final void addClauseRole(ClauseRole role){
+           
+           if(!clauseRoles.contains(role)){
+               
+               clauseRoles.add(role);
+               
+               if(clauseRoles.contains(ClauseRole.DEFAULT) && role != ClauseRole.DEFAULT){
+                   
+                   clauseRoles.remove(ClauseRole.DEFAULT);
+                   
+               }
+               
+           }
+           
+       }
+       
+       Integer getIndexOfNextOperand(Integer start, ArrayList<SearchClause> clauses){
+           
+           for(int i = start; i < clauses.size(); i++){
+               
+               SearchClause clause = clauses.get(i);
+               if(!clause.isOperator()) return i;            
+               
+           }
+           
+           return -1;
+           
+       }
+       
+       Integer getIndexOfPreviousOperand(Integer start, ArrayList<SearchClause> clauses){
+           
+           
+           for(int i = start; i >= 0; i--){
+               
+               SearchClause clause = clauses.get(i);
+               if(!clause.isOperator()) return i;
+               
+           }
+           
+           return -1;
+           
+       }
+       
+       Boolean isOperator(){
+           
+           try{
+               
+               SearchOperator.valueOf(getOriginalString());
+               return true;
+               
+           }
+           catch(IllegalArgumentException iae){
+               
+               Matcher proxMatcher = PROX_OPERATOR_REGEX.matcher(getOriginalString());
+               if(proxMatcher.matches()) return true;
+               
+               
+           }
+           
+           return false;
+           
+       }  
+       
+       public SearchType parseForSearchType(){
+           
+            SearchType type = SearchType.SUBSTRING;
+            if(SearchTarget.USER_DEFINED == target) return SearchType.USER_DEFINED;
+            if(SearchTarget.METADATA == target || SearchTarget.TRANSLATION == target) return SearchType.PHRASE;
+            ArrayList<ClauseRole> allRoles = getAllClauseRoles();
+            if(allRoles.contains(ClauseRole.LEMMA)) return SearchType.LEMMA;
+            if(allRoles.contains(ClauseRole.REGEX)) return SearchType.REGEX;
+            if(allRoles.contains(ClauseRole.START_PROX)) return SearchType.PROXIMITY;
+            if(originalString.matches(PHRASE_MARKER)) return SearchType.PHRASE;
+            return type;
+           
+           
+       }
+       
+       SolrField parseForField(SearchType searchType, SearchTarget searchTarget, Boolean caps, Boolean marks){
+           
+           if(searchType == SearchType.USER_DEFINED) return null;
+           if(searchTarget == SearchTarget.METADATA) return SolrField.metadata;
+           if(searchTarget == SearchTarget.TRANSLATION) return SolrField.translation;
+           if(searchType == SearchType.LEMMA) return SolrField.transcription_ia;
+           String suffix = (caps && marks) ? "_ia" : (caps ? "_ic" : "_id" );
+           String prefix = "transcription";
+           if(searchType == SearchType.SUBSTRING){
+               
+               prefix = "transcription_ngram";
+               
+           }
+           else if(searchType == SearchType.REGEX){
+               
+               prefix = "untokenized";
+               
+           }
+           
+           try{
+               
+               return SolrField.valueOf(prefix + suffix);
+               
+           }
+           catch(IllegalArgumentException iae){
+               
+               return SolrField.transcription_ngram_ia;
+               
+           }
+               
+           
+       }
+       
+       SearchHandler parseForSearchHandler(ArrayList<ClauseRole> roles){
+           
+           if(roles.size() < 1) return null;
+           if(roles.contains(ClauseRole.REGEX)) return SearchHandler.REGEXP;
+           if(roles.contains(ClauseRole.START_PROX)) return SearchHandler.SURROUND;
+           return SearchHandler.DEFAULT;
+           
+       }
+       
+       String getQueryPrefix(SearchHandler sh, SolrField field){
+           
+           if(field == null) return "";
+           StringBuilder prefix = new StringBuilder();
+           if(sh == SearchHandler.REGEXP){
+               
+               prefix.append("{!");
+               prefix.append(sh.name().toLowerCase());
+               prefix.append(" cache=false qf=\"");
+               prefix.append(field.name().toLowerCase());
+               prefix.append("\"}");
+               return prefix.toString();
+               
+           }
+           else if(sh == SearchHandler.SURROUND){
+               
+               prefix.append("{!");
+               prefix.append(sh.name().toLowerCase());
+               prefix.append(" cache=false}");              
+               
+               
+           }
+           else if(this.getAllClauseRoles().contains(ClauseRole.NOT)){
+               
+               prefix.append("-");
+               
+           }
+           prefix.append(field.name().toLowerCase());
+           prefix.append(":"); 
+           return prefix.toString();
+           
+       }
+       
 
-                    try{ 
-                        
-                        String keywordExpanded = this.expandLemmas(keyword);
-                        keyword = "(" + keywordExpanded + ")";
-                    }
-                    catch(Exception e){
+       SolrQuery buildQuery(SolrQuery sq) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
+           
+           SearchType type = parseForSearchType();
+           SolrField field = parseForField(type, target, ignoreCaps, ignoreMarks);
+           SearchHandler handler = parseForSearchHandler(getAllClauseRoles());
+           String queryPrefix = getQueryPrefix(handler, field);
+           String queryBody = buildTransformedString();
+           queryBody = "(" + queryBody + ")";
+           sq.addFilterQuery(queryPrefix + queryBody);
+           return sq;
+           
+       }
+       
+       String getDisplayString(){
+           
+           String o = this.getOriginalString().trim();
+           o = o.replaceAll(REGEX_MARKER, "");
+           if(this.parseForSearchType() == SearchType.LEMMA) o = o.replaceAll(LEX_MARKER, "");
+           if(Character.toString(o.charAt(0)).equals("(") && Character.toString(o.charAt(o.length() - 1)).equals(")")){
+               
+               String test = o.substring(1, o.length() - 1);
+               if(!test.contains("(") && !test.contains(")")) return test.trim();
+               
+           }
+           return o;
+           
+           
+       }
+       
+       abstract void assignClauseRoles() throws IncompleteClauseException;
+              
+       abstract ArrayList<ClauseRole> getSubordinateClauseRoles();
+       
+       abstract Boolean isCharactersProxTerm();
+             
+       abstract public String buildTransformedString() throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException;
+        
+       abstract ArrayList<SearchTerm> getConstituentTerms(ArrayList<SearchTerm> terms);
+       
+       /* getters and setters */
+       SearchTarget getSearchTarget(){ return target; }
+       Boolean getIgnoreCaps(){ return ignoreCaps; }
+       Boolean getIgnoreMarks(){ return ignoreMarks; }
+       public String getTransformedString(){ return transformedString; }
+        
+    }
+    
+    public class SubClause extends SearchClause{
+            
+        ArrayList<SearchClause> transformedClauses = new ArrayList<SearchClause>();
+        
+        SubClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+            
+            super(rs, tg, caps, marks);
+            assignClauseRoles();
+            transformedClauses = doCharsProxTransform(clauseComponents);
+         //   System.out.println("Creating " + rs + " as a SubClause");
+                   
+        }
+        
+        @Override
+        public String buildTransformedString() throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
+            
+            StringBuilder transformed = new StringBuilder();
+            Iterator<SearchClause> scit = transformedClauses.iterator();
+            while(scit.hasNext()){
+                
+                SearchClause clause = scit.next();
+                String clauseContent = clause.buildTransformedString().trim();
+                transformed.append(clauseContent);
+                if(!clauseContent.equals("")) transformed.append(" ");
+                
+                
+            }
+            
+            transformedString = transformed.toString().trim();
+            return transformedString;
+            
+        }
+        
+       
+        final ArrayList<SearchClause> doCharsProxTransform(ArrayList<SearchClause> clauses) throws IncompleteClauseException, RegexCompilationException{
+            
+            Integer chpIndex = getCharsProxIndex(clauses);
+            if(chpIndex == -1) return clauses;
+            ArrayList<SearchClause> proxClauses = new ArrayList<SearchClause>();
+            Integer startIndex = getProxStartTerm(chpIndex, clauses);
+            Integer endIndex = getProxPostTerm(chpIndex, clauses);
+            if(startIndex == -1 || endIndex == -1) throw new IncompleteClauseException();
+            for(int i = 0; i < startIndex; i++){
+                
+                proxClauses.add(clauses.get(i));
+                
+            }
+            String regex = convertCharProxToRegexSyntax(clauses.get(startIndex).originalString, clauses.get(endIndex).originalString, clauses.get(chpIndex).originalString);
 
-                        transformedKeywords.add(keyword);
-                        continue;
-                        
-                    }
-                    
-                }
-                if(ignoreMarks) keyword = FileUtils.stripDiacriticals(keyword);
-                // note: Solr index uses medial sigma only, even at the ends of words
-                keyword = keyword.replaceAll("ς", "σ");  
-                transformedKeywords.add(keyword);
-                counter++;
+            try{
             
+                SearchTerm regexSearchTerm = new SearchTerm(regex, target, ignoreCaps, ignoreMarks);
+                regexSearchTerm.addClauseRole(ClauseRole.REGEX);
+                proxClauses.add(regexSearchTerm);
+                
+            } catch(StringSearchParsingException sspe){
+                
+                throw new RegexCompilationException();
                 
             }
+            for(int k = endIndex + 1; k < clauses.size(); k++){
+                
+                proxClauses.add(clauses.get(k));
             
-            return transformedKeywords;
+            }
+            return proxClauses;
             
         }
         
-        /**
-         * Substitutes transformed terms into the original search-string in order.
-         * 
-         * @param initialTerms
-         * @param transformedTerms
-         * @return 
-         */
-        
-        String substituteTerms(ArrayList<String> initialTerms, ArrayList<String> transformedTerms){
-            
-            String remainingString = rawString;
-            ArrayList<String> subBits = new ArrayList<String>();
-            
-            for(int i = 0; i < initialTerms.size(); i++){
-                
-                String iTerm = initialTerms.get(i).replace("?", "\\?").replace("*", "\\*");
-                String sTerm = transformedTerms.get(i);                
-                String[] remBits = remainingString.split(iTerm, 2);
-                String newClause = remBits[0] + sTerm;
-                remainingString = remBits[1];
-                subBits.add(newClause);
-                
-                
-            }
-            subBits.add(remainingString);
-            String swapString = "";
-            for(String bit : subBits){
-                
-                swapString += bit;
-                
-            }
-            return swapString;
-            
-        }
-        
-        /**
-         * In theory, this method should swap human-entered search operators for those
-         * which make sense to Solr.
-         * 
-         * At the moment, however, it is only handlng proximity searches. 
-         * 
-         * @param expandedString
-         * @return 
-         */     
-        //TODO: revisit the question of operator substitution once string-search work is
-        // more advanced
-        // TODO: this won't work with user-defined settings
-        String substituteOperators(String expandedString){
-            
-            String smallString = expandedString;
-            if(type.equals(SearchType.PROXIMITY)){
-                
-                smallString = smallString + "~" + String.valueOf(proximityDistance);
-                
-            }
-            
-            smallString = transformProximitySearch(smallString);
-            return smallString;
-            
-            
-        }
-        
-        /**
-         * Ensures correct syntax for proximity searches
-         * 
-         * @param searchString
-         * @return 
-         */
-        
-        // TODO: this is a bit fubarred. Revisit once the larger quesion of user-defined
-        // searches has been addressed
-        String transformProximitySearch(String searchString){
-            
-            if(!searchString.contains("~")) return searchString;
-            // tidy proximity syntax
-            searchString = searchString.replaceAll("\\s*~\\s*(\\d+)", "~$1");
-            String[] searchBits = searchString.split("~");
-            if(searchBits.length < 2) return searchString;
-            // retrieve everything prior to proximity setting
-            String prelimSearchTerms = searchBits[0];
-            // tokenise on whitespace
-            String[] medSearchTerms = prelimSearchTerms.split(" ");
-            // if only one term is involved, return unchanged, as proximity search 
-            // only makes sense with two-and-only-two terms
-            if(medSearchTerms.length < 2) return searchString;
-            // reconstitute search terms
-            String searchTerms = medSearchTerms[medSearchTerms.length - 2] + " " + medSearchTerms[medSearchTerms.length - 1];
-            // wrap in quotation marks
-            if(searchTerms.indexOf("\"") != 0) searchTerms = "\"" + searchTerms;
-            if(searchTerms.lastIndexOf("\"") != (searchTerms.length() - 1)) searchTerms = searchTerms + "\"";
-            // restore proximity setting to end of string
-            String newSearchString = searchTerms + "~" + searchBits[1];
-            return newSearchString;
-                     
-        }
-        
-        /**
-         * Substitutes user field names provided as a convenience with actual gory Solr fields.
-         * 
-         * 
-         * @param fieldString
-         * @return 
-         */
-        
-        String substituteFields(String fieldString){
-            
-            if(type.equals(SearchType.USER_DEFINED)){
-                
-                fieldString = Pattern.compile("\\blem:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.transcription_ia.name() + ":");
-                fieldString = Pattern.compile("\\bstring:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.transcription_ngram_ia.name() + ":");
-                fieldString = Pattern.compile("\\bapis:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.apis_metadata.name() + ":");
-                fieldString = Pattern.compile("\\bhgv:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.hgv_metadata.name() + ":");
-                fieldString = Pattern.compile("\\bmeta:", Pattern.CASE_INSENSITIVE).matcher(fieldString).replaceAll(SolrField.metadata.name() + ":");
-                return fieldString;
-                
-            }
-            
-            String fieldDesignator = "";
-            
-            if(type.equals(SearchType.SUBSTRING)){
-                
-                fieldDesignator = SolrField.transcription_ngram_ia.name();
-                
-            }
-            
-            else if(type.equals(SearchType.LEMMAS)){
-                
-                
-                fieldDesignator = SolrField.transcription_ia.name();
-            
-            }
-            
-            // henceforth only proximity and phrase searches possible
-            
-            else if(target.equals(SearchTarget.TEXT)){
-                
-                if(ignoreCaps && ignoreMarks){
-                    
-                    fieldDesignator = SolrField.transcription_ia.name();
-                
-                }
-                
-                else if(ignoreCaps){
-                    
-                    
-                    fieldDesignator = SolrField.transcription_ic.name();
-                
-                }
-                        
-                else if(ignoreMarks){
-                    
-                    fieldDesignator = SolrField.transcription_id.name();
-                
-                }
-                
-                else{
-                    
-                    fieldDesignator = SolrField.transcription.name();
+        @Override
+        final void assignClauseRoles() throws IncompleteClauseException{
+                      
+           for(int i = 0; i < clauseComponents.size(); i++){
+               
+               SearchClause clause = clauseComponents.get(i);
+               if(clause.isOperator()){
+                   
+                   clause.addClauseRole(ClauseRole.OPERATOR);
+                   
+                   try{
+                       
+                       SearchOperator op = SearchOperator.valueOf(clause.getOriginalString().trim());
+                       if(op == SearchOperator.OR){
+                           
+                           int prevOperand = getIndexOfPreviousOperand(i, clauseComponents);
+                           int nextOperand = getIndexOfNextOperand(i, clauseComponents);
+                           if(prevOperand == -1 || nextOperand == -1) throw new IncompleteClauseException();
+                           clauseComponents.get(prevOperand).addClauseRole(ClauseRole.OR);
+                           clauseComponents.get(nextOperand).addClauseRole(ClauseRole.OR);
+                           
+                       }
+                       else{
 
+                           int nextOperand = getIndexOfNextOperand(i, clauseComponents);
+                           if(nextOperand == -1) throw new IncompleteClauseException();
+                           String opName = op.name();
+                           if(opName.equals(SearchOperator.LEX.name())) opName = ClauseRole.LEMMA.name();
+                           ClauseRole role = ClauseRole.valueOf(opName);
+                           clauseComponents.get(nextOperand).addClauseRole(role);
+                           
+                       }
+                       
+                   }
+                   catch(IllegalArgumentException iae){
+                       
+                       int prevOperand = getIndexOfPreviousOperand(i, clauseComponents);
+                       int nextOperand = getIndexOfNextOperand(i, clauseComponents);
+                       if(prevOperand == -1 || nextOperand == -1) throw new IncompleteClauseException();
+                       clauseComponents.get(prevOperand).addClauseRole(ClauseRole.START_PROX);
+                       clauseComponents.get(nextOperand).addClauseRole(ClauseRole.END_PROX);                   
+                       
+                   }
                     
-                }
-                
-            }
-                        
-            else if(target.equals(SearchTarget.METADATA)){
-                
-                fieldDesignator = SolrField.metadata.name();
+               }
+               else{
+                   
+                   clause.assignClauseRoles();              
+                   
+               }
+               
+               
+           }
+           
+       }
+        
+        String convertCharProxToRegexSyntax(String prevTerm, String nextTerm, String charProx) throws RegexCompilationException{
             
-            }
-            
-            else if(target.equals(SearchTarget.TRANSLATION)){
-                
-                fieldDesignator = SolrField.translation.name();
-            
-            }
-            
-            else if(target.equals(SearchTarget.ALL)){
-                
-                fieldDesignator = SolrField.all.name();
-            
-            }
-            
-            if(!fieldDesignator.equals("")) fieldString = fieldDesignator + ":(" + fieldString + ")";
-            
-            return fieldString;
+            Matcher charProxMatcher = charProxRegex.matcher(charProx);
+            if(!charProxMatcher.matches()) throw new RegexCompilationException();
+            String numChars = charProxMatcher.group(1);
+            String unit = charProxMatcher.group(2);
+            String distRegex = ".{1," + numChars + "}";
+            prevTerm = convertWildcardToRegexSyntax(prevTerm);
+            nextTerm = convertWildcardToRegexSyntax(nextTerm);
+            String regex = prevTerm.trim() + distRegex + nextTerm.trim();
+            if(unit.equals("w")) return regex;
+            String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
+            String nearRegex = "(" + revRegex + "|" + regex + ")";
+            return nearRegex;
             
         }
         
-        /**
-         * Returns a Boolean regarding whether or not to lemmatise a token.
-         * 
-         * @param keywords
-         * @param currentIteration
-         * @return 
-         */
-                
-        Boolean lemmatizeWord(ArrayList<String> keywords, int currentIteration){
+        String convertWildcardToRegexSyntax(String wildcard){
             
-            if(type.equals(SearchType.LEMMAS)) return true;
+            String regex = wildcard.replaceAll("\\*", ".*");
+            regex = regex.replaceAll("\\?", ".");
+            return regex;
             
-            if(!type.equals(SearchType.USER_DEFINED)) return false;
-            
-            String keyword = keywords.get(currentIteration);
-
-            int previousOccurrences = 0;
-            
-            for(int i = 0; i < currentIteration; i++){
-                
-                if(keywords.get(i).equals(keyword)) previousOccurrences++;
-                
-            }
-
-            int index = 0;
-            String lemSub = rawString.substring(index);
-            int counter = 0;
-            
-            while(lemSub.contains(keyword)){
-                
-                index = lemSub.indexOf(keyword);
-                if(counter == previousOccurrences) break;
-                lemSub = lemSub.substring(index + keyword.length());
-                counter++;
-                
-            }
-            
-            if(index - "lem:".length() < 0) return false;
-            String lemcheck = lemSub.substring(index - "lem:".length(), index);
-            if(lemcheck.equals("lem:")) return true;
-            return false;
             
         }
         
-        /**
-         * Expands the given query string with its lemmas in a form usable for querying Solr
-         * 
-         * 
-         * @param query
-         * @return
-         * @throws MalformedURLException
-         * @throws SolrServerException 
-         */
-        
-        public String expandLemmas(String query) throws MalformedURLException, SolrServerException {
+        Integer getCharsProxIndex(ArrayList<SearchClause> clauses){
             
-            SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
-            StringBuilder exp = new StringBuilder();
-            SolrQuery sq = new SolrQuery();
-            String[] lemmas = query.split("\\s+");
-            for (String lemma : lemmas) {
-              exp.append(" lemma:");
-              exp.append(lemma);
+            for(int i = 0; i < clauses.size(); i++){
+                
+                if(clauses.get(i).isCharactersProxTerm()) return i;
+                
             }
-            sq.setQuery(exp.toString());
-            sq.setRows(1000);
-            QueryResponse rs = solr.query(sq);
-            SolrDocumentList forms = rs.getResults();
-            Set<String> formSet = new HashSet<String>();
-            if (forms.size() > 0) {
+            
+            return -1;
+            
+        }
+        
+        Integer getProxStartTerm(Integer start, ArrayList<SearchClause> clauses){
+            
+            for(int i = start; i >= 0; i--){
+                
+                if(clauses.get(i).getClauseRoles().contains(ClauseRole.START_PROX)) return i;
+                
+            }
+            
+            return -1;
+            
+        }
+        
+        Integer getProxPostTerm(Integer start, ArrayList<SearchClause> clauses){
+            
+            for(int i = start; i < clauses.size(); i++){
+                
+                if(clauses.get(i).getClauseRoles().contains(ClauseRole.END_PROX)) return i;
+                
+            }
+            
+            return -1;
+        }
+        
+        @Override
+        ArrayList<ClauseRole> getSubordinateClauseRoles(){
+           
+           ArrayList<ClauseRole> subroles = new ArrayList<ClauseRole>();
+           
+           Iterator<SearchClause> scit = transformedClauses.iterator();
+           while(scit.hasNext()){
+               
+               SearchClause clause = scit.next();
+               Iterator<ClauseRole> scrit = clause.getClauseRoles().iterator();
+               while(scrit.hasNext()){
+                   
+                   ClauseRole scrole = scrit.next();
+                   if(!subroles.contains(scrole)) subroles.add(scrole);
+                                   
+               }             
+               
+           }
+           
+           return subroles;
+           
+       }
+        
+       @Override
+       ArrayList<SearchTerm> getConstituentTerms(ArrayList<SearchTerm> terms){
+           
+           Iterator<SearchClause> scit = clauseComponents.iterator();
+           while(scit.hasNext()){
+               
+               SearchClause clause = scit.next();
+               clause.getConstituentTerms(terms);
+               
+           }
+           
+           return terms;
+           
+       }
+        
+        @Override
+        Boolean isCharactersProxTerm(){ return false; }
+        
+        
+        
+    }
+    
+    public class SearchTerm extends SearchClause{
+        
+        Pattern charProxTermRegex = Pattern.compile("\\d{1,2}(w|n)c");
+        
+        SearchTerm(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+            
+            super(rs, tg, caps, marks);
+
+        }
+        
+        @Override
+        void assignClauseRoles(){}
+        
+        @Override
+        public String buildTransformedString() throws InternalQueryException, InsufficientSpecificityException{
+            
+            String transformed = originalString;
+            if(wildcardsTooLoose(transformed)) throw new InsufficientSpecificityException();
+            if(transformed.equals(StringSearchFacet.SearchOperator.LEX.name())) return "";
+            if(transformed.equals(StringSearchFacet.SearchOperator.REGEX.name())) return "";
+            if(transformed.equals(StringSearchFacet.SearchOperator.NOT.name())) return "";
+            if(transformed.equals(StringSearchFacet.SearchOperator.AND.name())) return ""; // because this is the default operator
+            if(transformed.equals(StringSearchFacet.SearchOperator.OR.name())) return "OR";
+            if(clauseRoles.contains(ClauseRole.LEMMA)){
+                
+                transformed = expandLemma(transformed);
+                return transformed;
+                
+            }
+            if(target != SearchTarget.TEXT){
+                
+                transformed = transformed.toLowerCase();
+                return transformed;
+                
+            }
+            if(ignoreCaps) transformed = transformed.toLowerCase();
+            if(ignoreMarks) transformed = FileUtils.stripDiacriticals(transformed);
+            transformed = transformed.replaceAll("ς", "σ");  
+            if(clauseRoles.contains(ClauseRole.REGEX)){
+                
+                transformed = anchorRegex(transformed);
+                return transformed;
+            }
+            transformed = transformed.replaceAll("#", "^");
+            transformed = transformed.replaceAll("\\^", "\\\\^");     
+            transformedString = transformed;
+            return transformed;
+            
+        }
+        
+        Boolean wildcardsTooLoose(String test){
+           
+           if(clauseRoles.contains(ClauseRole.REGEX)) return false;
+           if(!test.contains("?") && !test.contains("*")) return false;
+           test = test.replaceAll("\\?", "");
+           test = test.replaceAll("\\*", "");
+           if(test.length() > 2) return false;
+           return true;
+           
+           
+        }
+        
+        String expandLemma(String declinedForm) throws InternalQueryException{
+            
+           
+           try{
+            
+           SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
+           // TODO: stop hard-coding string for prodo!
+           String searchTerm = "lemma:" + declinedForm;
+           SolrQuery sq = new SolrQuery();
+           sq.setQuery(searchTerm);
+           sq.setRows(1000);
+           QueryResponse qr = solr.query(sq);
+           SolrDocumentList forms = qr.getResults();
+           Set<String> formSet = new HashSet<String>();
+           if (forms.size() > 0) {
               for (int i = 0; i < forms.size(); i++) {
                 formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
               }
-             return FileUtils.interpose(formSet, " OR ");
+             declinedForm = FileUtils.interpose(formSet, " OR ");
              
-            }
-            
-            return query;
-          }
-       
+            } 
+           declinedForm = "(" + declinedForm + ")";
+           return declinedForm;
+           
+           }
+           catch(Exception e){
+               
+               throw new InternalQueryException();
+               
+           }
+           
+       }
         
-        
-        /* getters and setters */
-        @Override
-        public SearchTarget getSearchTarget(){ return target; }
-        @Override
-        public String getSearchString(){ return searchString; }
-        @Override
-        public String getHighlightString(){ 
+        String anchorRegex(String rawRegex){
             
-            String highlightString = searchString;
-            return highlightString;
-        
-        }
-        @Override
-        public SearchType getSearchType(){ return type; }
-        @Override
-        public int getProximityDistance(){ return proximityDistance; }
-        @Override
-        public String getRawString(){ return rawString; }
-        @Override
-        public Boolean getIgnoreCaps(){ return ignoreCaps; }
-        @Override
-        public Boolean getIgnoreMarks(){ return ignoreMarks; }
-        public SolrField getField(){ return field; }
-    }
-    
-    final class RegexSearchConfiguration implements ISearchStringRetrievable{
-        
-        String rawRegex;
-        String regex;
-        ArrayList<String> identifiers = new ArrayList<String>();
-        
-        final static String SEARCH_FIELD = "untokenized_ia"; 
-        final static String TERMS_FIELD = "untokenized_ia";
-        //TODO: Stop hardcoding this
-        final static String solrServerURL = "http://localhost:8083/solr/pn-search";
-        SolrServer solrServer;
-        
-        public RegexSearchConfiguration(String rawString) throws MalformedURLException{
-            
-            rawRegex = rawString;
-            regex = rawString.replaceFirst("(?i)regex:", "");
-            solrServer = new CommonsHttpSolrServer(solrServerURL);
-
-
-        }
-        
-        private TermsResponse doRegexSearch()throws MalformedURLException, SolrServerException{
-            
-            identifiers = getIdentifierPrefixes();
-            SolrQuery sq = new SolrQuery();
-            sq.setQueryType("/terms");
-            sq.setTerms(true);
-            sq.setTermsLimit(-1);                   // no limit
-            String idPrefixes = getAllIdsAsQueryValue();
-            sq.setTermsRegex(idPrefixes + ".*" + regex + ".*");
-            sq.addTermsField(TERMS_FIELD);
-            //sq.setTimeAllowed(2500);
-            QueryResponse qr = solrServer.query(sq, METHOD.POST);
-            return qr.getTermsResponse();
-            
-        }
-        
-        private ArrayList<String> getIdentifierPrefixes(){
-            
-            ArrayList<String> allids = new ArrayList<String>();
-            if(otherConstraints.getFilterQueries() != null && otherConstraints.getFilterQueries().length > 0){
-                
-                try{
-                
-                    QueryResponse qr = solrServer.query(buildSubQuery(), METHOD.POST);
-                    SolrDocumentList results = qr.getResults();
-                    
-                    Iterator<SolrDocument> rit = results.iterator();
-                    while(rit.hasNext()){
-                        
-                        String id = ((String)rit.next().getFieldValue("id"));
-                        if(!allids.contains(id)) allids.add(id);
-                           
-                    }
-            
-                }
-                catch(SolrServerException sse){ System.out.println("SolrServerException " + sse.getMessage() + " " + otherConstraints.toString() );} // TODO: Do something intelligent here
-                 
-          
-            }
-
-            return allids;
-            
-        }
-        
-        private String getAllIdsAsQueryValue(){
-            
-            if(identifiers.size() <= 0) return "";
-            
-            StringBuilder ids = new StringBuilder("(");
-            Iterator<String> idit = identifiers.iterator();
-            while(idit.hasNext()){
-                
-                String id = idit.next();
-                ids.append(id);
-                if(idit.hasNext()) ids.append("|");
-                
-            }
-            ids.append(")");
-            return ids.toString();
-            
-        }
-        
-        private SolrQuery buildSubQuery(){
-            
-            String[] fqs = otherConstraints.getFilterQueries();
-            SolrQuery sq = new SolrQuery();
-            if(fqs == null || fqs.length < 1 ) return sq;
-            sq.setQuery("*:*");
-            sq.setRows(100000);         // is there any way to remove the cap entirely?
-            sq.addField("id");
-            
-            for(int i = 0; i < fqs.length; i++){
-
-                sq.addFilterQuery(fqs[i]);
-            
-            }
-            
-            return sq;
+            StringBuilder anchoredRegex = new StringBuilder();
+            int l = rawRegex.length();
+            if(l < 1) return rawRegex;
+            String firstChar = Character.toString(rawRegex.charAt(0));
+            String lastChar  = Character.toString(rawRegex.charAt(l - 1));
+            String startExp = l > 1 ? rawRegex.substring(0, 2) : firstChar;
+            String lastExp = l > 1 ? rawRegex.substring(l - 2, l) : lastChar;
+            if(!firstChar.equals("^")) anchoredRegex.append("^");
+            if(!startExp.equals(".*") && !startExp.equals(".+") && !firstChar.equals("^")) anchoredRegex.append(".*");
+            anchoredRegex.append(rawRegex);
+            if(!lastExp.equals(".*") && !lastExp.equals(".+") && !lastChar.equals("$")) anchoredRegex.append(".*");
+            if(!lastChar.equals("$")) anchoredRegex.append("$");            
+            return anchoredRegex.toString();
             
         }
         
         @Override
-        public String getSearchString() throws InternalQueryException{
+        ArrayList<ClauseRole> getSubordinateClauseRoles(){
             
-            StringBuilder searchString = new StringBuilder();
+            return new ArrayList<ClauseRole>();
             
-            try{
-                
-                TermsResponse termsResponse = doRegexSearch();
-                List<Term> terms = termsResponse.getTerms(TERMS_FIELD);
-                Iterator<Term> trit = terms.iterator();
-                Pattern escaper = Pattern.compile(":");
-                while(trit.hasNext()){
-                    
-                    Term term = trit.next();
-                    String content = term.getTerm();
-                    String id = content.substring(0, content.indexOf(" "));    
-                    if(searchString.length() > 0) searchString.append(" OR ");
-                    Matcher escapeMatcher = escaper.matcher(id);
-                    id = escapeMatcher.replaceAll("\\\\:");
-                    searchString.append(id);
-                           
-                }
-                
-            }
-            catch(Exception e){ 
-                
-               // throw new InternalQueryException(e.getMessage() + ":" + searchString); 
-                System.out.println("Exception thrown retrieving search string " + e.getMessage() + ":" + e.getClass().toString());
-            
-            }
-            
-            if(searchString.length() > 0){
-                
-                searchString.insert(0, "id:(");
-                searchString.append(")");
-                
-                
-            }
-            
-            return searchString.toString();
         }
         
         @Override
-        public SearchType getSearchType(){ return SearchType.REGEX; }
-
-        @Override
-        public String getRawString() {
-            return rawRegex.replaceFirst("regex", "REGEX");
-        }
-
-        @Override
-        public SearchTarget getSearchTarget() {
+        Boolean isCharactersProxTerm(){
             
-            return SearchTarget.REGEX;
+            return charProxTermRegex.matcher(originalString).matches();
             
         }
-
+        
         @Override
-        public Boolean getIgnoreCaps() {
-            return true;
+        ArrayList<SearchTerm> getConstituentTerms(ArrayList<SearchTerm> terms){
+            
+            terms.add(this);
+            return terms;
+            
         }
-
-        @Override
-        public Boolean getIgnoreMarks() {
-            return true;
-        }
-
-        @Override
-        public int getProximityDistance() {
-            return 0;
-        }
-
-        @Override
-        public String getHighlightString() {
-            // TODO: Supporting this properly is going to be a bugger
-           return "";
-        }
-                
+        
     }
     
 }

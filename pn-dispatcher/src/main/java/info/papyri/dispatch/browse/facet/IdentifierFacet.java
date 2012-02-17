@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
@@ -134,7 +135,7 @@ public class IdentifierFacet extends Facet{
     }    
     
     @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         Boolean noConstraints = true;
         

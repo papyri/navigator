@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -189,7 +190,7 @@ public class HasImagesFacet extends Facet {
     }
     
     @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
                 
         for(int i = 0; i < ImageParam.values().length; i++){
             
