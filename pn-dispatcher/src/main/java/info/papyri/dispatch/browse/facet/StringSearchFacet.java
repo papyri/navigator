@@ -189,7 +189,6 @@ public class StringSearchFacet extends Facet{
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" id=\"text-search-widget\" title=\"");
         html.append(getToolTipText());
         html.append("\">");
-        html.append(generateHiddenFields());
         
         html.append("<div class=\"stringsearch-top-controls\">");
         
@@ -251,7 +250,8 @@ public class StringSearchFacet extends Facet{
         html.append("\" id=\"translation-label\">Translations</label>");
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
-               
+        html.append(generateHiddenFields());
+       
         html.append("</div><!-- closing .facet-widget -->");
         
         return html.toString();
