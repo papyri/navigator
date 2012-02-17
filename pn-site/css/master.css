@@ -112,6 +112,10 @@ font-size: 96%;
 font-weight: bold;
 }
 
+div#search {
+text-align:center;
+}
+
 div.search {
 font-size:93%;
 }

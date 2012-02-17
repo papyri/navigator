@@ -482,7 +482,9 @@
           (recur (conj result
                        (collect-row answer)))
           result)))
-    (catch Exception e (println query)))))
+    (catch Exception e 
+      (println query)
+      (throw e)))))
 
 ;; ## Data queueing functions
 
