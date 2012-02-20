@@ -2,7 +2,6 @@ package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.LanguageCode;
-import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchType;
 import java.net.URL;
