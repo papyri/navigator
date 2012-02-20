@@ -1490,6 +1490,7 @@ public class StringSearchFacet extends Facet{
             if(transformed.equals(StringSearchFacet.SearchOperator.NOT.name())) return "";
             if(transformed.equals(StringSearchFacet.SearchOperator.AND.name())) return ""; // because this is the default operator
             if(transformed.equals(StringSearchFacet.SearchOperator.OR.name())) return "OR";
+            if(clauseRoles.contains(ClauseRole.OPERATOR) && transformed.equals("1w")) return "w";
             if(clauseRoles.contains(ClauseRole.LEMMA)){
                 
                 transformed = expandLemma(transformed);
