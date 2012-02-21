@@ -6,8 +6,14 @@ $(document).ready(
 	*/
 
 	function(){
+	
+		// activate tm search
+		$("li.dialog").each(function(i) {
+          $(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
+          $(this).hide();
+        }); 
 					
-		// first, a little namespacing
+		// a little namespacing
 		
 		if(typeof info == 'undefined') info = {};
 		if(typeof info.papyri == 'undefined') info.papyri = {};
@@ -16,6 +22,7 @@ $(document).ready(
 			
 		// alias to save typing	
 		var hic = info.papyri.thill.guidesearch;
+		hic.COOKIE = "togglestate";
 		hic.reqd_on = {};
 		hic.reqd_off = {};
 		hic.selectedRadios = [];
@@ -340,43 +347,42 @@ $(document).ready(
 	     */
 	    hic.hideSearch = function(evt){
 
-		var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
-		var initialHeight = $("#facet-wrapper").height();
-		var initialWidgetHeight = $("#facet-widgets-wrapper").height();
-		var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
+			var delay = evt.data.delay;
+			var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
+			var initialHeight = $("#facet-wrapper").height();
+			var initialWidgetHeight = $("#facet-widgets-wrapper").height();
+			var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
 	    	var newValsWidth = hic.getValsAndRecordsWidth("hide-search");
 	    	$("#facet-wrapper").height(initialHeight);
-	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, 325);
+	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, delay);
 	    	window.setTimeout(function(){
 	    		$(".title-long").css("display", "block")
 	    		$(".title-short").css("display", "none");
 	    		}, 150);
 	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
-	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, 325, "swing",
+	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, delay, "swing",
 	    		
-    		function(){
+    			function(){
 	    			
-    			$("#facet-wrapper").height(finalHeight);
-    			$("#facet-widgets-wrapper").addClass("search-closed");
-    			$("form[name='facets']").addClass("search-closed");
-    			$("#facet-widgets-wrapper").offset({ left:-23 });
-    			$("#facet-widgets-wrapper").removeClass("search-open");
-    			$("#search-toggle").addClass("toggle-closed");
-    			$("#search-toggle").removeClass("toggle-open");
-    			$("#vals-and-records-wrapper").removeClass("vals-and-records-min");
-    			$("#vals-and-records-wrapper").addClass("vals-and-records-max");
-    			$("#vals-and-records-wrapper").css({"position":"relative" });
-    			var height = initialWidgetHeight > $("#vals-and-records-wrapper").height() ? initialWidgetHeight : $("#vals-and-records-wrapper").height();
-    			$("#search-toggle-pointer").text(">>");
-    			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });	    			
-    			hic.positionTogglePointer();
+    				$("#facet-wrapper").height(finalHeight);
+    				$("#facet-widgets-wrapper").addClass("search-closed");
+    				$("form[name='facets']").addClass("search-closed");
+    				$("#facet-widgets-wrapper").offset({ left:-23 });
+    				$("#facet-widgets-wrapper").removeClass("search-open");
+    					$("#search-toggle").addClass("toggle-closed");
+    				$("#search-toggle").removeClass("toggle-open");
+    				$("#vals-and-records-wrapper").removeClass("vals-and-records-min");
+    				$("#vals-and-records-wrapper").addClass("vals-and-records-max");
+    				$("#vals-and-records-wrapper").css({"position":"relative" });
+    				var height = initialWidgetHeight > $("#vals-and-records-wrapper").height() ? initialWidgetHeight : $("#vals-and-records-wrapper").height();
+    				$("#search-toggle-pointer").text(">>");
+    				$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });	    			
+    				hic.positionTogglePointer();
 
-    		}
-	    	
-	    	
-    	);
+    			});
     	$("#search-toggle").unbind('click');
     	$("#search-toggle").click(hic.showSearch);
+    	$.cookie(hic.COOKIE, 0);
 	    
    }
     
@@ -421,7 +427,8 @@ $(document).ready(
 			
 			);
 			$("#search-toggle").unbind('click');
-			$("#search-toggle").click(hic.hideSearch);
+			$("#search-toggle").click({ delay:325 }, hic.hideSearch);
+			$.cookie(hic.COOKIE, null);
 		
 		}
 		
@@ -557,21 +564,18 @@ $(document).ready(
 			}
 		
 		});		
-		hic.setCookie = function(name,value,hours) {
+		hic.isSubsequentPage = function(){
 		
-    		if (hours) {
-        		var date = new Date();
-       			date.setTime(date.getTime()+(hours*60*60*1000));
-        		var expires = "; expires="+date.toGMTString();
-    	}
-    	else var expires = "";
-    	document.cookie = name+"="+value+expires+"; path=/";
+			var pageno = decodeURI((RegExp('page=(\\d+)(&|$)').exec(location.search)||[,null])[1]);
+			if(pageno != null && pageno > 1) return true;
+			return false;
+		
 		}
-		
+	
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		// select substring as default
 		$("#substring").click();
-		$(".toggle-open").click(hic.hideSearch);
+		$(".toggle-open").click({ delay: 325 }, hic.hideSearch);
 		$(".toggle-closed").click(hic.showSearch);		
 		$("#vals-and-records-wrapper").width(hic.getValsAndRecordsWidth("init"));
 		hic.positionTogglePointer();
@@ -589,6 +593,14 @@ $(document).ready(
 		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").change(hic.tidyQueryString);
 		// sets cookie on click to record to allow reversion to current search results
 		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
+		if($.cookie(hic.COOKIE) == 0 && hic.isSubsequentPage()){
+		
+			var e = {};
+			e.data = {};
+			e.data.delay = 0;
+			hic.hideSearch(e);
+		
+		}
 	
 	}
 	
