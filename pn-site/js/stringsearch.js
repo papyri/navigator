@@ -101,13 +101,6 @@ $(document).ready(
 		
 		}
 		
-	/*	hic.lastWordIsNotOrLexOrAndOrNearOrRegex = function(boxval, controls){
-		
-			if(boxval.match(lastWordIsLexNotAndNearOrRegexRegExp)) return true;
-			return false;		
-		
-		}
-	*/	
 		hic.lastWordIsKeywordOtherThanNot = function(boxval, controls){
 		
 			if(boxval.match(lastWordIsKeywordNotNotRegExp)) return true;
@@ -197,13 +190,15 @@ $(document).ready(
 			if(boxval.match(proxRegExp)){
 			
 				$(controls).find(".prxcount").removeAttr("disabled");
-			
+				$("#within").css("color", "#000");
+				
 			}
 			else{
 			
 				var prxcount = $(controls).find(".prxcount");
 				$(prxcount).val("");
 				$(prxcount).attr("disabled", "disabled");
+				$("#within").css("color", "#aaa");
 			
 			}
 		
@@ -217,6 +212,7 @@ $(document).ready(
 			if(boxval.match(proxCountRegExp)){
 			
 				$(controls).find(".prxunit").removeAttr("disabled");
+				$(controls).find(".prxunit").val("chars");
 			
 			}
 			else{
