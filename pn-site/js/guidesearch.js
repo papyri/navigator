@@ -269,7 +269,7 @@ $(document).ready(
 	    		if(keyword.match(proxRegExp)){
 	    		
 	    			var proxcount = $(stringcontrols[i]).find(".prxcount").val().match(/^\d{1,2}$/) ? $(stringcontrols[i]).find(".prxcount").val() : "1";
-	    			var proxunit = $(stringcontrols[i]).find(".prxunit").val() == "chars" ? "chars" : "words";	// default to 'words'
+	    			var proxunit = $(stringcontrols[i]).find(".prxunit").val() == "words" ? "words" : "chars";	// default to 'chars'
 	    			searchString += "~" + proxcount + proxunit;
 	    		
 	    		}	 

@@ -199,11 +199,11 @@ public class StringSearchFacet extends Facet{
         html.append(formName.name());
         html.append("\" size=\"37\" maxlength=\"250\" class=\"keyword\"></input>");
         html.append("<span class=\"prx\">");
+        html.append("<span id=\"within\">within</span>");
         html.append("<input type=\"text\" name=\"prxcount\" class=\"prxcount\" size=\"2\" maxlength=\"2\" disabled=\"disabled\"/>");
         html.append(" <select name=\"prxunit\" class=\"prxunit\" disabled=\"disabled\">");
-        html.append("<option selected=\"selected\" value=\"none\">---</option>");
+        html.append("<option selected=\"selected\" value=\"chars\">chars</option>");
         html.append("<option value=\"words\">words</option>");
-        html.append("<option value=\"chars\">chars</option>");
         html.append("</select>");
         html.append("</span>");
         html.append("</p>");
