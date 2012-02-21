@@ -567,7 +567,7 @@ $(document).ready(
 		hic.isSubsequentPage = function(){
 		
 			var pageno = decodeURI((RegExp('page=(\\d+)(&|$)').exec(location.search)||[,null])[1]);
-			if(pageno != null && pageno > 1) return true;
+			if(pageno != 'null') return true;
 			return false;
 		
 		}
