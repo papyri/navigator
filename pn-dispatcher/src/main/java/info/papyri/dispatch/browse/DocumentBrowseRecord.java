@@ -2,16 +2,15 @@ package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.LanguageCode;
+import info.papyri.dispatch.browse.facet.StringSearchFacet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm;
-import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchType;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
 
@@ -38,7 +37,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String solrQueryString;
   private Long position;
   private Long total;
-  //private ArrayList<SearchTerm> highlightTerms;
+  private Pattern[] highlightTerms;
   
   private static IdComparator documentComparator = new IdComparator();
   
@@ -54,169 +53,112 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
     this.hasIllustration = illus;
-    this.highlightString = buildHighlightString(sts);
+    this.highlightTerms = buildHighlightTerms(sts);
+    this.highlightString = buildHighlightString(sts );
     
   }
   
-  String buildHighlightString(ArrayList<SearchTerm> searchTerms){
-      
-      StringBuilder hilites = new StringBuilder();
-      ArrayList<String> regexes = new ArrayList<String>();
-      
+  
+  final Pattern[] buildHighlightTerms(ArrayList<SearchTerm> searchTerms){
+ 
+      FileUtils util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+      ArrayList<Pattern> hilites = new ArrayList<Pattern>();
       Iterator<SearchTerm> stit = searchTerms.iterator();
       while(stit.hasNext()){
+      try{
+          SearchTerm searchTerm = stit.next();
+          String transformedString = searchTerm.buildTransformedString();
+          if(transformedString == null) continue;
+          if("".equals(transformedString) || searchTerm.getClauseRoles().contains(ClauseRole.OPERATOR)) continue;
+          if(searchTerm.getClauseRoles().contains(ClauseRole.REGEX)){
+              
+              String trimmedRegex = trimRegex(transformedString);
+              trimmedRegex = util.substituteDiacritics(trimmedRegex);
+              Pattern trimmedPattern = Pattern.compile(trimmedRegex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
+              hilites.add(trimmedPattern);
+             
+              
+          }else if(searchTerm.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
+              
+              Pattern[] patterns = util.getSubstringHighlightPatterns(transformedString);
+              hilites.addAll(Arrays.asList(patterns));
+              
+              
+          }else{
+              
+              
+              Pattern[] patterns = util.getPhraseHighlightPatterns(transformedString);
+              hilites.addAll(Arrays.asList(patterns));
+          }
+          
+      }catch(Exception e){}
+      }
+      Pattern[] patterns = new Pattern[hilites.size()];
+      return hilites.toArray(patterns);
       
-          SearchTerm term = stit.next();
-                
+  }
+  
+  final String buildHighlightString(ArrayList<SearchTerm> searchTerms){
+      
+      StringBuilder hilite = new StringBuilder();
+      Iterator<SearchTerm> stit = searchTerms.iterator();
+      while(stit.hasNext()){
+          
           try{
-          
-              String searchString = term.buildTransformedString(); 
-              hilites.append(searchString);
-              hilites.append(" ");
+              
+              SearchTerm searchTerm = stit.next();
+              String term = searchTerm.buildTransformedString();
+              ArrayList<ClauseRole> roles = searchTerm.getClauseRoles();
+              if(!"".equals(term)){
                   
-              }
-          
-           catch (Exception e){} 
-          
-      }
-           
-      return hilites.toString().trim();
-      
-  }
+                  if(roles.contains(ClauseRole.REGEX)){
 
-  String transformSubstringSearchToHighlightPattern(String origSearch){
-      
-      origSearch = transformWildcardToRegex(origSearch);
-      if(!Character.toString(origSearch.charAt(0)).equals("^")) origSearch = "[\\s]([\\S]*?)" + origSearch;
-      if(!Character.toString(origSearch.charAt(origSearch.length() - 1)).equals("^")) origSearch += "([\\S]*?)[\\s]";
-      origSearch = origSearch.replaceAll("\\^", "[\\\\s]");
-      
-      return origSearch;
-      
-  }
-  
-  ArrayList<String> getExpandedRegexes(ArrayList<String> regexes){
-  
-      ArrayList<String> expandedStrings = new ArrayList<String>();
-      FileUtils util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-      String slurpString = util.loadTextFromId(url.toExternalForm());
-      Iterator<String> rit = regexes.iterator();
-      while(rit.hasNext()){
-          
-          String regex = rit.next();
-          Pattern pattern = Pattern.compile(regex);
-          Matcher matcher = pattern.matcher(slurpString);
-          while(matcher.find()){
-              
-              String found = matcher.group();
-              expandedStrings.add(found);
-              
-              
-          }
-          
-      }
-     
-      return expandedStrings;
-      
-  }
-  
-  String transformProximitySearchToHighlightPattern(String origSearch){
-      
-      origSearch = transformWildcardToRegex(origSearch);
-      String[] searchBits = origSearch.split("\\s+");
-      Pattern opPattern = Pattern.compile("(\\d+)(w|n)");
-      String regexReplace = "";
-      String operation = "w";
-      StringBuilder regex = new StringBuilder();
-      
-      for(int i = 0; i < searchBits.length; i++){
-          
-          String bit = searchBits[i];
-          Matcher opMatcher = opPattern.matcher(bit);
-          if(opMatcher.matches()){
-          
-              String length = opMatcher.group(1);
-              regexReplace = "\\s(\\S+\\s){1," + length + "}\\s";
-              operation = opMatcher.group(2);
-              regex.append(regexReplace);
-              
-          }
-          else{
-              
-              regex.append(bit);
-              
-          }
-          
-      }
-      
-      if(!operation.equals("w")){
-          
-          regex.append("|");
-          for(int i = searchBits.length - 1; i >= 0; i--){
-              
-              String bit = searchBits[i];
-              Matcher opMatcher = opPattern.matcher(bit);
-              if(opMatcher.matches()){
+                          String trimmedRegex = trimRegex(term);
+                          hilite.append(ClauseRole.REGEX.name());
+                          hilite.append(":");
+                          hilite.append(trimmedRegex);
+
+
+                  }else if (searchTerm.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
+
+                      hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
+                      hilite.append(":");
+                      hilite.append(term);              
+
+                  } else{
+
+                      hilite.append(StringSearchFacet.SearchType.PHRASE.name());
+                      hilite.append(":");
+                      hilite.append(term);
+
+                  }
                   
-                  regex.append(regexReplace);
-                  
+                                if(stit.hasNext()) hilite.append(" ");
+
+              
               }
-              else{
-                  
-                  regex.append(bit);
-                  
-              }
-              
-              
-          }
+
           
+          } catch(Exception e){}
           
       }
       
-      return regex.toString();
-  }
-  
-  String transformUserDefinedSearchToHighlightPattern(String origSearch){
-      
-      origSearch = origSearch.substring(origSearch.indexOf(":") + 1);
-      origSearch = transformWildcardToRegex(origSearch);
-      
-      return origSearch;
+      return hilite.toString();
       
   }
   
-  String transformWildcardToRegex(String origSearch){
+  private String trimRegex(String rawRegex){
       
-      origSearch = origSearch.replaceAll("\\?", ".");
-      origSearch = origSearch.replaceAll("\\*", ".*");
-      return origSearch;
-      
-  }
-  
-  Boolean containsWildcard(String wild){
-      
-      return (!wild.contains("?") && !wild.contains("*"));  
-      
-  }
-    
-  String regexify(SearchType searchType, String searchString){
-      
-      if(searchType == SearchType.USER_DEFINED) return transformUserDefinedSearchToHighlightPattern(searchString);
-      if(searchType == SearchType.SUBSTRING) return transformSubstringSearchToHighlightPattern(searchString);
-      if(searchType == SearchType.PROXIMITY) return transformProximitySearchToHighlightPattern(searchString);
-      return transformWildcardToRegex(searchString);
+      if(rawRegex.length() < 3) return rawRegex;
+      String prefix = rawRegex.substring(0, 3);
+      String suffix = rawRegex.substring(rawRegex.length() - 3, rawRegex.length());
+      String trimmedRegex = rawRegex;
+      if("^.*".equals(prefix)) trimmedRegex = trimmedRegex.substring(3);
+      if(".*$".equals(suffix)) trimmedRegex = trimmedRegex.substring(0, trimmedRegex.length() - 3);
+      return trimmedRegex;
       
   }
   
-  Boolean needsRegexification(SearchType searchType, String searchString){
-      
-      if(containsWildcard(searchString)) return true;
-      if(searchType == SearchType.REGEX) return true;
-      if(searchType == SearchType.PROXIMITY) return true;
-      if(searchType == SearchType.SUBSTRING) return true;
-      return false;
-      
-  }
   
   @Override
   public String getHTML() {
@@ -457,7 +399,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       StringBuilder html = new StringBuilder();
       try{
           FileUtils util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-          List<String> kwix = util.highlightMatches(highlightString, util.loadTextFromId(url.toExternalForm()));
+          List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
           html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
           for(String kwic : kwix){
 
