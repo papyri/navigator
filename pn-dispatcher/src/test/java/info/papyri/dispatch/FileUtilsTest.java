@@ -84,7 +84,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("Ostrakon");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -105,7 +105,7 @@ public class FileUtilsTest extends TestCase {
     expResult.add("Sheep");
     expResult.add("sheep");
     expResult.add("sheep");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -125,7 +125,7 @@ public class FileUtilsTest extends TestCase {
     List<String> expResult = new ArrayList<String>();
     expResult.add("ἀναγκαία̣ς");
     expResult.add("χ[ρ]είας");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -161,7 +161,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("καὶ στρ]ατηγ");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -180,7 +180,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("μεν) κα");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -200,7 +200,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("στρ̣[ατη-]<br/>31. γῶι");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -219,7 +219,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("σ]τρατηγ</span>είας");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -238,7 +238,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("Alexandria");
-    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
     int matches = 0;
     for (String e : expResult) {
       if (result.contains(e)) {
@@ -255,7 +255,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("τουτ’έστιν");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -274,7 +274,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("sheep");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -294,7 +294,7 @@ public class FileUtilsTest extends TestCase {
     List<String> expResult = new ArrayList<String>();
     expResult.add("<span class=\"highlight\">sheep</span>");
     expResult.add("<span class=\"highlight\">sheep-</span>pens");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -311,7 +311,7 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/bgu;2;521";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     String text = instance.loadTextFromId(id);
-    String result = instance.highlight(query, text);
+    String result = instance.standardHighlight(query, text);
     assertTrue(result.equals(text));
   }
 
@@ -321,7 +321,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("κα̣ισ");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -340,7 +340,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
     expResult.add("<span class=\"highlight\">μὲν [κα</span>");
-    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -357,7 +357,7 @@ public class FileUtilsTest extends TestCase {
     String query = "transcription_ngram_ia:(θμοινεθυμις)";
     String id = "http://papyri.info/ddbdp/p.fuad.i.univ;;5";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
     assertTrue(result.contains("<br id=\"av,2-l3\"><span class=\"linenumber\">3</span><span class=\"highlight\">Θμ̣ο̣ινεθῦμις</span>"));
   }
   
@@ -365,7 +365,7 @@ public class FileUtilsTest extends TestCase {
     String query = "transcription_ngram_ia:(\\^θρασω\\^)";
     String id = "http://papyri.info/ddbdp/p.sakaon;;94";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
     assertTrue(result.contains("<br id=\"ar-l5\"><span class=\"linenumber\">5</span><span class=\"highlight\">Θρασώ</span>"));
   }
 
@@ -373,7 +373,7 @@ public class FileUtilsTest extends TestCase {
     String query = "transcription_ngram_ia:(απολλωνιωι)";
     String id = "http://papyri.info/ddbdp/bgu;10;1941";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-    String result = instance.highlight(query, instance.loadHtmlFromId(id));
+    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
     assertTrue(result.contains("<span class=\"highlight\">Ἀπολλωνί̣ωι<br id=\"aFrA,2-l3\"></span>"));
   }
 

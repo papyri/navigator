@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.SocketTimeoutException;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.ServletConfig;
@@ -152,7 +153,8 @@ public class Reader extends HttpServlet {
     }
     if (f != null && f.exists()) {
       try {
-        out.write(util.highlight(q, util.loadFile(f)));
+        Pattern[] patterns = util.buildPatterns(q);
+        out.write(util.highlight(patterns, util.loadFile(f)));
       } catch (Exception e) {
         e.printStackTrace(System.out);
       } finally {

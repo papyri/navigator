@@ -960,7 +960,6 @@ public class StringSearchFacet extends Facet{
         Pattern charProxRegex = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
         private String LEX_MARKER = "LEX";
         private String REGEX_MARKER = "REGEX";
-       // private String SUBSTRING_MARKER = "#";
         
         SearchClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
             
@@ -1065,8 +1064,7 @@ public class StringSearchFacet extends Facet{
        }
        
        Integer getIndexOfPreviousOperand(Integer start, ArrayList<SearchClause> clauses){
-           
-           
+                    
            for(int i = start; i >= 0; i--){
                
                SearchClause clause = clauses.get(i);
@@ -1245,8 +1243,7 @@ public class StringSearchFacet extends Facet{
             super(rs, tg, caps, marks);
             assignClauseRoles();
             transformedClauses = doCharsProxTransform(clauseComponents);
-         //   System.out.println("Creating " + rs + " as a SubClause");
-                   
+
         }
         
         @Override
