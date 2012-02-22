@@ -225,8 +225,9 @@ $(document).ready(
 		
 			if(boxval.match(proxCountRegExp)){
 			
-				$(controls).find(".prxunit").removeAttr("disabled");
-				$(controls).find(".prxunit").val("chars");
+				var prxunit = $($(controls).find(".prxunit"));
+				prxunit.removeAttr("disabled");
+				if(prxunit.val() != "words" && prxunit.val() != "chars") prxunit.val("chars");
 			
 			}
 			else{
