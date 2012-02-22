@@ -52,7 +52,8 @@ $(document).ready(
 		var alreadyContainsNotRegExp = new RegExp(/NOT/);
 		var alreadyContainsConjunctionRegExp = new RegExp(/(AND|OR)/);
 		var alreadyContainsLexRegExp = new RegExp(/LEX/);
-		
+		var alreadyContainsAndRegExp = new RegExp(/AND/);
+		var alreadyContainsOrRegExp = new RegExp(/OR/);		
 		
 		/*************************
 		 * filtration functions  *
@@ -136,6 +137,20 @@ $(document).ready(
 		
 		}
 		
+		hic.alreadyContainsAnd = function(boxval, controls){
+		
+			if(boxval.match(alreadyContainsAndRegExp)) return true;
+			return false;
+		
+		}
+		
+		hic.alreadyContainsOr = function(boxval, controls){
+		
+			if(boxval.match(alreadyContainsOrRegExp)) return true;
+			return false;
+		
+		}
+		
 		hic.isAwaitingProximityInput = function(boxval, controls){
 		
 			if(boxval.match(proxRegExp)){
@@ -163,9 +178,9 @@ $(document).ready(
 		// build filtration data structure
 		
 		hic.activationRules = {};
-		hic.activationRules["AND"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction, hic.alreadyContainsProximity];
-		hic.activationRules["OR"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction, hic.alreadyContainsProximity];
-		hic.activationRules["NOT"] = [hic.textBoxHasContent];
+		hic.activationRules["AND"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsOr];
+		hic.activationRules["OR"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsAnd, hic.alreadyContainsNot];
+		hic.activationRules["NOT"] = [hic.lastWordIsKeyword];
 		hic.activationRules["LEX"] = [hic.lastWordIsWordButNotKeyword, hic.isAwaitingProximityInput, hic.alreadyContainsRegex, hic.alreadyContainsLex];
 		hic.activationRules["THEN"] = [hic.textBoxIsEmpty, hic.alreadyContainsNot, hic.alreadyContainsProximity, hic.lastWordIsKeyword, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction];
 		hic.activationRules["NEAR"] = [hic.textBoxIsEmpty, hic.alreadyContainsNot, hic.alreadyContainsProximity, hic.lastWordIsKeywordOtherThanNot, hic.notAloneNotPreceded, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction];
@@ -263,7 +278,8 @@ $(document).ready(
 		
 			$(button).removeAttr("disabled");
 			$(button).removeClass("ui-state-disabled");
-			$(button).addClass("ui-state-default");
+			//$(button).addClass("ui-state-default");
+			$(button).css("background", "#C0D3BC url(css/custom-theme/images/ui-bg_glass_75_c0d3bc_1x400.png) 50% 50% repeat-x");
 		
 		}
 		
@@ -300,10 +316,29 @@ $(document).ready(
 			mtr.find("input.prxcount").attr("disabled", "disabled");
 			mtr.find(".prx select").attr("disabled", "disabled");
 			mtr.after(searchHTML.clone());
-			$(lastTopSelector + " .str-operator").text("and");
+			var displayVal = val == "+" ? "" : val.toUpperCase() + " ";
+			var textbox = $(lastTopSelector + " .keyword");
+			textbox.val(displayVal);
 			hic.doButtonActivationCheck("", $(lastTopSelector));
 			hic.doProxControlsActivationCheck("", $(lastTopSelector));
+			textbox.focus();
 			
+		}
+		
+		hic.doNot = function(){
+		
+			var textval = $(this).parents(topSelector).find(".keyword").val();
+			if(hic.textBoxIsEmpty(textval, null)){
+			
+				hic.addKeyWord.call($(this));
+			
+			}
+			else{
+			
+				hic.addNewClause.call($(this));
+			
+			}
+		
 		}
 		
 		hic.clearValues = function(){
@@ -349,7 +384,13 @@ $(document).ready(
 				
 		});
 		$(".syntax-add").live("click", hic.addNewClause);
-		$(".syntax:not(.syntax-clear, .syntax-add, .syntax-remove)").live("click", hic.addKeyWord);
+		$(".syntax-lex").live("click", hic.addKeyWord);
+		$(".syntax-then").live("click", hic.addKeyWord);
+		$(".syntax-near").live("click", hic.addKeyWord);
+		$(".syntax-regex").live("click", hic.addKeyWord);
+		$(".syntax-and").live("click", hic.addNewClause);
+		$(".syntax-or").live("click", hic.addNewClause);
+		$(".syntax-not").live("click", hic.doNot);
 		$(".syntax-clear").live("click", hic.clearValues);
 		$(".syntax-remove").live("click", function(){
 		
