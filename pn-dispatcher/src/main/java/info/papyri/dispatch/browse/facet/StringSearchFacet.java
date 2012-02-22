@@ -95,7 +95,7 @@ public class StringSearchFacet extends Facet{
         NEAR("near"),
         REGEX("regex"),
         CLEAR("clear"),
-        ADD("+"),
+       // ADD("+"),
         REMOVE("-");
 
         String label;
@@ -139,7 +139,7 @@ public class StringSearchFacet extends Facet{
      */
     private HashMap<Integer, ArrayList<SearchClause>> searchConfigurations = new HashMap<Integer, ArrayList<SearchClause>>();
     
-    /** The path to the Solr index for lemmatisated searches */
+    /** The path to the Solr index for lemmatised searches */
     private static String morphSearch = "morph-search/";
     
     ArrayList<CustomApplicationException> exceptionLog;
@@ -756,7 +756,20 @@ public class StringSearchFacet extends Facet{
               
     }
     
-    
+    public ArrayList<SearchClause> getAllSearchClauses(){
+        
+        ArrayList<SearchClause> clauses = new ArrayList<SearchClause>();
+        
+        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchConfigurations.entrySet()){
+            
+            ArrayList<SearchClause> linkedClauses = entry.getValue();
+            clauses.addAll(linkedClauses);
+            
+        }
+        
+        return clauses;
+        
+    }
     
     @Override
     public ArrayList<CustomApplicationException> getExceptionLog(){
