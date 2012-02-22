@@ -372,7 +372,7 @@ public class StringSearchFacet extends Facet{
         
             SearchClause nowConfig = scit.next();
             query.append(nowConfig.getDisplayString());
-            if(scit.hasNext()) query.append(" AND ");
+            if(scit.hasNext()) query.append(" ");
         
             
         }
