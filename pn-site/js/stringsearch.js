@@ -42,7 +42,6 @@ $(document).ready(
 		
 		var whitespaceOnlyRegExp = new RegExp(/^\s*$/);
 		var lastWordIsKeywordRegExp = new RegExp(/(AND|OR|NOT|(LEX(:?))|THEN|NEAR|REGEX)\s*$/);
-		// var lastWordIsLexNotAndNearOrRegexRegExp = new RegExp(/(NOT|AND|NEAR|LEX|OR|REGEX)\s*$/);
 		var lastWordIsKeywordNotNotRegExp = new RegExp(/(AND|OR|LEX|THEN|NEAR|REGEX)\s*$/);
 		var alreadyContainsProximityRegExp = new RegExp(/(THEN|NEAR)/);
 		var notNotPrecededRegExp = new RegExp(/^\s*NOT\s*$/);
@@ -179,7 +178,7 @@ $(document).ready(
 		
 		hic.activationRules = {};
 		hic.activationRules["AND"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsOr];
-		hic.activationRules["OR"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsAnd, hic.alreadyContainsNot];
+		hic.activationRules["OR"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.alreadyContainsAnd, hic.alreadyContainsNot, hic.alreadyContainsProximity];
 		hic.activationRules["NOT"] = [hic.lastWordIsKeyword];
 		hic.activationRules["LEX"] = [hic.lastWordIsWordButNotKeyword, hic.isAwaitingProximityInput, hic.alreadyContainsRegex, hic.alreadyContainsLex];
 		hic.activationRules["THEN"] = [hic.textBoxIsEmpty, hic.alreadyContainsNot, hic.alreadyContainsProximity, hic.lastWordIsKeyword, hic.alreadyContainsRegex, hic.alreadyContainsNot, hic.alreadyContainsConjunction];
