@@ -95,7 +95,6 @@ public class StringSearchFacet extends Facet{
         NEAR("near"),
         REGEX("regex"),
         CLEAR("clear"),
-       // ADD("+"),
         REMOVE("-");
 
         String label;
@@ -119,7 +118,7 @@ public class StringSearchFacet extends Facet{
     
     static Pattern PROX_OPERATOR_REGEX = Pattern.compile("\\d{1,2}(w|n|wc|nc)");
     
-    static String PHRASE_MARKER = ".*(\"|')[\\p{L}]*\\s[\\p{L}]*(\\1).*";
+    static String PHRASE_MARKER = ".*(\"|')[\\p{L}]+(\\s+[\\p{L}]+)*(\\1).*";
             
     static Pattern WHITESPACE_DETECTOR = Pattern.compile("^.*\\s+.*$");
    
@@ -862,12 +861,12 @@ public class StringSearchFacet extends Facet{
             String proxOperator = num + operator + unit;
 
             searchString = searchString.replace(proxMatch.group(1), proxOperator);
-
             if(metricsMatch.matches() && metricsMatch.group(1) != null && metricsMatch.group(1).length() > 0){
                 
                 searchString = searchString.replace(metricsMatch.group(1), "");
             }
 
+            searchString = transformPhraseSearch(searchString);
             Iterator<String> sit2 = subclauses.iterator();
             while(sit2.hasNext()){
 
@@ -877,6 +876,34 @@ public class StringSearchFacet extends Facet{
             }
 
             return searchString;
+            
+        }
+        
+        String transformPhraseSearch(String fullSearch){
+            
+            if(!fullSearch.contains("\"") && !fullSearch.contains("'")) return fullSearch;
+            Pattern phrasePattern = Pattern.compile("(\"|')([^'\"]+)(\\1)");
+            Matcher phraseMatcher = phrasePattern.matcher(fullSearch);
+            ArrayList<String> quotedPhrases = new ArrayList<String>();
+            ArrayList<String> transformedPhrases = new ArrayList<String>();
+            while(phraseMatcher.find()){
+                quotedPhrases.add(phraseMatcher.group());
+                String phrase = phraseMatcher.group(2);
+                phrase = phrase.replaceAll("\\s+", " w ");
+                transformedPhrases.add(phrase);
+                
+            }
+            
+            for(int i = 0; i < quotedPhrases.size(); i++){
+                
+                String quotedPhrase = quotedPhrases.get(i);
+                String newPhrase = transformedPhrases.get(i);
+                fullSearch = fullSearch.replaceAll(quotedPhrase, newPhrase);
+                
+            }
+            
+            return fullSearch;
+            
             
         }
         
@@ -1009,10 +1036,8 @@ public class StringSearchFacet extends Facet{
            return clauseRoles;
             
        }
-       
-
-       
-       ArrayList<ClauseRole> getAllClauseRoles(){
+           
+       public ArrayList<ClauseRole> getAllClauseRoles(){
            
            ArrayList<ClauseRole> allRoles = new ArrayList<ClauseRole>();
            Iterator<ClauseRole> scrit = clauseRoles.iterator();
@@ -1120,8 +1145,7 @@ public class StringSearchFacet extends Facet{
             if(allRoles.contains(ClauseRole.START_PROX)) return SearchType.PROXIMITY;
             if(originalString.matches(PHRASE_MARKER)) return SearchType.PHRASE;
             return type;
-           
-           
+                  
        }
        
        SolrField parseForField(SearchType searchType, SearchTarget searchTarget, Boolean caps, Boolean marks){
@@ -1380,6 +1404,8 @@ public class StringSearchFacet extends Facet{
             String distRegex = ".{1," + numChars + "}";
             prevTerm = convertWildcardToRegexSyntax(prevTerm);
             nextTerm = convertWildcardToRegexSyntax(nextTerm);
+            prevTerm = prevTerm.replaceAll("\\^", "\\\\b");
+            nextTerm = nextTerm.replaceAll("\\^", "\\\\b");
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
             if(unit.equals("w")) return regex;
             String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
@@ -1509,11 +1535,11 @@ public class StringSearchFacet extends Facet{
             }
             if(target != SearchTarget.TEXT){
                 
-                transformed = transformed.toLowerCase();
+                transformed = lowerCaseExcludingRegexes(transformed);
                 return transformed;
                 
             }
-            if(ignoreCaps) transformed = transformed.toLowerCase();
+            if(ignoreCaps) transformed = lowerCaseExcludingRegexes(transformed);
             if(ignoreMarks) transformed = FileUtils.stripDiacriticals(transformed);
             transformed = transformed.replaceAll("ς", "σ");  
             if(clauseRoles.contains(ClauseRole.REGEX)){
@@ -1538,6 +1564,34 @@ public class StringSearchFacet extends Facet{
            return true;
            
            
+        }
+        
+        String lowerCaseExcludingRegexes(String ucString){
+            
+            if(!clauseRoles.contains(ClauseRole.REGEX)) return ucString.toLowerCase();
+            int curlyBracketCount = 0;
+            String precedingCharacter = "";
+            StringBuilder lced = new StringBuilder();
+            for(int i = 0; i < ucString.length(); i++){
+            
+                String c = Character.toString(ucString.charAt(i));
+                if("\\".equals(precedingCharacter) || curlyBracketCount > 0){
+                    
+                    lced.append(c);
+                    
+                }
+                else{
+                    
+                    lced.append(c.toLowerCase());
+                    
+                }
+                precedingCharacter = c;
+                if("{".equals(c)) curlyBracketCount++;
+                if("}".equals(c)) curlyBracketCount--;
+                
+            }
+            
+            return lced.toString();
         }
         
         String expandLemma(String declinedForm) throws InternalQueryException{
