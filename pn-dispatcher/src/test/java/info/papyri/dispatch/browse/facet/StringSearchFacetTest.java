@@ -121,7 +121,7 @@ public class StringSearchFacetTest extends TestCase {
             ArrayList<StringSearchFacet.SearchClause> firstConfig = configs.get(6);
             assertEquals(1, configs.size());
             assertEquals(5, firstConfig.size());
-            assertTrue(firstConfig.get(0).getIgnoreCaps());           
+            assertTrue(firstConfig.get(0).getIgnoreCaps()); 
 
             // Search type should default to substring
             assertEquals(StringSearchFacet.SearchType.SUBSTRING, firstConfig.get(0).parseForSearchType());

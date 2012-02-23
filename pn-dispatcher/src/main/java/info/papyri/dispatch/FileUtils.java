@@ -536,8 +536,10 @@ public class FileUtils {
       
       return patterns;
   }
+  
+
     
-   List<String> getTokensFromQuery(String query){
+   public List<String> getTokensFromQuery(String query){
        
       String q = query.replace("*", "£").replace("?", "#");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
@@ -556,7 +558,7 @@ public class FileUtils {
     
    public String substituteDiacritics(String rawString){
         
-        String transformedString = rawString.toLowerCase()
+        String transformedString = rawString
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
                 .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
@@ -571,7 +573,8 @@ public class FileUtils {
    
    public String substituteForSubstringPatternMatch(String rawString){
        
-       String transformedString = rawString.toLowerCase()
+       String transformedString = rawString;
+       transformedString = transformedString.toLowerCase()
                 .replaceAll("([^ ^])", sigla + "$1" + sigla)
                 .replace("^ ^", "\\s+")
                 .replace("^", "(\\b)")
@@ -587,14 +590,24 @@ public class FileUtils {
    
    public String substituteForPhrasePatternMatch(String rawString){
        
-       String transformedString = rawString.toLowerCase()
+       String transformedString = rawString;
+       transformedString = transformedString.toLowerCase()
                 .replaceAll("(\\S)", sigla + "$1" + sigla)
                 .replaceAll("([^£#])$", "$1\\\\b")
                 .replaceAll("\\s", "\\\\s+")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "");
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
+       transformedString = "\\b" + transformedString + "\\b";
        return transformedString;
+       
+   }
+   
+   public String substituteWildcards(String rawString){
+       
+      String transformedString = rawString.replaceAll("£", ".*");
+      transformedString = transformedString.replaceAll("#", ".");
+      return transformedString;
        
    }
    
