@@ -1439,8 +1439,9 @@ public class StringSearchFacet extends Facet{
             
             for(int i = start; i >= 0; i--){
                 
-                if(clauses.get(i).getClauseRoles().contains(ClauseRole.START_PROX)) return i;
-                
+              //  if(clauses.get(i).getClauseRoles().contains(ClauseRole.START_PROX)) return i;
+                 if(clauses.get(i).getClauseRoles().contains(ClauseRole.START_PROX)) return 0;
+               
             }
             
             return -1;
@@ -1451,8 +1452,9 @@ public class StringSearchFacet extends Facet{
             
             for(int i = start; i < clauses.size(); i++){
                 
-                if(clauses.get(i).getClauseRoles().contains(ClauseRole.END_PROX)) return i;
-                
+  //              if(clauses.get(i).getClauseRoles().contains(ClauseRole.END_PROX)) return i;
+                  if(clauses.get(i).getClauseRoles().contains(ClauseRole.END_PROX)) return clauses.size() - 1;
+              
             }
             
             return -1;
