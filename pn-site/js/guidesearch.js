@@ -22,7 +22,8 @@ $(document).ready(
 			
 		// alias to save typing	
 		var hic = info.papyri.thill.guidesearch;
-		hic.COOKIE = "togglestate";
+		hic.HIDE_REVEAL_COOKIE = "togglestate";
+		hic.BETA_COOKIE = "betacode";
 		hic.reqd_on = {};
 		hic.reqd_off = {};
 		hic.selectedRadios = [];
@@ -54,7 +55,7 @@ $(document).ready(
 	   		if(val == "text"){
 	   		
 	   			$("#beta-on, #caps, #marks").removeAttr("disabled", "disabled");
-	   			
+	   			hic.checkBetacode();
 	   			
 	   		} 
 	   		else{
@@ -571,6 +572,19 @@ $(document).ready(
 			return false;
 		
 		}
+		hic.checkBetacode = function(){
+
+			if($.cookie(hic.BETA_COOKIE) == "beta-on"){
+			
+				$("#beta-on").attr("checked", "checked");
+			
+			} else {
+		
+				$("#beta-on").removeAttr("checked");
+		
+			}		
+		
+		}
 	
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
 		// select substring as default
@@ -583,7 +597,13 @@ $(document).ready(
 		// changing date mode causes tidy and submit
 		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
 		// turning betacode on/off selects text input
-		$("#beta-on").change(function(){$(".stringsearch-top-controls:last .keyword").focus();});
+		$("#beta-on").change(function(){
+			
+			$(".stringsearch-top-controls:last .keyword").focus();
+			var beta = $(this).attr("checked") ? "beta-on" : "beta-off";
+			$.cookie(hic.BETA_COOKIE, beta);
+			
+		});
 		// entry into string search triggers text monitoring 
 		$(".stringsearch-top-controls:last .keyword").live("focus", hic.monitorTextInput);
 		//$(".stringsearch-top-controls:last .keyword").live("blur", function(){ $("#keyword").focus(hic.monitorTextInput) });
@@ -593,7 +613,8 @@ $(document).ready(
 		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").change(hic.tidyQueryString);
 		// sets cookie on click to record to allow reversion to current search results
 		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
-		if($.cookie(hic.COOKIE) == 0 && hic.isSubsequentPage()){
+		hic.checkBetacode();
+		if($.cookie(hic.HIDE_REVEAL_COOKIE) == 0 && hic.isSubsequentPage()){
 		
 			var e = {};
 			e.data = {};
@@ -601,6 +622,7 @@ $(document).ready(
 			hic.hideSearch(e);
 		
 		}
+
 	
 	}
 	
