@@ -626,6 +626,7 @@ $(document).ready(
 		});
 		// entry into string search triggers text monitoring 
 		$(".stringsearch-top-controls:last .keyword").live("focus", hic.monitorTextInput);
+
 		//$(".stringsearch-top-controls:last .keyword").live("blur", function(){ $("#keyword").focus(hic.monitorTextInput) });
 		// submit triggers tidy ...
 		$("form[name='facets']").submit(hic.tidyQueryString);

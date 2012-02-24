@@ -281,7 +281,6 @@ $(document).ready(
 		
 			$(button).removeAttr("disabled");
 			$(button).removeClass("ui-state-disabled");
-			//$(button).addClass("ui-state-default");
 			$(button).css("background", "#C0D3BC url(css/custom-theme/images/ui-bg_glass_75_c0d3bc_1x400.png) 50% 50% repeat-x");
 		
 		}
@@ -389,6 +388,7 @@ $(document).ready(
 				var searchbits = hic.trimRecoveredStringSearches(nowsearch);
 				hic.addReqdSearchBoxes(searchbits);
 				hic.removeSearchFromStack(stringbits);	
+				$(topSelector + ":last .keyword").focus();
 			
 			}
 		
@@ -401,8 +401,7 @@ $(document).ready(
 			for(i = 0; i < searchbits.length; i++){
 			
 				var bit = searchbits[i];
-				// trim off brackets
-				bit = bit.substring(1, bit.length - 1);
+				bit = bit.substring(1, bit.length - 1);		// trim brackets
 				searchbits[i] = bit;
  			
 			}
@@ -413,13 +412,20 @@ $(document).ready(
 		
 		hic.addReqdSearchBoxes = function(searchbits){
 		
+			if(searchbits.length < 2) return;
+			var bit = "";
+		
 			for(i = 1; i < searchbits.length; i++){
 			
 				hic.addNewClause.call($(topSelector + ":last .keyword"));
-				var bit = searchbits[i];
+				bit = searchbits[i];
 				$(topSelector + ":last .keyword").val(bit);
 						
 			}
+			
+			var controls = $(topSelector + ":last");
+			hic.doButtonActivationCheck(bit, controls);
+			hic.doProxControlsActivationCheck(bit, controls);
 		
 		}
 		
