@@ -27,6 +27,9 @@ $(document).ready(
 		if(typeof info.papyri.thill.stringsearch == 'undefined') info.papyri.thill.stringsearch = {};
 		var hic = info.papyri.thill.stringsearch;
 		
+		// "import"
+		hic.SEARCH_STRING_STACK = info.papyri.thill.guidesearch.SEARCH_STACK;
+		
 		// first, we make a copy of the entire text-search control block
 		// for easy repetition when users want to add controls
 		// (see hic.addNewClause function)
@@ -278,7 +281,6 @@ $(document).ready(
 		
 			$(button).removeAttr("disabled");
 			$(button).removeClass("ui-state-disabled");
-			//$(button).addClass("ui-state-default");
 			$(button).css("background", "#C0D3BC url(css/custom-theme/images/ui-bg_glass_75_c0d3bc_1x400.png) 50% 50% repeat-x");
 		
 		}
@@ -373,6 +375,76 @@ $(document).ready(
 			hic.doProxControlsActivationCheck(val, controls);
 			
 		}
+		
+		hic.restoreFullTextSearch = function(){
+		
+			var nowVal = $(topSelector + " .keyword").val();
+			if(nowVal && nowVal != ""){
+			
+				var allstrings = $.cookie(hic.SEARCH_STRING_STACK);
+				if(!allstrings || allstrings == "") return false;
+				var stringbits = allstrings.split("|");
+				var nowsearch = stringbits[stringbits.length - 1];
+				var searchbits = hic.trimRecoveredStringSearches(nowsearch);
+				hic.addReqdSearchBoxes(searchbits);
+				hic.removeSearchFromStack(stringbits);	
+				$(topSelector + ":last .keyword").focus();
+			
+			}
+		
+		}
+		
+		hic.trimRecoveredStringSearches = function(nowsearch){
+		
+			nowsearch = nowsearch.replace("OR", ")¤(OR");
+			var searchbits = nowsearch.split("¤");
+			for(i = 0; i < searchbits.length; i++){
+			
+				var bit = searchbits[i];
+				bit = bit.substring(1, bit.length - 1);		// trim brackets
+				searchbits[i] = bit;
+ 			
+			}
+		
+			return searchbits;
+		
+		}
+		
+		hic.addReqdSearchBoxes = function(searchbits){
+		
+			if(searchbits.length < 2) return;
+			var bit = "";
+		
+			for(i = 1; i < searchbits.length; i++){
+			
+				hic.addNewClause.call($(topSelector + ":last .keyword"));
+				bit = searchbits[i];
+				$(topSelector + ":last .keyword").val(bit);
+						
+			}
+			
+			var controls = $(topSelector + ":last");
+			hic.doButtonActivationCheck(bit, controls);
+			hic.doProxControlsActivationCheck(bit, controls);
+		
+		}
+		
+		hic.removeSearchFromStack = function(stringbits){
+		
+			var allstring = "";
+			var penult = stringbits.length - 1;
+			
+			for(i = 0; i < penult; i++){
+				
+				allstring += stringbits[i];
+				if(i < penult - 1) allstring += "|";
+			
+			}
+			
+			if(allstring == "") allstring = null;
+			$.cookie(hic.SEARCH_STRING_STACK, allstring);
+		
+		}
 	
 		/* TODO: live() now deprecated; replace with on() syntax */
 		$(".keyword").live("focus keypress keyup keydown", hic.analyzeTextInput);
@@ -410,5 +482,6 @@ $(document).ready(
 		});
 
 		hic.doButtonActivationCheck("", $(topSelector));
+		hic.restoreFullTextSearch();
 		
 });

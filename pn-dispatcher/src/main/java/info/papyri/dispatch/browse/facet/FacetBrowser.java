@@ -5,7 +5,7 @@ import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
-import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm;
+import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -149,7 +149,7 @@ public class FacetBrowser extends HttpServlet {
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog);
-        //html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
+      //  html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -351,7 +351,7 @@ public class FacetBrowser extends HttpServlet {
     
     ArrayList<DocumentBrowseRecord> retrieveRecords(SolrQuery solrQuery, QueryResponse queryResponse, ArrayList<Facet> facets){
         
-        ArrayList<SearchTerm> searchTerms = this.generateHighlightString(facets);
+        ArrayList<SearchClause> searchClauses = this.generateHighlightString(facets);
 
         ArrayList<DocumentBrowseRecord> records = new ArrayList<DocumentBrowseRecord>();
         
@@ -378,7 +378,7 @@ public class FacetBrowser extends HttpServlet {
                 Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchTerms);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchClauses);
                 setLinearBrowseData(solrQuery, queryResponse, counter, record);
                 records.add(record);
                 counter++;
@@ -404,19 +404,19 @@ public class FacetBrowser extends HttpServlet {
      * @return 
      */
     
-    private ArrayList<SearchTerm> generateHighlightString(ArrayList<Facet> facets){
+    private ArrayList<SearchClause> generateHighlightString(ArrayList<Facet> facets){
         
-        ArrayList<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+        ArrayList<SearchClause> searchClauses = new ArrayList<SearchClause>();
         
         try{
         
             StringSearchFacet ssf = (StringSearchFacet)this.findFacet(facets, StringSearchFacet.class);
-            searchTerms = ssf.getAllSearchTerms();
+            searchClauses = ssf.getAllSearchClauses();
             
         
         }
         catch(FacetNotFoundException fnfe){}
-        return searchTerms;
+        return searchClauses;
         
     }
     
