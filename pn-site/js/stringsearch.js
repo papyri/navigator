@@ -396,7 +396,7 @@ $(document).ready(
 		
 		hic.trimRecoveredStringSearches = function(nowsearch){
 		
-			nowsearch = nowsearch.replace("OR", ")¤(OR");
+			nowsearch = nowsearch.replace(" OR ", ")¤(OR ");
 			var searchbits = nowsearch.split("¤");
 			for(i = 0; i < searchbits.length; i++){
 			
