@@ -22,8 +22,9 @@ $(document).ready(
 			
 		// alias to save typing	
 		var hic = info.papyri.thill.guidesearch;
-		hic.HIDE_REVEAL_COOKIE = "togglestate";
-		hic.BETA_COOKIE = "betacode";
+		hic.HIDE_REVEAL_COOKIE = "togglestate";		// for persising show/hide search panel
+		hic.BETA_COOKIE = "betacode";				// for persisting beta-as-you-type settings
+		hic.SEARCH_STACK = "searchstack";			// back-button behaviour for string-search
 		hic.reqd_on = {};
 		hic.reqd_off = {};
 		hic.selectedRadios = [];
@@ -112,6 +113,7 @@ $(document).ready(
 				     filteredels.push($("input[name='target']").filter(":checked"));	
 	    		
 	    		}
+	    		
 	    	
 	    	}		
 	    	// image filter elements
@@ -249,6 +251,7 @@ $(document).ready(
 				current = currentbits[0];
 			
 			}
+			hic.concatenateSearchToCookie(textval);
 			var hrefwquery = current + "?" + $.param(params);
 			window.location = hrefwquery;
 			return false;
@@ -280,6 +283,21 @@ $(document).ready(
 	    	}
 			totalSearchString = totalSearchString.replace(")¤(OR", " OR");
 	    	return totalSearchString;
+	    
+	    }
+	    
+	    hic.concatenateSearchToCookie = function(textval){
+	    
+	    	var searchstack = $.cookie(hic.SEARCH_STACK) ? $.cookie(hic.SEARCH_STACK) : "";
+	    
+	    	if(textval){
+	    	
+	    		if(searchstack.length > 1) searchstack += "|";
+	    		searchstack += textval;
+	    	
+	    	}
+
+	    	$.cookie(hic.SEARCH_STACK, searchstack);
 	    
 	    }
 	    
@@ -564,7 +582,8 @@ $(document).ready(
 				hic.tidyQueryString();
 			}
 		
-		});		
+		});
+		
 		hic.isSubsequentPage = function(){
 		
 			var pageno = decodeURI((RegExp('page=(\\d+)(&|$)').exec(location.search)||[,null])[1]);
@@ -572,6 +591,7 @@ $(document).ready(
 			return false;
 		
 		}
+		
 		hic.checkBetacode = function(){
 
 			if($.cookie(hic.BETA_COOKIE) == "beta-on"){
@@ -613,6 +633,12 @@ $(document).ready(
 		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").change(hic.tidyQueryString);
 		// sets cookie on click to record to allow reversion to current search results
 		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
+		$("#reset-all").click(function(e){
+		
+			$.cookie(hic.SEARCH_STACK, null);
+			return true;
+		
+		});
 		hic.checkBetacode();
 		if($.cookie(hic.HIDE_REVEAL_COOKIE) == 0 && hic.isSubsequentPage()){
 		
