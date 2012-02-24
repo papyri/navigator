@@ -255,6 +255,11 @@ public class StringSearchFacetTest extends TestCase {
         catch(StringSearchParsingException sspe){
         
             fail("StringSearchParsingException erroneously thrown in test: " + sspe.getMessage());
+        } 
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in assignClauseRoles test:" + e.getMessage());
+            
         }
 
     }
@@ -419,6 +424,11 @@ public class StringSearchFacetTest extends TestCase {
             fail("StringSearchParsingException erroneously thrown in breakIntoComponents test: " + sspe.getMessage());
             
         }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in breakIntoComponents test:" + e.getMessage());
+            
+        }
         
         // non-matching brackets cause MismatchedBracketException to be thrown
         // TODO: will need to check for character-escaping?
@@ -435,6 +445,11 @@ public class StringSearchFacetTest extends TestCase {
             fail("StringSearchParsingException erroneously thrown in breakIntoComponents test: " + sspe.getMessage());
             
         }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in breakIntoComponents test:" + e.getMessage());
+            
+        }
         
           String search9 = "(kai and (ouk NOT ou)))";
         try{
@@ -446,6 +461,11 @@ public class StringSearchFacetTest extends TestCase {
          catch(StringSearchParsingException sspe){
             
             fail("StringSearchParsingException erroneously thrown in breakIntoComponents test: " + sspe.getMessage());
+            
+        }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in breakIntoComponents test:" + e.getMessage());
             
         }
     }
@@ -525,7 +545,7 @@ public class StringSearchFacetTest extends TestCase {
             StringSearchFacet.SubClause term14 = testInstance.new SubClause(origString14, t, true, true);
             assertEquals("^.*(ouk.{1,12}kai|kai.{1,12}ouk).*$", term14.buildTransformedString());
             
-            // TODO: test nested queries etc.
+            
             
         }
         catch(Exception e){
@@ -656,6 +676,11 @@ public class StringSearchFacetTest extends TestCase {
             
             
         }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in parseForSearchType test:" + e.getMessage());
+            
+        }
         
     }
     
@@ -722,7 +747,11 @@ public class StringSearchFacetTest extends TestCase {
             fail("StringSearchParsingException erroneously thrown on parseForField test: " + sspe.getMessage());
             
         }
-        
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in parseForField test:" + e.getMessage());
+            
+        }
     }
     
     public void testParseForHandler(){
@@ -758,6 +787,11 @@ public class StringSearchFacetTest extends TestCase {
             fail("StringSearchParsingException erroneously thrown in parseForHandler test: " + sspe.getMessage());
             
         }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in parseForHandler test:" + e.getMessage());
+            
+        }
     }
     
     public void testGetQueryPrefix(){
@@ -784,6 +818,11 @@ public class StringSearchFacetTest extends TestCase {
             
             fail("StringSearchParsingException erroneously thrown on getQueryPrefix test: " + sspe.getMessage());
             
+            
+        }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown in getQueryPrefix test:" + e.getMessage());
             
         }
     }

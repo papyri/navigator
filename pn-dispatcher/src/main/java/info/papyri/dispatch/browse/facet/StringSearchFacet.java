@@ -783,7 +783,7 @@ public class StringSearchFacet extends Facet{
         Pattern proxMetricsDetect = Pattern.compile(".*(~(\\d{1,2})([\\w]+)?)\\s*$");
         Pattern justMetricsDetect = Pattern.compile("(~(\\d{1,2})([\\w]+)?)\\s*$");
                 
-        ArrayList<SearchClause> buildSearchClauses(String searchString, SearchTarget target, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+        ArrayList<SearchClause> buildSearchClauses(String searchString, SearchTarget target, Boolean caps, Boolean marks) throws MismatchedBracketException, InternalQueryException, MalformedProximitySearchException, IncompleteClauseException, InsufficientSpecificityException, RegexCompilationException{
             
             if(searchString == null) return null;
             ArrayList<SearchClause> clauses = new ArrayList<SearchClause>();
@@ -866,7 +866,7 @@ public class StringSearchFacet extends Facet{
                 searchString = searchString.replace(metricsMatch.group(1), "");
             }
 
-            searchString = transformPhraseSearch(searchString);
+            searchString = transformPhraseSearch(searchString, unit);
             Iterator<String> sit2 = subclauses.iterator();
             while(sit2.hasNext()){
 
@@ -879,7 +879,7 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        String transformPhraseSearch(String fullSearch){
+        String transformPhraseSearch(String fullSearch, String unit){
             
             if(!fullSearch.contains("\"") && !fullSearch.contains("'")) return fullSearch;
             Pattern phrasePattern = Pattern.compile("(\"|')([^'\"]+)(\\1)");
@@ -889,7 +889,8 @@ public class StringSearchFacet extends Facet{
             while(phraseMatcher.find()){
                 quotedPhrases.add(phraseMatcher.group());
                 String phrase = phraseMatcher.group(2);
-                phrase = phrase.replaceAll("\\s+", " w ");
+                String replacement = "c".equals(unit) ? " " : " w ";
+                phrase = phrase.replaceAll("\\s+", replacement);
                 transformedPhrases.add(phrase);
                 
             }
@@ -1001,7 +1002,7 @@ public class StringSearchFacet extends Facet{
         private String LEX_MARKER = "LEX";
         private String REGEX_MARKER = "REGEX";
         
-        SearchClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+        SearchClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws InsufficientSpecificityException, InternalQueryException, MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
             
             originalString = rs;
             target = tg;
@@ -1275,12 +1276,12 @@ public class StringSearchFacet extends Facet{
             
         ArrayList<SearchClause> transformedClauses = new ArrayList<SearchClause>();
         
-        SubClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+        SubClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, InternalQueryException, InsufficientSpecificityException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
             
             super(rs, tg, caps, marks);
             assignClauseRoles();
             transformedClauses = doCharsProxTransform(clauseComponents);
-
+            
         }
         
         @Override
@@ -1304,7 +1305,7 @@ public class StringSearchFacet extends Facet{
         }
         
        
-        final ArrayList<SearchClause> doCharsProxTransform(ArrayList<SearchClause> clauses) throws IncompleteClauseException, RegexCompilationException{
+        final ArrayList<SearchClause> doCharsProxTransform(ArrayList<SearchClause> clauses) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
             
             Integer chpIndex = getCharsProxIndex(clauses);
             if(chpIndex == -1) return clauses;
@@ -1312,12 +1313,9 @@ public class StringSearchFacet extends Facet{
             Integer startIndex = getProxStartTerm(chpIndex, clauses);
             Integer endIndex = getProxPostTerm(chpIndex, clauses);
             if(startIndex == -1 || endIndex == -1) throw new IncompleteClauseException();
-            for(int i = 0; i < startIndex; i++){
-                
-                proxClauses.add(clauses.get(i));
-                
-            }
-            String regex = convertCharProxToRegexSyntax(clauses.get(startIndex).originalString, clauses.get(endIndex).originalString, clauses.get(chpIndex).originalString);
+            String startString = buildCharsProxStartString(clauses, chpIndex);
+            String endString = buildCharsProxEndString(clauses, chpIndex);
+            String regex = convertCharProxToRegexSyntax(startString, endString, clauses.get(chpIndex).originalString);
 
             try{
             
@@ -1330,12 +1328,64 @@ public class StringSearchFacet extends Facet{
                 throw new RegexCompilationException();
                 
             }
-            for(int k = endIndex + 1; k < clauses.size(); k++){
-                
-                proxClauses.add(clauses.get(k));
-            
-            }
             return proxClauses;
+            
+        }
+        
+        String buildCharsProxStartString(ArrayList<SearchClause> clauses, int charProxIndex) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
+
+            StringBuilder startBuilder = new StringBuilder();
+            for(int i = 0; i < charProxIndex; i++){
+                
+                SearchClause clause = clauses.get(i);
+                if(clause.getClauseRoles().contains(ClauseRole.OPERATOR)) continue;
+                if(clause.getClauseRoles().contains(ClauseRole.LEMMA)){
+                    
+                    String lemmata = clause.buildTransformedString();
+
+                    lemmata = lemmata.replaceAll("\\s?OR\\s?", "|");
+                    startBuilder.append(lemmata);
+                    
+                }
+                else{
+                    
+                    startBuilder.append(clause.getOriginalString());
+                    
+                }
+                
+                startBuilder.append(" ");
+                
+            }
+            
+            return startBuilder.toString().trim();
+            
+        }
+        
+        String buildCharsProxEndString(ArrayList<SearchClause> clauses, int charProxIndex) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
+            
+            StringBuilder endBuilder = new StringBuilder();
+            for(int i = charProxIndex + 1; i < clauses.size(); i++){
+                
+                SearchClause clause = clauses.get(i);
+                if(clause.getClauseRoles().contains(ClauseRole.OPERATOR)) continue;
+                if(clause.getClauseRoles().contains(ClauseRole.LEMMA)){
+                    
+                    String lemmata = clause.buildTransformedString();
+                    lemmata = lemmata.replaceAll("\\s?OR\\s?", "|");
+                    endBuilder.append(lemmata);
+                    
+                }
+                else{
+                    
+                    endBuilder.append(clause.getOriginalString());
+                    
+                }
+                
+                endBuilder.append(" ");
+                
+            }
+                      
+            return endBuilder.toString().trim();    
             
         }
         
@@ -1509,7 +1559,7 @@ public class StringSearchFacet extends Facet{
         
         Pattern charProxTermRegex = Pattern.compile("\\d{1,2}(w|n)c");
         
-        SearchTerm(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
+        SearchTerm(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, InsufficientSpecificityException, InternalQueryException, IncompleteClauseException, RegexCompilationException{
             
             super(rs, tg, caps, marks);
 
@@ -1600,25 +1650,30 @@ public class StringSearchFacet extends Facet{
             
            
            try{
-            
-           SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
-           // TODO: stop hard-coding string for prodo!
-           String searchTerm = "lemma:" + declinedForm;
-           SolrQuery sq = new SolrQuery();
-           sq.setQuery(searchTerm);
-           sq.setRows(1000);
-           QueryResponse qr = solr.query(sq);
-           SolrDocumentList forms = qr.getResults();
-           Set<String> formSet = new HashSet<String>();
-           if (forms.size() > 0) {
-              for (int i = 0; i < forms.size(); i++) {
-                formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
-              }
-             declinedForm = FileUtils.interpose(formSet, " OR ");
-             
-            } 
-           declinedForm = "(" + declinedForm + ")";
-           return declinedForm;
+               if(Character.toString(declinedForm.charAt(declinedForm.length() - 1)).equals("σ")){
+                   
+                   String startForm = declinedForm.substring(0, declinedForm.length() - 1);
+                   declinedForm = startForm + "ς";
+                   
+               }
+               SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
+               // TODO: stop hard-coding string for prodo!
+               String searchTerm = "lemma:" + declinedForm;
+               SolrQuery sq = new SolrQuery();
+               sq.setQuery(searchTerm);
+               sq.setRows(1000);
+               QueryResponse qr = solr.query(sq);
+               SolrDocumentList forms = qr.getResults();
+               Set<String> formSet = new HashSet<String>();
+               if (forms.size() > 0) {
+                  for (int i = 0; i < forms.size(); i++) {
+                    formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
+                  }
+                 declinedForm = FileUtils.interpose(formSet, " OR ");
+
+                } 
+               declinedForm = "(" + declinedForm + ")";
+               return declinedForm;
            
            }
            catch(Exception e){

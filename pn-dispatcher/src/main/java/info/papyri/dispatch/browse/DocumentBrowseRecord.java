@@ -6,6 +6,7 @@ import info.papyri.dispatch.browse.facet.StringSearchFacet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +59,31 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.highlightTerms = buildHighlightTerms(sts);
     this.highlightString = buildHighlightString(sts );
     
+  }
+  
+  final URL trimURL(URL rawURL){
+      
+      if(rawURL.toString().length() < 2000) return rawURL;
+      String bigURL = rawURL.toString();
+      bigURL = bigURL.substring(0, 2000);
+      try{
+          
+          return new URL(bigURL);
+          
+      } catch(MalformedURLException mue){
+       
+          try{
+          
+            return new URL(rawURL.getProtocol(), rawURL.getHost(), rawURL.getPath());
+            
+          } catch (MalformedURLException mue2){
+              
+              return null;
+              
+          }
+          
+      } 
+      
   }
   
   
