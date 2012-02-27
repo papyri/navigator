@@ -878,9 +878,9 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals("fq=transcription_ngram_ic:(κάι)", URLDecoder.decode(clause1.buildQuery(new SolrQuery()).toString(), "UTF-8"));
                         
             // user-defined, caps and marks set
-            String test2 = "transcription_ia:και";
+            String test2 = "HGV:και";
             StringSearchFacet.SearchTerm clause2 = testInstance.new SearchTerm(test2, StringSearchFacet.SearchTarget.USER_DEFINED, true, true);
-            assertEquals("fq=(transcription_ia:και)", URLDecoder.decode(clause2.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=(hgv_metadata:και)", URLDecoder.decode(clause2.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // substring search, caps and marks
             String test3 = "ΚΆΙ";

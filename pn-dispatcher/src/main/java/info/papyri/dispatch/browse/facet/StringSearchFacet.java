@@ -1348,7 +1348,7 @@ public class StringSearchFacet extends Facet{
                 }
                 else{
                     
-                    startBuilder.append(clause.getOriginalString());
+                    startBuilder.append(this.convertCharsProxWildcards(clause.getOriginalString()));
                     
                 }
                 
@@ -1376,7 +1376,7 @@ public class StringSearchFacet extends Facet{
                 }
                 else{
                     
-                    endBuilder.append(clause.getOriginalString());
+                    endBuilder.append(this.convertCharsProxWildcards(clause.getOriginalString()));
                     
                 }
                 
@@ -1385,6 +1385,14 @@ public class StringSearchFacet extends Facet{
             }
                       
             return endBuilder.toString().trim();    
+            
+        }
+        
+        String convertCharsProxWildcards(String rawString){
+            
+            rawString = rawString.replaceAll("\\*", "");
+            rawString = rawString.replaceAll("\\?", ".");
+            return rawString;
             
         }
         
@@ -1586,7 +1594,12 @@ public class StringSearchFacet extends Facet{
             }
             if(target != SearchTarget.TEXT){
                 
-                transformed = lowerCaseExcludingRegexes(transformed);
+                transformed = lowerCaseExcludingRegexes(transformed);               
+                if(target == SearchTarget.USER_DEFINED){
+                    
+                    return translateUserDefinedField(transformed);
+                    
+                }
                 return transformed;
                 
             }
@@ -1682,6 +1695,42 @@ public class StringSearchFacet extends Facet{
            }
            
        }
+        
+       String translateUserDefinedField(String rawString){
+          
+          Pattern pattern = Pattern.compile("\\W*(\\w+):.*");
+          Matcher matcher = pattern.matcher(rawString);
+          if(matcher.matches()){
+              
+              String userField = matcher.group(1);
+              System.out.println("User field is " + userField);
+           
+              if("translation".equals(userField)){
+               
+                rawString = rawString.replace(userField, SolrField.translation.name());
+               
+              }
+              else if("meta".equals(userField)){
+
+                 rawString = rawString.replace(userField, SolrField.metadata.name());
+
+              }
+              else if("apis".equals(userField)){
+
+                 rawString = rawString.replace(userField, SolrField.apis_metadata.name());
+
+              }
+              else if("hgv".equals(userField)){
+
+                  rawString = rawString.replace(userField, SolrField.hgv_metadata.name()); 
+
+              }
+
+            } 
+          
+          return rawString;
+              
+       }   
         
         String anchorRegex(String rawRegex){
             
