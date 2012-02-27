@@ -569,21 +569,21 @@ public class StringSearchFacetTest extends TestCase {
             String andClause = "kai AND ouk";
             StringSearchFacet.SubClause andSubClause = testInstance.new SubClause(andClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> andClauses = andSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxAndClauses = andSubClause.doCharsProxTransform(andClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxAndClauses = andSubClause.doProxTransform(andClauses);
             assertEquals(andClauses, proxAndClauses);
 
             // if proximity search but with words as unit, return unchanged
             String wordProxClause = "kai 5w ouk";
             StringSearchFacet.SubClause wordSubClause = testInstance.new SubClause(wordProxClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wordClauses = wordSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxWordClauses = wordSubClause.doCharsProxTransform(wordClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxWordClauses = wordSubClause.doProxTransform(wordClauses);
             assertEquals(wordClauses, proxWordClauses);
 
             // if THEN search with chars as unit, return appropriate regex
             String thenClause = "kai 5wc ouk";
             StringSearchFacet.SubClause thenSubClause = testInstance.new SubClause(thenClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> thenClauses = thenSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxThenClauses = thenSubClause.doCharsProxTransform(thenClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxThenClauses = thenSubClause.doProxTransform(thenClauses);
             assertEquals(1, proxThenClauses.size());
             assertEquals(1, proxThenClauses.get(0).getClauseRoles().size());
             assertTrue(proxThenClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
@@ -593,7 +593,7 @@ public class StringSearchFacetTest extends TestCase {
             String nearClause = "kai 5nc ouk";
             StringSearchFacet.SubClause nearSubClause = testInstance.new SubClause(nearClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> nearClauses = nearSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxNearClauses = thenSubClause.doCharsProxTransform(nearClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxNearClauses = thenSubClause.doProxTransform(nearClauses);
             assertEquals(1, proxNearClauses.size());
             assertEquals(1, proxNearClauses.get(0).getClauseRoles().size());
             assertTrue(proxNearClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
@@ -603,7 +603,7 @@ public class StringSearchFacetTest extends TestCase {
             String wildClause = "k?i 5wc ou*";
             StringSearchFacet.SubClause wildSubClause = testInstance.new SubClause(wildClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wildClauses = wildSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxWildClauses = thenSubClause.doCharsProxTransform(wildClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxWildClauses = thenSubClause.doProxTransform(wildClauses);
             assertEquals(1, proxWildClauses.size());
             assertEquals(1, proxWildClauses.get(0).getClauseRoles().size());
             assertTrue(proxWildClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
@@ -918,13 +918,26 @@ public class StringSearchFacetTest extends TestCase {
             Pattern lemmaOutput = Pattern.compile("fq=transcription_ia:(\\((\\s*\\S+\\s+OR\\s+)+\\S+\\s*\\))");
             assertTrue(lemmaOutput.matcher(URLDecoder.decode(clause9.buildQuery(new SolrQuery()).toString(), "UTF-8")).matches());
             
+            // proximity with leading wildcards
+            String test10 = "(*ιοσ* THEN λογ*)~2words";
+            StringSearchFacet.SubClause clause10 = testInstance.new SubClause(test10, t, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*\\b\\p{L}+ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,2}λογ\\p{L}+\\b.*$)", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            
+            String test11 = "(?ιοσ* THEN *λογ?)~5words";
+            StringSearchFacet.SubClause clause11 = testInstance.new SubClause(test11, t, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}+λογ\\p{L}\\b.*$)", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+           
+            String test12 = "(?ιοσ* NEAR *λογ?)~5words";
+            StringSearchFacet.SubClause clause12 = testInstance.new SubClause(test12, t, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*(\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}+λογ\\p{L}\\b|\\b\\p{L}+λογ\\p{L}\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}ιοσ\\p{L}+\\b).*$)", URLDecoder.decode(clause12.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            
             // metadata search
-           StringSearchFacet.SearchTerm clause10 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.METADATA, false, false);
-            assertEquals("fq=metadata:(κάι)", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            StringSearchFacet.SearchTerm clause13 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.METADATA, false, false);
+            assertEquals("fq=metadata:(κάι)", URLDecoder.decode(clause13.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // translation search
-            StringSearchFacet.SearchTerm clause11 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.TRANSLATION, false, false);
-            assertEquals("fq=translation:(κάι)", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), "UTF-8"));          
+            StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.TRANSLATION, false, false);
+            assertEquals("fq=translation:(κάι)", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));          
             
             
             
@@ -934,6 +947,31 @@ public class StringSearchFacetTest extends TestCase {
             fail("Exception erroneously thrown on buildQuery test: " + e.getMessage());
             
         }
+          
+    }
+    
+    public void convertWildcardWordProxToRegex(){
+        
+        
+        String test1 = "*ιοσ* 2w λογ*";
+        String expected1 = "\\b\\p{L}+ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,2}λογ\\p{L}+\\b";
+
+        String test2 = "?ιοσ* 5w *λογ?";
+        String expected2 = "\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\p{L}λογ\\p{L}+\\b";
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
     }

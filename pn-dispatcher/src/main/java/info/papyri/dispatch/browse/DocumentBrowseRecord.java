@@ -149,11 +149,12 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                   
                   if(roles.contains(ClauseRole.REGEX)){
 
-                      String trimmedRegex = trimRegex(term);
+                /*      String trimmedRegex = trimRegex(term);
                       hilite.append(ClauseRole.REGEX.name());
                       hilite.append(":");
                       hilite.append(trimmedRegex);
-
+                       */
+                      return "";
 
                   }
                  else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){

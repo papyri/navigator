@@ -124,6 +124,11 @@ public class StringSearchFacet extends Facet{
    
     SearchClauseFactory CLAUSE_FACTORY = new SearchClauseFactory();
     
+    Pattern charProxRegex = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
+    Pattern wordProxRegex = Pattern.compile(".*?(\\d{1,2})?(w|n).*");
+    Pattern charProxTermRegex = Pattern.compile("\\d{1,2}(w|n)c");
+    Pattern wordProxTermRegex = Pattern.compile("(\\d{1,2})?(w|n)"); 
+    
     /** A collection from which <code>SearchConfiguration</code>s can be retrieved in an
      *  ordered manner.
      * 
@@ -281,8 +286,7 @@ public class StringSearchFacet extends Facet{
         
         searchConfigurations = pullApartParams(params);
         return !searchConfigurations.isEmpty();
-        
-        
+             
     }
     
     @Override
@@ -997,9 +1001,9 @@ public class StringSearchFacet extends Facet{
         Boolean ignoreCaps;
         Boolean ignoreMarks;
         SearchTarget target;
-        Pattern charProxRegex = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
         private String LEX_MARKER = "LEX";
         private String REGEX_MARKER = "REGEX";
+        
         
         SearchClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws InsufficientSpecificityException, InternalQueryException, MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
             
@@ -1025,7 +1029,7 @@ public class StringSearchFacet extends Facet{
            // non-quote-delimited with internal whitespace means true
            if(rs.contains(" ")) return true;
            // internal brackets means true
-           if(rs.contains("(")||rs.contains(")")) return true;
+           if((rs.contains("(")||rs.contains(")")) && !rs.contains("\\")) return true;
            return false;
            
        }
@@ -1258,6 +1262,10 @@ public class StringSearchFacet extends Facet{
        abstract ArrayList<ClauseRole> getSubordinateClauseRoles();
        
        abstract Boolean isCharactersProxTerm();
+       
+       abstract Boolean isWordsProxTerm();
+       
+       abstract Boolean containsLeadingWildcard();
              
        abstract public String buildTransformedString() throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException;
         
@@ -1279,7 +1287,7 @@ public class StringSearchFacet extends Facet{
             
             super(rs, tg, caps, marks);
             assignClauseRoles();
-            transformedClauses = doCharsProxTransform(clauseComponents);
+            transformedClauses = doProxTransform(clauseComponents);
             
         }
         
@@ -1303,17 +1311,25 @@ public class StringSearchFacet extends Facet{
             
         }
         
-       
-        final ArrayList<SearchClause> doCharsProxTransform(ArrayList<SearchClause> clauses) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
+        final ArrayList<SearchClause> doProxTransform(ArrayList<SearchClause> clauses) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
             
             Integer chpIndex = getCharsProxIndex(clauses);
-            if(chpIndex == -1) return clauses;
+            if(chpIndex != -1) return doCharsProxTransform(clauses, chpIndex);
+            Integer wdIndex = getWordsProxIndex(clauses);
+            if(wdIndex != -1 && containsLeadingWildcard()) return doWordsProxTransform(clauses, wdIndex);
+            return clauses;
+    
+        }
+        
+       
+        final ArrayList<SearchClause> doCharsProxTransform(ArrayList<SearchClause> clauses, int chpIndex) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
+            
             ArrayList<SearchClause> proxClauses = new ArrayList<SearchClause>();
             Integer startIndex = getProxStartTerm(chpIndex, clauses);
             Integer endIndex = getProxPostTerm(chpIndex, clauses);
             if(startIndex == -1 || endIndex == -1) throw new IncompleteClauseException();
-            String startString = buildCharsProxStartString(clauses, chpIndex);
-            String endString = buildCharsProxEndString(clauses, chpIndex);
+            String startString = buildProxStartString(clauses, chpIndex);
+            String endString = buildProxEndString(clauses, chpIndex);
             String regex = convertCharProxToRegexSyntax(startString, endString, clauses.get(chpIndex).originalString);
 
             try{
@@ -1331,7 +1347,35 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        String buildCharsProxStartString(ArrayList<SearchClause> clauses, int charProxIndex) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
+        
+        final ArrayList<SearchClause> doWordsProxTransform(ArrayList<SearchClause> clauses, int metricIndex) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
+            
+            ArrayList<SearchClause> proxClauses = new ArrayList<SearchClause>();
+            Integer startIndex = getProxStartTerm(metricIndex, clauses);
+            Integer endIndex = getProxPostTerm(metricIndex,clauses);
+            if(startIndex == -1 || endIndex == -1) throw new IncompleteClauseException();
+            String startString = buildProxStartString(clauses, metricIndex);
+            String endString = buildProxEndString(clauses, metricIndex);
+            String regex = convertWordProxToRegexSyntax(startString, endString, clauses.get(metricIndex).originalString);
+            
+            try{
+                
+                SearchTerm regexSearchTerm = new SearchTerm(regex, target, ignoreCaps, ignoreMarks);
+                regexSearchTerm.addClauseRole(ClauseRole.REGEX);
+                proxClauses.add(regexSearchTerm);
+                
+            }
+            catch(StringSearchParsingException sspe){
+                
+                throw new RegexCompilationException();
+                
+            }
+            
+            return proxClauses;
+            
+        }
+        
+        String buildProxStartString(ArrayList<SearchClause> clauses, int charProxIndex) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
 
             StringBuilder startBuilder = new StringBuilder();
             for(int i = 0; i < charProxIndex; i++){
@@ -1348,7 +1392,7 @@ public class StringSearchFacet extends Facet{
                 }
                 else{
                     
-                    startBuilder.append(this.convertCharsProxWildcards(clause.getOriginalString()));
+                    startBuilder.append(this.convertProxWildcards(clause.getOriginalString(), clauses.get(charProxIndex).getOriginalString(), i, clauses.size()));
                     
                 }
                 
@@ -1359,8 +1403,9 @@ public class StringSearchFacet extends Facet{
             return startBuilder.toString().trim();
             
         }
+
         
-        String buildCharsProxEndString(ArrayList<SearchClause> clauses, int charProxIndex) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
+        String buildProxEndString(ArrayList<SearchClause> clauses, int charProxIndex) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
             
             StringBuilder endBuilder = new StringBuilder();
             for(int i = charProxIndex + 1; i < clauses.size(); i++){
@@ -1376,7 +1421,7 @@ public class StringSearchFacet extends Facet{
                 }
                 else{
                     
-                    endBuilder.append(this.convertCharsProxWildcards(clause.getOriginalString()));
+                    endBuilder.append(this.convertProxWildcards(clause.getOriginalString(), clauses.get(charProxIndex).getOriginalString(), i, clauses.size()));
                     
                 }
                 
@@ -1388,11 +1433,82 @@ public class StringSearchFacet extends Facet{
             
         }
         
+        String convertProxWildcards(String rawString, String proxClause, int iteration, int totalLength){
+            
+            if(charProxTermRegex.matcher(proxClause).matches()){
+                
+                return convertCharsProxWildcards(rawString);
+                
+            }
+            
+            return convertWordProxWildcards(rawString, iteration, totalLength);
+            
+        }
+        
         String convertCharsProxWildcards(String rawString){
             
             rawString = rawString.replaceAll("\\*", "");
             rawString = rawString.replaceAll("\\?", ".");
             return rawString;
+            
+        }
+        
+        String convertWordProxWildcards(String rawString, int iteration, int totalLength){
+
+            StringBuilder asRegex = new StringBuilder();
+            int end = rawString.length() - 1;
+            
+            for(int i = 0; i <= end; i++){
+                
+                String nowChar = Character.toString(rawString.charAt(i));
+                
+                if(i == 0){
+
+                    if(!nowChar.equals("?") && !nowChar.equals("*")){
+                        
+                        if(iteration == 0) asRegex.append("\\b");
+                        asRegex.append(nowChar);
+                        continue;
+                        
+                    }
+                    asRegex.append("\\b\\p{L}");
+                    if(nowChar.equals("*")) asRegex.append("+");
+                    continue;
+                            
+                }
+                else if(i == end){
+                    
+                    if(!nowChar.equals("?") && !nowChar.equals("*")){
+                        
+                        asRegex.append(nowChar);
+                        if(iteration == totalLength - 1) asRegex.append("\\b");
+                        continue;
+                        
+                    }
+                    asRegex.append("\\p{L}");
+                    if(nowChar.equals("*")) asRegex.append("+");
+                    asRegex.append("\\b");
+                    
+                }
+                else{
+                    
+                    if(!nowChar.equals("?") && !nowChar.equals("*")){
+                        
+                        asRegex.append(nowChar);
+                        continue;
+                        
+                    }
+                    asRegex.append("\\p{L}");
+                    if(nowChar.equals("*")) asRegex.append("+");
+                    
+                    
+                }
+    
+                
+            }
+            
+            return asRegex.toString();
+            
             
         }
         
@@ -1457,28 +1573,53 @@ public class StringSearchFacet extends Facet{
             Matcher charProxMatcher = charProxRegex.matcher(charProx);
             if(!charProxMatcher.matches()) throw new RegexCompilationException();
             String numChars = charProxMatcher.group(1);
-            String unit = charProxMatcher.group(2);
+            String operator = charProxMatcher.group(2);
             String distRegex = ".{1," + numChars + "}";
-            prevTerm = convertWildcardToRegexSyntax(prevTerm);
-            nextTerm = convertWildcardToRegexSyntax(nextTerm);
+            prevTerm = convertCharsWildcardToRegexSyntax(prevTerm);
+            nextTerm = convertCharsWildcardToRegexSyntax(nextTerm);
             prevTerm = prevTerm.replaceAll("\\^", "\\\\b");
             nextTerm = nextTerm.replaceAll("\\^", "\\\\b");
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
-            if(unit.equals("w")) return regex;
+            if(operator.equals("w")) return regex;
             String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
             String nearRegex = "(" + revRegex + "|" + regex + ")";
             return nearRegex;
             
         }
         
-        String convertWildcardToRegexSyntax(String wildcard){
+        String convertWordProxToRegexSyntax(String prevTerm, String nextTerm, String wordProx) throws RegexCompilationException{
             
+            Matcher wordProxMatcher = wordProxRegex.matcher(wordProx);
+            if(!wordProxMatcher.matches()) throw new RegexCompilationException();
+            
+            Integer numWords = Integer.valueOf(wordProx.substring(0, wordProx.length() - 1));
+            String operator = wordProx.substring(wordProx.length() - 1).equals("n") ? "n" : "w";
+            String distRegex = "(\\p{L}+\\s){0," + numWords + "}";
+            prevTerm = prevTerm.replaceAll("\\^", "\\\\b");
+            nextTerm = nextTerm.replaceAll("\\^", "\\\\b");
+            String regex = prevTerm.trim() + "\\s" + distRegex + nextTerm.trim();
+            if(operator.equals("w")) return regex;
+            String revRegex = nextTerm.trim() + "\\s" + distRegex + prevTerm.trim();
+            String nearRegex = "(" + regex + "|" + revRegex + ")";
+            return nearRegex;
+            
+            
+        }
+        
+        String convertCharsWildcardToRegexSyntax(String wildcard){
+            
+            // need to anchor start and end of string if wildcarded
+            String startChar = Character.toString(wildcard.charAt(0));
+            if("*".equals(startChar) || "?".equals(startChar)) wildcard = "^" + wildcard;
+            String endChar = Character.toString(wildcard.charAt(wildcard.length() - 1));
+            if("*".equals(endChar) || "?".equals(endChar)) wildcard = wildcard + "^";
             String regex = wildcard.replaceAll("\\*", ".*");
             regex = regex.replaceAll("\\?", ".");
             return regex;
             
             
         }
+
         
         Integer getCharsProxIndex(ArrayList<SearchClause> clauses){
             
@@ -1490,6 +1631,18 @@ public class StringSearchFacet extends Facet{
             
             return -1;
             
+        }
+        
+        Integer getWordsProxIndex(ArrayList<SearchClause> clauses){
+            
+            for(int i = 0; i < clauses.size(); i++){
+                
+                
+                if(clauses.get(i).isWordsProxTerm()) return i;
+                
+            }
+            
+            return -1;
         }
         
         Integer getProxStartTerm(Integer start, ArrayList<SearchClause> clauses){
@@ -1515,6 +1668,21 @@ public class StringSearchFacet extends Facet{
             }
             
             return -1;
+        }
+        
+        @Override
+        Boolean containsLeadingWildcard(){
+            
+            Iterator<SearchClause> scit = this.getClauseComponents().iterator();
+            while(scit.hasNext()){
+                
+                SearchClause sc = scit.next();
+                if(sc.containsLeadingWildcard()) return true;
+                
+            }
+            
+            return false;
+            
         }
         
         @Override
@@ -1558,14 +1726,14 @@ public class StringSearchFacet extends Facet{
         @Override
         Boolean isCharactersProxTerm(){ return false; }
         
-        
+        @Override
+        Boolean isWordsProxTerm(){ return false; };
         
     }
     
     public class SearchTerm extends SearchClause{
         
-        Pattern charProxTermRegex = Pattern.compile("\\d{1,2}(w|n)c");
-        
+
         SearchTerm(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, InsufficientSpecificityException, InternalQueryException, IncompleteClauseException, RegexCompilationException{
             
             super(rs, tg, caps, marks);
@@ -1703,7 +1871,6 @@ public class StringSearchFacet extends Facet{
           if(matcher.matches()){
               
               String userField = matcher.group(1);
-              System.out.println("User field is " + userField);
            
               if("translation".equals(userField)){
                
@@ -1761,6 +1928,23 @@ public class StringSearchFacet extends Facet{
         Boolean isCharactersProxTerm(){
             
             return charProxTermRegex.matcher(originalString).matches();
+            
+        }
+        
+        @Override
+        Boolean isWordsProxTerm(){
+            
+            return wordProxTermRegex.matcher(originalString).matches();
+            
+        }
+        
+        @Override
+        Boolean containsLeadingWildcard(){
+            
+            if(originalString.length() < 1) return false;
+            String firstChar = Character.toString(originalString.charAt(0));
+            if("?".equals(firstChar) || "*".equals(firstChar)) return true;
+            return false;
             
         }
         
