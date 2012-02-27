@@ -1,3 +1,42 @@
+// jQuery plugin: PutCursorAtEnd 1.0
+// http://plugins.jquery.com/project/PutCursorAtEnd
+// by teedyay
+//
+// Puts the cursor at the end of a textbox/ textarea
+
+// codesnippet: 691e18b1-f4f9-41b4-8fe8-bc8ee51b48d4
+(function($)
+{
+    jQuery.fn.putCursorAtEnd = function()
+    {
+    return this.each(function()
+    {
+        $(this).focus()
+
+        // If this function exists...
+        if (this.setSelectionRange)
+        {
+        // ... then use it
+        // (Doesn't work in IE)
+
+        // Double the length because Opera is inconsistent about whether a carriage return is one character or two. Sigh.
+        var len = $(this).val().length * 2;
+        this.setSelectionRange(len, len);
+        }
+        else
+        {
+        // ... otherwise replace the contents with itself
+        // (Doesn't work in Google Chrome)
+        $(this).val($(this).val());
+        }
+
+        // Scroll to the bottom, in case we're in a tall textarea
+        // (Necessary for Firefox and Google Chrome)
+        this.scrollTop = 999999;
+    });
+    };
+})(jQuery);
+
 $(document).ready(
 
 	/**
@@ -301,8 +340,8 @@ $(document).ready(
 			var val = input.val();
 			var newVal = (val.length > 0 ? val + " " : val) + keyword;
 			newVal += " ";
-			input.val(newVal);
 			input.focus();
+			input.val(newVal);
 			hic.doButtonActivationCheck(input.val(), parent);
 			hic.doProxControlsActivationCheck(input.val(), parent);
 			
@@ -320,10 +359,11 @@ $(document).ready(
 			mtr.after(searchHTML.clone());
 			var displayVal = val == "+" ? "" : val.toUpperCase() + " ";
 			var textbox = $(lastTopSelector + " .keyword");
+			textbox.removeAttr("disabled");
+			textbox.focus();
 			textbox.val(displayVal);
 			hic.doButtonActivationCheck("", $(lastTopSelector));
 			hic.doProxControlsActivationCheck("", $(lastTopSelector));
-			textbox.focus();
 			
 		}
 		
@@ -388,7 +428,9 @@ $(document).ready(
 				var searchbits = hic.trimRecoveredStringSearches(nowsearch);
 				hic.addReqdSearchBoxes(searchbits);
 				hic.removeSearchFromStack(stringbits);	
+				$(topSelector + ":last .keyword").removeAttr("disabled");
 				$(topSelector + ":last .keyword").focus();
+				$(topSelector + ":last .keyword").putCursorAtEnd();
 			
 			}
 		
@@ -478,7 +520,7 @@ $(document).ready(
 			
 			}
 			hic.doButtonActivationCheck($(lastTopSelector).find(".keyword").val(), $(lastTopSelector));
-		
+			$(lastTopSelector).find(".keyword").putCursorAtEnd();
 		});
 
 		hic.doButtonActivationCheck("", $(topSelector));
