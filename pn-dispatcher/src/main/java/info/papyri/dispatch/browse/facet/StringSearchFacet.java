@@ -193,7 +193,6 @@ public class StringSearchFacet extends Facet{
         
         // textbox HTML
         html.append("<p class=\"ui-corner-all facet-stringsearch-wrapper\">");
-        html.append("<span class=\"str-operator\"></span>");
         html.append("<input type=\"text\" name=\"");
         html.append(formName.name());
         html.append("\" size=\"37\" maxlength=\"250\" class=\"keyword\"></input>");
