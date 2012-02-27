@@ -281,7 +281,7 @@ $(document).ready(
 	    		totalSearchString += searchString;
 	    	
 	    	}
-			totalSearchString = totalSearchString.replace(")¤(OR", " OR");
+			totalSearchString = totalSearchString.replace(/\)¤\(OR/g, " OR");
 	    	return totalSearchString;
 	    
 	    }
