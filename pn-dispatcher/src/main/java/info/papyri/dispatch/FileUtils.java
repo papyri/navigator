@@ -514,7 +514,7 @@ public class FileUtils {
           
           String token = tokens.get(i);
           token = substituteForSubstringPatternMatch(token);
-          patterns[i] = Pattern.compile(token);  
+          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);  
           
       }
       
@@ -529,7 +529,7 @@ public class FileUtils {
       
           String token = tokens.get(i);
           token = substituteForPhrasePatternMatch(token);
-          patterns[i] = Pattern.compile(token);
+          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);
       
           
       }
