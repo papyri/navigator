@@ -41,11 +41,14 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private Long position;
   private Long total;
   private Pattern[] highlightTerms;
+  private ArrayList<String> highlightWords;
+  private FileUtils util;
   
   private static IdComparator documentComparator = new IdComparator();
   
   public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts) {
-
+    
+    util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
     this.url = url;
@@ -56,6 +59,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
     this.hasIllustration = illus;
+    this.highlightWords = new ArrayList<String>();
     this.highlightTerms = buildHighlightTerms(sts);
     this.highlightString = buildHighlightString(sts );
     
@@ -89,7 +93,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   final Pattern[] buildHighlightTerms(ArrayList<SearchClause> searchClauses){
  
-      FileUtils util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
       ArrayList<Pattern> hilites = new ArrayList<Pattern>();
       Iterator<SearchClause> stit = searchClauses.iterator();
       while(stit.hasNext()){
@@ -102,10 +105,9 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
               
               String trimmedRegex = trimRegex(transformedString);
               trimmedRegex = util.substituteDiacritics(trimmedRegex);
-              Pattern trimmedPattern = Pattern.compile(trimmedRegex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES);
-              hilites.add(trimmedPattern);
-             
-              
+              Pattern[] regexPatterns = matchRegexToDocument(trimmedRegex);
+              hilites.addAll(Arrays.asList(regexPatterns));
+                        
           }
           else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
               
@@ -117,8 +119,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
               
               Pattern[] patterns = util.getSubstringHighlightPatterns(transformedString);
               hilites.addAll(Arrays.asList(patterns));
-              
-              
+                        
           }   
           else{
               
@@ -131,6 +132,27 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       }
       Pattern[] patterns = new Pattern[hilites.size()];
       return hilites.toArray(patterns);
+      
+  }
+  
+  Pattern[] matchRegexToDocument(String regex){
+      
+      ArrayList<Pattern> patterns = new ArrayList<Pattern>();
+      String fullText = util.loadTextFromId(url.toExternalForm()); 
+      
+      Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
+      Matcher matcher = pattern.matcher(fullText);
+      while(matcher.find()){
+          
+          String found = matcher.group(0);
+          highlightWords.add(found);
+          Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
+          patterns.add(foundPattern);
+          
+      }
+      
+      Pattern[] arrPatterns = new Pattern[patterns.size()];
+      return patterns.toArray(arrPatterns);
       
   }
   
@@ -149,12 +171,17 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                   
                   if(roles.contains(ClauseRole.REGEX)){
 
-                /*      String trimmedRegex = trimRegex(term);
-                      hilite.append(ClauseRole.REGEX.name());
-                      hilite.append(":");
-                      hilite.append(trimmedRegex);
-                       */
-                      return "";
+                      Iterator<String> hwit = highlightWords.iterator();
+                      while(hwit.hasNext()){
+                      
+                          String highlightWord = hwit.next();
+                          hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
+                          hilite.append(":(\"");
+                          hilite.append(highlightWord);
+                          hilite.append("\")");
+                      
+                      }
+
 
                   }
                  else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
@@ -166,10 +193,9 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                           if(!termbit.matches("\\d+w")){
                               
                               hilite.append(StringSearchFacet.SearchType.PHRASE.name());
-                              hilite.append(":");
+                              hilite.append(":(");
                               hilite.append(termbit);
-                              if(i < termbits.length - 1) hilite.append(" ");
-                              
+                              hilite.append(")");
                           }
                       
                       }
@@ -179,19 +205,19 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                   else if (searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
 
                       hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
-                      hilite.append(":");
-                      hilite.append(term);              
+                      hilite.append(":(");
+                      hilite.append(term);   
+                      hilite.append(")");
 
                   } else{
 
                       hilite.append(StringSearchFacet.SearchType.PHRASE.name());
-                      hilite.append(":");
+                      hilite.append(":(");
                       hilite.append(term);
+                      hilite.append(")");
 
                   }
                   
-                if(stit.hasNext()) hilite.append(" ");
-
               
               }
 
@@ -455,7 +481,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
       StringBuilder html = new StringBuilder();
       try{
-          FileUtils util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+
           List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
           html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
           for(String kwic : kwix){
