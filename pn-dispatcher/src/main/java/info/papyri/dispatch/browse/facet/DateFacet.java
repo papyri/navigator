@@ -176,7 +176,7 @@ public class DateFacet extends Facet {
     }
    
    @Override
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
            
         solrQuery.addFacetField(flagField.name());
         

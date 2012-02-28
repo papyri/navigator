@@ -94,3 +94,9 @@ div.date-facet-widget{
     padding-right: 0.3em;
     
 }
+
+tr.result-record{
+    
+    overflow: hidden;
+    
+}

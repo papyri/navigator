@@ -1,6 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
+import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -78,7 +79,7 @@ abstract public class Facet {
      * @see FacetBrowser#buildFacetQuery(int, java.util.ArrayList) 
      */
     
-    public SolrQuery buildQueryContribution(SolrQuery solrQuery) throws InternalQueryException{
+    public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
         solrQuery.addFacetField(field.name());
         solrQuery.setFacetLimit(-1);                // = no limit
@@ -403,6 +404,12 @@ abstract public class Facet {
         return facetConstraints;
         
     }
+    
+    public ArrayList<CustomApplicationException> getExceptionLog(){
+        
+        return new ArrayList<CustomApplicationException>();
+        
+    } 
     
     public String getDisplayName(String facetParam, java.lang.String facetValue){
         

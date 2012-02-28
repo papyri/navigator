@@ -186,7 +186,6 @@ public class CollectionBrowser extends HttpServlet {
         queryBuilder.append("OPTIONAL { ?grandchild dc:hasPart ?greatgrandchild . } ");
         queryBuilder.append("OPTIONAL { ?greatgrandchild rdfs:label ?label2 . } }");
 
-        System.out.println("Query is " + queryBuilder.toString());
         return queryBuilder.toString();
         
     }

@@ -2,12 +2,18 @@ package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.LanguageCode;
+import info.papyri.dispatch.browse.facet.StringSearchFacet;
+import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
+import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
 
 /**
@@ -33,11 +39,15 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String solrQueryString;
   private Long position;
   private Long total;
+  private Pattern[] highlightTerms;
+  private ArrayList<String> highlightWords;
+  private FileUtils util;
   
   private static IdComparator documentComparator = new IdComparator();
   
-  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, String hlite) {
-
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts) {
+    
+    util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
     this.url = url;
@@ -48,10 +58,190 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
     this.hasIllustration = illus;
-    this.highlightString = hlite;
+    this.highlightWords = new ArrayList<String>();
+    this.highlightTerms = buildHighlightTerms(sts);
+    this.highlightString = buildHighlightString(sts );
     
   }
+  
+  final URL trimURL(URL rawURL){
+      
+      if(rawURL.toString().length() < 2000) return rawURL;
+      String bigURL = rawURL.toString();
+      bigURL = bigURL.substring(0, 2000);
+      try{
+          
+          return new URL(bigURL);
+          
+      } catch(MalformedURLException mue){
+       
+          try{
+          
+            return new URL(rawURL.getProtocol(), rawURL.getHost(), rawURL.getPath());
+            
+          } catch (MalformedURLException mue2){
+              
+              return null;
+              
+          }
+          
+      } 
+      
+  }
+  
+  
+  final Pattern[] buildHighlightTerms(ArrayList<SearchClause> searchClauses){
+ 
+      ArrayList<Pattern> hilites = new ArrayList<Pattern>();
+      Iterator<SearchClause> stit = searchClauses.iterator();
+      while(stit.hasNext()){
+      try{
+          SearchClause searchClause = stit.next();
+          String transformedString = searchClause.buildTransformedString();
+          if(transformedString == null) continue;
+          if("".equals(transformedString)) continue;
+          if(searchClause.getAllClauseRoles().contains(ClauseRole.REGEX)){
+              
+              String trimmedRegex = trimRegex(transformedString);
+              trimmedRegex = util.substituteDiacritics(trimmedRegex);
+              Pattern[] regexPatterns = matchRegexToDocument(trimmedRegex);
+              hilites.addAll(Arrays.asList(regexPatterns));
+                        
+          }
+          else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
+              
+              transformedString = transformedString.replaceAll("(\\d+)w", "");
+              hilites.addAll(Arrays.asList(util.getPhraseHighlightPatterns(transformedString)));
+              
+          }
+          else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
+              
+              Pattern[] patterns = util.getSubstringHighlightPatterns(transformedString);
+              hilites.addAll(Arrays.asList(patterns));
+                        
+          }   
+          else{
+              
+              
+              Pattern[] patterns = util.getPhraseHighlightPatterns(transformedString);
+              hilites.addAll(Arrays.asList(patterns));
+          }
+          
+      }catch(Exception e){}
+      }
+      Pattern[] patterns = new Pattern[hilites.size()];
+      return hilites.toArray(patterns);
+      
+  }
+  
+  Pattern[] matchRegexToDocument(String regex){
+      
+      ArrayList<Pattern> patterns = new ArrayList<Pattern>();
+      String fullText = util.loadTextFromId(url.toExternalForm()); 
+      
+      Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
+      Matcher matcher = pattern.matcher(fullText);
+      while(matcher.find()){
+          
+          String found = matcher.group(0);
+          highlightWords.add(found);
+          Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
+          patterns.add(foundPattern);
+          
+      }
+      
+      Pattern[] arrPatterns = new Pattern[patterns.size()];
+      return patterns.toArray(arrPatterns);
+      
+  }
+  
+  final String buildHighlightString(ArrayList<SearchClause> searchClauses){
+      
+      StringBuilder hilite = new StringBuilder();
+      Iterator<SearchClause> stit = searchClauses.iterator();
+      while(stit.hasNext()){
+          
+          try{
+              
+              SearchClause searchClause = stit.next();
+              String term = searchClause.buildTransformedString();
+              ArrayList<ClauseRole> roles = searchClause.getAllClauseRoles();
+              if(!"".equals(term)){
+                  
+                  if(roles.contains(ClauseRole.REGEX)){
 
+                      Iterator<String> hwit = highlightWords.iterator();
+                      while(hwit.hasNext()){
+                      
+                          String highlightWord = hwit.next();
+                          hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
+                          hilite.append(":(\"");
+                          hilite.append(highlightWord);
+                          hilite.append("\")");
+                      
+                      }
+
+
+                  }
+                 else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
+                      
+                      String[] termbits = term.split(" ");
+                      for(int i = 0; i < termbits.length; i++){
+                          
+                          String termbit = termbits[i];
+                          if(!termbit.matches("\\d+w")){
+                              
+                              hilite.append(StringSearchFacet.SearchType.PHRASE.name());
+                              hilite.append(":(");
+                              hilite.append(termbit);
+                              hilite.append(")");
+                          }
+                      
+                      }
+                      
+                      
+                  }
+                  else if (searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
+
+                      hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
+                      hilite.append(":(");
+                      hilite.append(term);   
+                      hilite.append(")");
+
+                  } else{
+
+                      hilite.append(StringSearchFacet.SearchType.PHRASE.name());
+                      hilite.append(":(");
+                      hilite.append(term);
+                      hilite.append(")");
+
+                  }
+                  
+              
+              }
+
+          
+          } catch(Exception e){}
+          
+      }
+      
+      return hilite.toString();
+      
+  }
+  
+  private String trimRegex(String rawRegex){
+      
+      if(rawRegex.length() < 3) return rawRegex;
+      String prefix = rawRegex.substring(0, 3);
+      String suffix = rawRegex.substring(rawRegex.length() - 3, rawRegex.length());
+      String trimmedRegex = rawRegex;
+      if("^.*".equals(prefix)) trimmedRegex = trimmedRegex.substring(3);
+      if(".*$".equals(suffix)) trimmedRegex = trimmedRegex.substring(0, trimmedRegex.length() - 3);
+      return trimmedRegex;
+      
+  }
+  
+  
   @Override
   public String getHTML() {
 
@@ -289,16 +479,22 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String getKWIC(){
       
       StringBuilder html = new StringBuilder();
-      FileUtils util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
-      List<String> kwix = util.highlightMatches(highlightString, util.loadTextFromId(url.toExternalForm()));
-      html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
-      for(String kwic : kwix){
+      try{
+
+          List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
+          html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
+          for(String kwic : kwix){
+
+              html.append(kwic);
+              html.append("<br/>\n");
+
+          }
+          html.append("</td></tr>");
+      } catch (Exception e){
           
-          html.append(kwic);
-          html.append("<br/>\n");
+          // TODO: Need to do something sensible here with regard to highlighting
           
       }
-      html.append("</td></tr>");
       return html.toString();
       
   }
