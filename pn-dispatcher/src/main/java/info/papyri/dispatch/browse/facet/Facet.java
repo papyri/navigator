@@ -1,12 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
-import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
 import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
-import info.papyri.dispatch.browse.facet.customexceptions.IncompleteClauseException;
-import info.papyri.dispatch.browse.facet.customexceptions.MalformedProximitySearchException;
-import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketException;
-import info.papyri.dispatch.browse.facet.customexceptions.RegexCompilationException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;

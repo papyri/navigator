@@ -5,7 +5,6 @@ import info.papyri.dispatch.LanguageCode;
 import info.papyri.dispatch.browse.facet.StringSearchFacet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
-import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;

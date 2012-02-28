@@ -1,6 +1,5 @@
 package info.papyri.dispatch.browse.facet;
 
-import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
