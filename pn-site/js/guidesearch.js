@@ -6,8 +6,14 @@ $(document).ready(
 	*/
 
 	function(){
+	
+		// activate tm search
+		$("li.dialog").each(function(i) {
+          $(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
+          $(this).hide();
+        }); 
 					
-		// first, a little namespacing
+		// a little namespacing
 		
 		if(typeof info == 'undefined') info = {};
 		if(typeof info.papyri == 'undefined') info.papyri = {};
@@ -16,6 +22,9 @@ $(document).ready(
 			
 		// alias to save typing	
 		var hic = info.papyri.thill.guidesearch;
+		hic.HIDE_REVEAL_COOKIE = "togglestate";		// for persising show/hide search panel
+		hic.BETA_COOKIE = "betacode";				// for persisting beta-as-you-type settings
+		hic.SEARCH_STACK = "searchstack";			// back-button behaviour for string-search
 		hic.reqd_on = {};
 		hic.reqd_off = {};
 		hic.selectedRadios = [];
@@ -30,12 +39,9 @@ $(document).ready(
 		// switched on or off onclick.
 
 		hic.reqd_on["target-metadata"] = ["#caps", "#marks"];
-		hic.reqd_off["target-metadata"] = ["#beta-on", "#substring", "#lemmas"];
+		hic.reqd_off["target-metadata"] = ["#beta-on"];
 		hic.reqd_on["target-translations"] = ["#caps", "#marks"];
-		hic.reqd_off["target-translations"] = ["#beta-on", "#substring", "#lemmas"];
-		hic.reqd_on["target-all"] = ["#caps", "#marks"];
-		//hic.reqd_off["lemmas"] = ["#target-metadata", "#target-translations", "#target-all"];
-		//hic.reqd_off["lem"] = hic.reqd_off["lemmas"];
+		hic.reqd_off["target-translations"] = ["#beta-on"];
 		
 		/**
 		 * Restricts user options so that only possible string-search configurations
@@ -44,90 +50,26 @@ $(document).ready(
 		 */
 		
 	   	hic.configureSearchSettings = function(){
-
-	    	var reqd_disabled = [];
-
-	    	var eltype = $(this).attr("name");
+	   	
+	   		var val = $(this).val();
+	   		
+	   		if(val == "text"){
+	   		
+	   			$("#beta-on, #caps, #marks").removeAttr("disabled", "disabled");
+	   			hic.checkBetacode();
+	   			
+	   		} 
+	   		else{
+	   		
+	   			$("#beta-on").removeAttr("checked");
+	   			$("#beta-on").attr("disabled", "disabled");
+	   			$("#caps").attr("checked", "checked");
+	   			$("#caps").attr("disabled", "disabled");
+	   			$("#marks").attr("checked", "checked");
+	   			$("#marks").attr("disabled", "disabled");	   			
+	   		
+	   		}
 	    	
-	    	// these two conditionals build an array (reqd_disabled) of all elements that
-	    	// *must* be disabled given the new setting
-	    	
-	    	if(eltype == "type"){
-	    		
-	    		var target = $("#text-search-widget").find("input[name='target']:checked").attr("id");
-	    		if(hic.reqd_on[target]) jQuery.merge(reqd_disabled, hic.reqd_on[target]); 
-	    		if(hic.reqd_off[target]) jQuery.merge(reqd_disabled, hic.reqd_off[target]); 
-	    	
-	    	}
-	    	else if(eltype == "target"){
-	    	
-	    		var type = $("#text-search-widget").find("input[name='type']:checked").attr("id");
-	    		if(hic.reqd_on[type]) jQuery.merge(reqd_disabled, hic.reqd_on[type]);
-	    		if(hic.reqd_off[type]) jQuery.merge(reqd_disabled, hic.reqd_off[type]);
-	    		
-	    	}
-
-	    	// then enable all currently disabled elements not found in the
-	    	// reqd_disabled array
-
-	    	var disableds = $("#text-search-widget input:disabled");
-	    	
-	    	for(var i = 0; i < disableds.length; i++){
-
-	    		var dis = disableds[i];
-	    		
-	    		var disid = $(dis).attr("id");
-	    		disid = "#" + disid;
-	    		
-	    		var foundInArray = false;
-	    		
-	    		for(var j = 0; j < reqd_disabled.length; j++){
-
-	    			if(disid == reqd_disabled[j]) foundInArray = true;
-	    		
-	    		}
-	    		
-	    		if(!foundInArray) $(disid).removeAttr("disabled"); 
-	    	
-	    	}
-	    
-	    	// now, check and/or disabled all reqd elements
-	    
-			var id = $(this).attr("id");
-			
-			var onanda = hic.reqd_on[id];
-			
-			if(onanda){
-			
-				for(var i = 0; i < onanda.length; i++){
-				
-					$(onanda[i]).attr("checked", "checked");
-					$(onanda[i]).attr("disabled", "disabled");
-				
-				}
-		
-			}
-	    	
-	    	var offanda = hic.reqd_off[id];
-	    	
-	    	if(offanda){
-	    	
-	    		for(var i = 0; i < offanda.length; i++){
-	    		
-	    			$(offanda[i]).removeAttr("checked");
-	    			$(offanda[i]).attr("disabled", "disabled");
-	    		
-	    		}
-	    	
-	    	}
-	    	
-	    	// check whether a search-type is now selected
-	    	// if not, default to 'Word/Phrase' search
-	    	if($("input[name='type']:checked").length == 0){
-	    		
-	    		$("#phrase").attr("checked", "checked");
-	    	
-	    	}
 	    }
 	    
 	    /**
@@ -149,11 +91,13 @@ $(document).ready(
 	    	// if a string is set for search, than the associated text, target, and option
 	    	// fields must also be set.
 	    	
-	    	var textel = $("input[name='STRING']");
-	    	if(!textel.attr("value").match(/^\s*$/)){
+	    	var textval = hic.buildTextSearchString();
+	    	if(!textval.match(/^\s*$/)){
 
-				if(textel.attr("value").indexOf(":") != -1) mixedsearch = true;
+				if(textval.indexOf(":") != -1) mixedsearch = true;
 				
+				var textel = $("<input type=\"text\" name=\"STRING\"></input>");
+				textel.val(textval);
                 filteredels.push(textel);
 	    		var betas = $("#betaYes:checked");
 	    		if(betas.length > 0) filteredels.push(betas);
@@ -165,18 +109,11 @@ $(document).ready(
 	    		if(marks.length > 0) filteredels.push(marks);
 
                 if(!mixedsearch){
-                
-	    		     var type = $("input[name='type']").filter(":checked");
-	    		     filteredels.push(type);
+                 
 				     filteredels.push($("input[name='target']").filter(":checked"));	
 	    		
-	    		     if(type.val() == "proximity"){
-	    		
-	    			    filteredels.push($("input[name='within']"));
-	    		
-	    		     }
-	    		
 	    		}
+	    		
 	    	
 	    	}		
 	    	// image filter elements
@@ -259,7 +196,17 @@ $(document).ready(
 	    			if(hidden.getAttribute("name") == "COLLECTION"){
 	    			
 	    				var collvalue = $("select[name='COLLECTION']").attr("value");
-	    				if(collvalue != "default") continue;
+	    				if(collvalue != "default"){
+	    				
+	    					filteredels.push($("select[name='COLLECTION']"));
+	    					continue;
+	    						
+	    				}
+	    				else{
+	    				
+	    					filteredels.push(hidden);
+	    				
+	    				}
 	    				
 	    			}
 	    		
@@ -290,7 +237,6 @@ $(document).ready(
 			
 			if(mixedsearch){
 			
-				params["type"] = "user_defined";
 				params["target"] = "user_defined";
 			
 			}
@@ -305,12 +251,55 @@ $(document).ready(
 				current = currentbits[0];
 			
 			}
+			hic.concatenateSearchToCookie(textval);
 			var hrefwquery = current + "?" + $.param(params);
 			window.location = hrefwquery;
 			return false;
-
 	    }
 	    
+	    hic.buildTextSearchString = function(){
+	    
+	    	var proxRegExp = new RegExp(/\s+(THEN|NEAR)\s+/);
+	    	var totalSearchString = "";
+	    	var stringcontrols = $(".stringsearch-top-controls");
+
+	    	for(var i = 0; i < stringcontrols.length; i++){
+	    	
+	    		var keyword = $(stringcontrols[i]).find(".keyword").val();
+	    		var searchString = keyword.replace(/(\s+)/g, " ");
+	    		searchString = $.trim(searchString);	    		
+	    		if(searchString.length == 0) continue;
+	    		searchString = "(" + searchString + ")";
+	    		if(keyword.match(proxRegExp)){
+	    		
+	    			var proxcount = $(stringcontrols[i]).find(".prxcount").val().match(/^\d{1,2}$/) ? $(stringcontrols[i]).find(".prxcount").val() : "1";
+	    			var proxunit = $(stringcontrols[i]).find(".prxunit").val() == "words" ? "words" : "chars";	// default to 'chars'
+	    			searchString += "~" + proxcount + proxunit;
+	    		
+	    		}	 
+	    		searchString = i == 0 ? searchString : "¤" + searchString;
+	    		totalSearchString += searchString;
+	    	
+	    	}
+			totalSearchString = totalSearchString.replace(/\)¤\(OR/g, " OR");
+	    	return totalSearchString;
+	    
+	    }
+	    
+	    hic.concatenateSearchToCookie = function(textval){
+	    
+	    	var searchstack = $.cookie(hic.SEARCH_STACK) ? $.cookie(hic.SEARCH_STACK) : "";
+	    
+	    	if(textval){
+	    	
+	    		if(searchstack.length > 1) searchstack += "|";
+	    		searchstack += textval;
+	    	
+	    	}
+
+	    	$.cookie(hic.SEARCH_STACK, searchstack);
+	    
+	    }
 	    
 	    /**
 	     * Monitors the text being entered into the search box for a variety of inputs:
@@ -377,43 +366,42 @@ $(document).ready(
 	     */
 	    hic.hideSearch = function(evt){
 
-		var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
-		var initialHeight = $("#facet-wrapper").height();
-		var initialWidgetHeight = $("#facet-widgets-wrapper").height();
-		var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
+			var delay = evt.data.delay;
+			var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
+			var initialHeight = $("#facet-wrapper").height();
+			var initialWidgetHeight = $("#facet-widgets-wrapper").height();
+			var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
 	    	var newValsWidth = hic.getValsAndRecordsWidth("hide-search");
 	    	$("#facet-wrapper").height(initialHeight);
-	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, 325);
+	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, delay);
 	    	window.setTimeout(function(){
 	    		$(".title-long").css("display", "block")
 	    		$(".title-short").css("display", "none");
 	    		}, 150);
 	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
-	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, 325, "swing",
+	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, delay, "swing",
 	    		
-    		function(){
+    			function(){
 	    			
-    			$("#facet-wrapper").height(finalHeight);
-    			$("#facet-widgets-wrapper").addClass("search-closed");
-    			$("form[name='facets']").addClass("search-closed");
-    			$("#facet-widgets-wrapper").offset({ left:-23 });
-    			$("#facet-widgets-wrapper").removeClass("search-open");
-    			$("#search-toggle").addClass("toggle-closed");
-    			$("#search-toggle").removeClass("toggle-open");
-    			$("#vals-and-records-wrapper").removeClass("vals-and-records-min");
-    			$("#vals-and-records-wrapper").addClass("vals-and-records-max");
-    			$("#vals-and-records-wrapper").css({"position":"relative" });
-    			var height = initialWidgetHeight > $("#vals-and-records-wrapper").height() ? initialWidgetHeight : $("#vals-and-records-wrapper").height();
-    			$("#search-toggle-pointer").text(">>");
-    			$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });	    			
-    			hic.positionTogglePointer();
+    				$("#facet-wrapper").height(finalHeight);
+    				$("#facet-widgets-wrapper").addClass("search-closed");
+    				$("form[name='facets']").addClass("search-closed");
+    				$("#facet-widgets-wrapper").offset({ left:-23 });
+    				$("#facet-widgets-wrapper").removeClass("search-open");
+    					$("#search-toggle").addClass("toggle-closed");
+    				$("#search-toggle").removeClass("toggle-open");
+    				$("#vals-and-records-wrapper").removeClass("vals-and-records-min");
+    				$("#vals-and-records-wrapper").addClass("vals-and-records-max");
+    				$("#vals-and-records-wrapper").css({"position":"relative" });
+    				var height = initialWidgetHeight > $("#vals-and-records-wrapper").height() ? initialWidgetHeight : $("#vals-and-records-wrapper").height();
+    				$("#search-toggle-pointer").text(">>");
+    				$("#search-toggle-pointer").offset({ top: ($(window).height() / 2) - 5 });	    			
+    				hic.positionTogglePointer();
 
-    		}
-	    	
-	    	
-    	);
+    			});
     	$("#search-toggle").unbind('click');
     	$("#search-toggle").click(hic.showSearch);
+    	$.cookie(hic.COOKIE, 0);
 	    
    }
     
@@ -458,7 +446,8 @@ $(document).ready(
 			
 			);
 			$("#search-toggle").unbind('click');
-			$("#search-toggle").click(hic.hideSearch);
+			$("#search-toggle").click({ delay:325 }, hic.hideSearch);
+			$.cookie(hic.COOKIE, null);
 		
 		}
 		
@@ -571,11 +560,56 @@ $(document).ready(
 			}
 		
 		});
+		
+		/**
+		 * Autocomplete for provenance
+		 */
+		
+		$("#id-place").autocomplete({
+		
+			//source: $("#place-autocomplete").text().split('¤'),
+			source: function(req, responseFn){
+			
+				var re = $.ui.autocomplete.escapeRegex(req.term);
+				var matcher = new RegExp( "^" + re, "i" );
+				var a = $.grep(  $("#place-autocomplete").text().split('¤'), function(item,index){ return matcher.test(item);});
+        		responseFn( a );				
+			
+			},
+			select: function(event, ui){
+			
+				$("#id-place").val(ui.item.value);
+				hic.tidyQueryString();
+			}
+		
+		});
+		
+		hic.isSubsequentPage = function(){
+		
+			var pageno = decodeURI((RegExp('page=(\\d+)(&|$)').exec(location.search)||[,null])[1]);
+			if(pageno != 'null') return true;
+			return false;
+		
+		}
+		
+		hic.checkBetacode = function(){
+
+			if($.cookie(hic.BETA_COOKIE) == "beta-on"){
+			
+				$("#beta-on").attr("checked", "checked");
+			
+			} else {
+		
+				$("#beta-on").removeAttr("checked");
+		
+			}		
+		
+		}
+	
 		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
-		$("#text-search-widget").find("input[name='type']").click(hic.configureSearchSettings);
 		// select substring as default
 		$("#substring").click();
-		$(".toggle-open").click(hic.hideSearch);
+		$(".toggle-open").click({ delay: 325 }, hic.hideSearch);
 		$(".toggle-closed").click(hic.showSearch);		
 		$("#vals-and-records-wrapper").width(hic.getValsAndRecordsWidth("init"));
 		hic.positionTogglePointer();
@@ -583,14 +617,42 @@ $(document).ready(
 		// changing date mode causes tidy and submit
 		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
 		// turning betacode on/off selects text input
-		$("#beta-on").change(function(){$("#keyword").focus();});
+		$("#beta-on").change(function(){
+			
+			$(".stringsearch-top-controls:last .keyword").focus();
+			var beta = $(this).attr("checked") ? "beta-on" : "beta-off";
+			$.cookie(hic.BETA_COOKIE, beta);
+			
+		});
 		// entry into string search triggers text monitoring 
-		$("#keyword").focus(hic.monitorTextInput);
-		 $("#keyword").blur(function(){ $("#keyword").focus(hic.monitorTextInput) });
+		$(".stringsearch-top-controls:last .keyword").live("focus", hic.monitorTextInput);
+
+		//$(".stringsearch-top-controls:last .keyword").live("blur", function(){ $("#keyword").focus(hic.monitorTextInput) });
 		// submit triggers tidy ...
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		// ... unless checks need to be in place first
-		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").change(hic.tidyQueryString);
+		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").change(hic.tidyQueryString);
+		// sets cookie on click to record to allow reversion to current search results
+		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
+		$("#reset-all").click(function(e){
+		
+			$.cookie(hic.SEARCH_STACK, null);
+			return true;
+		
+		});
+		hic.checkBetacode();
+		if($.cookie(hic.HIDE_REVEAL_COOKIE) == 0 && hic.isSubsequentPage()){
+		
+			var e = {};
+			e.data = {};
+			e.data.delay = 0;
+			hic.hideSearch(e);
+		
+		}
+
+	
 	}
+	
+
 
 );

@@ -38,8 +38,8 @@ public class IdentifierFacetTest extends TestCase {
         mockParams.put(IdentifierFacet.IdParam.IDNO.name(), new String[]{"2133"});
         
         assertTrue(testInstance.addConstraints(mockParams));
-        SolrQuery sq = new SolrQuery();
-        sq = testInstance.buildQueryContribution(sq);
+  //      SolrQuery sq = new SolrQuery();
+  //      sq = testInstance.buildQueryContribution(sq);
         
     }
     

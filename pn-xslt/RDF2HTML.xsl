@@ -127,11 +127,9 @@
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
    
-    <html lang="en" version="HTML+RDFa 1.1">
-      <xsl:namespace name="dc" select="'http://purl.org/dc/terms/'"></xsl:namespace>
+    <html lang="en" version="HTML+RDFa 1.1"
+      prefix="dc: http://purl.org/dc/terms/">
       <head>
-        
-        
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
@@ -153,6 +151,10 @@
        </xsl:if>
         <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <xsl:comment><![CDATA[[if IE]><link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
+        <xsl:comment><![CDATA[[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
+        <xsl:comment><![CDATA[[if IE 8]><link rel="stylesheet" href="/css/ie8.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
+        <xsl:comment><![CDATA[[if IE 7]><link rel="stylesheet" href="/css/ie9.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>        
         <title>
           <xsl:call-template name="get-references"/>
         </title>

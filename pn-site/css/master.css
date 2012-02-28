@@ -17,7 +17,7 @@ color: white;
 /*background: #5C0303;*/
 font-family: Georgia, serif;
 height:85px;
-text-align:left;
+text-align:left;fac
 }
 
 #hd h1 {
@@ -112,12 +112,8 @@ font-size: 96%;
 font-weight: bold;
 }
 
-div#search {
-font-size:100%;
-margin-bottom: 2em;
-padding-top: 20px;
-text-align: center;
-height: 50px;
+div.search {
+font-size:93%;
 }
 
 div.search p {
@@ -730,15 +726,6 @@ td.kwic {
 
 /*  FACET CONTROLS (NB: LARGELY COPIED FROM SEARCH.HTML; CONSIDER INTEGRATING */
 
-#facet-stringsearch-wrapper{
-    
-    background:white;
-    border:thin solid silver;
-    padding:1em;
-    /*width:780px */
-    width: 550px; /* shrunk for faceted display */
-    
-}
 
 /*  MORE-LIKE-THIS ADDITIONS THILL 2011.11.04 */
 
@@ -772,5 +759,64 @@ div.more-like-this a:after{
 
 /* END MORE-LIKE-THIS ADDITIONS */
 
+/* LINEAR BROWSING ADDITIONS THILL 2011.12.16 */
 
+#linear-browse-wrapper{
+    
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    clear: both;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 90%;
+    height: 25px;
+    position: relative;
+    
+}
+
+#linear-previous-record{
+    
+    float: left;
+    
+    }
+
+#linear-next-record{
+    
+    float: right;
+}
+
+#linear-back{
+    
+    position: absolute;
+    left: 42%;
+    
+}
+
+#linear-back a{
+    
+    color: #162A5C;
+    
+}
+
+#linear-browse-wrapper a{
+    
+    text-decoration: none;
+    
+}
+
+#linear-browse-wrapper a:hover{
+    
+    text-decoration: underline;
+    
+}
+
+.deadlink{
+    
+    color: #777;
+    font-style: italic;
+    
+}
+
+/* END LINEAR BROWSING ADDITIONS */
 

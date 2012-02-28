@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
@@ -314,7 +315,7 @@ public class FileUtils {
    * @param t
    * @return the highlighted text
    */
-  public String highlight(String query, String t) {
+  public String standardHighlight(String query, String t) {
     Pattern[] patterns = getPatterns(query);
     List<String> exclusions = getExclusions(t);
     String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
@@ -350,6 +351,49 @@ public class FileUtils {
     return result.toString().replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
   }
   
+  public String highlight(Pattern[] patterns, String t) {
+    List<String> exclusions = getExclusions(t);
+    String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
+    int index = 0;
+    for (Pattern pattern : patterns) {
+      StringBuilder hl = new StringBuilder();
+      Matcher m = pattern.matcher(text);
+      while (m.find()) {
+        hl.append(text.substring(index, m.start()));
+        hl.append(hlStartMark);
+        hl.append(text.substring(m.start(), m.end()));
+        hl.append(hlEndMark);
+        index = m.end();
+      }
+      if (hl.length() > 0) {
+        hl.append(text.substring(index));
+        text = hl.toString();
+        index = 0;
+      }
+    }
+    Pattern p = Pattern.compile("ⓐⓐⓐ\\n?");
+    int i = 0;
+    int start = 0;
+    Matcher m = p.matcher(text);
+    StringBuilder result = new StringBuilder();
+    while (m.find()) {
+      result.append(text.substring(start, m.start()));
+      result.append(exclusions.get(i));
+      start = m.end();
+      i++;
+    }
+    result.append(text.substring(start));
+    return result.toString().replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
+  }
+  
+
+  public List<String> highlightStandardMatches(String query, String t) {
+
+      Pattern[] patterns = getPatterns(query);
+      return highlightMatches(t, patterns);  
+  }
+  
+    
   /**
    * Finds matches in a text file and returns the top 3 matches with HTML
    * highlighting applied and with context surrounding the highlighted text.
@@ -358,9 +402,8 @@ public class FileUtils {
    * @return A <code>java.util.List</code> containing the top 3 matches plus
    * context
    */
-  public List<String> highlightMatches(String query, String t) {
+  public List<String> highlightMatches(String t, Pattern[] patterns) {
     List<String> result = new ArrayList<String>();
-    Pattern[] patterns = getPatterns(query);
     String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$3ⓞ").replaceAll(hyphenatedLineNum, "Ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
     for (Pattern pattern : patterns) {
       Matcher m = pattern.matcher(text);
@@ -390,7 +433,7 @@ public class FileUtils {
           }
         }
         if (start >= prevEnd) {
-          result.add(highlight(query, text.substring(start, end)).replaceAll("Ⓜ([^ⓞ]+)ⓞ"
+          result.add(highlight(patterns, text.substring(start, end)).replaceAll("Ⓜ([^ⓞ]+)ⓞ"
                   + "", "-]<br/>$1 ").replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
@@ -398,7 +441,7 @@ public class FileUtils {
           prevEnd = end;
         } else {
           String hit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
-          result.add(highlight(query, hit).replaceAll("Ⓜ([^ⓞ]+)ⓞ", "-]<br/>$1 ").replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
+          result.add(highlight(patterns, hit).replaceAll("Ⓜ([^ⓞ]+)ⓞ", "-]<br/>$1 ").replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
           if (result.size() > 2) {
             return result;
           }
@@ -407,8 +450,10 @@ public class FileUtils {
     }
     return result;
   }
+  
 
-    private Pattern[] getPatterns(String query) {
+
+    public Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "#");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
       QueryLexer ql = new QueryLexer(a);
@@ -459,6 +504,150 @@ public class FileUtils {
         }
     }
     return patterns;
+  }
+   
+  public Pattern[] getSubstringHighlightPatterns(String query){
+      
+      List<String> tokens = getTokensFromQuery(query);
+      Pattern[] patterns = new Pattern[tokens.size()];
+      for(int i = 0; i < tokens.size(); i++){
+          
+          String token = tokens.get(i);
+          token = substituteForSubstringPatternMatch(token);
+          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);  
+          
+      }
+      
+      return patterns;
+  }
+  
+  public Pattern[] getPhraseHighlightPatterns(String query){
+      
+      List<String> tokens = getTokensFromQuery(query);
+      Pattern[] patterns = new Pattern[tokens.size()];
+      for(int i = 0; i < tokens.size(); i++){
+      
+          String token = tokens.get(i);
+          token = substituteForPhrasePatternMatch(token);
+          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);
+      
+          
+      }
+      
+      return patterns;
+  }
+  
+
+    
+   public List<String> getTokensFromQuery(String query){
+       
+      String q = query.replace("*", "£").replace("?", "#");
+      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
+      QueryLexer ql = new QueryLexer(a);
+      CommonTokenStream tokens = new CommonTokenStream(ql);
+      QueryParser qp = new QueryParser(tokens);
+      List<String> find = new ArrayList<String>();
+      try {
+        qp.query();
+        find = qp.getStrings();
+      } catch (RecognitionException e) { }      
+       
+      return find; 
+       
+   }
+    
+   public String substituteDiacritics(String rawString){
+        
+        String transformedString = rawString
+                .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
+                .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
+                .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
+                .replace("ι", "(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)")
+                .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
+                .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
+                .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
+                .replace("ρ", "(ρ|ῥ)");                  
+        return transformedString;
+        
+    }
+   
+   public String substituteForSubstringPatternMatch(String rawString){
+       
+       String transformedString = rawString;
+       transformedString = transformedString.toLowerCase()
+                .replaceAll("([^ ^])", sigla + "$1" + sigla)
+                .replace("^ ^", "\\s+")
+                .replace("^", "(\\b)")
+                .replaceAll("\\s", "\\\\s+")
+                .replaceAll("^\\^", "(\\s|^)")
+                .replaceAll("^$", "(\\s|$)")
+                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "");      
+       transformedString = substituteDiacritics(transformedString);
+       transformedString = swapInSigla(transformedString);
+       return transformedString;
+       
+   }
+   
+   public String substituteForPhrasePatternMatch(String rawString){
+       
+       String transformedString = rawString;
+       transformedString = transformedString.toLowerCase()
+                .replaceAll("(\\S)", sigla + "$1" + sigla)
+                .replaceAll("([^£#])$", "$1\\\\b")
+                .replaceAll("\\s", "\\\\s+")
+                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "");
+       transformedString = substituteDiacritics(transformedString);
+       transformedString = swapInSigla(transformedString);
+       transformedString = "\\b" + transformedString + "\\b";
+       return transformedString;
+       
+   }
+   
+   public String substituteWildcards(String rawString){
+       
+      String transformedString = rawString.replaceAll("£", ".*");
+      transformedString = transformedString.replaceAll("#", ".");
+      return transformedString;
+       
+   }
+   
+   public String swapInSigla(String rawString){
+        
+       return rawString.replaceAll("(σ|ς)", "(σ|ς)" + sigla);
+       
+   }
+   
+   public String stripOutSigla(String rawString){
+       
+       return rawString.replaceAll(sigla, "");
+       
+   }
+   
+    Pattern[] buildPatterns(String q){
+      
+      ArrayList<Pattern> patterns = new ArrayList<Pattern>();
+      String[] qbits = q.split("\\)");
+      for(int i = 0; i < qbits.length; i++){
+          
+          String qbit = qbits[i];
+          if(qbit.contains("PHRASE:")){
+              
+              patterns.addAll(Arrays.asList(getPhraseHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1, qbit.length()))));
+              
+          }
+             
+         
+          else{
+              
+               patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1, qbit.length()))));
+            
+          }
+          
+      }
+      
+      Pattern[] patt = new Pattern[patterns.size()];
+      return patterns.toArray(patt);
+      
   }
 
     /**

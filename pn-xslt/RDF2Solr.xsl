@@ -18,7 +18,7 @@
   <xsl:import href="txt-teilgandl.xsl"/>
   <xsl:import href="txt-teilistanditem.xsl"/>
   <xsl:import href="txt-teilistbiblandbibl.xsl"/>
-  <xsl:import href="txt-teimilestone.xsl"/>
+  <xsl:import href="txt-teimilestone.xsl"/> 
   <xsl:import href="txt-teinote.xsl"/>
   <xsl:import href="txt-teip.xsl"/>
   <xsl:import href="txt-teispace.xsl"/>
@@ -78,12 +78,10 @@
         <xsl:if test="$apis = true()">
           <field name="collection">apis</field>
         </xsl:if>
-
+        <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
           <xsl:when test="$collection = 'ddbdp'">
-            <field name="id">http://papyri.info/ddbdp/<xsl:value-of
-                select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']"
-              /></field>
+            <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type != 'HGV']">
               <xsl:choose>
@@ -130,8 +128,6 @@
             <xsl:variable name="textnfc"
               select="normalize-space(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"/>
             <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
-            <!-- transcription fields are 8-fold: plain, plain ignore diacriticals, plain ignore case, plain ignore case and diacriticals,
-              ngram, ngram ignore diacriticals, ngram ignore case, ngram ignore case and diacriticals-->
             <field name="transcription">
               <xsl:value-of select="translate($textnfc, 'ς', 'σ')"/>
             </field>
@@ -143,12 +139,10 @@
             <field name="transcription_ic">
               <xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"/>
             </field>
+            <xsl:variable name="transcription_ia" select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"></xsl:variable>
             <field name="transcription_ia">
-              <xsl:value-of
-                select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"
-              />
+              <xsl:value-of select="$transcription_ia"/>
             </field>
-            <!--
             <field name="transcription_ngram">
               <xsl:for-each select="tokenize($textnfc, '\s+')">
                 <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
@@ -164,7 +158,7 @@
                 <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
-            -->
+            
             <field name="transcription_ngram_ia">
               <xsl:for-each
                 select="tokenize(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), '\s+')">
@@ -175,6 +169,19 @@
                 </xsl:if>
               </xsl:for-each>
             </field>
+        <!--   <field name="untokenized">
+              <xsl:value-of select="translate($textnfc, 'ς', 'σ')"></xsl:value-of>
+            </field>
+
+            <field name="untokenized_ia">
+              <xsl:value-of select="$transcription_ia"></xsl:value-of>
+            </field>
+            <field name="untokenized_ic">
+              <xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"></xsl:value-of>
+            </field>
+            <field name="untokenized_id">
+              <xsl:value-of select="translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"></xsl:value-of>
+            </field> -->
             <xsl:if test="string-length($textnfd) > 0">
               <field name="has_transcription">true</field>
             </xsl:if>
@@ -235,9 +242,7 @@
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
-            <field name="id">http://papyri.info/hgv/<xsl:value-of
-                select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"
-              /></field>
+            <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'TM']">
               <field name="identifier">
@@ -271,9 +276,7 @@
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'apis'">
-            <field name="id">http://papyri.info/apis/<xsl:value-of
-                select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'apisid']"
-              /></field>
+            <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="facetfields">
               <xsl:with-param name="docs" select="/"/>
               <xsl:with-param name="alterity">self</xsl:with-param>
@@ -909,8 +912,11 @@
   <xsl:if test="matches($first-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z') and matches($last-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
   <field name="first_revised"><xsl:value-of select="$first-revised"></xsl:value-of></field>
   <field name="last_revised"><xsl:value-of select="$last-revised"></xsl:value-of></field>
+  <field name="last_editor"><xsl:value-of select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when=replace($last-revised, $date-suffix, '')][1]/@who"></xsl:value-of></field>
   </xsl:if>
-  </xsl:template>
+</xsl:template>
+  
+
 
   <xsl:template name="ddbdp-app">
     <xsl:choose>

@@ -15,9 +15,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.abdera.Abdera;
+import org.apache.abdera.i18n.text.InvalidCharacterException;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
+import org.apache.abdera.model.Person;
 import org.apache.abdera.writer.Writer;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -69,7 +71,8 @@ public class AtomFeedServlet extends HttpServlet{
         id,
         metadata,
         display_place,
-        display_date
+        display_date,
+        last_editor
     
     
     }
@@ -236,7 +239,7 @@ public class AtomFeedServlet extends HttpServlet{
         }       
         sq.setQuery(q);
         return sq;
-        
+            
     }
     
     /**
@@ -335,13 +338,7 @@ public class AtomFeedServlet extends HttpServlet{
         selfLink.setRel("self");
         selfLink.setMimeType("application/atom+xml");
         feed.addLink(selfLink);
-        // TODO: Right now the 'updated' date is equal to the 'updated' field
-        // of the most recently updated document in the feed. Is this useful/correct?
         feed.setUpdated((Date)results.get(0).getFieldValue(SolrField.last_revised.name()));
-        // TODO: Is this a sensible value for the author field?
-        // TODO: Should author fields be attached instead to individual records?
-        // TODO: If so, these will need to be indexed.
-        // TODO: Should the additional available members be assigned to the author element
         feed.addAuthor("http://papyri.info");
         return feed;
         
@@ -410,7 +407,20 @@ public class AtomFeedServlet extends HttpServlet{
             Date modified = (Date) doc.getFieldValue(SolrField.last_revised.name());
             Date published = (Date) doc.getFieldValue(SolrField.first_revised.name());
             String summary = getSummary(doc);
+            String contributorURI = ((String) doc.getFieldValue(SolrField.last_editor.name()));
             Entry newEntry = feed.addEntry();
+
+            if(contributorURI != null){
+                
+                contributorURI = contributorURI.replaceAll("\\s", "");
+                String[] contributorBits = contributorURI.split("/");
+                String contributorName = contributorBits.length > 0 ? contributorBits[contributorBits.length - 1] : "Papyri.info";
+                Person contributor  = abdera.getFactory().newContributor();
+                contributor.setUri(contributorURI);
+                contributor.setName(contributorName);
+                newEntry.addContributor(contributor);
+                       
+            }
             Link contentLink = abdera.getFactory().newLink();
             contentLink.setHref(id);
             contentLink.setRel("alternate");

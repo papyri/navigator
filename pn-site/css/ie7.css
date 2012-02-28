@@ -1,0 +1,102 @@
+.facet-constraint{
+    
+    width: 30%;
+    margin-right: 2%;
+    
+}
+
+.option-label, .widget-label{
+    
+    float: left;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    
+}
+
+.facet-widget{
+    
+    height: 50px;
+    clear: left; 
+     
+}
+
+#text-search-widget{
+    
+    height: 350px;
+    
+}
+
+#id-selector-wrapper{
+    
+    height: 100px;
+    
+}
+
+#img-select{
+    
+    height: 100px;
+    
+}
+
+.facet-widget #series-coll-wrapper{
+
+    width: 70%;
+    position: relative;
+    
+}
+
+#series-coll-wrapper label{
+    
+    float: left;
+    clear: left;
+    
+}
+
+#collection-wrapper, #idno-wrapper{
+    
+    padding-top: 25px;
+    
+}
+
+.facet-widget #vol-idno-wrapper{
+    
+    width: 30%;
+    float: right;
+}
+
+#vol-idno-wrapper input{
+    
+    float: right;
+}
+
+#vol-idno-wrapper label{
+    
+    float: left;
+}
+
+div.date-facet-widget{
+    
+    padding-bottom: 0em;
+    
+}
+
+#img-select label{
+    
+    font-size: 90%;
+    
+}
+
+#img-select INPUT.ui-button{
+    
+    font-size: 95%;
+    padding-bottom: 0.1em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    
+}
+
+tr.result-record{
+    
+    overflow: hidden;
+    
+}

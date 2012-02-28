@@ -52,7 +52,7 @@
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
-  (println (str "Loading " n " records to " server))
+  (println (str "Loading " (if (nil? n) "500" n) " records to " server))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 500)
         factory (ConnectionFactory.)
@@ -70,7 +70,8 @@
         (.append "</rdf:RDF>"))
       (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
       (catch Exception e
-        (.println *err* (str (.getMessage e) " talking to Mulgara.")))
+        (.println *err* (str (.getMessage e) " talking to Mulgara."))
+        (.printStackTrace e))
       (finally
         (doto conn
           (.close))))))
@@ -281,8 +282,8 @@
       tasks (map (fn [x]
         (fn []
           (transform x)
-          (if (> (count @buffer) 500)
-          (flush-buffer nil))))
+          (when (> (count @buffer) 500)
+            (flush-buffer nil))))
         (filter #(.endsWith (.getName %) ".xml") files))]
       (doseq [future (.invokeAll pool tasks)]
         (.get future))

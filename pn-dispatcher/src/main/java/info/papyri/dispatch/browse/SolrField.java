@@ -34,6 +34,8 @@ public enum SolrField {
         earliest_date,
         latest_date,        
         transcription_ngram_ia,
+        transcription_ngram_ic,
+        transcription_ngram_id,
         transcription,
         transcription_ia,
         translation,
@@ -56,6 +58,10 @@ public enum SolrField {
         series_led_path,
         volume_led_path,
         idno_led_path,
-        title
+        title,
+        untokenized_ia,
+        untokenized_ic,
+        untokenized_id
+        
         
 }

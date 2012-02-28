@@ -1,9 +1,12 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.browse.facet.customexceptions.FacetNotFoundException;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
+import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
+import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -51,7 +54,7 @@ public class FacetBrowser extends HttpServlet {
     static private URL FACET_URL;
     /** path to servlet */
     static private String FACET_PATH;
-    /** Default umber of records to show per page */
+    /** Default number of records to show per page */
     static private int defaultDocumentsPerPage = 15;
     /** Utility class providing lemma expansion */
     static SolrUtils SOLR_UTIL;
@@ -104,7 +107,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Parse request, allowing each facet to pull out and parse the part of the request
          * relevant to itself.
-         */
+         */              
+        
         Boolean constraintsPresent = parseRequestToFacets(request, facets);
         
         /* determine what page of results has been requested ('0' if no page requested and
@@ -118,6 +122,8 @@ public class FacetBrowser extends HttpServlet {
          * by each of the facets in turn.
          */
         SolrQuery solrQuery = buildFacetQuery(page, facets, docsPerPage);
+        
+        ArrayList<CustomApplicationException> exceptionLog = collectFacetExceptions(facets);
                
         /* Query the Solr server */
         QueryResponse queryResponse = runFacetQuery(solrQuery);
@@ -131,7 +137,7 @@ public class FacetBrowser extends HttpServlet {
          
         /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
            of which represents one returned document. */
-        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(queryResponse, facets);
+        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(solrQuery, queryResponse, facets);
         
                 
         /* Determine the number of results returned. 
@@ -142,8 +148,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-          String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage);
-      //  String html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request);
+        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog);
+        //html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -233,12 +239,14 @@ public class FacetBrowser extends HttpServlet {
         sq.setStart((pageNumber - 1) * docsPerPage); 
         
         // iterate through facets, adding their contributions to solr query
-        Iterator<Facet> fit = facets.iterator();
-        while(fit.hasNext()){
+        // TODO: this is a cheap hack right now, to ensure that the StringSearchFacet
+        // is passed a SolrQuery object with as many clauses as possible attached
+        // i.e., with the search space narrowed as far as possible
+        // this should probably be implemented in a more systematic way
+        for(int i = facets.size() - 1; i >= 0; i--){
             
-            Facet facet = fit.next();
+            Facet facet = facets.get(i);
             sq = facet.buildQueryContribution(sq);
-            
             
         }
         sq.addSortField(SolrField.series.name(), SolrQuery.ORDER.asc);
@@ -246,7 +254,8 @@ public class FacetBrowser extends HttpServlet {
         sq.addSortField(SolrField.item.name(), SolrQuery.ORDER.asc);
         // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
         // all documents that pass these filters - hence '*:*' as the actual query
-        sq.setQuery("*:*");
+        String queryString = sq.toString().contains("cache") ? "{!cache=false}*:*" : "*:*";
+        sq.setQuery(queryString);
         return sq;
         
         
@@ -287,6 +296,28 @@ public class FacetBrowser extends HttpServlet {
         
     }
     
+    ArrayList<CustomApplicationException> collectFacetExceptions(ArrayList<Facet> facets){
+        
+        ArrayList<CustomApplicationException> exceptions = new ArrayList<CustomApplicationException>();
+        
+        Iterator<Facet> fit = facets.iterator();
+        while(fit.hasNext()){
+            
+            ArrayList<CustomApplicationException> facetExceptions = fit.next().getExceptionLog();
+            
+            Iterator<CustomApplicationException> xit = facetExceptions.iterator();
+            while(xit.hasNext()){
+                
+                exceptions.add(xit.next());
+                
+            }
+            
+        }
+        
+        return exceptions;
+        
+    }
+    
     /**
      * Sends the <code>QueryResponse</code> returned by the Solr server to each of the
      * <code>Facet</code>s in turn to populate its values list.
@@ -318,14 +349,16 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord
      */
     
-    ArrayList<DocumentBrowseRecord> retrieveRecords(QueryResponse queryResponse, ArrayList<Facet> facets){
+    ArrayList<DocumentBrowseRecord> retrieveRecords(SolrQuery solrQuery, QueryResponse queryResponse, ArrayList<Facet> facets){
         
-        String highlightString = this.generateHighlightString(facets);
+        ArrayList<SearchClause> searchClauses = this.generateHighlightString(facets);
 
         ArrayList<DocumentBrowseRecord> records = new ArrayList<DocumentBrowseRecord>();
         
         if(queryResponse.getResults() == null) return records;
         
+        int counter = 0;
+                
         for(SolrDocument doc : queryResponse.getResults()){
             
            try{ 
@@ -345,8 +378,10 @@ public class FacetBrowser extends HttpServlet {
                 Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
                 ArrayList<String> allIds = getAllSortedIds(doc);
                 String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, highlightString);
+                DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchClauses);
+                setLinearBrowseData(solrQuery, queryResponse, counter, record);
                 records.add(record);
+                counter++;
                 
            }
            catch (MalformedURLException mue){
@@ -369,19 +404,19 @@ public class FacetBrowser extends HttpServlet {
      * @return 
      */
     
-    private String generateHighlightString(ArrayList<Facet> facets){
+    private ArrayList<SearchClause> generateHighlightString(ArrayList<Facet> facets){
         
-        String highlightString = "";
+        ArrayList<SearchClause> searchClauses = new ArrayList<SearchClause>();
         
         try{
         
             StringSearchFacet ssf = (StringSearchFacet)this.findFacet(facets, StringSearchFacet.class);
-            String hWords = ssf.getHighlightString();
-            highlightString += hWords;
+            searchClauses = ssf.getAllSearchClauses();
+            
         
         }
         catch(FacetNotFoundException fnfe){}
-        return highlightString;
+        return searchClauses;
         
     }
     
@@ -397,7 +432,7 @@ public class FacetBrowser extends HttpServlet {
      * @return The complete HTML for all interactive portions of the page, as a <code>String</code>
      */
     
-    private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, int docsPerPage){
+    private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog){
                 
         StringBuilder html = new StringBuilder();
         html.append("<form name=\"facets\" method=\"get\" action=\"");
@@ -407,7 +442,7 @@ public class FacetBrowser extends HttpServlet {
         assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams, docsPerPage);
-        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage);
+        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage, exceptionLog);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
         html.append("</div><!-- closing #facet-wrapper -->");
         html.append("</form>");
@@ -421,7 +456,7 @@ public class FacetBrowser extends HttpServlet {
      * 
      */
     
-    private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq, int docsPerPage, HttpServletRequest request){
+    private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq, int docsPerPage, HttpServletRequest request, ArrayList<CustomApplicationException> exceptionLog){
         
         StringBuilder html = new StringBuilder();
         html.append("<form name=\"facets\" method=\"get\" action=\"");
@@ -431,7 +466,7 @@ public class FacetBrowser extends HttpServlet {
         assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams, docsPerPage);
-        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage);
+        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage, exceptionLog);
         html.append(submittedParams.keySet().toString());
         html.append("<br><br>");
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
@@ -537,14 +572,21 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord#getHTML() 
      */
     
-    private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html, int docsPerPage){
+    private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog){
         
         html.append("<div id=\"facet-records-wrapper\">");
         html.append("<div id=\"results-prefix-wrapper\">");
         html.append("<div id=\"results-prefix\">");
-        if(!constraintsPresent){
+        if(!constraintsPresent && exceptionLog.size() == 0){
             
             html.append("<h2>Please select values from the left-hand column to return results</h2>");
+            
+        }
+        else if(exceptionLog.size() > 0){
+            
+           html.append(displayParsingErrorMessage(exceptionLog));
+           returnedRecords.clear();
+           resultSize = 0;
             
         }
         else if(resultSize == 0){
@@ -600,6 +642,7 @@ public class FacetBrowser extends HttpServlet {
           
     }
     
+    
     /**
      * Generates the HTML controls indicating the constraints currently set on each <code>Facet</code>, and that,
      * when clicked, remove the constraint which they designate. 
@@ -611,19 +654,18 @@ public class FacetBrowser extends HttpServlet {
      */
     
     private StringBuilder assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams, int docsPerPage){
-          
-        StringBuilder previousValuesHTML = new StringBuilder("<div id=\"previous-values\">");
+        
+        
+        StringBuilder previousHTMLValues = new StringBuilder("<div id=\"previous-values\">");
         Iterator<Facet> fit = facets.iterator();
         
         while(fit.hasNext()){
             
             Facet facet = fit.next();      
             
-            String[] params = facet.getFormNames();
+            String[] params = facet.getFormNames(); 
             
-            previousValuesHTML.append("<div class='prev-constraint-wrapper' id='prev-constraint-");
-            previousValuesHTML.append(facet.getCSSSelectorID());
-            previousValuesHTML.append("'>");  
+            StringBuilder values = new StringBuilder();
                             
             for(int i = 0; i < params.length; i++){
             
@@ -641,41 +683,77 @@ public class FacetBrowser extends HttpServlet {
                         String displayName = facet.getDisplayName(param, facetValue);
                         String displayFacetValue = facet.getDisplayValue(facetValue);
                         String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue, docsPerPage);
-                        previousValuesHTML.append("<div class='facet-constraint constraint-");
-                        previousValuesHTML.append(param.toLowerCase());
-                        previousValuesHTML.append("'>");
-                        previousValuesHTML.append("<div class='constraint-label'>");
-                        previousValuesHTML.append(displayName);
-                        previousValuesHTML.append("<span class='semicolon'>:</span> ");
-                        previousValuesHTML.append(displayFacetValue);
-                        previousValuesHTML.append("</div><!-- closing .constraint-label -->");
-                        previousValuesHTML.append("<div class='constraint-closer'>");
-                        previousValuesHTML.append("<a href='");
-                        previousValuesHTML.append(FACET_PATH);
-                        previousValuesHTML.append("".equals(queryString) ? "" : "?");
-                        previousValuesHTML.append(queryString);
-                        previousValuesHTML.append("' title ='Remove facet value'>X</a>");
-                        previousValuesHTML.append("</div><!-- closing .constraint-closer -->");
-                        previousValuesHTML.append("<div class='spacer'></div>");
-                        previousValuesHTML.append("</div><!-- closing .facet-constraint -->");
+                        values.append("<div class='facet-constraint constraint-");
+                        values.append(param.toLowerCase());
+                        values.append("'>");
+                        values.append("<div class='constraint-label'>");
+                        values.append(displayName);
+                        values.append("<span class='semicolon'>:</span> ");
+                        values.append(displayFacetValue);
+                        values.append("</div><!-- closing .constraint-label -->");
+                        values.append("<div class='constraint-closer'>");
+                        values.append("<a href='");
+                        values.append(FACET_PATH);
+                        values.append("".equals(queryString) ? "" : "?");
+                        values.append(queryString);
+                        values.append("' title ='Remove facet value'>X</a>");
+                        values.append("</div><!-- closing .constraint-closer -->");
+                        values.append("<div class='spacer'></div>");
+                        values.append("</div><!-- closing .facet-constraint -->");
                     }
                                         
                 }
             
             }
             
-            previousValuesHTML.append("</div><!-- closing .prev-constraint-wrapper -->");
+            String valueString = values.toString();
+            if(valueString.length() > 0){
+                
+               previousHTMLValues.append("<div class='prev-constraint-wrapper' id='prev-constraint-");
+               previousHTMLValues.append(facet.getCSSSelectorID());
+               previousHTMLValues.append("'>");              
+               previousHTMLValues.append(values); 
+               previousHTMLValues.append("</div><!-- closing .prev-constraint-wrapper -->");
+                
+                
+            }
+            
 
                      
         }
         
-        previousValuesHTML.append("<div class='spacer'></div>");
-        previousValuesHTML.append("</div><!-- closing #previous-values -->");
-        html.append(previousValuesHTML.toString());
+        previousHTMLValues.append("<div class='spacer'></div>");
+        previousHTMLValues.append("</div><!-- closing #previous-values -->");
+        html.append(previousHTMLValues.toString());
         return html;
         
     }
+
+    String displayParsingErrorMessage(ArrayList<CustomApplicationException> exceptionLog){
         
+        StringBuilder html = new StringBuilder();
+        html.append("<div id=\"parse-errors\">");
+        html.append("<p>");
+        html.append("Unfortunately, your string search could not be parsed, for the following ");
+        String r = exceptionLog.size() == 1 ? "reason" : "reasons";
+        html.append(r);
+        html.append(":");
+        html.append("</p>");
+        html.append("<ul>");
+        Iterator<CustomApplicationException> xit = exceptionLog.iterator();
+        while(xit.hasNext()){
+        
+            CustomApplicationException exception = xit.next();
+            html.append("<li class=\"parse-error\">");
+            html.append(exception.getMessage());
+            html.append("</li>");
+            
+        }
+        html.append("</ul>");
+        html.append("</div><!-- closing #parsing-errors -->");
+        return html.toString();
+    }
+    
     /**
      * Injects the HTML code previously generated by the <code>assembleHTML</code> method
      * 
@@ -1022,8 +1100,57 @@ public class FacetBrowser extends HttpServlet {
         }        
         
        return acceptedIds;
-       
-       
+         
+    }
+    
+    /**
+     * Creates, starting from the <code>SolrQuery</code> object used for the current result set,
+     * a new <code>SolrQuery</code> capable of returning the immediate neighbour(s) of the passed
+     * <code>DocumentBrowseRecord</code> in that result set, in order to support linear-browsing 
+     * functionality.
+     * 
+     * @param bigQuery
+     * @param qr
+     * @param recordPosition
+     * @param record 
+     */
+    
+    private void setLinearBrowseData(SolrQuery bigQuery, QueryResponse qr, int recordPosition, DocumentBrowseRecord record){
+
+        SolrQuery newQuery = new SolrQuery();  
+        
+        String[] filterQueries = bigQuery.getFilterQueries();
+        String[] sortFields = bigQuery.getSortFields();
+        
+        try{
+            
+            Long currentPosition = Long.valueOf(bigQuery.getStart() + recordPosition);
+            Long lastRecord = qr.getResults().getNumFound() - 1;
+            newQuery.setRows((currentPosition == 0 || currentPosition == lastRecord) ? 2 : 3);
+            int startValue = (int)(currentPosition == 0 ? 0 : currentPosition - 1);
+            newQuery.setStart(startValue);
+            newQuery.addField("id");
+            newQuery.addField("title");
+        
+            for(int i = 0; i < filterQueries.length; i++){
+
+                String filterQuery = filterQueries[i];
+                if(!"".equals(filterQuery)) newQuery.addFilterQuery(filterQuery);
+
+            }
+
+            for(int j = 0; j < sortFields.length; j++){
+
+                String[] sortBits = sortFields[j].split(" ");
+                if(sortBits.length == 2) newQuery.addSortField(sortBits[0], SolrQuery.ORDER.valueOf(sortBits[1]));
+
+            }
+            
+            record.setSolrData(newQuery, currentPosition, lastRecord);
+            
+            
+        } catch(Exception e){  }
+        
     }
     
     /**
