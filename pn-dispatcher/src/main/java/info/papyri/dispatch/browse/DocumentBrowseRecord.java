@@ -125,6 +125,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
               
               Pattern[] patterns = util.getPhraseHighlightPatterns(transformedString);
               hilites.addAll(Arrays.asList(patterns));
+              
           }
           
       }catch(Exception e){}
@@ -136,6 +137,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   Pattern[] matchRegexToDocument(String regex){
       
+      regex = interpolateTextMarksIntoRegex(regex);
       ArrayList<Pattern> patterns = new ArrayList<Pattern>();
       String fullText = util.loadTextFromId(url.toExternalForm()); 
       
@@ -144,15 +146,57 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       while(matcher.find()){
           
           String found = matcher.group(0);
+          found = simplifyFoundString(found);
           highlightWords.add(found);
           Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
           patterns.add(foundPattern);
           
       }
-      
+     // if(highlightWords.isEmpty()) highlightWords.add(regex + "|" + fullText);
       Pattern[] arrPatterns = new Pattern[patterns.size()];
       return patterns.toArray(arrPatterns);
       
+  }
+  
+  String interpolateTextMarksIntoRegex(String regex){
+      
+      String specialChars = "((\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\\s)+)?";
+      StringBuilder regexBuilder = new StringBuilder();
+      String prevCharacter = "";
+      int curlyBracketCount = 0;
+      
+      for(int i = 0; i < regex.length(); i++){
+          
+          String nowChar = Character.toString(regex.charAt(i));
+          String nextChar = i == regex.length() - 1 ? "" : Character.toString(regex.charAt(i + 1));
+          regexBuilder.append(nowChar);
+          if(!prevCharacter.equals("\\") && !prevCharacter.equals("|") && !nextChar.equals("|") &&
+              curlyBracketCount == 0 && nowChar.matches("[\\p{L}\\)]")){
+              
+              regexBuilder.append(specialChars);
+              
+          }
+          prevCharacter = nowChar;
+          if("{".equals(nowChar)) curlyBracketCount += 1;
+          if("}".equals(nowChar)) curlyBracketCount -= 1;
+          
+      }
+      
+      return regexBuilder.toString().trim();
+      
+  }
+  
+  String simplifyFoundString(String foundString){
+      
+      List<String> specialChars = Arrays.asList(new String[]{"\\(", "\\)", "\\{", "\\}", "\\d", "-", "\\[", "\\]", "\\s" });
+      Iterator<String> scit = specialChars.iterator();
+      while(scit.hasNext()){
+      
+          String spchar = scit.next();
+          foundString = foundString.replaceAll(spchar, ".");
+          
+      }
+      return foundString;
   }
   
   final String buildHighlightString(ArrayList<SearchClause> searchClauses){
@@ -174,13 +218,10 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                       while(hwit.hasNext()){
                       
                           String highlightWord = hwit.next();
-                          hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
-                          hilite.append(":(\"");
-                          hilite.append(highlightWord);
-                          hilite.append("\")");
+                          hilite.append(buildRegexHighlightString(highlightWord));
+                          
                       
                       }
-
 
                   }
                  else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
@@ -226,6 +267,29 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       }
       
       return hilite.toString();
+      
+  }
+  
+  private String buildRegexHighlightString(String highlightWord){
+      
+      StringBuilder highlighter = new StringBuilder();
+      StringSearchFacet.SearchType searchType = highlightWord.contains(" ") ? StringSearchFacet.SearchType.PHRASE : StringSearchFacet.SearchType.SUBSTRING;
+      highlighter.append(StringSearchFacet.SearchType.SUBSTRING.name());
+      highlighter.append(":(");
+      if(searchType == StringSearchFacet.SearchType.PHRASE){
+          
+          highlighter.append("\"");
+          
+      }
+      highlighter.append(highlightWord);
+      if(searchType == StringSearchFacet.SearchType.PHRASE){
+          
+          highlighter.append("\"");
+          
+      }
+      highlighter.append(")");
+      return highlighter.toString();
+      
       
   }
   

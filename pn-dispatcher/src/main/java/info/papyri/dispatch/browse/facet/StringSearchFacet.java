@@ -706,31 +706,6 @@ public class StringSearchFacet extends Facet{
         
     }
     
-    /**
-     * Returns the text to be highlighted for each of the <code>SearchConfiguration</code> objects. 
-     * 
-     * @return 
-     */
-    
-    public String getHighlightString(){
-        // TODO: this isn't going to work as it stands
-        String highlightString = "";
-        
-        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchConfigurations.entrySet()){
-            
-            ArrayList<SearchClause> values = entry.getValue();
-            Iterator<SearchClause> vit = values.iterator();
-            while(vit.hasNext()){
-            
-                SearchClause config = vit.next();
-                highlightString += config.getOriginalString();  // might need to replace this with bespoke highlight string
-                   
-            }
-        }
-        
-        return highlightString;
-    }
-    
     public ArrayList<SearchTerm> getAllSearchTerms(){
         
         
