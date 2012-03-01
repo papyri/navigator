@@ -145,14 +145,20 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       Matcher matcher = pattern.matcher(fullText);
       while(matcher.find()){
           
-          String found = matcher.group(0);
-          found = simplifyFoundString(found);
-          highlightWords.add(found);
-          Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
-          patterns.add(foundPattern);
+          String firstFound = matcher.group(0);
+          ArrayList<String> founds = simplifyFoundString(firstFound);
+          Iterator<String> fit = founds.iterator();
+          while(fit.hasNext()){
+              
+              String found = fit.next();
+              highlightWords.add(found);
+              Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
+              patterns.add(foundPattern);
+          
+          }
           
       }
-     // if(highlightWords.isEmpty()) highlightWords.add(regex + "|" + fullText);
+
       Pattern[] arrPatterns = new Pattern[patterns.size()];
       return patterns.toArray(arrPatterns);
       
@@ -160,7 +166,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   String interpolateTextMarksIntoRegex(String regex){
       
-      String specialChars = "((\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\\s)+)?";
+      String specialChars = "((\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\\s|̣)+)?";
       StringBuilder regexBuilder = new StringBuilder();
       String prevCharacter = "";
       int curlyBracketCount = 0;
@@ -186,17 +192,27 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
   }
   
-  String simplifyFoundString(String foundString){
+  public ArrayList<String> simplifyFoundString(String foundString){
       
-      List<String> specialChars = Arrays.asList(new String[]{"\\(", "\\)", "\\{", "\\}", "\\d", "-", "\\[", "\\]", "\\s" });
-      Iterator<String> scit = specialChars.iterator();
-      while(scit.hasNext()){
-      
-          String spchar = scit.next();
-          foundString = foundString.replaceAll(spchar, ".");
-          
+      ArrayList<String> foundStrings = new ArrayList<String>();
+      List<String> foundbits =  Arrays.asList(foundString.split("\\d+\\."));
+      for(int i = 0; i < foundbits.size(); i++){
+
+          List<String> specialChars = Arrays.asList(new String[]{"\\(", "\\)", "\\{", "\\}", "\\.", "-", "\\[", "\\]", "\\s" });
+
+          String fb = foundbits.get(i).trim();
+          Iterator<String> scit = specialChars.iterator();
+          while(scit.hasNext()){
+
+              String spchar = scit.next();
+              fb = fb.replaceAll(spchar, ".");
+              
+          }
+          if(fb.matches("^.*[^\\.].*$")) foundStrings.add(fb);
+
       }
-      return foundString;
+      
+      return foundStrings;
   }
   
   final String buildHighlightString(ArrayList<SearchClause> searchClauses){
