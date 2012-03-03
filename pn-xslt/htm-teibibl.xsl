@@ -221,8 +221,8 @@
   
   <xsl:function name="pi:checkFile">
     <xsl:param name="ddb" />
-    <xsl:variable name="link" select="concat('http://papyri.info/ddbdp/', $ddb, '/source')" />
-    <xsl:variable name="test" select="doc-available(pi:get-filename($link, 'xml'))"/>
+    <xsl:variable name="link" select="concat('http://papyri.info/ddbdp/', $ddb)" />
+    <xsl:variable name="test" select="doc-available(pi:get-filename(concat($link, '/source'), 'xml'))"/>
     <xsl:if test="$test">
       <xsl:value-of select="$link" />
     </xsl:if>

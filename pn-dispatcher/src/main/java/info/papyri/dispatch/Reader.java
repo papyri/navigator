@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.SocketTimeoutException;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import javax.servlet.ServletException;

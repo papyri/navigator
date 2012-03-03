@@ -127,11 +127,9 @@
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
    
-    <html lang="en" version="HTML+RDFa 1.1">
-      <xsl:namespace name="dc" select="'http://purl.org/dc/terms/'"></xsl:namespace>
+    <html lang="en" version="HTML+RDFa 1.1"
+      prefix="dc: http://purl.org/dc/terms/">
       <head>
-        
-        
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>

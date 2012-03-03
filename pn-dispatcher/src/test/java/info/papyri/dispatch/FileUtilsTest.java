@@ -5,9 +5,7 @@
 package info.papyri.dispatch;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
 

@@ -1,8 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
-import java.util.Iterator;
-import org.apache.solr.client.solrj.response.FacetField.Count;
 
 
 /**

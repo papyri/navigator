@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package info.papyri.dispatch;
 
 import java.io.*;
@@ -514,7 +510,7 @@ public class FileUtils {
           
           String token = tokens.get(i);
           token = substituteForSubstringPatternMatch(token);
-          patterns[i] = Pattern.compile(token);  
+          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);  
           
       }
       
@@ -529,7 +525,7 @@ public class FileUtils {
       
           String token = tokens.get(i);
           token = substituteForPhrasePatternMatch(token);
-          patterns[i] = Pattern.compile(token);
+          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);
       
           
       }
@@ -626,27 +622,21 @@ public class FileUtils {
     Pattern[] buildPatterns(String q){
       
       ArrayList<Pattern> patterns = new ArrayList<Pattern>();
-      String[] qbits = q.split(" ");
+      String[] qbits = q.split("\\)");
       for(int i = 0; i < qbits.length; i++){
           
           String qbit = qbits[i];
-         if(qbit.contains("REGEX:")){
+          if(qbit.contains("PHRASE:")){
               
-              String pattern = substituteDiacritics(qbit.substring("REGEX:".length()));
-              patterns.add(Pattern.compile(pattern));
-              
-          }
-          else if(qbit.contains("SUBSTRING:")){
-              
-               patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(qbit.substring("SUBSTRING:".length()))));
+              patterns.addAll(Arrays.asList(getPhraseHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1, qbit.length()))));
               
           }
              
          
           else{
               
-              patterns.addAll(Arrays.asList(getPhraseHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1))));
-              
+               patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1, qbit.length()))));
+            
           }
           
       }
