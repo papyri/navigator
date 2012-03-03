@@ -1,102 +1,103 @@
-.facet-constraint{
-    
-    width: 30%;
-    margin-right: 2%;
-    
-}
-
-.option-label, .widget-label{
-    
-    float: left;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    
-}
-
 .facet-widget{
-    
-    height: 50px;
-    clear: left; 
-     
+
+	margin-bottom: 0px;
+
 }
 
-#text-search-widget{
-    
-    height: 350px;
-    
+div.stringsearch-top-controls:first-child p.facet-stringsearch-wrapper{
+      
+        margin-top: 1em;
+      
 }
 
-#id-selector-wrapper{
-    
-    height: 100px;
-    
+#series-coll-wrapper, #vol-idno-wrapper{
+	  
+	float: left;
+
+}
+	  
+#series-coll-wrapper{
+	  
+	width: 65%;
+	  
+}
+	  
+#series-coll-wrapper p{
+	  
+	margin-right: 0px;
+	  
+}
+	  
+#vol-idno-wrapper{
+	  
+	width: 35%;
+	  
+}
+	  
+div.content p.coll-or{
+	  
+	position: absolute;
+	top: 3.2em;
+	font-size: 12px;
+	font-style: italic;
+	margin-left: 1.5em;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	  
 }
 
-#img-select{
-    
-    height: 100px;
-    
+#series-wrapper label, #collection-wrapper label, #volume-wrapper label, #idno-wrapper label{
+
+	float: left;
+
 }
 
-.facet-widget #series-coll-wrapper{
+#series-wrapper, #volume-wrapper{
 
-    width: 70%;
-    position: relative;
-    
+	height: 1.2em;
+
 }
 
-#series-coll-wrapper label{
-    
-    float: left;
-    clear: left;
-    
+p#volume-wrapper, p#idno-wrapper{
+
+	margin-right: 0px;
+
 }
 
-#collection-wrapper, #idno-wrapper{
-    
-    padding-top: 25px;
-    
+.stringsearch-section{
+
+	clear: both;
+
 }
 
-.facet-widget #vol-idno-wrapper{
-    
-    width: 30%;
-    float: right;
+.date-facet-widget{
+
+	margin-bottom: 0px;
+	padding-bottom: 0.5em;
 }
 
-#vol-idno-wrapper input{
-    
-    float: right;
+#date-mode-facet-widget{
+
+	position: relative;
+	top: -1em;
+
 }
 
-#vol-idno-wrapper label{
-    
-    float: left;
+.hidden-buttons{
+
+	display: none;
+
 }
 
-div.date-facet-widget{
-    
-    padding-bottom: 0em;
-    
+.option-label{
+
+	float: left;
+
 }
 
-#img-select label{
-    
-    font-size: 90%;
-    
-}
+div.content p.coll-or{
 
-#img-select INPUT.ui-button{
-    
-    font-size: 95%;
-    padding-bottom: 0.1em;
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-    
-}
-
-tr.result-record{
-    
-    overflow: hidden;
-    
+	position: absolute;
+	top: 2.7em;
+	margin-left: 0px;
 }

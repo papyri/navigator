@@ -137,7 +137,8 @@ $(document).ready(
 		
 		hic.lastWordIsWordButNotKeyword = function(boxval, controls){
 		
-			if(boxval.trim().length > 0 && !hic.lastWordIsKeyword(boxval, controls)) return true;
+			boxval = boxval.replace(" ", "");
+			if(boxval != "" && !hic.lastWordIsKeyword(boxval, controls)) return true;
 			return false;
 		
 		

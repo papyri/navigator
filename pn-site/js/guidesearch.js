@@ -366,6 +366,7 @@ $(document).ready(
 	     */
 	    hic.hideSearch = function(evt){
 
+			var widthcomp = $("#search-toggle").outerWidth() + 1;
 			var delay = evt.data.delay;
 			var currentValsWrapperLeft = $("#vals-and-records-wrapper").position().left;
 			var initialHeight = $("#facet-wrapper").height();
@@ -373,20 +374,21 @@ $(document).ready(
 			var finalHeight = initialHeight > initialWidgetHeight ? initialHeight : initialWidgetHeight;
 	    	var newValsWidth = hic.getValsAndRecordsWidth("hide-search");
 	    	$("#facet-wrapper").height(initialHeight);
-	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + 23) }, delay);
+	    	$("#facet-widgets-wrapper").animate({ left: -($("#facet-widgets-wrapper").width() + widthcomp) }, delay);
 	    	window.setTimeout(function(){
 	    		$(".title-long").css("display", "block")
 	    		$(".title-short").css("display", "none");
 	    		}, 150);
 	    	$("#vals-and-records-wrapper").css({"position":"absolute", "left": currentValsWrapperLeft });
-	    	$("#vals-and-records-wrapper").animate({ left: 23, width: newValsWidth }, delay, "swing",
+	    	$("#vals-and-records-wrapper").animate({ left: 0, width: newValsWidth }, delay, "swing",
 	    		
     			function(){
 	    			
+	    			$("#reset-all, #search").addClass("hidden-buttons");
     				$("#facet-wrapper").height(finalHeight);
     				$("#facet-widgets-wrapper").addClass("search-closed");
     				$("form[name='facets']").addClass("search-closed");
-    				$("#facet-widgets-wrapper").offset({ left:-23 });
+    				$("#facet-widgets-wrapper").offset({ left:-widthcomp });
     				$("#facet-widgets-wrapper").removeClass("search-open");
     					$("#search-toggle").addClass("toggle-closed");
     				$("#search-toggle").removeClass("toggle-open");
@@ -413,7 +415,9 @@ $(document).ready(
 		
 		hic.showSearch = function(evt){
 		
+			$("#reset-all, #search").removeClass("hidden-buttons");
 			var widgetWrapperWidth = 500;
+			var widthcomp = $("#search-toggle").outerWidth() + 1;
 			var newWidgetWidthVal = widgetWrapperWidth;
 			$("#vals-and-records-wrapper").css("position", "absolute");
 			$("#facet-widgets-wrapper").removeClass("search-closed");
@@ -426,10 +430,10 @@ $(document).ready(
 	    		$(".title-short").css("display", "block");
 	    	}, 200);
 			$("#facet-widgets-wrapper").animate({ left: 0 }, 325);
-			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal + 23, width: newValsWidth }, 325, 
+			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal - widthcomp, width: newValsWidth }, 325, 
 			
 				function(){
-				
+					
 					var widgetHeight = $("#facet-widgets-wrapper").height();
 					var resultsHeight = $("#vals-and-records-wrapper").height();
 					var greaterHeight = widgetHeight > resultsHeight ? widgetHeight : resultsHeight;
@@ -454,7 +458,7 @@ $(document).ready(
 		hic.getValsAndRecordsWidth = function(direction){
 		
 		      var fullWidth = $(window).width();
-		      var searchWidth = (direction == "hide-search") ? 23 : 500;
+		      var searchWidth = (direction == "hide-search") ? $("#search-togger").outerWidth() + 1 : 500;
 		      var ownMargin = 23;
 		      var ownPadding = 0.02 * fullWidth;
 		      var widgetPadding = 25;
