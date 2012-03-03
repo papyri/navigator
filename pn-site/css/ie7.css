@@ -100,4 +100,11 @@ div.content p.coll-or{
 	position: absolute;
 	top: 2.7em;
 	margin-left: 0px;
+	
+}
+
+tr.result-record td{
+
+	border-top: silver thin solid;
+
 }
