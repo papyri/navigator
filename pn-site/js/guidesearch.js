@@ -654,7 +654,15 @@ $(document).ready(
 		
 		}
 
-	
+		$("select[name='SERIES']").combobox();
+		$("select[name='COLLECTION']").combobox();
+		$("select[name='PLACE']").combobox();
+		$("select[name='DATE_START']").combobox();
+		$("select[name='DATE_END']").combobox();
+		$("select[name='LANG']").combobox();
+		$("select[name='TRANSL']").combobox();
+
+
 	}
 	
 

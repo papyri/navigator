@@ -9,9 +9,8 @@
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>
-
     <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/combobox.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <!-- typegreek code written by Randy Hoyt, http://www.typegreek.com/overview/. Used with gratitude and permission -->
@@ -180,6 +179,12 @@
       #text-search-widget select, #text-search-widget input, #img-select input{
         
         float: none;
+      
+      }
+      
+      #place-selector input{
+      
+      	width: 73%;
       
       }
       
@@ -587,7 +592,7 @@
       
       }
       
-      .date-facet-widget select{
+      .date-facet-widget select, .date-facet-widget input{
       
       	float: left;
       

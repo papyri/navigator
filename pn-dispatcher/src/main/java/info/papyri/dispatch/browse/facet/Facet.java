@@ -113,7 +113,10 @@ abstract public class Facet {
      public String generateWidget() {
         
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" title=\"");
-        html.append(getToolTipText());                                          
+        html.append(getToolTipText());  
+        html.append("\" id=\"");
+        html.append(formName.name().toLowerCase());
+        html.append("-selector");
         html.append("\">");
         html.append(generateHiddenFields()); 
         html.append("<p>");

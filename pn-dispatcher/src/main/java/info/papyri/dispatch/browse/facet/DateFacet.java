@@ -321,7 +321,18 @@ public class DateFacet extends Facet {
         String afterWhichWidget = terminusAfterWhich.generateWidget();
         String beforeWhichWidget = terminusBeforeWhich.generateWidget();
         String modeSelector = generateModeSelector();
-        return afterWhichWidget + beforeWhichWidget + modeSelector;
+        String eraSelector = generateEraSelector();
+        return afterWhichWidget + beforeWhichWidget +  eraSelector + modeSelector;
+        
+    }
+    
+    private String generateEraSelector(){
+        
+        StringBuilder html = new StringBuilder();
+        html.append("<div id=\"era-selector\">");
+        html.append(getEraOptions());
+        html.append("</div><!-- closing #era-selector -->");
+        return html.toString();
         
     }
     
@@ -368,15 +379,33 @@ public class DateFacet extends Facet {
         
     }
     
-    private String getEraOptions(String terminusEra){
+    private String getEraOptions(){
+        
+        // set to BCE by default
+        
+        // set to CE if start era is set to CE and value is not default
+        
+        // disable if:
+        //      both values are set to the same era
+        //      end era is set to BCE
+        //      start era is set to CE
         
         String allOptions = "";
+        String startEra = terminusAfterWhich.getEra();
+        String endEra = terminusBeforeWhich.getEra();
+        Boolean startEraIsDefault = "".equals(terminusAfterWhich.getCurrentValue());
+        Boolean isUnknown = "Unknown".equals(terminusAfterWhich.getCurrentValue()) || "Unknown".equals(terminusBeforeWhich.getCurrentValue());
+        String selectedEra = !startEraIsDefault && "CE".equals(startEra) ? "CE" : "BCE";
+        Boolean disabled = (!startEraIsDefault && startEra.equals(endEra)) || isUnknown || "BCE".equals(endEra) || (!startEraIsDefault && "CE".equals(startEra));
         
         ArrayList<String> eras = new ArrayList<String>(Arrays.asList("BCE", "CE"));
         
         for(String era : eras){
             
-            String tag = era.equals(terminusEra) ? "<option selected>" + era + "</option>" : "<option>" + era + "</option>";
+            String tag = "<label id=\"" + era + "-label\">" + era  + "</label>";
+            tag += era.equals(selectedEra) && !isUnknown ? "<input type=\"radio\" name=\"era\" value=\"" + era + "\" checked" : "<input type=\"radio\" name=\"era\" value=\"" + era + "\"";
+            tag += disabled ? " disabled" : "";
+            tag += "/>";
             allOptions += tag;
             
         }
@@ -1104,7 +1133,7 @@ public class DateFacet extends Facet {
             
             StringBuilder html = new StringBuilder("<div class=\"facet-widget date-facet-widget\" title=\"");
             html.append(getAfterWhichToolTipText());
-            html.append("\">");
+            html.append("\" id=\"date-start-selector\">");
             Boolean onlyOneValue = valuesAndCounts.size() == 1;
             String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
             String disabled = onlyOneValue ? " disabled=\"true\"" : "";
@@ -1147,29 +1176,6 @@ public class DateFacet extends Facet {
             }
                 
             html.append("</select>");
-            
-            html.append("<div class=\"date-input-box");
-            if(startIsUnknown) html.append(" unknown-date");
-            html.append("\">");
-            html.append("<input type=\"text\" size=\"4\" maxlength=\"4\" name=\"");
-            html.append(DateParam.DATE_START_TEXT.name());
-            html.append("\" id=\"");
-            html.append(DateParam.DATE_START_TEXT.name());
-            html.append("\" value=\"");
-            html.append(startDisplayValue);    
-            html.append("\"");
-            html.append("/>");
-            html.append("</input>");
-
-            html.append("<select name=\"");
-            html.append(DateParam.DATE_START_ERA.name());
-            html.append("\" id=\"");
-            html.append(DateParam.DATE_START_ERA.name());
-            html.append("\"");
-            html.append(">");
-            html.append(getEraOptions(this.getEra()));
-            html.append("</select>");
-            html.append("</div><!-- closing .date-input-box -->");
             html.append("</div><!-- closing .facet-widget -->");
 
             return html.toString();                    
@@ -1406,7 +1412,7 @@ public class DateFacet extends Facet {
             
             StringBuilder html = new StringBuilder("<div class=\"facet-widget date-facet-widget\" title=\"");
             html.append(getBeforeWhichToolTipText());
-            html.append("\">");
+            html.append("\" id=\"date-end-selector\">");
             Boolean onlyOneValue = valuesAndCounts.size() == 1;
             String defaultSelected = onlyOneValue  ? " selected=\"true\"" : "";
             String disabled = onlyOneValue ? " disabled=\"true\"" : "";
@@ -1450,26 +1456,6 @@ public class DateFacet extends Facet {
 
             
             html.append("</select>");
-            html.append("<div class=\"date-input-box");
-            if(endIsUnknown) html.append(" unknown-date");
-            html.append("\">");
-            html.append("<input type=\"text\" size=\"4\" maxlength=\"4\" name=\"");
-            html.append(DateParam.DATE_END_TEXT.name());
-            html.append("\" id=\"");
-            html.append(DateParam.DATE_END_TEXT.name());
-            html.append("\" value=\"");
-            html.append(endDisplayValue);        
-            html.append("\"");
-            html.append(">");
-            html.append("</input>");
-            html.append("<select name=\"");
-            html.append(DateParam.DATE_END_ERA.name());
-            html.append("\" id=\"");
-            html.append(DateParam.DATE_END_ERA.name());
-            html.append("\">");
-            html.append(getEraOptions(this.getEra()));
-            html.append("</select>");    
-            html.append("</div><!-- closing .date-input-box -->");
             html.append("</div><!-- closing .facet-widget -->");
 
             return html.toString();         
