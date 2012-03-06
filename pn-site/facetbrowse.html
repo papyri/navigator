@@ -586,10 +586,12 @@
       .date-facet-widget{
       
       	margin: 1em;
-      	padding-bottom: 1em;
+      	margin-bottom: 0.25em;
       	padding-left: 4px;
       	position: relative;
-      
+      	width: 70%;
+      	float: left;
+      	
       }
       
       .date-facet-widget select, .date-facet-widget input{
@@ -637,12 +639,27 @@
       #date-mode-facet-widget{
       
       	padding-bottom: 0;
+      	margin-top: 0.35em;
+      	margin-bottom: 1.5em;
       
       }
       
      input#STRICT{
       	
       	margin-left: 3em;
+      }
+      
+      #era-selector{
+      
+      		float: left;
+      		position: relative;
+      
+      }
+      
+      input[name="era"]{
+      	
+      		margin-right: 0.5em;
+      
       }
       
       #results-prefix-wrapper{
@@ -719,6 +736,8 @@
       	margin-right: 7px;
       
       }
+      
+
       
     </style>
           <!--[if IE 6]>
