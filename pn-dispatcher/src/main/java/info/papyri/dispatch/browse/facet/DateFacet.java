@@ -753,32 +753,7 @@ public class DateFacet extends Facet {
          * also necessarily falls before 200 CE).
          * 
          */
-        void filterValuesAndCounts(){
-            
-            orderValuesAndCounts();
-            ArrayList<Count> filteredCounts = new ArrayList<Count>();
-            long previousCount = 0;
-            
-            for(Count vc : valuesAndCounts){
-                
-                long nowCount = vc.getCount();
-                String nowName = vc.getName();
-                // we want to include the currently selected value
-                if((nowCount > 0 && nowCount != previousCount) || nowName.equals(currentValue)) filteredCounts.add(vc);
-                previousCount = nowCount;
-                
-            }
-            // the above loop fails to filter out the first value in the sortd valuesAndCounts list when required
-            // so another conditional block is required
-            if(filteredCounts.size() > 1){
-
-                if(filteredCounts.get(0).getCount() == filteredCounts.get(1).getCount()) filteredCounts.remove(0);
-                
-            }
-            Collections.sort(filteredCounts, DateFacet.dateCountComparator);
-            valuesAndCounts = filteredCounts;         
-            
-        }       
+        abstract void filterValuesAndCounts();       
         
         /**
          * Calculates the values to be displayed in the widget.
@@ -1181,6 +1156,38 @@ public class DateFacet extends Facet {
             return html.toString();                    
             
         }
+        
+        @Override
+        void filterValuesAndCounts(){
+            
+            orderValuesAndCounts();
+            ArrayList<Count> filteredCounts = new ArrayList<Count>();
+            long previousCount = 0;
+            int otherLimit = terminusBeforeWhich.getMostExtremeValue();
+            
+            for(Count vc : valuesAndCounts){
+                
+                long nowCount = vc.getCount();
+                String nowName = vc.getName();
+                Boolean tooBig = !nowName.equals("Unknown") && !nowName.equals("") && Integer.valueOf(nowName) >= otherLimit;
+
+                // we want to include the currently selected value
+                if(((nowCount > 0 && nowCount != previousCount ) && !tooBig) || nowName.equals(currentValue)) filteredCounts.add(vc);
+
+                previousCount = nowCount;
+                
+            }
+            // the above loop fails to filter out the first value in the sorted valuesAndCounts list when required
+            // so another conditional block is required
+            if(filteredCounts.size() > 1){
+
+                if(filteredCounts.get(0).getCount() == filteredCounts.get(1).getCount()) filteredCounts.remove(0);
+                
+            }
+            Collections.sort(filteredCounts, DateFacet.dateCountComparator);
+            valuesAndCounts = filteredCounts;         
+            
+        } 
         
         @Override
         void calculateStrictWidgetValues(List<RangeFacet.Count> facetQueries) {
