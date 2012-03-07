@@ -124,10 +124,6 @@ $(document).ready(
 			var printpubs = $("input:checkbox[name='PRINT']:checked");
 			if(printpubs.length > 0) filteredels.push(printpubs);
 			
-			// date mode selector
-			var datemode = $("input:radio[name='DATE_MODE']:checked");
-			if(datemode.length > 0) filteredels.push(datemode);
-			
 			var vol = $("#id-volume");
 			var volno = vol.val();
 			if(volno != "" && volno != "n.a.") filteredels.push(vol);
@@ -135,51 +131,13 @@ $(document).ready(
 			var ident = $("#id-idno");
 			var identno = ident.val();
 			if(identno != "" && identno != "n.a.") filteredels.push(ident);
-	
-	    	var datestart = $("#DATE_START_TEXT");
-	    	var startval = datestart.val();
-	    	if(startval != "") filteredels.push(datestart);
-	    	
-	    	var dateend = $("#DATE_END_TEXT");
-	    	var endval = dateend.val();
-	    	if(endval != "") filteredels.push(dateend);
-	    	
+			
+			 hic.addDatesToFilteredEls("date-start-selector", filteredels);
+			 hic.addDatesToFilteredEls("date-end-selector", filteredels);
+
 	    	var docsperpage = $("#DOCS_PER_PAGE");
 	    	var docsval = docsperpage.val();
 	    	if(docsval.match(/^\d{1,3}$/) && docsval > 0) filteredels.push(docsperpage);
-	    	
-	    	// note that there are two separate means of entering dates: 
-	    	// using a drop-down selector, or via text input
-	    	// to avoid the need to disambiguate these and decide issues
-	    	// of priority, the selectors (DATE_START and DATE_END controls)
-	    	// never submit their values directly to the server
-	    	// instead their values are copied into the relevant text
-	    	// input fields (DATE_START_TEXT and DATE_END_TEXT), which
-	    	// *are* submitted
-	    	
-	    	var opts = $("select").not("[name='DATE_START']").not("[name='DATE_END']");
-
-	    	for(var i = 0; i < opts.length; i++){
-	    	
-	    		var opt = $(opts[i]);
-	    		
-	    		// Era selection should be submitted only if there is a numerical
-	    		// year value to go with it
-	    		if(opt.attr("name") == "DATE_START_ERA" || opt.attr("name") == "DATE_END_ERA"){
-	    		
-	    			var prefix = opt.attr("name").substring(0, opt.attr("name").length - 4);
-	    			var correlatedText = prefix + "_TEXT";
-	    			var correlatedValue = $("input[name='" + correlatedText + "']").val();
-	    			if(correlatedValue != "" && correlatedValue != "n.a.") filteredels.push(opt);
-	
-	    		}
-	    		else if(opt.attr("value") != "default" && !opt.attr("disabled")){
-	    		
-	    			filteredels.push(opt);
-	    			
-	    		}
-
-	    	}
 	    	
 	    	var hiddens = document.getElementsByTagName("input");
 	    	
@@ -216,6 +174,26 @@ $(document).ready(
 	    	
 	    	}
 	    	
+	    	var combos = $(".combobox");
+	    	var default_msg = "--- All values ---";
+	    	for(var m = 0; m < combos.length; m++){
+	    	
+	    		var combo = $(combos[m]);
+				
+	    		if(combo.attr("name") != "DATE_START" && combo.attr("name") != "DATE_END" && !combo.attr("disabled")){
+
+					var val = combo.val();
+
+					if(val != "" && val != default_msg){
+
+						filteredels.push(combo);
+						
+					}
+
+				}
+	    	
+	    	}
+	    	
 	    	var params = {};
 			
 			for(var k = 0; k < filteredels.length; k++){
@@ -225,12 +203,14 @@ $(document).ready(
 				var val = $(fel).attr("value");
 				// workaround for jQuery hidden field blindness
 				if(typeof name == 'undefined' || typeof val == 'undefined'){
-				
+
 					name = fel.getAttribute("name");
 					val = fel.getAttribute("value");
 
 				}
 				val = val.replace(/#/g, "^");
+				val = val.replace(/\s*(HGV|DDBDP):\s*/, "");
+				val = val.replace(/\s*\(\d+\)\s*$/, "");
 				params[name] = val;
 				
 			}
@@ -255,6 +235,46 @@ $(document).ready(
 			var hrefwquery = current + "?" + $.param(params);
 			window.location = hrefwquery;
 			return false;
+	    }
+	    
+	    hic.addDatesToFilteredEls = function(date_wrapper_name, filteredels){
+	    
+	    	var date_selector = "#" + date_wrapper_name + " input";
+	    	var datefield = $(date_selector);
+	    	var selected_date = datefield.val();
+	    	if(selected_date == "") return;
+	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");
+	    	var era_finder = new RegExp(/\s*(B?CE)$/);
+	    	var era = "";
+	    	if(selected_date.match(era_finder)){
+	    	
+	    		era = era_finder.exec(selected_date)[1];
+	    		selected_date = selected_date.replace(era, "").replace(/^\s*/, "").replace(/\s*$/, "");
+	    		
+	    	}
+	    	else if(selected_date.toLowerCase() != "unknown"){
+	    	
+	    		selected_date = selected_date.replace(/\D/g, "");
+	    		era = $("input:radio[name=era]:checked").val()
+	    	
+	    	}
+	    	
+	    	if(selected_date.match(/^\s*$/)) return;
+	    	
+	    	// date mode selector
+			var datemode = $("input:radio[name='DATE_MODE']:checked");
+			if(datemode.length > 0 && $.inArray(datemode, filteredels) == -1) filteredels.push(datemode);
+			
+	    	var date_el_name = date_wrapper_name.match("start") ? "DATE_START_TEXT" : "DATE_END_TEXT";
+	    	var era_el_name = date_wrapper_name.match("start") ? "DATE_START_ERA" : "DATE_END_ERA";
+	    	var date_el = $("<input type=\"text\" name=\"" + date_el_name + "\"></input>");
+	    	date_el.val(selected_date);
+	    	filteredels.push(date_el);
+	    	if(era == "") return;
+	    	var era_el = $("<input type=\"radio\" name=\"" + era_el_name + "\"></input>");
+	    	era_el.val(era);
+	    	filteredels.push(era_el);
+	    
 	    }
 	    
 	    hic.buildTextSearchString = function(){
@@ -636,6 +656,7 @@ $(document).ready(
 		$("form[name='facets']").submit(hic.tidyQueryString);
 		// ... unless checks need to be in place first
 		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").change(hic.tidyQueryString);
+		
 		// sets cookie on click to record to allow reversion to current search results
 		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
 		$("#reset-all").click(function(e){
@@ -661,6 +682,11 @@ $(document).ready(
 		$("select[name='DATE_END']").combobox();
 		$("select[name='LANG']").combobox();
 		$("select[name='TRANSL']").combobox();
+		$(".combobox").click(function(evt){
+		
+			$(this).val("");
+		
+		});
 
 
 	}

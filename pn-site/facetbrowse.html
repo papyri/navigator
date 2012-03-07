@@ -10,13 +10,13 @@
     <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/combobox.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <!-- typegreek code written by Randy Hoyt, http://www.typegreek.com/overview/. Used with gratitude and permission -->
     <script src="/js/typegreek.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/guidesearch.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/stringsearch.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/combobox.js" type="text/javascript" charset="utf-8"></script>
 
    <style type="text/css">
 
@@ -662,6 +662,12 @@
       
       }
       
+      #era-selector label{
+      
+      	margin-right: 0.5em;
+      
+      }
+      
       #results-prefix-wrapper{
       
       	position: relative;
@@ -737,7 +743,29 @@
       
       }
       
+      .combobox{
+      
+        	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
+			font-size: 90%;
+			min-width: 13em;
+      		padding-left: 4px;
+      		padding-bottom: 1px;
+      		height: 1.3em;
 
+      
+      }
+      
+      ul.ui-autocomplete, .combobox{
+      
+      	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
+
+      }
+      
+	  ul.ui-autocomplete li a strong{
+	  
+	  	font-weight: bold;	
+	  
+	  }
       
     </style>
           <!--[if IE 6]>
