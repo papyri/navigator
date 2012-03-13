@@ -46,7 +46,7 @@
   <xsl:import href="teichoice.xsl"/>
   <xsl:import href="teihandshift.xsl"/>
   <xsl:import href="teiheader.xsl"/>
-  <xsl:import href="teimilestone.xsl"/>
+  <xsl:import href="teimilestone.xsl"/> 
   <xsl:import href="teiorig.xsl"/>
   <xsl:import href="teiorigandreg.xsl"/>
   <xsl:import href="teiq.xsl"/>
@@ -61,11 +61,12 @@
   <xsl:import href="htm-tpl-apparatus.xsl"/>
   <xsl:import href="htm-tpl-lang.xsl"/>
   <xsl:import href="htm-tpl-metadata.xsl"/>
-  <xsl:import href="htm-tpl-nav.xsl"/>
+  <xsl:include href="htm-tpl-structure.xsl"/>
   <xsl:import href="htm-tpl-license.xsl"/>
+  <xsl:include href="htm-tpl-sqbrackets.xsl"/>
+
   
   <!-- global named templates with no html, also used by start-txt -->
-  <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
