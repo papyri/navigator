@@ -123,6 +123,12 @@ $(document).ready(
 			if(externals.length > 0) filteredels.push(externals);
 			var printpubs = $("input:checkbox[name='PRINT']:checked");
 			if(printpubs.length > 0) filteredels.push(printpubs);
+			if($("select[name='TRANSC'] option:selected").val() != "default" && !($("select[name='TRANSC']").attr("disabled"))) filteredels.push($("select[name='TRANSC']"));
+
+			// date mode selector
+			var datemode = $("input:radio[name='DATE_MODE']:checked");
+			if(datemode.length > 0) filteredels.push(datemode);
+
 			
 			var vol = $("#id-volume");
 			var volno = vol.val();
@@ -167,26 +173,29 @@ $(document).ready(
 	    				}
 	    				
 	    			}
-	    		
-	    			filteredels.push(hidden);			
+	    			else{
+	    			
+	    				filteredels.push(hidden);	
+	    				
+	    			}
 	    			
 	    		}
 	    	
 	    	}
 	    	
 	    	var combos = $(".combobox");
-	    	var default_msg = "--- All values ---";
+
 	    	for(var m = 0; m < combos.length; m++){
-	    	
+	    		
 	    		var combo = $(combos[m]);
-				
+
 	    		if(combo.attr("name") != "DATE_START" && combo.attr("name") != "DATE_END" && !combo.attr("disabled")){
 
-					var val = combo.val();
+					var hiddenselect = combo.prev();
+					var val = $(hiddenselect).val();
+					if(val != "" && val != "default"){
 
-					if(val != "" && val != default_msg){
-
-						filteredels.push(combo);
+						filteredels.push(hiddenselect);
 						
 					}
 
@@ -201,6 +210,7 @@ $(document).ready(
 				var fel = filteredels[k];
 				var name = $(fel).attr("name");
 				var val = $(fel).attr("value");
+
 				// workaround for jQuery hidden field blindness
 				if(typeof name == 'undefined' || typeof val == 'undefined'){
 
@@ -211,7 +221,28 @@ $(document).ready(
 				val = val.replace(/#/g, "^");
 				val = val.replace(/\s*(HGV|DDBDP):\s*/, "");
 				val = val.replace(/\s*\(\d+\)\s*$/, "");
-				params[name] = val;
+				if(!params[name]){
+				
+					params[name] = val;
+				
+				} else{
+				
+					var startVal = params[name];
+					if($.isArray(startVal)){
+					
+						startVal.push(val);
+					
+					}
+					else{
+					
+						var vals = new Array();
+						vals.push(startVal);
+						vals.push(val);
+						params[name] = vals;
+					
+					}
+				
+				}
 				
 			}
 			
@@ -232,7 +263,9 @@ $(document).ready(
 			
 			}
 			hic.concatenateSearchToCookie(textval);
-			var hrefwquery = current + "?" + $.param(params);
+			var qs = $.param(params);
+			qs = qs.replace(/%5B%5D/g, "");
+			var hrefwquery = current + "?" + qs;
 			window.location = hrefwquery;
 			return false;
 	    }
@@ -243,7 +276,7 @@ $(document).ready(
 	    	var datefield = $(date_selector);
 	    	var selected_date = datefield.val();
 	    	if(selected_date == "") return;
-	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");
+	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");	// trim count
 	    	var era_finder = new RegExp(/\s*(B?CE)$/);
 	    	var era = "";
 	    	if(selected_date.match(era_finder)){
@@ -256,6 +289,11 @@ $(document).ready(
 	    	
 	    		selected_date = selected_date.replace(/\D/g, "");
 	    		era = $("input:radio[name=era]:checked").val()
+	    	
+	    	}
+	    	else if(selected_date.toLowerCase() == "unknown"){
+	    	
+	    		selected_date = "n.a.";
 	    	
 	    	}
 	    	
@@ -678,6 +716,7 @@ $(document).ready(
 		$("select[name='SERIES']").combobox();
 		$("select[name='COLLECTION']").combobox();
 		$("select[name='PLACE']").combobox();
+		$("select[name='NOME']").combobox();
 		$("select[name='DATE_START']").combobox();
 		$("select[name='DATE_END']").combobox();
 		$("select[name='LANG']").combobox();

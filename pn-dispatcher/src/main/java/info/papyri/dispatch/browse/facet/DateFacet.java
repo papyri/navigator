@@ -1328,8 +1328,10 @@ public class DateFacet extends Facet {
             }
              else{
 
-                valuesAndCounts.remove(0);
-                valuesAndCounts.add(0, earliestUsefulDate);
+                int firstKnownIndex = "Unknown".equals(valuesAndCounts.get(0).getName()) ? 1 : 0;
+                if(firstKnownIndex >= valuesAndCounts.size()) return;
+                valuesAndCounts.remove(firstKnownIndex);
+                valuesAndCounts.add(firstKnownIndex, earliestUsefulDate);
 
             }
                
@@ -1357,7 +1359,22 @@ public class DateFacet extends Facet {
         @Override
         Count getFirstUsefulValue(){
             
-            return this.earliestStrictDate;
+            if("Unknown".equals(this.getCurrentValue())) return this.valuesAndCounts.get(0);
+            
+            try{
+                
+                int earliestDate = Integer.valueOf(earliestStrictDate.getName());
+                int currentDate = Integer.valueOf(this.getCurrentValue());
+                if(earliestDate < currentDate) return this.valuesAndCounts.get(0);
+                
+                
+            }
+            catch(NumberFormatException nfe){
+                
+                return earliestStrictDate;
+                
+            }
+            return earliestStrictDate;
             
         }
              
@@ -1692,7 +1709,27 @@ public class DateFacet extends Facet {
         @Override
         Count getFirstUsefulValue(){
             
-            return this.latestStrictDate;
+            if("Unknown".equals(getCurrentValue()) || "Unknown".equals(getOtherTerminus().getCurrentValue())){
+                
+                long unknownCount = getOtherTerminus().getValuesAndCounts().get(0).getCount();
+                return new Count(new FacetField(SolrField.unknown_date_flag.name()), "Unknown", unknownCount);
+                
+            }
+            try{
+                
+                int latestDate = Integer.valueOf(latestStrictDate.getName());
+                int currentDate = Integer.valueOf(getCurrentValue());
+                if(latestDate >= currentDate) return valuesAndCounts.get(valuesAndCounts.size() - 1);
+                
+                
+            } catch(NumberFormatException nfe){
+                
+                return latestStrictDate;
+                
+            }
+            
+            
+            return latestStrictDate;
             
         }
         
