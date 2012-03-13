@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>
-
     <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
@@ -18,6 +16,7 @@
     <script src="/js/typegreek.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/guidesearch.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/stringsearch.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/combobox.js" type="text/javascript" charset="utf-8"></script>
 
    <style type="text/css">
 
@@ -180,6 +179,12 @@
       #text-search-widget select, #text-search-widget input, #img-select input{
         
         float: none;
+      
+      }
+      
+      #place-selector input{
+      
+      	width: 73%;
       
       }
       
@@ -581,13 +586,15 @@
       .date-facet-widget{
       
       	margin: 1em;
-      	padding-bottom: 1em;
+      	margin-bottom: 0.25em;
       	padding-left: 4px;
       	position: relative;
-      
+      	width: 70%;
+      	float: left;
+      	
       }
       
-      .date-facet-widget select{
+      .date-facet-widget select, .date-facet-widget input{
       
       	float: left;
       
@@ -632,12 +639,33 @@
       #date-mode-facet-widget{
       
       	padding-bottom: 0;
+      	margin-top: 0.35em;
+      	margin-bottom: 1.5em;
       
       }
       
      input#STRICT{
       	
       	margin-left: 3em;
+      }
+      
+      #era-selector{
+      
+      		float: left;
+      		position: relative;
+      
+      }
+      
+      input[name="era"]{
+      	
+      		margin-right: 0.5em;
+      
+      }
+      
+      #era-selector label{
+      
+      	margin-right: 0.5em;
+      
       }
       
       #results-prefix-wrapper{
@@ -714,6 +742,30 @@
       	margin-right: 7px;
       
       }
+      
+      .combobox{
+      
+        	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
+			font-size: 90%;
+			min-width: 13em;
+      		padding-left: 4px;
+      		padding-bottom: 1px;
+      		height: 1.3em;
+
+      
+      }
+      
+      ul.ui-autocomplete, .combobox{
+      
+      	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
+
+      }
+      
+	  ul.ui-autocomplete li a strong{
+	  
+	  	font-weight: bold;	
+	  
+	  }
       
     </style>
           <!--[if IE 6]>

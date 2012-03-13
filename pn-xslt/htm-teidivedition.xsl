@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teidivedition.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-teidivedition.xsl 1753 2012-02-29 20:38:41Z sarcanon $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -25,13 +25,19 @@
 
    <!-- Textpart div -->
    <xsl:template match="t:div[@type='textpart']" priority="1">
-      <xsl:variable name="div-loc">
+       <xsl:variable name="div-type">
+           <xsl:for-each select="ancestor::t:div[@type!='edition']">
+               <xsl:value-of select="@type"/>
+               <xsl:text>-</xsl:text>
+           </xsl:for-each>
+       </xsl:variable>
+       <xsl:variable name="div-loc">
          <xsl:for-each select="ancestor::t:div[@type='textpart']">
             <xsl:value-of select="@n"/>
             <xsl:text>-</xsl:text>
          </xsl:for-each>
       </xsl:variable>
-      <span class="textpartnumber" id="ab{$div-loc}{@n}">
+       <span class="textpartnumber" id="{$div-type}ab{$div-loc}{@n}">
          <!-- add ancestor textparts -->
          <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and @subtype">
             <xsl:value-of select="@subtype"/>

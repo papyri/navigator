@@ -46,7 +46,7 @@
   <xsl:import href="teichoice.xsl"/>
   <xsl:import href="teihandshift.xsl"/>
   <xsl:import href="teiheader.xsl"/>
-  <xsl:import href="teimilestone.xsl"/>
+  <xsl:import href="teimilestone.xsl"/> 
   <xsl:import href="teiorig.xsl"/>
   <xsl:import href="teiorigandreg.xsl"/>
   <xsl:import href="teiq.xsl"/>
@@ -61,11 +61,12 @@
   <xsl:import href="htm-tpl-apparatus.xsl"/>
   <xsl:import href="htm-tpl-lang.xsl"/>
   <xsl:import href="htm-tpl-metadata.xsl"/>
-  <xsl:import href="htm-tpl-nav.xsl"/>
+  <xsl:include href="htm-tpl-structure.xsl"/>
   <xsl:import href="htm-tpl-license.xsl"/>
+  <xsl:include href="htm-tpl-sqbrackets.xsl"/>
+
   
   <!-- global named templates with no html, also used by start-txt -->
-  <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
@@ -221,16 +222,23 @@
                       </xsl:if>
                     </div>
                   </xsl:if>
-                  <xsl:if test="$ddbdp">
-                    <div id="editthis" class="ui-widget-content ui-corner-all">
-                      <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
-                    </div>
-                  </xsl:if>
-                  <xsl:if test="$hgv and not($ddbdp)">
-                    <div id="editthis" class="ui-widget-content ui-corner-all">
-                      <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
-                    </div>
-                  </xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="$ddbdp">
+                      <div id="editthis" class="ui-widget-content ui-corner-all">
+                       <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
+                     </div>
+                    </xsl:when>
+                    <xsl:when test="$hgv and not($ddbdp)">
+                      <div id="editthis" class="ui-widget-content ui-corner-all">
+                        <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                      </div>
+                    </xsl:when>
+                    <xsl:when test="$apis and not($hgv or $ddbdp)">
+                      <div id="editthis" class="ui-widget-content ui-corner-all">
+                        <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
+                      </div>
+                    </xsl:when>
+                  </xsl:choose>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
                   <xsl:if test="$hgv or $apis">

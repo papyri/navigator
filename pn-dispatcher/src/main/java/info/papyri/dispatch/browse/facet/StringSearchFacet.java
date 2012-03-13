@@ -26,47 +26,68 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 
 /**
- * Replicates the functioning of <code>info.papyri.dispatch.Search</code> in a 
- * manner compatible with the faceted browse framework and codebase.
+ * <code>Facet</code> complex string-search capability.
  * 
- * Note that although the algorithm used for the search process is intended to
- * replicate that defined in <code>info.papyri.dispatch.Search</code> it is implemented
- * very differently. The logic for string-handling is all encapsulated in the inner 
- * SearchConfiguration class, below, and more specific documentation is provided there.
+ * For the implementation of string-search used in the pre-faceted versions of the Navigator
+ * see the <code>info.papyri.dispatch.Search</code> class, on which much of the functionality
+ * of this <code>Facet</code> is originally modeled.
  * 
- * One important difference between this subclass and other <code>Facet</code> subclasses
- * is that repeated complex (that is to say, involving more than one request parameter)
- * searches are possible. This means that search parameters must be ordered, both to 
+ * The code below can broadly be divided into the outer <code>StringSearchFacet</code>
+ * class (broadly, responsible for display and user interaction) and its inner
+ * <code>SearchClause</code> classes (responsible for handling the actual string-search
+ * logic).
+ * 
+ * The outer class differs from other <code>Facet</code> subclasses chiefly in that
+ * repeated complex (that is to say, involving more than one request parameter)
+ * searches are possible. This entails that search parameters must be ordered, both to 
  * ensure that they remain correctly correlated with each other (so that for example the
  * IGNORE_CAPS setting used in one search is not mistakenly applied to another) and so
  * that they can be displayed correctly. Most of the methods overriding <code>Facet</code> 
  * methods do so in order to provide this ordering functionality.
  * 
+ * Overview and documentation of string-search logic are given with the inner
+ * <code>SearchClause</code> class and its subclasses.
+ * 
  * @author thill
- * @version 2011.08.19
+ * @version 2012.02.08
  * @see info.papyri.dispatch.Search
- * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchConfiguration
+ * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause
+ * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause
+ * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm
  */
 public class StringSearchFacet extends Facet{
     
     final public String SUBFIELD_SEPARATOR = "¤";
     
     /**
-     * The type of search being performed.
-     * 
-     * PROXIMITY and WITHIN values are both used for proximity searches- PROXIMITY indicating
-     * that a 'slop search' is desired, and WITHIN to specify slop-distance
-     * 
-     * USER_DEFINED is used for searches in which the user bypasses the standard HTML
-     * form controls to specify the search using string-input only.
+     * Frontend descriptions of the type of search being performed.
+     * <dl>
+     * <dt>PHRASE       </dt>   <dd>searches performed for complete words or groups of complete words.</dd>
+     * <dt>SUBSTRING    </dt>   <dd>seeks any instance of the string entered regardless of word divisions. Such
+     * searches are the default search-setting</dd>
+     * <dt>REGEX        </dt>   <dd>searches using Regular Expression syntax</dd>
+     * <dt>LEMMA        </dt>   <dd>expands a word into all its possible forms, and then conducts a search
+     * for these forms</dd>
+     * <dt>USER_DEFINED </dt>   <dd>the user has chosen the fields to search manually, and thus wishes
+     * to bypass the application's automatic determination of the search-field.</dd>
+     * <dt>PROXIMITY    </dt>   <dd>the user is searching for two words or substrings within a 
+     * given word or character range of each other (for example, the words 'Call' and 'Ishmael' separated
+     * by a single word, or the strings 'Some y' and 'ulation' within 98 characters
+     * of each other).</dd>
+     * </dl>
      * 
      */
     public enum SearchType{ PHRASE, SUBSTRING, REGEX, LEMMA, USER_DEFINED, PROXIMITY };
     
+    /**
+     * Used in relation to PROXIMITY searches to indicate whether the relevant metric
+     * of distance is characters (CHARS) or words (WORDS).     * 
+     */
+    
     enum SearchUnit{ WORDS, CHARS };
     
     /**
-     * Values indicating the fields to search
+     * Frontend descriptions of the fields to search
      * 
      * Note that these values do not correspond directly to Solr fields; the Solr field
      * to search is determined by inspecting the submitted SearchTarget, along with 
@@ -81,9 +102,49 @@ public class StringSearchFacet extends Facet{
      */
     enum SearchOption{ NO_CAPS, NO_MARKS, PROXCOUNT, PROXUNIT };
     
+    /**
+     * Values indicating the function of a given <code>SearchTerm</code> within a search.
+     * <dl>
+     * <dt>LEMMA        </dt><dd>the term is to be lemmatised</dd>
+     * <dt>REGEX        </dt><dd>the term is a regex</dd>
+     * <dt>START_PROX   </dt><dd>the term is the first term in a proximity search</dd>
+     * <dt>END_PROX     </dt><dd>the term is the second and last term of a proximity search</dd>
+     * <dt>AND          </dt><dd>the term is mandatory for the search</dd>
+     * <dt>OR           </dt><dd>the term is potentially optional in the search</dd>
+     * <dt>NOT          </dt><dd>the term is excluded from the search</dd>
+     * <dt>OPERATOR     </dt><dd>the term is a search operator</dd>
+     * <dt>DEFAULT      </dt><dd>no role has yet been assigned.</dd>
+     * </dl>
+     * 
+     */
+    
     public enum ClauseRole{LEMMA, REGEX, START_PROX, END_PROX, AND, OR, NOT, OPERATOR, DEFAULT };
     
+    /**
+     * The list of possible search operators.
+     * 
+     * <strong>AND</strong>, <strong>OR</strong>, <strong>NOT</strong> all behave as standard Boolean operators
+     * <strong>REGEX</strong> indicates that the term that follows should be parsed as a Regular Expression
+     * <strong>THEN</strong> is used in proximity searching to indicate that the term following the operator should
+     * follow the term preceding the operator by a given number of words or characters
+     * <strong>NEAR</strong> is used in proximity searching to indicate that the term following the operator should
+     * be found within a given number of words or characters in either direction from the term
+     * preceding the operator.
+     * <strong>LEX</strong> indicates that the term that follows it should be expanded to all of its possible forms
+     * prior to search
+     * 
+     */
+    
     enum SearchOperator{AND, OR, REGEX, THEN, NEAR, NOT, LEX };
+    
+    /**
+     * List of button controls for the <code>Facet</code>
+     * 
+     * Most of these serve simply to display the relevant search operator in the search box.
+     * CLEAR clears the search box; REMOVE removes the search box entirely.
+     * 
+     * @see #generateSearchButtons() 
+     */
     
     enum SearchButton{
         
@@ -107,6 +168,15 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    /**
+     * List of usable Solr search-handlers.
+     * <dl>
+     * <dt>SURROUND </dt>    <dd>used for word-proximity searches</dd>
+     * <dt>REGEXP   </dt>    <dd>used for Regular Expression searches</dd>
+     * <dt>DEFAULT  </dt>    <dd>used for all other searches.</dd>
+     * </dl>
+     */
+    
     enum SearchHandler{
         
         SURROUND,
@@ -116,20 +186,90 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    // the following series of regex patterns is given here as static members 
+    // because of the relative expense of regex compilation and matching
+    
+    /**
+     * Regular Expression <code>Pattern</code> for detecting the presence of a 
+     * proximity operator in a <code>SearchClause</code>.
+     * 
+     * Note the syntax here:
+     * \d{1,2}: An integer between 1 and 99 indicating the number of proximity untis
+     * within which a search term has to fall
+     * (w|n): whether the proximity search is a THEN (w) or NEAR (n) search
+     * c?: Optional; when appended, the 'c' indicates that a character-range search
+     * is desired; when absent, a word-proximity search will be performed
+     * 
+     * @see SearchClause#isOperator() 
+     */
+    
     static Pattern PROX_OPERATOR_REGEX = Pattern.compile("\\d{1,2}(w|n|wc|nc)");
     
+    /**
+     * Regular Expression <code>Pattern</code> for detecting the presence of a 
+     * character-proximity operator in a <code>SearchClause</code>.
+     * 
+     * @see SubClause#convertCharProxToRegexSyntax(java.lang.String, java.lang.String, java.lang.String) 
+     */
+
+    static Pattern CHAR_PROX_REGEX = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
+    
+    /**
+     * Regular Expression <code>Pattern</code> for detecting the presence of a 
+     * word-proximity operator in a <code>SearchClause</code>
+     * 
+     * @see SubClause#convertWordProxToRegexSyntax(java.lang.String, java.lang.String, java.lang.String) 
+     */
+    
+    static Pattern WORD_PROX_REGEX = Pattern.compile(".*?(\\d{1,2})?(w|n).*");
+    
+    /**
+     * Regular Expression <code>Pattern</code> for determining whether a given 
+     * <code>SearchClause</code> contains a character-proximity operator.
+     * 
+     * @see SubClause#convertProxWildcards(java.lang.String, java.lang.String, int, int) 
+     * @see SearchTerm#isCharactersProxTerm() 
+     */
+    
+    static Pattern CHAR_PROX_TERM_REGEX = Pattern.compile("\\d{1,2}(w|n)c");
+    
+    
+    /**
+     * Regular Expression <code>Pattern</code> for determining whether a given
+     * <code>SearchClause</code> contains a word-proximity operator.
+     * 
+     * @see SearchTerm#isWordsProxTerm() 
+     */
+    
+    static Pattern WORD_PROX_TERM_REGEX = Pattern.compile("(\\d{1,2})?(w|n)");   
+    
+    /**
+     * Regular Expression <code>Pattern</code> for determining whether a given
+     * String contains a search phrase (that is to say, whether it contains a 
+     * quotation-mark-delimited substring containing whitespace).
+     * 
+     * @see SearchClause#parseForSearchType() 
+     * 
+     */
+    
     static String PHRASE_MARKER = ".*(\"|')[\\p{L}]+(\\s+[\\p{L}]+)*(\\1).*";
+    
+    /**
+     * Regular Expression <code>Pattern</code> for determining whether a given String
+     * contains any whitespace.
+     * 
+     * @see #isTerm(java.lang.String) 
+     */
             
     static Pattern WHITESPACE_DETECTOR = Pattern.compile("^.*\\s+.*$");
+    
+    // TODO: need to refactor and put this somewhere more sensible
    
     SearchClauseFactory CLAUSE_FACTORY = new SearchClauseFactory();
     
-    Pattern charProxRegex = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
-    Pattern wordProxRegex = Pattern.compile(".*?(\\d{1,2})?(w|n).*");
-    Pattern charProxTermRegex = Pattern.compile("\\d{1,2}(w|n)c");
-    Pattern wordProxTermRegex = Pattern.compile("(\\d{1,2})?(w|n)"); 
+
     
-    /** A collection from which <code>SearchConfiguration</code>s can be retrieved in an
+    /** A collection from which <code>SearchClause</code>s can be retrieved in an
      *  ordered manner.
      * 
      * Ordering is important because, unlike other facets, additional string-search
@@ -141,10 +281,19 @@ public class StringSearchFacet extends Facet{
      * (b) retain the order of submission for display purposes.
      * 
      */
-    private HashMap<Integer, ArrayList<SearchClause>> searchConfigurations = new HashMap<Integer, ArrayList<SearchClause>>();
+    private HashMap<Integer, ArrayList<SearchClause>> searchClauses = new HashMap<Integer, ArrayList<SearchClause>>();
     
-    /** The path to the Solr index for lemmatised searches */
+    /**
+     * Path to the Solr index for lemmatised searches 
+     */
     private static String morphSearch = "morph-search/";
+    
+    /**
+     * Stores exceptions thrown during search-clause parsing for feedback to the user.
+     * 
+     * @see info.papyri.dispatch.browse.facet.FacetBrowser#collectFacetExceptions(java.util.ArrayList) 
+     * @see info.papyri.dispatch.browse.facet.customexceptions
+     */
     
     ArrayList<CustomApplicationException> exceptionLog;
 
@@ -158,7 +307,7 @@ public class StringSearchFacet extends Facet{
     @Override
     public SolrQuery buildQueryContribution(SolrQuery solrQuery){
         
-        Iterator<ArrayList<SearchClause>> scait = searchConfigurations.values().iterator();
+        Iterator<ArrayList<SearchClause>> scait = searchClauses.values().iterator();
         while(scait.hasNext()){
             
             ArrayList<SearchClause> nowConfigs = scait.next();
@@ -261,6 +410,13 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    /**
+     * Generates search buttons for display
+     * 
+     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchButton
+     * @return 
+     */
+    
     private String generateSearchButtons(){
         
        StringBuilder html = new StringBuilder();
@@ -284,8 +440,8 @@ public class StringSearchFacet extends Facet{
     @Override
     public Boolean addConstraints(Map<String, String[]> params){
         
-        searchConfigurations = pullApartParams(params);
-        return !searchConfigurations.isEmpty();
+        searchClauses = pullApartParams(params);
+        return !searchClauses.isEmpty();
              
     }
     
@@ -297,12 +453,12 @@ public class StringSearchFacet extends Facet{
         int counter = 0;
         int index = 1;
         
-        while(index <= searchConfigurations.size()){
+        while(index <= searchClauses.size()){
             
-            ArrayList<SearchClause> configs = searchConfigurations.get(counter);
+            ArrayList<SearchClause> configs = searchClauses.get(counter);
             counter++;
             if(configs == null) continue;
-            String concatenatedStringQuery = this.concatenateConfigs(configs);
+            String concatenatedStringQuery = this.concatenateSearchClauses(configs);
             
             String inp = "<input type='hidden' name='";
             String v = "' value='";
@@ -350,14 +506,27 @@ public class StringSearchFacet extends Facet{
         
     }
     
-    private String concatenateConfigs(ArrayList<SearchClause> configs){
+    /**
+     * Reconstitutes the various <code>SearchClause</code>s as passed in the params
+     * to the servlet
+     * 
+     * Used in maintaining state between page transitions (for example, when paging through
+     * result sets or removing another facet value)
+     * 
+     * @param configs
+     * @return 
+     */
+    
+    //TODO: get rid of old 'config' designation, replace with clause strings
+    
+    private String concatenateSearchClauses(ArrayList<SearchClause> clauses){
         
         StringBuilder query = new StringBuilder();
-        Iterator<SearchClause> scit = configs.iterator();
+        Iterator<SearchClause> scit = clauses.iterator();
         while(scit.hasNext()){
         
-            SearchClause nowConfig = scit.next();
-            query.append(nowConfig.getOriginalString());
+            SearchClause nowClause = scit.next();
+            query.append(nowClause.getOriginalString());
             if(scit.hasNext()) query.append(SUBFIELD_SEPARATOR);
         
             
@@ -366,14 +535,21 @@ public class StringSearchFacet extends Facet{
         
     }
     
-    private String concatenateConfigDisplayValues(ArrayList<SearchClause> configs){
+    /**
+     * Concatenates <code>SearchClause</code> search-strings in human-readable form.
+     * 
+     * @param configs
+     * @return 
+     */
+    
+    private String concatenateConfigDisplayValues(ArrayList<SearchClause> clauses){
         
         StringBuilder query = new StringBuilder();
-        Iterator<SearchClause> scit = configs.iterator();
+        Iterator<SearchClause> scit = clauses.iterator();
         while(scit.hasNext()){
         
-            SearchClause nowConfig = scit.next();
-            query.append(nowConfig.getDisplayString());
+            SearchClause clause = scit.next();
+            query.append(clause.getDisplayString());
             if(scit.hasNext()) query.append(" ");
         
             
@@ -384,7 +560,7 @@ public class StringSearchFacet extends Facet{
     
     /**
      * Parses the request for string-search parameters, uses these to create appropriate
-     * <code>SearchConfiguration</code> objects, and populates a <code>HashMap</code> with them,
+     * <code>SearchClause</code> objects, and populates a <code>HashMap</code> with them,
      * the keys of which are <code>Integer</code>s which allow the <code>SearchConfigurations</code>
      * to be retrieved in an ordered manner.
      * 
@@ -394,7 +570,7 @@ public class StringSearchFacet extends Facet{
     
     HashMap<Integer, ArrayList<SearchClause>> pullApartParams(Map<String, String[]> params){
         
-        HashMap<Integer, ArrayList<SearchClause>> configs = new HashMap<Integer, ArrayList<SearchClause>>();
+        HashMap<Integer, ArrayList<SearchClause>> orderedClauses = new HashMap<Integer, ArrayList<SearchClause>>();
         
         Pattern pattern = Pattern.compile(formName.name() + "([\\d]*)");
         
@@ -448,15 +624,23 @@ public class StringSearchFacet extends Facet{
                     
                 }
                 Integer matchNumber = matchSuffix.equals("") ? 0 : Integer.valueOf(matchSuffix);
-                if(fieldConfigs.size() > 0) configs.put(matchNumber, fieldConfigs);
+                if(fieldConfigs.size() > 0) orderedClauses.put(matchNumber, fieldConfigs);
                 
             }
             
         }
         
-        return configs;
+        return orderedClauses;
         
     }
+    
+    /**
+     * Determines whether a given string constitutes a single search term or
+     * whether it can be broken down further into individual search terms.
+     * 
+     * @param clause
+     * @return 
+     */
     
     Boolean isTerm(String clause){
         
@@ -468,8 +652,6 @@ public class StringSearchFacet extends Facet{
         String test = clause.substring(1, clause.length() - 1);
         if(!test.contains(firstChar)) return true;
         return false;
-        
-        
         
     }
     
@@ -495,9 +677,9 @@ public class StringSearchFacet extends Facet{
     public String getDisplayValue(String facetValue){
         
         Integer k = Integer.valueOf(facetValue);
-        if(!searchConfigurations.containsKey(k)) return "Facet value not found";
+        if(!searchClauses.containsKey(k)) return "Facet value not found";
         
-        ArrayList<SearchClause> configs = searchConfigurations.get(k);
+        ArrayList<SearchClause> configs = searchClauses.get(k);
         SearchClause leadConfig = configs.get(0);
         String displaySearchString = this.concatenateConfigDisplayValues(configs);
         
@@ -516,7 +698,7 @@ public class StringSearchFacet extends Facet{
             dv.append(String.valueOf(config.getProximityDistance()));
             
         }*/
-        
+
         return dv.toString();
         
     }
@@ -546,7 +728,7 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        SearchClause config = searchConfigurations.get(Integer.valueOf(paramNumber)).get(0);
+        SearchClause config = searchClauses.get(Integer.valueOf(paramNumber)).get(0);
         
         String searchType = config.parseForSearchType().name().toLowerCase();
            
@@ -559,14 +741,14 @@ public class StringSearchFacet extends Facet{
     @Override
     public String getAsQueryString(){
         
-        if(searchConfigurations.size() < 1) return "";
+        if(searchClauses.size() < 1) return "";
         
         StringBuilder qs = new StringBuilder();
         int counter = 0;
         int index = 1;
-        while(index <= searchConfigurations.size()){
+        while(index <= searchClauses.size()){
             
-            ArrayList<SearchClause> configs = searchConfigurations.get(counter);
+            ArrayList<SearchClause> configs = searchClauses.get(counter);
             counter++;
             if(configs == null) continue;
             qs.append(getConfigurationAsQueryString(index, configs));
@@ -586,13 +768,13 @@ public class StringSearchFacet extends Facet{
         // filterValue is index to search configuration
         
         StringBuilder qs = new StringBuilder();
-        int filteredLength = searchConfigurations.size() - 1;
+        int filteredLength = searchClauses.size() - 1;
         int counter = 0;
         int index = 1;
         
         while(index <= filteredLength){
             
-            ArrayList<SearchClause> configs = searchConfigurations.get(counter);
+            ArrayList<SearchClause> configs = searchClauses.get(counter);
             counter++;
             if(configs == null) continue;
             
@@ -613,7 +795,7 @@ public class StringSearchFacet extends Facet{
     }
     
     /**
-     * Reconstitutes a query-string from the members of the passed <code>SearchConfiguration</code> object.
+     * Reconstitutes a query-string from the members of the passed <code>SearchClause</code> <code>ArrayList</code>.
      * 
      * 
      * @param pn
@@ -621,7 +803,7 @@ public class StringSearchFacet extends Facet{
      * @return 
      */
     
-    private String getConfigurationAsQueryString(Integer pn, ArrayList<SearchClause> configs){
+    private String getConfigurationAsQueryString(Integer pn, ArrayList<SearchClause> clauses){
         
             String paramNumber = pn == 0 ? "" : String.valueOf(pn);
         
@@ -631,9 +813,9 @@ public class StringSearchFacet extends Facet{
             
             qs.append(kwParam);
             qs.append("=");
-            qs.append(this.concatenateConfigs(configs));
+            qs.append(this.concatenateSearchClauses(clauses));
             
-            SearchClause leadConfig = configs.get(0);
+            SearchClause leadConfig = clauses.get(0);
             
             qs.append("&");
             qs.append(targetParam);
@@ -664,7 +846,7 @@ public class StringSearchFacet extends Facet{
     @Override
     public String getCSSSelectorID(){
         
-        return super.getCSSSelectorID() + String.valueOf(searchConfigurations.size());
+        return super.getCSSSelectorID() + String.valueOf(searchClauses.size());
         
         
     }
@@ -680,9 +862,9 @@ public class StringSearchFacet extends Facet{
     @Override
     public String[] getFormNames(){
 
-        String[] formNames = new String[searchConfigurations.size() + 1];
+        String[] formNames = new String[searchClauses.size() + 1];
         
-        for(int i = 0; i <= searchConfigurations.size(); i++){
+        for(int i = 0; i <= searchClauses.size(); i++){
             
             String suffix = i == 0 ? "" : String.valueOf(i);
             String form = formName.name().toString() + suffix;
@@ -702,15 +884,23 @@ public class StringSearchFacet extends Facet{
     @Override
     public String getToolTipText(){
         
-        return "Performs a substring search, as though using the standard Search page. Capitalisation and diacritcs are ignored.";
+        return "Performs a string search.";
         
     }
+    
+    /**
+     * Recursively eturns all the bottom-level <code>SearchTerm</code>s currently being 
+     * used by the <code>Facet</code>.
+     * 
+     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm
+     * @return 
+     */
     
     public ArrayList<SearchTerm> getAllSearchTerms(){
         
         
         ArrayList<SearchTerm> allTerms = new ArrayList<SearchTerm>();
-        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchConfigurations.entrySet()){
+        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchClauses.entrySet()){
             
             ArrayList<SearchClause> clauses = entry.getValue();
             Iterator<SearchClause> scit = clauses.iterator();
@@ -733,11 +923,18 @@ public class StringSearchFacet extends Facet{
               
     }
     
+    /**
+     * Returns all the top-level <code>SearchClause</code>s being used by the <code>Facet</code>
+     * 
+     * @see info.papyri.dispatch.browse.facet.FacetBrowser#generateHighlightString(java.util.ArrayList) 
+     * @return 
+     */
+    
     public ArrayList<SearchClause> getAllSearchClauses(){
         
         ArrayList<SearchClause> clauses = new ArrayList<SearchClause>();
         
-        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchConfigurations.entrySet()){
+        for(Map.Entry<Integer, ArrayList<SearchClause>> entry : searchClauses.entrySet()){
             
             ArrayList<SearchClause> linkedClauses = entry.getValue();
             clauses.addAll(linkedClauses);
@@ -748,6 +945,12 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    /**
+     * Returns the exceptionLog
+     * 
+     * @return 
+     */
+    
     @Override
     public ArrayList<CustomApplicationException> getExceptionLog(){
         
@@ -755,12 +958,60 @@ public class StringSearchFacet extends Facet{
         
     }
     
+    /**
+     * Inner class responsible for parsing the search-strings as submitted to the servlet
+     * into corresponding <code>SearchClause</code> objects.
+     * 
+     * As matters stand this class is probably slightly too complex, designed to deal
+     * at laest partially with search strings more complicated than that strictly
+     * allowed by the interface. However, it forms a useful base to build upon.
+     * 
+     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause
+     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm
+     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause
+     * 
+     */
+    
     final class SearchClauseFactory{
         
+        /**
+         * Regular Expression <code>Pattern</code> for detecting the presence of 
+         * a proximity search in the servlet search-string
+         */
+        
         Pattern proxClauseDetect = Pattern.compile(".*(\\bNEAR\\b|\\bTHEN\\b).*", Pattern.CASE_INSENSITIVE);
+        
+        /**
+         * Regular Expression <code>Pattern</code> for detecting the presence of 
+         * proximity search metrics in the servlet search-string 
+         */
         Pattern proxMetricsDetect = Pattern.compile(".*(~(\\d{1,2})([\\w]+)?)\\s*$");
+        
+        /**
+         * Regular Expression <code>Pattern</code> for pulling out proximity search
+         * metrics from the servlet serach-string
+         * 
+         */
         Pattern justMetricsDetect = Pattern.compile("(~(\\d{1,2})([\\w]+)?)\\s*$");
-                
+        
+        /**
+         * Takes the passed search string and transforms it into corresponding
+         * <code>SearchClause</code> objects
+         * 
+         * 
+         * @param searchString
+         * @param target
+         * @param caps
+         * @param marks
+         * @return
+         * @throws MismatchedBracketException
+         * @throws InternalQueryException
+         * @throws MalformedProximitySearchException
+         * @throws IncompleteClauseException
+         * @throws InsufficientSpecificityException
+         * @throws RegexCompilationException 
+         */
+        
         ArrayList<SearchClause> buildSearchClauses(String searchString, SearchTarget target, Boolean caps, Boolean marks) throws MismatchedBracketException, InternalQueryException, MalformedProximitySearchException, IncompleteClauseException, InsufficientSpecificityException, RegexCompilationException{
             
             if(searchString == null) return null;
@@ -809,26 +1060,55 @@ public class StringSearchFacet extends Facet{
             
         }
         
+        /**
+         * Transforms a search-string metrics and operators from front-end syntax to an approximation of
+         * Solr syntax.
+         * 
+         * For example, if a search-string is submitted in the form '(Call THEN Ishmael)~15words',
+         * this method will return '(Call 15w Ishamel)'. If a search-string is submitted in the
+         * form '(Som NEAR ation)~90chars', this method will return '(Som 90nc ation)'
+         * 
+         * This syntax does not conform precisely to the Solr <code>SurroundQParser</code> syntax. In
+         * the case of word-proximity searches without leading wildcards the translation into Solr syntax 
+         * will be exact and the resulting string can be submitted as-is to the Solr server. In the case of
+         * proximity searches Solr does not directly support, however, the pseudo-Solr syntax generated 
+         * will be further transformed into a regular expression.
+         * 
+         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doProxTransform(java.util.ArrayList) 
+         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doCharsProxTransform(java.util.ArrayList, int) 
+         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doWordsProxTransform(java.util.ArrayList, int) 
+         * @param fullString
+         * @return
+         * @throws MalformedProximitySearchException
+         * @throws MismatchedBracketException 
+         */
+        
         String swapInProxperators(String fullString) throws MalformedProximitySearchException, MismatchedBracketException{
 
             String searchString = fullString;
+            // first, we remove any subclauses, and deal with them later
             ArrayList<String> subclauses = suckOutSubClauses(searchString);
             Iterator<String> sit = subclauses.iterator();
             while(sit.hasNext()){
                 
+                   // found subclauses are replaced with an empty bracket-pair
+                   // to mark their place
                    searchString = searchString.replace(sit.next(), "()");
                    
             }
-
+            // check to see whether a proximity search is involved
             Matcher proxMatch = proxClauseDetect.matcher(searchString);
             Matcher metricsMatch = proxMetricsDetect.matcher(searchString);
             if(!proxMatch.matches()){
                 
                 if(metricsMatch.matches()){
-    
+                    // if we have metrics submitted with a non-proximity search,
+                    // throw an exception
                     throw new MalformedProximitySearchException();
                     
                 }
+                // if we don't have any proximity info to worry about,
+                // return the search-string unchanged
                 return fullString;
                 
             }
@@ -836,15 +1116,18 @@ public class StringSearchFacet extends Facet{
             String num = metricsMatch.matches() && metricsMatch.group(2) != null && metricsMatch.group(2).length() > 0? metricsMatch.group(2) : "1";
             String unit = metricsMatch.matches() && metricsMatch.group(3) != null && metricsMatch.group(3).length() > 0 && metricsMatch.group(3).equals("chars") ? "c" : "";
             
+            // Solr-parseable string, or a reasonable facsimile thereof
             String proxOperator = num + operator + unit;
 
             searchString = searchString.replace(proxMatch.group(1), proxOperator);
+            // trim off the original search metrics indication if required
             if(metricsMatch.matches() && metricsMatch.group(1) != null && metricsMatch.group(1).length() > 0){
                 
                 searchString = searchString.replace(metricsMatch.group(1), "");
             }
 
             searchString = transformPhraseSearch(searchString, unit);
+            // reinsert the subclauses removed earlier in the method
             Iterator<String> sit2 = subclauses.iterator();
             while(sit2.hasNext()){
 
@@ -856,6 +1139,24 @@ public class StringSearchFacet extends Facet{
             return searchString;
             
         }
+        
+        /**
+         * Transforms proximity searches for phrases into a (pseudo-)Solr syntax within 
+         * each phrase.
+         * 
+         * For example, a user might wish to search for phrases such as "Call me Ishmael" and 
+         * "how long precisely" separated by 12 words. At the servlet level, this would
+         * be represented as ("Call me Ishmael" THEN "how long precisely")~12words.
+         * For such a query to be parsed by Solr, not only does the ~12words indicator
+         * needed to be transformed and swapped in for THEN (that is to say, ("Call me
+         * Ishmael" 12w "how long precisely"), but the individual phrases need to be
+         * transformed similarly into <code>SurroundQParser</code> syntax (that is to say '(Call w me w
+         * Ishamel 12w how w long w precisely)')
+         * 
+         * @param fullSearch
+         * @param unit
+         * @return 
+         */
         
         String transformPhraseSearch(String fullSearch, String unit){
             
@@ -1093,7 +1394,7 @@ public class StringSearchFacet extends Facet{
            
        }
        
-       Boolean isOperator(){
+       public Boolean isOperator(){
            
            try{
                
@@ -1410,7 +1711,7 @@ public class StringSearchFacet extends Facet{
         
         String convertProxWildcards(String rawString, String proxClause, int iteration, int totalLength){
             
-            if(charProxTermRegex.matcher(proxClause).matches()){
+            if(CHAR_PROX_TERM_REGEX.matcher(proxClause).matches()){
                 
                 return convertCharsProxWildcards(rawString);
                 
@@ -1545,7 +1846,7 @@ public class StringSearchFacet extends Facet{
         
         String convertCharProxToRegexSyntax(String prevTerm, String nextTerm, String charProx) throws RegexCompilationException{
             
-            Matcher charProxMatcher = charProxRegex.matcher(charProx);
+            Matcher charProxMatcher = CHAR_PROX_REGEX.matcher(charProx);
             if(!charProxMatcher.matches()) throw new RegexCompilationException();
             String numChars = charProxMatcher.group(1);
             String operator = charProxMatcher.group(2);
@@ -1564,7 +1865,7 @@ public class StringSearchFacet extends Facet{
         
         String convertWordProxToRegexSyntax(String prevTerm, String nextTerm, String wordProx) throws RegexCompilationException{
             
-            Matcher wordProxMatcher = wordProxRegex.matcher(wordProx);
+            Matcher wordProxMatcher = WORD_PROX_REGEX.matcher(wordProx);
             if(!wordProxMatcher.matches()) throw new RegexCompilationException();
             
             Integer numWords = Integer.valueOf(wordProx.substring(0, wordProx.length() - 1));
@@ -1902,14 +2203,14 @@ public class StringSearchFacet extends Facet{
         @Override
         Boolean isCharactersProxTerm(){
             
-            return charProxTermRegex.matcher(originalString).matches();
+            return CHAR_PROX_TERM_REGEX.matcher(originalString).matches();
             
         }
         
         @Override
         Boolean isWordsProxTerm(){
             
-            return wordProxTermRegex.matcher(originalString).matches();
+            return WORD_PROX_TERM_REGEX.matcher(originalString).matches();
             
         }
         

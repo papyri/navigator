@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teisupplied.xsl 1636 2011-10-26 13:08:32Z gabrielbodard $ -->
+<!-- $Id: teisupplied.xsl 1755 2012-03-09 18:35:57Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0" 
    xmlns:EDF="http://epidoc.sourceforge.net/ns/functions"
-   exclude-result-prefixes="t EDF" 
+                exclude-result-prefixes="t EDF" 
                 version="2.0">
 
   <xsl:template match="t:supplied[@reason='lost']">
+     <xsl:param name="location" />
       <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and child::t:*[1][local-name() = 'milestone'][@rend = 'paragraphos']">
          <br/>
       </xsl:if>
@@ -17,7 +18,8 @@
          </xsl:when>
          <xsl:otherwise>
         <!-- Found in tpl-reasonlost.xsl -->
-        <xsl:call-template name="lost-opener"/>
+        <!--<xsl:call-template name="lost-opener"/>-->
+            <xsl:text>[</xsl:text>
             <xsl:choose>
                <xsl:when test="$edition-type = 'diplomatic'">
                   <xsl:variable name="supplied-content">
@@ -56,12 +58,13 @@
             <!-- function EDF:f-wwrap declared in htm-teilb.xsl; tests if lb break=no immediately follows supplied -->
             <xsl:if test="EDF:f-wwrap(.) = true()">
                <!-- unless this is in the app part of a choice/subst/app in ddbdp -->
-               <xsl:if test="not($leiden-style='ddbdp' and (ancestor::t:*[local-name()=('reg','corr','rdg') or self::t:del[parent::t:subst]]))">
+               <xsl:if test="(not($leiden-style='ddbdp' and (ancestor::t:*[local-name()=('reg','corr','rdg') or self::t:del[parent::t:subst]]))) and (not($location = 'apparatus'))">
                   <xsl:text>-</xsl:text>
                </xsl:if>
             </xsl:if>
             <!-- Found in tpl-reasonlost.xsl -->
-        <xsl:call-template name="lost-closer"/>
+        <!--<xsl:call-template name="lost-closer"/>-->
+            <xsl:text>]</xsl:text>
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>
@@ -86,10 +89,7 @@
   
 
   <xsl:template match="t:supplied[@reason='subaudible']">
-      <xsl:text>(</xsl:text>
-      <xsl:apply-templates/>
-      <xsl:call-template name="cert-low"/>
-      <xsl:text>)</xsl:text>
+      <xsl:text>(</xsl:text><xsl:apply-templates/><xsl:call-template name="cert-low"/><xsl:text>)</xsl:text>
   </xsl:template>
   
 
