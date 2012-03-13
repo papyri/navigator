@@ -221,16 +221,23 @@
                       </xsl:if>
                     </div>
                   </xsl:if>
-                  <xsl:if test="$ddbdp">
-                    <div id="editthis" class="ui-widget-content ui-corner-all">
-                      <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
-                    </div>
-                  </xsl:if>
-                  <xsl:if test="$hgv and not($ddbdp)">
-                    <div id="editthis" class="ui-widget-content ui-corner-all">
-                      <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
-                    </div>
-                  </xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="$ddbdp">
+                      <div id="editthis" class="ui-widget-content ui-corner-all">
+                       <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
+                     </div>
+                    </xsl:when>
+                    <xsl:when test="$hgv and not($ddbdp)">
+                      <div id="editthis" class="ui-widget-content ui-corner-all">
+                        <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                      </div>
+                    </xsl:when>
+                    <xsl:when test="$apis and not($hgv or $ddbdp)">
+                      <div id="editthis" class="ui-widget-content ui-corner-all">
+                        <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
+                      </div>
+                    </xsl:when>
+                  </xsl:choose>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
                   <xsl:if test="$hgv or $apis">
