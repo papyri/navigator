@@ -192,7 +192,7 @@ public class DateFacet extends Facet {
         // In 'loose' date mode it is possible in some cases to retrieve texts with the
         // end date set earlier than the start date. Although this is coherent in terms of backend
         // logic, it may not appear to be so to the end user. This conditional block accordingly
-        // ensures that such queries return to results to the end user.
+        // ensures that such queries return no results to the end user.
         if(endDate < startDate){
             
             solrQuery.addFilterQuery("-" + SolrField.earliest_date.name() + ":[* TO *]");
@@ -201,8 +201,8 @@ public class DateFacet extends Facet {
         }
         Integer startFacet = Integer.valueOf(terminusAfterWhich.getFacetBucket());
         Integer endFacet = Integer.valueOf(terminusBeforeWhich.getFacetBucket());
-        solrQuery.addNumericRangeFacet(SolrField.earliest_date.name(), startFacet, endFacet, INTERVAL);
-        solrQuery.addNumericRangeFacet(SolrField.latest_date.name(), startFacet, endFacet, INTERVAL);
+        solrQuery.addNumericRangeFacet(SolrField.earliest_date.name(), RANGE_START, endFacet, INTERVAL);
+        solrQuery.addNumericRangeFacet(SolrField.latest_date.name(), startFacet, RANGE_END, INTERVAL);
         terminusBeforeWhich.buildQueryContribution(solrQuery);
         terminusAfterWhich.buildQueryContribution(solrQuery);
         return solrQuery;
@@ -312,6 +312,16 @@ public class DateFacet extends Facet {
         
         terminusBeforeWhich.filterValuesAndCounts();
         terminusAfterWhich.filterValuesAndCounts();
+        
+        if(dateMode == DateMode.LOOSE){
+            
+                terminusBeforeWhich.extendTerminusRange();
+                terminusAfterWhich.extendTerminusRange();
+                terminusBeforeWhich.refilterValuesAndCounts();
+                terminusAfterWhich.refilterValuesAndCounts();
+
+        }
+        
          
     }
        
@@ -712,6 +722,8 @@ public class DateFacet extends Facet {
         
         abstract String generateWidget();
         
+        abstract Count getFirstUsefulValue();
+        
         /**
          * Sorts the facet values returned from the server using the facetCountComparator.
          * 
@@ -740,6 +752,8 @@ public class DateFacet extends Facet {
          */
         abstract Integer getFacetBucket();
         
+        abstract void extendTerminusRange();
+        
         /**
          * Eliminates redundant facet ranges.
          * 
@@ -753,7 +767,9 @@ public class DateFacet extends Facet {
          * also necessarily falls before 200 CE).
          * 
          */
-        abstract void filterValuesAndCounts();       
+        abstract void filterValuesAndCounts();     
+        
+        abstract void refilterValuesAndCounts();
         
         /**
          * Calculates the values to be displayed in the widget.
@@ -1018,6 +1034,8 @@ public class DateFacet extends Facet {
     }
     
     class TerminusAfterWhich extends Terminus{
+        
+        Count earliestStrictDate = null;
                 
         public TerminusAfterWhich(String value){
             
@@ -1177,15 +1195,10 @@ public class DateFacet extends Facet {
                 previousCount = nowCount;
                 
             }
-            // the above loop fails to filter out the first value in the sorted valuesAndCounts list when required
-            // so another conditional block is required
-            if(filteredCounts.size() > 1){
 
-                if(filteredCounts.get(0).getCount() == filteredCounts.get(1).getCount()) filteredCounts.remove(0);
-                
-            }
             Collections.sort(filteredCounts, DateFacet.dateCountComparator);
-            valuesAndCounts = filteredCounts;         
+            valuesAndCounts = filteredCounts;
+
             
         } 
         
@@ -1201,6 +1214,7 @@ public class DateFacet extends Facet {
                 String name = String.valueOf(i);
                 long number = responseAsMap.containsKey(i) ? responseAsMap.get(i) : 0;
                 runningTotal += number;
+                if(number != 0) earliestStrictDate = new Count(new FacetField(SolrField.unknown_date_flag.name()), name, runningTotal);
                 Count newCount = new Count(new FacetField(getFacetField().name()), name, runningTotal);
                 valuesAndCounts.add(newCount);
                    
@@ -1298,14 +1312,62 @@ public class DateFacet extends Facet {
         void orderValuesAndCounts() {
             
             Collections.sort(valuesAndCounts, DateFacet.dateCountComparator);
+            Collections.reverse(valuesAndCounts);
             
         }
         
+        @Override
+        void extendTerminusRange(){
+            
+            Count earliestUsefulDate = getFirstUsefulValue();
+       
+            if(this.valuesAndCounts.isEmpty()){
+               
+                    valuesAndCounts.add(earliestUsefulDate);
+                    
+            }
+             else{
+
+                valuesAndCounts.remove(0);
+                valuesAndCounts.add(0, earliestUsefulDate);
+
+            }
+               
+        }
         
+        @Override
+        void refilterValuesAndCounts(){
+        
+            ArrayList<Count> recount = new ArrayList<Count>();
+            
+            Collections.sort(valuesAndCounts, DateFacet.dateCountComparator);
+            long prevCount = 0;
+            for(int i = 0; i < valuesAndCounts.size(); i++){
+                
+                long count = valuesAndCounts.get(i) == null ? 0 : valuesAndCounts.get(i).getCount();
+                if(count != 0 && count != prevCount) recount.add(valuesAndCounts.get(i));
+                prevCount = count;
+                
+            }
+        
+            valuesAndCounts = recount;
+        
+        }
+        
+        @Override
+        Count getFirstUsefulValue(){
+            
+            return this.earliestStrictDate;
+            
+        }
+             
     }
+    
     
     class TerminusBeforeWhich extends Terminus{
                 
+        Count latestStrictDate = null;
+        
         public TerminusBeforeWhich(String value){
             
             super(value, SolrField.latest_date);
@@ -1355,6 +1417,7 @@ public class DateFacet extends Facet {
                 int retrievalNumber = i - DateFacet.INTERVAL;
                 long number = responseAsMap.containsKey(retrievalNumber) ? responseAsMap.get(retrievalNumber) : 0;
                 runningTotal += number;
+                if(number != 0) latestStrictDate = new Count(new FacetField(SolrField.latest_date.name()), name, runningTotal);
                 Count newCount = new Count(new FacetField(getFacetField().name()), name, runningTotal);
                 valuesAndCounts.add(newCount);
                    
@@ -1522,7 +1585,7 @@ public class DateFacet extends Facet {
                         
                     }
                     else{
-                        
+
                         long looseCount = 0;
                         if(i > 0){
                             
@@ -1561,7 +1624,7 @@ public class DateFacet extends Facet {
         void orderValuesAndCounts() {
             
             Collections.sort(valuesAndCounts, DateFacet.dateCountComparator);
-            Collections.reverse(valuesAndCounts);
+            //Collections.reverse(valuesAndCounts);
             
         }
         
@@ -1583,16 +1646,55 @@ public class DateFacet extends Facet {
                 
             }
             
-            if(filteredCounts.size() > 1){
-
-                if(filteredCounts.get(0).getCount() == filteredCounts.get(1).getCount()) filteredCounts.remove(0);
-                
-            }
             Collections.sort(filteredCounts, DateFacet.dateCountComparator);
             valuesAndCounts = filteredCounts;         
-            
+          
         } 
+         
+        @Override
+        void extendTerminusRange(){
+            
+            Count latestUsefulDate =  getFirstUsefulValue();
+
+            if(valuesAndCounts.isEmpty()){
+         
+                 valuesAndCounts.add(latestUsefulDate);
+                    
+              
+            }else{
+
+                valuesAndCounts.remove(valuesAndCounts.remove(valuesAndCounts.size() - 1));
+                valuesAndCounts.add(latestUsefulDate);
+
+            }
+            
+        }
+        
+        @Override       
+        void refilterValuesAndCounts(){
+        
+            ArrayList<Count> recount = new ArrayList<Count>();
+            Collections.sort(valuesAndCounts, DateFacet.dateCountComparator);;
+            Collections.reverse(valuesAndCounts);
+            long prevCount = 0;
+            for(int i = 0; i < valuesAndCounts.size(); i++){
                 
+                long count = valuesAndCounts.get(i) == null ? 0 : valuesAndCounts.get(i).getCount();
+                if(count != 0 && count != prevCount) recount.add(valuesAndCounts.get(i));
+                prevCount = count;
+                
+            }
+            Collections.sort(recount, DateFacet.dateCountComparator);
+            valuesAndCounts = recount;
+        
+        }
+        
+        @Override
+        Count getFirstUsefulValue(){
+            
+            return this.latestStrictDate;
+            
+        }
         
     }
     
