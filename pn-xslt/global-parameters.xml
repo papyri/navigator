@@ -23,9 +23,15 @@
   </parameter>
   
   <parameter>
-    <name>meta-style</name>
+    <name>edn-structure</name>
     <value on="yes">default</value>
+    <value>ddbdp</value>
     <value>hgv</value>
+    <value>london</value>
+    <value>london</value>
+    <value>petrae-en</value>
+    <value>petrae-fr</value>
+    <value>petrae-ru</value>
     <value>sammelbuch</value>
   </parameter>
   
@@ -52,4 +58,10 @@
     <name>line-inc</name>
     <value>5</value>
   </parameter>
+  
+  <parameter>
+    <name>css-loc</name>
+    <value>../xsl/global.css</value>
+  </parameter>
+  
 </parameters>
