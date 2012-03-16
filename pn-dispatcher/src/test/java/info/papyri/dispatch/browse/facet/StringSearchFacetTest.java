@@ -205,11 +205,13 @@ public class StringSearchFacetTest extends TestCase {
             String test6 = "(kai 17w (kai OR ouk))";
             assertEquals(test6, s.swapInProxperators(prox6));
             
-            //  internal prox searches dealt with correctly
+     /* 
+             // TODO: Currently working - but perhaps not necessary to support nested queries in this way. 
+             //  internal prox searches dealt with correctly
             String prox7 = "(kai THEN (kai THEN ouk)~10chars)~15words";
             String test7 = "(kai 15w (kai THEN ouk)~10chars)";
             assertEquals(test7, s.swapInProxperators(prox7));
-            
+     */       
             // absent metrics default to one word
             String prox8 = "(kai THEN ouk)";
             String test8 = "(kai 1w ouk)";

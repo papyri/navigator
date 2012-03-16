@@ -102,10 +102,10 @@
 						input.autocomplete("search", "");
 						input.focus();
 					});
-
-			var ht = input.outerHeight();
+			// need to play with these values to get them working x-browser
+			var ht = input.outerHeight() - 2;
 			var wd = this.button.width();
-			var leftness = input.position().left + input.outerWidth() - wd;
+			var leftness = input.position().left + input.outerWidth() - wd - 3;
 			var topness = input.position().top + 1;
 			var stylestring = "height:" + ht + "px; position:absolute; top:" + topness + "px; left:" + leftness + "px";
 			this.button.attr("style", stylestring);

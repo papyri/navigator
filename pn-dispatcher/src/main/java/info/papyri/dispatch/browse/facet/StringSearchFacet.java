@@ -1082,7 +1082,7 @@ public class StringSearchFacet extends Facet{
         String swapInProxperators(String fullString) throws MalformedProximitySearchException, MismatchedBracketException{
 
             String searchString = fullString;
-            // first, we remove any subclauses, and deal with them later
+       /*     // first, we remove any subclauses, and deal with them later
             ArrayList<String> subclauses = suckOutSubClauses(searchString);
             Iterator<String> sit = subclauses.iterator();
             while(sit.hasNext()){
@@ -1091,7 +1091,9 @@ public class StringSearchFacet extends Facet{
                    // to mark their place
                    searchString = searchString.replace(sit.next(), "()");
                    
-            }
+            } 
+              
+      */
             // check to see whether a proximity search is involved
             Matcher proxMatch = proxClauseDetect.matcher(searchString);
             Matcher metricsMatch = proxMetricsDetect.matcher(searchString);
@@ -1124,14 +1126,14 @@ public class StringSearchFacet extends Facet{
 
             searchString = transformPhraseSearch(searchString, unit);
             // reinsert the subclauses removed earlier in the method
-            Iterator<String> sit2 = subclauses.iterator();
+           /* Iterator<String> sit2 = subclauses.iterator();
             while(sit2.hasNext()){
 
                 searchString = searchString.replaceFirst("\\(\\)", sit2.next());
                 
                 
             }
-
+*/
             return searchString;
             
         }

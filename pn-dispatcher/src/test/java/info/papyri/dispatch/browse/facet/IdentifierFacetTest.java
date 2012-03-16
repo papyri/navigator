@@ -1,11 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import junit.framework.TestCase;
-import org.apache.solr.client.solrj.SolrQuery;
 
 /**
  *
