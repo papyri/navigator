@@ -245,9 +245,9 @@ $(document).ready(
 		hic.checkProxCountActivate = function(boxval, controls){
 		
 			if(boxval.match(proxRegExp)){
-			
+	
 				$(controls).find(".prxcount").removeAttr("disabled");
-				$("#within").css("color", "#000");
+				$(controls).find(".within").css("color", "#000");
 				
 			}
 			else{
@@ -255,7 +255,7 @@ $(document).ready(
 				var prxcount = $(controls).find(".prxcount");
 				$(prxcount).val("");
 				$(prxcount).attr("disabled", "disabled");
-				$("#within").css("color", "#aaa");
+				$(controls).find(".within").css("color", "#aaa");
 			
 			}
 		
@@ -353,6 +353,7 @@ $(document).ready(
 			var val = $(this).val();
 			if(val == 'none') return false;
 			var mtr = $(this).parents(topSelector);
+			mtr.find(".within").css("color", "#aaa");
 			mtr.find("#str-search-controls").remove();
 			mtr.find("input.keyword").attr("disabled", "disabled");
 			mtr.find("input.prxcount").attr("disabled", "disabled");
@@ -489,25 +490,24 @@ $(document).ready(
 		
 		}
 	
-		/* TODO: live() now deprecated; replace with on() syntax */
-		$(".keyword").live("focus keypress keyup keydown", hic.analyzeTextInput);
-		$(".prxcount").live("click keypress keyup", function(){ hic.checkProxUnitActivate($(this).val(), $(this).parents(".prx")); });
-		$(".prxunit").live("change", function(evt){ 
+		$("#text-search-widget").on("focus keypress keyup keydown", ".keyword", hic.analyzeTextInput);
+		$("#text-search-widget").on("click keypress keyup", ".prxcount", function(){ hic.checkProxUnitActivate($(this).val(), $(this).parents(".prx")); });
+		$("#text-search-widget").on("change", ".prxunit", function(evt){ 
 
 				hic.doButtonActivationCheck($(lastTopSelector).find(".keyword").val(), $(lastTopSelector));
 				hic.doProxControlsActivationCheck($(lastTopSelector).find(".keyword").val(), $(lastTopSelector));
 				
 		});
-		$(".syntax-add").live("click", hic.addNewClause);
-		$(".syntax-lex").live("click", hic.addKeyWord);
-		$(".syntax-then").live("click", hic.addKeyWord);
-		$(".syntax-near").live("click", hic.addKeyWord);
-		$(".syntax-regex").live("click", hic.addKeyWord);
-		$(".syntax-and").live("click", hic.addNewClause);
-		$(".syntax-or").live("click", hic.addNewClause);
-		$(".syntax-not").live("click", hic.doNot);
-		$(".syntax-clear").live("click", hic.clearValues);
-		$(".syntax-remove").live("click", function(){
+		$("#text-search-widget").on("click", ".syntax-add", hic.addNewClause);
+		$("#text-search-widget").on("click", ".syntax-lex", hic.addKeyWord);
+		$("#text-search-widget").on("click", ".syntax-then", hic.addKeyWord);
+		$("#text-search-widget").on("click", ".syntax-near", hic.addKeyWord);
+		$("#text-search-widget").on("click", ".syntax-regex", hic.addKeyWord);
+		$("#text-search-widget").on("click", ".syntax-and", hic.addNewClause);
+		$("#text-search-widget").on("click", ".syntax-or", hic.addNewClause);
+		$("#text-search-widget").on("click", ".syntax-not", hic.doNot);
+		$("#text-search-widget").on("click", ".syntax-clear", hic.clearValues);
+		$("#text-search-widget").on("click", ".syntax-remove", function(){
 		
 			var buttonBar = $(this).parent().clone();
 			$(this).parent().parent().remove();

@@ -24,8 +24,8 @@
 					.attr('id', select.attr('id') + '_input')
 					.attr('tabIndex', select.attr('tabIndex') + 1)
 					.attr('name', select.attr('name'))
-					.attr('disabled', select.attr('disabled'))
-					.insertAfter(select)
+					.attr('width', 50)
+					.insertAfter(select) 
 					.val(value)
 					.autocomplete({
 						delay: 0,
@@ -52,7 +52,11 @@
 							self._trigger("selected", event, {
 								item: ui.item.option
 							});
-							window.setTimeout(info.papyri.thill.guidesearch.tidyQueryString, 200);
+						var controlbutton = $(this).next("button");
+						controlbutton.css("outline-color", $(this).css("outline-color"));
+						controlbutton.css("outline-width", $(this).css("outline-width"));
+						controlbutton.css("outline-style", $(this).css("outline-style"));
+						window.setTimeout(info.papyri.thill.guidesearch.tidyQueryString, 10);
 						},
 						change: function (event, ui) {
 							if (!ui.item) {
@@ -87,7 +91,7 @@
 						text: false
 					})
 					.removeClass("ui-corner-all")
-					.addClass("ui-corner-right ui-button-icon")
+					.addClass("ui-corner-right ui-button-icon combobox-button")
 					.click(function () {
 						// close if already visible
 						if (input.autocomplete("widget").is(":visible")) {
@@ -97,20 +101,25 @@
 
 						// work around a bug (likely same cause as #5265)
 						$(this).blur();
-
+						input.focus();
 						// pass empty string as value to search for, displaying all results
 						input.autocomplete("search", "");
 						input.focus();
 					});
-
+			// need to play with these values to get them working x-browser
 			var ht = input.outerHeight();
 			var wd = this.button.width();
-			var leftness = input.position().left + input.outerWidth() - wd;
-			var topness = input.position().top + 1;
+			var leftness = input.position().left + input.outerWidth();
+			var topness = input.position().top;
 			var stylestring = "height:" + ht + "px; position:absolute; top:" + topness + "px; left:" + leftness + "px";
 			this.button.attr("style", stylestring);
 			if(input.attr("disabled")) this.button.attr("disabled", "disabled");
+			if(select.attr("disabled")){
 			
+				input.attr("disabled", "disabled");
+				this.button.attr("disabled", "disabled");
+			
+			}
 		},
 
 		destroy: function () {

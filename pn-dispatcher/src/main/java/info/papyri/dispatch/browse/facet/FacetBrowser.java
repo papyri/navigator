@@ -149,7 +149,7 @@ public class FacetBrowser extends HttpServlet {
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog);
-        //html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
+        // html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -167,6 +167,7 @@ public class FacetBrowser extends HttpServlet {
         facets.add(new StringSearchFacet());
         facets.add(new IdentifierFacet());
         facets.add(new PlaceFacet());
+        facets.add(new NomeFacet());
         facets.add(new DateFacet());
         facets.add(new LanguageFacet());
         facets.add(new TranslationFacet());
@@ -529,6 +530,8 @@ public class FacetBrowser extends HttpServlet {
             html.append(idFacet.generateWidget());
             Facet placeFacet = findFacet(facets, PlaceFacet.class);
             html.append(placeFacet.generateWidget());
+            Facet nomeFacet = findFacet(facets, NomeFacet.class);
+            html.append(nomeFacet.generateWidget());
             Facet dateFacet = findFacet(facets, DateFacet.class);
             html.append(dateFacet.generateWidget());
             Facet langFacet = findFacet(facets, LanguageFacet.class);
