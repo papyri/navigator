@@ -290,6 +290,7 @@ min-width: 350px;
 }
 div.image {
 width: 49%;
+margin-left:1em;
 }
 div.transcription {
 margin-left:1em;

@@ -9,7 +9,7 @@
 
             <!-- Location of HGV glossary file relative to the current file -->
             <xsl:param name="hgv-gloss">
-                        <xsl:text>../../../xml/idp.data/trunk/HGV_trans_EpiDoc/glossary.xml</xsl:text>
+                        <xsl:text>/data/papyri.info/idp.data/HGV_trans_EpiDoc/glossary.xml</xsl:text>
             </xsl:param>
 
             <!-- Mapping file -->
@@ -28,8 +28,8 @@
                         select="document($param-file)//parameter[name = 'edition-type']/value[@on = 'yes']"/>
             <xsl:param name="apparatus-style"
                         select="document($param-file)//parameter[name = 'apparatus-style']/value[@on = 'yes']"/>
-            <xsl:param name="line-inc"
-                        select="document($param-file)//parameter[name = 'line-inc']/value"/>
+            <!--<xsl:param name="line-inc"
+                        select="document($param-file)//parameter[name = 'line-inc']/value"/>-->
             <xsl:param name="css-loc"
                         select="document($param-file)//parameter[name = 'css-loc']/value"/>
 

@@ -61,9 +61,9 @@
   <xsl:import href="htm-tpl-apparatus.xsl"/>
   <xsl:import href="htm-tpl-lang.xsl"/>
   <xsl:import href="htm-tpl-metadata.xsl"/>
-  <xsl:include href="htm-tpl-structure.xsl"/>
+  <xsl:import href="htm-tpl-structure.xsl"/>
   <xsl:import href="htm-tpl-license.xsl"/>
-  <xsl:include href="htm-tpl-sqbrackets.xsl"/>
+  <xsl:import href="htm-tpl-sqbrackets.xsl"/>
 
   
   <!-- global named templates with no html, also used by start-txt -->
