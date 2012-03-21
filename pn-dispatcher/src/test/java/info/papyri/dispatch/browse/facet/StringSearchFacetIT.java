@@ -201,11 +201,12 @@ public class StringSearchFacetIT extends TestCase {
             assertEquals("fq=metadata:(κάι)", URLDecoder.decode(clause13.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // translation search
-            StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.TRANSLATION, false, false);
+          /*  StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.TRANSLATION, false, false);
             assertEquals("fq=translation:(κάι)", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));          
-            
-            
-            
+            System.out.println("****************");
+            StringSearchFacet.SearchTerm clause15 = testInstance.new SearchTerm("k", StringSearchFacet.SearchTarget.TEXT, false, false);
+            clause15.buildQuery(new SolrQuery());
+            System.out.println("=================="); */
         }
         catch(CustomApplicationException cae){
             
@@ -401,7 +402,9 @@ public class StringSearchFacetIT extends TestCase {
             StringSearchFacet.SubClause term14 = testInstance.new SubClause(origString14, t, true, true);
             assertEquals("^.*(ouk.{1,12}kai|kai.{1,12}ouk).*$", term14.buildTransformedString());
             
-          
+            String origString15 = "REGEX kai(?<!i)";
+            StringSearchFacet.SubClause term15 = testInstance.new SubClause(origString15, t, true, true);
+            assertEquals("^.*kai(?<!i).*$", term15.buildTransformedString());
          
             
         }
@@ -418,6 +421,8 @@ public class StringSearchFacetIT extends TestCase {
 
         
     }
+    
+
     
 
     

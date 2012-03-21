@@ -376,7 +376,7 @@ public class StringSearchFacetTest extends TestCase {
         }
     }
     
-    public void testAssignClauseRoles(){
+   public void testAssignClauseRoles(){
         
         StringSearchFacet.SearchTarget t = StringSearchFacet.SearchTarget.TEXT;
         Boolean caps = true;
@@ -456,7 +456,7 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals(StringSearchFacet.ClauseRole.OPERATOR, term2.getClauseRoles().get(0));
             assertEquals(StringSearchFacet.ClauseRole.END_PROX, term3.getClauseRoles().get(0));
             
-        /*    // mixed handlers add default roles appropriately
+            // mixed handlers add default roles appropriately
              // TODO: These actually work, but for code simplification may not be supported in future
             StringSearchFacet.SubClause term7 = testInstance.new SubClause("luw AND ouk OR kai", t, caps, marks);
             ArrayList<StringSearchFacet.SearchClause> subclauses7 = term7.getClauseComponents();
@@ -480,7 +480,7 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals(1, tibClause.getClauseRoles().size());
             assertTrue(tibClause.getClauseRoles().contains(StringSearchFacet.ClauseRole.AND));
             
-        */    // incompatibilities?
+            // incompatibilities?
             
         
         }

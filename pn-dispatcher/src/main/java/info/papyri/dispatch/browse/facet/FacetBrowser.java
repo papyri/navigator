@@ -58,6 +58,8 @@ public class FacetBrowser extends HttpServlet {
     static private int defaultDocumentsPerPage = 15;
     /** Utility class providing lemma expansion */
     static SolrUtils SOLR_UTIL;
+    
+    static int socketTimeout = 1000;
         
     @Override
     public void init(ServletConfig config) throws ServletException{
@@ -102,6 +104,8 @@ public class FacetBrowser extends HttpServlet {
         
         /* Get the <code>List</code> of facets to be displayed */
         ArrayList<Facet> facets = getFacets();
+        
+        parseRequestForTimeout(request);
         
         int docsPerPage = parseRequestForDocumentsPerPage(request);
         
@@ -149,7 +153,7 @@ public class FacetBrowser extends HttpServlet {
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog);
-        // html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
+         //html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -189,6 +193,19 @@ public class FacetBrowser extends HttpServlet {
          } catch(Exception e){}
         
         return docsPerPage;
+    }
+    
+    void parseRequestForTimeout(HttpServletRequest request){
+        
+        Map<String, String[]> requestParams = request.getParameterMap();
+        
+        try{
+            
+            socketTimeout = Integer.valueOf(requestParams.get("to")[0]);
+            
+        } catch(Exception e){}
+        
+        
     }
     
     /**
@@ -273,7 +290,8 @@ public class FacetBrowser extends HttpServlet {
         
         try{
             
-          SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
+          CommonsHttpSolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
+          solrServer.setSoTimeout(socketTimeout);
           QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.POST);
           return qr;
             
