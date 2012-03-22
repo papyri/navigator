@@ -13,7 +13,7 @@
 ;; ### Usage
 ;; (from Leiningen)
 ;;
-;; * run without arguments — builds the PN index (pn-search-offline) and HTML/txt pages for texts and data
+;; * run without arguments — builds the PN index (pn-search) and HTML/txt pages for texts and data
 ;; * run with a list of files — indexes and generates HTML/txt for just the files provided
 ;; * `biblio` — builds the PN index for bibliography (biblio-search)
 ;; * `load-lemmas` — loads the morphological data from the Perseus lemma db into the lemma index (morph-search)
@@ -482,7 +482,8 @@
           (recur (conj result
                        (collect-row answer)))
           result)))
-    (catch Exception e (println query)))))
+    (catch Exception e 
+      (println query)))))
 
 ;; ## Data queueing functions
 
@@ -742,7 +743,7 @@
   (println "Generating text...")
   (generate-text)
 
-  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search-offline/") 500 5))
+  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 5))
 	  (.setRequestWriter @solr (BinaryRequestWriter.)))
   
   ;; Index docs queued in @text

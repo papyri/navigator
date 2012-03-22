@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teilb.xsl 1755 2012-03-09 18:35:57Z gabrielbodard $ -->
+<!-- $Id: htm-teilb.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    xmlns:EDF="http://epidoc.sourceforge.net/ns/functions"
@@ -8,8 +8,6 @@
    <xsl:import href="teilb.xsl"/>
 
    <xsl:template match="t:lb">
-      <xsl:param name="location"/>
-      
       <xsl:choose>
          <xsl:when test="ancestor::t:lg and $verse-lines = 'on'">
             <xsl:apply-imports/>
@@ -36,18 +34,15 @@
                   <xsl:when test="$edition-type='diplomatic'"/>
                   <!--    *or unless* the lb is first in its ancestor div  -->
                   <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1])"/>
-                  <xsl:when test="$leiden-style = 'ddbdp' and ((not(ancestor::*[name() = 'TEI'])) or $location='apparatus')" />                                      
                   <!--   *or unless* the second part of an app in ddbdp  -->
                   <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and
                            (ancestor::t:corr or ancestor::t:reg or ancestor::t:rdg or ancestor::t:del[parent::t:subst])"/>
                   <!--  *unless* previous line ends with space / g / supplied[reason=lost]  -->
-                  <!-- in which case the hyphen will be inserted before the space/g r final ']' of supplied
-                     (tested by EDF:f-wwrap in teig.xsl, which is called by teisupplied.xsl, teig.xsl and teispace.xsl) -->
                   <xsl:when test="preceding-sibling::node()[1][local-name() = 'space' or
                         local-name() = 'g' or (local-name()='supplied' and @reason='lost') or
                         (normalize-space(.)='' 
                                  and preceding-sibling::node()[1][local-name() = 'space' or
-                                 local-name() = 'g' or (local-name()='supplied' and @reason='lost')])]"/>              
+                                 local-name() = 'g' or (local-name()='supplied' and @reason='lost')])]"/>
                   <xsl:otherwise>
                       <xsl:text>-</xsl:text>
                   </xsl:otherwise>
@@ -75,23 +70,14 @@
                      </xsl:otherwise>
                   </xsl:choose>
                </xsl:when>
-               <xsl:when
-                  test="$leiden-style = 'ddbdp' and ((not(ancestor::*[name() = 'TEI']))  or $location='apparatus')">
-                  <xsl:choose>
-                     <xsl:when test="@break='no' or @type='inWord'">
-                        <xsl:text>|</xsl:text>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:text> | </xsl:text>
-                     </xsl:otherwise>
-                  </xsl:choose>
-               </xsl:when>              
                <xsl:otherwise>
-                  <br id="a{$div-loc}l{$line}"/>
+                  <br><xsl:choose>
+                    <xsl:when test="@xml:id"><xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute></xsl:when>
+                    <xsl:otherwise><xsl:attribute name="id"><xsl:value-of select="concat('a', $div-loc, 'l', $line)"/></xsl:attribute></xsl:otherwise>
+                  </xsl:choose></br>
                </xsl:otherwise>
             </xsl:choose>
             <xsl:choose>
-               <xsl:when test="$location = 'apparatus'" />
                <xsl:when
                   test="not(number(@n)) and ($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
                   <!--         non-numerical line-nos always printed in DDbDP         -->
@@ -117,6 +103,21 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
+   
+   <xsl:function name="EDF:f-wwrap">
+      <!-- called by teisupplied.xsl, teig.xsl and teispace.xsl -->
+      <xsl:param name="ww-context"/>
+         <xsl:choose>
+            <xsl:when test="$ww-context/following-sibling::node()[1][(local-name()='lb' and (@break='no' or @type='inWord'))
+            or normalize-space(.)='' and following-sibling::node()[1][local-name()='lb' and (@break='no' or @type='inWord')]]">
+               <xsl:value-of select="true()"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="false()"/>
+            </xsl:otherwise>
+         </xsl:choose>
+   </xsl:function>
+
 
    <xsl:template name="margin-num">
       <xsl:choose>

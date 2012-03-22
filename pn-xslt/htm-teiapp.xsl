@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teiapp.xsl 1755 2012-03-09 18:35:57Z gabrielbodard $ -->
+<!-- $Id: htm-teiapp.xsl 1637 2011-10-26 13:23:06Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:tei="http://www.tei-c.org/ns/1.0"
-                xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
+                xmlns:t="http://www.tei-c.org/ns/1.0" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="t" 
                 version="2.0">
   <!-- Contains app and its children rdg, ptr, note and lem -->
 
@@ -39,13 +39,17 @@
                <xsl:otherwise/>
             </xsl:choose>
          </xsl:when>
-         <xsl:when test="@resp='previous'">
-            <xsl:apply-templates/>
-         </xsl:when>
-         <xsl:when test="@resp='autopsy'"/>
-         <xsl:when test="parent::t:app"/>
          <xsl:otherwise>
-            <xsl:apply-templates/>
+            <xsl:choose>
+               <xsl:when test="@resp='previous'">
+                  <xsl:apply-templates/>
+               </xsl:when>
+               <xsl:when test="@resp='autopsy'"/>
+               <xsl:when test="parent::t:app"/>
+               <xsl:otherwise>
+                  <xsl:apply-templates/>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>
@@ -54,16 +58,18 @@
   <xsl:template match="t:wit">
       <xsl:choose>
       <!-- Temporary -->
-         <xsl:when test="parent::t:app"/>
+      <xsl:when test="parent::t:app"/>
+
          <xsl:otherwise>
             <xsl:apply-templates/>
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>
 
+
   <xsl:template match="t:lem">
       <xsl:choose>
-         <xsl:when test="$leiden-style=('ddbdp','sammelbuch') and ancestor::t:div[@type='translation']">
+         <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and ancestor::t:div[@type = 'translation']">
             <xsl:variable name="wit-val" select="@resp"/>
             <xsl:variable name="lang" select="ancestor::t:div[@type = 'translation']/@xml:lang"/>
             <span class="term">
@@ -93,54 +99,17 @@
               </span>                 
             </span>
          </xsl:when>
-         <xsl:when test="$leiden-style=('ddbdp','sammelbuch') and ancestor::t:*[local-name()=('reg','corr','rdg') 
-            or self::t:del[@rend='corrected']]">
-            <xsl:apply-templates/>
-            <xsl:if test="@resp">
-               <xsl:choose>
-                  <xsl:when test="$leiden-style='ddbdp'"><xsl:text> FNORD-SPLIT </xsl:text></xsl:when>
-                  <xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise>
-               </xsl:choose>              
-               <xsl:if test="parent::t:app[@type='BL']">
-                  <xsl:text>BL </xsl:text>
-               </xsl:if>
-               
-               <xsl:value-of select="@resp"/>
-               
-               <xsl:if test="parent::t:app[@type='SoSOL']">
-                  <xsl:text> (via PE)</xsl:text>
-               </xsl:if>
-               <xsl:choose>
-                  <xsl:when test="$leiden-style='ddbdp'"><xsl:text> FNORD-DELIM </xsl:text></xsl:when>
-                  <xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise>
-               </xsl:choose>  
-            </xsl:if>
-            <xsl:choose>
-               <xsl:when test="parent::t:app[@type='editorial']">
-                  <xsl:text> (</xsl:text><xsl:for-each select="following-sibling::t:rdg">
-                     <!-- found in tpl-apparatus.xsl -->
-                     <xsl:call-template name="app-ed-mult"/>
-                  </xsl:for-each><xsl:text>)</xsl:text>
-               </xsl:when>
-               <xsl:when test="parent::t:app[@type='alternative']">
-                  <xsl:text> (or </xsl:text>
-                  <xsl:for-each select="following-sibling::t:rdg">
-                     <xsl:apply-templates/>
-                     <xsl:if test="position()!=last()">
-                        <xsl:text> or </xsl:text>
-                     </xsl:if>
-                  </xsl:for-each>
-                  <xsl:text>)</xsl:text>
-               </xsl:when>
-            </xsl:choose>
-         </xsl:when>
-         <xsl:when test="parent::t:app[@type='previouslyread']">
-            <span class="previouslyread">
-               <xsl:apply-templates/>
-            </span>
-         </xsl:when>
          <xsl:otherwise>
-            <xsl:apply-templates/>
+            <xsl:choose>
+               <xsl:when test="parent::t:app[@type='previouslyread']">
+                  <span class="previouslyread">
+                     <xsl:apply-templates/>
+                  </span>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:apply-templates/>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>
