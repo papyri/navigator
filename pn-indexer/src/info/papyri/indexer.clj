@@ -503,6 +503,7 @@
        			  (execute-query (hgv-citation-query url)))
        ]
     (.add @html (list (str "file:" (get-filename url))
+    	  (list "self-url" url)
           (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
           (list "related" (apply str (interpose " " (for [x relations] (first x)))))
           (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
@@ -546,6 +547,7 @@
                              exclude)]
         (if (nil? exclusion)
           ( .add @html (list (str "file:" (get-filename (last item)))
+          	(list "self-url" url)
             (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
             (list "related" (apply str (interpose " " (for [x related] (last x)))))
             (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
