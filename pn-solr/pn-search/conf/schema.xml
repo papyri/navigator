@@ -71,96 +71,103 @@
         <tokenizer class="solr.KeywordTokenizerFactory"></tokenizer>
       </analyzer>
     </fieldType>
-
   </types>
 
 
   <fields>
-    <field name="collection" type="string" indexed="true" stored="true" required="true"
-      multiValued="true"/>
-    <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
-    <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
-    <field name="idno_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
-    <field name="id" type="string" indexed="true" stored="true" required="true"/>
-    <field name="display_place" type="string" indexed="true" stored="true"/>
-    <field name="display_date" type="string" indexed="false" stored="true"/>
-    <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
-    <field name="transcription" type="text" indexed="true" stored="false"/>
-    <field name="transcription_id" type="text" indexed="true" stored="false"/>
-    <field name="transcription_ic" type="text" indexed="true" stored="false"/>
-    <field name="transcription_ia" type="text" indexed="true" stored="false"/>
-    <field name="transcription_ngram" type="nuppertext" indexed="true" stored="false"/>
-    <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false"/>
-    <field name="transcription_ngram_ic" type="ntext" indexed="true" stored="false"/>
-    <field name="transcription_ngram_id" type="nuppertext" indexed="true" stored="false"/>
-    <field name="has_transcription" type="boolean" indexed="true" stored="false"/>
-    <field name="translation_language" type="string" indexed="true" stord="false" multiValued="true"/>
-    <field name="translation" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="has_translation" type="boolean" indexed="true" stored="true"/>
-    <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="earliest_date" type="int" indexed="true" stored="true"/>
-    <field name="latest_date" type="int" indexed="true" stored="true"/>
-    <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false"
-      required="false"/>
-    <field name="apis_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="hgv_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="images" type="boolean" indexed="true" stored="false"/>
-    <field name="images-ext" type="boolean" indexed="true" stored="true"/>
-    <field name="images-int" type="boolean" indexed="true" stored="true"/>
-    <field name="illustrations" type="boolean" indexed="true" stored="true"/>
-    <field name="image_path" type="string" indexed="false" stored="true" multiValued="true"/>
-    <field name="invnum" type="text" indexed="true" stored="true"/>
-    <field name="language" type="text" indexed="true" stored="true" multiValued="true"/>
-    <field name="facet_language" type="string" indexed="true" stored="true" multiValued="true"/>
-    <field name="nome" type="string" indexed="true" stored="true" multiValued="true"/>
+    <!-- fields used by the Papyrological Navigator -->
     <field name="all" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="series" type="string" indexed="true" stored="false" multiValued="false"
-      required="true"/>
-    <field name="volume" type="int" indexed="true" stored="false" multiValued="false"
-      required="true" default="0"/>
-    <field name="item" type="long" indexed="true" stored="false" multiValued="false" required="true"
-      default="0"/>
-    <field name="ddbdp_item_letter" type="string" stored="true" indexed="true" multiValued="false"
-      required="false"/>
-    <field name="hgv_item_letter" type="string" stored="true" indexed="true" multiValued="false"
-      required="false"/>
+    <field name="apis_full_identifier" type="string" indexed="true" stored="true"
+      multiValued="false"/>
+    <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="false"/>
+    <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
     <field name="apis_item_letter" type="string" stored="true" indexed="true" multiValued="false"
       required="false"/>
-    <field name="ddbdp_series" type="string" indexed="true" stored="true" default="0"
-      multiValued="false"/>
-    <field name="hgv_series" type="string" indexed="true" stored="true" default="0"
+    <field name="apis_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="apis_publication_id" type="string" indexed="false" stored="true"
       multiValued="false"/>
     <field name="apis_series" type="string" indexed="true" stored="true" default="0"
       multiValued="false"/>
-    <field name="ddbdp_volume" type="string" indexed="true" stored="true" default="0"
-      multiValued="false"/>
-    <field name="hgv_volume" type="string" indexed="true" stored="true" default="0"
-      multiValued="false"/>
     <field name="apis_volume" type="string" indexed="true" stored="true" default="0"
+      multiValued="false"/>
+    <field name="collection" type="string" indexed="true" stored="true" required="true"
+      multiValued="true"/>
+    <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true"
       multiValued="false"/>
     <field name="ddbdp_item" type="long" indexed="true" stored="true" default="0"
       multiValued="false"/>
-    <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
-    <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
-    <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true"
+    <field name="ddbdp_item_letter" type="string" stored="true" indexed="true" multiValued="false"
+      required="false"/>
+    <field name="ddbdp_series" type="string" indexed="true" stored="true" default="0"
       multiValued="false"/>
-    <field name="hgv_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
-    <field name="apis_full_identifier" type="string" indexed="true" stored="true"
+    <field name="ddbdp_volume" type="string" indexed="true" stored="true" default="0"
       multiValued="false"/>
+    <field name="display_date" type="string" indexed="false" stored="true"/>
+    <field name="display_place" type="string" indexed="true" stored="true"/>
+    <field name="facet_language" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="earliest_date" type="int" indexed="true" stored="true"/>
+    <field name="has_transcription" type="boolean" indexed="true" stored="false"/>
+    <field name="has_translation" type="boolean" indexed="true" stored="true"/>
     <field name="hgv_identifier" type="string" indexed="false" stored="true" default="0"
       multiValued="false"/>
-    <field name="apis_inventory" type="string" indexed="false" stored="true" multiValued="false"/>
-    <field name="apis_publication_id" type="string" indexed="false" stored="true"
+    <field name="hgv_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="hgv_item_letter" type="string" stored="true" indexed="true" multiValued="false"
+      required="false"/>
+    <field name="hgv_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="hgv_series" type="string" indexed="true" stored="true" default="0"
       multiValued="false"/>
+    <field name="hgv_volume" type="string" indexed="true" stored="true" default="0"
+      multiValued="false"/>
+    <field name="id" type="string" indexed="true" stored="true" required="true"/>
+    <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="idno_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="illustrations" type="boolean" indexed="true" stored="true"/>
+    <field name="images" type="boolean" indexed="true" stored="false"/>
+    <field name="images-int" type="boolean" indexed="true" stored="true"/>
+    <field name="images-ext" type="boolean" indexed="true" stored="true"/>
+    <field name="image_path" type="string" indexed="false" stored="true" multiValued="true"/>
+    <field name="invnum" type="text" indexed="true" stored="true"/>
+    <field name="item" type="long" indexed="true" stored="false" multiValued="false" required="true"
+      default="0"/>
+    <field name="language" type="text" indexed="true" stored="true" multiValued="true"/>
+    <field name="latest_date" type="int" indexed="true" stored="true"/>
+    <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="nome" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="series" type="string" indexed="true" stored="false" multiValued="false"
+      required="true"/>
+    <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="title" type="text" indexed="false" stored="true" multiValued="false"/>
+    <field name="transcription" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ia" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ic" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_id" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram" type="nuppertext" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram_ic" type="ntext" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram_id" type="nuppertext" indexed="true" stored="false" multiValued="true"/>
+    <field name="translation" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="translation_language" type="string" indexed="true" stord="false" multiValued="true"/>
+    <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false"
+      required="false"/>
+    <field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_ic" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="volume" type="int" indexed="true" stored="false" multiValued="false"
+      required="true" default="0"/>
+    <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+    
+    
+  <!-- end PN fields -->
+  <!-- fields used by the change feed -->
+    
     <field name="first_revised" type="date" indexed="true" stored="true" multiValued="false"></field> 
     <field name="last_revised" type="date" indexed="true" stored="true" multiValued="false"></field>
     <field name="last_editor" type="string" indexed="false" stored="true" multiValued="false"></field>
-    <field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="false"></field>
-    <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="false"></field>
-    <field name="untokenized_ic" type="untokenized" indexed="true" stored="false" multiValued="false"></field>
-    <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="false"></field>
+ <!-- end fields used by the change feed -->
+   
   </fields>
 
 
@@ -178,6 +185,7 @@
   <copyField source="apis_metadata" dest="all"/>
   <copyField source="hgv_metadata" dest="metadata"/>
   <copyField source="apis_metadata" dest="metadata"/>
+  <copyField source="untokenized_ia" dest="tokenized_ia"/>
   <copyField source="transcription" dest="untokenized"/>
   <copyField source="transcription_ia" dest="untokenized_ia"/>
   <copyField source="transcription_ic" dest="untokenized_ic"/>
