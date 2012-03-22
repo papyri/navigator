@@ -770,11 +770,7 @@
         </xsl:for-each>
       </xsl:when>
     </xsl:choose>
-    <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance/t:p/t:placeName[@subtype='nome']">
-      <field name="nome">
-        <xsl:value-of select="normalize-space(.)"/>
-      </field>
-    </xsl:for-each>
+
 
     <!-- InvNum -->
     <xsl:if

@@ -46,7 +46,7 @@
   <xsl:import href="teichoice.xsl"/>
   <xsl:import href="teihandshift.xsl"/>
   <xsl:import href="teiheader.xsl"/>
-  <xsl:import href="teimilestone.xsl"/> 
+  <xsl:import href="teimilestone.xsl"/>
   <xsl:import href="teiorig.xsl"/>
   <xsl:import href="teiorigandreg.xsl"/>
   <xsl:import href="teiq.xsl"/>
@@ -61,12 +61,11 @@
   <xsl:import href="htm-tpl-apparatus.xsl"/>
   <xsl:import href="htm-tpl-lang.xsl"/>
   <xsl:import href="htm-tpl-metadata.xsl"/>
-  <xsl:import href="htm-tpl-structure.xsl"/>
+  <xsl:import href="htm-tpl-nav.xsl"/>
   <xsl:import href="htm-tpl-license.xsl"/>
-  <xsl:import href="htm-tpl-sqbrackets.xsl"/>
-
   
   <!-- global named templates with no html, also used by start-txt -->
+  <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
@@ -222,23 +221,16 @@
                       </xsl:if>
                     </div>
                   </xsl:if>
-                  <xsl:choose>
-                    <xsl:when test="$ddbdp">
-                      <div id="editthis" class="ui-widget-content ui-corner-all">
-                       <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
-                     </div>
-                    </xsl:when>
-                    <xsl:when test="$hgv and not($ddbdp)">
-                      <div id="editthis" class="ui-widget-content ui-corner-all">
-                        <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
-                      </div>
-                    </xsl:when>
-                    <xsl:when test="$apis and not($hgv or $ddbdp)">
-                      <div id="editthis" class="ui-widget-content ui-corner-all">
-                        <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
-                      </div>
-                    </xsl:when>
-                  </xsl:choose>
+                  <xsl:if test="$ddbdp">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
+                  <xsl:if test="$hgv and not($ddbdp)">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
                   <xsl:if test="$hgv or $apis">
@@ -596,13 +588,7 @@
             <xsl:variable name="provenance-value">
               <xsl:value-of select="normalize-space(string-join(/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"></xsl:value-of>
             </xsl:variable>
-            <xsl:variable name="provenance-display">
-              <xsl:choose>
-                <xsl:when test="lower-case($provenance-value) eq 'unbekannt' or lower-case($provenance-value) eq 'unknown'">More of unknown provenance</xsl:when>
-                <xsl:otherwise>More from <xsl:value-of select="$provenance-value"></xsl:value-of></xsl:otherwise>
-              </xsl:choose>
-            </xsl:variable>
-            <div class="more-like-this"><a href="{concat($facet-root, $provenance-param, '=', $provenance-value)}" title="{$provenance-display}" target="_blank"><xsl:value-of select="$provenance-display"></xsl:value-of></a></div>
+            <div class="more-like-this"><a href="{concat($facet-root, $provenance-param, '=', $provenance-value)}" title="More from {$provenance-value}" target="_blank">More from <xsl:value-of select="$provenance-value"></xsl:value-of></a></div>
           </xsl:if>
       </td>
     </tr>
@@ -660,8 +646,7 @@
       <td class="mddate">
         <xsl:value-of select="."/>
         <!-- more-like-this output -->
-        <xsl:choose>
-        <xsl:when test="./(@when|@notBefore|@notAfter)">
+        <xsl:if test="./(@when|@notBefore|@notAfter)">
           <xsl:variable name="date-start">
             <xsl:choose>
               <xsl:when test="./@when">
@@ -702,7 +687,7 @@
                  <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-start-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
-                 <xsl:value-of select="abs($date-start)"></xsl:value-of>
+                 <xsl:value-of select="$date-start"></xsl:value-of>
                 <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-start-era-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
@@ -717,7 +702,7 @@
                  <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-end-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
-                 <xsl:value-of select="abs($date-end)"></xsl:value-of>
+                 <xsl:value-of select="$date-end"></xsl:value-of>
                  <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-end-era-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
@@ -758,14 +743,7 @@
           </xsl:variable>
           <xsl:variable name="anchor" select="concat($facet-root, $date-mode, $date-start-querystring, $date-end-querystring)"></xsl:variable>
           <div class="more-like-this"><a href="{$anchor}" title="More from this timespan" target="_blank">More from the period <xsl:value-of select="$span-label"></xsl:value-of></a></div>
-        </xsl:when>
-          <xsl:otherwise>
-            <xsl:variable name="unknown-check"><xsl:value-of select="."></xsl:value-of></xsl:variable>
-            <xsl:if test="$unknown-check eq 'unknown' or $unknown-check eq 'unbekannt'">
-              <div class="more-like-this"><a href="{concat($facet-root, 'DATE_START_TEXT=n.a.')}" title="More with unknown date" target="_blank">More with unknown date</a></div>
-            </xsl:if>
-          </xsl:otherwise>
-        </xsl:choose>
+        </xsl:if>
       </td>
     </tr>
   </xsl:template>
@@ -773,17 +751,11 @@
   <xsl:function name="pi:trim-date-to-year">
     <xsl:param name="raw-date"></xsl:param>
     <xsl:variable name="cooked-date">
-    <xsl:analyze-string select="$raw-date" regex="-?(\d{{4}})(-\d{{1,2}}){{0,2}}">
+    <xsl:analyze-string select="$raw-date" regex="(-?\d{{4}})(-\d{{1,2}}){{0,2}}">
       <xsl:matching-substring>
         <xsl:value-of select="regex-group(1)"></xsl:value-of>
       </xsl:matching-substring>
     </xsl:analyze-string>
-    </xsl:variable>
-    <xsl:variable name="era-sign">
-      <xsl:choose>
-      <xsl:when test="substring($raw-date, 1, 1) eq '-'">-</xsl:when>
-      <xsl:otherwise></xsl:otherwise>
-      </xsl:choose>
     </xsl:variable>
     <xsl:variable name="trimmed-date">
       <xsl:choose>
@@ -791,7 +763,7 @@
         <xsl:otherwise><xsl:value-of select="$cooked-date"></xsl:value-of></xsl:otherwise>
       </xsl:choose>    
     </xsl:variable>
-    <xsl:sequence select="number(concat($era-sign, $trimmed-date))"></xsl:sequence>
+    <xsl:sequence select="number($trimmed-date)"></xsl:sequence>
   </xsl:function>
   
   <xsl:function name="pi:get-era">

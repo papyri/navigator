@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teilb.xsl 1725 2012-01-10 16:08:31Z gabrielbodard $ -->
+<!-- $Id: teilb.xsl 1554 2011-09-25 12:19:04Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -25,10 +25,14 @@
             </xsl:when>
          </xsl:choose>
       </xsl:if>
-     <xsl:if test="$leiden-style=('ddbdp','sammelbuch') and @rend">
-        <xsl:text> (</xsl:text>
-        <xsl:value-of select="@rend"/>
-        <xsl:text>) </xsl:text>
+     <xsl:if test="$leiden-style = 'ddbdp' and $leiden-style = 'sammelbuch'">
+        <xsl:choose>
+           <xsl:when test="@rend">
+              <xsl:text> (</xsl:text>
+              <xsl:value-of select="@rend"/>
+              <xsl:text>) </xsl:text>
+           </xsl:when>
+        </xsl:choose>
      </xsl:if>
   </xsl:template>
   

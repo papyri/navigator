@@ -18,10 +18,11 @@
   
   <xsl:template match="xsl:stylesheet"><xsl:text>
 </xsl:text>
-    <xsl:element name="xsl:stylesheet">
+    <xsl:element name="stylesheet" namespace="http://www.w3.org/1999/XSL/Transform">
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates/>
     </xsl:element>
+    
   </xsl:template>
   
   <xsl:template match="node()|@*|comment()">
