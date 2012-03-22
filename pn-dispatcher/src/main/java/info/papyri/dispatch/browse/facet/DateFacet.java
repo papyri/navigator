@@ -1127,7 +1127,7 @@ public class DateFacet extends Facet {
             StringBuilder html = new StringBuilder("<div class=\"facet-widget date-facet-widget\" title=\"");
             html.append(getAfterWhichToolTipText());
             html.append("\" id=\"date-start-selector\">");
-            Boolean onlyOneValue = valuesAndCounts.size() == 1;
+            Boolean onlyOneValue = valuesAndCounts.size() <= 1;
             String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
             String disabled = onlyOneValue ? " disabled=\"true\"" : "";
             html.append("<span class=\"option-label\">Date on or after</span>");
@@ -1321,6 +1321,8 @@ public class DateFacet extends Facet {
             
             Count earliestUsefulDate = getFirstUsefulValue();
        
+            if(earliestUsefulDate != null) return;
+            
             if(this.valuesAndCounts.isEmpty()){
                
                     valuesAndCounts.add(earliestUsefulDate);
@@ -1372,6 +1374,11 @@ public class DateFacet extends Facet {
             catch(NumberFormatException nfe){
                 
                 return earliestStrictDate;
+                
+            }
+            catch (NullPointerException npe){
+                
+                return null;
                 
             }
             return earliestStrictDate;
@@ -1500,7 +1507,7 @@ public class DateFacet extends Facet {
             StringBuilder html = new StringBuilder("<div class=\"facet-widget date-facet-widget\" title=\"");
             html.append(getBeforeWhichToolTipText());
             html.append("\" id=\"date-end-selector\">");
-            Boolean onlyOneValue = valuesAndCounts.size() == 1;
+            Boolean onlyOneValue = valuesAndCounts.size() <= 1;
             String defaultSelected = onlyOneValue  ? " selected=\"true\"" : "";
             String disabled = onlyOneValue ? " disabled=\"true\"" : "";
             html.append("<span class=\"option-label\">Date before</span>");
@@ -1672,7 +1679,8 @@ public class DateFacet extends Facet {
         void extendTerminusRange(){
             
             Count latestUsefulDate =  getFirstUsefulValue();
-
+            if(latestUsefulDate == null) return;
+            
             if(valuesAndCounts.isEmpty()){
          
                  valuesAndCounts.add(latestUsefulDate);
@@ -1725,6 +1733,10 @@ public class DateFacet extends Facet {
             } catch(NumberFormatException nfe){
                 
                 return latestStrictDate;
+                
+            } catch(NullPointerException npe){
+                
+                return null;
                 
             }
             

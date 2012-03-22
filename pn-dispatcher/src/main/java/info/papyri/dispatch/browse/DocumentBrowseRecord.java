@@ -581,13 +581,14 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   private List<String> filterKWIX(List<String> rawKWIX){
       
-      ArrayList<String> kwix = new ArrayList<String>();
+     // TODO: Purpose of this is to act as a filter function. Create filters!  
+    /*  ArrayList<String> kwix = new ArrayList<String>();
       Iterator<String> kwixit = rawKWIX.iterator();
       while(kwixit.hasNext()){
           
           kwix.add("spuz");
           
-      }
+      }*/
       return rawKWIX;
       
   }

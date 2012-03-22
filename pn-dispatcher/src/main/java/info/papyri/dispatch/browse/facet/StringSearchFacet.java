@@ -10,6 +10,7 @@ import info.papyri.dispatch.browse.facet.customexceptions.MalformedProximitySear
 import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketException;
 import info.papyri.dispatch.browse.facet.customexceptions.RegexCompilationException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
+import info.papyri.dispatch.browse.facet.customexceptions.SubstringTooSmallException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -728,8 +729,7 @@ public class StringSearchFacet extends Facet{
         
         SearchClause config = searchClauses.get(Integer.valueOf(paramNumber)).get(0);
         
-        String searchType = config.parseForSearchType().name().toLowerCase();
-           
+        String searchType = config.parseForSearchType().name().toLowerCase();        
         String firstCap = searchType.substring(0, 1).toUpperCase();
         return firstCap + searchType.substring(1, searchType.length());
         
@@ -1082,18 +1082,7 @@ public class StringSearchFacet extends Facet{
         String swapInProxperators(String fullString) throws MalformedProximitySearchException, MismatchedBracketException{
 
             String searchString = fullString;
-       /*     // first, we remove any subclauses, and deal with them later
-            ArrayList<String> subclauses = suckOutSubClauses(searchString);
-            Iterator<String> sit = subclauses.iterator();
-            while(sit.hasNext()){
-                
-                   // found subclauses are replaced with an empty bracket-pair
-                   // to mark their place
-                   searchString = searchString.replace(sit.next(), "()");
-                   
-            } 
-              
-      */
+ 
             // check to see whether a proximity search is involved
             Matcher proxMatch = proxClauseDetect.matcher(searchString);
             Matcher metricsMatch = proxMetricsDetect.matcher(searchString);
@@ -1125,15 +1114,6 @@ public class StringSearchFacet extends Facet{
             }
 
             searchString = transformPhraseSearch(searchString, unit);
-            // reinsert the subclauses removed earlier in the method
-           /* Iterator<String> sit2 = subclauses.iterator();
-            while(sit2.hasNext()){
-
-                searchString = searchString.replaceFirst("\\(\\)", sit2.next());
-                
-                
-            }
-*/
             return searchString;
             
         }
@@ -1369,6 +1349,7 @@ public class StringSearchFacet extends Facet{
             clauseComponents = hasSubComponents(rs) ? clauseComponents = CLAUSE_FACTORY.buildSearchClauses(rs, tg, caps, marks) : new ArrayList<SearchClause>();
             clauseRoles = new ArrayList<ClauseRole>();
             clauseComponents = assignClauseRoles(clauseComponents);
+            
         }
         
         /**
@@ -1397,8 +1378,6 @@ public class StringSearchFacet extends Facet{
            }
            // non-quote-delimited with internal whitespace means true
            if(rs.contains(" ")) return true;
-           // internal brackets means true
-           if((rs.contains("(")||rs.contains(")")) && !rs.contains("\\")) return true;
            return false;
            
        }
@@ -1719,7 +1698,7 @@ public class StringSearchFacet extends Facet{
         * @throws InsufficientSpecificityException 
         */
 
-       SolrQuery buildQuery(SolrQuery sq) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException{
+       SolrQuery buildQuery(SolrQuery sq) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException, SubstringTooSmallException{
            
            SearchType type = parseForSearchType();
            SolrField field = parseForField(type, target, ignoreCaps, ignoreMarks);
@@ -1742,6 +1721,7 @@ public class StringSearchFacet extends Facet{
            
            String o = this.getOriginalString().trim();
            o = o.replaceAll(REGEX_MARKER, "");
+           o = o.replaceAll("<", "&lt;");
            if(this.parseForSearchType() == SearchType.LEMMA) o = o.replaceAll(LEX_MARKER, "");
            if(Character.toString(o.charAt(0)).equals("(") && Character.toString(o.charAt(o.length() - 1)).equals(")")){
                
@@ -1750,7 +1730,6 @@ public class StringSearchFacet extends Facet{
                
            }
            return o;
-           
            
        }
        
@@ -2518,7 +2497,8 @@ public class StringSearchFacet extends Facet{
                 return transformed;
             }
             transformed = transformed.replaceAll("#", "^");
-            transformed = transformed.replaceAll("\\^", "\\\\^");     
+            transformed = transformed.replaceAll("\\^", "\\\\^");    
+            transformed = transformed.trim();
             transformedString = transformed;
             return transformed;
             
@@ -2544,6 +2524,7 @@ public class StringSearchFacet extends Facet{
            
            
         }
+        
         
         /**
          * Transforms the literal parts of a regular expression to lower case.
@@ -2670,7 +2651,24 @@ public class StringSearchFacet extends Facet{
           
           return rawString;
               
-       }   
+       }  
+       
+       @Override
+       SolrQuery buildQuery(SolrQuery sq) throws InternalQueryException, IncompleteClauseException, RegexCompilationException, InsufficientSpecificityException, SubstringTooSmallException{
+           
+           SearchType type = parseForSearchType();
+           SolrField field = parseForField(type, target, ignoreCaps, ignoreMarks);
+           SearchHandler handler = parseForSearchHandler(getAllClauseRoles());
+           String queryPrefix = getQueryPrefix(handler, field);
+           String queryBody = buildTransformedString();
+           int minLength = !queryBody.equals("") && String.valueOf(queryBody.charAt(0)).equals("(") && String.valueOf(queryBody.charAt(queryBody.length() - 1)).equals(")") ? 5 : 3;
+           if(type == SearchType.SUBSTRING && queryBody.length() < minLength) throw new SubstringTooSmallException();
+           queryBody = "(" + queryBody + ")";
+           sq.addFilterQuery(queryPrefix + queryBody);
+           return sq;
+           
+       }
+       
        
        /**
         * Adds the multi-character match pattern ('.*') to the beginning and end of a regex as 
