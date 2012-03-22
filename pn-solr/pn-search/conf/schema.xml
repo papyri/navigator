@@ -185,7 +185,6 @@
   <copyField source="apis_metadata" dest="all"/>
   <copyField source="hgv_metadata" dest="metadata"/>
   <copyField source="apis_metadata" dest="metadata"/>
-  <copyField source="untokenized_ia" dest="tokenized_ia"/>
   <copyField source="transcription" dest="untokenized"/>
   <copyField source="transcription_ia" dest="untokenized_ia"/>
   <copyField source="transcription_ic" dest="untokenized_ic"/>
