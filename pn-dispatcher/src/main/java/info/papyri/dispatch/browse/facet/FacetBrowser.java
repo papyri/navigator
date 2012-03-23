@@ -203,7 +203,12 @@ public class FacetBrowser extends HttpServlet {
             
             socketTimeout = Integer.valueOf(requestParams.get("to")[0]);
             
-        } catch(Exception e){}
+        } catch(Exception e){
+        
+        
+            socketTimeout = 1000;
+        
+        }
         
         
     }
@@ -469,6 +474,14 @@ public class FacetBrowser extends HttpServlet {
         
     }
     
+    private String assembleTimeInput(){
+        
+        StringBuilder html = new StringBuilder();
+        html.append("<div id=\"timeout\"><label for=\"to\">Timeout(milliseconds)</label><input type=\"text\" length=\"6\" maxlength=\"6\" name=\"to\" value=\"1000\"/></div><!-- closing #timeout -->");
+        return html.toString();
+        
+    }
+    
     /**
      * A debugging method: Like <code>assembleHTML</code>, but outputs the query string submitted to the
      * Solr server at the bottom of the page.
@@ -524,6 +537,8 @@ public class FacetBrowser extends HttpServlet {
         html.append("\" id=\"reset-all\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" aria-disabled=\"false\">New Search</a>");
         html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
         html.append("</div>");
+        html.append(assembleTimeInput());
+
         
         try{
             
