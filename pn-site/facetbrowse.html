@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery-1.7.min.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script> 
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <!-- typegreek code written by Randy Hoyt, http://www.typegreek.com/overview/. Used with gratitude and permission -->
@@ -168,6 +168,13 @@
       
       }
       
+      .facet-widget .combobox{
+      
+      	position: relative;
+      	right: 25px;
+      
+      }
+      
       .facet-widget select, .facet-widget input{
       
         float: right;
@@ -184,7 +191,19 @@
       
       #place-selector input{
       
-      	width: 73%;
+      	width: 63%;
+
+      }
+      
+      #nome-selector input{
+      
+      	width: 63%;
+      
+      }
+      
+      #date-start-selector input, #date-end-selector input{
+      
+      	min-width: 10.5em;
       
       }
       
@@ -207,7 +226,6 @@
         padding-left: 1%;
         padding-right: 1%;
         min-height: 1100px;
-        /*min-width: 400px;*/
 
       }
       
@@ -377,7 +395,7 @@
 	 div.content p.coll-or{
 	  
 	  	  position: absolute;
-	  	  top: 3.2em;
+	  	  top: 2.7em;
 	  	  font-size: 12px;
 	  	  font-style: italic;
 	  	  margin-left: 1.5em;
@@ -733,7 +751,7 @@
       
       }
       
-      #within{
+      .within{
       
       	display: inline-block;
       	color: #aaa;
@@ -747,7 +765,6 @@
       
         	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 			font-size: 90%;
-			min-width: 13em;
       		padding-left: 4px;
       		padding-bottom: 1px;
       		height: 1.3em;
@@ -761,11 +778,51 @@
 
       }
       
+      .facet-widget button.ui-corner-all, .facet-widget button.ui-corner-bottom, .facet-widget button.ui-corner-right, .facet-widget button.ui-corner-br {
+
+		-moz-border-radius-bottomright: 0px;
+		-webkit-border-bottom-right-radius: 0px;
+		-khtml-border-bottom-right-radius: 0px;
+		border-bottom-right-radius: 0px;
+		-moz-border-radius-topright: 0px;
+		-webkit-border-top-right-radius: 0px;
+		-khtml-border-top-right-radius:0px;
+		border-top-right-radius: 0px;
+
+		}
+      
+     .facet-widget .ui-state-default, .facet-widget .ui-widget-content, .facet-widget .ui-state-default, .facet-widget .ui-widget-header, .facet-widget .ui-state-default{
+     
+     	border: none;
+     
+     }
+      
 	  ul.ui-autocomplete li a strong{
 	  
 	  	font-weight: bold;	
 	  
 	  }
+      #transcription-selectors{
+      
+      		float: right;
+      		display: inline-block;
+      }
+      #transcription-selectors input{
+      
+      		float: none;
+      
+      }
+      
+      #transcription-selectors label{
+      
+      	margin-right: 1em;
+      
+      }
+      #check-true{
+      
+      	margin-right: 2em;
+      
+      }
       
     </style>
           <!--[if IE 6]>
@@ -776,6 +833,7 @@
 
       <!--[if IE]>
     <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
     <![endif]-->
       <!--[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]-->
     <script type="text/javascript">

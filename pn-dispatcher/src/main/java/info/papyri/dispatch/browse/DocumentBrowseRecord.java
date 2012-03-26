@@ -195,7 +195,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   public ArrayList<String> simplifyFoundString(String foundString){
       
       ArrayList<String> foundStrings = new ArrayList<String>();
-      List<String> foundbits =  Arrays.asList(foundString.split("\\d+\\."));
+      List<String> foundbits =  Arrays.asList(foundString.split("((\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)"));
       for(int i = 0; i < foundbits.size(); i++){
 
           List<String> specialChars = Arrays.asList(new String[]{"\\(", "\\)", "\\{", "\\}", "\\.", "-", "\\[", "\\]", "\\s" });
@@ -561,7 +561,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       StringBuilder html = new StringBuilder();
       try{
 
-          List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
+          List<String> kwix = filterKWIX(util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms));
           html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
           for(String kwic : kwix){
 
@@ -576,6 +576,20 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           
       }
       return html.toString();
+      
+  }
+  
+  private List<String> filterKWIX(List<String> rawKWIX){
+      
+     // TODO: Purpose of this is to act as a filter function. Create filters!  
+    /*  ArrayList<String> kwix = new ArrayList<String>();
+      Iterator<String> kwixit = rawKWIX.iterator();
+      while(kwixit.hasNext()){
+          
+          kwix.add("spuz");
+          
+      }*/
+      return rawKWIX;
       
   }
   

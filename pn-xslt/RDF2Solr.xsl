@@ -46,6 +46,9 @@
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
   <xsl:import href="pi-txt-teilb.xsl"/>
+  <xsl:import href="teisurplus.xsl"/>
+  <xsl:import href="orig-supplied.xsl"/>
+  <xsl:import href="reg-surplus.xsl"/>
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
@@ -66,7 +69,7 @@
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     <xsl:variable name="image" select="contains($related, 'info:fedora/ldpd')"/>
-
+    
     <add>
       <doc>
         <xsl:if test="$ddbdp = true()">
@@ -123,28 +126,64 @@
               </xsl:for-each>
             </xsl:for-each>
             <xsl:variable name="text">
-              <xsl:apply-templates select="//t:div[@type = 'edition']"/>
+              <xsl:variable name="temp-reg-edition">
+                <xsl:element name="reg-edition-wrapper">
+                  <xsl:copy-of select="//t:div[@type='edition']"></xsl:copy-of>
+                </xsl:element>
+              </xsl:variable>
+              <xsl:call-template name="reg-text-processing">
+                <xsl:with-param name="temp-node" select="$temp-reg-edition"></xsl:with-param>
+              </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="temp-orig-edition">
+              <xsl:element name="orig-edition-wrapper">
+                <xsl:copy-of select="//t:div[@type = 'edition']"></xsl:copy-of>
+              </xsl:element>
+            </xsl:variable>
+            <xsl:variable name="orig-text">
+             <xsl:call-template name="orig-text-processing">
+               <xsl:with-param name="temp-node" select="$temp-orig-edition"></xsl:with-param>
+             </xsl:call-template>
             </xsl:variable>
             <xsl:variable name="textnfc"
               select="normalize-space(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"/>
             <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
+            <xsl:variable name="orignfc" select="normalize-space(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"></xsl:variable>
+            <xsl:variable name="orignfd" select="normalize-unicode($orignfc, 'NFD')"></xsl:variable>
             <field name="transcription">
               <xsl:value-of select="translate($textnfc, 'ς', 'σ')"/>
+            </field>
+            <field name="transcription">
+              <xsl:value-of select="translate($orignfc, 'ς', 'σ')"></xsl:value-of>
             </field>
             <field name="transcription_id">
               <xsl:value-of
                 select="translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"
               />
             </field>
+            <field name="transcription_id">
+              <xsl:value-of select="translate(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"></xsl:value-of>
+            </field>
             <field name="transcription_ic">
               <xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"/>
+            </field>
+            <field name="transcription_ic">
+              <xsl:value-of select="translate(lower-case($orignfc), 'ς', 'σ')"></xsl:value-of>
             </field>
             <xsl:variable name="transcription_ia" select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"></xsl:variable>
             <field name="transcription_ia">
               <xsl:value-of select="$transcription_ia"/>
             </field>
+            <field name="transcription_ia">
+              <xsl:value-of select="translate(lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"></xsl:value-of>
+            </field>
             <field name="transcription_ngram">
               <xsl:for-each select="tokenize($textnfc, '\s+')">
+                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+              </xsl:for-each>
+            </field>
+            <field name="transcription_ngram">
+              <xsl:for-each select="tokenize($orignfc, '\s+')">
                 <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
@@ -153,12 +192,21 @@
                 <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
+            <field name="transcription_ngram_id">
+              <xsl:for-each select="tokenize(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''), '\s+')">
+                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+              </xsl:for-each>
+            </field>
             <field name="transcription_ngram_ic">
               <xsl:for-each select="tokenize(lower-case($textnfc), '\s+')">
                 <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
               </xsl:for-each>
-            </field>
-            
+            </field>   
+            <field name="transcription_ngram_ic">
+              <xsl:for-each select="tokenize(lower-case($orignfc), '\s+')">
+                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+              </xsl:for-each>
+            </field>  
             <field name="transcription_ngram_ia">
               <xsl:for-each
                 select="tokenize(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), '\s+')">
@@ -169,19 +217,16 @@
                 </xsl:if>
               </xsl:for-each>
             </field>
-        <!--   <field name="untokenized">
-              <xsl:value-of select="translate($textnfc, 'ς', 'σ')"></xsl:value-of>
+            <field name="transcription_ngram_ia">
+              <xsl:for-each
+                select="tokenize(translate(lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), '\s+')">
+                <xsl:if test="string-length(normalize-space(.)) &gt; 0">
+                  <xsl:text>^</xsl:text>
+                  <xsl:value-of select="normalize-space(.)"/>
+                  <xsl:text>^ </xsl:text>
+                </xsl:if>
+              </xsl:for-each>
             </field>
-
-            <field name="untokenized_ia">
-              <xsl:value-of select="$transcription_ia"></xsl:value-of>
-            </field>
-            <field name="untokenized_ic">
-              <xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"></xsl:value-of>
-            </field>
-            <field name="untokenized_id">
-              <xsl:value-of select="translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"></xsl:value-of>
-            </field> -->
             <xsl:if test="string-length($textnfd) > 0">
               <field name="has_transcription">true</field>
             </xsl:if>
@@ -919,7 +964,16 @@
   <field name="last_editor"><xsl:value-of select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when=replace($last-revised, $date-suffix, '')][1]/@who"></xsl:value-of></field>
   </xsl:if>
 </xsl:template>
-  
+ 
+ <xsl:template name="reg-text-processing">
+   <xsl:param name="temp-node"></xsl:param>
+   <xsl:apply-templates select="$temp-node//t:div[@type='edition']"></xsl:apply-templates>
+ </xsl:template>
+ 
+  <xsl:template name="orig-text-processing">
+    <xsl:param name="temp-node"></xsl:param>
+    <xsl:apply-templates select="$temp-node//t:div[@type='edition']"></xsl:apply-templates>
+  </xsl:template>
 
 
   <xsl:template name="ddbdp-app">

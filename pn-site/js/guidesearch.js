@@ -275,7 +275,7 @@ $(document).ready(
 	    	var date_selector = "#" + date_wrapper_name + " input";
 	    	var datefield = $(date_selector);
 	    	var selected_date = datefield.val();
-	    	if(selected_date == "") return;
+	    	if(selected_date == "" || datefield.attr("disabled")) return;
 	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");	// trim count
 	    	var era_finder = new RegExp(/\s*(B?CE)$/);
 	    	var era = "";
@@ -442,6 +442,7 @@ $(document).ready(
 	    		
     			function(){
 	    			
+	    			$("#era-selector").css("display", "none");
 	    			$("#reset-all, #search").addClass("hidden-buttons");
     				$("#facet-wrapper").height(finalHeight);
     				$("#facet-widgets-wrapper").addClass("search-closed");
@@ -488,6 +489,8 @@ $(document).ready(
 	    		$(".title-short").css("display", "block");
 	    	}, 200);
 			$("#facet-widgets-wrapper").animate({ left: 0 }, 325);
+				    			$("#era-selector").css("display", "block");
+
 			$("#vals-and-records-wrapper").animate({ left: newWidgetWidthVal - widthcomp, width: newValsWidth }, 325, 
 			
 				function(){
@@ -687,7 +690,7 @@ $(document).ready(
 			
 		});
 		// entry into string search triggers text monitoring 
-		$(".stringsearch-top-controls:last .keyword").live("focus", hic.monitorTextInput);
+		$("#text-search-widget").on("focus", ".stringsearch-top-controls:last .keyword", hic.monitorTextInput);
 
 		//$(".stringsearch-top-controls:last .keyword").live("blur", function(){ $("#keyword").focus(hic.monitorTextInput) });
 		// submit triggers tidy ...
@@ -723,7 +726,26 @@ $(document).ready(
 		$("select[name='TRANSL']").combobox();
 		$(".combobox").click(function(evt){
 		
-			$(this).val("");
+			$(this).val("");	
+			var button = $(this).next("button");
+			button.css("outline-color", $(this).css("outline-color"));
+			button.css("outline-width", $(this).css("outline-width"));
+			button.css("outline-style", $(this).css("outline-style"));
+		
+		});
+		$(".combobox").blur(function(evt){
+		
+			var button = $(this).next("button");
+			button.css("outline","none");
+		
+		
+		});
+		$(".combobox").focus(function(evt){
+		
+			var button = $(this).next("button");
+			button.css("outline-color", $(this).css("outline-color"));
+			button.css("outline-width", $(this).css("outline-width"));
+			button.css("outline-style", $(this).css("outline-style"));		
 		
 		});
 

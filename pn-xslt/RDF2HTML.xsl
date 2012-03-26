@@ -46,7 +46,7 @@
   <xsl:import href="teichoice.xsl"/>
   <xsl:import href="teihandshift.xsl"/>
   <xsl:import href="teiheader.xsl"/>
-  <xsl:import href="teimilestone.xsl"/> 
+  <xsl:import href="teimilestone.xsl"/>
   <xsl:import href="teiorig.xsl"/>
   <xsl:import href="teiorigandreg.xsl"/>
   <xsl:import href="teiq.xsl"/>
@@ -61,15 +61,15 @@
   <xsl:import href="htm-tpl-apparatus.xsl"/>
   <xsl:import href="htm-tpl-lang.xsl"/>
   <xsl:import href="htm-tpl-metadata.xsl"/>
-  <xsl:include href="htm-tpl-structure.xsl"/>
   <xsl:import href="htm-tpl-license.xsl"/>
-  <xsl:include href="htm-tpl-sqbrackets.xsl"/>
-
-  
   <!-- global named templates with no html, also used by start-txt -->
+  <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
   <xsl:import href="tpl-text.xsl"/>
+  <xsl:include href="htm-tpl-sqbrackets.xsl"/>
+  <xsl:include href="htm-tpl-structure.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
+  <xsl:param name="self-url"></xsl:param>
   <xsl:param name="collection"/>
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
@@ -132,6 +132,7 @@
       prefix="dc: http://purl.org/dc/terms/">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta property="dc:identifier" content="{$self-url}"/>
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
@@ -152,6 +153,7 @@
        </xsl:if>
         <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <link rel="bookmark" href="{$self-url}" title="Canonical URI"/>
         <xsl:comment><![CDATA[[if IE]><link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
         <xsl:comment><![CDATA[[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
         <xsl:comment><![CDATA[[if IE 8]><link rel="stylesheet" href="/css/ie8.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
@@ -222,23 +224,20 @@
                       </xsl:if>
                     </div>
                   </xsl:if>
-                  <xsl:choose>
-                    <xsl:when test="$ddbdp">
-                      <div id="editthis" class="ui-widget-content ui-corner-all">
-                       <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
-                     </div>
-                    </xsl:when>
-                    <xsl:when test="$hgv and not($ddbdp)">
-                      <div id="editthis" class="ui-widget-content ui-corner-all">
-                        <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
-                      </div>
-                    </xsl:when>
-                    <xsl:when test="$apis and not($hgv or $ddbdp)">
-                      <div id="editthis" class="ui-widget-content ui-corner-all">
-                        <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
-                      </div>
-                    </xsl:when>
-                  </xsl:choose>
+                  <xsl:if test="$ddbdp">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
+                  <xsl:if test="$hgv and not($ddbdp)">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
+                  <div id="canonical-uri" class="ui-widget-content ui-corner-all">
+                    <span id="canonical-uri-label">Canonical URI:</span>
+                    <span id="canonical-uri-value"><xsl:value-of select="$self-url"></xsl:value-of></span>
+                  </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
                   <xsl:if test="$hgv or $apis">

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teinum.xsl 1739 2012-01-12 18:00:42Z gabrielbodard $ -->
+<!-- $Id: htm-teinum.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -9,7 +9,7 @@
    <xsl:template match="t:num">
       <xsl:choose>
          <xsl:when
-            test="$leiden-style=('ddbdp','sammelbuch') 
+            test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') 
             and string(.)">
             <span>
                <xsl:attribute name="title">
@@ -37,9 +37,6 @@
                         </xsl:if>
                      </xsl:when>
                   </xsl:choose>
-                  <xsl:if test="child::t:certainty[@match='../@value']">
-                     <xsl:text>(?)</xsl:text>
-                  </xsl:if>
                </xsl:attribute>
                <xsl:apply-imports/>
             </span>
