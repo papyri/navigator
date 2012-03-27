@@ -49,8 +49,26 @@ $(document).ready(function(){
             }
             return result;
           });
-          $("#history").click( function() {
-            $("#history>ul").toggle("blind");
+
+          $("#edit-history").mouseover( function(){
+          
+          	$("#edit-history-list").show("blind", 250);
+          
+          });
+          $("#edit-history").mouseleave( function(){
+          
+          	$("#edit-history-list").hide("blind", 250);
+          
+          });
+          $("#all-history").mouseover( function(){
+          
+          	$("#all-history-list").show("blind", 250);
+          
+          });
+          $("#all-history").mouseleave( function(){
+          
+          	$("#all-history-list").hide("blind", 250);
+          
           });
 
 });

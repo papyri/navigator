@@ -267,13 +267,38 @@
                       <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
                       <xsl:apply-templates select="/t:TEI"/>
                       <div id="history">
-                        <h3>History (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
-                        <ul style="display:none">
-                          <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change">
-                            <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
-                          </xsl:for-each>
-                        </ul>
-                      </div>
+                        <div id="history-headers">
+                        <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
+                        </div><!-- closing #history-headers -->
+                        <div id="history-lists">
+                          <ul id="edit-history-list" style="display:none;">
+                            <xsl:choose>
+                              <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+                              <xsl:when test="count(/t:TEI/t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]) &gt; 0">
+                                <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]">
+                                  <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
+                                </xsl:for-each>                                     
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <li>No editorial history recorded.</li>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </ul>
+                          <ul id="all-history-list" style="display:none">
+                            <xsl:choose>
+                              <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+                              <xsl:when test="count(/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')])">
+                                <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')]">
+                                  <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
+                                </xsl:for-each>                                                    
+                              </xsl:when>
+                            <xsl:otherwise>
+                              <li>No further history recorded.</li>
+                            </xsl:otherwise>
+                            </xsl:choose>
+                          </ul>
+                        </div><!-- closing #history-lists -->
+                      </div><!-- closing #history -->
                       <p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a> © Duke Databank of Documentary Papyri.  
                         This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
                     </div>
