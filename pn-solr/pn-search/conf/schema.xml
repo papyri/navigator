@@ -15,7 +15,7 @@
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.ShingleFilterFactory" maxShingleSize="2" minShingleSize="2"
           outputUnigrams="false"/>
-        <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20"/>
+        <filter class="solr.NGramFilterFactory" minGramSize="4" maxGramSize="20"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.KeywordTokenizerFactory"/>
@@ -28,7 +28,7 @@
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.ShingleFilterFactory" maxShingleSize="2" minShingleSize="2"
           outputUnigrams="false"/>
-        <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20"/>
+        <filter class="solr.NGramFilterFactory" minGramSize="4" maxGramSize="20"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.KeywordTokenizerFactory"/>
@@ -152,9 +152,9 @@
     <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false"
       required="false"/>
     <field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
-    <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+   <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="untokenized_ic" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
-    <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field> 
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false"
       required="true" default="0"/>
     <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
@@ -172,6 +172,7 @@
     <field name="last_app_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
     <field name="last_date_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
     <field name="last_place_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+
  <!-- end fields used by the change feed -->
    
   </fields>
@@ -194,5 +195,5 @@
   <copyField source="transcription" dest="untokenized"/>
   <copyField source="transcription_ia" dest="untokenized_ia"/>
   <copyField source="transcription_ic" dest="untokenized_ic"/>
-  <copyField source="transcription_id" dest="untokenized_id"/>
+  <copyField source="transcription_id" dest="untokenized_id"/> 
 </schema>

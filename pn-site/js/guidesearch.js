@@ -83,6 +83,8 @@ $(document).ready(
 
             var querystring = "";
 	    	var filteredels = [];
+	    	filteredels.push($("input[name='to']"));
+	    	
 	    	// mixedsearch refers to string searches of the user-defined type
 	    	// i.e., not necessarily corresponding to the string-search types
 	    	// defined by the interface controls
