@@ -181,11 +181,11 @@ public class AtomFeedServlet extends HttpServlet{
             
         } catch(IllegalArgumentException iae){
             
-            return SearchType.all;
+            return SearchType.other;
             
         } catch(NullPointerException npe){
             
-            return SearchType.all;
+            return SearchType.other;
             
         }
          
@@ -220,7 +220,7 @@ public class AtomFeedServlet extends HttpServlet{
         }
             
         if(q.equals(""))q = SolrField.edit_date.name() + ":[* TO *]";
-        if(searchType != SearchType.all) sq.addFilterQuery(SolrField.edit_type.name() + ":" + searchType.name());
+        if(searchType != SearchType.other) sq.addFilterQuery(SolrField.edit_type.name() + ":" + searchType.name());
         sq.setQuery(q);
         return sq;
             

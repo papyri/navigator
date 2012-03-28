@@ -11,6 +11,6 @@ public enum SearchType{
         appchange,
         datechange,
         placechange, 
-        all
+        other
         
 }

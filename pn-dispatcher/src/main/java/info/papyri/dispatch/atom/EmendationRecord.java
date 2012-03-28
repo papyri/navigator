@@ -39,7 +39,7 @@ public class EmendationRecord implements Comparable {
     
     final ArrayList<Date> filterDatesBySearchType(ArrayList<Date> editDates, ArrayList<String> searchTypes, SearchType filterType){
         
-        if(filterType == SearchType.all) return new ArrayList<Date>(editDates);
+        if(filterType == SearchType.other) return new ArrayList<Date>(editDates);
         ArrayList<Date> filteredDates = new ArrayList<Date>();
         for(int i = 0; i < editDates.size(); i++){
         
