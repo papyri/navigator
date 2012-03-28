@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.abdera.Abdera;
-import org.apache.abdera.i18n.text.InvalidCharacterException;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
@@ -53,44 +53,12 @@ public class AtomFeedServlet extends HttpServlet{
     /** Identifier assigned for requests that return no results */
     final static String NONEFOUND_ID = SELF + "none";
 
-    /** The possible parameters passed to the servlet */
-    private enum Param{
+    /** The possible temporal parameters passed to the servlet */
+    private enum TimeParam{
         
         AFTER,
         BEFORE,
         ON 
-        
-    }
-    
-    /** Solr fields used in the population of Atom elements */
-    private enum SolrField{
-    
-        first_revised,
-        last_revised, 
-        title,
-        id,
-        metadata,
-        display_place,
-        display_date,
-        last_editor
-    
-    
-    }
-    
-    /** Solr fields used in determining the value of the atom:title element
-     *  on individual atom:entry elements
-     */
-    private enum TitleField{
-        
-        ddbdp_series,
-        hgv_series,
-        apis_series,
-        ddbdp_volume,
-        hgv_volume,
-        ddbdp_full_identifier,
-        hgv_full_identifier,
-        apis_full_identifier
-       
         
     }
     
@@ -101,8 +69,7 @@ public class AtomFeedServlet extends HttpServlet{
         next,
         previous,
         last
-        
-        
+     
         
     }
     
@@ -139,11 +106,12 @@ public class AtomFeedServlet extends HttpServlet{
             response.setContentType("xml");
             ServletOutputStream out = response.getOutputStream();
             int page = pullOutPageNumber(request);
-            EnumMap<Param, String> dateParams = pullOutDateParams(request);
+            EnumMap<TimeParam, String> dateParams = pullOutDateParams(request);
+            SearchType typeFlag = pullOutTypeFlag(request);
             SolrDocumentList results = new SolrDocumentList();
             try{
                 
-                 SolrQuery sq = buildSolrQuery(dateParams, page);
+                 SolrQuery sq = buildSolrQuery(dateParams, page, typeFlag);
                  results = queryServer(sq);
 
             } catch(ParseException pe){
@@ -154,7 +122,8 @@ public class AtomFeedServlet extends HttpServlet{
             if(results.size() == 0) results = buildNoResultsDocumentList(buildErrorMsg(dateParams));  
             Feed emptyFeed = initFeed(results);  
             paginateFeed(emptyFeed, dateParams, page, results);
-            addEntries(emptyFeed, results);
+            ArrayList<EmendationRecord> emendationRecords = buildEmendationRecords(results, typeFlag);
+            addEntries(emptyFeed, emendationRecords);
             Writer writer = abdera.getWriterFactory().getWriterByMediaType("application/atom+xml");
             emptyFeed.writeTo(writer, out);
 
@@ -187,12 +156,12 @@ public class AtomFeedServlet extends HttpServlet{
      * @return An <code>EnumMap</code> of parameters mapped to their values
      */
     
-    EnumMap<Param, String> pullOutDateParams(HttpServletRequest req){
+    EnumMap<TimeParam, String> pullOutDateParams(HttpServletRequest req){
         
-        EnumMap<Param, String> dateParams = new EnumMap<Param, String>(Param.class);
+        EnumMap<TimeParam, String> dateParams = new EnumMap<TimeParam, String>(TimeParam.class);
         Map<String, String[]> params = req.getParameterMap();
         
-        for(Param value : Param.values()){
+        for(TimeParam value : TimeParam.values()){
             
             if(params.containsKey(value.name())) dateParams.put(value, params.get(value.name())[0]);
                 
@@ -201,6 +170,25 @@ public class AtomFeedServlet extends HttpServlet{
         
         return dateParams;
         
+    }
+    
+    SearchType pullOutTypeFlag(HttpServletRequest req){
+        
+        try{
+            
+            return SearchType.valueOf(req.getPathInfo().substring(1).toLowerCase());
+            
+            
+        } catch(IllegalArgumentException iae){
+            
+            return SearchType.all;
+            
+        } catch(NullPointerException npe){
+            
+            return SearchType.all;
+            
+        }
+         
     }
 
     /** 
@@ -215,28 +203,24 @@ public class AtomFeedServlet extends HttpServlet{
      * @throws ParseException 
      */
 
-    SolrQuery buildSolrQuery(EnumMap<Param, String> dateParams, int page) throws ParseException{
+    SolrQuery buildSolrQuery(EnumMap<TimeParam, String> dateParams, int page, SearchType searchType) throws ParseException{
         
         SolrQuery sq = new SolrQuery();
         String q = "";
-        sq.addSortField(SolrField.last_revised.name(), SolrQuery.ORDER.desc);
-        sq.addSortField(SolrField.first_revised.name(), SolrQuery.ORDER.desc);
+        sq.addSortField(SolrField.edit_date.name(), SolrQuery.ORDER.desc);
         sq.setRows(entriesPerPage);
         sq.setStart((page - 1) * entriesPerPage);       
  
-        for(Map.Entry<Param, String> entry : dateParams.entrySet()){
+        for(Map.Entry<TimeParam, String> entry : dateParams.entrySet()){
             
             String rangeString = generateRangeString(entry.getKey(), entry.getValue());
             if(!"".equals(q)) q += " AND ";
-            q += SolrField.last_revised.name() + ":" + rangeString;
+            q += SolrField.edit_date.name() + ":" + rangeString;
             
         }
             
-        if(q.equals("")){
-            
-            q = SolrField.last_revised.name() + ":[* TO *]";
-                     
-        }       
+        if(q.equals(""))q = SolrField.edit_date.name() + ":[* TO *]";
+        if(searchType != SearchType.all) sq.addFilterQuery(SolrField.edit_type.name() + ":" + searchType.name());
         sq.setQuery(q);
         return sq;
             
@@ -252,7 +236,7 @@ public class AtomFeedServlet extends HttpServlet{
      * @throws ParseException 
      */
     
-    String generateRangeString(Param prm, String dateAsString) throws ParseException{
+    String generateRangeString(TimeParam prm, String dateAsString) throws ParseException{
         
         String rs = "";
         SimpleDateFormat marshalFormat = new SimpleDateFormat("yyy-MM-dd");
@@ -263,12 +247,12 @@ public class AtomFeedServlet extends HttpServlet{
         Date dateAsDate = marshalFormat.parse(dateAsString);
         String iso8601 = unmarshalFormat.format(dateAsDate);
         
-        if(prm == Param.AFTER){
+        if(prm == TimeParam.AFTER){
             
             earliestDate = iso8601;
             
         }
-        else if(prm == Param.BEFORE){
+        else if(prm == TimeParam.BEFORE){
             
             
             latestDate = iso8601;
@@ -338,7 +322,7 @@ public class AtomFeedServlet extends HttpServlet{
         selfLink.setRel("self");
         selfLink.setMimeType("application/atom+xml");
         feed.addLink(selfLink);
-        feed.setUpdated((Date)results.get(0).getFieldValue(SolrField.last_revised.name()));
+        feed.setUpdated((Date)results.get(0).getFieldValue(SolrField.edit_date.name()));
         feed.addAuthor("http://papyri.info");
         return feed;
         
@@ -353,7 +337,7 @@ public class AtomFeedServlet extends HttpServlet{
      * @param results 
      */
 
-     void paginateFeed(Feed feed, EnumMap<Param, String> dateParams, int page, SolrDocumentList results){
+     void paginateFeed(Feed feed, EnumMap<TimeParam, String> dateParams, int page, SolrDocumentList results){
           
          long numResults = results.getNumFound();
          if(numResults <= entriesPerPage) return;
@@ -391,6 +375,21 @@ public class AtomFeedServlet extends HttpServlet{
         
     }
      
+     ArrayList<EmendationRecord> buildEmendationRecords(SolrDocumentList ers, SearchType filterType){
+         
+         ArrayList<EmendationRecord> emendationRecords = new ArrayList<EmendationRecord>();
+         for(SolrDocument doc : ers){
+             
+             EmendationRecord emendationRecord = new EmendationRecord(doc, filterType);
+             emendationRecords.add(emendationRecord);
+             
+         }
+         
+         return emendationRecords;
+            
+     }
+     
+     
     /**
       * Parses the passed <code>SolrDocumentList</code> into atom:entry elements.
       * 
@@ -398,43 +397,35 @@ public class AtomFeedServlet extends HttpServlet{
       * @param entries 
       */ 
      
-    void addEntries(Feed feed, SolrDocumentList entries){
+    void addEntries(Feed feed, ArrayList<EmendationRecord> emendationRecords){
         
-        for(SolrDocument doc : entries){
+        for(EmendationRecord rec : emendationRecords){
             
-            String id = (String) doc.getFieldValue(SolrField.id.name());
-            String title = getTitle(id, doc);
-            Date modified = (Date) doc.getFieldValue(SolrField.last_revised.name());
-            Date published = (Date) doc.getFieldValue(SolrField.first_revised.name());
-            String summary = getSummary(doc);
-            String contributorURI = ((String) doc.getFieldValue(SolrField.last_editor.name()));
-            Entry newEntry = feed.addEntry();
-
-            if(contributorURI != null){
-                
-                contributorURI = contributorURI.replaceAll("\\s", "");
-                String[] contributorBits = contributorURI.split("/");
-                String contributorName = contributorBits.length > 0 ? contributorBits[contributorBits.length - 1] : "Papyri.info";
-                Person contributor  = abdera.getFactory().newContributor();
-                contributor.setUri(contributorURI);
-                contributor.setName(contributorName);
-                newEntry.addContributor(contributor);
-                       
-            }
+            Entry feedEntry = feed.addEntry();
+            
+            feedEntry.setId(rec.getID());
+            feedEntry.setTitle(rec.getTitle());
+            feedEntry.setUpdated(rec.getLastEmendationDate());
+            feedEntry.setPublished(rec.getPublicationDate());
+            
             Link contentLink = abdera.getFactory().newLink();
-            contentLink.setHref(id);
+            contentLink.setHref(rec.getID());
             contentLink.setRel("alternate");
             contentLink.setMimeType("application/xhtml+xml");
-            newEntry.addLink(contentLink);
-            newEntry.setId(id);
-            newEntry.setTitle(title);
-            newEntry.setUpdated(modified);
-            newEntry.setPublished(published);
+            feedEntry.addLink(contentLink);
+            
             Link rightsLink = abdera.getFactory().newLink();
             rightsLink.setRel("license");
-            rightsLink.setHref(id.contains("/apis/") ? "http://creativecommons.org/licenses/by-nc/3.0/" : "http://creativecommons.org/licenses/by/3.0/");
-            newEntry.addLink(rightsLink);
-            if(summary.length() > 0) newEntry.setSummary(summary);      
+            rightsLink.setHref(rec.getID().contains("/apis/") ? "http://creativecommons.org/licenses/by-nc/3.0/" : "http://creativecommons.org/licenses/by/3.0/");
+            feedEntry.addLink(rightsLink);  
+            
+            Person contributor  = abdera.getFactory().newContributor();
+            contributor.setUri(rec.getContributorURI());
+            contributor.setName(rec.getContributorName());
+            feedEntry.addContributor(contributor);
+            
+            if(rec.getSummary().length() > 0) feedEntry.setSummary(rec.getSummary());      
+
             
         }
         
@@ -457,7 +448,7 @@ public class AtomFeedServlet extends HttpServlet{
         doc.addField(SolrField.id.name(), SELF + "error");
         doc.addField(SolrField.title.name(), "There has been an error in processing your request");
         doc.addField(SolrField.metadata.name(), msg);
-        doc.addField(SolrField.last_revised.name(), new Date());       
+        doc.addField(SolrField.edit_date.name(), new Date());       
         sdl.add(doc);
         
         return sdl;
@@ -480,7 +471,7 @@ public class AtomFeedServlet extends HttpServlet{
         doc.addField(SolrField.id.name(), SELF + "none");
         doc.addField(SolrField.title.name(), "No results returned");
         doc.addField(SolrField.metadata.name(), msg);
-        doc.addField(SolrField.last_revised.name(), new Date());       
+        doc.addField(SolrField.edit_date.name(), new Date());       
         sdl.add(doc);
         
         return sdl;
@@ -497,7 +488,7 @@ public class AtomFeedServlet extends HttpServlet{
      * @see info.papyri.dispatch.atom.AtomFeedServlet#buildNoResultsDocumentList(java.lang.String) 
      */
     
-    String buildErrorMsg(EnumMap<Param, String> dateParams){
+    String buildErrorMsg(EnumMap<TimeParam, String> dateParams){
         
         String none_msg = "No results returned for this query.";
         
@@ -507,9 +498,9 @@ public class AtomFeedServlet extends HttpServlet{
         
         String msg = "";
         
-        Boolean hasAfter = dateParams.containsKey(Param.AFTER);
-        Boolean hasBefore = dateParams.containsKey(Param.BEFORE);
-        Boolean hasOn = dateParams.containsKey(Param.ON);
+        Boolean hasAfter = dateParams.containsKey(TimeParam.AFTER);
+        Boolean hasBefore = dateParams.containsKey(TimeParam.BEFORE);
+        Boolean hasOn = dateParams.containsKey(TimeParam.ON);
         
         Date before = new Date();
         Date after = new Date();
@@ -517,9 +508,9 @@ public class AtomFeedServlet extends HttpServlet{
         
         try{
         
-            if(hasBefore) before = simpleFormat.parse(dateParams.get(Param.BEFORE));
-            if(hasAfter) after = simpleFormat.parse(dateParams.get(Param.AFTER));
-            if(hasOn) on = simpleFormat.parse(dateParams.get(Param.ON));
+            if(hasBefore) before = simpleFormat.parse(dateParams.get(TimeParam.BEFORE));
+            if(hasAfter) after = simpleFormat.parse(dateParams.get(TimeParam.AFTER));
+            if(hasOn) on = simpleFormat.parse(dateParams.get(TimeParam.ON));
 
             if(hasAfter && hasBefore){
 
@@ -563,12 +554,12 @@ public class AtomFeedServlet extends HttpServlet{
      * @see info.papyri.dispatch.atom.AtomFeedServlet#paginateFeed(org.apache.abdera.model.Feed, java.util.EnumMap, int, org.apache.solr.common.SolrDocumentList) 
      */
 
-    String buildDateQueryString(EnumMap<Param, String> dateParams){
+    String buildDateQueryString(EnumMap<TimeParam, String> dateParams){
         
         String qs = "?";
         if(dateParams.size() == 0) return qs;
       
-        for(Map.Entry<Param, String> entry : dateParams.entrySet()){
+        for(Map.Entry<TimeParam, String> entry : dateParams.entrySet()){
             
             qs += entry.getKey().name() + "=" + entry.getValue();
             qs += "&";
@@ -578,100 +569,7 @@ public class AtomFeedServlet extends HttpServlet{
         return qs;
     }
     
-    /**
-     * Assembles the relevant <code>SolrField</code> values into a <code>String</code> 
-     * to be used as the value of an atom:title element.
-     * 
-     * If the passed <code>SolrDocument</code> represents an error condition, the title will
-     * be 'Error'. If it represents no results having been returned, the title will be 
-     * 'No results found'.
-     * 
-     * @param id
-     * @param doc
-     * @return 
-     */
-    
-    String getTitle(String id, SolrDocument doc){
-        
-        String title = "";
-        String series = "";
-        String volume = "";
-        String item = "";
-        
-        if(id.contains("/ddbdp/")){
-            
-            series = doc.getFieldValue(TitleField.ddbdp_series.name()) == null ? "" : (String) doc.getFieldValue(TitleField.ddbdp_series.name());
-            volume = doc.getFieldValue(TitleField.ddbdp_volume.name()) == null ? "" : (String) doc.getFieldValue(TitleField.ddbdp_volume.name());
-            item = doc.getFieldValue(TitleField.ddbdp_full_identifier.name()) == null ? "" : (String) doc.getFieldValue(TitleField.ddbdp_full_identifier.name());
-            
-        }
-        else if(id.contains("/hgv/")){
-            
-            series = doc.getFieldValue(TitleField.hgv_series.name()) == null ? "" : (String) doc.getFieldValue(TitleField.hgv_series.name());
-            volume = doc.getFieldValue(TitleField.hgv_volume.name()) == null ? "" : (String) doc.getFieldValue(TitleField.hgv_volume.name());
-            item = doc.getFieldValue(TitleField.hgv_full_identifier.name()) == null ? "" : (String) doc.getFieldValue(TitleField.hgv_full_identifier.name());            
-            
-        }
-        else{
-            
-            series = doc.getFieldValue(TitleField.apis_series.name()) == null ? "" : (String) doc.getFieldValue(TitleField.apis_series.name());
-            item = doc.getFieldValue(TitleField.apis_full_identifier.name()) == null ? "" : (String) doc.getFieldValue(TitleField.apis_full_identifier.name());               
-            
-        }
-        
-        if(volume.equals("0")) volume = "";
-        if(!series.equals("") && (!volume.equals("") || !item.equals(""))) series += " ";
-        if(!volume.equals("") && (!item.equals("") || !item.equals(""))) volume += " ";
-        title = series + volume + item;
-        if(id.equals(ERROR_ID)) title = "Error";
-        if(id.equals(NONEFOUND_ID)) title = "No reults found";
-        if(title.equals("")) title = id;
-        return title;
-        
-    }
-    
-    /**
-     * Assembles <code>SolrField</code> values to populate an atom:summary element
-     * 
-     * @param doc
-     * @return 
-     */
-    
-    // TODO: Are these actually the values desired?
-    
-    String getSummary(SolrDocument doc){
-        
-       if((ERROR_ID).equals(doc.getFieldValue(SolrField.id.name())) || (NONEFOUND_ID).equals(doc.getFieldValue(SolrField.id.name()))){
-                
-           String msg = doc.getFieldValue(SolrField.metadata.name()) == null ? "Unspecified error" : (String) doc.getFieldValue(SolrField.metadata.name());
-           return msg;
-                
-       }
-               
-        String summary = "";
-        
-        if(doc.getFieldValue(SolrField.title.name()) != null && !doc.getFieldValue(SolrField.title.name()).equals("")){
-            
-            summary += "Title: " + doc.getFieldValue(SolrField.title.name());
-            
-        }
-        
-        if(doc.getFieldValue(SolrField.display_place.name()) != null && !doc.getFieldValue(SolrField.display_place.name()).equals("")){
-            
-            if(summary.length() != 0) summary += ", ";
-            summary += "Provenance: " + (String) doc.getFieldValue(SolrField.display_place.name());
-            
-        }
-        if(doc.getFieldValue(SolrField.display_date.name()) != null && !doc.getFieldValue(SolrField.display_date.name()).equals("")){
-            
-            if(summary.length() != 0) summary += ", ";
-            summary += "Date: " + (String) doc.getFieldValue(SolrField.display_date.name());
-        }
-       
-        return summary;
-        
-    }
-        
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

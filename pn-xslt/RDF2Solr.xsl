@@ -951,14 +951,29 @@
 
 <xsl:template name="revision-history">
       <xsl:param name="docs"></xsl:param>
-          <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
-          <xsl:variable name="first-revised"><xsl:value-of select="concat(pi:get-earliest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>
-          <xsl:variable name="last-revised"><xsl:value-of select="concat(pi:get-latest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>   
-  <xsl:if test="matches($first-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z') and matches($last-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
-  <field name="first_revised"><xsl:value-of select="$first-revised"></xsl:value-of></field>
-  <field name="last_revised"><xsl:value-of select="$last-revised"></xsl:value-of></field>
-  <field name="last_editor"><xsl:value-of select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when=replace($last-revised, $date-suffix, '')][1]/@who"></xsl:value-of></field>
-  </xsl:if>
+     <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
+    <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change">
+      <xsl:variable name="raw-date" select="@when"></xsl:variable>
+      <xsl:variable name="cooked-date">
+      <xsl:choose>
+        <xsl:when test="matches($raw-date, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')"><xsl:value-of select="$raw-date"></xsl:value-of></xsl:when>
+        <xsl:otherwise><xsl:value-of select="concat($raw-date, $date-suffix)"></xsl:value-of></xsl:otherwise>
+      </xsl:choose>
+      </xsl:variable>
+      <field name="edit_date"><xsl:value-of select="$cooked-date"></xsl:value-of></field>
+      <field name="edit_agent"><xsl:value-of select="@who"></xsl:value-of></field>
+      <xsl:variable name="raw-contents"><xsl:value-of select="."></xsl:value-of></xsl:variable>
+      <xsl:variable name="keyword">
+        <xsl:choose>
+          <xsl:when test="matches($raw-contents, 'appchange', 'i')">appchange</xsl:when>
+          <xsl:when test="matches($raw-contents, 'datechange', 'i')">datechange</xsl:when>
+          <xsl:when test="matches($raw-contents, 'placechange', 'i')">placechange</xsl:when>
+          <xsl:otherwise>other</xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <field name="edit_type"><xsl:value-of select="$keyword"></xsl:value-of></field>
+    </xsl:for-each>
+  
 </xsl:template>
  
  <xsl:template name="reg-text-processing">
