@@ -955,25 +955,53 @@
 
 <xsl:template name="revision-history">
       <xsl:param name="docs"></xsl:param>
-      <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
-      <xsl:variable name="first-revised"><xsl:value-of select="concat(pi:get-earliest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>
-      <xsl:variable name="last-revised"><xsl:value-of select="concat(pi:get-latest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>   
-      <xsl:variable name="app-whens" as="attribute(when)">
-        <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change">
-          <xsl:if test="matches(., 'appchange', 'i')">
-            <xsl:sequence select="@when"></xsl:sequence>        
-          </xsl:if>
-        </xsl:for-each>
-      </xsl:variable>
-  <xsl:variable name="first-app-revised"><xsl:value-of select="concat(pi:get-earliest-date($app-whens, $app-whens[1]), $date-suffix)"></xsl:value-of></xsl:variable>
-  <xsl:if test="matches($first-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z') and matches($last-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
-  <field name="published"><xsl:value-of select="$first-revised"></xsl:value-of></field>
-  <field name="edit_date"><xsl:value-of select="$last-revised"></xsl:value-of></field>
-  <field name="last_editor"><xsl:value-of select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when=replace($last-revised, $date-suffix, '')][1]/@who"></xsl:value-of></field>
-  </xsl:if>
+      
+      <xsl:variable name="all-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change"></xsl:variable>
+      <xsl:variable name="app-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'appchange', 'i')]"></xsl:variable>
+      <xsl:variable name="date-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'datechange', 'i')]"></xsl:variable>
+      <xsl:variable name="place-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'placechange', 'i')]"></xsl:variable>
+      <xsl:if test="count($all-edits) &gt; 0">
+        <xsl:variable name="first-revised"><xsl:value-of select="pi:regularise-datestring(pi:get-earliest-date-element(remove($all-edits, 1), $all-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="last-revised"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($all-edits, 1), $all-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="all-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($all-edits, 1), $all-edits[1])/@who"></xsl:value-of></xsl:variable>
+        <field name="published"><xsl:value-of select="$first-revised"></xsl:value-of></field>
+        <field name="edit_date"><xsl:value-of select="$last-revised"></xsl:value-of></field>
+        <field name="last_editor"><xsl:value-of select="$all-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      <xsl:if test="count($app-edits) > 0">
+        <xsl:variable name="latest-app-edit"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($app-edits, 1), $app-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="app-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($app-edits, 1), $app-edits[1])/@who"></xsl:value-of></xsl:variable> 
+        <field name="app_edit_date"><xsl:value-of select="$latest-app-edit"></xsl:value-of></field>
+        <field name="app_editor"><xsl:value-of select="$app-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      <xsl:if test="count($date-edits) > 0">
+        <xsl:variable name="latest-date-edit"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($date-edits, 1), $date-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="date-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($date-edits, 1), $date-edits[1])/@who"></xsl:value-of></xsl:variable>         
+        <field name="date_edit_date"><xsl:value-of select="$latest-date-edit"></xsl:value-of></field>
+        <field name="date_editor"><xsl:value-of select="$date-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      <xsl:if test="count($place-edits) > 0">
+        <xsl:variable name="latest-place-edit"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($place-edits, 1), $place-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="place-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($place-edits, 1), $place-edits[1])/@who"></xsl:value-of></xsl:variable>        
+        <field name="place_edit_date"><xsl:value-of select="$latest-place-edit"></xsl:value-of></field>
+        <field name="place_editor"><xsl:value-of select="$place-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      
+  <!--   <xsl:variable name="last-revised"><xsl:value-of select="pi:get-latest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, $docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]"></xsl:value-of></xsl:variable>   
+ <xsl:variable name="app-whens" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[contains(text(), 'appchange')]/@when"></xsl:variable> -->
+  
+  
+  
+  <!--  <field name="edit_date"><xsl:value-of select="$last-revised"></xsl:value-of></field>
+  <field name="last_editor"><xsl:value-of select="pi:get-latest-editor($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1])"></xsl:value-of></field>
+  
+  <xsl:if test="count($app-whens) > 0">
+  <xsl:variable name="first-app-revised"><xsl:value-of select="concat(pi:get-latest-date($app-whens, $app-whens[1]), $date-suffix)"></xsl:value-of></xsl:variable>
   <xsl:if test="matches($first-app-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
     <field name="app_edit_date"><xsl:value-of select="$first-app-revised"></xsl:value-of></field>
   </xsl:if>
+  
+  </xsl:if>-->
 </xsl:template>
  
  <xsl:template name="reg-text-processing">

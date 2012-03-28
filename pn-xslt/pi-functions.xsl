@@ -320,70 +320,48 @@
   </xsl:function>
   
    
-  <xsl:function name="pi:get-earliest-date">
-    <xsl:param name="date-seq"></xsl:param>
-    <xsl:param name="current"></xsl:param>
+  <xsl:function name="pi:get-earliest-date-element">
+    <xsl:param name="change-seq"></xsl:param>
+    <xsl:param name="current-seq"></xsl:param>
     <xsl:choose>
-    <xsl:when test="count($date-seq) = 0">
-      <xsl:sequence select="$current"></xsl:sequence>
+    <xsl:when test="count($change-seq) = 0">
+      <xsl:sequence select="$current-seq[1]"></xsl:sequence>
     </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="current-as-num" select="number(replace($current, '[^0-9]', ''))"></xsl:variable>
-        <xsl:variable name="comp-as-num" select="number(replace($date-seq[1], '[^0-9]', ''))"></xsl:variable>
+        <xsl:variable name="current-as-num" select="number(replace($current-seq[1]/@when, '[^0-9]', ''))"></xsl:variable>
+        <xsl:variable name="comp-as-num" select="number(replace($change-seq[1]/@when, '[^0-9]', ''))"></xsl:variable>
         <xsl:choose>
           <xsl:when test="$current-as-num lt $comp-as-num">
-            <xsl:sequence select="pi:get-earliest-date(remove($date-seq, 1), $current)"></xsl:sequence>
+            <xsl:sequence select="pi:get-earliest-date-element(remove($change-seq, 1), $current-seq)"></xsl:sequence>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:sequence select="pi:get-earliest-date(remove($date-seq, 1), $date-seq[1])"></xsl:sequence>
+            <xsl:sequence select="pi:get-earliest-date-element(remove($change-seq, 1), $change-seq[1])"></xsl:sequence>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:otherwise>
       </xsl:choose>
   </xsl:function>
-  
-  <xsl:function name="pi:get-latest-date">
-    <xsl:param name="date-seq"></xsl:param>
-    <xsl:param name="current"></xsl:param>
+ 
+  <xsl:function name="pi:get-latest-date-element">
+    <xsl:param name="change-seq"></xsl:param>
+    <xsl:param name="current-seq"></xsl:param>
     <xsl:choose>
-    <xsl:when test="count($date-seq) = 0">
-      <xsl:sequence select="$current"></xsl:sequence>
+    <xsl:when test="count($change-seq) = 0">
+      <xsl:sequence select="$current-seq[1]"></xsl:sequence>
     </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="current-as-num" select="number(replace($current, '[^0-9]', ''))"></xsl:variable>
-        <xsl:variable name="comp-as-num" select="number(replace($date-seq[1], '[^0-9]', ''))"></xsl:variable>
+        <xsl:variable name="current-as-num" select="number(replace($current-seq[1], '[^0-9]', ''))"></xsl:variable>
+        <xsl:variable name="comp-as-num" select="number(replace($change-seq[1], '[^0-9]', ''))"></xsl:variable>
         <xsl:choose>
           <xsl:when test="$current-as-num gt $comp-as-num">
-            <xsl:sequence select="pi:get-latest-date(remove($date-seq, 1), $current)"></xsl:sequence>
+            <xsl:sequence select="pi:get-latest-date-element(remove($change-seq, 1), $current-seq)"></xsl:sequence>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:sequence select="pi:get-latest-date(remove($date-seq, 1), $date-seq[1])"></xsl:sequence>
+            <xsl:sequence select="pi:get-latest-date-element(remove($change-seq, 1), $current-seq[1])"></xsl:sequence>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:otherwise>
       </xsl:choose>
-  </xsl:function>
-  
-  <xsl:function name="pi:get-latest-editor">
-    <xsl:param name="date-seq"></xsl:param>
-    <xsl:param name="current"></xsl:param>
-    <xsl:choose>
-      <xsl:when test="count($date-seq) = 0">
-        <xsl:sequence select="$current"></xsl:sequence>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="current-as-num" select="number(replace($current, '[^0-9]', ''))"></xsl:variable>
-        <xsl:variable name="comp-as-num" select="number(replace($date-seq[1], '[^0-9]', ''))"></xsl:variable>
-        <xsl:choose>
-          <xsl:when test="$current-as-num gt $comp-as-num">
-            <xsl:sequence select="pi:get-latest-date(remove($date-seq, 1), $current)"></xsl:sequence>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:sequence select="pi:get-latest-date(remove($date-seq, 1), $date-seq[1])"></xsl:sequence>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:function>
   
   <xsl:function name="pi:get-identifier">
@@ -400,6 +378,15 @@
         <xsl:sequence select="concat('http://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>
       </xsl:otherwise>
     </xsl:choose> 
+  </xsl:function>
+  
+  <xsl:function name="pi:regularise-datestring">
+    <xsl:param name="raw-date"></xsl:param>
+    <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
+    <xsl:choose>
+      <xsl:when test="matches($raw-date, '^\d{4}-\d{2}-\d{2}$')"><xsl:sequence select="concat($raw-date, $date-suffix)"></xsl:sequence></xsl:when>
+      <xsl:otherwise><xsl:sequence select="$raw-date"></xsl:sequence></xsl:otherwise>
+    </xsl:choose>
     
   </xsl:function>
 
