@@ -9,7 +9,7 @@ import org.apache.solr.common.SolrDocument;
  *
  * @author thill
  */
-public class EmendationRecord implements Comparable {
+public class EmendationRecord {
     
     private String id;
     private String title;
@@ -17,48 +17,21 @@ public class EmendationRecord implements Comparable {
     private String contributorURI;
     private String contributorName;
     private SearchType searchType;
-    private ArrayList<Date> emendationDates;
-    private ArrayList<String> emendationTypes;
-    private ArrayList<Date> relevantEmendationDates;
+    private Date publicationDate;
+    private Date emendationDate;
       
     public EmendationRecord(SolrDocument doc, SearchType st){
         
+        searchType = st;
         id = (String) doc.getFieldValue(SolrField.id.name());
         title = getTitle(id, doc);
-        emendationDates = (ArrayList<Date>) doc.getFieldValue(SolrField.edit_date.name());
-        emendationTypes = (ArrayList<String>) doc.getFieldValue(SolrField.edit_type.name());
-        relevantEmendationDates = filterDatesBySearchType(emendationDates, emendationTypes, searchType);
+        publicationDate = (Date) doc.getFieldValue(SolrField.published.name());
+        emendationDate = (Date) doc.getFieldValue(searchType.getDateField().name());
         summary = getSummary(doc);
-        contributorURI = (String) doc.getFieldValue(SolrField.edit_agent.name());
+        contributorURI = (String) doc.getFieldValue(searchType.getEditorField().name());
         contributorName = (String) getContributorName(contributorURI);
-        searchType = st;
         
         
-        
-    }
-    
-    final ArrayList<Date> filterDatesBySearchType(ArrayList<Date> editDates, ArrayList<String> searchTypes, SearchType filterType){
-        
-        if(filterType == SearchType.other) return new ArrayList<Date>(editDates);
-        ArrayList<Date> filteredDates = new ArrayList<Date>();
-        for(int i = 0; i < editDates.size(); i++){
-        
-        try{
-
-            Date editDate = editDates.get(i);
-            SearchType editType = SearchType.valueOf(searchTypes.get(i));
-            if(editType == filterType){
-                
-                filteredDates.add(editDate);
-                
-            }
-        }
-        catch(NullPointerException npe){}
-        catch(IllegalArgumentException iae){}   
-        
-        }
-        
-        return filteredDates;
         
     }
     
@@ -176,22 +149,8 @@ public class EmendationRecord implements Comparable {
     String getSummary(){ return summary; }
     String getContributorURI(){ return contributorURI; }
     String getContributorName(){ return contributorName; }
-    Date getLastEmendationDate(){ return relevantEmendationDates.get(relevantEmendationDates.size() - 1); }
-    Date getPublicationDate(){ return emendationDates.get(0); }
-
-    @Override
-    public int compareTo(Object o) {
-        
-        EmendationRecord er2 = (EmendationRecord) o;
-        Date thisDate = this.getLastEmendationDate();
-        Date thatDate = ((EmendationRecord) o).getLastEmendationDate();
-        
-        if(thisDate.after(thatDate))  return  1;
-        if(thisDate.before(thatDate)) return -1;
-        return 0; 
-        
-    }
-    
+    Date getEmendationDate(){ return emendationDate; }
+    Date getPublicationDate(){ return publicationDate; }
     
     
 }

@@ -207,7 +207,7 @@ public class AtomFeedServlet extends HttpServlet{
         
         SolrQuery sq = new SolrQuery();
         String q = "";
-        sq.addSortField(SolrField.edit_date.name(), SolrQuery.ORDER.desc);
+        sq.addSortField(searchType.getDateField().name(), SolrQuery.ORDER.desc);
         sq.setRows(entriesPerPage);
         sq.setStart((page - 1) * entriesPerPage);       
  
@@ -215,12 +215,11 @@ public class AtomFeedServlet extends HttpServlet{
             
             String rangeString = generateRangeString(entry.getKey(), entry.getValue());
             if(!"".equals(q)) q += " AND ";
-            q += SolrField.edit_date.name() + ":" + rangeString;
+            q += searchType.getDateField().name() + ":" + rangeString;
             
         }
             
         if(q.equals(""))q = SolrField.edit_date.name() + ":[* TO *]";
-        if(searchType != SearchType.other) sq.addFilterQuery(SolrField.edit_type.name() + ":" + searchType.name());
         sq.setQuery(q);
         return sq;
             
@@ -405,7 +404,7 @@ public class AtomFeedServlet extends HttpServlet{
             
             feedEntry.setId(rec.getID());
             feedEntry.setTitle(rec.getTitle());
-            feedEntry.setUpdated(rec.getLastEmendationDate());
+            feedEntry.setUpdated(rec.getEmendationDate());
             feedEntry.setPublished(rec.getPublicationDate());
             
             Link contentLink = abdera.getFactory().newLink();

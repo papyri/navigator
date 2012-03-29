@@ -169,9 +169,9 @@
     <field name="place_edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
     <field name="published" type="date" indexed="true" stored="true" multiValued="false"></field>
     <field name="last_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
-    <field name="last_app_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
-    <field name="last_date_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
-    <field name="last_place_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+    <field name="app_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+    <field name="date_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+    <field name="place_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
 
  <!-- end fields used by the change feed -->
    

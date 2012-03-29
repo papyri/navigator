@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package info.papyri.dispatch.atom;
 
 /**
@@ -18,7 +14,13 @@ public enum SolrField{
         display_place,
         display_date,
         edit_date,
-        edit_agent,
-        edit_type
+        app_edit_date,
+        date_edit_date,
+        place_edit_date,
+        last_editor,
+        app_editor,
+        date_editor,
+        place_editor,
+        published
     
 }
