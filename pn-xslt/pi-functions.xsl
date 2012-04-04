@@ -385,6 +385,7 @@
     <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
     <xsl:choose>
       <xsl:when test="matches($raw-date, '^\d{4}-\d{2}-\d{2}$')"><xsl:sequence select="concat($raw-date, $date-suffix)"></xsl:sequence></xsl:when>
+      <xsl:when test="matches($raw-date, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.+')"><xsl:sequence select="concat(substring($raw-date, 0, 20), 'Z')"></xsl:sequence></xsl:when>
       <xsl:otherwise><xsl:sequence select="$raw-date"></xsl:sequence></xsl:otherwise>
     </xsl:choose>
     
