@@ -69,7 +69,6 @@
   <xsl:include href="htm-tpl-sqbrackets.xsl"/>
   <xsl:include href="htm-tpl-structure.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
-  <xsl:param name="self-url"></xsl:param>
   <xsl:param name="collection"/>
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
@@ -77,6 +76,7 @@
   <xsl:param name="isPartOf"/>
   <xsl:param name="sources"/>
   <xsl:param name="citationForm"/>
+  <xsl:param name="selfUrl"></xsl:param>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
@@ -132,7 +132,7 @@
       prefix="dc: http://purl.org/dc/terms/">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta property="dc:identifier" content="{$self-url}"/>
+        <meta property="dc:identifier" content="{$selfUrl}"/>
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
@@ -153,7 +153,7 @@
        </xsl:if>
         <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-        <link rel="bookmark" href="{$self-url}" title="Canonical URI"/>
+        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
         <xsl:comment><![CDATA[[if IE]><link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
         <xsl:comment><![CDATA[[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
         <xsl:comment><![CDATA[[if IE 8]><link rel="stylesheet" href="/css/ie8.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:comment>
@@ -236,7 +236,7 @@
                   </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI:</span>
-                    <span id="canonical-uri-value"><xsl:value-of select="$self-url"></xsl:value-of></span>
+                    <span id="canonical-uri-value"><xsl:value-of select="$selfUrl"></xsl:value-of></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
@@ -269,7 +269,8 @@
                       <div id="history">
                         <div id="history-headers">
                         <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
-                        </div><!-- closing #history-headers -->
+                        </div>
+                        <!-- closing #history-headers -->
                         <div id="history-lists">
                           <ul id="edit-history-list" style="display:none;">
                             <xsl:choose>
@@ -286,7 +287,7 @@
                           </ul>
                           <ul id="all-history-list" style="display:none">
                             <xsl:choose>
-                              <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+                             <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
                               <xsl:when test="count(/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')])">
                                 <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')]">
                                   <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
@@ -297,8 +298,10 @@
                             </xsl:otherwise>
                             </xsl:choose>
                           </ul>
-                        </div><!-- closing #history-lists -->
-                      </div><!-- closing #history -->
+                        </div>
+                       <!-- closing #history-lists -->
+                      </div>
+                      <!-- closing #history -->
                       <p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a> © Duke Databank of Documentary Papyri.  
                         This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
                     </div>
