@@ -1,5 +1,9 @@
 package info.papyri.dispatch.atom;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import org.apache.solr.common.SolrDocument;
@@ -147,7 +151,31 @@ public class EmendationRecord {
     String getID(){ return id; }
     String getTitle() { return title; }
     String getSummary(){ return summary; }
-    String getContributorURI(){ return contributorURI; }
+    String getContributorURI(){
+        
+        try{
+            
+            URL url = new URL(contributorURI);
+            return contributorURI;
+            
+        }
+        catch(MalformedURLException mfe){
+            
+            try{
+                
+                String escapedName = URLEncoder.encode(contributorName,"UTF-8");
+                return "http://papyri.info/?id=" + escapedName;
+                
+            }
+            catch(UnsupportedEncodingException uee){
+            
+                return "http://papyri.info/";
+            
+            }
+            
+        }
+        
+    }
     String getContributorName(){ return contributorName; }
     Date getEmendationDate(){ return emendationDate; }
     Date getPublicationDate(){ return publicationDate; }

@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
@@ -120,7 +121,7 @@ public class AtomFeedServlet extends HttpServlet{
                 
             }
             if(results.size() == 0) results = buildNoResultsDocumentList(buildErrorMsg(dateParams));  
-            Feed emptyFeed = initFeed(results);  
+            Feed emptyFeed = initFeed(results, typeFlag);  
             paginateFeed(emptyFeed, dateParams, page, results);
             ArrayList<EmendationRecord> emendationRecords = buildEmendationRecords(results, typeFlag);
             addEntries(emptyFeed, emendationRecords);
@@ -161,12 +162,25 @@ public class AtomFeedServlet extends HttpServlet{
         EnumMap<TimeParam, String> dateParams = new EnumMap<TimeParam, String>(TimeParam.class);
         Map<String, String[]> params = req.getParameterMap();
         
-        for(TimeParam value : TimeParam.values()){
+        for(Map.Entry<String, String[]> entry : params.entrySet()){
+            
+            try{
+                
+                TimeParam t = TimeParam.valueOf(entry.getKey().toUpperCase());
+                dateParams.put(t, entry.getValue()[0]);
+                
+            }
+            catch(IllegalArgumentException iae){}
+            
+            
+        }
+        
+     /*   for(TimeParam value : TimeParam.values()){
             
             if(params.containsKey(value.name())) dateParams.put(value, params.get(value.name())[0]);
                 
         }
-        
+     */   
         
         return dateParams;
         
@@ -219,7 +233,7 @@ public class AtomFeedServlet extends HttpServlet{
             
         }
             
-        if(q.equals(""))q = SolrField.edit_date.name() + ":[* TO *]";
+        if(q.equals("")) q = searchType.getDateField().name() + ":[* TO *]";
         sq.setQuery(q);
         return sq;
             
@@ -244,27 +258,33 @@ public class AtomFeedServlet extends HttpServlet{
         String earliestDate = "*";
         String latestDate = "*";
         Date dateAsDate = marshalFormat.parse(dateAsString);
-        String iso8601 = unmarshalFormat.format(dateAsDate);
         
         if(prm == TimeParam.AFTER){
             
-            earliestDate = iso8601;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateAsDate);
+            calendar.add(Calendar.SECOND, 1);
+            earliestDate = unmarshalFormat.format(calendar.getTime());
             
         }
         else if(prm == TimeParam.BEFORE){
             
             
-            latestDate = iso8601;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateAsDate);
+            calendar.add(Calendar.SECOND, -1);
+            latestDate = unmarshalFormat.format(calendar.getTime());
             
         }
         else{       // i.e., if Param.ON
             
-            earliestDate = iso8601;
-            // note that the single passed date value needs to be converted into 
+             // note that the single passed date value needs to be converted into 
             // a date range with a span of one day
+            earliestDate =  unmarshalFormat.format(dateAsDate);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(dateAsDate);     
             calendar.add(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.SECOND, -1);
             latestDate = unmarshalFormat.format(calendar.getTime());
             
         }
@@ -311,7 +331,7 @@ public class AtomFeedServlet extends HttpServlet{
      * @return 
      */
     
-    Feed initFeed(SolrDocumentList results){
+    Feed initFeed(SolrDocumentList results, SearchType searchType){
                 
         Feed feed = abdera.newFeed(); 
         feed.setId("http://papyri.info/atom/");
@@ -321,7 +341,7 @@ public class AtomFeedServlet extends HttpServlet{
         selfLink.setRel("self");
         selfLink.setMimeType("application/atom+xml");
         feed.addLink(selfLink);
-        feed.setUpdated((Date)results.get(0).getFieldValue(SolrField.edit_date.name()));
+        feed.setUpdated((Date)results.get(0).getFieldValue(searchType.getDateField().name()));
         feed.addAuthor("http://papyri.info");
         return feed;
         

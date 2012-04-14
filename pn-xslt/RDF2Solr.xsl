@@ -503,19 +503,13 @@
           </field>
         </xsl:if>
         <field name="series_led_path">
-          <xsl:value-of
-            select="string-join(($ddbdp_series, $ddbdp_volume, $ddbdp_full_identifier, 'ddbdp'), ';')"
-          />
+          <xsl:value-of select="string-join(($ddbdp_series, $ddbdp_volume, $ddbdp_full_identifier, 'ddbdp'), ';')"/>
         </field>
         <field name="volume_led_path">
-          <xsl:value-of
-            select="string-join(($ddbdp_volume, $ddbdp_full_identifier, $ddbdp_series, 'ddbdp'), ';')"
-          />
+          <xsl:value-of select="string-join(($ddbdp_volume, $ddbdp_full_identifier, $ddbdp_series, 'ddbdp'), ';')"/>
         </field>
         <field name="idno_led_path">
-          <xsl:value-of
-            select="string-join(($ddbdp_full_identifier, $ddbdp_series, $ddbdp_volume, 'ddbdp'), ';')"
-          />
+          <xsl:value-of select="string-join(($ddbdp_full_identifier, $ddbdp_series, $ddbdp_volume, 'ddbdp'), ';')"/>
         </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
@@ -579,11 +573,38 @@
           <field name="apis_publication_id">
             <xsl:value-of select="replace(., ':', ' ')"/>
           </field>
+          <xsl:variable name="apis-pubid" select="."></xsl:variable>
+          <field name="series_led_path">
+            <xsl:value-of select="string-join(($apis_series, '0', $apis-pubid, 'apis'), ';')"/>
+          </field>
+          <field name="volume_led_path">
+            <xsl:value-of select="string-join(('0', $apis-pubid, $apis_series, 'apis'), ';')"/>
+          </field>
+          <field name="idno_led_path">
+            <xsl:value-of select="string-join(($apis-pubid, $apis_series, '0', 'apis'), ';')"/>
+          </field>
         </xsl:for-each>
+        <field name="series_led_path">
+          <xsl:value-of select="string-join(($apis_series, '0', $apis_item, 'apis'), ';')"/>
+        </field>
+        <field name="volume_led_path">
+          <xsl:value-of select="string-join(('0', $apis_item, $apis_series, 'apis'), ';')"/>
+        </field>
+        <field name="idno_led_path">
+          <xsl:value-of select="string-join(($apis_item, $apis_series, '0', 'apis'), ';')"/>
+        </field>
+        <xsl:variable name="apis-inventory" select="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"></xsl:variable>
         <field name="apis_inventory">
-          <xsl:value-of
-            select="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
-          />
+          <xsl:value-of select="$apis-inventory"/>
+        </field>
+        <field name="series_led_path">
+          <xsl:value-of select="string-join(($apis_series, '0', $apis-inventory, 'apis'), ';')"/>
+        </field>
+        <field name="volume_led_path">
+          <xsl:value-of select="string-join(('0', $apis-inventory, $apis_series, 'apis'), ';')"/>
+        </field>
+        <field name="idno_led_path">
+          <xsl:value-of select="string-join(($apis-inventory, $apis_series, '0', 'apis'), ';')"/>
         </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
