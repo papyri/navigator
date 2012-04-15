@@ -49,6 +49,8 @@
   <xsl:import href="teisurplus.xsl"/>
   <xsl:import href="orig-supplied.xsl"/>
   <xsl:import href="reg-surplus.xsl"/>
+  <xsl:import href="orig-teiabbrandexpan.xsl"/>
+  <xsl:import href="reg-teiabbrandexpan.xsl"/>
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
@@ -151,26 +153,26 @@
             <xsl:variable name="orignfc" select="normalize-space(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"></xsl:variable>
             <xsl:variable name="orignfd" select="normalize-unicode($orignfc, 'NFD')"></xsl:variable>
             <field name="transcription">
-              <xsl:value-of select="translate($textnfc, 'ς', 'σ')"/>
+              <xsl:value-of select="replace(translate($textnfc, 'ς', 'σ'), $abbreviation-marker, '')"/>
             </field>
             <field name="transcription">
               <xsl:value-of select="translate($orignfc, 'ς', 'σ')"></xsl:value-of>
             </field>
             <field name="transcription_id">
               <xsl:value-of
-                select="translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"
+                select="replace(translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ'), $abbreviation-marker, '')"
               />
             </field>
             <field name="transcription_id">
               <xsl:value-of select="translate(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"></xsl:value-of>
             </field>
             <field name="transcription_ic">
-              <xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"/>
+              <xsl:value-of select="replace(translate(lower-case($textnfc), 'ς', 'σ'), $abbreviation-marker, '')"/>
             </field>
             <field name="transcription_ic">
               <xsl:value-of select="translate(lower-case($orignfc), 'ς', 'σ')"></xsl:value-of>
             </field>
-            <xsl:variable name="transcription_ia" select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"></xsl:variable>
+            <xsl:variable name="transcription_ia" select="replace(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), $abbreviation-marker, '')"></xsl:variable>
             <field name="transcription_ia">
               <xsl:value-of select="$transcription_ia"/>
             </field>
@@ -179,7 +181,9 @@
             </field>
             <field name="transcription_ngram">
               <xsl:for-each select="tokenize($textnfc, '\s+')">
-                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                <xsl:if test=". != ''"><xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
             <field name="transcription_ngram">
@@ -189,7 +193,9 @@
             </field>
             <field name="transcription_ngram_id">
               <xsl:for-each select="tokenize(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), '\s+')">
-                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                <xsl:if test=". != ''"><xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
             <field name="transcription_ngram_id">
@@ -199,7 +205,9 @@
             </field>
             <field name="transcription_ngram_ic">
               <xsl:for-each select="tokenize(lower-case($textnfc), '\s+')">
-                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                <xsl:if test=". != ''"><xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
               </xsl:for-each>
             </field>   
             <field name="transcription_ngram_ic">
@@ -211,9 +219,11 @@
               <xsl:for-each
                 select="tokenize(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), '\s+')">
                 <xsl:if test="string-length(normalize-space(.)) &gt; 0">
-                  <xsl:text>^</xsl:text>
-                  <xsl:value-of select="normalize-space(.)"/>
-                  <xsl:text>^ </xsl:text>
+                  <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                  <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                  <xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of>
+                  <xsl:value-of select="replace(., $abbreviation-marker, '')"/>
+                  <xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text>
                 </xsl:if>
               </xsl:for-each>
             </field>

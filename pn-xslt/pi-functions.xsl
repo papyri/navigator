@@ -388,7 +388,26 @@
       <xsl:when test="matches($raw-date, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.+')"><xsl:sequence select="concat(substring($raw-date, 0, 20), 'Z')"></xsl:sequence></xsl:when>
       <xsl:otherwise><xsl:sequence select="$raw-date"></xsl:sequence></xsl:otherwise>
     </xsl:choose>
-    
+  </xsl:function>
+  
+  <xsl:function name="pi:get-word-start-boundary-char">
+    <xsl:param name="token"></xsl:param>
+    <xsl:variable name="no-boundary"></xsl:variable>
+    <xsl:variable name="boundary">^</xsl:variable>
+    <xsl:choose>
+      <xsl:when test="substring($token, 1, 1) eq $abbreviation-marker"><xsl:sequence select="$no-boundary"></xsl:sequence></xsl:when>
+      <xsl:otherwise><xsl:sequence select="$boundary"></xsl:sequence></xsl:otherwise> 
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="pi:get-word-end-boundary-char">
+    <xsl:param name="token"></xsl:param>
+    <xsl:variable name="no-boundary"></xsl:variable>
+    <xsl:variable name="boundary">^</xsl:variable>
+    <xsl:choose>
+      <xsl:when test="substring($token, string-length($token)) eq $abbreviation-marker"><xsl:sequence select="$no-boundary"></xsl:sequence></xsl:when>
+      <xsl:otherwise><xsl:sequence select="$boundary"></xsl:sequence></xsl:otherwise> 
+    </xsl:choose>
   </xsl:function>
 
 </xsl:stylesheet>
