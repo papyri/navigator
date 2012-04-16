@@ -504,7 +504,6 @@
        			  (execute-query (hgv-citation-query url)))
        ]
     (.add @html (list (str "file:" (get-filename url))
-    	  (list "self-url" url)
           (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
           (list "related" (apply str (interpose " " (for [x relations] (first x)))))
           (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
@@ -512,6 +511,7 @@
           (list "isPartOf" (apply str (interpose " " (first is-part-of))))
           (list "sources" (apply str (interpose " " (for [x source](first x)))))
           (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
+          (list "selfUrl" url)
           (list "server" nserver)))))
 
 (defn queue-items
@@ -548,14 +548,14 @@
                              exclude)]
         (if (nil? exclusion)
           ( .add @html (list (str "file:" (get-filename (last item)))
-          	(list "self-url" url)
             (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
             (list "related" (apply str (interpose " " (for [x related] (last x)))))
             (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
             (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
             (list "isPartOf" (apply str (interpose " " all-urls)))   
             (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
-            (list "citationForm" (apply str (interpose "" (for [x citations](last x)))))       
+            (list "citationForm" (apply str (interpose "" (for [x citations](last x)))))  
+        	(list "selfUrl" url)     
             (list "server" nserver)))
           (do (.add @links (list (get-html-filename 
                                    (.toString 
