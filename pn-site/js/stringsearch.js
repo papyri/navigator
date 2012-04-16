@@ -363,12 +363,12 @@ $(document).ready(
 			var parent = $(this).parents(topSelector);
 			var input = $(parent).find(".keyword");
 			var val = input.val();
-			var newVal = val + keyword;
+			var newVal = val + mark;
 			input.focus();
 			input.val(newVal);
 			hic.doButtonActivationCheck(input.val(), parent);
-			hic.doProxControlsActivationCheck(input.val(), parent);				
-		
+			hic.doProxControlsActivationCheck(input.val(), parent);	
+						
 		}
 		
 		hic.addNewClause = function(){
