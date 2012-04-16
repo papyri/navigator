@@ -157,6 +157,9 @@ public class StringSearchFacet extends Facet{
         NEAR("near"),
         REGEX("regex"),
         CLEAR("clear"),
+        ABBR("abbr"),
+   //     THENNOT("then-not"),
+   //     NOTAFTER("not-after"),
         REMOVE("-");
 
         String label;
