@@ -359,7 +359,7 @@ $(document).ready(
 		
 		hic.addAbbreviationMark = function(){
 		
-			var mark = '&#xB0;';
+			var mark = "°";
 			var parent = $(this).parents(topSelector);
 			var input = $(parent).find(".keyword");
 			var val = input.val();
