@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -59,8 +58,7 @@ public class FacetBrowser extends HttpServlet {
     /** Utility class providing lemma expansion */
     static SolrUtils SOLR_UTIL;
     
-    int socketTimeout = 1000;
-    int querytime = 0;
+    static int SOCKET_TIMEOUT = 10000;
         
     @Override
     public void init(ServletConfig config) throws ServletException{
@@ -105,9 +103,7 @@ public class FacetBrowser extends HttpServlet {
         
         /* Get the <code>List</code> of facets to be displayed */
         ArrayList<Facet> facets = getFacets();
-        
-        parseRequestForTimeout(request);
-        
+                
         int docsPerPage = parseRequestForDocumentsPerPage(request);
         
         /* Parse request, allowing each facet to pull out and parse the part of the request
@@ -151,13 +147,11 @@ public class FacetBrowser extends HttpServlet {
          */
         long resultSize = queryResponse.getResults() == null ? 0 : queryResponse.getResults().getNumFound();
         
-        try{ querytime = (Integer)queryResponse.getHeader().get("QTime"); }
-        catch(Exception e){ querytime = 0; }
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog);
-         //html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
+      //   html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -198,24 +192,7 @@ public class FacetBrowser extends HttpServlet {
         
         return docsPerPage;
     }
-    
-    void parseRequestForTimeout(HttpServletRequest request){
-        
-        Map<String, String[]> requestParams = request.getParameterMap();
-        
-        try{
-            
-            socketTimeout = Integer.valueOf(requestParams.get("to")[0]);
-            
-        } catch(Exception e){
-        
-        
-            socketTimeout = 1000;
-        
-        }
-        
-        
-    }
+
     
     /**
      * Passes the passed <code>HttpServletRequest</code> object to each of the <code>Facet</code>s
@@ -300,7 +277,7 @@ public class FacetBrowser extends HttpServlet {
         try{
             
           CommonsHttpSolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
-          solrServer.setSoTimeout(socketTimeout);
+          solrServer.setSoTimeout(SOCKET_TIMEOUT);
           QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.POST);
           return qr;
             
@@ -478,17 +455,6 @@ public class FacetBrowser extends HttpServlet {
         
     }
     
-    private String assembleTimeInput(){
-        
-        StringBuilder html = new StringBuilder();
-        html.append("<div id=\"timeout\"><label for=\"to\">Timeout(milliseconds)</label><input type=\"text\" length=\"6\" maxlength=\"6\" name=\"to\" value=\"1000\"/></div><!-- closing #timeout -->");
-        html.append("<div id=\"totaltime\" style=\"margin-left: 1em; margin-top: 0.5em;\">Time for previous query: ");
-        html.append(String.valueOf(querytime));
-        html.append("</div><!-- closing totaltime -->");
-        return html.toString();
-        
-    }
-    
     /**
      * A debugging method: Like <code>assembleHTML</code>, but outputs the query string submitted to the
      * Solr server at the bottom of the page.
@@ -544,7 +510,6 @@ public class FacetBrowser extends HttpServlet {
         html.append("\" id=\"reset-all\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" aria-disabled=\"false\">New Search</a>");
         html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
         html.append("</div>");
-        html.append(assembleTimeInput());
 
         
         try{
@@ -731,7 +696,7 @@ public class FacetBrowser extends HttpServlet {
                         values.append("'>");
                         values.append("<div class='constraint-label'>");
                         values.append(displayName);
-                        values.append("<span class='semicolon'>:</span> ");
+                        if(!"".equals(displayName)) values.append("<span class='semicolon'>:</span> ");
                         values.append(displayFacetValue);
                         values.append("</div><!-- closing .constraint-label -->");
                         values.append("<div class='constraint-closer'>");
