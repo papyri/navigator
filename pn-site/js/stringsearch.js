@@ -94,7 +94,8 @@ $(document).ready(
 		var alreadyContainsConjunctionRegExp = new RegExp(/(AND|OR)/);
 		var alreadyContainsLexRegExp = new RegExp(/LEX/);
 		var alreadyContainsAndRegExp = new RegExp(/AND/);
-		var alreadyContainsOrRegExp = new RegExp(/OR/);		
+		var alreadyContainsOrRegExp = new RegExp(/OR/);	
+		var stringIsToBeLemmatisedRegExp = new RegExp(/LEMMA[\s]*(\S+)?$/);	
 		
 		/*************************
 		 * filtration functions  *
@@ -193,6 +194,13 @@ $(document).ready(
 		
 		}
 		
+		hic.stringIsToBeLemmatised = function(boxval, controls){
+		
+			if(boxval.match(stringIsToBeLemmatisedRegExp)) return true;
+			return false;
+		
+		}
+		
 		hic.isAwaitingProximityInput = function(boxval, controls){
 		
 			if(boxval.match(proxRegExp)){
@@ -230,6 +238,7 @@ $(document).ready(
 		hic.activationRules["CLEAR"] = [hic.textBoxIsEmpty];
 		hic.activationRules["ADD"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.isAwaitingProximityInput];
 		hic.activationRules["REMOVE"] = [hic.onlyOneTextInput];	
+		hic.activationRules["ABBR"] = [hic.stringIsToBeLemmatised];
 		
 		// (en|dis)ables proximity controls appropriately
 		
@@ -346,6 +355,20 @@ $(document).ready(
 			hic.doButtonActivationCheck(input.val(), parent);
 			hic.doProxControlsActivationCheck(input.val(), parent);
 			
+		}
+		
+		hic.addAbbreviationMark = function(){
+		
+			var mark = '&#x00B0';
+			var parent = $(this).parents(topSelector);
+			var input = $(parent).find(".keyword");
+			var val = input.val();
+			var newVal = val + keyword;
+			input.focus();
+			input.val(newVal);
+			hic.doButtonActivationCheck(input.val(), parent);
+			hic.doProxControlsActivationCheck(input.val(), parent);				
+		
 		}
 		
 		hic.addNewClause = function(){
@@ -507,6 +530,9 @@ $(document).ready(
 		$("#text-search-widget").on("click", ".syntax-or", hic.addNewClause);
 		$("#text-search-widget").on("click", ".syntax-not", hic.doNot);
 		$("#text-search-widget").on("click", ".syntax-clear", hic.clearValues);
+		$("#text-search-widget").on("click", ".syntax-abbr", hic.addAbbreviationMark);
+		$("#text-search-widget").on("click", ".syntax-then-not", hic.addKeyWord);
+		$("#text-search-widget").on("click", ".syntax-not-after", hic.addKeyWord);		
 		$("#text-search-widget").on("click", ".syntax-remove", function(){
 		
 			var buttonBar = $(this).parent().clone();
