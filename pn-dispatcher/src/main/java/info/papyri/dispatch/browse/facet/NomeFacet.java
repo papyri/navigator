@@ -22,4 +22,14 @@ public class NomeFacet extends Facet {
         
     }
     
+    @Override
+    public String getDisplayValue(String value){
+        
+        String firstChar = String.valueOf(value.charAt(0)).toUpperCase();
+        String remainder = value.substring(1).toLowerCase();
+        return firstChar + remainder;
+        
+        
+    }
+    
 }
