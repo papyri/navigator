@@ -577,6 +577,7 @@ public class FileUtils {
                 .replaceAll("\\s", "\\\\s+")
                 .replaceAll("^\\^", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
+                .replaceAll("°", "")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "");      
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
@@ -589,12 +590,16 @@ public class FileUtils {
        String transformedString = rawString;
        transformedString = transformedString.toLowerCase()
                 .replaceAll("(\\S)", sigla + "$1" + sigla)
-                .replaceAll("([^£#])$", "$1\\\\b")
+                .replace("^ ^", "\\s+")
+                .replace("^", "(\\b)")
                 .replaceAll("\\s", "\\\\s+")
+                .replaceAll("^\\^", "(\\s|^)")
+                .replaceAll("^$", "(\\s|$)")
+                .replaceAll("°", "")
                 .replace("£", "\\S*").replace("#", "\\S").replace("\"", "");
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
-       transformedString = "\\b" + transformedString + "\\b";
+       transformedString = "(^|(?<=[\\s]))" + transformedString + "((?=[\\s])|$)";
        return transformedString;
        
    }

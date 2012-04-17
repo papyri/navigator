@@ -60,7 +60,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.hasIllustration = illus;
     this.highlightWords = new ArrayList<String>();
     this.highlightTerms = buildHighlightTerms(sts);
-    this.highlightString = buildHighlightString(sts );
+    this.highlightString = buildHighlightString(sts);
     
   }
   
@@ -89,6 +89,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
   }
   
+  // used for KWIC highlighting
   
   final Pattern[] buildHighlightTerms(ArrayList<SearchClause> searchClauses){
  
@@ -121,8 +122,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                         
           }   
           else{
-              
-              
+                         
               Pattern[] patterns = util.getPhraseHighlightPatterns(transformedString);
               hilites.addAll(Arrays.asList(patterns));
               
@@ -215,6 +215,9 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       return foundStrings;
   }
   
+  // used to build the query string (itself used by the Reader class to highlight
+  // text in its displayed HTML)
+  
   final String buildHighlightString(ArrayList<SearchClause> searchClauses){
       
       StringBuilder hilite = new StringBuilder();
@@ -232,11 +235,11 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
                       Iterator<String> hwit = highlightWords.iterator();
                       while(hwit.hasNext()){
-                      
+
                           String highlightWord = hwit.next();
                           hilite.append(buildRegexHighlightString(highlightWord));
-                          
-                      
+
+
                       }
 
                   }
@@ -252,10 +255,10 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                               hilite.append(":(");
                               hilite.append(termbit);
                               hilite.append(")");
+                              
                           }
                       
-                      }
-                      
+                      }                   
                       
                   }
                   else if (searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
@@ -561,7 +564,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       StringBuilder html = new StringBuilder();
       try{
 
-          List<String> kwix = filterKWIX(util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms));
+          List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
           html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
           for(String kwic : kwix){
 
@@ -576,20 +579,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           
       }
       return html.toString();
-      
-  }
-  
-  private List<String> filterKWIX(List<String> rawKWIX){
-      
-     // TODO: Purpose of this is to act as a filter function. Create filters!  
-    /*  ArrayList<String> kwix = new ArrayList<String>();
-      Iterator<String> kwixit = rawKWIX.iterator();
-      while(kwixit.hasNext()){
-          
-          kwix.add("spuz");
-          
-      }*/
-      return rawKWIX;
       
   }
   

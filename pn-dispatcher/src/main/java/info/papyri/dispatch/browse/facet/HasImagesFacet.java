@@ -15,7 +15,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  * Facet class for selecting records based on the availability of images within
  * papyri.info, online more generally, or in print publications.
  * 
- * This facet is unusual only that the controls operate in a somewhat inverse way
+ * This facet is unusual only in that the controls operate in a somewhat inverse way
  * to those of other facets: while the controls of other facets are generally 
  * <em>subtractive</em>, the controls for this facet are <em>additive</em>: while
  * with other facets adding values narrows the set of documents that meet the 
@@ -26,7 +26,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  */
 
 public class HasImagesFacet extends Facet {
-    
+        
     /**
      * Enum listing the possible values for the controls.
      * 
@@ -97,7 +97,16 @@ public class HasImagesFacet extends Facet {
     // necessary
     public String generateWidget() {
         
-        Boolean moreThanOneOn = getAllOnImageParams().size() > 1;
+        SearchConfiguration intObj = searchConfigurations.get(ImageParam.INT);
+        SearchConfiguration extObj = searchConfigurations.get(ImageParam.EXT);
+        SearchConfiguration prObj = searchConfigurations.get(ImageParam.PRINT);
+        Boolean allOff = intObj.isOff() && extObj.isOff() && prObj.isOff();
+        
+        Boolean inDeactivated = allOff && intObj.hasNoRecords();
+        Boolean exDeactivated =  allOff && extObj.hasNoRecords();
+        Boolean prDeactivated =  allOff && prObj.hasNoRecords();
+
+       // Boolean intDeactivated = intObj.isOn()
         
         StringBuilder html = new StringBuilder();
         String chbx = "<input type=\"checkbox\" name=\"";
@@ -106,6 +115,7 @@ public class HasImagesFacet extends Facet {
         String lblstrt = "<label for=\"";
         String close = ">";
         String lblend = "</label>";
+        String deac = " class=\"deactivated\"";
 
         html.append("<div class=\"facet-widget\" id=\"img-select\" title=\"");
         html.append(getToolTipText());
@@ -113,53 +123,53 @@ public class HasImagesFacet extends Facet {
         html.append("<p id=\"img-selector-lbl\">Show only records with images from:</p>");
         html.append("<p>");
         
-        SearchConfiguration intObj = searchConfigurations.get(ImageParam.INT);
         html.append(chbx);
         html.append(ImageParam.INT.name());
         html.append(val);
         html.append("on");
         html.append(clss);
         if(intObj.isOn()) html.append(" checked");
-        if(intObj.isOn() && moreThanOneOn && !intObj.hasRecord()) html.append(" disabled");
+        if(inDeactivated) html.append(" disabled title=\"There are no images hosted by Papyri.info in the current set of results.\"");
         html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.INT.name());
         html.append("\"");
+        if(inDeactivated) html.append(deac);
         html.append(close);
         html.append(ImageParam.INT.getLabel());
         html.append(lblend);
         
-        SearchConfiguration extObj = searchConfigurations.get(ImageParam.EXT);
         html.append(chbx);
         html.append(ImageParam.EXT.name());
         html.append(val);
         html.append("on");
         html.append(clss);
         if(extObj.isOn()) html.append(" checked");
-        if(extObj.isOn() && moreThanOneOn && !extObj.hasRecord()) html.append(" disabled");
+        if(exDeactivated) html.append(" disabled title=\"There are no externally-hosted images associated with the current set of results.\"");
         html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.EXT.name());
         html.append("\"");
+        if(exDeactivated) html.append(deac);
         html.append(close);
         html.append(ImageParam.EXT.getLabel());
         html.append(lblend);        
 
-        SearchConfiguration prObj = searchConfigurations.get(ImageParam.PRINT);
         html.append(chbx);
         html.append(ImageParam.PRINT.name());
         html.append(val);
         html.append("on");
         html.append(clss);
         if(prObj.isOn()) html.append(" checked");
-        if(prObj.isOn() && moreThanOneOn && !prObj.hasRecord()) html.append(" disabled");
+        if(prDeactivated) html.append(" disabled title=\"There are no print images associated with the current set of results.\"");
         html.append("/");
         html.append(close);
         html.append(lblstrt);
         html.append(ImageParam.PRINT.name());
         html.append("\"");
+        if(prDeactivated) html.append(deac);
         html.append(close);
         html.append(ImageParam.PRINT.getLabel());
         html.append(lblend);
@@ -266,7 +276,7 @@ public class HasImagesFacet extends Facet {
     
     @Override
     public void setWidgetValues(QueryResponse qr){
-    
+            
         for(ImageParam ip : ImageParam.values()){
     
             FacetField facetField = qr.getFacetField(ip.getSearchField());
@@ -404,8 +414,10 @@ public class HasImagesFacet extends Facet {
         
         public void setIsOn(Boolean state){ on = state; }
         public Boolean isOn(){ return on; }
+        public Boolean isOff() { return !on; }
         public void setHasRecord(Boolean hr){ hasRecords = hr; }
         public Boolean hasRecord(){ return hasRecords; }
+        public Boolean hasNoRecords(){ return !hasRecords; }
     
     
     }

@@ -373,7 +373,7 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
     "Verdana", "Tahoma";
 }
 
-div#history h3:hover {
+span#all-history:hover, span#edit-history:hover {
 background:#f9e4a0;
 cursor:pointer;
 }

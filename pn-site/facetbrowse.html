@@ -116,8 +116,6 @@
 
       }
       
-
-      
       div.nav{
       	
       	z-index: 500;
@@ -500,13 +498,13 @@
 	  
 	  	float: left;
 	  	margin-right: 0;
-	  	margin-left: 4px;
+	  	margin-left: 2px;
 	  
 	  }
 	  
 	  #str-search-controls input.ui-button{
 	  	
-	  	padding: .2em .4em;
+	  	padding: .2em .2em;
 	  
 	  }
 	  
@@ -607,7 +605,6 @@
       	margin-bottom: 0.25em;
       	padding-left: 4px;
       	position: relative;
-      	width: 70%;
       	float: left;
       	
       }
@@ -667,23 +664,28 @@
       	margin-left: 3em;
       }
       
-      #era-selector{
+      #after-era-selector, #before-era-selector{
       
       		float: left;
       		position: relative;
+      		margin-left: 2em;
+      		padding-top: 2px;
       
       }
       
-      input[name="era"]{
+	#after-era-selector input, #before-era-selector input{
+      
+      	float: none;
+      	margin-right: 10px;
+      	min-width: 10px;
       	
-      		margin-right: 0.5em;
-      
       }
-      
-      #era-selector label{
+           
+      #after-era-selector label, #before-era-selector label{
       
       	margin-right: 0.5em;
-      
+      	float: none;
+      	
       }
       
       #results-prefix-wrapper{
@@ -823,6 +825,18 @@
       	margin-right: 2em;
       
       }
+      #timeout{
+      
+      	clear: both;
+      	width: 6em;
+      	margin-left: 1em;
+      
+      }
+      .deactivated{
+      	
+      	color: #888;
+      
+      }
       
     </style>
           <!--[if IE 6]>
@@ -848,6 +862,14 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
 
+	function findTM(href){
+	
+		var loc = window.location.toString();
+		if(loc.charAt(loc.length - 1) == "#") loc = loc.substring(0, loc.length - 1);
+		loc = loc + "?target=user_defined&STRING=(identifier:" + href + ")";
+		window.location = loc;
+
+	}
 
     </script>
   </head>
@@ -872,7 +894,7 @@
               <li>
                 <a href="/browse/apis/">APIS</a>
               </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="findTM(jQuery('#tmid').attr('value'))" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
               <li>or Search:</li>
               <li class="current">

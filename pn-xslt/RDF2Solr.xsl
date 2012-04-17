@@ -49,6 +49,8 @@
   <xsl:import href="teisurplus.xsl"/>
   <xsl:import href="orig-supplied.xsl"/>
   <xsl:import href="reg-surplus.xsl"/>
+  <xsl:import href="orig-teiabbrandexpan.xsl"/>
+  <xsl:import href="reg-teiabbrandexpan.xsl"/>
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
@@ -151,26 +153,26 @@
             <xsl:variable name="orignfc" select="normalize-space(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"></xsl:variable>
             <xsl:variable name="orignfd" select="normalize-unicode($orignfc, 'NFD')"></xsl:variable>
             <field name="transcription">
-              <xsl:value-of select="translate($textnfc, 'ς', 'σ')"/>
+              <xsl:value-of select="replace(translate($textnfc, 'ς', 'σ'), $abbreviation-marker, '')"/>
             </field>
             <field name="transcription">
               <xsl:value-of select="translate($orignfc, 'ς', 'σ')"></xsl:value-of>
             </field>
             <field name="transcription_id">
               <xsl:value-of
-                select="translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"
+                select="replace(translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ'), $abbreviation-marker, '')"
               />
             </field>
             <field name="transcription_id">
               <xsl:value-of select="translate(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"></xsl:value-of>
             </field>
             <field name="transcription_ic">
-              <xsl:value-of select="translate(lower-case($textnfc), 'ς', 'σ')"/>
+              <xsl:value-of select="replace(translate(lower-case($textnfc), 'ς', 'σ'), $abbreviation-marker, '')"/>
             </field>
             <field name="transcription_ic">
               <xsl:value-of select="translate(lower-case($orignfc), 'ς', 'σ')"></xsl:value-of>
             </field>
-            <xsl:variable name="transcription_ia" select="translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"></xsl:variable>
+            <xsl:variable name="transcription_ia" select="replace(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), $abbreviation-marker, '')"></xsl:variable>
             <field name="transcription_ia">
               <xsl:value-of select="$transcription_ia"/>
             </field>
@@ -179,7 +181,9 @@
             </field>
             <field name="transcription_ngram">
               <xsl:for-each select="tokenize($textnfc, '\s+')">
-                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                <xsl:if test=". != ''"><xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
             <field name="transcription_ngram">
@@ -189,7 +193,9 @@
             </field>
             <field name="transcription_ngram_id">
               <xsl:for-each select="tokenize(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), '\s+')">
-                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                <xsl:if test=". != ''"><xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
               </xsl:for-each>
             </field>
             <field name="transcription_ngram_id">
@@ -199,7 +205,9 @@
             </field>
             <field name="transcription_ngram_ic">
               <xsl:for-each select="tokenize(lower-case($textnfc), '\s+')">
-                <xsl:if test=". != ''"><xsl:text>^</xsl:text><xsl:value-of select="."/><xsl:text>^ </xsl:text></xsl:if>
+                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                <xsl:if test=". != ''"><xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
               </xsl:for-each>
             </field>   
             <field name="transcription_ngram_ic">
@@ -211,9 +219,11 @@
               <xsl:for-each
                 select="tokenize(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), '\s+')">
                 <xsl:if test="string-length(normalize-space(.)) &gt; 0">
-                  <xsl:text>^</xsl:text>
-                  <xsl:value-of select="normalize-space(.)"/>
-                  <xsl:text>^ </xsl:text>
+                  <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
+                  <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
+                  <xsl:text> </xsl:text><xsl:value-of select="$word-start-boundary"></xsl:value-of>
+                  <xsl:value-of select="replace(., $abbreviation-marker, '')"/>
+                  <xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text>
                 </xsl:if>
               </xsl:for-each>
             </field>
@@ -503,19 +513,13 @@
           </field>
         </xsl:if>
         <field name="series_led_path">
-          <xsl:value-of
-            select="string-join(($ddbdp_series, $ddbdp_volume, $ddbdp_full_identifier, 'ddbdp'), ';')"
-          />
+          <xsl:value-of select="string-join(($ddbdp_series, $ddbdp_volume, $ddbdp_full_identifier, 'ddbdp'), ';')"/>
         </field>
         <field name="volume_led_path">
-          <xsl:value-of
-            select="string-join(($ddbdp_volume, $ddbdp_full_identifier, $ddbdp_series, 'ddbdp'), ';')"
-          />
+          <xsl:value-of select="string-join(($ddbdp_volume, $ddbdp_full_identifier, $ddbdp_series, 'ddbdp'), ';')"/>
         </field>
         <field name="idno_led_path">
-          <xsl:value-of
-            select="string-join(($ddbdp_full_identifier, $ddbdp_series, $ddbdp_volume, 'ddbdp'), ';')"
-          />
+          <xsl:value-of select="string-join(($ddbdp_full_identifier, $ddbdp_series, $ddbdp_volume, 'ddbdp'), ';')"/>
         </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
@@ -579,11 +583,38 @@
           <field name="apis_publication_id">
             <xsl:value-of select="replace(., ':', ' ')"/>
           </field>
+          <xsl:variable name="apis-pubid" select="."></xsl:variable>
+          <field name="series_led_path">
+            <xsl:value-of select="string-join(($apis_series, '0', $apis-pubid, 'apis'), ';')"/>
+          </field>
+          <field name="volume_led_path">
+            <xsl:value-of select="string-join(('0', $apis-pubid, $apis_series, 'apis'), ';')"/>
+          </field>
+          <field name="idno_led_path">
+            <xsl:value-of select="string-join(($apis-pubid, $apis_series, '0', 'apis'), ';')"/>
+          </field>
         </xsl:for-each>
+        <field name="series_led_path">
+          <xsl:value-of select="string-join(($apis_series, '0', $apis_item, 'apis'), ';')"/>
+        </field>
+        <field name="volume_led_path">
+          <xsl:value-of select="string-join(('0', $apis_item, $apis_series, 'apis'), ';')"/>
+        </field>
+        <field name="idno_led_path">
+          <xsl:value-of select="string-join(($apis_item, $apis_series, '0', 'apis'), ';')"/>
+        </field>
+        <xsl:variable name="apis-inventory" select="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"></xsl:variable>
         <field name="apis_inventory">
-          <xsl:value-of
-            select="$docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
-          />
+          <xsl:value-of select="$apis-inventory"/>
+        </field>
+        <field name="series_led_path">
+          <xsl:value-of select="string-join(($apis_series, '0', $apis-inventory, 'apis'), ';')"/>
+        </field>
+        <field name="volume_led_path">
+          <xsl:value-of select="string-join(('0', $apis-inventory, $apis_series, 'apis'), ';')"/>
+        </field>
+        <field name="idno_led_path">
+          <xsl:value-of select="string-join(($apis-inventory, $apis_series, '0', 'apis'), ';')"/>
         </field>
         <xsl:if test="$alterity = 'self'">
           <field name="series">
@@ -815,7 +846,11 @@
         </xsl:for-each>
       </xsl:when>
     </xsl:choose>
-
+    <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance/t:p/t:placeName[@subtype='nome']">
+      <field name="nome">
+        <xsl:value-of select="normalize-space(.)"/>
+      </field>
+    </xsl:for-each>
 
     <!-- InvNum -->
     <xsl:if
@@ -955,14 +990,53 @@
 
 <xsl:template name="revision-history">
       <xsl:param name="docs"></xsl:param>
-          <xsl:variable name="date-suffix">T00:00:00Z</xsl:variable>
-          <xsl:variable name="first-revised"><xsl:value-of select="concat(pi:get-earliest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>
-          <xsl:variable name="last-revised"><xsl:value-of select="concat(pi:get-latest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]), $date-suffix)"></xsl:value-of></xsl:variable>   
-  <xsl:if test="matches($first-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z') and matches($last-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
-  <field name="first_revised"><xsl:value-of select="$first-revised"></xsl:value-of></field>
-  <field name="last_revised"><xsl:value-of select="$last-revised"></xsl:value-of></field>
-  <field name="last_editor"><xsl:value-of select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when=replace($last-revised, $date-suffix, '')][1]/@who"></xsl:value-of></field>
+      
+      <xsl:variable name="all-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change"></xsl:variable>
+      <xsl:variable name="app-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'appchange', 'i')]"></xsl:variable>
+      <xsl:variable name="date-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'datechange', 'i')]"></xsl:variable>
+      <xsl:variable name="place-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'placechange', 'i')]"></xsl:variable>
+      <xsl:if test="count($all-edits) &gt; 0">
+        <xsl:variable name="first-revised"><xsl:value-of select="pi:regularise-datestring(pi:get-earliest-date-element(remove($all-edits, 1), $all-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="last-revised"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($all-edits, 1), $all-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="all-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($all-edits, 1), $all-edits[1])/@who"></xsl:value-of></xsl:variable>
+        <field name="published"><xsl:value-of select="$first-revised"></xsl:value-of></field>
+        <field name="edit_date"><xsl:value-of select="$last-revised"></xsl:value-of></field>
+        <field name="last_editor"><xsl:value-of select="$all-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      <xsl:if test="count($app-edits) > 0">
+        <xsl:variable name="latest-app-edit"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($app-edits, 1), $app-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="app-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($app-edits, 1), $app-edits[1])/@who"></xsl:value-of></xsl:variable> 
+        <field name="app_edit_date"><xsl:value-of select="$latest-app-edit"></xsl:value-of></field>
+        <field name="app_editor"><xsl:value-of select="$app-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      <xsl:if test="count($date-edits) > 0">
+        <xsl:variable name="latest-date-edit"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($date-edits, 1), $date-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="date-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($date-edits, 1), $date-edits[1])/@who"></xsl:value-of></xsl:variable>         
+        <field name="date_edit_date"><xsl:value-of select="$latest-date-edit"></xsl:value-of></field>
+        <field name="date_editor"><xsl:value-of select="$date-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      <xsl:if test="count($place-edits) > 0">
+        <xsl:variable name="latest-place-edit"><xsl:value-of select="pi:regularise-datestring(pi:get-latest-date-element(remove($place-edits, 1), $place-edits[1])/@when)"></xsl:value-of></xsl:variable>
+        <xsl:variable name="place-edit-author"><xsl:value-of select="pi:get-latest-date-element(remove($place-edits, 1), $place-edits[1])/@who"></xsl:value-of></xsl:variable>        
+        <field name="place_edit_date"><xsl:value-of select="$latest-place-edit"></xsl:value-of></field>
+        <field name="place_editor"><xsl:value-of select="$place-edit-author"></xsl:value-of></field>
+      </xsl:if>
+      
+  <!--   <xsl:variable name="last-revised"><xsl:value-of select="pi:get-latest-date($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, $docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1]"></xsl:value-of></xsl:variable>   
+ <xsl:variable name="app-whens" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[contains(text(), 'appchange')]/@when"></xsl:variable> -->
+  
+  
+  
+  <!--  <field name="edit_date"><xsl:value-of select="$last-revised"></xsl:value-of></field>
+  <field name="last_editor"><xsl:value-of select="pi:get-latest-editor($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when, data($docs/t:TEI/t:teiHeader/t:revisionDesc/t:change/@when)[1])"></xsl:value-of></field>
+  
+  <xsl:if test="count($app-whens) > 0">
+  <xsl:variable name="first-app-revised"><xsl:value-of select="concat(pi:get-latest-date($app-whens, $app-whens[1]), $date-suffix)"></xsl:value-of></xsl:variable>
+  <xsl:if test="matches($first-app-revised, '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z')">
+    <field name="app_edit_date"><xsl:value-of select="$first-app-revised"></xsl:value-of></field>
   </xsl:if>
+  
+  </xsl:if>-->
 </xsl:template>
  
  <xsl:template name="reg-text-processing">
