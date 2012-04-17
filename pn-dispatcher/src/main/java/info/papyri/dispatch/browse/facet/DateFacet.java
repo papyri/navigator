@@ -331,20 +331,11 @@ public class DateFacet extends Facet {
         String afterWhichWidget = terminusAfterWhich.generateWidget();
         String beforeWhichWidget = terminusBeforeWhich.generateWidget();
         String modeSelector = generateModeSelector();
-        String eraSelector = generateEraSelector();
-        return afterWhichWidget + beforeWhichWidget +  eraSelector + modeSelector;
+        return afterWhichWidget + beforeWhichWidget + modeSelector;
         
     }
     
-    private String generateEraSelector(){
-        
-        StringBuilder html = new StringBuilder();
-        html.append("<div id=\"era-selector\">");
-        html.append(getEraOptions());
-        html.append("</div><!-- closing #era-selector -->");
-        return html.toString();
-        
-    }
+
     
     private String generateModeSelector(){
         
@@ -391,14 +382,12 @@ public class DateFacet extends Facet {
     
     private String getEraOptions(){
         
-        // set to BCE by default
+        // both selectors set to BCE by default
         
-        // set to CE if start era is set to CE and value is not default
+        // set both to BCE if end era is set to BCE and value is not default
+        // set both to CE if start era is set to CE and value is not 
         
-        // disable if:
-        //      both values are set to the same era
-        //      end era is set to BCE
-        //      start era is set to CE
+        // disable if set to unknown
         
         String allOptions = "";
         String startEra = terminusAfterWhich.getEra();
@@ -1026,6 +1015,8 @@ public class DateFacet extends Facet {
             
         }
         
+        abstract String generateEraSelector();
+        
         public ArrayList<Count> getValuesAndCounts(){ return this.valuesAndCounts; }
         
         public void setValuesAndCounts(ArrayList<Count> newCounts){ this.valuesAndCounts = newCounts; }
@@ -1169,10 +1160,42 @@ public class DateFacet extends Facet {
             }
                 
             html.append("</select>");
+            html.append(generateEraSelector());
             html.append("</div><!-- closing .facet-widget -->");
-
             return html.toString();                    
             
+        }
+        
+        @Override
+        String generateEraSelector(){
+            
+            // default is BCE
+            // disable if unknown
+        
+            StringBuilder html = new StringBuilder();
+            html.append("<div id=\"after-era-selector\">");
+            
+            
+            String allOptions = "";
+            Boolean isUnknown = "Unknown".equals(currentValue) || "Unknown".equals(terminusBeforeWhich.getCurrentValue());
+            String selectedEra = (isUnknown || "".equals(currentValue) || Integer.valueOf(currentValue) <= 0)  ? "BCE" : "CE";
+            Boolean disabled = isUnknown;
+        
+            ArrayList<String> eras = new ArrayList<String>(Arrays.asList("BCE", "CE"));
+        
+            for(String era : eras){
+            
+                String tag = "<label id=\"after-" + era + "-label\">" + era  + "</label>";
+                tag += "<input type=\"radio\" name=\"after-era\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ?  " checked" : "");
+                tag += disabled ? " disabled" : "";
+                tag += "/>";
+                allOptions += tag;
+            
+            }
+            html.append(allOptions);    
+            html.append("</div><!-- closing #after-era-selector -->");
+            return html.toString();
+        
         }
         
         @Override
@@ -1550,8 +1573,8 @@ public class DateFacet extends Facet {
 
             
             html.append("</select>");
+            html.append(generateEraSelector());
             html.append("</div><!-- closing .facet-widget -->");
-
             return html.toString();         
                        
         }
@@ -1650,6 +1673,37 @@ public class DateFacet extends Facet {
             Collections.sort(valuesAndCounts, DateFacet.dateCountComparator);
             //Collections.reverse(valuesAndCounts);
             
+        }
+        
+        @Override
+        String generateEraSelector(){
+            
+            // disable if unknown
+        
+            StringBuilder html = new StringBuilder();
+            html.append("<div id=\"before-era-selector\">");
+            
+            
+            String allOptions = "";
+            Boolean isUnknown = "Unknown".equals(currentValue) || "Unknown".equals(terminusAfterWhich.getCurrentValue());
+            String selectedEra = (isUnknown || "".equals(currentValue) || Integer.valueOf(currentValue) <= 0) ? "BCE" : "CE";
+            Boolean disabled = isUnknown;
+        
+            ArrayList<String> eras = new ArrayList<String>(Arrays.asList("BCE", "CE"));
+        
+            for(String era : eras){
+            
+                String tag = "<label id=\"before-" + era + "-label\">" + era  + "</label>";
+                tag += "<input type=\"radio\" name=\"before-era\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ? " checked" : "");
+                tag += disabled ? " disabled" : "";
+                tag += "/>";
+                allOptions += tag;
+            
+            }
+            html.append(allOptions);       
+            html.append("</div><!-- closing #before-era-selector -->");
+            return html.toString();
+        
         }
         
         @Override

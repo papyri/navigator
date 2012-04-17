@@ -288,7 +288,7 @@ $(document).ready(
 	    	else if(selected_date.toLowerCase() != "unknown"){
 
 	    		selected_date = selected_date.replace(/\D/g, "");
-	    		era = $("input:radio[name=era]:checked").val()
+	    		era = $(datefield.parents(".date-facet-widget").find("input[type=radio]:checked")).val();
 
 	    	}
 	    	else if(selected_date.toLowerCase() == "unknown"){
@@ -302,7 +302,6 @@ $(document).ready(
 	    	// date mode selector
 			var datemode = $("input:radio[name='DATE_MODE']:checked");
 			if(datemode.length > 0 && $.inArray(datemode, filteredels) == -1) filteredels.push(datemode);
-
 	    	var date_el_name = date_wrapper_name.match("start") ? "DATE_START_TEXT" : "DATE_END_TEXT";
 	    	var era_el_name = date_wrapper_name.match("start") ? "DATE_START_ERA" : "DATE_END_ERA";
 	    	var date_el = $("<input type=\"text\" name=\"" + date_el_name + "\"></input>");
@@ -562,12 +561,13 @@ $(document).ready(
 		 * value has been entered
 		 *
 		 */
-		$("select[name='DATE_START_ERA'], select[name='DATE_END_ERA']").change(function(){
+		$("input[name='after-era'], input[name='before-era']").change(function(){
 
-	    	var prefix = $(this).attr("name").substring(0, $(this).attr("name").length - 4);
-	    	var correlatedText = prefix + "_TEXT";
-	    	var correlatedValue = $("input[name='" + correlatedText + "']").val();
-	    	if(correlatedValue == "" || correlatedValue == "n.a.") return false;		
+	    	var correlatedText = $(this).attr("name") == 'after-era' ? 'DATE_START' : 'DATE_END';
+	    	var correlatedTextInput = $("input[name='" + correlatedText + "']");
+	    	var correlatedValue = correlatedTextInput.val();
+	    	if(correlatedValue == "" || correlatedValue == "n.a.") return false;	
+	    	correlatedTextInput.val(correlatedValue.replace(/\s*\(\d+\)[\s]*$/g, "").replace(/\D/g, "").trim());
 			$("form[name='facets']").submit();
 
 		});
