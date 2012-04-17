@@ -531,12 +531,14 @@ public class IdentifierFacet extends Facet{
         SeriesSearchConfiguration ssc = (SeriesSearchConfiguration) searchConfigurations.get(IdParam.SERIES);
         HashMap<String, Long> csf = ssc.getIdValues();
         Collection<String> keys = csf.keySet();
-        
         for(String key : keys){
         
-            if(key.contains(facetValue)){
+            String[] keyBits = key.split(";");
+            String seriesName = "";
+            try{ seriesName = keyBits[1]; } 
+            catch(Exception e){}
+            if(seriesName.equals(facetValue)){
                 
-                String[] keyBits = key.split(";");
                 collection = keyBits[0];
                 break;
             }
@@ -779,9 +781,6 @@ public class IdentifierFacet extends Facet{
     /**
      * <code>SearchConfiguration</code> for browsing by DDbDP / HGV series
      * 
-     * Note that browsing by DDbDP/HGV series is incompatible with browsing by APIS collection - 
-     * only one of <code>SeriesSearchConfiguration</code> and <code>CollectionSearchConfiguration</code>
-     * may be active at any given time.
      */
     
     
