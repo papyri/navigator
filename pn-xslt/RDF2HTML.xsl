@@ -298,7 +298,7 @@
                         <div class="translation data">
                           <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
                             [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
-                          <xsl:apply-templates select="t:p"/>
+                          <xsl:apply-templates />
                         </div>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
