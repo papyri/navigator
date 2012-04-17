@@ -275,10 +275,11 @@ $(document).ready(
 	    	var date_selector = "#" + date_wrapper_name + " input";
 	    	var datefield = $(date_selector);
 	    	var selected_date = datefield.val();
-	    	if(selected_date == "" || datefield.attr("disabled")) return;
+	    	if(selected_date == "") return;
 	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");	// trim count
 	    	var era_finder = new RegExp(/\s*(B?CE)$/);
 	    	var era = "";
+
 	    	if(selected_date.match(era_finder)){
 
 	    		era = era_finder.exec(selected_date)[1];
@@ -296,7 +297,6 @@ $(document).ready(
 	    		selected_date = "n.a.";
 
 	    	}
-
 	    	if(selected_date.match(/^\s*$/)) return;
 
 	    	// date mode selector
