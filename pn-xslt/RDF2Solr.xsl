@@ -148,36 +148,36 @@
              </xsl:call-template>
             </xsl:variable>
             <xsl:variable name="textnfc"
-              select="normalize-space(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"/>
+              select="normalize-space(replace(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ'))"/>
             <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
-            <xsl:variable name="orignfc" select="normalize-space(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''))"></xsl:variable>
+            <xsl:variable name="orignfc" select="normalize-space(replace(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ'))"></xsl:variable>
             <xsl:variable name="orignfd" select="normalize-unicode($orignfc, 'NFD')"></xsl:variable>
             <field name="transcription">
-              <xsl:value-of select="replace(translate($textnfc, 'ς', 'σ'), $abbreviation-marker, '')"/>
+              <xsl:value-of select="replace($textnfc, $abbreviation-marker, '')"/>
             </field>
             <field name="transcription">
-              <xsl:value-of select="translate($orignfc, 'ς', 'σ')"></xsl:value-of>
+              <xsl:value-of select="$orignfc"></xsl:value-of>
             </field>
             <field name="transcription_id">
               <xsl:value-of
-                select="replace(translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ'), $abbreviation-marker, '')"
+                select="replace(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, '')"
               />
             </field>
             <field name="transcription_id">
-              <xsl:value-of select="translate(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''), 'ς', 'σ')"></xsl:value-of>
+              <xsl:value-of select="translate($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')"></xsl:value-of>
             </field>
             <field name="transcription_ic">
-              <xsl:value-of select="replace(translate(lower-case($textnfc), 'ς', 'σ'), $abbreviation-marker, '')"/>
+              <xsl:value-of select="replace(lower-case($textnfc), $abbreviation-marker, '')"/>
             </field>
             <field name="transcription_ic">
-              <xsl:value-of select="translate(lower-case($orignfc), 'ς', 'σ')"></xsl:value-of>
+              <xsl:value-of select="lower-case($orignfc)"></xsl:value-of>
             </field>
-            <xsl:variable name="transcription_ia" select="replace(translate(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ'), $abbreviation-marker, '')"></xsl:variable>
+            <xsl:variable name="transcription_ia" select="replace(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), $abbreviation-marker, '')"></xsl:variable>
             <field name="transcription_ia">
               <xsl:value-of select="$transcription_ia"/>
             </field>
             <field name="transcription_ia">
-              <xsl:value-of select="translate(lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')), 'ς', 'σ')"></xsl:value-of>
+              <xsl:value-of select="lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''))"></xsl:value-of>
             </field>
             <field name="transcription_ngram">
               <xsl:for-each select="tokenize($textnfc, '\s+')">
