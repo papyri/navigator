@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import edu.unc.epidoc.transcoder.TransCoder;
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
@@ -965,36 +966,20 @@ public class StringSearchFacet extends Facet{
             searchString = searchString.replaceAll("\\s+", " ");
             searchString = searchString.trim();
             if(searchString.length() == 0) return null;
-            
             searchString = swapInProxperators(searchString);
             // strip enclosing parens if present
             searchString = trimEnclosingBrackets(searchString);
-
-            Pattern subClauseRegex = Pattern.compile("^\\(.*\\)$");
             
             while(searchString.length() > 0){
 
-                String nowChar = Character.toString(searchString.charAt(0));
+              String nowChar = Character.toString(searchString.charAt(0));
                 int endIndex = getMatchingIndex(nowChar, searchString);
-                if(endIndex == -1){
-                    
-                    if(nowChar.equals("(")){
-                        
-                        throw new MismatchedBracketException();
-                        
-                    }
-                    else{
-                        
-                        endIndex = searchString.length() - 1;
-                        
-                    }
-                    
-                }
+                if(endIndex == -1) endIndex = searchString.length() - 1;
                 endIndex = endIndex + 1;
                 Matcher metricsMatch = justMetricsDetect.matcher(searchString.substring(endIndex).trim());
                 if(metricsMatch.matches()){ endIndex += (metricsMatch.group(1).length()); }
                 String nowWord = searchString.substring(0, endIndex).trim();
-                SearchClause newClause = subClauseRegex.matcher(nowWord).matches() ? new SubClause(nowWord, target, caps, marks) : new SearchTerm(nowWord, target, caps, marks);
+                SearchTerm newClause = new SearchTerm(nowWord, target, caps, marks);
                 clauses.add(newClause);
                 searchString = searchString.substring(endIndex).trim();
                                
@@ -1114,41 +1099,6 @@ public class StringSearchFacet extends Facet{
         }
         
         /**
-         * Removes bracket-delimited subclauses from a clause.
-         * 
-         * This is required for swapping of Solr proximity syntax into the correct clause in the
-         * event of nexted proximity searches
-         * 
-         * @param searchString
-         * @return
-         * @throws MismatchedBracketException 
-         */
-        
-        ArrayList<String> suckOutSubClauses(String searchString) throws MismatchedBracketException{
-           
-            String trimmedString = searchString.trim();//.replaceAll("~\\d{1,2}([^\\s\\d]+)?\\s*$", "");
-
-            if(Character.toString(trimmedString.charAt(0)).equals("(")){
-                
-                int endIndex = getIndexOfMatchingCloseBracket(trimmedString);
-                if(endIndex == -1) throw new MismatchedBracketException();
-                trimmedString =  trimmedString.substring(1, endIndex);
-            }
-            ArrayList<String> subclauses = new ArrayList<String>();
-            while(trimmedString.indexOf("(") != -1){
-                
-                Integer firstBracketIndex = trimmedString.indexOf("(");
-                Integer endBracketIndex = firstBracketIndex + getIndexOfMatchingCloseBracket(trimmedString.substring(firstBracketIndex));
-                endBracketIndex += 1;
-                String clause = trimmedString.substring(firstBracketIndex, endBracketIndex);
-                subclauses.add(clause);
-                trimmedString = trimmedString.substring(endBracketIndex).trim();
-                   
-            }
-            return subclauses;
-        }
-        
-        /**
          * Removes insignificant brackets - that is to say, those which surround an entire clause.
          * 
          * 
@@ -1183,7 +1133,7 @@ public class StringSearchFacet extends Facet{
          */
         Integer getMatchingIndex(String startChar, String remainder){
             
-            if("(".equals(startChar)) return getIndexOfMatchingCloseBracket(remainder);
+            //if("(".equals(startChar)) return getIndexOfMatchingCloseBracket(remainder);
             if("\"".equals(startChar) || "'".equals(startChar)){
                 
                 int endIndex = remainder.indexOf(startChar, 1);
@@ -1290,13 +1240,27 @@ public class StringSearchFacet extends Facet{
         
         SearchClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws InsufficientSpecificityException, InternalQueryException, MismatchedBracketException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
             
-            originalString = rs;
+            originalString = transcodeToUnicodeC(rs);
             target = tg;
             ignoreCaps = caps;
             ignoreMarks = marks;
             clauseComponents = hasSubComponents(rs) ? clauseComponents = CLAUSE_FACTORY.buildSearchClauses(rs, tg, caps, marks) : new ArrayList<SearchClause>();
             clauseRoles = new ArrayList<ClauseRole>();
             clauseComponents = assignClauseRoles(clauseComponents);
+            
+        }
+        
+        final String transcodeToUnicodeC(String dString){
+            
+            try{
+                
+                TransCoder tc = new TransCoder();
+                tc.setParser("Unicode");
+                tc.setConverter("UnicodeC");
+                return tc.getString(dString);
+            } catch(Exception e){ return dString; }
+            
+            
             
         }
         
@@ -1653,7 +1617,7 @@ public class StringSearchFacet extends Facet{
            SearchHandler handler = parseForSearchHandler(getAllClauseRoles());
            String queryPrefix = getQueryPrefix(handler, field);
            String queryBody = buildTransformedString();
-           queryBody = "(" + queryBody + ")";
+           if(!getAllClauseRoles().contains(ClauseRole.REGEX)) queryBody = "(" + queryBody + ")";
            sq.addFilterQuery(queryPrefix + queryBody);
            return sq;
            
@@ -1871,7 +1835,6 @@ public class StringSearchFacet extends Facet{
        SearchTarget getSearchTarget(){ return target; }
        Boolean getIgnoreCaps(){ return ignoreCaps; }
        Boolean getIgnoreMarks(){ return ignoreMarks; }
-       public String getTransformedString(){ return transformedString; }
         
     }
     
