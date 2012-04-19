@@ -548,15 +548,15 @@
                              exclude)]
         (if (nil? exclusion)
           ( .add @html (list (str "file:" (get-filename (last item)))
-            (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
-            (list "related" (apply str (interpose " " (for [x related] (last x)))))
-            (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
-            (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
-            (list "isPartOf" (apply str (interpose " " all-urls)))   
-            (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
-            (list "citationForm" (apply str (interpose "" (for [x citations](last x)))))  
-        	(list "selfUrl" url)     
-            (list "server" nserver)))
+                             (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
+                             (list "related" (apply str (interpose " " (for [x related] (last x)))))
+                             (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
+                             (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
+                             (list "isPartOf" (apply str (interpose " " all-urls)))   
+                             (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
+                             (list "citationForm" (apply str (interpose "" (for [x citations](last x)))))  
+                             (list "selfUrl" (last item))     
+                             (list "server" nserver)))
           (do (.add @links (list (get-html-filename 
                                    (.toString 
                                      (last 
