@@ -5,8 +5,10 @@ import info.papyri.dispatch.LanguageCode;
 import info.papyri.dispatch.browse.facet.StringSearchFacet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -96,39 +98,40 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       ArrayList<Pattern> hilites = new ArrayList<Pattern>();
       Iterator<SearchClause> stit = searchClauses.iterator();
       while(stit.hasNext()){
-      try{
-          SearchClause searchClause = stit.next();
-          String transformedString = searchClause.buildTransformedString();
-          if(transformedString == null) continue;
-          if("".equals(transformedString)) continue;
-          if(searchClause.getAllClauseRoles().contains(ClauseRole.REGEX)){
-              
-              String trimmedRegex = trimRegex(transformedString);
-              trimmedRegex = util.substituteDiacritics(trimmedRegex);
-              Pattern[] regexPatterns = matchRegexToDocument(trimmedRegex);
-              hilites.addAll(Arrays.asList(regexPatterns));
-                        
-          }
-          else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
-              
-              transformedString = transformedString.replaceAll("(\\d+)w", "");
-              hilites.addAll(Arrays.asList(util.getPhraseHighlightPatterns(transformedString)));
-              
-          }
-          else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
-              
-              Pattern[] patterns = util.getSubstringHighlightPatterns(transformedString);
-              hilites.addAll(Arrays.asList(patterns));
-                        
-          }   
-          else{
-                         
-              Pattern[] patterns = util.getPhraseHighlightPatterns(transformedString);
-              hilites.addAll(Arrays.asList(patterns));
-              
-          }
           
-      }catch(Exception e){}
+          try{
+              SearchClause searchClause = stit.next();
+              String transformedString = searchClause.buildTransformedString();
+              if(transformedString == null) continue;
+              if("".equals(transformedString)) continue;
+              if(searchClause.getAllClauseRoles().contains(ClauseRole.REGEX)){
+
+                  String trimmedRegex = trimRegex(transformedString);
+                  trimmedRegex = util.substituteDiacritics(trimmedRegex);
+                  Pattern[] regexPatterns = matchRegexToDocument(trimmedRegex);
+                  hilites.addAll(Arrays.asList(regexPatterns));
+
+              }
+              else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
+
+                  transformedString = transformedString.replaceAll("(\\d+)w", "");
+                  hilites.addAll(Arrays.asList(util.getPhraseHighlightPatterns(transformedString)));
+
+              }
+              else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
+
+                  Pattern[] patterns = util.getSubstringHighlightPatterns(transformedString);
+                  hilites.addAll(Arrays.asList(patterns));
+
+              }   
+              else{
+
+                  Pattern[] patterns = util.getPhraseHighlightPatterns(transformedString);
+                  hilites.addAll(Arrays.asList(patterns));
+
+              }
+
+          }catch(Exception e){}
       }
       Pattern[] patterns = new Pattern[hilites.size()];
       return hilites.toArray(patterns);
@@ -237,18 +240,23 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                       while(hwit.hasNext()){
 
                           String highlightWord = hwit.next();
-                          hilite.append(buildRegexHighlightString(highlightWord));
+                          highlightWord = buildRegexHighlightString(highlightWord);
+                          try{ highlightWord = URLEncoder.encode(highlightWord, "UTF-8");} 
+                          catch(UnsupportedEncodingException uee){}
+                          hilite.append(highlightWord);
 
 
                       }
 
                   }
-                 else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
+                  else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
                       
                       String[] termbits = term.split(" ");
                       for(int i = 0; i < termbits.length; i++){
                           
                           String termbit = termbits[i];
+                          try{ termbit = URLEncoder.encode(termbit, "UTF-8");} 
+                          catch(UnsupportedEncodingException uee){}
                           if(!termbit.matches("\\d+w")){
                               
                               hilite.append(StringSearchFacet.SearchType.PHRASE.name());
@@ -265,6 +273,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
                       hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
                       hilite.append(":(");
+                      try{ term = URLEncoder.encode(term, "UTF-8"); } 
+                      catch (UnsupportedEncodingException uee){}
                       hilite.append(term);   
                       hilite.append(")");
 
@@ -272,6 +282,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
                       hilite.append(StringSearchFacet.SearchType.PHRASE.name());
                       hilite.append(":(");
+                      try{ term = URLEncoder.encode(term, "UTF-8"); } 
+                      catch (UnsupportedEncodingException uee){}
                       hilite.append(term);
                       hilite.append(")");
 
