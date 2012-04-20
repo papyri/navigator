@@ -28,6 +28,8 @@ $(document).ready(
 		hic.reqd_on = {};
 		hic.reqd_off = {};
 		hic.selectedRadios = [];
+		hic.startDateSet = false;
+		hic.endDateSet = false;
 
 		// 'Search Type' is really a proxy for setting the fields to be searched
 		// and the string transformations to use in search. Certain combinations
@@ -218,14 +220,14 @@ $(document).ready(
 					val = fel.getAttribute("value");
 
 				}
-				val = val.replace(/#/g, "^");
 				val = val.replace(/\s*(HGV|DDBDP):\s*/, "");
 				val = val.replace(/\s*\(\d+\)\s*$/, "");
-				if(!params[name]){
+				if(!params[name] || params[name] == val){
 
 					params[name] = val;
 
-				} else{
+				} 
+				else{
 
 					var startVal = params[name];
 					if($.isArray(startVal)){
@@ -234,7 +236,7 @@ $(document).ready(
 
 					}
 					else{
-
+				
 						var vals = new Array();
 						vals.push(startVal);
 						vals.push(val);
@@ -275,7 +277,8 @@ $(document).ready(
 	    	var date_selector = "#" + date_wrapper_name + " input";
 	    	var datefield = $(date_selector);
 	    	var selected_date = datefield.val();
-	    	if(selected_date == "") return;
+	    	
+	    	if(selected_date == "" || !hic.dateIsSignificant(date_wrapper_name)) return;
 	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");	// trim count
 	    	var era_finder = new RegExp(/\s*(B?CE)$/);
 	    	var era = "";
@@ -301,7 +304,7 @@ $(document).ready(
 
 	    	// date mode selector
 			var datemode = $("input:radio[name='DATE_MODE']:checked");
-			if(datemode.length > 0 && $.inArray(datemode, filteredels) == -1) filteredels.push(datemode);
+			if(datemode.length > 0) filteredels.push(datemode);
 	    	var date_el_name = date_wrapper_name.match("start") ? "DATE_START_TEXT" : "DATE_END_TEXT";
 	    	var era_el_name = date_wrapper_name.match("start") ? "DATE_START_ERA" : "DATE_END_ERA";
 	    	var date_el = $("<input type=\"text\" name=\"" + date_el_name + "\"></input>");
@@ -312,6 +315,44 @@ $(document).ready(
 	    	era_el.val(era);
 	    	filteredels.push(era_el);
 
+	    }
+	    
+	    hic.dateIsSignificant = function(date_name){
+	    
+	    	if(date_name == "date-start-selector") return hic.startDateSignificant();
+	    	return hic.endDateSignificant();
+	    
+	    
+	    }
+	    
+	    hic.startDatePreviouslySelected = function(){
+	    
+	    	var startdates = $("#previous-values .constraint-date_start_text");
+	    	if(startdates.length > 0) return true;
+	    	return false;
+	    
+	    }
+	    
+	    hic.endDatePreviouslySelected = function(){
+	    
+	    	var enddates = $("#previous-values .constraint-date_end_text");
+	    	if(enddates.length > 0) return true;
+	    	return false;	    
+	    
+	    }
+	    
+	    hic.startDateSignificant = function(){
+	    
+	    	if(hic.startDatePreviouslySelected()) return true;
+	    	return hic.startDateSet;
+	    
+	    }
+	    
+	    hic.endDateSignificant = function(){
+	    
+	    	if(hic.endDatePreviouslySelected()) return true;
+	    	return hic.endDateSet;
+	    
 	    }
 
 	    hic.buildTextSearchString = function(){
@@ -748,7 +789,87 @@ $(document).ready(
 			button.css("outline-style", $(this).css("outline-style"));		
 
 		});
+		
+		$("input[name=DATE_START]").focus(function(evt){
+			
+			hic.startDateSet = true;
+			$(this).unbind("focus");
+		
+		});
+		
+		$("input[name=DATE_START]").click(function(evt){
+			
+			$("input:radio[name=after-era]").removeAttr("disabled");
+		
+		});
 
+		$("input[name=DATE_END]").click(function(evt){
+			
+			$("input:radio[name=before-era]").removeAttr("disabled");
+
+		});
+		
+		$("input[name=DATE_START]").blur(function(evt){
+			
+			var val = $(this).val();
+			if(val == "" || val == "default") $("input:radio[name=after-era]").attr("disabled", "");
+
+		});
+
+		$("input[name=DATE_END]").blur(function(evt){
+			
+			var val = $(this).val();
+			if(val == "" || val == "default") $("input:radio[name=before-era]").attr("disabled", "");
+		
+		});
+		
+
+		$("input[name=DATE_END]").focus(function(evt){
+			
+			hic.endDateSet = true;
+			$(this).unbind("focus");
+		
+		});
+		
+		$("input:radio[name=after-era]").change(function(evt){
+		
+			if($("input[name=DATE_START]").val() != "default" && $("input[name=DATE_START]").val() != "Unknown"){
+			
+				hic.startDateSet = true;
+				$(this).unbind("change");
+				
+			}
+			
+		});
+		
+	    $("input:radio[name=before-era]").change(function(evt){
+		
+			if($("input[name=DATE_END]").val() != "default" && $("input[name=DATE_END]").val() != "Unknown"){
+			
+				hic.endDateSet = true;
+				$(this).unbind("change");
+				
+			}
+			
+		});
+		
+		$("input:radio[name=DATE_MODE]").change(function(evt){
+		
+			if($("input[name=DATE_START]").val() != "default" && $("input[name=DATE_START]").val() != "Unknown"){
+			
+				hic.startDateSet = true;
+				$(this).unbind("change");
+				
+			}		
+			if($("input[name=DATE_END]").val() != "default" && $("input[name=DATE_END]").val() != "Unknown"){	
+			
+				hic.endDateSet = true;
+				$(this).unbind("change");
+				
+			}		
+			
+		
+		});
 
 	}
 
