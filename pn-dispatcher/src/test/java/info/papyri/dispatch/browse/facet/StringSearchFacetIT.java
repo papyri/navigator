@@ -165,7 +165,7 @@ public class StringSearchFacetIT extends TestCase {
             // regex, no marks
             String test6 = "REGEX κ.ι\\s";
             StringSearchFacet.SubClause clause6 = testInstance.new SubClause(test6, t, false, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_id\"}(^.*κ.ι\\s.*$)", URLDecoder.decode(clause6.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_id\"}^.*κ.ι\\s.*$", URLDecoder.decode(clause6.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // proximity, words unit, no caps
             String test7 = "(ΚἈΙ? THEN ΟΎΚ)~8words";
@@ -175,7 +175,7 @@ public class StringSearchFacetIT extends TestCase {
             // proximity, chars unit, no caps or marks
             String test8 = "(ΚἈ? NEAR ΟΎΚ)~8chars";
             StringSearchFacet.SubClause clause8 = testInstance.new SubClause(test8, t, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*(ουκ.{1,8}κα.|κα..{1,8}ουκ).*$)", URLDecoder.decode(clause8.buildQuery(new SolrQuery()).toString() ,"UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(ουκ.{1,8}κα.|κα..{1,8}ουκ).*$", URLDecoder.decode(clause8.buildQuery(new SolrQuery()).toString() ,"UTF-8"));
   
             // lexical 
             String test9 = "LEX λύω";
@@ -186,15 +186,15 @@ public class StringSearchFacetIT extends TestCase {
             // proximity with leading wildcards
             String test10 = "(*ιοσ* THEN λογ*)~2words";
             StringSearchFacet.SubClause clause10 = testInstance.new SubClause(test10, t, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*\\b\\p{L}+ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,2}λογ\\p{L}+\\b.*$)", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*\\b\\p{L}+ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,2}λογ\\p{L}+\\b.*$", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             String test11 = "(?ιοσ* THEN *λογ?)~5words";
             StringSearchFacet.SubClause clause11 = testInstance.new SubClause(test11, t, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}+λογ\\p{L}\\b.*$)", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}+λογ\\p{L}\\b.*$", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), "UTF-8"));
            
             String test12 = "(?ιοσ* NEAR *λογ?)~5words";
             StringSearchFacet.SubClause clause12 = testInstance.new SubClause(test12, t, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}(^.*(\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}+λογ\\p{L}\\b|\\b\\p{L}+λογ\\p{L}\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}ιοσ\\p{L}+\\b).*$)", URLDecoder.decode(clause12.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}+λογ\\p{L}\\b|\\b\\p{L}+λογ\\p{L}\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}ιοσ\\p{L}+\\b).*$", URLDecoder.decode(clause12.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // metadata search
             StringSearchFacet.SearchTerm clause13 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.METADATA, false, false);
