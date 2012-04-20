@@ -1660,7 +1660,7 @@ public class StringSearchFacet extends Facet{
            
            StringBuilder dv = new StringBuilder(procString);
            dv.append("<br/>");
-           if(parseForSearchType() == SearchType.PROXIMITY){
+           if(parseForSearchType() == SearchType.PROXIMITY || (parseForSearchType() == SearchType.REGEX && !getProximityDisplayString().equals(""))){
             
                 dv.append("Within: ");
                 dv.append(getProximityDisplayString());
@@ -1690,8 +1690,27 @@ public class StringSearchFacet extends Facet{
            
            String orig = this.getOriginalString();
            if(orig.indexOf("~") == -1 || orig.indexOf("~") == orig.length() - 1) return "";
-           String proxBit = orig.substring(orig.lastIndexOf("~") + 1);
-           proxBit = proxBit.replaceFirst("(\\d+)(\\w+)", "$1 $2");
+           String proxBit = orig.substring(orig.lastIndexOf("~") + 1).trim();
+           Pattern pattern = Pattern.compile("^(\\d+)(\\w+)$");
+           Matcher matcher = pattern.matcher(proxBit);
+           try{
+              
+               if(matcher.matches()){
+              
+                   proxBit = proxBit;
+                   String num = matcher.group(1);
+                   String unit = matcher.group(2);
+                    unit = Integer.valueOf(num) > 1 ? unit : String.valueOf(unit.charAt(unit.length() - 1)).equals("s") ? unit.substring(0, unit.length() - 1): unit;
+                    proxBit = num + " " + unit;
+               
+               }
+
+           }
+           catch(Exception e){ 
+               
+               proxBit = proxBit.replaceFirst("(\\d+)(\\w+)", "$1 $2"); 
+           
+           }
            return proxBit;
            
        }
