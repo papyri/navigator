@@ -2211,8 +2211,8 @@ public class StringSearchFacet extends Facet{
             String numChars = charProxMatcher.group(1);
             String operator = charProxMatcher.group(2);
             String distRegex = ".{1," + numChars + "}";
-            prevTerm = prevTerm.replaceAll("\\^", "\\\\b");
-            nextTerm = nextTerm.replaceAll("\\^", "\\\\b");
+            prevTerm = prevTerm.replaceAll("#", "\\\\b");
+            nextTerm = nextTerm.replaceAll("#", "\\\\b");
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
             if(operator.equals("w")) return regex;
             String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
@@ -2243,8 +2243,8 @@ public class StringSearchFacet extends Facet{
             Integer numWords = Integer.valueOf(wordProx.substring(0, wordProx.length() - 1));
             String operator = wordProx.substring(wordProx.length() - 1).equals("n") ? "n" : "w";
             String distRegex = "(\\p{L}+\\s){0," + numWords + "}";
-            prevTerm = prevTerm.replaceAll("\\^", "\\\\b");
-            nextTerm = nextTerm.replaceAll("\\^", "\\\\b");
+            prevTerm = prevTerm.replaceAll("#", "\\\\b");
+            nextTerm = nextTerm.replaceAll("#", "\\\\b");
             String regex = prevTerm.trim() + "\\s" + distRegex + nextTerm.trim();
             if(operator.equals("w")) return regex;
             String revRegex = nextTerm.trim() + "\\s" + distRegex + prevTerm.trim();
@@ -2458,8 +2458,6 @@ public class StringSearchFacet extends Facet{
                 transformed = anchorRegex(transformed);
                 return transformed;
             }
-            transformed = transformed.replaceAll("#", "^");
-            transformed = transformed.replaceAll("\\^", "\\\\^");    
             transformed = transformed.trim();
             transformedString = transformed;
             return transformed;
@@ -2555,7 +2553,7 @@ public class StringSearchFacet extends Facet{
                Set<String> formSet = new HashSet<String>();
                if (forms.size() > 0) {
                   for (int i = 0; i < forms.size(); i++) {
-                    formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
+                    formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_#]", "").toLowerCase());
                   }
                  declinedForm = FileUtils.interpose(formSet, " OR ");
 

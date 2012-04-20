@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -60,7 +61,7 @@ public class Reader extends HttpServlet {
       if (page.contains("current") && (page.contains("-citations-") || page.contains("index.html"))) {
         response.sendError(HttpServletResponse.SC_GONE);
       } else if (page.endsWith(".html")) {
-        if (page.contains("ddb/html") || page.contains("aggregated/html")) {
+        if (page.contains("ddb/html") || page.contains("aggrega     ted/html")) {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         } else if (page.contains("hgvmeta")) {
@@ -132,6 +133,7 @@ public class Reader extends HttpServlet {
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
     throws ServletException, IOException {
     PrintWriter out = response.getWriter();
+    q = URLDecoder.decode(q,"UTF-8");
     if (q.contains("transcription_l")) {
       try {
         StringBuilder query = new StringBuilder();

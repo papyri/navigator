@@ -6,11 +6,9 @@ import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm;
 import info.papyri.dispatch.browse.facet.customexceptions.MalformedProximitySearchException;
 import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import junit.framework.TestCase;
-import org.apache.solr.client.solrj.SolrQuery;
 
 
 
@@ -118,6 +116,7 @@ public class StringSearchFacetTest extends TestCase {
             mockParams.clear();
 
             mockParams.put("STRING6", new String[]{"(και AND ουκ)¤(\"ο στρατηγος\" THEN \"ο καισαροσ\")~5words¤(αι# OR #ου)¤(νερ NEAR τι)~10chars¤(LEX λυω)"});
+
             mockParams.put("target6", new String[]{"TEXT"});
             mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "6", new String[]{"on"});
             configs = testInstance.pullApartParams(mockParams);
@@ -204,14 +203,7 @@ public class StringSearchFacetTest extends TestCase {
             String prox6 = "(kai THEN (kai OR ouk))~17words";
             String test6 = "(kai 17w (kai OR ouk))";
             assertEquals(test6, s.swapInProxperators(prox6));
-            
-     /* 
-             // TODO: Currently working - but perhaps not necessary to support nested queries in this way. 
-             //  internal prox searches dealt with correctly
-            String prox7 = "(kai THEN (kai THEN ouk)~10chars)~15words";
-            String test7 = "(kai 15w (kai THEN ouk)~10chars)";
-            assertEquals(test7, s.swapInProxperators(prox7));
-     */       
+                 
             // absent metrics default to one word
             String prox8 = "(kai THEN ouk)";
             String test8 = "(kai 1w ouk)";
@@ -283,14 +275,6 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals("\"kai ouk\"", oukClause.getOriginalString());
             assertTrue(oukClause instanceof StringSearchFacet.SearchTerm);
 
-            // bracket-delimited terms resolves as subclauses
-            String search5 = "(kai ouk) (eleutheria kaisaros)";
-            ArrayList<StringSearchFacet.SearchClause> clauses4 = f.buildSearchClauses(search5, t, caps, marks);
-            assertEquals(2, clauses4.size());
-            StringSearchFacet.SearchClause bracket1 = clauses4.get(0);
-            assertEquals("(kai ouk)", bracket1.getOriginalString());
-            assertTrue(bracket1 instanceof StringSearchFacet.SubClause);
-
             // whitespace shouldn't make a difference
             String search6 = "kai     AND  ouk";
             ArrayList<StringSearchFacet.SearchClause> clauses5 = f.buildSearchClauses(search6, t, caps, marks);
@@ -298,32 +282,7 @@ public class StringSearchFacetTest extends TestCase {
             StringSearchFacet.SearchClause andClause = clauses5.get(1);
             assertEquals("AND", andClause.getOriginalString());
             assertTrue(andClause instanceof StringSearchFacet.SearchTerm);
-/*
-            // nested brackets dealt with recursively
-             * TODO: functioning but relevant methods may be removed for code simplification
-            String search7 = "(kai AND (ouk THEN (LEX luw)))";
-            ArrayList<StringSearchFacet.SearchClause> clauses6 = f.buildSearchClauses(search7, t, caps, marks);
-            assertEquals(3, clauses6.size());
-            StringSearchFacet.SearchClause clauses7 = clauses6.get(2);
-            assertEquals(3, clauses7.getClauseComponents().size());
-            assertTrue(clauses7.getClauseComponents().get(2) instanceof StringSearchFacet.SubClause);
-            StringSearchFacet.SearchClause lemClause = clauses7.getClauseComponents().get(2);
-            assertTrue(lemClause instanceof StringSearchFacet.SubClause);
-            assertEquals(2, lemClause.getClauseComponents().size());
-            StringSearchFacet.SearchClause lemWord = lemClause.getClauseComponents().get(0);
-            assertEquals("LEX", lemWord.getOriginalString());
-            StringSearchFacet.SearchClause luwWord = lemClause.getClauseComponents().get(1);
-            assertEquals("luw", luwWord.getOriginalString());
-            
-            // deal correctly with recursive proximity searches
-            String search8 = "(kai AND (ouk THEN (luw THEN strathgos)~6words)~11chars)";
-            ArrayList<StringSearchFacet.SearchClause> clauses8 = f.buildSearchClauses(search8, t, caps, marks);
-            assertEquals(3, clauses8.size());
-            StringSearchFacet.SearchClause clauses9 = clauses8.get(2);
-            assertEquals("(ouk THEN (luw THEN strathgos)~6words)~11chars", clauses9.getOriginalString());
-            StringSearchFacet.SearchClause clauses10 = clauses9.getClauseComponents().get(2);
-            assertEquals("(luw THEN strathgos)~6words", clauses10.getOriginalString());
- */           
+         
         
         } catch(StringSearchParsingException sspe){
             
@@ -470,18 +429,7 @@ public class StringSearchFacetTest extends TestCase {
             StringSearchFacet.SearchClause lemLuwClause = subclauses8.get(3);
             assertEquals(2, lemLuwClause.getClauseRoles().size());
             assertTrue(lemLuwClause.getClauseRoles().contains(StringSearchFacet.ClauseRole.LEMMA));
-            assertTrue(lemLuwClause.getClauseRoles().contains(StringSearchFacet.ClauseRole.END_PROX));
-
-            // nested structures receive roles appropriately
-            StringSearchFacet.SubClause term9 = testInstance.new SubClause("kaisaros OR (nero AND tiberius)", t, caps, marks);
-            StringSearchFacet.SearchClause orClause = term9.getClauseComponents().get(2);
-            assertEquals(StringSearchFacet.ClauseRole.OR, orClause.getClauseRoles().get(0));
-            StringSearchFacet.SearchClause tibClause = orClause.getClauseComponents().get(2);
-            assertEquals(1, tibClause.getClauseRoles().size());
-            assertTrue(tibClause.getClauseRoles().contains(StringSearchFacet.ClauseRole.AND));
-            
-            // incompatibilities?
-            
+            assertTrue(lemLuwClause.getClauseRoles().contains(StringSearchFacet.ClauseRole.END_PROX));            
         
         }
         catch(StringSearchParsingException sspe){
@@ -742,7 +690,29 @@ public class StringSearchFacetTest extends TestCase {
         
     }
     
-
+    public void testTranscoder(){
+        
+        try{
+            
+            String test1 = "εῖ";
+            StringSearchFacet.SearchTerm testTerm = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, true);
+            assertEquals(test1, testTerm.transcodeToUnicodeC(test1));
+            
+            String test2 = "ει̃";
+            StringSearchFacet.SearchTerm testTerm2 = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, true);
+            assertEquals(test1, testTerm2.transcodeToUnicodeC(test2));
+            
+        }
+        catch(Exception e){
+            
+            fail("Exception erroneously thrown instantiating testTerm in testTrancoder: " + e.getMessage());
+            
+            
+        }
+        
+        
+        
+    }
     
     
 }
