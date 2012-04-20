@@ -234,6 +234,11 @@
                       <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
                     </div>
                   </xsl:if>
+                  <xsl:if test="$apis and not($ddbdp or $hgv)">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI:</span>
                     <span id="canonical-uri-value"><xsl:value-of select="$selfUrl"></xsl:value-of></span>
