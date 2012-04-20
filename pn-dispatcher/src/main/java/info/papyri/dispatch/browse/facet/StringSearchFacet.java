@@ -1660,11 +1660,11 @@ public class StringSearchFacet extends Facet{
            
            StringBuilder dv = new StringBuilder(procString);
            dv.append("<br/>");
-            if(parseForSearchType() == SearchType.PROXIMITY){
+           if(parseForSearchType() == SearchType.PROXIMITY || (parseForSearchType() == SearchType.REGEX && !getProximityDisplayString().equals(""))){
             
-            dv.append("Within: ");
-            dv.append(getProximityDisplayString());
-            dv.append("<br/>");
+                dv.append("Within: ");
+                dv.append(getProximityDisplayString());
+                dv.append("<br/>");
             
             }
             dv.append("Target: ");
@@ -1690,8 +1690,27 @@ public class StringSearchFacet extends Facet{
            
            String orig = this.getOriginalString();
            if(orig.indexOf("~") == -1 || orig.indexOf("~") == orig.length() - 1) return "";
-           String proxBit = orig.substring(orig.lastIndexOf("~") + 1);
-           proxBit = proxBit.replaceFirst("(\\d+)(\\w+)", "$1 $2");
+           String proxBit = orig.substring(orig.lastIndexOf("~") + 1).trim();
+           Pattern pattern = Pattern.compile("^(\\d+)(\\w+)$");
+           Matcher matcher = pattern.matcher(proxBit);
+           try{
+              
+               if(matcher.matches()){
+              
+                   proxBit = proxBit;
+                   String num = matcher.group(1);
+                   String unit = matcher.group(2);
+                    unit = Integer.valueOf(num) > 1 ? unit : String.valueOf(unit.charAt(unit.length() - 1)).equals("s") ? unit.substring(0, unit.length() - 1): unit;
+                    proxBit = num + " " + unit;
+               
+               }
+
+           }
+           catch(Exception e){ 
+               
+               proxBit = proxBit.replaceFirst("(\\d+)(\\w+)", "$1 $2"); 
+           
+           }
            return proxBit;
            
        }
@@ -2211,8 +2230,8 @@ public class StringSearchFacet extends Facet{
             String numChars = charProxMatcher.group(1);
             String operator = charProxMatcher.group(2);
             String distRegex = ".{1," + numChars + "}";
-            prevTerm = prevTerm.replaceAll("\\^", "\\\\b");
-            nextTerm = nextTerm.replaceAll("\\^", "\\\\b");
+            prevTerm = prevTerm.replaceAll("#", "\\\\b");
+            nextTerm = nextTerm.replaceAll("#", "\\\\b");
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
             if(operator.equals("w")) return regex;
             String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
@@ -2243,8 +2262,8 @@ public class StringSearchFacet extends Facet{
             Integer numWords = Integer.valueOf(wordProx.substring(0, wordProx.length() - 1));
             String operator = wordProx.substring(wordProx.length() - 1).equals("n") ? "n" : "w";
             String distRegex = "(\\p{L}+\\s){0," + numWords + "}";
-            prevTerm = prevTerm.replaceAll("\\^", "\\\\b");
-            nextTerm = nextTerm.replaceAll("\\^", "\\\\b");
+            prevTerm = prevTerm.replaceAll("#", "\\\\b");
+            nextTerm = nextTerm.replaceAll("#", "\\\\b");
             String regex = prevTerm.trim() + "\\s" + distRegex + nextTerm.trim();
             if(operator.equals("w")) return regex;
             String revRegex = nextTerm.trim() + "\\s" + distRegex + prevTerm.trim();
@@ -2458,8 +2477,6 @@ public class StringSearchFacet extends Facet{
                 transformed = anchorRegex(transformed);
                 return transformed;
             }
-            transformed = transformed.replaceAll("#", "^");
-            transformed = transformed.replaceAll("\\^", "\\\\^");    
             transformed = transformed.trim();
             transformedString = transformed;
             return transformed;
@@ -2555,7 +2572,7 @@ public class StringSearchFacet extends Facet{
                Set<String> formSet = new HashSet<String>();
                if (forms.size() > 0) {
                   for (int i = 0; i < forms.size(); i++) {
-                    formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
+                    formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_#]", "").toLowerCase());
                   }
                  declinedForm = FileUtils.interpose(formSet, " OR ");
 

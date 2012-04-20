@@ -6,7 +6,7 @@ import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -450,7 +450,7 @@ public class FileUtils {
 
 
     public Pattern[] getPatterns(String query) {
-      String q = query.replace("*", "£").replace("?", "#");
+      String q = query.replace("*", "£").replace("?", "¥");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
       QueryLexer ql = new QueryLexer(a);
       CommonTokenStream tokens = new CommonTokenStream(ql);
@@ -464,15 +464,15 @@ public class FileUtils {
       }
       Pattern[] patterns = new Pattern[find.size()];
       for (int i = 0; i < find.size(); i++) {
-        if (query.contains("^") || query.contains("ngram")) {
+        if (query.contains("#") || query.contains("ngram")) {
           patterns[i] = Pattern.compile(find.get(i).toLowerCase()
-                .replaceAll("([^ ^])", sigla + "$1" + sigla)
-                .replace("^ ^", "\\s+")
-                .replace("^", "(\\b)")
+                .replaceAll("([^ #])", sigla + "$1" + sigla)
+                .replace("# #", "\\s+")
+                .replace("#", "(\\b)")
                 .replaceAll("\\s", "\\\\s+")
-                .replaceAll("^\\^", "(\\s|^)")
+                .replaceAll("^#", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
-                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
+                .replace("£", "\\S*").replace("¥", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
                 .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
@@ -485,9 +485,9 @@ public class FileUtils {
         } else {
           patterns[i] = Pattern.compile("\\b" + find.get(i).toLowerCase()
                 .replaceAll("(\\S)", sigla + "$1" + sigla)
-                .replaceAll("([^£#])$", "$1\\\\b")
+                .replaceAll("([^£¥])$", "$1\\\\b")
                 .replaceAll("\\s", "\\\\s+")
-                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "")
+                .replace("£", "\\S*").replace("¥", "\\S").replace("\"", "")
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
                 .replace("η", "(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
@@ -537,7 +537,7 @@ public class FileUtils {
     
    public List<String> getTokensFromQuery(String query){
        
-      String q = query.replace("*", "£").replace("?", "#");
+      String q = query.replace("*", "£").replace("?", "¥");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
       QueryLexer ql = new QueryLexer(a);
       CommonTokenStream tokens = new CommonTokenStream(ql);
@@ -571,14 +571,14 @@ public class FileUtils {
        
        String transformedString = rawString;
        transformedString = transformedString.toLowerCase()
-                .replaceAll("([^ ^])", sigla + "$1" + sigla)
-                .replace("^ ^", "\\s+")
-                .replace("^", "(\\b)")
+                .replaceAll("([^ #])", sigla + "$1" + sigla)
+                .replace("# #", "\\s+")
+                .replace("#", "(\\b)")
                 .replaceAll("\\s", "\\\\s+")
-                .replaceAll("^\\^", "(\\s|^)")
+                .replaceAll("^#", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
                 .replaceAll("°", "")
-                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "");      
+                .replaceAll("£", "\\S*").replaceAll("¥", "\\S").replace("\"", "");      
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
        return transformedString;
@@ -590,13 +590,13 @@ public class FileUtils {
        String transformedString = rawString;
        transformedString = transformedString.toLowerCase()
                 .replaceAll("(\\S)", sigla + "$1" + sigla)
-                .replace("^ ^", "\\s+")
-                .replace("^", "(\\b)")
+                .replace("^ #", "\\s+")
+                .replace("#", "(\\b)")
                 .replaceAll("\\s", "\\\\s+")
-                .replaceAll("^\\^", "(\\s|^)")
+                .replaceAll("^#", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
                 .replaceAll("°", "")
-                .replace("£", "\\S*").replace("#", "\\S").replace("\"", "");
+                .replace("£", "\\S*").replaceAll("¥", "\\S").replace("\"", "");
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
        transformedString = "(^|(?<=[\\s]))" + transformedString + "((?=[\\s])|$)";
@@ -607,7 +607,7 @@ public class FileUtils {
    public String substituteWildcards(String rawString){
        
       String transformedString = rawString.replaceAll("£", ".*");
-      transformedString = transformedString.replaceAll("#", ".");
+      transformedString = transformedString.replaceAll("¥", ".");
       return transformedString;
        
    }
@@ -641,7 +641,7 @@ public class FileUtils {
           else{
               
                patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1, qbit.length()))));
-            
+              
           }
           
       }

@@ -155,7 +155,7 @@ public class FileUtilsTest extends TestCase {
 
 
   public void testFindMatchesSubstringPhrase() {
-    String query = "\"\\^και\\^ \\^στρατηγ\"";
+    String query = "\"#και# #στρατηγ\"";
     String id = "http://papyri.info/ddbdp/bgu;14;2373";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
@@ -174,7 +174,7 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindMatchesSubstringPhraseWordBoundaries() {
-    String query = "transcription_ngram_ia:(\"μεν\\^ \\^κα\")";
+    String query = "transcription_ngram_ia:(\"μεν# #κα\")";
     String id = "http://papyri.info/ddbdp/bgu;1;110";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
@@ -315,7 +315,7 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindMatchesNot() {
-    String query = "\\^καισ NOT \\^καισαρ";
+    String query = "#καισ NOT #καισαρ";
     String id = "http://papyri.info/ddbdp/p.hamb;2;187";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
@@ -334,7 +334,7 @@ public class FileUtilsTest extends TestCase {
   }
 
   public void testFindNgram() {
-    String query = "transcription_ngram_ia:(\"μεν\\^ \\^κα\")";
+    String query = "transcription_ngram_ia:(\"μεν# #κα\")";
     String id = "http://papyri.info/ddbdp/bgu;3;923";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     List<String> expResult = new ArrayList<String>();
@@ -361,7 +361,7 @@ public class FileUtilsTest extends TestCase {
   }
   
   public void testNgramHighlightLineNo() {
-    String query = "transcription_ngram_ia:(\\^θρασω\\^)";
+    String query = "transcription_ngram_ia:(#θρασω#)";
     String id = "http://papyri.info/ddbdp/p.sakaon;;94";
     FileUtils instance = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
     String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
