@@ -393,7 +393,7 @@
   <xsl:function name="pi:get-word-start-boundary-char">
     <xsl:param name="token"></xsl:param>
     <xsl:variable name="no-boundary"></xsl:variable>
-    <xsl:variable name="boundary">^</xsl:variable>
+    <xsl:variable name="boundary">#</xsl:variable>
     <xsl:choose>
       <xsl:when test="substring($token, 1, 1) eq $abbreviation-marker"><xsl:sequence select="$no-boundary"></xsl:sequence></xsl:when>
       <xsl:otherwise><xsl:sequence select="$boundary"></xsl:sequence></xsl:otherwise> 
@@ -403,7 +403,7 @@
   <xsl:function name="pi:get-word-end-boundary-char">
     <xsl:param name="token"></xsl:param>
     <xsl:variable name="no-boundary"></xsl:variable>
-    <xsl:variable name="boundary">^</xsl:variable>
+    <xsl:variable name="boundary">#</xsl:variable>
     <xsl:choose>
       <xsl:when test="substring($token, string-length($token)) eq $abbreviation-marker"><xsl:sequence select="$no-boundary"></xsl:sequence></xsl:when>
       <xsl:otherwise><xsl:sequence select="$boundary"></xsl:sequence></xsl:otherwise> 
