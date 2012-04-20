@@ -1660,11 +1660,11 @@ public class StringSearchFacet extends Facet{
            
            StringBuilder dv = new StringBuilder(procString);
            dv.append("<br/>");
-            if(parseForSearchType() == SearchType.PROXIMITY){
+           if(parseForSearchType() == SearchType.PROXIMITY){
             
-            dv.append("Within: ");
-            dv.append(getProximityDisplayString());
-            dv.append("<br/>");
+                dv.append("Within: ");
+                dv.append(getProximityDisplayString());
+                dv.append("<br/>");
             
             }
             dv.append("Target: ");

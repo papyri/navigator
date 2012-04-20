@@ -50,7 +50,7 @@ function init() {
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
         + "select ?subject "
         + "from <rmi://localhost/papyri.info#pi> "
-        + "where { ?subject dc:references <http://papyri.info" + getPath().replace(/\/$/, "") + "/source>}")
+        + "where { ?subject dc:references <http://papyri.info" + getPath().replace(/\/jQuery/, "") + "/source>}")
         + "&format=json", function(data) {
             if (data.results.bindings.length > 0) {
                 jQuery("#controls").append('<div id="related" class="ui-widget-content ui-corner-all" style="margin-left:2em"><h4>related resources</h4></div>')
@@ -92,9 +92,9 @@ function getPath() {
  */
 function addLinearBrowseControls(){
 
-	var position = $(document).getUrlParam("p");
-	var total = $(document).getUrlParam("t");
-	var rows = $(document).getUrlParam("rows");
+	var position = jQuery(document).getUrlParam("p");
+	var total = jQuery(document).getUrlParam("t");
+	var rows = jQuery(document).getUrlParam("rows");
 	var qs = buildSolrQueryString();
 	querySolrServer(qs, position, total, rows, qs);
 	
@@ -115,7 +115,7 @@ function buildSolrQueryString(){
 	// get rid of values not used by Solr: t, d, and q (which is used only for highlighting)
 	querystring = querystring.replace(/[&?]t=\d+/, "");
 	querystring = querystring.replace(/[&?]p=\d+/, "");
-	var highlightstring = $(document).getUrlParam("q");
+	var highlightstring = jQuery(document).getUrlParam("q");
 	// but *some* value for q is required, so the 'select all' wildcard (*:*) is given
 	if(highlightstring == null || highlightstring == ""){
 	
@@ -139,7 +139,7 @@ function querySolrServer(query, position, total, rows, querystring){
 
 	var that = this;
 	var serverUrl = "http://" + location.host + "/solr/select/";
-	$.get(	serverUrl,
+	jQuery.get(	serverUrl,
 			query, 
 			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); }, 
 			"xml");
@@ -154,35 +154,35 @@ function querySolrServer(query, position, total, rows, querystring){
 
 function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 
-	var xml = $(xmldoc);
+	var xml = jQuery(xmldoc);
 	var prevRecord = (position == 0 && rows == 2) ? null : xml.find("doc")[0];
 	var nextRecord = (position == total && rows == 2) ? null : xml.find("doc")[xml.find("doc").length - 1];	
-	var htmlWrapper = $("<div id=\"linear-browse-wrapper\"></div>");
+	var htmlWrapper = jQuery("<div id=\"linear-browse-wrapper\"></div>");
 	addPrevRecordHTML(htmlWrapper, prevRecord, position, total, rows, querystring);
 	addBackToFacetBrowse(htmlWrapper)
 	addNextRecordHTML(htmlWrapper, nextRecord, position, total, rows, querystring);
-	var spacer = $("<div style='height: 1px; width: 100%; clear: both;'></div>");
-	$("#controls").before(htmlWrapper);
+	var spacer = jQuery("<div style='height: 1px; width: 100%; clear: both;'></div>");
+	jQuery("#controls").before(htmlWrapper);
 
 }
 
 function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = $("<div id=\"linear-previous-record\"></div>");
+	var arrowWrapper = jQuery("<div id=\"linear-previous-record\"></div>");
 	var msg = "<< Previous record";
 	if(record == null){
 	
-		var deadlink = $("<span class='deadlink'></span>");
+		var deadlink = jQuery("<span class='deadlink'></span>");
 		deadlink.text(msg);
 		arrowWrapper.append(deadlink);
 		
 	} 
 	else{
 	
-		var link = $("<a></a>");
+		var link = jQuery("<a></a>");
 		link.text(msg);
-		var id = $($(record).children()[0]).text().substring("http://papyri.info".length);
-		var title = $($(record).children()[1]).text();
+		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
+		var title = jQuery(jQuery(record).children()[1]).text();
 		var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
 		link.attr("title", title);
 		link.attr("href", href);
@@ -202,29 +202,29 @@ function addBackToFacetBrowse(wrapper){
 	var searchstring = getCookie("lbpersist");
 	if(searchstring == null) return;
 	var prevpageURL = window.location.protocol + "//" + window.location.host + "/search" + searchstring;
-	var linkwrapper = $("<div id='linear-back'></div>");
-	var link = $("<a href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");	
+	var linkwrapper = jQuery("<div id='linear-back'></div>");
+	var link = jQuery("<a href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");	
 	linkwrapper.append(link);
 	wrapper.append(linkwrapper);
 }
 
 function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = $("<div id=\"linear-next-record\"></div>");
+	var arrowWrapper = jQuery("<div id=\"linear-next-record\"></div>");
 	var msg = "Next record >>"
 	if(record == null){
 	
-		var deadlink = $("<span class='deadlink'></span>");
+		var deadlink = jQuery("<span class='deadlink'></span>");
 		deadlink.text(msg);
 		arrowWrapper.append(deadlink);
 	
 	}
 	else{
 	
-		var link = $("<a></a>");
+		var link = jQuery("<a></a>");
 		link.text(msg);
-		var id = $($(record).children()[0]).text().substring("http://papyri.info".length);
-		var title = $($(record).children()[1]).text();
+		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
+		var title = jQuery(jQuery(record).children()[1]).text();
 		var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
 		link.attr("title", title);
 		link.attr("href", href);
@@ -245,7 +245,7 @@ function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
 function buildSolrQueryLinkString(direction, querystring, position, total, rows){
 
-	var offset = $(document).getUrlParam("start") / 1;
+	var offset = jQuery(document).getUrlParam("start") / 1;
 	position = position / 1;
 	total = total / 1;
 	rows = rows / 1;
@@ -290,11 +290,11 @@ function buildSolrQueryLinkString(direction, querystring, position, total, rows)
 	querystring = querystring.replace(reOffset, "start=" + new_offset);
 	querystring = querystring.replace(reRows, "rows=" + new_rows);
 	querystring = querystring + "&p=" + new_position;
-	querystring = querystring + "&t=" + $(document).getUrlParam("t");
+	querystring = querystring + "&t=" + jQuery(document).getUrlParam("t");
 	querystring = querystring.replace(/[&]?q=\*:\*/, "");
-	if($(document).getUrlParam("q") != null && $(document).getUrlParam("q") != ""){
+	if(jQuery(document).getUrlParam("q") != null && jQuery(document).getUrlParam("q") != ""){
 	
-		querystring = querystring + "&q=" + $(document).getUrlParam("q");
+		querystring = querystring + "&q=" + jQuery(document).getUrlParam("q");
 	
 	}
 	return querystring;
@@ -322,10 +322,10 @@ jQuery.fn.extend({
 * If the desired param does not exist, null will be returned
 *
 * To get the document params:
-* @example value = $(document).getUrlParam("paramName");
+* @example value = jQuery(document).getUrlParam("paramName");
 * 
 * To get the params of a html-attribut (uses src attribute)
-* @example value = $('#imgLink').getUrlParam("paramName");
+* @example value = jQuery('#imgLink').getUrlParam("paramName");
 */ 
  getUrlParam: function(strParamName){
 	  strParamName = escape(unescape(strParamName));
@@ -333,7 +333,7 @@ jQuery.fn.extend({
 	  var returnVal = new Array();
 	  var qString = null;
 	  
-	  if ($(this).attr("nodeName")=="#document") {
+	  if (jQuery(this).attr("nodeName")=="#document") {
 	  	//document-handler
 		
 		if (window.location.search.search(strParamName) > -1 ){
@@ -341,16 +341,16 @@ jQuery.fn.extend({
 			qString = window.location.search.substr(1,window.location.search.length).split("&");
 		}
 			
-	  } else if ($(this).attr("src")!="undefined") {
+	  } else if (jQuery(this).attr("src")!="undefined") {
 	  	
-	  	var strHref = $(this).attr("src")
+	  	var strHref = jQuery(this).attr("src")
 	  	if ( strHref.indexOf("?") > -1 ){
 	    	var strQueryString = strHref.substr(strHref.indexOf("?")+1);
 	  		qString = strQueryString.split("&");
 	  	}
-	  } else if ($(this).attr("href")!="undefined") {
+	  } else if (jQuery(this).attr("href")!="undefined") {
 	  	
-	  	var strHref = $(this).attr("href")
+	  	var strHref = jQuery(this).attr("href")
 	  	if ( strHref.indexOf("?") > -1 ){
 	    	var strQueryString = strHref.substr(strHref.indexOf("?")+1);
 	  		qString = strQueryString.split("&");

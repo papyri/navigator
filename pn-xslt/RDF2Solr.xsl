@@ -943,6 +943,10 @@
   <xsl:template match="t:gap">
     <xsl:text> </xsl:text>
   </xsl:template>
+  
+  <xsl:template match="t:g">
+    <xsl:value-of select="@type"/>
+  </xsl:template>
 
   <xsl:template name="tpl-apparatus">
     <!-- An apparatus is only created if one of the following is true -->

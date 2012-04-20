@@ -277,7 +277,7 @@
                               <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
                               <xsl:when test="count(/t:TEI/t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]) &gt; 0">
                                 <xsl:for-each select="/t:TEI/t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]">
-                                  <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
+                                  <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:apply-templates/></li>
                                 </xsl:for-each>                                     
                               </xsl:when>
                               <xsl:otherwise>
@@ -326,7 +326,7 @@
                         <div class="translation data">
                           <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
                             [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
-                          <xsl:apply-templates select="t:p"/>
+                          <xsl:apply-templates />
                         </div>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
