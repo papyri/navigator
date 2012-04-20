@@ -577,7 +577,7 @@ public class FileUtils {
                 .replaceAll("\\s", "\\\\s+")
                 .replaceAll("^#", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
-                .replaceAll("°", "")
+                .replaceAll("°", "\\\\(")
                 .replaceAll("£", "\\S*").replaceAll("¥", "\\S").replace("\"", "");      
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
@@ -595,7 +595,7 @@ public class FileUtils {
                 .replaceAll("\\s", "\\\\s+")
                 .replaceAll("^#", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
-                .replaceAll("°", "")
+                .replaceAll("°", "\\\\(")
                 .replace("£", "\\S*").replaceAll("¥", "\\S").replace("\"", "");
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);

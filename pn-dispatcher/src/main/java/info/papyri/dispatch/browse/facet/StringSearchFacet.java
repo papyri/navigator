@@ -191,7 +191,7 @@ public class StringSearchFacet extends Facet{
         
     }
     
-    // the following series of regex patterns is given here as static members 
+    // the following regex patterns are declared as static members 
     // because of the relative expense of regex compilation and matching
     
     /**
@@ -267,6 +267,14 @@ public class StringSearchFacet extends Facet{
      */
             
     static Pattern WHITESPACE_DETECTOR = Pattern.compile("^.*\\s+.*$");
+    
+    /**
+     * Factory class responsible for converting the submitted search parameters into
+     * the relevant <code>SearchClause</code> objects.
+     * 
+     * @see SearchClauseFactory
+     * @see SearchClause
+     */
        
     SearchClauseFactory CLAUSE_FACTORY = new SearchClauseFactory();
     
@@ -538,7 +546,7 @@ public class StringSearchFacet extends Facet{
     /**
      * Parses the request for string-search parameters, uses these to create appropriate
      * <code>SearchClause</code> objects, and populates a <code>HashMap</code> with them,
-     * the keys of which are <code>Integer</code>s which allow the <code>SearchClause</code>s
+     * the keys of which are <code>Integer</code>s allowing the <code>SearchClause</code>s
      * to be retrieved in an ordered manner.
      * 
      * @param params
@@ -907,13 +915,9 @@ public class StringSearchFacet extends Facet{
      * Inner class responsible for parsing the search-strings as submitted to the servlet
      * into corresponding <code>SearchClause</code> objects.
      * 
-     * As matters stand this class is probably slightly too complex, designed to deal
-     * at laest partially with search strings more complicated than that strictly
-     * allowed by the interface. However, it forms a useful base to build upon.
-     * 
-     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause
-     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm
-     * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause
+     * @see SearchClause
+     * @see SearchTerm
+     * @see SubClause
      * 
      */
     
@@ -1003,9 +1007,9 @@ public class StringSearchFacet extends Facet{
          * proximity searches Solr does not directly support, however, the pseudo-Solr syntax generated 
          * will be further transformed into a regular expression.
          * 
-         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doProxTransform(java.util.ArrayList) 
-         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doCharsProxTransform(java.util.ArrayList, int) 
-         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doWordsProxTransform(java.util.ArrayList, int) 
+         * @see SubClause#doProxTransform(java.util.ArrayList) 
+         * @see SubClause#doCharsProxTransform(java.util.ArrayList, int) 
+         * @see SubClause#doWordsProxTransform(java.util.ArrayList, int) 
          * @param fullString
          * @return
          * @throws MalformedProximitySearchException
@@ -1249,6 +1253,14 @@ public class StringSearchFacet extends Facet{
             clauseComponents = assignClauseRoles(clauseComponents);
             
         }
+        
+        /**
+         * Converts text entered using combining diacritics (Unicode Normalization Form D) 
+         * to precomposed characters (norm form C)
+         * 
+         * @param dString
+         * @return 
+         */
         
         final String transcodeToUnicodeC(String dString){
             
