@@ -380,39 +380,6 @@ public class DateFacet extends Facet {
         
     }
     
-    private String getEraOptions(){
-        
-        // both selectors set to BCE by default
-        
-        // set both to BCE if end era is set to BCE and value is not default
-        // set both to CE if start era is set to CE and value is not 
-        
-        // disable if set to unknown
-        
-        String allOptions = "";
-        String startEra = terminusAfterWhich.getEra();
-        String endEra = terminusBeforeWhich.getEra();
-        Boolean startEraIsDefault = "".equals(terminusAfterWhich.getCurrentValue());
-        Boolean isUnknown = "Unknown".equals(terminusAfterWhich.getCurrentValue()) || "Unknown".equals(terminusBeforeWhich.getCurrentValue());
-        String selectedEra = !startEraIsDefault && "CE".equals(startEra) ? "CE" : "BCE";
-        Boolean disabled = (!startEraIsDefault && startEra.equals(endEra)) || isUnknown || "BCE".equals(endEra) || (!startEraIsDefault && "CE".equals(startEra));
-        
-        ArrayList<String> eras = new ArrayList<String>(Arrays.asList("BCE", "CE"));
-        
-        for(String era : eras){
-            
-            String tag = "<label id=\"" + era + "-label\">" + era  + "</label>";
-            tag += era.equals(selectedEra) && !isUnknown ? "<input type=\"radio\" name=\"era\" value=\"" + era + "\" checked" : "<input type=\"radio\" name=\"era\" value=\"" + era + "\"";
-            tag += disabled ? " disabled" : "";
-            tag += "/>";
-            allOptions += tag;
-            
-        }
-        
-        return allOptions;
-        
-    }
-
     @Override
     public ArrayList<String> getFacetConstraints(String facetParam){
         
@@ -1178,8 +1145,7 @@ public class DateFacet extends Facet {
             
             String allOptions = "";
             Boolean isUnknown = "Unknown".equals(currentValue) || "Unknown".equals(terminusBeforeWhich.getCurrentValue());
-            String selectedEra = (isUnknown || "".equals(currentValue) || Integer.valueOf(currentValue) <= 0)  ? "BCE" : "CE";
-            Boolean disabled = isUnknown;
+            String selectedEra = (isUnknown || "".equals(currentValue) || Integer.valueOf(currentValue) <= -1)  ? "BCE" : "CE";
         
             ArrayList<String> eras = new ArrayList<String>(Arrays.asList("BCE", "CE"));
         
@@ -1187,7 +1153,7 @@ public class DateFacet extends Facet {
             
                 String tag = "<label id=\"after-" + era + "-label\">" + era  + "</label>";
                 tag += "<input type=\"radio\" name=\"after-era\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ?  " checked" : "");
-                tag += disabled ? " disabled" : "";
+                tag += " disabled";
                 tag += "/>";
                 allOptions += tag;
             
@@ -1685,9 +1651,17 @@ public class DateFacet extends Facet {
             
             
             String allOptions = "";
+            String otherVal = terminusAfterWhich.getCurrentValue();
+            Boolean otherIsCE = false;
+            try{
+                
+                Integer otherAsInt = Integer.valueOf(otherVal);
+                if(otherAsInt > -1) otherIsCE = true;
+                
+            } catch(Exception e){}
             Boolean isUnknown = "Unknown".equals(currentValue) || "Unknown".equals(terminusAfterWhich.getCurrentValue());
-            String selectedEra = (isUnknown || "".equals(currentValue) || Integer.valueOf(currentValue) <= 0) ? "BCE" : "CE";
-            Boolean disabled = isUnknown;
+            String selectedEra = (isUnknown || "".equals(currentValue) || Integer.valueOf(currentValue) <= -1) ? "BCE" : "CE";
+            if(selectedEra.equals("BCE") && otherIsCE) selectedEra = "CE";
         
             ArrayList<String> eras = new ArrayList<String>(Arrays.asList("BCE", "CE"));
         
@@ -1695,7 +1669,7 @@ public class DateFacet extends Facet {
             
                 String tag = "<label id=\"before-" + era + "-label\">" + era  + "</label>";
                 tag += "<input type=\"radio\" name=\"before-era\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ? " checked" : "");
-                tag += disabled ? " disabled" : "";
+                tag += " disabled";
                 tag += "/>";
                 allOptions += tag;
             
