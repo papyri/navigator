@@ -567,6 +567,21 @@ public class FileUtils {
         
     }
    
+   public String stripOutDiacritcs(String rawString){
+       
+        String transformedString = rawString
+                .replace("(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)", "α")
+                .replace("(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)", "ε")
+                .replace("(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)", "η")
+                .replace("(ι|ί|ὶ|ἰ|ἱ|ἲ|ἳ|ἴ|ἵ|ἶ|ἷ|ῒ|ΐ|ῖ|ῗ)", "ι")
+                .replace("(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)", "ο")
+                .replace("(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)", "υ")
+                .replace("(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)", "ω")
+                .replace("(ρ|ῥ)", "ρ");                  
+        return transformedString;
+       
+   }
+   
    public String substituteForSubstringPatternMatch(String rawString){
        
        String transformedString = rawString;

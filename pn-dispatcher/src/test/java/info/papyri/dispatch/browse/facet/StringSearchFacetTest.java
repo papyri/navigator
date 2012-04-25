@@ -142,6 +142,17 @@ public class StringSearchFacetTest extends TestCase {
             ArrayList<StringSearchFacet.SearchClause> sevenConfig = configs.get(7);
             assertEquals(1, sevenConfig.size());
             StringSearchFacet.SearchClause regex = sevenConfig.get(0);
+            
+            mockParams.clear();
+            configs.clear();
+            mockParams.put("STRING8", new String[]{"([-kai]sar)"});
+            mockParams.put("target8", new String[]{"TEXT"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_CAPS.name().toLowerCase() + "8", new String[]{"on"});
+            mockParams.put(StringSearchFacet.SearchOption.NO_MARKS.name().toLowerCase() + "8", new String[]{"on"});
+            configs = testInstance.pullApartParams(mockParams);
+            ArrayList<StringSearchFacet.SearchClause> eightConfig = configs.get(8);
+            assertEquals(1, eightConfig.size());
+            StringSearchFacet.SearchClause lookbefore = eightConfig.get(0);
 
 
         }
@@ -178,13 +189,13 @@ public class StringSearchFacetTest extends TestCase {
             
             // search type THEN swapped in as 'w' and unit type 'words' eliminated
             String prox1 = "(kai THEN ouk)~15words";
-            String test1 = "(kai 15w ouk)"; 
+            String test1 = "kai 15w ouk"; 
             assertEquals(test1, s.swapInProxperators(prox1));
 
 
             // search type NEAR swapped in as 'n' and unit type 'chars' retained as 'c'
             String prox2 = "(kai NEAR ouk)~15chars";
-            String test2 = "(kai 15nc ouk)";
+            String test2 = "kai 15nc ouk";
             assertEquals(test2, s.swapInProxperators(prox2));
 
             // malformed unit defaults to 'words' (i.e. eliminated)
@@ -201,12 +212,12 @@ public class StringSearchFacetTest extends TestCase {
 
             // internal brackets dealt with correctly
             String prox6 = "(kai THEN (kai OR ouk))~17words";
-            String test6 = "(kai 17w (kai OR ouk))";
+            String test6 = "kai 17w (kai OR ouk)";
             assertEquals(test6, s.swapInProxperators(prox6));
                  
             // absent metrics default to one word
             String prox8 = "(kai THEN ouk)";
-            String test8 = "(kai 1w ouk)";
+            String test8 = "kai 1w ouk";
             assertEquals(test8, s.swapInProxperators(prox8));
         
         }
@@ -295,44 +306,6 @@ public class StringSearchFacetTest extends TestCase {
             
         }
         
-        // non-matching brackets cause MismatchedBracketException to be thrown
-        // TODO: will need to check for character-escaping?
-        
-        String search8 = "(kai and (ouk NOT ou)";
-        try{
-            
-            ArrayList<StringSearchFacet.SearchClause> clauses8 = f.buildSearchClauses(search8, t, caps, marks);
-            fail("MismatchedBracketException not thrown on test8");
-            
-        } catch(MismatchedBracketException mbe){}
-         catch(StringSearchParsingException sspe){
-            
-            fail("StringSearchParsingException erroneously thrown in breakIntoComponents test: " + sspe.getMessage());
-            
-        }
-        catch(Exception e){
-            
-            fail("Exception erroneously thrown in breakIntoComponents test:" + e.getMessage());
-            
-        }
-        
-          String search9 = "(kai and (ouk NOT ou)))";
-        try{
-            
-            ArrayList<StringSearchFacet.SearchClause> clauses8 = f.buildSearchClauses(search9, t, caps, marks);
-            fail("MismatchedBracketException not thrown on test9");
-            
-        } catch(MismatchedBracketException mbe){}     
-         catch(StringSearchParsingException sspe){
-            
-            fail("StringSearchParsingException erroneously thrown in breakIntoComponents test: " + sspe.getMessage());
-            
-        }
-        catch(Exception e){
-            
-            fail("Exception erroneously thrown in breakIntoComponents test:" + e.getMessage());
-            
-        }
     }
     
    public void testAssignClauseRoles(){
@@ -347,7 +320,7 @@ public class StringSearchFacetTest extends TestCase {
             ArrayList<SearchClause> testClauses = new ArrayList<SearchClause>();
             
             // single term without antecedent receives default role  
-            StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm("kai", t, caps, marks);
+            StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm("kai", t, caps, marks, true);
             testClauses.add(term1);
             testClauses = testTerm.assignClauseRoles(testClauses);
             assertEquals(1, testClauses.get(0).getClauseRoles().size());
@@ -357,9 +330,9 @@ public class StringSearchFacetTest extends TestCase {
             
             // term with AND antecedent receives AND role
             
-            term1 = testInstance.new SearchTerm("kai", t, caps, marks); 
-            StringSearchFacet.SearchTerm term2 = testInstance.new SearchTerm("AND", t, caps, marks);
-            StringSearchFacet.SearchTerm term3 = testInstance.new SearchTerm("ouk", t, caps, marks);
+            term1 = testInstance.new SearchTerm("kai", t, caps, marks, false); 
+            StringSearchFacet.SearchTerm term2 = testInstance.new SearchTerm("AND", t, caps, marks, false);
+            StringSearchFacet.SearchTerm term3 = testInstance.new SearchTerm("ouk", t, caps, marks, false);
             testClauses.add(term1);
             testClauses.add(term2);
             testClauses.add(term3);
@@ -370,9 +343,9 @@ public class StringSearchFacetTest extends TestCase {
             testClauses.clear();
             
             // term with OR antecedent or postcedent receives OR role
-            term1 = testInstance.new SearchTerm("kai", t, caps, marks); 
-            term2 = testInstance.new SearchTerm("OR", t, caps, marks);
-            term3 = testInstance.new SearchTerm("ouk", t, caps, marks);
+            term1 = testInstance.new SearchTerm("kai", t, caps, marks, false); 
+            term2 = testInstance.new SearchTerm("OR", t, caps, marks, false);
+            term3 = testInstance.new SearchTerm("ouk", t, caps, marks, false);
             testClauses.add(term1);
             testClauses.add(term2);
             testClauses.add(term3);
@@ -383,8 +356,8 @@ public class StringSearchFacetTest extends TestCase {
             testClauses.clear();
             
             // term with NOT antecedent receives NOT role
-            term1 = testInstance.new SearchTerm("NOT", t, caps, marks); 
-            term2 = testInstance.new SearchTerm("ouk", t, caps, marks);
+            term1 = testInstance.new SearchTerm("NOT", t, caps, marks, false); 
+            term2 = testInstance.new SearchTerm("ouk", t, caps, marks, false);
             testClauses.add(term1);
             testClauses.add(term2);
             testClauses = testTerm.assignClauseRoles(testClauses);
@@ -393,8 +366,8 @@ public class StringSearchFacetTest extends TestCase {
             testClauses.clear();
             
             // term with LEX antecedent receives LEX role
-            term1 = testInstance.new SearchTerm("LEX", t, caps, marks); 
-            term2 = testInstance.new SearchTerm("luw", t, caps, marks);
+            term1 = testInstance.new SearchTerm("LEX", t, caps, marks, false); 
+            term2 = testInstance.new SearchTerm("luw", t, caps, marks, false);
             testClauses.add(term1);
             testClauses.add(term2);
             testClauses = testTerm.assignClauseRoles(testClauses);
@@ -404,9 +377,9 @@ public class StringSearchFacetTest extends TestCase {
             
             // proximity searches assign pre- and post- roles correctly
             StringSearchFacet.SubClause term6 = testInstance.new SubClause("(luw THEN strategos)~15words", t, caps, marks);
-            term1 = testInstance.new SearchTerm("luw", t, caps, marks); 
-            term2 = testInstance.new SearchTerm("15w", t, caps, marks);
-            term3 = testInstance.new SearchTerm("strategos", t, caps, marks);
+            term1 = testInstance.new SearchTerm("luw", t, caps, marks, false); 
+            term2 = testInstance.new SearchTerm("15w", t, caps, marks, false);
+            term3 = testInstance.new SearchTerm("strategos", t, caps, marks, false);
             testClauses.add(term1);
             testClauses.add(term2);
             testClauses.add(term3);
@@ -452,25 +425,25 @@ public class StringSearchFacetTest extends TestCase {
 
             // default to substring
             String rawString1 = "kai";
-            StringSearchFacet.SearchTerm clause1 = testInstance.new SearchTerm(rawString1, t, true, true);
+            StringSearchFacet.SearchTerm clause1 = testInstance.new SearchTerm(rawString1, t, true, true, true);
             assertEquals(StringSearchFacet.SearchType.SUBSTRING, clause1.parseForSearchType());
 
             // quotation marks w/o word-boundary marker indicate phrase search
             String rawString2 = "\"kai ouk\"";
-            StringSearchFacet.SearchTerm clause2 = testInstance.new SearchTerm(rawString2, t, true, true);
+            StringSearchFacet.SearchTerm clause2 = testInstance.new SearchTerm(rawString2, t, true, true, true);
             assertEquals(StringSearchFacet.SearchType.PHRASE, clause2.parseForSearchType());
 
             // target as metadata results in phrase search
-            StringSearchFacet.SearchTerm clause3 = testInstance.new SearchTerm(rawString1, StringSearchFacet.SearchTarget.METADATA, true, true);
+            StringSearchFacet.SearchTerm clause3 = testInstance.new SearchTerm(rawString1, StringSearchFacet.SearchTarget.METADATA, true, true, true);
             assertEquals(StringSearchFacet.SearchType.PHRASE, clause3.parseForSearchType());
             
             // target as translation results in phrase search
-            StringSearchFacet.SearchTerm clause4 = testInstance.new SearchTerm(rawString1, StringSearchFacet.SearchTarget.TRANSLATION, true, true);
+            StringSearchFacet.SearchTerm clause4 = testInstance.new SearchTerm(rawString1, StringSearchFacet.SearchTarget.TRANSLATION, true, true, true);
             assertEquals(StringSearchFacet.SearchType.PHRASE, clause4.parseForSearchType());
             
             // quotation marks w/word-boundary marker indicate substring search
             String rawString5 = "\"#kai# #ouk\"";
-            StringSearchFacet.SearchTerm clause5 = testInstance.new SearchTerm(rawString5, t, true, true);
+            StringSearchFacet.SearchTerm clause5 = testInstance.new SearchTerm(rawString5, t, true, true, true);
             assertEquals(StringSearchFacet.SearchType.SUBSTRING, clause5.parseForSearchType());
 
             // lemma request anywhere in clause results in lemma
@@ -488,7 +461,7 @@ public class StringSearchFacetTest extends TestCase {
             StringSearchFacet.SubClause clause8 = testInstance.new SubClause(rawString8, t, true, true);
             assertEquals(StringSearchFacet.SearchType.REGEX, clause8.parseForSearchType());
             
-            // proximity request with word unti results in proximity
+            // proximity request with word unit results in proximity
             String rawString9 = "(kai THEN ouk)~5words";
             StringSearchFacet.SubClause clause9 = testInstance.new SubClause(rawString9, t, true, true);
             assertEquals(StringSearchFacet.SearchType.PROXIMITY, clause9.parseForSearchType());
@@ -656,7 +629,7 @@ public class StringSearchFacetTest extends TestCase {
       
         try{
         
-            StringSearchFacet.SearchTerm testTerm = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, false);
+            StringSearchFacet.SearchTerm testTerm = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, false, true);
             
             // multi-character and anchors bracket unanchored expressions
             String test1 = "και";
@@ -695,11 +668,11 @@ public class StringSearchFacetTest extends TestCase {
         try{
             
             String test1 = "εῖ";
-            StringSearchFacet.SearchTerm testTerm = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, true);
+            StringSearchFacet.SearchTerm testTerm = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, true, true);
             assertEquals(test1, testTerm.transcodeToUnicodeC(test1));
             
             String test2 = "ει̃";
-            StringSearchFacet.SearchTerm testTerm2 = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, true);
+            StringSearchFacet.SearchTerm testTerm2 = testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, true, true);
             assertEquals(test1, testTerm2.transcodeToUnicodeC(test2));
             
         }

@@ -8,6 +8,7 @@ import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +42,11 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String solrQueryString;
   private Long position;
   private Long total;
-  private Pattern[] highlightTerms;
+  public Pattern[] highlightTerms;
   private ArrayList<String> highlightWords;
   private FileUtils util;
+  
+  private SearchClause testClause;
   
   private static IdComparator documentComparator = new IdComparator();
   
@@ -60,6 +63,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
     this.hasIllustration = illus;
+    this.testClause = sts.size() > 0 ? sts.get(0) : null;
     this.highlightWords = new ArrayList<String>();
     this.highlightTerms = buildHighlightTerms(sts);
     this.highlightString = buildHighlightString(sts);
@@ -107,7 +111,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
               if(searchClause.getAllClauseRoles().contains(ClauseRole.REGEX)){
 
                   String trimmedRegex = trimRegex(transformedString);
-                  trimmedRegex = util.substituteDiacritics(trimmedRegex);
                   Pattern[] regexPatterns = matchRegexToDocument(trimmedRegex);
                   hilites.addAll(Arrays.asList(regexPatterns));
 
@@ -139,14 +142,39 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   }
   
   Pattern[] matchRegexToDocument(String regex){
-      
+
       regex = interpolateTextMarksIntoRegex(regex);
       ArrayList<Pattern> patterns = new ArrayList<Pattern>();
-      String fullText = util.loadTextFromId(url.toExternalForm()); 
-      
+      String fullText = util.loadTextFromId(url.toExternalForm());
+      String negatedPrecedingString = getNegatedPrecedingCharacters(regex);
+      String negatedFollowingString = getNegatedFollowingChars(regex);
+      int precedingIndexAdjustment = negatedPrecedingString.length();
+      int followingIndexAdjustment = negatedFollowingString.length();
+      regex = util.substituteDiacritics(regex);
       Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
       Matcher matcher = pattern.matcher(fullText);
+      
       while(matcher.find()){
+          int startIndex = matcher.start() - precedingIndexAdjustment;
+          int endIndex = matcher.end() + followingIndexAdjustment;
+          if(startIndex < 0) startIndex = 0;
+          if(endIndex > fullText.length()) endIndex = fullText.length();
+          String found = fullText.substring(startIndex, endIndex);
+          if((precedingIndexAdjustment == 0 || !negatedPrecedingString.equals(found.substring(0, precedingIndexAdjustment + 1))) && (followingIndexAdjustment == 0 || !negatedFollowingString.equals(found.substring(found.length() - followingIndexAdjustment)))){
+
+             found = found.replaceAll("([()\\[\\]{}\\.])", ".");
+             found = found.replaceAll("\\s{2,}", "\\\\b");
+             found = found.replaceAll("\\s", " ");
+             System.out.println("found is " + found);
+             highlightWords.add(found);
+             Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
+             patterns.add(foundPattern);        
+                       
+          }
+             
+
+      }
+      /*while(matcher.find()){
           
           String firstFound = matcher.group(0);
           ArrayList<String> founds = simplifyFoundString(firstFound);
@@ -160,37 +188,66 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           
           }
           
-      }
+      }*/
 
       Pattern[] arrPatterns = new Pattern[patterns.size()];
       return patterns.toArray(arrPatterns);
       
   }
   
+  String getNegatedPrecedingCharacters(String regex){
+      
+      Pattern pattern = Pattern.compile("^\\(\\?\\<\\!(.*?)\\).*$");
+      Matcher matcher = pattern.matcher(regex);
+      if(!matcher.matches()) return "";
+      String simplifiedPattern = matcher.group(1).replaceAll("\\\\[\\w]", "").replaceAll("[^\\p{L}]", "");
+      return simplifiedPattern;
+      
+  }
+  
+  String getNegatedFollowingChars(String regex){
+
+      Pattern pattern = Pattern.compile("^.*\\(\\?\\!(.*)\\).*$");
+      Matcher matcher = pattern.matcher(regex);
+      if(!matcher.matches()) return "";
+      String simplifiedPattern = matcher.group(1).replaceAll("\\\\[\\w]", "").replaceAll("[^\\p{L}]", "");
+      return simplifiedPattern;
+      
+  }
+  
   String interpolateTextMarksIntoRegex(String regex){
       
-      String specialChars = "((\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\\s|̣)+)?";
+      String specialChars = "(\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[)?";
       StringBuilder regexBuilder = new StringBuilder();
       String prevCharacter = "";
-      int curlyBracketCount = 0;
+      int curlyBracesCount = 0;
+      int parensCount = 0;
+      Boolean insideNegLookBehind = false;
       
       for(int i = 0; i < regex.length(); i++){
           
           String nowChar = Character.toString(regex.charAt(i));
           String nextChar = i == regex.length() - 1 ? "" : Character.toString(regex.charAt(i + 1));
+          if(nowChar.equals("<") && prevCharacter.equals("?") && nextChar.equals("!") && !insideNegLookBehind){
+                   
+              insideNegLookBehind = true;
+              parensCount = 1;
+          }
+          if(insideNegLookBehind && parensCount == 0) insideNegLookBehind = false;
           regexBuilder.append(nowChar);
-          if(!prevCharacter.equals("\\") && !prevCharacter.equals("|") && !nextChar.equals("|") &&
-              curlyBracketCount == 0 && nowChar.matches("[\\p{L}\\)]")){
-              
+          if(!insideNegLookBehind && !prevCharacter.equals("\\") && !prevCharacter.equals("|") && !nextChar.equals("|") &&
+              curlyBracesCount == 0 && nowChar.matches("[\\p{L}\\)]")){
+
               regexBuilder.append(specialChars);
               
           }
           prevCharacter = nowChar;
-          if("{".equals(nowChar)) curlyBracketCount += 1;
-          if("}".equals(nowChar)) curlyBracketCount -= 1;
+          if("{".equals(nowChar)) curlyBracesCount += 1;
+          if("}".equals(nowChar)) curlyBracesCount -= 1;
+          if(("(").equals(nowChar) && insideNegLookBehind) parensCount += 1;
+          if((")").equals(nowChar) && insideNegLookBehind) parensCount -= 1;
           
       }
-      
       return regexBuilder.toString().trim();
       
   }
@@ -208,7 +265,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           while(scit.hasNext()){
 
               String spchar = scit.next();
-              fb = fb.replaceAll(spchar, ".");
+              fb = fb.replaceAll(spchar, "\\" + spchar);
               
           }
           if(fb.matches("^.*[^\\.].*$")) foundStrings.add(fb);
@@ -364,7 +421,10 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(language);
     html.append("</td>");
     html.append("<td class=\"has-translation\">");
-    html.append(translationLanguages);
+    try{
+    html.append(URLDecoder.decode(testClause.buildTransformedString(), "UTF-8"));
+    } catch(Exception e){ html.append("Exception"); }
+   // html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");
     html.append(getImageHTML());
@@ -571,7 +631,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
   }
   
-  private String getKWIC(){
+  String getKWIC(){
       
       StringBuilder html = new StringBuilder();
       try{

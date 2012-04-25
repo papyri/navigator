@@ -39,7 +39,7 @@ public class StringSearchFacetIT extends TestCase {
         try{
 
             // single term without antecedent receives default role  
-            StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm("kai", t, caps, marks);
+            StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm("kai", t, caps, marks, true);
             assertEquals(1, term1.getClauseRoles().size());
             assertEquals(StringSearchFacet.ClauseRole.DEFAULT, term1.getClauseRoles().get(0));
 
@@ -127,27 +127,27 @@ public class StringSearchFacetIT extends TestCase {
             
             // single-word substring search, no caps
             String test1 = "ΚάΙ";
-            StringSearchFacet.SearchTerm clause1 = testInstance.new SearchTerm(test1, t, true, false);
+            StringSearchFacet.SearchTerm clause1 = testInstance.new SearchTerm(test1, t, true, false, true);
             assertEquals("fq=transcription_ngram_ic:(κάι)", URLDecoder.decode(clause1.buildQuery(new SolrQuery()).toString(), "UTF-8"));
                         
             // user-defined, caps and marks set
             String test2 = "HGV:και";
-            StringSearchFacet.SearchTerm clause2 = testInstance.new SearchTerm(test2, StringSearchFacet.SearchTarget.USER_DEFINED, true, true);
+            StringSearchFacet.SearchTerm clause2 = testInstance.new SearchTerm(test2, StringSearchFacet.SearchTarget.USER_DEFINED, true, true, true);
             assertEquals("fq=(hgv_metadata:και)", URLDecoder.decode(clause2.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // substring search, caps and marks
             String test3 = "ΚΆΙ";
-            StringSearchFacet.SearchTerm clause3 = testInstance.new SearchTerm(test3, t, true, true);
+            StringSearchFacet.SearchTerm clause3 = testInstance.new SearchTerm(test3, t, true, true, true);
             assertEquals("fq=transcription_ngram_ia:(και)", URLDecoder.decode(clause3.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // phrase search on text field, no marks
             String test4 = "\"κάι οὐκ\"";
-            StringSearchFacet.SearchTerm clause4 = testInstance.new SearchTerm(test4, t, false, true);
+            StringSearchFacet.SearchTerm clause4 = testInstance.new SearchTerm(test4, t, false, true, true);
             assertEquals("fq=transcription_id:(\"και ουκ\")", URLDecoder.decode(clause4.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // quote-delimited with substring markers, no caps or marks
             String test5 = "\"#κάι# #οὐ\"";
-            StringSearchFacet.SearchTerm clause5 = testInstance.new SearchTerm(test5, t, true, true);
+            StringSearchFacet.SearchTerm clause5 = testInstance.new SearchTerm(test5, t, true, true, true);
             assertEquals("fq=transcription_ngram_ia:(\"#και# #ου\")", URLDecoder.decode(clause5.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             // regex, no marks
@@ -183,11 +183,44 @@ public class StringSearchFacetIT extends TestCase {
             String test12 = "(?ιοσ* NEAR *λογ?)~5words";
             StringSearchFacet.SubClause clause12 = testInstance.new SubClause(test12, t, true, true);
             assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(\\b\\p{L}ιοσ\\p{L}+\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}+λογ\\p{L}\\b|\\b\\p{L}+λογ\\p{L}\\b\\s(\\p{L}+\\s){0,5}\\b\\p{L}ιοσ\\p{L}+\\b).*$", URLDecoder.decode(clause12.buildQuery(new SolrQuery()).toString(), "UTF-8"));
-            
+                
             // metadata search
-            StringSearchFacet.SearchTerm clause13 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.METADATA, false, false);
+            StringSearchFacet.SearchTerm clause13 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.METADATA, false, false, true);
             assertEquals("fq=metadata:(κάι)", URLDecoder.decode(clause13.buildQuery(new SolrQuery()).toString(), "UTF-8"));
-                              
+  
+            // simplified negative lookahead/behind
+            String test14 = "[-kai]sar"; 
+            StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test14, StringSearchFacet.SearchTarget.TEXT, true, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(?<!kai)sar.*$", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            
+            String test15 = "[-kai]sar#";
+            StringSearchFacet.SearchTerm clause15 = testInstance.new SearchTerm(test15, StringSearchFacet.SearchTarget.TEXT, true, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(?<!kai)sar\\b.*$", URLDecoder.decode(clause15.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            
+            String test16 = "kai[-sar]";
+            StringSearchFacet.SearchTerm clause16 = testInstance.new SearchTerm(test16, t, true, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*kai(?!sar).*$", URLDecoder.decode(clause16.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+           
+            String test17 = "( ou[-k] NEAR [-kai]sar )~5chars";
+            StringSearchFacet.SubClause clause17 = testInstance.new SubClause(test17, t, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*((?<!kai)sar.{1,5}ou(?!k)|ou(?!k).{1,5}(?!kai)sar).*$", URLDecoder.decode(clause17.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+              
+            String test18 = "(*sar THEN ou[-k])~15words";
+            StringSearchFacet.SubClause clause18 = testInstance.new SubClause(test18, t, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*\\b\\p{L}+sar\\s(\\p{L}+\\s){0,15}ou(?!k)\\b.*$", URLDecoder.decode(clause18.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+           
+            String test19 = "[-#]tou[-#]";
+            StringSearchFacet.SearchTerm clause19 = testInstance.new SearchTerm(test19, t, true, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(?<!\\b)tou(?!\\b).*$", URLDecoder.decode(clause19.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+          
+            
+            // simplified syntax when part of regex needs to pass through unchanged
+            String test25 = "REGEX hyphen[-_]test";
+            StringSearchFacet.SubClause clause25 = testInstance.new SubClause(test25, t, true, true);
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*hyphen[-_]test.*$", URLDecoder.decode(clause25.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+             
+            
+            
             // translation search
           /*  StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.TRANSLATION, false, false);
             assertEquals("fq=translation:(κάι)", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));          
@@ -222,21 +255,21 @@ public class StringSearchFacetIT extends TestCase {
             String andClause = "kai AND ouk";
             StringSearchFacet.SubClause andSubClause = testInstance.new SubClause(andClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> andClauses = andSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxAndClauses = andSubClause.doProxTransform(andClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxAndClauses = andSubClause.doRegexTransform(andClauses);
             assertEquals(andClauses, proxAndClauses);
 
             // if proximity search but with words as unit, return unchanged
             String wordProxClause = "kai 5w ouk";
             StringSearchFacet.SubClause wordSubClause = testInstance.new SubClause(wordProxClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wordClauses = wordSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxWordClauses = wordSubClause.doProxTransform(wordClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxWordClauses = wordSubClause.doRegexTransform(wordClauses);
             assertEquals(wordClauses, proxWordClauses);
 
             // if THEN search with chars as unit, return appropriate regex
             String thenClause = "kai 5wc ouk";
             StringSearchFacet.SubClause thenSubClause = testInstance.new SubClause(thenClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> thenClauses = thenSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxThenClauses = thenSubClause.doProxTransform(thenClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxThenClauses = thenSubClause.doRegexTransform(thenClauses);
             assertEquals(1, proxThenClauses.size());
             assertEquals(1, proxThenClauses.get(0).getClauseRoles().size());
             assertTrue(proxThenClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
@@ -246,7 +279,7 @@ public class StringSearchFacetIT extends TestCase {
             String nearClause = "kai 5nc ouk";
             StringSearchFacet.SubClause nearSubClause = testInstance.new SubClause(nearClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> nearClauses = nearSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxNearClauses = nearSubClause.doProxTransform(nearClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxNearClauses = nearSubClause.doRegexTransform(nearClauses);
             assertEquals(1, proxNearClauses.size());
             assertEquals(1, proxNearClauses.get(0).getClauseRoles().size());
             assertTrue(proxNearClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
@@ -256,7 +289,7 @@ public class StringSearchFacetIT extends TestCase {
             String wildClause = "k?i 5wc ou*";
             StringSearchFacet.SubClause wildSubClause = testInstance.new SubClause(wildClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wildClauses = wildSubClause.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxWildClauses = wildSubClause.doProxTransform(wildClauses);
+            ArrayList<StringSearchFacet.SearchClause> proxWildClauses = wildSubClause.doRegexTransform(wildClauses);
             assertEquals(1, proxWildClauses.size());
             assertEquals(1, proxWildClauses.get(0).getClauseRoles().size());
             assertTrue(proxWildClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
@@ -288,21 +321,21 @@ public class StringSearchFacetIT extends TestCase {
         
             StringSearchFacet.SubClause wildClause1 = testInstance.new SubClause(test1, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wildClauses1 = wildClause1.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxWildClauses1 = wildClause1.doProxTransform(wildClauses1);
+            ArrayList<StringSearchFacet.SearchClause> proxWildClauses1 = wildClause1.doRegexTransform(wildClauses1);
             assertEquals(1, proxWildClauses1.size());
             assertEquals(1, proxWildClauses1.get(0).getClauseRoles().size());
             assertEquals(expected1, proxWildClauses1.get(0).buildTransformedString());
             
             StringSearchFacet.SubClause wildClause2 = testInstance.new SubClause(test2, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wildClauses2 = wildClause2.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxWildClauses2 = wildClause2.doProxTransform(wildClauses2);
+            ArrayList<StringSearchFacet.SearchClause> proxWildClauses2 = wildClause2.doRegexTransform(wildClauses2);
             assertEquals(1, proxWildClauses2.size());
             assertEquals(1, proxWildClauses2.get(0).getClauseRoles().size());
             assertEquals(expected2, proxWildClauses2.get(0).buildTransformedString());    
 
             StringSearchFacet.SubClause wildClause3 = testInstance.new SubClause(test3, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wildClauses3 = wildClause3.getClauseComponents();
-            ArrayList<StringSearchFacet.SearchClause> proxWildClauses3 = wildClause3.doProxTransform(wildClauses3);
+            ArrayList<StringSearchFacet.SearchClause> proxWildClauses3 = wildClause3.doRegexTransform(wildClauses3);
             assertEquals(1, proxWildClauses3.size());
             assertEquals(1, proxWildClauses3.get(0).getClauseRoles().size());
             assertEquals(expected3, proxWildClauses3.get(0).buildTransformedString());
@@ -323,7 +356,7 @@ public class StringSearchFacetIT extends TestCase {
 
             // sanity-check: no transformation req'd returns as same
             String origString1 = "κάι";
-            StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm(origString1, t, false, false);
+            StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm(origString1, t, false, false, true);
             assertEquals(origString1, term1.buildTransformedString());
 
             // regex means no transformation
@@ -333,15 +366,15 @@ public class StringSearchFacetIT extends TestCase {
 
             // ignore_caps results in lower-casing
             String origString3 = "ΚάΙ";
-            StringSearchFacet.SearchTerm term3 = testInstance.new SearchTerm(origString3, t, true, false);
+            StringSearchFacet.SearchTerm term3 = testInstance.new SearchTerm(origString3, t, true, false, true);
             assertEquals(origString1, term3.buildTransformedString());
 
             // ignore_marks results in diacritic-stripping
-            StringSearchFacet.SearchTerm term4 = testInstance.new SearchTerm(origString1, t, false, true);
+            StringSearchFacet.SearchTerm term4 = testInstance.new SearchTerm(origString1, t, false, true, true);
             assertEquals("και", term4.buildTransformedString());
 
             // both results in lower-casing and diacritic-stripping
-            StringSearchFacet.SearchTerm term5 = testInstance.new SearchTerm(origString3, t, true, true);
+            StringSearchFacet.SearchTerm term5 = testInstance.new SearchTerm(origString3, t, true, true, true);
             assertEquals("και", term5.buildTransformedString());
             
             Pattern lemmaOutput = Pattern.compile("\\((\\s*\\S+\\s+OR\\s+)+\\S+\\s*\\)");
@@ -368,7 +401,7 @@ public class StringSearchFacetIT extends TestCase {
             
             // final sigma replaced with medial sigma
             String origString10 = "στρατηγος";
-            StringSearchFacet.SearchTerm term10 = testInstance.new SearchTerm(origString10, t, true, true);
+            StringSearchFacet.SearchTerm term10 = testInstance.new SearchTerm(origString10, t, true, true, true);
             assertEquals("στρατηγοσ", term10.buildTransformedString());
             
             // replace hash-mark \b markers with caret \b markers
@@ -377,16 +410,11 @@ public class StringSearchFacetIT extends TestCase {
             assertEquals("#kai# #tou", term11.buildTransformedString());
             
             // character-proximity searches transformed into appropriate regex
-            String origString12 = "(kai THEN ouk)~10chars";
-            StringSearchFacet.SubClause term12 = testInstance.new SubClause(origString12, t, true, true);
-            assertEquals("^.*kai.{1,10}ouk.*$", term12.buildTransformedString());
-            
-
             String origString13 = "(kai 10wc ouk)";
             StringSearchFacet.SubClause term13 = testInstance.new SubClause(origString13, t, true, true);
-            assertEquals("^.*kai.{1,10}ouk.*$", term13.buildTransformedString());  
+            assertEquals("^.*(kai.{1,10}ouk).*$", term13.buildTransformedString());  
             
-            String origString14 = "(kai 12nc ouk)";
+            String origString14 = "kai 12nc ouk";
             StringSearchFacet.SubClause term14 = testInstance.new SubClause(origString14, t, true, true);
             assertEquals("^.*(ouk.{1,12}kai|kai.{1,12}ouk).*$", term14.buildTransformedString());
             
@@ -406,9 +434,7 @@ public class StringSearchFacetIT extends TestCase {
             String origString18 = "REGEX kai[sa]r";
             StringSearchFacet.SubClause term18 = testInstance.new SubClause(origString18, StringSearchFacet.SearchTarget.TEXT, true, true);
             assertEquals("^.*kai[sa]r.*$", term18.buildTransformedString());
-        
-   
-         
+            
             
         }
         catch(CustomApplicationException e){

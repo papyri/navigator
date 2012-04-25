@@ -120,7 +120,7 @@ public class StringSearchFacet extends Facet{
      * 
      */
     
-    public enum ClauseRole{LEMMA, REGEX, START_PROX, END_PROX, AND, OR, NOT, OPERATOR, DEFAULT };
+    public enum ClauseRole{LEMMA, REGEX, NEGATIVE_ASSERTION, START_PROX, END_PROX, AND, OR, NOT, OPERATOR, DEFAULT};
     
     /**
      * The list of possible search operators.
@@ -153,14 +153,14 @@ public class StringSearchFacet extends Facet{
         AND("and"),
         OR("or"),
         NOT("not"),
-        LEX("lex"),
         THEN("then"),
         NEAR("near"),
+        LEX("lex"),
         REGEX("regex"),
-        CLEAR("clear"),
         ABBR("abbr"),
-   //     THENNOT("then-not"),
-   //     NOTAFTER("not-after"),
+        STARTNOT("start-not"),
+        ENDNOT("end-not"),
+        CLEAR("clear"),
         REMOVE("-");
 
         String label;
@@ -449,7 +449,15 @@ public class StringSearchFacet extends Facet{
     @Override
     public Boolean addConstraints(Map<String, String[]> params){
         
-        searchClauses = pullApartParams(params);
+        try{
+            searchClauses = pullApartParams(params);
+        }
+        catch(MismatchedBracketException mbe){
+            
+            exceptionLog.add(mbe);
+            
+            
+        }
         return !searchClauses.isEmpty();
              
     }
@@ -553,7 +561,7 @@ public class StringSearchFacet extends Facet{
      * @return 
      */
     
-    HashMap<Integer, ArrayList<SearchClause>> pullApartParams(Map<String, String[]> params){
+    HashMap<Integer, ArrayList<SearchClause>> pullApartParams(Map<String, String[]> params) throws MismatchedBracketException{
         
         HashMap<Integer, ArrayList<SearchClause>> orderedClauses = new HashMap<Integer, ArrayList<SearchClause>>();
         
@@ -598,11 +606,13 @@ public class StringSearchFacet extends Facet{
                 while(cit.hasNext()){
                     
                     String clause = cit.next();
-                    
+                    clause = CLAUSE_FACTORY.trimEnclosingBrackets(clause);
                     try{
                     
-                        SearchClause searchClause = isTerm(clause) ? new SearchTerm(clause, trgt, caps, marks) : new SubClause(clause, trgt, caps, marks);
+                        SearchClause searchClause = isTerm(clause) ? new SearchTerm(clause, trgt, caps, marks, true) : new SubClause(clause, trgt, caps, marks);
                         clauses.add(searchClause);                   
+
+                       
                         
                     }
                     catch(CustomApplicationException cpe){ exceptionLog.add(cpe);}
@@ -962,7 +972,7 @@ public class StringSearchFacet extends Facet{
          */
         
         ArrayList<SearchClause> buildSearchClauses(String searchString, SearchTarget target, Boolean caps, Boolean marks) throws MismatchedBracketException, InternalQueryException, MalformedProximitySearchException, IncompleteClauseException, InsufficientSpecificityException, RegexCompilationException{
-            
+
             if(searchString == null) return null;
             ArrayList<SearchClause> clauses = new ArrayList<SearchClause>();
             
@@ -972,7 +982,7 @@ public class StringSearchFacet extends Facet{
             if(searchString.length() == 0) return null;
             searchString = swapInProxperators(searchString);
             // strip enclosing parens if present
-            searchString = trimEnclosingBrackets(searchString);
+            // searchString = trimEnclosingBrackets(searchString);
             
             while(searchString.length() > 0){
 
@@ -983,7 +993,7 @@ public class StringSearchFacet extends Facet{
                 Matcher metricsMatch = justMetricsDetect.matcher(searchString.substring(endIndex).trim());
                 if(metricsMatch.matches()){ endIndex += (metricsMatch.group(1).length()); }
                 String nowWord = searchString.substring(0, endIndex).trim();
-                SearchTerm newClause = new SearchTerm(nowWord, target, caps, marks);
+                SearchTerm newClause = new SearchTerm(nowWord, target, caps, marks, false);
                 clauses.add(newClause);
                 searchString = searchString.substring(endIndex).trim();
                                
@@ -1051,6 +1061,7 @@ public class StringSearchFacet extends Facet{
             }
 
             searchString = transformPhraseSearch(searchString, unit);
+            searchString = CLAUSE_FACTORY.trimEnclosingBrackets(searchString);
             return searchString;
             
         }
@@ -1114,14 +1125,13 @@ public class StringSearchFacet extends Facet{
         String trimEnclosingBrackets(String searchString) throws MismatchedBracketException{
             
             if(!Character.toString(searchString.charAt(0)).equals("(")) return searchString;
-            int endBracketIndex = getIndexOfMatchingCloseBracket(searchString);
+            int endBracketIndex = getIndexOfMatchingCloseParens(searchString);
             if(endBracketIndex == -1){ throw new MismatchedBracketException(); }
             if(endBracketIndex == searchString.length() - 1){
-                
+
                 return searchString.substring(1, endBracketIndex);
                 
             }
-            
             return searchString;
                    
         }
@@ -1160,7 +1170,7 @@ public class StringSearchFacet extends Facet{
          * @return 
          */
         
-        Integer getIndexOfMatchingCloseBracket(String remainder){
+        Integer getIndexOfMatchingCloseParens(String remainder){
         
             int pos = -1;
             int bracketCount = 1;
@@ -1348,6 +1358,18 @@ public class StringSearchFacet extends Facet{
            
        }
        
+       public void removeFromClauseRoles(ClauseRole removedRole){
+           
+           clauseRoles.remove(removedRole);
+           Iterator<SearchClause> scit = clauseComponents.iterator();
+           while(scit.hasNext()){
+               
+               scit.next().removeFromClauseRoles(removedRole);
+               
+           }
+                      
+       }
+       
        String getOriginalString(){
            
            return originalString;
@@ -1367,20 +1389,20 @@ public class StringSearchFacet extends Facet{
        }
        
        final void addClauseRole(ClauseRole role){
-           
+
            if(!clauseRoles.contains(role)){
-               
+
                clauseRoles.add(role);
-               
+
                if(clauseRoles.contains(ClauseRole.DEFAULT) && role != ClauseRole.DEFAULT){
-                   
+
                    clauseRoles.remove(ClauseRole.DEFAULT);
-                   
+
                }
-               
+
            }
-           
-       }
+
+        }
        
        /**
         * Determines the index in the clause list of the nearing following operator from a 
@@ -1764,7 +1786,13 @@ public class StringSearchFacet extends Facet{
                            int nextOperand = getIndexOfNextOperand(i, subclauses);
                            if(nextOperand == -1) throw new IncompleteClauseException();
                            String opName = op.name();
-                           if(opName.equals(SearchOperator.LEX.name())) opName = ClauseRole.LEMMA.name();
+                           if(op == SearchOperator.LEX) opName = ClauseRole.LEMMA.name();
+                           if(op == SearchOperator.REGEX){
+                               
+                               SearchClause nextClause = subclauses.get(nextOperand);
+                               nextClause.removeFromClauseRoles(ClauseRole.NEGATIVE_ASSERTION);
+                               
+                           }
                            ClauseRole role = ClauseRole.valueOf(opName);
                            subclauses.get(nextOperand).addClauseRole(role);
                            
@@ -1792,7 +1820,9 @@ public class StringSearchFacet extends Facet{
            
            return subclauses;
            
-       }       
+       } 
+       
+
        /**
         * Returns the <code>ClauseRole</code>s of all subordinate clauses, but <em>not</em>
         * the roles of the clause itself.
@@ -1894,7 +1924,7 @@ public class StringSearchFacet extends Facet{
         SubClause(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, InternalQueryException, InsufficientSpecificityException, MalformedProximitySearchException, IncompleteClauseException, RegexCompilationException{
             
             super(rs, tg, caps, marks);
-            transformedClauses = doProxTransform(clauseComponents);
+            transformedClauses = doRegexTransform(clauseComponents);
             
         }
         
@@ -1933,16 +1963,68 @@ public class StringSearchFacet extends Facet{
          * @throws RegexCompilationException 
          */
         
-        final ArrayList<SearchClause> doProxTransform(ArrayList<SearchClause> clauses) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
-            
+        final ArrayList<SearchClause> doRegexTransform(ArrayList<SearchClause> clauses) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
+
             Integer chpIndex = getCharsProxIndex(clauses);
             if(chpIndex != -1) return doCharsProxTransform(clauses, chpIndex);
             Integer wdIndex = getWordsProxIndex(clauses);
             if(wdIndex != -1 && containsLeadingWildcard()) return doWordsProxTransform(clauses, wdIndex);
+        //     if(!getClauseRoles().contains(ClauseRole.REGEX) && getOriginalString().contains("[-")) return doNegativeAssertionTransform(clauses);
             return clauses;
     
         }
         
+        final ArrayList<SearchClause> doNegativeAssertionTransform(ArrayList<SearchClause> clauses) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
+
+            ArrayList<SearchClause> negClauses = new ArrayList<SearchClause>();
+            StringBuilder regex = new StringBuilder();
+            
+            Iterator<SearchClause> scit = clauses.iterator();
+            while(scit.hasNext()){
+
+                SearchClause nowClause = scit.next();
+
+                if(nowClause.getClauseRoles().contains(ClauseRole.OPERATOR)) continue;
+                if(nowClause.getClauseRoles().contains(ClauseRole.LEMMA)){
+                    
+                    
+                    String lemmata = nowClause.buildTransformedString();
+                    lemmata = lemmata.replaceAll("\\s?OR\\s?", "|");
+                    regex.append(lemmata);
+                    
+                }
+                else{
+                    
+                    String searchTerm = nowClause.getOriginalString();
+                    searchTerm = searchTerm.replaceAll("#", "\\b");
+                    searchTerm = searchTerm.replaceAll(" ", "\\s+");
+                    searchTerm = searchTerm.replaceAll("\\*", ".*");
+                    searchTerm = searchTerm.replaceAll("\\?", ".");
+                    regex.append(searchTerm);
+                    
+                }
+                
+                if(scit.hasNext()) regex.append("\\s+");
+            
+            }
+
+            try{
+
+                  SearchTerm regexSearchTerm = new SearchTerm(regex.toString(), target, ignoreCaps, ignoreMarks, false);
+                  regexSearchTerm.addClauseRole(ClauseRole.REGEX);
+                  negClauses.add(regexSearchTerm);
+
+            } 
+            catch(StringSearchParsingException sspe){
+                
+                  throw new RegexCompilationException();
+                
+            }
+
+            return negClauses;
+            
+        }
+               
         /**
          * Converts character-proximity searches into regular expression syntax
          * 
@@ -1969,7 +2051,7 @@ public class StringSearchFacet extends Facet{
 
             try{
             
-                SearchTerm regexSearchTerm = new SearchTerm(regex, target, ignoreCaps, ignoreMarks);
+                SearchTerm regexSearchTerm = new SearchTerm(regex, target, ignoreCaps, ignoreMarks, false);
                 regexSearchTerm.addClauseRole(ClauseRole.REGEX);
                 proxClauses.add(regexSearchTerm);
                 
@@ -1981,6 +2063,7 @@ public class StringSearchFacet extends Facet{
             return proxClauses;
             
         }
+     
         
         /**
          * Transforms leading-wildcards in word-proximity searches into regular expression syntax
@@ -2006,7 +2089,7 @@ public class StringSearchFacet extends Facet{
 
             try{
 
-                SearchTerm regexSearchTerm = new SearchTerm(regex, target, ignoreCaps, ignoreMarks);
+                SearchTerm regexSearchTerm = new SearchTerm(regex, target, ignoreCaps, ignoreMarks, false);
                 regexSearchTerm.addClauseRole(ClauseRole.REGEX);
                 proxClauses.add(regexSearchTerm);
                 
@@ -2140,7 +2223,7 @@ public class StringSearchFacet extends Facet{
         
         String convertCharsProxWildcards(String rawString){
             
-            rawString = rawString.replaceAll("\\*", "");    // 
+            rawString = rawString.replaceAll("\\*", "");     
             rawString = rawString.replaceAll("\\?", ".");
             return rawString;
             
@@ -2223,7 +2306,7 @@ public class StringSearchFacet extends Facet{
         /**
          * Converts an entire character-proximity search to regex syntax
          * 
-         * Note the difference between this and the <code>buildProxStartStartString</code> and
+         * Note the difference between this and the <code>buildProxStartString</code> and
          * <code>buildProxEndString</code> methods. Those methods are for the <strong>operands</strong>
          * while this method pulls together the entire clause into a single regex
          * 
@@ -2441,11 +2524,19 @@ public class StringSearchFacet extends Facet{
     
     public class SearchTerm extends SearchClause{
         
-
-        SearchTerm(String rs, SearchTarget tg, Boolean caps, Boolean marks) throws MismatchedBracketException, MalformedProximitySearchException, InsufficientSpecificityException, InternalQueryException, IncompleteClauseException, RegexCompilationException{
+        Boolean isStandalone;
+        
+        SearchTerm(String rs, SearchTarget tg, Boolean caps, Boolean marks, Boolean isolate) throws MismatchedBracketException, MalformedProximitySearchException, InsufficientSpecificityException, InternalQueryException, IncompleteClauseException, RegexCompilationException{
             
             super(rs, tg, caps, marks);
-
+            isStandalone = isolate;
+            if(rs.contains("[-")){
+                
+                this.addClauseRole(ClauseRole.REGEX);
+                this.addClauseRole(ClauseRole.NEGATIVE_ASSERTION);
+                
+            }
+            
         }
         
         @Override
@@ -2460,6 +2551,7 @@ public class StringSearchFacet extends Facet{
             if(transformed.equals(StringSearchFacet.SearchOperator.NOT.name())) return "";
             if(transformed.equals(StringSearchFacet.SearchOperator.AND.name())) return ""; // because this is the default operator
             if(transformed.equals(StringSearchFacet.SearchOperator.OR.name())) return "OR";
+            if(transformed.contains("[-") && clauseRoles.contains(ClauseRole.NEGATIVE_ASSERTION)) transformed = expandNegativeAssertion(transformed);
             // deal with anomalous Solr syntax for representing single-word proximity
             if(clauseRoles.contains(ClauseRole.OPERATOR) && transformed.equals("1w")) return "w";
             // expand lemmas where required
@@ -2492,6 +2584,35 @@ public class StringSearchFacet extends Facet{
             transformed = transformed.trim();
             transformedString = transformed;
             return transformed;
+            
+        }
+        
+        private String expandNegativeAssertion(String rawAssertion){
+
+            rawAssertion = rawAssertion.replace("#", "\\b");
+            String[] assertBits = rawAssertion.split("]");
+            StringBuilder assertionAsRegex = new StringBuilder();
+            Pattern pattern = Pattern.compile(".*\\[\\-.*");
+            for(int i = 0; i < assertBits.length; i++){
+                String nowBit = assertBits[i];  
+                String openExpression = i == 0 && nowBit.matches("^[(]?\\[\\-.*") ? "(?<!" : "(?!";
+                Matcher matcher = pattern.matcher(nowBit);
+                if(matcher.matches()){
+
+                    nowBit = nowBit.replace("[-", openExpression);
+                    assertionAsRegex.append(nowBit);
+                    assertionAsRegex.append(")");
+                
+                }
+                else{
+                    
+                    assertionAsRegex.append(nowBit);
+                    
+                }
+                
+            }
+            
+            return assertionAsRegex.toString();
             
         }
         
@@ -2654,12 +2775,11 @@ public class StringSearchFacet extends Facet{
            String queryBody = buildTransformedString();
            int minLength = !queryBody.equals("") && String.valueOf(queryBody.charAt(0)).equals("(") && String.valueOf(queryBody.charAt(queryBody.length() - 1)).equals(")") ? 5 : 3;
            if(type == SearchType.SUBSTRING && queryBody.length() < minLength) throw new SubstringTooSmallException();
-           queryBody = "(" + queryBody + ")";
+           if(isStandalone && !getClauseRoles().contains(ClauseRole.REGEX)) queryBody = "(" + queryBody + ")";
            sq.addFilterQuery(queryPrefix + queryBody);
            return sq;
            
-       }
-       
+       } 
        
        /**
         * Adds the multi-character match pattern ('.*') to the beginning and end of a regex as 
@@ -2719,6 +2839,7 @@ public class StringSearchFacet extends Facet{
             if(originalString.length() < 1) return false;
             String firstChar = Character.toString(originalString.charAt(0));
             if("?".equals(firstChar) || "*".equals(firstChar)) return true;
+            if(originalString.contains("[-") && clauseRoles.contains(ClauseRole.NEGATIVE_ASSERTION)) return true;
             return false;
             
         }
@@ -2730,6 +2851,7 @@ public class StringSearchFacet extends Facet{
             return terms;
             
         }
+        
         
     }
     
