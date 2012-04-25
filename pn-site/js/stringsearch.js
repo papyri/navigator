@@ -96,7 +96,8 @@ $(document).ready(
 		var alreadyContainsAndRegExp = new RegExp(/AND/);
 		var alreadyContainsOrRegExp = new RegExp(/OR/);	
 		var stringIsToBeLemmatisedRegExp = new RegExp(/LEMMA[\s]*(\S+)?$/);	
-		
+		var hasOpenStartNotRegExp = new RegExp(/\[\-[^\]]*$/);
+				
 		/*************************
 		 * filtration functions  *
 		**************************/
@@ -215,6 +216,20 @@ $(document).ready(
 		
 		}
 		
+		hic.stringHasStartButNoEndNot = function(boxval, controls){
+		
+			if(boxval.match(hasOpenStartNotRegExp)) return true;
+			return false;
+			
+		}
+		
+		hic.stringHasNoStartNot = function(boxval, controls){
+		
+			if(!(boxval.match(hasOpenStartNotRegExp))) return true;
+			return false;
+		
+		}
+		
 		hic.onlyOneTextInput = function(boxval, controls){
 		
 			return $(topSelector).length == 1;
@@ -239,6 +254,8 @@ $(document).ready(
 		hic.activationRules["ADD"] = [hic.textBoxIsEmpty, hic.lastWordIsKeyword, hic.isAwaitingProximityInput];
 		hic.activationRules["REMOVE"] = [hic.onlyOneTextInput];	
 		hic.activationRules["ABBR"] = [hic.stringIsToBeLemmatised];
+		hic.activationRules["START-NOT"] = [hic.stringIsToBeLemmatised, hic.stringHasStartButNoEndNot, hic.alreadyContainsRegex];
+		hic.activationRules["END-NOT"] = [hic.stringIsToBeLemmatised, hic.stringHasNoStartNot, hic.alreadyContainsRegex];
 		
 		// (en|dis)ables proximity controls appropriately
 		
@@ -345,16 +362,33 @@ $(document).ready(
 		hic.addKeyWord = function(){
 
 			var keyword = $(this).val().toUpperCase();
+			keyword = hic.transformKeyword(keyword);
 			var parent = $(this).parents(topSelector);
 			var input = $(parent).find(".keyword");
 			var val = input.val();
-			var newVal = (val.length > 0 ? val + " " : val) + keyword;
-			newVal += " ";
+			var newVal = (hic.needsSpace(val, keyword) ? val + " " : val) + keyword;
 			input.focus();
 			input.val(newVal);
 			hic.doButtonActivationCheck(input.val(), parent);
 			hic.doProxControlsActivationCheck(input.val(), parent);
 			
+		}
+		
+		hic.transformKeyword = function(rawVal){
+
+    		if(rawVal.toUpperCase() == "START-NOT"){ return "[-"; }
+			else if(rawVal.toUpperCase() == "END-NOT"){ return "]"; }
+			return rawVal + " ";
+		 
+		}
+		
+		hic.needsSpace = function(rawVal, keyword){
+
+			if(rawVal.length == 0) return false;
+			if(keyword == "]") return false;
+			if(keyword == "[-" && rawVal.length > 0) return false;
+			return true;
+		
 		}
 		
 		hic.addAbbreviationMark = function(){
@@ -521,7 +555,7 @@ $(document).ready(
 				hic.doProxControlsActivationCheck($(lastTopSelector).find(".keyword").val(), $(lastTopSelector));
 				
 		});
-		$("#text-search-widget").on("click", ".syntax-add", hic.addNewClause);
+	//	$("#text-search-widget").on("click", ".syntax-add", hic.addNewClause);
 		$("#text-search-widget").on("click", ".syntax-lex", hic.addKeyWord);
 		$("#text-search-widget").on("click", ".syntax-then", hic.addKeyWord);
 		$("#text-search-widget").on("click", ".syntax-near", hic.addKeyWord);
@@ -531,8 +565,8 @@ $(document).ready(
 		$("#text-search-widget").on("click", ".syntax-not", hic.doNot);
 		$("#text-search-widget").on("click", ".syntax-clear", hic.clearValues);
 		$("#text-search-widget").on("click", ".syntax-abbr", hic.addAbbreviationMark);
-		$("#text-search-widget").on("click", ".syntax-then-not", hic.addKeyWord);
-		$("#text-search-widget").on("click", ".syntax-not-after", hic.addKeyWord);		
+		$("#text-search-widget").on("click", ".syntax-startnot", hic.addKeyWord);
+		$("#text-search-widget").on("click", ".syntax-endnot", hic.addKeyWord);		
 		$("#text-search-widget").on("click", ".syntax-remove", function(){
 		
 			var buttonBar = $(this).parent().clone();
