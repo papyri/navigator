@@ -182,10 +182,10 @@ public class Reader extends HttpServlet {
       while (i.hasNext()) {
         uri = FileUtils.substringBefore(i.next().path("related").path("value").getValueAsText(), "/source");
         if (uri.contains("ddbdp/")) {
-          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, uri);
+          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
         }
         if (uri.contains("hgv/")) {
-          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, uri);
+          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
         }
         if (result.exists()) break;
       }
