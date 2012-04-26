@@ -781,5 +781,5 @@
     (case (first args) 
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
-      (-index args))
+      (-index (rest args)))
     (-index)))
