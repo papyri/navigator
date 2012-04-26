@@ -67,7 +67,7 @@ public class StringSearchFacet extends Facet{
      * <dt>PHRASE       </dt>   <dd>searches performed for complete words or groups of complete words.</dd>
      * <dt>SUBSTRING    </dt>   <dd>seeks any instance of the string entered regardless of word divisions. Such
      * searches are the default search-setting</dd>
-     * <dt>REGEX        </dt>   <dd>searches using Regular Expression syntax</dd>
+     * <dt>REGEX        </dt>   <dd>searches using Regular Expression syntax.</dd>
      * <dt>LEMMA        </dt>   <dd>expands a word into all its possible forms, and then conducts a search
      * for these forms</dd>
      * <dt>USER_DEFINED </dt>   <dd>the user has chosen the fields to search manually, and thus wishes
@@ -108,7 +108,7 @@ public class StringSearchFacet extends Facet{
      * Values indicating the function of a given <code>SearchTerm</code> within a search.
      * <dl>
      * <dt>LEMMA                    </dt><dd>the term is to be lemmatised</dd>
-     * <dt>REGEX                    </dt><dd>the term is a regex</dd>
+     * <dt>REGEX                    </dt><dd>the term is a regex. Note that some searches are converted to regex searches in processing</dd>
      * <dt>START_PROX               </dt><dd>the term is the first term in a proximity search</dd>
      * <dt>END_PROX                 </dt><dd>the term is the second and last term of a proximity search</dd>
      * <dt>AND                      </dt><dd>the term is mandatory for the search</dd>
@@ -193,7 +193,7 @@ public class StringSearchFacet extends Facet{
     }
     
     // the following regex patterns are declared as static members 
-    // because of the relative expense of regex compilation and matching
+    // because of the relatively expensive character of regex compilation and matching
     
     /**
      * Regular Expression <code>Pattern</code> for detecting the presence of a 
@@ -1914,7 +1914,7 @@ public class StringSearchFacet extends Facet{
      * 
      * Note should be taken of the qualification 'in the first instance' found in the opening sentence, as processing
      * will often reduce what was submitted as a multi-term search clause to a single term. In particular,
-     * some kinds of complex searches (namely character-proximity and word-proximity-with-leading-wildcards)
+     * some kinds of complex searches (namely character-proximity, word-proximity-with-leading-wildcards, and negative assertion)
      * are converted to single-term regex representations for the purposes of querying Solr.
      * 
      */
@@ -2526,6 +2526,8 @@ public class StringSearchFacet extends Facet{
      */
     
     public class SearchTerm extends SearchClause{
+        
+        /** Indicates whether the term stands alone are as part of a larger <code>SubClause</code> */
         
         Boolean isStandalone;
         
