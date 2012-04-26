@@ -450,7 +450,9 @@ public class StringSearchFacet extends Facet{
     public Boolean addConstraints(Map<String, String[]> params){
         
         try{
+            
             searchClauses = pullApartParams(params);
+            
         }
         catch(MismatchedBracketException mbe){
             
@@ -696,6 +698,8 @@ public class StringSearchFacet extends Facet{
         
         String searchType = clause.parseForSearchType().name();
         if(searchType.equals(SearchType.USER_DEFINED.name())) return "";
+        if(clause.getAllClauseRoles().contains(ClauseRole.NEGATIVE_ASSERTION))searchType = SearchType.SUBSTRING.name();
+        if(!"".equals(clause.getProximityDisplayString())) searchType = SearchType.PROXIMITY.name();
         searchType = searchType.toLowerCase();
         String firstCap = searchType.substring(0, 1).toUpperCase();
         return firstCap + searchType.substring(1, searchType.length());
@@ -981,8 +985,6 @@ public class StringSearchFacet extends Facet{
             searchString = searchString.trim();
             if(searchString.length() == 0) return null;
             searchString = swapInProxperators(searchString);
-            // strip enclosing parens if present
-            // searchString = trimEnclosingBrackets(searchString);
             
             while(searchString.length() > 0){
 
