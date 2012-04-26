@@ -587,8 +587,9 @@ public class FacetBrowser extends HttpServlet {
         html.append("<div id=\"results-prefix\">");
         if(!constraintsPresent && exceptionLog.size() == 0){
             
-            html.append("<h2>Please select values from the left-hand column to return results</h2>");
-            
+            html.append("<div id=\"opening-info\"><h2>Please select values from the left-hand column to return results</h2></div>");
+            html.append("<noscript><div id=\"js-warning\"><p>You appear to have Javascript turned off in your browser.</p><p>Unfortunately, this site depends on Javascript in order to display correctly.</p><p>Please enable Javascript before searching.</p></div></noscript>");
+
         }
         else if(exceptionLog.size() > 0){
             
