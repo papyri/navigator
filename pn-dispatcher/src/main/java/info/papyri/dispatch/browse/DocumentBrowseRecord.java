@@ -174,21 +174,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
              
 
       }
-      /*while(matcher.find()){
-          
-          String firstFound = matcher.group(0);
-          ArrayList<String> founds = simplifyFoundString(firstFound);
-          Iterator<String> fit = founds.iterator();
-          while(fit.hasNext()){
-              
-              String found = fit.next();
-              highlightWords.add(found);
-              Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
-              patterns.add(foundPattern);
-          
-          }
-          
-      }*/
 
       Pattern[] arrPatterns = new Pattern[patterns.size()];
       return patterns.toArray(arrPatterns);
@@ -421,10 +406,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(language);
     html.append("</td>");
     html.append("<td class=\"has-translation\">");
-    try{
-    html.append(URLDecoder.decode(testClause.buildTransformedString(), "UTF-8"));
-    } catch(Exception e){ html.append("Exception"); }
-   // html.append(translationLanguages);
+    html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");
     html.append(getImageHTML());
