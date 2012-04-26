@@ -107,15 +107,16 @@ public class StringSearchFacet extends Facet{
     /**
      * Values indicating the function of a given <code>SearchTerm</code> within a search.
      * <dl>
-     * <dt>LEMMA        </dt><dd>the term is to be lemmatised</dd>
-     * <dt>REGEX        </dt><dd>the term is a regex</dd>
-     * <dt>START_PROX   </dt><dd>the term is the first term in a proximity search</dd>
-     * <dt>END_PROX     </dt><dd>the term is the second and last term of a proximity search</dd>
-     * <dt>AND          </dt><dd>the term is mandatory for the search</dd>
-     * <dt>OR           </dt><dd>the term is potentially optional in the search</dd>
-     * <dt>NOT          </dt><dd>the term is excluded from the search</dd>
-     * <dt>OPERATOR     </dt><dd>the term is a search operator</dd>
-     * <dt>DEFAULT      </dt><dd>no role has yet been assigned.</dd>
+     * <dt>LEMMA                    </dt><dd>the term is to be lemmatised</dd>
+     * <dt>REGEX                    </dt><dd>the term is a regex</dd>
+     * <dt>START_PROX               </dt><dd>the term is the first term in a proximity search</dd>
+     * <dt>END_PROX                 </dt><dd>the term is the second and last term of a proximity search</dd>
+     * <dt>AND                      </dt><dd>the term is mandatory for the search</dd>
+     * <dt>OR                       </dt><dd>the term is potentially optional in the search</dd>
+     * <dt>NOT                      </dt><dd>the term is excluded from the search</dd>
+     * <dt>OPERATOR                 </dt><dd>the term is a search operator</dd>
+     * <dt>NEGATIVE_ASSERTION       </dt><dd>the term contains a negative look-ahead or -behind assertion</dd>
+     * <dt>DEFAULT                  </dt><dd>no role has yet been assigned.</dd>
      * </dl>
      * 
      */
@@ -608,7 +609,7 @@ public class StringSearchFacet extends Facet{
                 while(cit.hasNext()){
                     
                     String clause = cit.next();
-                    clause = CLAUSE_FACTORY.trimEnclosingBrackets(clause);
+                    clause = trimEnclosingBrackets(clause);
                     try{
                     
                         SearchClause searchClause = isTerm(clause) ? new SearchTerm(clause, trgt, caps, marks, true) : new SubClause(clause, trgt, caps, marks);
@@ -651,6 +652,65 @@ public class StringSearchFacet extends Facet{
         return false;
         
     }
+    
+        /**
+         * Removes insignificant brackets - that is to say, those which surround an entire clause.
+         * 
+         * 
+         * @param searchString
+         * @return
+         * @throws MismatchedBracketException 
+         */
+        
+        String trimEnclosingBrackets(String searchString) throws MismatchedBracketException{
+            
+            if(!Character.toString(searchString.charAt(0)).equals("(")) return searchString;
+            int endBracketIndex = getIndexOfMatchingCloseParens(searchString);
+            if(endBracketIndex == -1){ throw new MismatchedBracketException(); }
+            if(endBracketIndex == searchString.length() - 1){
+
+                return searchString.substring(1, endBracketIndex);
+                
+            }
+            return searchString;
+                   
+        }
+        
+        /**
+         * Returns the index of an open-bracket's matching close bracket.
+         * 
+         * This method needs to be more complex than getMatchingIndex, above, because
+         * of the possibility of nested brackets.
+         * 
+         * 
+         * @param remainder
+         * @return 
+         */
+        
+        Integer getIndexOfMatchingCloseParens(String remainder){
+        
+            int pos = -1;
+            int bracketCount = 1;
+            for(int i = 1; i < remainder.length(); i++){
+                
+                String nowChar = Character.toString(remainder.charAt(i));
+                if("(".equals(nowChar)){
+                    bracketCount += 1;
+                } else if(")".equals(nowChar)) {
+
+                    bracketCount -= 1;
+                }
+                if(bracketCount == 0 && pos == -1){
+                    
+                    pos = i;
+                }
+                
+                
+            }
+            if(bracketCount != 0) return -1;
+            return pos;
+        
+        }
     
     @Override
     public ArrayList<String> getFacetConstraints(String facetParam){
@@ -1063,7 +1123,7 @@ public class StringSearchFacet extends Facet{
             }
 
             searchString = transformPhraseSearch(searchString, unit);
-            searchString = CLAUSE_FACTORY.trimEnclosingBrackets(searchString);
+            searchString = trimEnclosingBrackets(searchString);
             return searchString;
             
         }
@@ -1116,29 +1176,6 @@ public class StringSearchFacet extends Facet{
         }
         
         /**
-         * Removes insignificant brackets - that is to say, those which surround an entire clause.
-         * 
-         * 
-         * @param searchString
-         * @return
-         * @throws MismatchedBracketException 
-         */
-        
-        String trimEnclosingBrackets(String searchString) throws MismatchedBracketException{
-            
-            if(!Character.toString(searchString.charAt(0)).equals("(")) return searchString;
-            int endBracketIndex = getIndexOfMatchingCloseParens(searchString);
-            if(endBracketIndex == -1){ throw new MismatchedBracketException(); }
-            if(endBracketIndex == searchString.length() - 1){
-
-                return searchString.substring(1, endBracketIndex);
-                
-            }
-            return searchString;
-                   
-        }
-        
-        /**
          * Returns the index of a clause-delimiter's matching delimiter.
          * 
          * This will typically be a quotation mark, a bracket, or a space character.
@@ -1149,7 +1186,6 @@ public class StringSearchFacet extends Facet{
          */
         Integer getMatchingIndex(String startChar, String remainder){
             
-            //if("(".equals(startChar)) return getIndexOfMatchingCloseBracket(remainder);
             if("\"".equals(startChar) || "'".equals(startChar)){
                 
                 int endIndex = remainder.indexOf(startChar, 1);
@@ -1161,41 +1197,6 @@ public class StringSearchFacet extends Facet{
             
         }
         
-        /**
-         * Returns the index of an open-bracket's matching close bracket.
-         * 
-         * This method needs to be more complex than getMatchingIndex, above, because
-         * of the possibility of nested brackets.
-         * 
-         * 
-         * @param remainder
-         * @return 
-         */
-        
-        Integer getIndexOfMatchingCloseParens(String remainder){
-        
-            int pos = -1;
-            int bracketCount = 1;
-            for(int i = 1; i < remainder.length(); i++){
-                
-                String nowChar = Character.toString(remainder.charAt(i));
-                if("(".equals(nowChar)){
-                    bracketCount += 1;
-                } else if(")".equals(nowChar)) {
-
-                    bracketCount -= 1;
-                }
-                if(bracketCount == 0 && pos == -1){
-                    
-                    pos = i;
-                }
-                
-                
-            }
-            if(bracketCount != 0) return -1;
-            return pos;
-        
-        }
                 
     }
     
