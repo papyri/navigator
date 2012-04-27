@@ -723,24 +723,32 @@
       	
       }
       
+      #opening-info h2{
+      
+      	margin-top: 0px;
+      
+      }
+      
       #results-prefix-wrapper{
       
       	position: relative;
-      
+
       }
       
       #results-prefix{
       	float: left;
+      	width: 100%;
       }
       
       #results-prefix p{
       	clear: both;
+      	margin-top: 0px;
       }
       
       #docs-per-page{
-      	float: right;
-      	width: 245px;
-      	margin-top: 12px;
+      	position: absolute;
+      	right: 20px;
+      	
       }
       
       #docs-per-page input#DOCS_PER_PAGE{
@@ -880,9 +888,70 @@
       	padding: 2em;
       	border: thin dashed black;
       	margin-top: 5em;
+      	      
+      }
+      #opening-info h2, #info{
+      
+      	display: none;
       
       }
       
+      .info-section .info-content{
+      
+      	display: none;
+      
+      }
+
+	  .info-section{
+	  
+	  	margin-left: 2em;
+	  
+	  }
+	  
+	  .info-content{
+	  
+	  	margin-bottom: 10px;
+	  
+	  }
+
+	  .info-section h4{
+	  
+	  	cursor: pointer;
+	  	margin-bottom: 10px;
+	  
+	  }    
+	  
+	  .info-content h5{
+	  
+	  	font-weight: bold;
+	  	margin-top: 0.75em;
+	  	margin-bottom: 0.75em;
+	  
+	  }  
+	  
+	  .info-content ol{
+	  
+	  	margin: 1em;
+	  
+	  }
+	  
+	  .info-content ol li{
+	  
+	  	margin: 0.75em;
+	  
+	  }
+	  
+	  .topic-intro{
+	  
+	  	font-weight: bold;
+	  
+	  }
+	  
+	  .topic-intro:after{
+	  	
+	  	content:": ";
+	  
+	  }
     </style>
           <!--[if IE 6]>
           <script type="text/javascript">
@@ -892,10 +961,34 @@
 
       <!--[if IE]>
     <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" title="no title" charset="utf-8">
-
     <![endif]-->
       <!--[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]-->
     <script type="text/javascript">
+    
+     $(document).ready(function(){
+     
+     	$("#opening-info h2, #info").css("display", "block");
+        $(".info-section h4").click(function(){
+        	
+        	var startHeight = $("#facet-wrapper").height();
+        	$(this).next(".info-content").slideToggle(500, function(){
+        	
+        		var newHeight = $("#facet-wrapper").height();
+        	    if(newHeight != startHeight){
+                
+                	$("#search-toggle").height(newHeight);	
+        	
+        		}
+        	});
+
+        
+        });
+     	
+     
+     
+     
+     
+     });
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-19774706-1']);
