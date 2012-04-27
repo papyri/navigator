@@ -30,7 +30,6 @@
    :methods [#^{:static true} [index [java.util.List] void]
              #^{:static true} [loadBiblio [] void]
              #^{:static true} [loadLemmas [] void]])
-  (:use clojure.contrib.math)
   (:import
     (clojure.lang ISeq)
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
@@ -215,7 +214,7 @@
     (if (.contains url "hgv/")
       (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
             id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-        (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
+        (str filepath "/HGV_meta_EpiDoc/HGV" (Math/ceil (/ id-int 1000)) "/" identifier ".xml"))
       (when (.contains url "apis/")
         (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
           (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
@@ -239,7 +238,7 @@
         (when (.endsWith url "/source")
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".txt")))
+            (str htpath "/HGV_meta_EpiDoc/HGV" (Math/ceil (/ id-int 1000)) "/" identifier ".txt")))
         (when (.contains url "/apis")
           (if (.endsWith url "/source")
             (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
@@ -272,7 +271,7 @@
         (if (.endsWith url "/source")
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".html"))
+            (str htpath "/HGV_meta_EpiDoc/HGV" (Math/ceil (/ id-int 1000)) "/" identifier ".html"))
           (if (= url "http://papyri.info/hgv")
             (str htpath "/HGV_meta_EpiDoc/index.html")
             (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
@@ -781,5 +780,5 @@
     (case (first args) 
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
-      (-index args))
+      (-index (rest args)))
     (-index)))

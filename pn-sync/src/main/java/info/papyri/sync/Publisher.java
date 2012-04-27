@@ -94,7 +94,6 @@ public class Publisher implements Runnable {
             indexer.index(urls);
             success = callSolrMethod("commit");
             success = callSolrMethod("optimize");
-            success = callSolrMethod("swap");
           }
         }
         status = IDLE;
@@ -114,24 +113,10 @@ public class Publisher implements Runnable {
       StringBuilder uri = new StringBuilder();
       uri.append(SOLR);
       if ("commit".equals(action) || "optimize".equals(action)) {
-        uri.append("solr/pn-search-offline/update");
+        uri.append("solr/pn-search/update");
         PostMethod post = new PostMethod(uri.toString());
         post.setRequestBody("<" + action + " />");
         Document doc = db.parse(post.getResponseBodyAsStream());
-        NodeList nl = doc.getElementsByTagName("int");
-        for (int i = 0 ; i < nl.getLength(); i++) {
-          Element elt = (Element)nl.item(i);
-          if ("status".equals(elt.getAttribute("name"))) {
-            if ("0".equals(elt.getTextContent())) {
-              result = true;
-              break;
-            }
-          }
-        }
-      }
-      if ("swap".equals(action)) {
-        uri.append("solr/admin/cores?action=SWAP&core=pn-search-offline&other=pn-search");
-        Document doc = db.parse(uri.toString());
         NodeList nl = doc.getElementsByTagName("int");
         for (int i = 0 ; i < nl.getLength(); i++) {
           Element elt = (Element)nl.item(i);
