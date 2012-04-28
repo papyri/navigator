@@ -772,7 +772,8 @@
     (ref-set text nil)
     (ref-set solrtemplates nil))
   
-  (print-words))
+  ;;(print-words)
+  )
 
 
 (defn -main [& args]
