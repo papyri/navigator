@@ -1,6 +1,7 @@
 package info.papyri.dispatch;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.Collection;
@@ -593,7 +594,7 @@ public class FileUtils {
                 .replaceAll("^#", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
                 .replaceAll("°", "\\\\((?!\\\\*)")
-                .replaceAll("£", "\\S*").replaceAll("¥", "\\S").replace("\"", "");      
+                .replaceAll("£", "[^//s]*").replaceAll("¥", "[^//s]").replace("\"", "");
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
        return transformedString;
@@ -611,7 +612,7 @@ public class FileUtils {
                 .replaceAll("^#", "(\\s|^)")
                 .replaceAll("^$", "(\\s|$)")
                 .replaceAll("°", "\\\\((?!\\\\*)")
-                .replace("£", "\\S*").replaceAll("¥", "\\S").replace("\"", "");
+                .replace("£", "[^\\s]*").replaceAll("¥", "[^\\s]").replace("\"", "");
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
        transformedString = "(^|(?<=[\\s]))" + transformedString + "((?=[\\s])|$)";
@@ -644,18 +645,30 @@ public class FileUtils {
       ArrayList<Pattern> patterns = new ArrayList<Pattern>();
       String[] qbits = q.split("\\)");
       for(int i = 0; i < qbits.length; i++){
-          
+                    
           String qbit = qbits[i];
+          String term = qbit.substring(qbit.indexOf(":") + 2);
+          try{
+              
+              term = URLDecoder.decode(term, "UTF-8");
+              
+          }catch(UnsupportedEncodingException uee){}
+
           if(qbit.contains("PHRASE:")){
               
-              patterns.addAll(Arrays.asList(getPhraseHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1, qbit.length()))));
+              patterns.addAll(Arrays.asList(getPhraseHighlightPatterns(term)));
               
           }
              
          
+          else if(qbit.contains("SUBSTRING")) {
+              
+               patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(term)));
+              
+          }
           else{
               
-               patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(qbit.substring(qbit.indexOf(":") + 1, qbit.length()))));
+              patterns.add(Pattern.compile(term));
               
           }
           

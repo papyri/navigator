@@ -160,12 +160,13 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           if(startIndex < 0) startIndex = 0;
           if(endIndex > fullText.length()) endIndex = fullText.length();
           String found = fullText.substring(startIndex, endIndex);
+          found = anchorAssertionAtStart(found, precedingIndexAdjustment);
+          found = anchorAssertionAtEnd(found, followingIndexAdjustment);
           if((precedingIndexAdjustment == 0 || !negatedPrecedingString.equals(found.substring(0, precedingIndexAdjustment + 1))) && (followingIndexAdjustment == 0 || !negatedFollowingString.equals(found.substring(found.length() - followingIndexAdjustment)))){
 
              found = found.replaceAll("([()\\[\\]{}\\.])", ".");
              found = found.replaceAll("\\s{2,}", "\\\\b");
              found = found.replaceAll("\\s", " ");
-             System.out.println("found is " + found);
              highlightWords.add(found);
              Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
              patterns.add(foundPattern);        
@@ -200,7 +201,56 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
   }
   
-  String interpolateTextMarksIntoRegex(String regex){
+  public String anchorAssertionAtStart(String foundString, int startIndex){
+      
+      startIndex = startIndex - 1;
+      int i;
+      Boolean hasWhitespace = false;
+
+      for(i = startIndex; i >= 0; i--){
+          
+          String nowLetter = String.valueOf(foundString.charAt(i));
+          if(nowLetter != null && nowLetter.matches("^\\s$")){
+
+              hasWhitespace = true;
+              break;
+          }         
+          
+      }
+      if(hasWhitespace){
+          
+          return "\\b" + foundString.substring(i + 1);
+          
+      }
+      return foundString;
+      
+  }
+  
+  public String anchorAssertionAtEnd(String foundString, int endCount){
+      
+      int i;
+      Boolean hasWhitespace = false;
+      
+      for(i = foundString.length() - endCount; i < foundString.length(); i++){
+          
+          String nowLetter = String.valueOf(foundString.charAt(i));
+          if(nowLetter != null && nowLetter.matches("^\\s$")){
+
+              hasWhitespace = true;
+              break;
+          }              
+          
+      }
+      if(hasWhitespace){
+          
+          return foundString.substring(0, i) + "\\b";
+          
+      }
+      
+      return foundString;
+  }
+  
+  public String interpolateTextMarksIntoRegex(String regex){
       
       String specialChars = "(\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[)?";
       StringBuilder regexBuilder = new StringBuilder();
@@ -236,29 +286,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       return regexBuilder.toString().trim();
       
   }
-  
-  public ArrayList<String> simplifyFoundString(String foundString){
-      
-      ArrayList<String> foundStrings = new ArrayList<String>();
-      List<String> foundbits =  Arrays.asList(foundString.split("((\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)"));
-      for(int i = 0; i < foundbits.size(); i++){
 
-          List<String> specialChars = Arrays.asList(new String[]{"\\(", "\\)", "\\{", "\\}", "\\.", "-", "\\[", "\\]", "\\s" });
-
-          String fb = foundbits.get(i).trim();
-          Iterator<String> scit = specialChars.iterator();
-          while(scit.hasNext()){
-
-              String spchar = scit.next();
-              fb = fb.replaceAll(spchar, "\\" + spchar);
-              
-          }
-          if(fb.matches("^.*[^\\.].*$")) foundStrings.add(fb);
-
-      }
-      
-      return foundStrings;
-  }
   
   // used to build the query string (itself used by the Reader class to highlight
   // text in its displayed HTML)
@@ -347,7 +375,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
       StringBuilder highlighter = new StringBuilder();
       StringSearchFacet.SearchType searchType = highlightWord.contains(" ") ? StringSearchFacet.SearchType.PHRASE : StringSearchFacet.SearchType.SUBSTRING;
-      highlighter.append(StringSearchFacet.SearchType.SUBSTRING.name());
+      highlighter.append(StringSearchFacet.SearchType.REGEX.name());
       highlighter.append(":(");
       if(searchType == StringSearchFacet.SearchType.PHRASE){
           
