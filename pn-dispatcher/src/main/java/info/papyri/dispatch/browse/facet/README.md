@@ -3,7 +3,7 @@ info.papyri.dispatch.browse.facet.FacetBrowser - Overview
 
 Although the domain model for the faceted browser is complex, the browser code itself is in outline simple.
 
-The reason for this simplicity is that at its core the browser is simply leveraging the power of [baked-in Solr faceting capacities](http://wiki.apache.org/solr/SolrFacetingOverview "Solr faceting overview"). The code therefore does not need to manage basic housekeeping or low-level task, and is simply responsible for translating requests made via the interface to Solr queries and then formatting and displaying the results.
+The reason for this simplicity is that at its core the browser is simply leveraging the power of [baked-in Solr faceting capacities](http://wiki.apache.org/solr/SolrFacetingOverview "Solr faceting overview"). The code therefore does not need to manage basic housekeeping or low-level tasks, and is simply responsible for translating requests made via the interface to Solr queries and then formatting and displaying the results.
 
 Because of this simplicity, the code does not implement design patterns on a large scale, or adhere to any architectural pattern such as Model-View-Controller (MVC). 
 
