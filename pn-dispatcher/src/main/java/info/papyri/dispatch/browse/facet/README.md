@@ -17,7 +17,7 @@ Model
 
 As noted above, the model layer is taken care of by Solr. It is thus most readily understood by looking at the Solr server's [schema.xml](https://github.com/papyri/navigator/blob/master/pn-solr/pn-search/conf/schema.xml "schema.xml on github") file, and in particular at the fields defined there.
 
-It should be noted, however, that although Solr deals with faceting on a field-by-field basis, individual Java `Facet` classes may sometimes be responsible for two or more fields, which are wrapped and presented to the user as a single control group or facet. The `IdentifierFacet`, for instance, mediates eleven separate fields concerned with identifiers (apis\_series, ddbdp\_series, hgv\_series, etc.); the 'HasTranscriptionFacet`, by contrast, deals only with the single Boolean `has_transcription` field.
+It should be noted, however, that although Solr deals with faceting on a field-by-field basis, individual Java `Facet` classes may sometimes be responsible for two or more fields, which are wrapped and presented to the user as a single control group or facet. The `IdentifierFacet`, for instance, mediates eleven separate fields concerned with identifiers (apis\_series, ddbdp\_series, hgv\_series, etc.); the 'HasTranscriptionFacet', by contrast, deals only with the single Boolean `has_transcription` field.
 
 Controller
 ----------
