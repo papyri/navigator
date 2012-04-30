@@ -460,7 +460,6 @@ $(document).ready(
 	    /**
 	     * Hides search controls in order to expand result display
 	     *
-	     * TODO: clunky. Fix.
 	     */
 	    hic.hideSearch = function(evt){
 
@@ -561,9 +560,8 @@ $(document).ready(
 		      var fullWidth = $(window).width();
 		      var searchWidth = (direction == "hide-search") ? $("#search-togger").outerWidth() + 1 : 500;
 		      var ownMargin = 23;
-		      var ownPadding = 0.02 * fullWidth;
 		      var widgetPadding = 25;
-		      return fullWidth - searchWidth - ownMargin - ownPadding - widgetPadding - 1;
+		      return fullWidth - searchWidth - ownMargin - widgetPadding - 1;
 
 		}
 
