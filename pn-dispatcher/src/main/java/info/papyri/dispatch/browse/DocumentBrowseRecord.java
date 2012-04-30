@@ -647,9 +647,9 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       try{
 
           List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
-          html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
+          html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"7\">");
           for(String kwic : kwix){
-
+              
               html.append(kwic);
               html.append("<br/>\n");
 
