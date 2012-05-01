@@ -39,6 +39,10 @@ import org.apache.solr.common.SolrDocumentList;
  * <code>SearchClause</code> classes (responsible for handling the actual string-search
  * logic).
  * 
+ * Another inner class - <code>SearchClauseFactory</code> mediates between the outer and the
+ * inner classes, generating <code>SearchClause</code> objects based on the parameters
+ * passed to the outer class by the servlet.
+ * 
  * The outer class differs from other <code>Facet</code> subclasses chiefly in that
  * repeated complex (that is to say, involving more than one request parameter)
  * searches are possible. This entails that search parameters must be ordered, both to 
@@ -458,8 +462,7 @@ public class StringSearchFacet extends Facet{
         catch(MismatchedBracketException mbe){
             
             exceptionLog.add(mbe);
-            
-            
+              
         }
         return !searchClauses.isEmpty();
              
@@ -916,7 +919,7 @@ public class StringSearchFacet extends Facet{
     }
     
     /**
-     * Recursively eturns all the bottom-level <code>SearchTerm</code>s currently being 
+     * Recursively returns all the bottom-level <code>SearchTerm</code>s currently being 
      * used by the <code>Facet</code>.
      * 
      * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm
