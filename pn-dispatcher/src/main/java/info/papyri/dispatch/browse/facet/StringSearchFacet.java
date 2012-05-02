@@ -12,6 +12,8 @@ import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketExcep
 import info.papyri.dispatch.browse.facet.customexceptions.RegexCompilationException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
 import info.papyri.dispatch.browse.facet.customexceptions.SubstringTooSmallException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -737,9 +739,17 @@ public class StringSearchFacet extends Facet{
     public String getDisplayValue(String facetValue){
         
         Integer k = Integer.valueOf(facetValue);
-        if(!searchClauses.containsKey(k)) return "Facet value not found";     
-        SearchClause clause = searchClauses.get(k).get(0);
-        return clause.getDisplayString();
+        if(!searchClauses.containsKey(k)) return "Facet value not found";  
+        Iterator<SearchClause> scit = searchClauses.get(k).iterator();
+        StringBuilder display = new StringBuilder();
+        while(scit.hasNext()){
+            
+            display.append(scit.next().getDisplaySearchClause());
+            display.append(" ");
+            
+        }
+        return searchClauses.get(k).get(0).getDisplayString(display.toString());
+        
         
     }
     
@@ -843,7 +853,10 @@ public class StringSearchFacet extends Facet{
             
             qs.append(kwParam);
             qs.append("=");
-            qs.append(this.concatenateSearchClauses(clauses));
+            String rawClauses = this.concatenateSearchClauses(clauses);
+            try{ rawClauses = URLEncoder.encode(rawClauses, "UTF-8"); } 
+            catch(UnsupportedEncodingException uee){}
+            qs.append(rawClauses);
             
             SearchClause leadClause = clauses.get(0);
             
@@ -1663,13 +1676,7 @@ public class StringSearchFacet extends Facet{
            
        }
        
-       /**
-        * Tidies the search string for display to the user
-        * 
-        * @return 
-        */
-       
-       String getDisplayString(){
+       String getDisplaySearchClause(){
            
            String rawString = this.getOriginalString().trim().split("~")[0];
            String procString = rawString.replaceAll("<", "&lt;").replaceAll("_", "-");
@@ -1678,11 +1685,22 @@ public class StringSearchFacet extends Facet{
                procString = procString.substring(1, procString.length() - 1);
                
                
-           }
+           }           
+           return procString;
+       }
+       
+       /**
+        * Tidies the search string for display to the user
+        * 
+        * @return 
+        */
+       
+       String getDisplayString(String searchString){
+
            if(this.parseForSearchType() == SearchType.USER_DEFINED){
                
                Pattern pattern = Pattern.compile(".*?(\\d+)$");
-               Matcher matcher = pattern.matcher(procString);
+               Matcher matcher = pattern.matcher(searchString);
                
                if(matcher.matches()){
                    
@@ -1690,15 +1708,15 @@ public class StringSearchFacet extends Facet{
                    
                }
                
-               String procCaps = String.valueOf(procString.charAt(0)).toUpperCase();
-               procString = procCaps + procString.substring(1);
+               String procCaps = String.valueOf(searchString.charAt(0)).toUpperCase();
+               searchString = procCaps + searchString.substring(1);
                
            }
-           if(this.parseForSearchType() == SearchType.REGEX) procString = procString.replaceAll(REGEX_MARKER, "");
-           if(this.parseForSearchType() == SearchType.LEMMA) procString = procString.replaceAll(LEX_MARKER, "");
-           procString = procString.trim();
+           if(this.parseForSearchType() == SearchType.REGEX) searchString = searchString.replaceAll(REGEX_MARKER, "");
+           if(this.parseForSearchType() == SearchType.LEMMA) searchString = searchString.replaceAll(LEX_MARKER, "");
+           searchString = searchString.trim();
            
-           StringBuilder dv = new StringBuilder(procString);
+           StringBuilder dv = new StringBuilder(searchString);
            dv.append("<br/>");
            if(parseForSearchType() == SearchType.PROXIMITY || (parseForSearchType() == SearchType.REGEX && !getProximityDisplayString().equals(""))){
             
