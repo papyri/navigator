@@ -45,7 +45,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   public Pattern[] highlightTerms;
   private ArrayList<String> highlightWords;
   private FileUtils util;
-  
+  private String tempRegex;
   private SearchClause testClause;
   
   private static IdComparator documentComparator = new IdComparator();
@@ -64,6 +64,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.imagePaths = imgPaths;
     this.hasIllustration = illus;
     this.testClause = sts.size() > 0 ? sts.get(0) : null;
+        this.tempRegex = "";
+
     this.highlightWords = new ArrayList<String>();
     this.highlightTerms = buildHighlightTerms(sts);
     this.highlightString = buildHighlightString(sts);
@@ -118,17 +120,18 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
               else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY){
 
                   transformedString = transformedString.replaceAll("(\\d+)w", "");
+                  tempRegex = "Prox";
                   hilites.addAll(Arrays.asList(util.getPhraseHighlightPatterns(transformedString)));
 
               }
               else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
-
+                  tempRegex = "Substring";
                   Pattern[] patterns = util.getSubstringHighlightPatterns(transformedString);
                   hilites.addAll(Arrays.asList(patterns));
 
               }   
               else{
-
+                  tempRegex = "Other";
                   Pattern[] patterns = util.getPhraseHighlightPatterns(transformedString);
                   hilites.addAll(Arrays.asList(patterns));
 
@@ -151,6 +154,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       int precedingIndexAdjustment = negatedPrecedingString.length();
       int followingIndexAdjustment = negatedFollowingString.length();
       regex = util.substituteDiacritics(regex);
+      tempRegex = regex;
       Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
       Matcher matcher = pattern.matcher(fullText);
       
@@ -252,7 +256,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   public String interpolateTextMarksIntoRegex(String regex){
       
-      String specialChars = "(\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[)?";
+      String specialChars = "(\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\u0323)*";
       StringBuilder regexBuilder = new StringBuilder();
       String prevCharacter = "";
       int curlyBracesCount = 0;
@@ -374,21 +378,21 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String buildRegexHighlightString(String highlightWord){
       
       StringBuilder highlighter = new StringBuilder();
-      StringSearchFacet.SearchType searchType = highlightWord.contains(" ") ? StringSearchFacet.SearchType.PHRASE : StringSearchFacet.SearchType.SUBSTRING;
+      //StringSearchFacet.SearchType searchType = highlightWord.contains(" ") ? StringSearchFacet.SearchType.PHRASE : StringSearchFacet.SearchType.SUBSTRING;
       highlighter.append(StringSearchFacet.SearchType.REGEX.name());
       highlighter.append(":(");
-      if(searchType == StringSearchFacet.SearchType.PHRASE){
+   /*   if(searchType == StringSearchFacet.SearchType.PHRASE){
           
           highlighter.append("\"");
           
       }
-      highlighter.append(highlightWord);
-      if(searchType == StringSearchFacet.SearchType.PHRASE){
+   */   highlighter.append(highlightWord);
+   /*   if(searchType == StringSearchFacet.SearchType.PHRASE){
           
           highlighter.append("\"");
           
       }
-      highlighter.append(")");
+   */   highlighter.append(")");
       return highlighter.toString();
       
       
@@ -434,6 +438,15 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(language);
     html.append("</td>");
     html.append("<td class=\"has-translation\">");
+    
+  /*  try{
+        html.append("Regex: ");
+	html.append(tempRegex);
+  	        html.append("|||");
+
+        html.append(URLDecoder.decode(testClause.buildTransformedString().replaceAll("<", "|"), "UTF-8"));
+	  	
+    } catch(Exception e){ html.append("Exception"); }*/
     html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");
