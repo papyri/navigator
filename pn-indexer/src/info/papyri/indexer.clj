@@ -190,6 +190,10 @@
   [string1 string2]
   (when (.contains string1 string2) (.substring string1 0 (.indexOf string1 string2))))
 
+(defn ceil
+  [num]
+  (substring-before (str (Math/ceil num)) "."))
+
 (defn encode-url
   "Wrapper for the `java.net.URLEncoder.encode()` method."
   [url]
@@ -214,7 +218,7 @@
     (if (.contains url "hgv/")
       (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
             id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-        (str filepath "/HGV_meta_EpiDoc/HGV" (Math/ceil (/ id-int 1000)) "/" identifier ".xml"))
+        (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
       (when (.contains url "apis/")
         (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
           (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
@@ -238,7 +242,7 @@
         (when (.endsWith url "/source")
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str htpath "/HGV_meta_EpiDoc/HGV" (Math/ceil (/ id-int 1000)) "/" identifier ".txt")))
+            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".txt")))
         (when (.contains url "/apis")
           (if (.endsWith url "/source")
             (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
@@ -271,7 +275,7 @@
         (if (.endsWith url "/source")
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str htpath "/HGV_meta_EpiDoc/HGV" (Math/ceil (/ id-int 1000)) "/" identifier ".html"))
+            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".html"))
           (if (= url "http://papyri.info/hgv")
             (str htpath "/HGV_meta_EpiDoc/index.html")
             (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
