@@ -2565,6 +2565,7 @@ public class StringSearchFacet extends Facet{
             
         }
         
+        
         @Override
         public String buildTransformedString() throws InternalQueryException, InsufficientSpecificityException{
             
@@ -2615,7 +2616,7 @@ public class StringSearchFacet extends Facet{
         
         private String expandNegativeAssertion(String rawAssertion){
 
-            rawAssertion = rawAssertion.replace("#", "\\b");
+           // rawAssertion = rawAssertion.replace("#", "\\b");
             String[] assertBits = rawAssertion.split("]");
             StringBuilder assertionAsRegex = new StringBuilder();
             Pattern pattern = Pattern.compile(".*\\[\\-.*");
@@ -2626,6 +2627,7 @@ public class StringSearchFacet extends Facet{
                 if(matcher.matches()){
 
                     nowBit = nowBit.replace("[-", openExpression);
+                    nowBit = excludeAbbreviationMarks(openExpression, nowBit);
                     assertionAsRegex.append(nowBit);
                     assertionAsRegex.append(")");
                 
@@ -2637,8 +2639,40 @@ public class StringSearchFacet extends Facet{
                 }
                 
             }
+            String finalAssertion = assertionAsRegex.toString().replaceAll("#", "\\\\b");
+            return finalAssertion;
             
-            return assertionAsRegex.toString();
+        }
+        
+        protected String excludeAbbreviationMarks(String openExpression, String regexContents){
+            
+            Boolean prepend = "(?!".equals(openExpression);
+            int startPos = regexContents.indexOf(openExpression);
+            if(startPos == -1) return regexContents;
+            startPos += openExpression.length();
+         
+            StringBuilder noAbbrevs = new StringBuilder();
+            noAbbrevs.append(regexContents.substring(0, startPos));
+            
+            for(int i = startPos; i < regexContents.length(); i++){
+                
+                String nowChar = String.valueOf(regexContents.charAt(i));
+                if(nowChar.matches("\\p{L}")){
+                
+                    if(prepend) noAbbrevs.append("°?");
+                    noAbbrevs.append(nowChar);
+                    if(!prepend) noAbbrevs.append("°?");
+                    
+                }
+                else{
+                    
+                    noAbbrevs.append(nowChar);
+                    
+                }
+                
+            }
+            
+            return noAbbrevs.toString();
             
         }
         

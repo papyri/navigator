@@ -1490,65 +1490,6 @@ public class IdentifierFacet extends Facet{
             
             
         }
-             
-         /*   ArrayList<SolrField> facetFields = this.getFacetFields();
-            facetFields.remove(getLeadingField());            
-            
-            for(SolrField facetField : facetFields){
-            
-                FacetField ff = queryResponse.getFacetField(facetField.name());
-                
-                if(ff != null){
-                                        
-                    List<Count> facetCounts = ff.getValues();
-            
-                    for(Count count : facetCounts){
-
-                        String name = count.getName();
-                        Long number = count.getCount();
-
-                        if(name != null && !"".equals(name) && !"0".equals(name) && !"null".equals(name)  && number != 0){
-                                             
-                            if(idValues.containsKey(name)){
-                                
-                                Long currentValue = idValues.get(name);
-                                currentValue += number;
-                                idValues.put(name, currentValue);
-                                
-                            }
-                            else{
-                                
-                                idValues.put(name, number);
-                                
-                            }
-                 
-                        }   // closing extended null check
-              
-                    }       // closing loop through counts
-                
-                }           // closing ff null check          
-            
-            }               // closing loop through facet fields
-            
-            
-            for(String name : rawValues){
-                
-                if(idValues.containsKey(name)){
-                    
-                    Long currentValue = idValues.get(name);
-                    currentValue++;
-                    idValues.put(name, currentValue);   
-                    
-                }
-                else{
-                    
-                    idValues.put(name, Long.valueOf(1));
-                    
-                }
-                
-            } 
-            
-        }*/
         
     }
     
