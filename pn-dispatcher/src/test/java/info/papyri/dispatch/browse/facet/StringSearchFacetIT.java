@@ -191,23 +191,23 @@ public class StringSearchFacetIT extends TestCase {
             // simplified negative lookahead/behind
             String test14 = "[-kai]sar"; 
             StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test14, StringSearchFacet.SearchTarget.TEXT, true, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(?<!kai)sar.*$", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(?<!k°?a°?i°?)sar.*$", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             String test15 = "[-kai]sar#";
             StringSearchFacet.SearchTerm clause15 = testInstance.new SearchTerm(test15, StringSearchFacet.SearchTarget.TEXT, true, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(?<!kai)sar\\b.*$", URLDecoder.decode(clause15.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(?<!k°?a°?i°?)sar\\b.*$", URLDecoder.decode(clause15.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
             String test16 = "kai[-sar]";
             StringSearchFacet.SearchTerm clause16 = testInstance.new SearchTerm(test16, t, true, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*kai(?!sar).*$", URLDecoder.decode(clause16.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*kai(?!°?s°?a°?r).*$", URLDecoder.decode(clause16.buildQuery(new SolrQuery()).toString(), "UTF-8"));
            
             String test17 = "( ou[-k] NEAR [-kai]sar )~5chars";
             StringSearchFacet.SubClause clause17 = testInstance.new SubClause(test17, t, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*((?<!kai)sar.{1,5}ou(?!k)|ou(?!k).{1,5}(?!kai)sar).*$", URLDecoder.decode(clause17.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*((?<!k°?a°?i°?)sar.{1,5}ou(?!°?k)|ou(?!°?k).{1,5}(?!°?k°?a°?i)sar).*$", URLDecoder.decode(clause17.buildQuery(new SolrQuery()).toString(), "UTF-8"));
               
             String test18 = "(*sar THEN ou[-k])~15words";
             StringSearchFacet.SubClause clause18 = testInstance.new SubClause(test18, t, true, true);
-            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*\\b\\p{L}+sar\\s(\\p{L}+\\s){0,15}ou(?!k)\\b.*$", URLDecoder.decode(clause18.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*\\b\\p{L}+sar\\s(\\p{L}+\\s){0,15}ou(?!°?k)\\b.*$", URLDecoder.decode(clause18.buildQuery(new SolrQuery()).toString(), "UTF-8"));
            
             String test19 = "[-#]tou[-#]";
             StringSearchFacet.SearchTerm clause19 = testInstance.new SearchTerm(test19, t, true, true, true);

@@ -683,6 +683,21 @@ public class StringSearchFacetTest extends TestCase {
             
         }
         
+    }
+    
+    public void testExcludeAbbreviationMarks(){
+        
+        try{
+        
+        String test1 = "(?<!ths";
+        String result1 = "(?<!t°?h°?s°?";
+        assertEquals(result1, testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, false, true).excludeAbbreviationMarks("(?<!", test1));
+
+        } catch (Exception e){
+            
+            fail("Exception erroneously thrown instantiating testTerm in testExcludeAbbreviationMarks " + e.getMessage());
+            
+        }
         
         
     }
