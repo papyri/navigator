@@ -258,7 +258,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       
       String specialChars = "(\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\u0323)*";
       StringBuilder regexBuilder = new StringBuilder();
-      String prevCharacter = "";
+      String prevChar = "";
       int curlyBracesCount = 0;
       int parensCount = 0;
       Boolean insideNegLookBehind = false;
@@ -267,20 +267,21 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           
           String nowChar = Character.toString(regex.charAt(i));
           String nextChar = i == regex.length() - 1 ? "" : Character.toString(regex.charAt(i + 1));
-          if(nowChar.equals("<") && prevCharacter.equals("?") && nextChar.equals("!") && !insideNegLookBehind){
+          if(nowChar.equals("<") && prevChar.equals("?") && nextChar.equals("!") && !insideNegLookBehind){
                    
               insideNegLookBehind = true;
               parensCount = 1;
           }
           if(insideNegLookBehind && parensCount == 0) insideNegLookBehind = false;
-          regexBuilder.append(nowChar);
-          if(!insideNegLookBehind && !prevCharacter.equals("\\") && !prevCharacter.equals("|") && !nextChar.equals("|") &&
-              curlyBracesCount == 0 && nowChar.matches("[\\p{L}\\)]")){
+          String abbrevReplacer = "[\\(\\)]";
+          regexBuilder.append(nowChar.equals("°") ? abbrevReplacer : nowChar);
+          if(!insideNegLookBehind && !prevChar.equals("\\") && !prevChar.equals("|") && !nextChar.equals("|") &&
+              curlyBracesCount == 0 && (nowChar.matches("[\\p{L}\\)]") || nowChar.equals(abbrevReplacer))){
 
               regexBuilder.append(specialChars);
               
           }
-          prevCharacter = nowChar;
+          prevChar = nowChar;
           if("{".equals(nowChar)) curlyBracesCount += 1;
           if("}".equals(nowChar)) curlyBracesCount -= 1;
           if(("(").equals(nowChar) && insideNegLookBehind) parensCount += 1;
@@ -437,16 +438,15 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append("<td class=\"language\">");
     html.append(language);
     html.append("</td>");
-    html.append("<td class=\"has-translation\">");
-    
-  /*  try{
+    html.append("<td class=\"has-translation\">");  
+  /* try{
         html.append("Regex: ");
 	html.append(tempRegex);
   	        html.append("|||");
 
         html.append(URLDecoder.decode(testClause.buildTransformedString().replaceAll("<", "|"), "UTF-8"));
 	  	
-    } catch(Exception e){ html.append("Exception"); }*/
+    } catch(Exception e){ html.append("Exception"); } */
     html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");

@@ -1483,7 +1483,7 @@ public class IdentifierFacet extends Facet{
             while(rvit.hasNext()){
                 
                 String idno = rvit.next();
-                if(idno != null && !"".equals(idno)) idValues.put(idno.replaceAll(":", " "), Long.valueOf(1));
+                if(idno != null && !"".equals(idno)) idValues.put(idno.replaceAll(" ", ":"), Long.valueOf(1));
                 
                 
             }
