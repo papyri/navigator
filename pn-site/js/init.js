@@ -96,6 +96,7 @@ function addLinearBrowseControls(){
 	var total = jQuery(document).getUrlParam("t");
 	var rows = jQuery(document).getUrlParam("rows");
 	var qs = buildSolrQueryString();
+	if(qs == "") return false;
 	querySolrServer(qs, position, total, rows, qs);
 	
 }
@@ -112,6 +113,7 @@ function addLinearBrowseControls(){
 function buildSolrQueryString(){
 
 	var querystring = window.location.search;
+	if(!querystring.match(/fq=/)) return "";
 	// get rid of values not used by Solr: t, d, and q (which is used only for highlighting)
 	querystring = querystring.replace(/[&?]t=\d+/, "");
 	querystring = querystring.replace(/[&?]p=\d+/, "");
