@@ -660,7 +660,7 @@ public class IdentifierFacet extends Facet{
     public String getDisplayValue(String value){
         
         if(apisOnlyHTMLValue.equals(value)) return apisOnlyHTMLLabel;
-        return value.replaceAll("_", " ");
+        return value.replaceAll("[_*]", " ");
         
     }
     
@@ -1463,8 +1463,7 @@ public class IdentifierFacet extends Facet{
         public String getCSSSelector(){
             
             return "id-" + IdParam.IDNO.name().toLowerCase();
-            
-            
+             
         }
         
         @Override
@@ -1488,6 +1487,63 @@ public class IdentifierFacet extends Facet{
                 
             }
             
+            
+        }
+        
+        @Override
+        public String buildHTMLControl(){
+            
+            StringBuilder html = new StringBuilder();
+            
+            html.append("<p id=\"");
+            html.append(this.param.name().toLowerCase());
+            html.append("-wrapper\">");
+            
+            html.append("<label for=\"");
+            html.append(this.param.name());
+            html.append("\">");
+            html.append(this.param.getLabel());
+            html.append("</label>");
+            
+            html.append("<input type=\"text\" name=\"");
+            html.append(this.param.name());
+            html.append("\" id=\"");
+            html.append(this.getCSSSelector());
+            html.append("\" size=\"5\" maxlength=\"10\"");
+
+            if(this.isDisabled()){
+                
+                String msg = this.hasConstraint() ? this.getConstraint() : "n.a.";
+                msg = msg.replaceAll("[_*]", " ");
+                html.append(" value=\"");
+                html.append(msg);
+                html.append("\"");       
+                html.append(" disabled");
+                
+            }
+
+            html.append("/>");
+            
+            html.append("</p>");
+            
+                if(!this.isDisabled()){
+
+                html.append("<div class=\"autocomplete-values\" id=\"");
+                html.append(this.param.name().toLowerCase());
+                html.append("-autocomplete\">");          
+                ArrayList<String> autocompleteValues = this.getIdValuesAsHTML();
+                Iterator<String> acit = autocompleteValues.iterator();
+                while(acit.hasNext()){
+
+                    html.append(acit.next());
+                    if(acit.hasNext()) html.append(" ");
+
+
+                }
+                html.append("</div><!-- closing autocomplete values -->");
+            
+            }
+            return html.toString();
             
         }
         
