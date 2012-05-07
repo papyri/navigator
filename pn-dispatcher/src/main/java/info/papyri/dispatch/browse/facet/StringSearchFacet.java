@@ -2765,7 +2765,7 @@ public class StringSearchFacet extends Facet{
                Set<String> formSet = new HashSet<String>();
                if (forms.size() > 0) {
                   for (int i = 0; i < forms.size(); i++) {
-                    formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_#]", "").toLowerCase());
+                    formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[^\\p{L}]", "").toLowerCase());
                   }
                  declinedForm = FileUtils.interpose(formSet, " OR ");
 
