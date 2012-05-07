@@ -150,8 +150,7 @@ public class FacetBrowser extends HttpServlet {
         
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
-        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog);
-        //html = this.debugAssembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), solrQuery, docsPerPage, request, exceptionLog);
+        String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog, page);
         
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
@@ -437,7 +436,7 @@ public class FacetBrowser extends HttpServlet {
      * @return The complete HTML for all interactive portions of the page, as a <code>String</code>
      */
     
-    private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog){
+    private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog, int page){
                 
         StringBuilder html = new StringBuilder();
         html.append("<form name=\"facets\" method=\"get\" action=\"");
@@ -447,39 +446,8 @@ public class FacetBrowser extends HttpServlet {
         assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
         html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
         if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams, docsPerPage);
-        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage, exceptionLog);
+        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage, exceptionLog, page);
         html.append("</div><!-- closing #vals-and-records-wrapper -->");
-        html.append("</div><!-- closing #facet-wrapper -->");
-        html.append("</form>");
-        return html.toString();
-        
-    }
-    
-    /**
-     * A debugging method: Like <code>assembleHTML</code>, but outputs the query string submitted to the
-     * Solr server at the bottom of the page.
-     * 
-     */
-    
-    private String debugAssembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, SolrQuery sq, int docsPerPage, HttpServletRequest request, ArrayList<CustomApplicationException> exceptionLog){
-        
-        StringBuilder html = new StringBuilder();
-        html.append("<form name=\"facets\" method=\"get\" action=\"");
-        html.append(FACET_PATH);
-        html.append("\"> ");
-        html.append("<div id=\"facet-wrapper\">");
-        assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
-        html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
-        if(constraintsPresent) assemblePreviousValuesHTML(facets,html, submittedParams, docsPerPage);
-        assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage, exceptionLog);
-        html.append(submittedParams.keySet().toString());
-        html.append("<br><br>");
-        html.append("</div><!-- closing #vals-and-records-wrapper -->");
-        html.append("<div id=\"sparql-wrap\">");
-        html.append(sq.toString());
-        html.append("</div>");
-        html.append("<h4>" + request.getParameter("IDNO") + "</h4>");
-        html.append(request.getQueryString());
         html.append("</div><!-- closing #facet-wrapper -->");
         html.append("</form>");
         return html.toString();
@@ -580,7 +548,7 @@ public class FacetBrowser extends HttpServlet {
      * @see DocumentBrowseRecord#getHTML() 
      */
     
-    private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog){
+    private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog, int page){
         
         html.append("<div id=\"facet-records-wrapper\">");
         html.append("<div id=\"results-prefix-wrapper\">");
@@ -644,7 +612,7 @@ public class FacetBrowser extends HttpServlet {
                   
             }
             html.append("</table>");
-            html.append(doPagination(facets, resultSize, docsPerPage));
+            html.append(doPagination(facets, resultSize, docsPerPage, page));
             
         }
         
@@ -813,7 +781,7 @@ public class FacetBrowser extends HttpServlet {
      * @see #buildFullQueryString(java.util.EnumMap) 
      */
     
-    private String doPagination(ArrayList<Facet> facets, long resultSize, int docsPerPage){
+    private String doPagination(ArrayList<Facet> facets, long resultSize, int docsPerPage, int page){
         
         if(resultSize <= docsPerPage) return "";
         
@@ -833,7 +801,9 @@ public class FacetBrowser extends HttpServlet {
 
         for(long i = 1; i <= numPages; i++){
             
-            html.append("<div class='page'>");
+            html.append("<div class=\"page");
+            if(i == page) html.append(" currentpage");
+            html.append("\">");
             html.append("<a href='");
             html.append(FACET_PATH);
             html.append("?");
