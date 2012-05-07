@@ -222,7 +222,7 @@ $(document).ready(
 				}
 				val = val.replace(/\s*(HGV|DDBDP):\s*/, "");
 				val = val.replace(/\s*\(\d+\)\s*$/, "");
-				if(name == "IDNO") val = val.replace(/:/g, " ");
+				if(name == "IDNO") val = val.replace(/:/g, "*");
 				if(!params[name] || params[name] == val){
 
 					params[name] = val;
