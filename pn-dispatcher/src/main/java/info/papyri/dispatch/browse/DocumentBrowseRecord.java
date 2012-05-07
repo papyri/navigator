@@ -125,8 +125,15 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
               }
               else if(searchClause.parseForSearchType() == StringSearchFacet.SearchType.SUBSTRING){
-                  tempRegex = "Substring";
                   Pattern[] patterns = util.getSubstringHighlightPatterns(transformedString);
+                  for(int i = 0; i < patterns.length; i++){
+                      
+                      tempRegex += "###  ";
+                      tempRegex += patterns[i].toString();
+                      tempRegex += " ###";
+                      
+                      
+                  }
                   hilites.addAll(Arrays.asList(patterns));
 
               }   
@@ -148,13 +155,14 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
       regex = interpolateTextMarksIntoRegex(regex);
       ArrayList<Pattern> patterns = new ArrayList<Pattern>();
-      String fullText = util.loadTextFromId(url.toExternalForm());
+      String fullText = util.loadTextFromId(url.toExternalForm()).replaceAll("\\s+", " ");
+      tempRegex = fullText;
       String negatedPrecedingString = getNegatedPrecedingCharacters(regex);
       String negatedFollowingString = getNegatedFollowingChars(regex);
       int precedingIndexAdjustment = negatedPrecedingString.length();
       int followingIndexAdjustment = negatedFollowingString.length();
       regex = util.substituteDiacritics(regex);
-      tempRegex = regex;
+      tempRegex += "<br><br>" + regex;
       Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
       Matcher matcher = pattern.matcher(fullText);
       
@@ -171,10 +179,15 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
              found = found.replaceAll("([()\\[\\]{}\\.])", ".");
              found = found.replaceAll("\\s{2,}", "\\\\b");
              found = found.replaceAll("\\s", " ");
-             highlightWords.add(found);
-             Pattern foundPattern = Pattern.compile(found, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
-             patterns.add(foundPattern);        
+             String[] foundBits = found.split("[\\d]+\\.");
+             for(int i = 0; i < foundBits.length; i++){
+            
+                 String fbit = foundBits[i].trim();
+                 highlightWords.add(fbit);
+                 Pattern foundPattern = Pattern.compile(fbit, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
+                 patterns.add(foundPattern);        
                        
+             }
           }
              
 
@@ -256,7 +269,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   public String interpolateTextMarksIntoRegex(String regex){
       
-      String specialChars = "(\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\u0323)*";
+      String specialChars = "(\\{|\\}|\\(|\\)|\\d|\\.|-|\\]|\\[|\u0323|\\p{Punct}|(-?\\s*[\\d]+\\.\\s))*";
       StringBuilder regexBuilder = new StringBuilder();
       String prevChar = "";
       int curlyBracesCount = 0;
@@ -276,7 +289,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           String abbrevReplacer = "[\\(\\)]";
           regexBuilder.append(nowChar.equals("°") ? abbrevReplacer : nowChar);
           if(!insideNegLookBehind && !prevChar.equals("\\") && !prevChar.equals("|") && !nextChar.equals("|") &&
-              curlyBracesCount == 0 && (nowChar.matches("[\\p{L}\\)]") || nowChar.equals(abbrevReplacer))){
+              curlyBracesCount == 0 && !nextChar.equals("") && (nowChar.matches("[\\p{L}\\)]") || nowChar.equals(abbrevReplacer))){
 
               regexBuilder.append(specialChars);
               
@@ -379,21 +392,10 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String buildRegexHighlightString(String highlightWord){
       
       StringBuilder highlighter = new StringBuilder();
-      //StringSearchFacet.SearchType searchType = highlightWord.contains(" ") ? StringSearchFacet.SearchType.PHRASE : StringSearchFacet.SearchType.SUBSTRING;
       highlighter.append(StringSearchFacet.SearchType.REGEX.name());
       highlighter.append(":(");
-   /*   if(searchType == StringSearchFacet.SearchType.PHRASE){
-          
-          highlighter.append("\"");
-          
-      }
-   */   highlighter.append(highlightWord);
-   /*   if(searchType == StringSearchFacet.SearchType.PHRASE){
-          
-          highlighter.append("\"");
-          
-      }
-   */   highlighter.append(")");
+      highlighter.append(highlightWord);
+      highlighter.append(")");
       return highlighter.toString();
       
       
@@ -439,14 +441,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     html.append(language);
     html.append("</td>");
     html.append("<td class=\"has-translation\">");  
-  /* try{
-        html.append("Regex: ");
-	html.append(tempRegex);
-  	        html.append("|||");
-
-        html.append(URLDecoder.decode(testClause.buildTransformedString().replaceAll("<", "|"), "UTF-8"));
-	  	
-    } catch(Exception e){ html.append("Exception"); } */
     html.append(translationLanguages);
     html.append("</td>");
     html.append("<td class=\"has-images\">");
@@ -727,13 +721,11 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   
   private String generateLink(){
       
-      StringBuilder html = new StringBuilder();
-      
-      html.append(url.toString().substring("http://papyri.info".length()));
-      html.append(this.getHighlightString());      
-      html.append(getSolrQueryString());
-      
-      return html.toString();
+      String startURL = url.toString().substring("http://papyri.info".length());
+      String sh = getHighlightString();
+      String sq = getSolrQueryString();
+      String fullURL = (startURL + sh + sq).length() < 2000 ? startURL + sh + sq : (startURL + sq).length() < 2000 ? startURL + sq : startURL;
+      return fullURL;
       
   }
   
