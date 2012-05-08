@@ -1718,7 +1718,7 @@ public class StringSearchFacet extends Facet{
            
            StringBuilder dv = new StringBuilder(searchString);
            dv.append("<br/>");
-           if(parseForSearchType() == SearchType.PROXIMITY || (parseForSearchType() == SearchType.REGEX && !getProximityDisplayString().equals(""))){
+           if(!getProximityDisplayString().equals("")){
             
                 dv.append("Within: ");
                 dv.append(getProximityDisplayString());
