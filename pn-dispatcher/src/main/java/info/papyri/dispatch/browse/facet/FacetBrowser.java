@@ -8,6 +8,8 @@ import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -57,6 +59,8 @@ public class FacetBrowser extends HttpServlet {
     static private int defaultDocumentsPerPage = 15;
     /** Utility class providing lemma expansion */
     static SolrUtils SOLR_UTIL;
+    /** Path to html instructions file */
+    static String INSTRUCTIONS_PATH;
     
     static int SOCKET_TIMEOUT = 20000;
         
@@ -70,6 +74,7 @@ public class FacetBrowser extends HttpServlet {
         home = config.getInitParameter("home");
         PN_SEARCH = config.getInitParameter("pnSearchPath");
         FACET_PATH = config.getInitParameter("facetBrowserPath");
+        INSTRUCTIONS_PATH = config.getInitParameter("instructionsPath");
         try {
             
             FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
@@ -151,12 +156,11 @@ public class FacetBrowser extends HttpServlet {
         /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog, page);
-        
+       
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
      
     }
-    
 
     /** Returns the <code>List</code> of <code>Facet</code>s to be used. 
      * 
@@ -573,7 +577,7 @@ public class FacetBrowser extends HttpServlet {
             
             html.append("<div id=\"opening-info\"><h2>Please select values from the left-hand column to return results</h2></div>");
             html.append("<noscript><div id=\"js-warning\"><p>You appear to have Javascript turned off in your browser.</p><p>Unfortunately, this site depends on Javascript in order to display correctly.</p><p>Please enable Javascript before searching.</p></div></noscript>");
-            html.append(instructions);
+            html.append(getInstructions());
         }
         else if(exceptionLog.size() > 0){
             
@@ -1162,7 +1166,32 @@ public class FacetBrowser extends HttpServlet {
         
     }
     
-    private String instructions = "<div id=\"info\"><p>Selecting a value using the controls in the left-hand column will return a list of all  documents that match it in the right-hand column. Once these results have been returned, the controls can be used to further refine the search with additional values. This process of adding new search constraints can be applied repeatedly until the results have been narrowed as far as desired.</p><div class=\"info-section\"><h4>More about <span class=\"search-type\">string-search</span></h4><div class=\"info-content\"><p>The Papyrological Navigator (PN) allows both simple and complex string-searching across the entire corpus of documents in the database.</p><p>Simply entering characters into the search box at the top of the column and clicking 'Search' will return all documents containing that sequence of characters anywhere in their text.</p><p>Many more complex kinds of search are also possible, however. </p><h5>Kinds of search</h5><ol><li><span class=\"topic-intro\">Substring</span> As noted above, this is the default. To narrow search results, the '#' character can be used to indicate a word-boundary. For example, searching for the substring 'και' will return all documents containing that sequence of characters (the word 'καί', in 'καῖσαρ' or ᾽καιρός', etc.). Searching for '#και#', however, will return only documents containing the word 'καί'.</li><li><span class=\"topic-intro\">Phrase</span> Unlike substring searching, phrase searching operates on complete words. It is indicated using quotation marks, whether single or double. For instance, searching for '\"και ουκ\"' will return only documents that contain that exact phrase.</li><li><span class=\"topic-intro\">Proximity</span> While phrase searching is useful for finding words immediately adjacent to each other, it is also possible to specify a maximum distance between two words - for instance, to search for all documents that contain the words 'καί' and 'οὐ' within 10 words or characters of each other.</li><li><span class=\"topic-intro\">Regular Expression</span> Regular expressions are a powerful means by which any possible text configuration can be sought: for instance, \"the substring και, followed immediately by any string of characters other than σαρ, followed immediately by a word beginning with τ and containing either an ε or an η'. Regular expressions are necessarily a complex topic, although an understanding even only of the basics can extend the power of your searches considerably; a good tutorial can be found at <a href=\"http://www.regular-expressions.info/\" title=\"Regular Expressions - Introduction\"> http://www.regular-expressions.info/</a></li></ol><h5>Search buttons</h5><p>The buttons beneath the text search box all relate to different aspects of these kinds of search.</p><ol><li><span class=\"topic-intro\">AND, OR, NOT</span> These are the standard boolean search operators, and behave as you would expect. Note, however, the distinction between NOT and START-NOT/END-NOT, as described below.</li><li><span class=\"topic-intro\">THEN, NEAR</span> These are used for proximity searching. THEN means that the second term must follow the first term within the specified range of words or characters; NEAR, that it may occur either before or after the first term within that range.</li> <li><span class=\"topic-intro\">LEX</span> This button is used for lemmatised searching, i.e., searching for all possible declined or conjugated forms of the term entered. For instance, searching for 'LEX στρατηγός' will return documents containing στρατηγού, στρατηγῷ, etc.</li><li><span class=\"topic-intro\">REGEX</span> Used to indicate that the search uses regular expression syntax</li><li><span class=\"topic-intro\">ABBR</span> Searches for abbreviated forms. For example, 'στρατ ABBR' (which will appear in the search box as 'στρατ°') will find all documents in which only the string ᾽στρατ' appears, as a shortened form of στρατηγός, στρατηγῶ, etc.</li><li><span class=\"topic-intro\">START-NOT, END-NOT</span> Where NOT is used to exclude documents that contain the following term anywhere in their contents, START-NOT and END-NOT are used to specify more precisely the kind of string being sought. For example, 'NOT καισαρ' will return all documents that do not contain the substring καισαρ anywhere in their contents. By contrast, 'και START-NOT σαρ END-NOT' (appearing in the search box as 'και[-σαρ]') means 'all documents that contain the string και when it is not followed by the string σαρ, regardless of whether the string καισαρ also appears in the document'.</li><li><span class=\"topic-intro\">CLEAR</span> clears the search box</li><li><span class=\"topic-intro\">REMOVE (-)</span> Some searches will involve more than one search box. This button removes search boxes that are no longer needed</li></ol><h5>Additional Options</h5><p>A series of checkboxes underneath the search buttons allow:</p><ol><li><span class=\"topic-intro\">Conversion from betacode as you type</span> Users missing a polytonic Greek keyboard or font can check this box to enter text using standard Latin alphabet characters in Betacode. A guide to using betacode can be found at <a href=\"http://www.tlg.uci.edu/encoding/\" title=\"Thesaurus Linguae Graecae Betacode guide\">http://www.tlg.uci.edu/encoding/</a></li><li><span class=\"topic-intro\">Search ignoring case</span> When this box is checked, searches are case-insensitive.</li><li><span class=\"topic-intro\">Search ignoring diacritics</span> When this box is checked, breathing and accent marks are ignored in the search.</li></ol><h5>Search Targets</h5><p>The row of radio-buttons beneath the checkboxes allows you to decide what section of each document you wish to search.</p><ol><li><span class=\"topic-intro\">Text</span> Searches the content of the document</li><li><span class=\"topic-intro\">Metadata</span> Searches the metadata associated with the document - for example, the identification number, location, and dating of the document. Because this is a freetext search, note that metadata searches are often better conducted using controls other than text search.</li><li><span class=\"topic-intro\">Translation</span> Searches the available translations (if any) of the document.</li></div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Series and Collection</span></h4> <div class=\"info-content\"><p>Documents in the Duke Databank of Documentary Papyri (DDbDP) and with metadata supplied by Heidelberger Gesamtverzeichnis der Griechischen Papyrusurkunden Ägyptens (HGV) are organised by series; those of the Advanced Papyrological Information System (APIS) by collection. Note that some documents will be members of both classification systems. These controls allow you easily to locate documents by either or both Series and Collection designations.</p></div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Provenance</span></h4><div class=\"info-content\"><p>Allows searching by location where the document was found, written, or sent to. Where possible, this is given using the ancient placename. Where the ancient name is unknown, a modern name is given.</p></div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Nome</span></h4> <div class=\"info-content\"><p>Allows searching by the nome with which the document is associated, as defined in the Hellenistic and Roman period.</p></div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Date</span></h4><div class=\"info-content\"><p>These controls allow searching by the temporal range within which documents fall. Such ranges may be either 'loose' or 'strict'. Loose date ranges encompass all documents which may have been in existence within their span; strict ranges only those documents whose dates fall within both ends of the range. For instance, suppose there exists a document dated between 150 - 350 AD. If a user selects a loose range of 100 - 200 AD, this document will be returned, as it may indeed have been in existence during that period. If the user switches to a strict range, however, this document will be excluded, as its latest possible date falls outside the bounds of the search.</div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Language</span></h4><div class=\"info-content\"><p>These controls allow you to search for documents based on their original language of composition. Note that many documents contain more than one language.</p></div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Translation Language</span></h4><div class=\"info-content\"><p>Searches for documents on the basis of languages into which they have been translated. Some documents will have been translated into more than one language.</p></div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Image</span></h4><div class=\"info-content\"><p>Papyri may be associated with up to three kinds of image: images hosted by papyri.info; images hosted on other sites; and images not found online, but available in printed materials.</p><p>Images hosted by papyri.info will typically be high-resolution and support zooming into and panning over them. Those hosted elsewhere vary considerably in quality, size, and supported features, and links to these hosts cannot always be guaranteed to work.</p></div></div><div class=\"info-section\"><h4>More about <span class=\"search-type\">searching by Transcription</span></h4><div class=\"info-content\"><p>Allows search results to be filtered by whether or not a transcription of their contents is available.</p></div></div><p>To remove values from your search criteria and broaden your search results, click on the 'x' in the upper-left-hand corner of the stored value when it appears. To remove all values and start again, click on 'New Search'.</p></div>";
+    
+    private String getInstructions(){
+        
+       String instructions = "<div id=\"info\"><p>Selecting a value using the controls in the left-hand column will return a list of all  documents that match it in the right-hand column. Once these results have been returned, the controls can be used to further refine the search with additional values. This process of adding new search constraints can be applied repeatedly until the results have been narrowed as far as desired.</p>";      
+
+       try{
+           
+           BufferedReader in = new BufferedReader(new FileReader(INSTRUCTIONS_PATH));
+           StringBuilder instrBuilder = new StringBuilder();
+           String startInst = "";
+           while((startInst = in.readLine()) != null){ instrBuilder.append(startInst);}   
+           return instrBuilder.toString();
+           
+       } catch(FileNotFoundException fnfe){
+           
+           return instructions;
+           
+       } catch(IOException ioe){
+           
+           return instructions;
+           
+       }
+       
+        
+    }
+    
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
