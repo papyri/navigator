@@ -1169,7 +1169,7 @@ public class FacetBrowser extends HttpServlet {
     
     private String getInstructions(){
         
-       String instructions = "<div id=\"info\"><p>Selecting a value using the controls in the left-hand column will return a list of all  documents that match it in the right-hand column. Once these results have been returned, the controls can be used to further refine the search with additional values. This process of adding new search constraints can be applied repeatedly until the results have been narrowed as far as desired.</p>";      
+       String instructions = "<div id=\"info\"><p>Selecting a value using the controls in the left-hand column will return a list of all  documents that match it in the right-hand column. Once these results have been returned, the controls can be used to further refine the search with additional values. This process of adding new search constraints can be applied repeatedly until the results have been narrowed as far as desired.</p></div>";      
 
        try{
            
