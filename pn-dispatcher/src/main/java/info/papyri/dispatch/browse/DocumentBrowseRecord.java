@@ -343,7 +343,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
                       for(int i = 0; i < termbits.length; i++){
                           
                           String termbit = termbits[i];
-                          try{ termbit = URLEncoder.encode(termbit, "UTF-8");} 
+                          try{ termbit = URLEncoder.encode(termbit.replaceAll("\\(", "").replaceAll("\\)", ""), "UTF-8");} 
                           catch(UnsupportedEncodingException uee){}
                           if(!termbit.matches("\\d+w")){
                               
@@ -361,7 +361,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
                       hilite.append(StringSearchFacet.SearchType.SUBSTRING.name());
                       hilite.append(":(");
-                      try{ term = URLEncoder.encode(term, "UTF-8"); } 
+                      try{ term = URLEncoder.encode(term.replaceAll("\\(", "").replaceAll("\\)", ""), "UTF-8"); } 
                       catch (UnsupportedEncodingException uee){}
                       hilite.append(term);   
                       hilite.append(")");
@@ -370,7 +370,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
                       hilite.append(StringSearchFacet.SearchType.PHRASE.name());
                       hilite.append(":(");
-                      try{ term = URLEncoder.encode(term, "UTF-8"); } 
+                      try{ term = URLEncoder.encode(term.replaceAll("\\(", "").replaceAll("\\)", ""), "UTF-8"); } 
                       catch (UnsupportedEncodingException uee){}
                       hilite.append(term);
                       hilite.append(")");
@@ -394,7 +394,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       StringBuilder highlighter = new StringBuilder();
       highlighter.append(StringSearchFacet.SearchType.REGEX.name());
       highlighter.append(":(");
-      highlighter.append(highlightWord);
+      highlighter.append(highlightWord.replaceAll("\\(", "").replaceAll("\\)", ""));
       highlighter.append(")");
       return highlighter.toString();
       
