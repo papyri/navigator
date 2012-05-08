@@ -71,6 +71,10 @@
             <param-name>facetBrowserPath</param-name>
             <param-value>/search</param-value>
         </init-param>
+        <init-param>
+        <param-name>instructionsPath</param-name>
+        <param-value>/data/papyri.info/pn/instructions</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>ImageMetadata</servlet-name>
