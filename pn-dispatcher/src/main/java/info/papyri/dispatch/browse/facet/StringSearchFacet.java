@@ -641,6 +641,9 @@ public class StringSearchFacet extends Facet{
      * Determines whether a given string constitutes a single search term or
      * whether it can be broken down further into individual search terms.
      * 
+     * Essentially this is a test to determine whether the passed string is 
+     * quote-delimited
+     * 
      * @param clause
      * @return 
      */
@@ -770,7 +773,12 @@ public class StringSearchFacet extends Facet{
         SearchClause clause = searchClauses.get(Integer.valueOf(paramNumber)).get(0);
         
         String searchType = clause.parseForSearchType().name();
+        // user-defined searches use the name of the user-entered field as their
+        // display prefix, and this is alreay part of the search string
+        // accordingly there is no need to add one here
         if(searchType.equals(SearchType.USER_DEFINED.name())) return "";
+        // simplified negative assertion searches hide their internals;
+        // they should appear as substring searches to the user
         if(clause.getAllClauseRoles().contains(ClauseRole.NEGATIVE_ASSERTION))searchType = SearchType.SUBSTRING.name();
         if(!"".equals(clause.getProximityDisplayString())) searchType = SearchType.PROXIMITY.name();
         searchType = searchType.toLowerCase();
@@ -1062,12 +1070,15 @@ public class StringSearchFacet extends Facet{
             if(searchString.length() == 0) return null;
             searchString = swapInProxperators(searchString);
             
+            // we proceed through the string, breaking it up into individual terms
+            // based on quote- and whitespace-delimitation
             while(searchString.length() > 0){
 
               String nowChar = Character.toString(searchString.charAt(0));
                 int endIndex = getMatchingIndex(nowChar, searchString);
                 if(endIndex == -1) endIndex = searchString.length() - 1;
                 endIndex = endIndex + 1;
+                // need to ensure that we retain metrics information if provided
                 Matcher metricsMatch = justMetricsDetect.matcher(searchString.substring(endIndex).trim());
                 if(metricsMatch.matches()){ endIndex += (metricsMatch.group(1).length()); }
                 String nowWord = searchString.substring(0, endIndex).trim();
@@ -1170,6 +1181,7 @@ public class StringSearchFacet extends Facet{
             ArrayList<String> quotedPhrases = new ArrayList<String>();
             ArrayList<String> transformedPhrases = new ArrayList<String>();
             while(phraseMatcher.find()){
+                
                 quotedPhrases.add(phraseMatcher.group());
                 String phrase = phraseMatcher.group(2);
                 String replacement = "c".equals(unit) ? " " : " w ";
@@ -1560,6 +1572,11 @@ public class StringSearchFacet extends Facet{
            if(searchTarget == SearchTarget.METADATA) return SolrField.metadata;
            if(searchTarget == SearchTarget.TRANSLATION) return SolrField.translation;
            if(searchType == SearchType.LEMMA) return SolrField.transcription_ia;
+           // note standard suffixing of fields
+           // (i)   _ia for no diacritics, no caps
+           // (ii)  _ic for no diacritics
+           // (iii) _id for do caps
+           // (iv)  no suffix indicates both caps and marks are present
            String suffix = (caps && marks) ? "_ia" : (caps ? "_ic" : "_id" );
            String prefix = "transcription";
            if(searchType == SearchType.SUBSTRING){
@@ -1612,6 +1629,12 @@ public class StringSearchFacet extends Facet{
        /**
         * Combines the search handler and seach field into a prefix to the search-string
         * parseable by Solr.
+        * 
+        * Note that caching needs to be turned off for all but the default handler,
+        * as the cache does not fine-grained enough to register anything beyond the
+        * fact that a non-standard handler is being used in a request - i.e, if caching
+        * is turned on, all results will be identical to the values first returned by 
+        * the Solr server
         * 
         * @param sh
         * @param field
@@ -1712,6 +1735,7 @@ public class StringSearchFacet extends Facet{
                searchString = procCaps + searchString.substring(1);
                
            }
+           
            if(this.parseForSearchType() == SearchType.REGEX) searchString = searchString.replaceAll(REGEX_MARKER, "");
            if(this.parseForSearchType() == SearchType.LEMMA) searchString = searchString.replaceAll(LEX_MARKER, "");
            searchString = searchString.trim();
@@ -1993,7 +2017,6 @@ public class StringSearchFacet extends Facet{
             if(chpIndex != -1) return doCharsProxTransform(clauses, chpIndex);
             Integer wdIndex = getWordsProxIndex(clauses);
             if(wdIndex != -1 && containsLeadingWildcard()) return doWordsProxTransform(clauses, wdIndex);
-        //     if(!getClauseRoles().contains(ClauseRole.REGEX) && getOriginalString().contains("[-")) return doNegativeAssertionTransform(clauses);
             return clauses;
     
         }
@@ -2349,10 +2372,12 @@ public class StringSearchFacet extends Facet{
             String numChars = charProxMatcher.group(1);
             String operator = charProxMatcher.group(2);
             String distRegex = ".{1," + numChars + "}";
+            // # is conventionally used to indicate word-boundaries on the user-end
             prevTerm = prevTerm.replaceAll("#", "\\\\b");
             nextTerm = nextTerm.replaceAll("#", "\\\\b");
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
             if(operator.equals("w")) return regex;
+            // if we are doing an unordered proximity search we also need to invert the terms
             String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
             String nearRegex = "(" + revRegex + "|" + regex + ")";
             return nearRegex;
@@ -2380,6 +2405,7 @@ public class StringSearchFacet extends Facet{
             if(!wordProxMatcher.matches()) throw new RegexCompilationException();          
             Integer numWords = Integer.valueOf(wordProx.substring(0, wordProx.length() - 1));
             String operator = wordProx.substring(wordProx.length() - 1).equals("n") ? "n" : "w";
+            // \p{L}+\s is the backend representation used for 'a unicode word'
             String distRegex = "(\\p{L}+\\s){0," + numWords + "}";
             prevTerm = prevTerm.replaceAll("#", "\\\\b");
             nextTerm = nextTerm.replaceAll("#", "\\\\b");
@@ -2616,7 +2642,6 @@ public class StringSearchFacet extends Facet{
         
         private String expandNegativeAssertion(String rawAssertion){
 
-           // rawAssertion = rawAssertion.replace("#", "\\b");
             String[] assertBits = rawAssertion.split("]");
             StringBuilder assertionAsRegex = new StringBuilder();
             Pattern pattern = Pattern.compile(".*\\[\\-.*");
@@ -2754,8 +2779,7 @@ public class StringSearchFacet extends Facet{
                    declinedForm = startForm + "ς";
                    
                }
-               SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
-              // SolrServer solr = new CommonsHttpSolrServer(FacetBrowser.SOLR_URL + morphSearch);
+               SolrServer solr = new CommonsHttpSolrServer(FacetBrowser.SOLR_URL + morphSearch);
                String searchTerm = "lemma:" + declinedForm;
                SolrQuery sq = new SolrQuery();
                sq.setQuery(searchTerm);
