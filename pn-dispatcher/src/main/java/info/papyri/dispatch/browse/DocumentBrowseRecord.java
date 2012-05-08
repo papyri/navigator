@@ -657,7 +657,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"7\">");
           for(String kwic : kwix){
               
-              html.append(kwic);
+              html.append(kwic.replaceAll("\\s*ⓐ\\s*", "")); // TODO: why is this character sneaking through when the user does a regex word-boundary (\b) search?
               html.append("<br/>\n");
 
           }
