@@ -189,7 +189,7 @@ public class StringSearchFacet extends Facet{
      * </dl>
      */
     
-    public enum SearchHandler{
+    enum SearchHandler{
         
         SURROUND,
         REGEXP,
@@ -1986,13 +1986,9 @@ public class StringSearchFacet extends Facet{
             
             StringBuilder transformed = new StringBuilder();
             Iterator<SearchClause> scit = transformedClauses.iterator();
-            ArrayList<SearchHandler> handlers = new ArrayList<SearchHandler>();
-            handlers.add(parseForSearchHandler(getAllClauseRoles()));
             while(scit.hasNext()){
                 
                 SearchClause clause = scit.next();
-                SearchHandler handler = clause.parseForSearchHandler(clause.getAllClauseRoles());
-                if(!clause.isOperator() && !handlers.contains(handler)) handlers.add(handler);
                 String clauseContent = clause.buildTransformedString().trim();
                 transformed.append(clauseContent);
                 if(!clauseContent.equals("")) transformed.append(" ");
