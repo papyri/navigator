@@ -2795,8 +2795,7 @@ public class StringSearchFacet extends Facet{
                    declinedForm = startForm + "ς";
                    
                }
-               SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
-              // SolrServer solr = new CommonsHttpSolrServer(FacetBrowser.SOLR_URL + morphSearch);
+               SolrServer solr = new CommonsHttpSolrServer(FacetBrowser.SOLR_URL + morphSearch);
                String searchTerm = "lemma:" + declinedForm;
                SolrQuery sq = new SolrQuery();
                sq.setQuery(searchTerm);
