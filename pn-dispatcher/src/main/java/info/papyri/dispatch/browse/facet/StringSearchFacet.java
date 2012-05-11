@@ -189,7 +189,7 @@ public class StringSearchFacet extends Facet{
      * </dl>
      */
     
-    enum SearchHandler{
+    public enum SearchHandler{
         
         SURROUND,
         REGEXP,
@@ -1338,7 +1338,12 @@ public class StringSearchFacet extends Facet{
            // quote-delimited means false
            if(startChar.equals("\"") || startChar.equals("'")){
                
-               if(Character.toString(rs.charAt(rs.length() - 1)).equals(startChar)) return false;
+               if(Character.toString(rs.charAt(rs.length() - 1)).equals(startChar)){
+                   
+                   String dequoted = rs.substring(1, rs.length() - 1);
+                   if(!dequoted.contains(startChar)) return false;
+                   
+               }
                
            }
            // non-quote-delimited with internal whitespace means true
@@ -1981,9 +1986,13 @@ public class StringSearchFacet extends Facet{
             
             StringBuilder transformed = new StringBuilder();
             Iterator<SearchClause> scit = transformedClauses.iterator();
+            ArrayList<SearchHandler> handlers = new ArrayList<SearchHandler>();
+            handlers.add(parseForSearchHandler(getAllClauseRoles()));
             while(scit.hasNext()){
                 
                 SearchClause clause = scit.next();
+                SearchHandler handler = clause.parseForSearchHandler(clause.getAllClauseRoles());
+                if(!clause.isOperator() && !handlers.contains(handler)) handlers.add(handler);
                 String clauseContent = clause.buildTransformedString().trim();
                 transformed.append(clauseContent);
                 if(!clauseContent.equals("")) transformed.append(" ");
@@ -1992,6 +2001,17 @@ public class StringSearchFacet extends Facet{
             }
             
             transformedString = transformed.toString().trim();
+            // regex searches require regex-syntax OR operator
+            if(transformedString.matches("^.*\\sOR\\s.*$") && getAllClauseRoles().contains(ClauseRole.REGEX)){
+
+                transformedString = transformedString.replaceAll("\\sOR\\s", "|");
+                // optimise by anchoring whole expression, not individual operands
+                transformedString = transformedString.replaceAll("\\^\\.\\*", "");
+                transformedString = transformedString.replaceAll("\\.\\*\\$", "");
+                // now we need to reanchor
+                transformedString = "^.*(" + transformedString + ").*$";          
+                
+            }
             return transformedString;
             
         }
@@ -2779,7 +2799,8 @@ public class StringSearchFacet extends Facet{
                    declinedForm = startForm + "ς";
                    
                }
-               SolrServer solr = new CommonsHttpSolrServer(FacetBrowser.SOLR_URL + morphSearch);
+               SolrServer solr = new CommonsHttpSolrServer("http://localhost:8083/solr/" + morphSearch);
+              // SolrServer solr = new CommonsHttpSolrServer(FacetBrowser.SOLR_URL + morphSearch);
                String searchTerm = "lemma:" + declinedForm;
                SolrQuery sq = new SolrQuery();
                sq.setQuery(searchTerm);

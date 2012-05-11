@@ -219,15 +219,28 @@ public class StringSearchFacetIT extends TestCase {
             StringSearchFacet.SubClause clause25 = testInstance.new SubClause(test25, t, true, true);
             assertEquals("fq={!regexp cache=false qf=\"untokenized_ia\"}^.*hyphen[-_]test.*$", URLDecoder.decode(clause25.buildQuery(new SolrQuery()).toString(), "UTF-8"));
              
+            // OR tests
+            // standard
+            String test26 = "kai OR ouk";
+            StringSearchFacet.SubClause clause26 = testInstance.new SubClause(test26, t, true, true);
+            assertEquals("fq=transcription_ngram_ia:(kai OR ouk)", URLDecoder.decode(clause26.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
+            // with quotation marks
+            String test27 = "\"kai ouk\" OR \"ouk kai\"";
+            StringSearchFacet.SubClause clause27 = testInstance.new SubClause(test27, t, true, true);
+            assertEquals("fq=transcription_ia:(\"kai ouk\" OR \"ouk kai\")", URLDecoder.decode(clause27.buildQuery(new SolrQuery()).toString(), "UTF-8"));
             
-            // translation search
-          /*  StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.TRANSLATION, false, false);
-            assertEquals("fq=translation:(κάι)", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));          
-            System.out.println("****************");
-            StringSearchFacet.SearchTerm clause15 = testInstance.new SearchTerm("k", StringSearchFacet.SearchTarget.TEXT, false, false);
-            clause15.buildQuery(new SolrQuery());
-            System.out.println("=================="); */
+            String test28 = "str[-a] OR str[-b]";
+            String result28 = "fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(str(?!°?a)|str(?!°?b)).*$";
+            StringSearchFacet.SubClause clause28 = testInstance.new SubClause(test28, t, true, true);
+            assertEquals(result28, URLDecoder.decode(clause28.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            
+            String test29 = "kai OR str[-b]";
+            String result29 = "fq={!regexp cache=false qf=\"untokenized_ia\"}^.*(kai|str(?!°?b)).*$";
+            StringSearchFacet.SubClause clause29 = testInstance.new SubClause(test29, t, true, true);
+             assertEquals(result29, URLDecoder.decode(clause29.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+                    
+            
         }
         catch(CustomApplicationException cae){
             
