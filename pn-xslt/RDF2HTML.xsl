@@ -446,6 +446,8 @@
           <tbody>
             <!-- Title -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/>
+            <!-- Author -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
             <!-- Summary -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary" mode="metadata"/>
             <!-- Publications -->
@@ -515,6 +517,14 @@
     <tr>
       <th class="rowheader" rowspan="1">Title</th>
       <td><xsl:if test="not(starts-with(., 'kein'))"><xsl:attribute name="class">mdtitle</xsl:attribute></xsl:if><xsl:value-of select="."/></td>
+    </tr>
+  </xsl:template>
+  
+  <!-- Author -->
+  <xsl:template match="t:author" mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="1">Author</th>
+      <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
   

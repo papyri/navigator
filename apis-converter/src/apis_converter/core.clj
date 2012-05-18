@@ -78,7 +78,7 @@
   
 (defn -main
   ([dir-name, xsl]
-    (-main dir-name xsl 10))
+    (-main dir-name xsl 2))
   ([dir-name, xsl, nthreads]
   (def xslt xsl)
   (def dirs (file-seq (File. dir-name)))
