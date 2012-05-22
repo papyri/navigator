@@ -4,6 +4,8 @@
     <xsl:output indent="yes"/>
     
     <xsl:template match="/">
+      <xsl:processing-instruction name="xml-model">href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
+</xsl:text>
         <TEI
             xmlns="http://www.tei-c.org/ns/1.0">
             <teiHeader>
@@ -32,9 +34,6 @@
                                 <xsl:if test="//*[starts-with(local-name(.), 'cu500') or //*[local-name(.) = 'cu544_n'] or //*[local-name(.) = 'cu590'] or //cuLCODE or //cu546[not(contains(lower-case(.), 'no language'))]]">
                                     <msItemStruct>
                                         <xsl:for-each select="//cu500"><note type="general"><xsl:value-of select="."/></note></xsl:for-each>
-                                        <xsl:for-each select="//cu500_lin"><note type="lines"><xsl:value-of select="."/></note></xsl:for-each>
-                                        <xsl:for-each select="//cu500_pal"><note type="paleography"><xsl:value-of select="."/></note></xsl:for-each>
-                                        <xsl:for-each select="//cu500_rec"><note type="recto_verso"><xsl:value-of select="."/></note></xsl:for-each>
                                         <xsl:for-each select="//cu544_n"><note type="related"><xsl:value-of select="."/></note></xsl:for-each>
                                         <xsl:for-each select="//cu590"><note type="local_note"><xsl:value-of select="."/></note></xsl:for-each>
                                         <xsl:if test="//cuLCODE or //cu546[not(contains(lower-case(.), 'no language'))]">
@@ -70,18 +69,34 @@
                                 </xsl:if>
                             </msContents>
                             <physDesc>
-                                <p><xsl:value-of select="//cu300"/></p>
-                                <xsl:if test="//*[starts-with(local-name(.), 'cu590_')]">
-                                    <objectDesc>
-                                        <p><xsl:for-each select="//cu590_con"><note type="conservation"><xsl:value-of select="."/></note></xsl:for-each>
-                                           <xsl:for-each select="//cu590_prs"><note type="preservation"><xsl:value-of select="."/></note></xsl:for-each>
-                                         </p>
-                                    </objectDesc>
+                              <objectDesc>
+                                <supportDesc>
+                                  <support><xsl:value-of select="//cu300"/></support>
+                                  <xsl:if test="//*[starts-with(local-name(.), 'cu590_')]">
+                                    <condition>
+                                      <xsl:for-each select="//cu590_con"><ab type="conservation"><xsl:value-of select="."/></ab></xsl:for-each>
+                                      <xsl:for-each select="//cu590_prs"><ab type="preservation"><xsl:value-of select="."/></ab></xsl:for-each>
+                                    </condition>
+                                  </xsl:if>
+                                </supportDesc>
+                                <xsl:if test="//cu500_lin or //cu500_rec">
+                                  <layoutDesc>
+                                    <layout>
+                                      <xsl:for-each select="//cu500_lin"><ab type="lines"><xsl:value-of select="."/></ab></xsl:for-each>
+                                      <xsl:for-each select="//cu500_rec"><ab type="recto-verso"><xsl:value-of select="."/></ab></xsl:for-each>
+                                    </layout>
+                                  </layoutDesc>
                                 </xsl:if>
+                              </objectDesc>
+                              <xsl:if test="//cu500_pal">
+                                <handDesc>
+                                  <p><xsl:value-of select="//cu500_pal"/></p>
+                                </handDesc>
+                              </xsl:if>
                             </physDesc>
                             <history>
                                 <origin>
-                                    <origDate>
+                                    <xsl:if test="//cu245f or //cuDateValue"><origDate>
                                         <xsl:if test="//cuDateRange[. = 'b']">
                                             <xsl:attribute name="notBefore">
                                                 <xsl:call-template name="formatDate">
@@ -130,7 +145,7 @@
                                         </xsl:if>
                                         </xsl:otherwise>
                                       </xsl:choose>
-                                      </origDate>
+                                      </origDate></xsl:if>
                                     <xsl:for-each select="//cu518">
                                         <origPlace><xsl:value-of select="."></xsl:value-of></origPlace>
                                     </xsl:for-each>     
