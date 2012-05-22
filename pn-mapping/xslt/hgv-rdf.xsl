@@ -64,7 +64,12 @@
                 </dcterms:relation>
             </xsl:if>
           <xsl:for-each select="//tei:idno[@type = 'TM']">
-            <dcterms:relation rdf:resource="http://www.trismegistos.org/tm/detail.php?quick={.}"/>
+            <dcterms:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+            <dcterms:relation>
+              <rdf:Description rdf:about="http://papyri.info/trismegistos/{.}">
+                <dcterms:relation rdf:resource="{$id}"/>
+              </rdf:Description>
+            </dcterms:relation>
           </xsl:for-each>
             <xsl:for-each select="//tei:text/tei:body/tei:div[@type='figure']//tei:graphic[contains(@url, 'columbia.edu') and contains(@url, 'key')]">
                 <dcterms:relation>
