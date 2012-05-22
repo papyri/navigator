@@ -63,7 +63,7 @@
             <!-- Material -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
             <!-- Language -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:textLang" mode="metadata"/>
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang" mode="metadata"/>
             <!-- Date -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
             <!-- Commentary -->
@@ -473,7 +473,7 @@
   </xsl:function>
   
   <!-- Notes -->
-  <xsl:template match="t:msItem/t:note" mode="metadata">
+  <xsl:template match="t:msItemStruct/t:note" mode="metadata">
     <tr>
       <th class="rowheader">Note (<xsl:value-of select="replace(./@type, '_', '/')"/>)</th>
       <td><xsl:value-of select="."/></td>
