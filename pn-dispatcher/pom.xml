@@ -110,6 +110,11 @@
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.6.0</version>
     </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-he</artifactId>
+      <version>9.4.0.3</version>
+    </dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>
