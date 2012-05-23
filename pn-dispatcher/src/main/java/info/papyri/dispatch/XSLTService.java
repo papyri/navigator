@@ -72,6 +72,10 @@ public class XSLTService extends HttpServlet {
     try {
       if ("GET".equals(request.getMethod())) {
         response.setContentType("application/json");
+        if(request.getParameter("jsonp") != null) {
+          out.print(request.getParameter("jsonp"));
+          out.print("(");
+        }
         out.print("{\"xslts\":[");
         String[] keys = (String[])xslts.keySet().toArray();
         for (int i = 0; i < keys.length; i++) {
@@ -79,6 +83,9 @@ public class XSLTService extends HttpServlet {
           if (i < keys.length - 2) out.print(",");
         }
         out.print("]}");
+        if(request.getParameter("jsonp") != null) {
+          out.print(")");
+        }
       } else {
         try {
           response.setContentType("text/html;charset=UTF-8");
