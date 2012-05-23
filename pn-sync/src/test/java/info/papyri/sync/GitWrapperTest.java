@@ -55,6 +55,8 @@ public class GitWrapperTest {
     assertEquals(expResult, result);
   }
   
+  /*
+   * Commented out because they 
   @Test
   public void testMapping() {
     System.out.println("Testing Mapping");
@@ -82,4 +84,6 @@ public class GitWrapperTest {
     }
     assertTrue(true);
   }
+   * 
+   */
 }

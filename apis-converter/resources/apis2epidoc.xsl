@@ -4,6 +4,8 @@
     <xsl:output indent="yes"/>
     
     <xsl:template match="/">
+      <xsl:processing-instruction name="xml-model">href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
+</xsl:text>
         <TEI
             xmlns="http://www.tei-c.org/ns/1.0">
             <teiHeader>
@@ -29,12 +31,11 @@
                             </msIdentifier>
                             <msContents>
                                 <xsl:if test="//cu520"><summary><xsl:value-of select="//cu520"></xsl:value-of></summary></xsl:if>
-                                <xsl:if test="//*[starts-with(local-name(.), 'cu500') or //cuLCODE or //cu546[not(contains(lower-case(.), 'no language'))]]">
-                                    <msItem>
+                                <xsl:if test="//*[starts-with(local-name(.), 'cu500') or //*[local-name(.) = 'cu544_n'] or //*[local-name(.) = 'cu590'] or //cuLCODE or //cu546[not(contains(lower-case(.), 'no language'))]]">
+                                    <msItemStruct>
                                         <xsl:for-each select="//cu500"><note type="general"><xsl:value-of select="."/></note></xsl:for-each>
-                                        <xsl:for-each select="//cu500_lin"><note type="lines"><xsl:value-of select="."/></note></xsl:for-each>
-                                        <xsl:for-each select="//cu500_pal"><note type="paleography"><xsl:value-of select="."/></note></xsl:for-each>
-                                        <xsl:for-each select="//cu500_rec"><note type="recto_verso"><xsl:value-of select="."/></note></xsl:for-each>
+                                        <xsl:for-each select="//cu544_n"><note type="related"><xsl:value-of select="."/></note></xsl:for-each>
+                                        <xsl:for-each select="//cu590"><note type="local_note"><xsl:value-of select="."/></note></xsl:for-each>
                                         <xsl:if test="//cuLCODE or //cu546[not(contains(lower-case(.), 'no language'))]">
                                             <textLang>
                                                 <xsl:attribute name="mainLang">
@@ -64,22 +65,38 @@
                                                 <xsl:for-each select="//cu546"><xsl:value-of select="."/><xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if></xsl:for-each>
                                             </textLang>
                                         </xsl:if>
-                                    </msItem>
+                                    </msItemStruct>
                                 </xsl:if>
                             </msContents>
                             <physDesc>
-                                <p><xsl:value-of select="//cu300"/></p>
-                                <xsl:if test="//*[starts-with(local-name(.), 'cu590_')]">
-                                    <objectDesc>
-                                        <p><xsl:for-each select="//cu590_con"><note type="conservation"><xsl:value-of select="."/></note></xsl:for-each>
-                                           <xsl:for-each select="//cu590_prs"><note type="preservation"><xsl:value-of select="."/></note></xsl:for-each>
-                                         </p>
-                                    </objectDesc>
+                              <objectDesc>
+                                <supportDesc>
+                                  <support><xsl:value-of select="//cu300"/></support>
+                                  <xsl:if test="//*[starts-with(local-name(.), 'cu590_')]">
+                                    <condition>
+                                      <xsl:for-each select="//cu590_con"><ab type="conservation"><xsl:value-of select="."/></ab></xsl:for-each>
+                                      <xsl:for-each select="//cu590_prs"><ab type="preservation"><xsl:value-of select="."/></ab></xsl:for-each>
+                                    </condition>
+                                  </xsl:if>
+                                </supportDesc>
+                                <xsl:if test="//cu500_lin or //cu500_rec">
+                                  <layoutDesc>
+                                    <layout>
+                                      <xsl:for-each select="//cu500_lin"><ab type="lines"><xsl:value-of select="."/></ab></xsl:for-each>
+                                      <xsl:for-each select="//cu500_rec"><ab type="recto-verso"><xsl:value-of select="."/></ab></xsl:for-each>
+                                    </layout>
+                                  </layoutDesc>
                                 </xsl:if>
+                              </objectDesc>
+                              <xsl:if test="//cu500_pal">
+                                <handDesc>
+                                  <p><xsl:value-of select="//cu500_pal"/></p>
+                                </handDesc>
+                              </xsl:if>
                             </physDesc>
                             <history>
                                 <origin>
-                                    <origDate>
+                                    <xsl:if test="//cu245f or //cuDateValue"><origDate>
                                         <xsl:if test="//cuDateRange[. = 'b']">
                                             <xsl:attribute name="notBefore">
                                                 <xsl:call-template name="formatDate">
@@ -128,7 +145,7 @@
                                         </xsl:if>
                                         </xsl:otherwise>
                                       </xsl:choose>
-                                      </origDate>
+                                      </origDate></xsl:if>
                                     <xsl:for-each select="//cu518">
                                         <origPlace><xsl:value-of select="."></xsl:value-of></origPlace>
                                     </xsl:for-each>     
@@ -225,21 +242,21 @@
     
     <xsl:template name="langCode">
         <xsl:param name="code"/>
-        <xsl:if test="'ara' = $code or contains(lower-case($code), 'arabic')">ar-Arab</xsl:if>
-        <xsl:if test="'arc' = $code or contains(lower-case($code), 'aramaic')">arc</xsl:if>
-        <xsl:if test="'cop' = $code or contains(lower-case($code), 'coptic')">egy-Copt</xsl:if>
-        <xsl:if test="'dem' = $code or contains(lower-case($code), 'demotic')">egy-Egyd</xsl:if>
-        <xsl:if test="'egy' = $code">egy</xsl:if>
-        <xsl:if test="'fas' = $code or contains(lower-case($code), 'persian')">fas</xsl:if>
-        <xsl:if test="'grc' = $code or contains(lower-case($code), 'greek')">grc</xsl:if>
-        <xsl:if test="'heb' = $code or contains(lower-case($code), 'hebrew')">he-Hebr</xsl:if>
-        <xsl:if test="'hir' = $code or contains(lower-case($code), 'hieratic')">egy-Egyh</xsl:if>
-        <xsl:if test="'hig' = $code or contains(lower-case($code), 'hieroglyph')">egy-Egyp</xsl:if>
-        <xsl:if test="'la' = $code or 'lat' = $code or contains(lower-case($code), 'latin')">la</xsl:if>
-        <xsl:if test="'pal' = $code or contains(lower-case($code), 'middle persian')">pal-Phil</xsl:if>
-        <xsl:if test="'ira' = $code or contains(lower-case($code), 'parthian')">xpr-Prti</xsl:if>
-        <xsl:if test="'sem' = $code or contains(lower-case($code), 'semitic')">sem</xsl:if>
-        <xsl:if test="'und' = $code or contains(lower-case($code), 'undetermined') or contains(lower-case($code), 'uncertain') or contains(lower-case($code), 'unknown')">und</xsl:if>
+        <xsl:choose><xsl:when test="'ara' = $code or contains(lower-case($code), 'arabic')">ar-Arab</xsl:when>
+        <xsl:when test="'arc' = $code or contains(lower-case($code), 'aramaic')">arc</xsl:when>
+        <xsl:when test="'cop' = $code or contains(lower-case($code), 'coptic')">egy-Copt</xsl:when>
+        <xsl:when test="'dem' = $code or contains(lower-case($code), 'demotic')">egy-Egyd</xsl:when>
+        <xsl:when test="'egy' = $code">egy</xsl:when>
+        <xsl:when test="'fas' = $code or contains(lower-case($code), 'persian')">fas</xsl:when>
+        <xsl:when test="'grc' = $code or contains(lower-case($code), 'greek')">grc</xsl:when>
+        <xsl:when test="'heb' = $code or contains(lower-case($code), 'hebrew')">he-Hebr</xsl:when>
+        <xsl:when test="'hir' = $code or contains(lower-case($code), 'hieratic')">egy-Egyh</xsl:when>
+        <xsl:when test="'hig' = $code or contains(lower-case($code), 'hieroglyph')">egy-Egyp</xsl:when>
+        <xsl:when test="'la' = $code or 'lat' = $code or contains(lower-case($code), 'latin')">la</xsl:when>
+        <xsl:when test="'pal' = $code or contains(lower-case($code), 'middle persian')">pal-Phil</xsl:when>
+        <xsl:when test="'ira' = $code or contains(lower-case($code), 'parthian')">xpr-Prti</xsl:when>
+        <xsl:when test="'sem' = $code or contains(lower-case($code), 'semitic')">sem</xsl:when>
+        <xsl:when test="'und' = $code or contains(lower-case($code), 'undetermined') or contains(lower-case($code), 'uncertain') or contains(lower-case($code), 'unknown')">und</xsl:when></xsl:choose>
     </xsl:template>
     
     <xsl:template name="formatDate">

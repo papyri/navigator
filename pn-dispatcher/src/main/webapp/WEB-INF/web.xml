@@ -144,6 +144,21 @@
             <param-value>/pn-search</param-value>
         </init-param>
     </servlet>
+    <servlet>
+      <servlet-name>XSLTService</servlet-name>
+      <servlet-class>info.papyri.dispatch.XSLTService</servlet-class>
+      <init-param>
+        <param-name>epidoc</param-name>
+        <param-value>/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
+        <param-name>papyri.info-full</param-name>
+        <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2HTML.xsl</param-value>
+        <param-name>papyri.info-solr</param-name>
+        <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2Solr.xsl</param-value>
+        <param-name>papyri.info-text</param-name>
+        <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeText.xsl</param-value>
+        <param-name>papyri.info-fragment</param-name>
+        <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeFragment.xsl</param-value>
+    </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
         <url-pattern>/browse/*</url-pattern>

@@ -206,7 +206,6 @@
              "where { <" url "> dc:relation ?s "
              "filter regex(\"" url "\", \"^http://papyri.info\") "
              "filter regex(str(?s), \"^http://papyri.info\")}"))) conn)
-
       (.execute
        (Insertion. graph,
        (.parseQuery interpreter

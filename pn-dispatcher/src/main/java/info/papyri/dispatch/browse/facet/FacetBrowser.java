@@ -140,11 +140,6 @@ public class FacetBrowser extends HttpServlet {
                 
          if(queryResponse != null){ populateFacets(facets, queryResponse); } 
          else { queryResponse = new QueryResponse(); }
-         
-        /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
-           of which represents one returned document. */
-        ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(solrQuery, queryResponse, facets);
-        
                 
         /* Determine the number of results returned. 
          * 
@@ -152,14 +147,21 @@ public class FacetBrowser extends HttpServlet {
          */
         long resultSize = queryResponse.getResults() == null ? 0 : queryResponse.getResults().getNumFound();
         
-        
-        /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
+        // I'm feeling lucky
+        if ("yes".equals(request.getParameter("lucky")) && resultSize == 1) {
+          response.sendRedirect((String)queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()));
+        } else {
+           /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
+           of which represents one returned document. */
+          ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(solrQuery, queryResponse, facets);
+          
+          /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
          * the returned records, and pagination information */
         String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog, page);
        
         /* Inject the generated HTML */
         displayBrowseResult(response, html);  
-     
+        }
     }
 
     /** Returns the <code>List</code> of <code>Facet</code>s to be used. 

@@ -61,7 +61,7 @@
           </xsl:for-each>
           <xsl:for-each select="//tei:idno[@type = 'TM']">
             <xsl:for-each select="tokenize(., '\s')">
-              <dcterms:relation rdf:resource="http://www.trismegistos.org/tm/detail.php?quick={.}"/>
+              <dcterms:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
             </xsl:for-each>
           </xsl:for-each>
         </rdf:Description>

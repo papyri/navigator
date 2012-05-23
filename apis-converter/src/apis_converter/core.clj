@@ -13,6 +13,10 @@
 
 (def templates (ref nil))
 
+(defn fix-entities
+  [line]
+  (.. line (replace "&apos;" "'") (replace "&quot;" "\"") (replace "&gt;" ">") (replace "&lt;" "<") (replace "&amp;" "&")))
+
 (defn read-file
   [file-name]
   (line-seq (BufferedReader. (FileReader. file-name))))
@@ -29,11 +33,12 @@
         (if (false? (.equals elt-name ""))
           (.endElement handler "" elt-name elt-name))
         (.startElement handler "" (aget line 0) (aget line 0) atts))
-        (let [content (aget line (- (alength line) 1))]
+        (let [content (fix-entities (aget line (- (alength line) 1)))]
             (.characters handler (.toCharArray (.trim content)) 0 (.length (.trim content)))))
     (do 
       (if (== (alength line) 1)
-        (.characters handler (.toCharArray (aget line 0)) 0 (.length (aget line 0)))))))
+        (let [content (fix-entities (aget line 0))]
+          (.characters handler (.toCharArray content) 0 (.length content)))))))
 
 (defn process-file
   [lines, elt-name, handler]
@@ -78,7 +83,7 @@
   
 (defn -main
   ([dir-name, xsl]
-    (-main dir-name xsl 10))
+    (-main dir-name xsl 2))
   ([dir-name, xsl, nthreads]
   (def xslt xsl)
   (def dirs (file-seq (File. dir-name)))
