@@ -203,7 +203,10 @@
         (str "prefix dc: <http://purl.org/dc/terms/> "
              "construct{?s dc:relation <" url ">} "
              "from <rmi://localhost/papyri.info#pi> "
-             "where { <" url "> dc:relation ?s}"))) conn)
+             "where { <" url "> dc:relation ?s "
+             "filter regex(\"" url "\", \"^http://papyri.info\") "
+             "filter regex(str(?s), \"^http://papyri.info\")}"))) conn)
+
       (.execute
        (Insertion. graph,
        (.parseQuery interpreter
