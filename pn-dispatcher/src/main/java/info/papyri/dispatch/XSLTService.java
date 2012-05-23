@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -77,10 +78,11 @@ public class XSLTService extends HttpServlet {
           out.print("(");
         }
         out.print("{\"xslts\":[");
-        String[] keys = (String[])xslts.keySet().toArray();
-        for (int i = 0; i < keys.length; i++) {
-          out.print("\""+keys[i]+"\"");
-          if (i < keys.length - 2) out.print(",");
+        Iterator<String> itr = xslts.keySet().iterator();
+        while (itr.hasNext()) {
+          String key = itr.next();
+          out.print("\""+key+"\"");
+          if (itr.hasNext()) out.print(",");
         }
         out.print("]}");
         if(request.getParameter("jsonp") != null) {
