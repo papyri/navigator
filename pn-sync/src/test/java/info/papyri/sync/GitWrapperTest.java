@@ -65,7 +65,7 @@ public class GitWrapperTest {
     l.add("/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.3.xml");
     try {
       map.mapFiles(l);
-    } catch (Exception e) {
+    } catch (Throwable e) {
       e.printStackTrace();
     }
     assertTrue(true);
