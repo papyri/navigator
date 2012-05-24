@@ -23,8 +23,10 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
@@ -92,6 +94,9 @@ public class XSLTService extends HttpServlet {
         try {
           response.setContentType("text/html;charset=UTF-8");
           XsltTransformer xslt = xslts.get(request.getParameter("xsl")).load();
+          if (request.getParameter("coll") != null) {
+            xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
+          }
           xslt.setSource(new StreamSource(request.getReader()));
           xslt.setDestination(new Serializer(response.getWriter()));
           xslt.transform();
