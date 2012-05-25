@@ -162,6 +162,13 @@
                         </msDesc>
                     </sourceDesc>
                 </fileDesc>
+              <encodingDesc>
+                <classDecl>
+                  <taxonomy xml:id="apis">
+                    <desc>APIS keywords are controlled locally at the institution level. They are not necessarily consistent.</desc>
+                  </taxonomy>
+                </classDecl>
+              </encodingDesc>
                 <profileDesc>
                     <langUsage>
                         <language ident="en">English</language>
@@ -177,7 +184,7 @@
                     </langUsage>
                     <xsl:if test="//cu653 or //cu655">
                         <textClass>
-                            <keywords scheme="apis">
+                            <keywords scheme="#apis">
                                 <xsl:for-each select="//cu653">
                                     <term><xsl:value-of select="."/></term>
                                 </xsl:for-each>
