@@ -13,7 +13,7 @@
 ;; ### Usage
 ;; (from Leiningen)
 ;;
-;; * run without arguments — builds the PN index (pn-search-offline) and HTML/txt pages for texts and data
+;; * run without arguments — builds the PN index (pn-search) and HTML/txt pages for texts and data
 ;; * run with a list of files — indexes and generates HTML/txt for just the files provided
 ;; * `biblio` — builds the PN index for bibliography (biblio-search)
 ;; * `load-lemmas` — loads the morphological data from the Perseus lemma db into the lemma index (morph-search)
@@ -30,7 +30,6 @@
    :methods [#^{:static true} [index [java.util.List] void]
              #^{:static true} [loadBiblio [] void]
              #^{:static true} [loadLemmas [] void]])
-  (:use clojure.contrib.math)
   (:import
     (clojure.lang ISeq)
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
@@ -75,6 +74,7 @@
 (def texttemplates (ref nil))
 (def bibsolrtemplates (ref nil))
 (def bibhtmltemplates (ref nil))
+(def links (ref (ConcurrentLinkedQueue.)))
 (def words (ref (ConcurrentSkipListSet.)))
 (def solr (ref nil))
 (def solrbiblio (ref nil))
@@ -435,8 +435,8 @@
             from <rmi://localhost/papyri.info#pi>
             where { <%s> dc:relation ?hgv .
                     ?hgv dc:source ?b .
-                    ?b dc:bibliographicCitation ?a }" url))  
-            
+                    ?b dc:bibliographicCitation ?a }" url)) 
+
 (defn cited-by-query
   "Looks for Cito citations coming from biblio"
   [url]
@@ -444,7 +444,7 @@
           select ?a
           from <rmi://localhost/papyri.info#pi>
           where {<%s> cito:isCitedBy ?a }" url))
-
+            
 (defn replaces-query
   "Finds items that the given item replaces."
   [url]
@@ -510,7 +510,7 @@
         source (if (empty? (re-seq #"/hgv/" url))
        		   	  (execute-query (other-source-query url))
        		   	  (execute-query (hgv-source-query url)))
-        citation (if (empty? (re-seq #"/hgv" url))
+        citation(if (empty? (re-seq #"/hgv" url))
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
@@ -551,6 +551,7 @@
                        (filter (fn [x] (= (first x) (last item))) all-sources))
              citations (if (empty? all-citations) ()
                          (filter (fn [x] (= (first x) (last item))) all-citations))
+             biblio (execute-query (cited-by-query url))
              reprint-in (if (empty? is-replaced-by) ()
                           (filter (fn [x] (= (first x) (last item))) is-replaced-by))
              exclusion (some (set (for [x (filter 
@@ -561,15 +562,16 @@
                              exclude)]
         (if (nil? exclusion)
           ( .add @html (list (str "file:" (get-filename (last item)))
-            (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
-            (list "related" (apply str (interpose " " (for [x related] (last x)))))
-            (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
-            (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
-            (list "isPartOf" (apply str (interpose " " all-urls)))   
-            (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
-            (list "citationForm" (apply str (interpose "" (for [x citations](last x)))))  
-        	(list "selfUrl" (substring-before (last item) "/source"))     
-            (list "server" nserver)))
+                             (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
+                             (list "related" (apply str (interpose " " (for [x related] (last x)))))
+                             (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
+                             (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
+                             (list "isPartOf" (apply str (interpose " " all-urls)))   
+                             (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
+                             (list "citationForm" (apply str (interpose "" (for [x citations](last x))))) 
+                             (list "biblio" (apply str (interpose " " (for [x biblio] (first x))))) 
+                             (list "selfUrl" (substring-before (last item) "/source"))     
+                             (list "server" nserver)))
           (do (.add @links (list (get-html-filename 
                                    (.toString 
                                      (last 
@@ -753,6 +755,15 @@
    
   ;; Generate HTML
   (println "Generating HTML...")
+  (generate-html)
+
+  ;; Generate text
+  (println "Generating text...")
+  (generate-text)
+
+  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 5))
+	  (.setRequestWriter @solr (BinaryRequestWriter.)))
+  
   ;; Index docs queued in @text
   (println "Indexing text...")
   (let [pool (Executors/newFixedThreadPool nthreads)
@@ -777,7 +788,8 @@
     (ref-set text nil)
     (ref-set solrtemplates nil))
   
-  (print-words))
+  ;;(print-words)
+  )
 
 
 (defn -main [& args]
@@ -785,5 +797,5 @@
     (case (first args) 
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
-      (-index args))
+      (-index (rest args)))
     (-index)))
