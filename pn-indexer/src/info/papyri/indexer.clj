@@ -13,7 +13,7 @@
 ;; ### Usage
 ;; (from Leiningen)
 ;;
-;; * run without arguments — builds the PN index (pn-search) and HTML/txt pages for texts and data
+;; * run without arguments — builds the PN index (pn-search-offline) and HTML/txt pages for texts and data
 ;; * run with a list of files — indexes and generates HTML/txt for just the files provided
 ;; * `biblio` — builds the PN index for bibliography (biblio-search)
 ;; * `load-lemmas` — loads the morphological data from the Perseus lemma db into the lemma index (morph-search)
@@ -30,6 +30,7 @@
    :methods [#^{:static true} [index [java.util.List] void]
              #^{:static true} [loadBiblio [] void]
              #^{:static true} [loadLemmas [] void]])
+  (:use clojure.contrib.math)
   (:import
     (clojure.lang ISeq)
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
@@ -74,7 +75,6 @@
 (def texttemplates (ref nil))
 (def bibsolrtemplates (ref nil))
 (def bibhtmltemplates (ref nil))
-(def links (ref (ConcurrentLinkedQueue.)))
 (def words (ref (ConcurrentSkipListSet.)))
 (def solr (ref nil))
 (def solrbiblio (ref nil))
@@ -437,6 +437,14 @@
                     ?hgv dc:source ?b .
                     ?b dc:bibliographicCitation ?a }" url))  
             
+(defn cited-by-query
+  "Looks for Cito citations coming from biblio"
+  [url]
+  (format "prefix cito: <http://purl.org/spar/cito/>
+          select ?a
+          from <rmi://localhost/papyri.info#pi>
+          where {<%s> cito:isCitedBy ?a }" url))
+
 (defn replaces-query
   "Finds items that the given item replaces."
   [url]
@@ -496,26 +504,28 @@
   [url]
   (println (get-filename url))
   (let [relations (execute-query (relation-query url))
-       replaces (execute-query (replaces-query url))
-       is-replaced-by (execute-query (is-replaced-by-query url))
-       is-part-of (execute-query (is-part-of-query url))
-       source (if (empty? (re-seq #"/hgv/" url))
+        replaces (execute-query (replaces-query url))
+        is-replaced-by (execute-query (is-replaced-by-query url))
+        is-part-of (execute-query (is-part-of-query url))
+        source (if (empty? (re-seq #"/hgv/" url))
        		   	  (execute-query (other-source-query url))
        		   	  (execute-query (hgv-source-query url)))
-       citation(if (empty? (re-seq #"/hgv" url))
+        citation (if (empty? (re-seq #"/hgv" url))
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
+        biblio (execute-query (cited-by-query url))
        ]
     (.add @html (list (str "file:" (get-filename url))
-          (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
-          (list "related" (apply str (interpose " " (for [x relations] (first x)))))
-          (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
-          (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (first x)))))
-          (list "isPartOf" (apply str (interpose " " (first is-part-of))))
-          (list "sources" (apply str (interpose " " (for [x source](first x)))))
-          (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
-          (list "selfUrl" url)
-          (list "server" nserver)))))
+                      (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
+                      (list "related" (apply str (interpose " " (for [x relations] (first x)))))
+                      (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
+                      (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (first x)))))
+                      (list "isPartOf" (apply str (interpose " " (first is-part-of))))
+                      (list "sources" (apply str (interpose " " (for [x source](first x)))))
+                      (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
+                      (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
+                      (list "selfUrl" url)
+                      (list "server" nserver)))))
 
 (defn queue-items
   "Adds children of the given collection or volume to the @html queue for processing,
@@ -743,15 +753,6 @@
    
   ;; Generate HTML
   (println "Generating HTML...")
-  (generate-html)
-
-  ;; Generate text
-  (println "Generating text...")
-  (generate-text)
-
-  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 5))
-	  (.setRequestWriter @solr (BinaryRequestWriter.)))
-  
   ;; Index docs queued in @text
   (println "Indexing text...")
   (let [pool (Executors/newFixedThreadPool nthreads)
@@ -776,8 +777,7 @@
     (ref-set text nil)
     (ref-set solrtemplates nil))
   
-  ;;(print-words)
-  )
+  (print-words))
 
 
 (defn -main [& args]
@@ -785,5 +785,5 @@
     (case (first args) 
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
-      (-index (rest args)))
+      (-index args))
     (-index)))

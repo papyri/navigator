@@ -77,9 +77,11 @@
   <xsl:param name="isPartOf"/>
   <xsl:param name="sources"/>
   <xsl:param name="citationForm"/>
-  <xsl:param name="selfUrl"></xsl:param>
+  <xsl:param name="selfUrl"/>
+  <xsl:param name="biblio"/>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
+  <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="doc-id">
@@ -266,6 +268,7 @@
                           <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
                       </xsl:for-each>
+                      <xsl:call-template name="biblio"/>
                     </div>
                   </xsl:if>
                   <div class="text">
@@ -357,6 +360,7 @@
                         </xsl:choose>
                       </xsl:for-each>
                     </xsl:if>
+                    <xsl:call-template name="biblio"/>
                   </div>
                   <xsl:if test="$apis">
                     <div class="text">
@@ -374,6 +378,7 @@
                 <xsl:if test="$collection = 'apis'">
                   <div class="metadata">
                     <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+                    <xsl:call-template name="biblio"/>
                   </div>
                   <div class="text">
                     <xsl:if test="$image">
@@ -430,6 +435,19 @@
       <p><xsl:value-of select=".//t:div[@type = 'translation']/t:ab"/></p>
     </div>
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="biblio">
+    <xsl:if test="$biblio-relations">
+      <div id="bibliography">
+        <h3>Citations</h3>
+        <ul>
+          <xsl:for-each select="$biblio-relations">
+            <li><a href="{.}" class="BP">cite</a></li>
+          </xsl:for-each>
+        </ul>
+      </div>
+    </xsl:if>  
   </xsl:template>
     
   <!-- Commentary links -->
