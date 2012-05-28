@@ -440,10 +440,11 @@
 (defn cited-by-query
   "Looks for Cito citations coming from biblio"
   [url]
-  (format "prefix cito: <http://purl.org/spar/cito/>
-          select ?a
-          from <rmi://localhost/papyri.info#pi>
-          where {<%s> cito:isCitedBy ?a }" url))
+  (let [uri (.replace url "/source" "/work")]
+    (format "prefix cito: <http://purl.org/spar/cito/>
+             select ?a
+            from <rmi://localhost/papyri.info#pi>
+            where {<%s> cito:isCitedBy ?a }" uri)))
             
 (defn replaces-query
   "Finds items that the given item replaces."

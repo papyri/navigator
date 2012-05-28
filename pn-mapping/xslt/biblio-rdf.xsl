@@ -47,9 +47,9 @@
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='mentions']">
-    <xsl:if test="not(contains(t:bibl/t:idno[@type='ddb'], ' '))">
+    <xsl:if test="t:bibl/t:idno[@type='ddb']">
       <cito:cites>
-        <rdf:Description rdf:about="http:papyri.info/ddbdp/{t:bibl/t:idno[@type='ddb']}/work">
+        <rdf:Description rdf:about="http://papyri.info/ddbdp/{t:bibl/t:idno[@type='ddb']}/work">
           <cito:isCitedBy rdf:resource="{$id}"/>
         </rdf:Description>
       </cito:cites>
