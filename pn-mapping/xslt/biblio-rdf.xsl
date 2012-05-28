@@ -47,7 +47,7 @@
   </xsl:template>
 
   <xsl:template match="t:relatedItem[@type='mentions']">
-    <xsl:if test="t:bibl/t:idno[@type='ddb']">
+    <xsl:if test="t:bibl/t:idno[@type='ddb' and not(contains(., ' '))]">
       <cito:cites>
         <rdf:Description rdf:about="http://papyri.info/ddbdp/{t:bibl/t:idno[@type='ddb']}/work">
           <cito:isCitedBy rdf:resource="{$id}"/>
