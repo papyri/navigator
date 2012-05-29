@@ -15,7 +15,11 @@
         <xsl:variable name="perseus-id" select="//tei:publicationStmt/tei:idno[@type = 'ddb-perseus-style']"/>
         <rdf:Description rdf:about="{$id}">
             <dcterms:identifier>papyri.info/ddbdp/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()"/></dcterms:identifier>
-          <dcterms:source rdf:resource="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/edition"/>
+            <dcterms:source>
+              <rdf:Description rdf:about="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/work">
+                <dcterms:source rdf:resource="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/original"/>
+              </rdf:Description>
+            </dcterms:source>
             <dcterms:identifier><xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']/text()"/></dcterms:identifier>
             <xsl:for-each select="distinct-values(//tei:text/tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-in']/@n)">
                 <xsl:for-each select="tokenize(., '\|')">

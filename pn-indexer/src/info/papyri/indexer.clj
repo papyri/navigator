@@ -437,6 +437,16 @@
                     ?hgv dc:source ?b .
                     ?b dc:bibliographicCitation ?a }" url)) 
 
+(defn batch-cited-by-query
+  [url]
+  (format "prefix cito: <http://purl.org/spar/cito/>
+          prefix dc: <http://purl.org/dc/terms/> 
+          construct {?a dc:relation ?c}
+          from <rmi://localhost/papyri.info#pi>
+          where {<%s> dc:hasPart ?a .
+                 ?a dc:source ?b .
+                 ?b cito:isCitedBy ?c }" url))
+
 (defn cited-by-query
   "Looks for Cito citations coming from biblio"
   [url]
@@ -482,7 +492,7 @@
     (persistent! *row*)))
                     
 (defn execute-query
-  "Executes the query provided and returns a vector of vectors containing the results"
+  "Executes the query provided and returns a vector. of vectors containing the results"
   [query]
   (let [interpreter (SparqlInterpreter.)
         answerlist (ArrayList.)
@@ -542,7 +552,8 @@
         			        (execute-query (batch-hgv-source-query url)))
         all-citations (if (empty? (re-seq #"/hgv/" url))
                         (execute-query (batch-other-citation-query url))
-                        (execute-query (batch-hgv-citation-query url)))]	
+                        (execute-query (batch-hgv-citation-query url)))
+        all-biblio (execute-query (batch-cited-by-query))]	
     (doseq [item items]
       (let  [related (if (empty? relations) ()
                        (filter (fn [x] (= (first x) (last item))) relations))
@@ -552,7 +563,8 @@
                        (filter (fn [x] (= (first x) (last item))) all-sources))
              citations (if (empty? all-citations) ()
                          (filter (fn [x] (= (first x) (last item))) all-citations))
-             biblio (execute-query (cited-by-query url))
+             biblio (if (empty? all-biblio) ()
+                      (filter (fn [x] (= (first x) (last item))) all-biblio))
              reprint-in (if (empty? is-replaced-by) ()
                           (filter (fn [x] (= (first x) (last item))) is-replaced-by))
              exclusion (some (set (for [x (filter 
@@ -798,5 +810,5 @@
     (case (first args) 
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
-      (-index (rest args)))
+      (-index args))
     (-index)))
