@@ -582,7 +582,7 @@
                              (list "isPartOf" (apply str (interpose " " all-urls)))   
                              (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
                              (list "citationForm" (apply str (interpose "" (for [x citations](last x))))) 
-                             (list "biblio" (apply str (interpose " " (for [x biblio] (first x))))) 
+                             (list "biblio" (apply str (interpose " " (for [x biblio] (last x))))) 
                              (list "selfUrl" (substring-before (last item) "/source"))     
                              (list "server" nserver)))
           (do (.add @links (list (get-html-filename 
