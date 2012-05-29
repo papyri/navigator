@@ -553,7 +553,7 @@
         all-citations (if (empty? (re-seq #"/hgv/" url))
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
-        all-biblio (execute-query (batch-cited-by-query))]	
+        all-biblio (execute-query (batch-cited-by-query url))]	
     (doseq [item items]
       (let  [related (if (empty? relations) ()
                        (filter (fn [x] (= (first x) (last item))) relations))
