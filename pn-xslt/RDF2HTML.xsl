@@ -438,7 +438,7 @@
   </xsl:template>
   
   <xsl:template name="biblio">
-    <xsl:if test="$biblio-relations">
+    <xsl:if test="$biblio-relations[1]">
       <div id="bibliography">
         <h3>Citations</h3>
         <ul>
