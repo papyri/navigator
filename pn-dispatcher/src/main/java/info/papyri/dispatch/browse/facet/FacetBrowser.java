@@ -149,7 +149,11 @@ public class FacetBrowser extends HttpServlet {
         
         // I'm feeling lucky
         if ("yes".equals(request.getParameter("lucky")) && resultSize == 1) {
-          response.sendRedirect((String)queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()));
+          if ("ddb-text".equals(request.getParameter("source"))) {
+            response.sendRedirect((String)queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()) + "/source");
+          } else {
+            response.sendRedirect((String)queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()));
+          }
         } else {
            /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
            of which represents one returned document. */
