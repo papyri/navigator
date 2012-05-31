@@ -76,7 +76,7 @@ public class DispatcherServlet extends HttpServlet {
           format = method.toString();
         }
       }
-      if ("rdfxml".equals(format) || "n3".equals(format) || "json".equals(format)) {
+      if ("rdfxml".equals(format) || "n3".equals(format) || "json".equals(format) || "xml".equals(format)) {
         query.delete(query.lastIndexOf("/"), query.length());
         String domain;
         if (query.indexOf("/") > 0) {

@@ -535,7 +535,7 @@
                       (list "sources" (apply str (interpose " " (for [x source](first x)))))
                       (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                       (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
-                      (list "selfUrl" url)
+                      (list "selfUrl" (substring-before url "/source"))
                       (list "server" nserver)))))
 
 (defn queue-items

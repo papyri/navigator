@@ -244,7 +244,7 @@
                   </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI:</span>
-                    <span id="canonical-uri-value"><xsl:value-of select="$selfUrl"></xsl:value-of></span>
+                    <span id="canonical-uri-value"><xsl:value-of select="$selfUrl"/></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
