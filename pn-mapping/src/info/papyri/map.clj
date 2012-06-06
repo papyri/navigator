@@ -11,7 +11,7 @@
             #^{:static true} [mapFiles [java.util.List] void]
             #^{:static true} [mapAll [java.util.List] void]
             ])
-  (:import (java.io BufferedReader ByteArrayInputStream ByteArrayOutputStream File FileInputStream FileOutputStream FileReader StringWriter)
+  (:import (java.io BufferedReader ByteArrayInputStream ByteArrayOutputStream File FileInputStream FileOutputStream FileReader StringReader StringWriter)
            (java.net URI)
            (java.nio.charset Charset)
            (java.util.concurrent Executors ConcurrentLinkedQueue)
@@ -21,19 +21,21 @@
            (net.sf.saxon Configuration FeatureKeys StandardErrorListener StandardURIResolver PreparedStylesheet TransformerFactoryImpl)
            ;;(net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
            (net.sf.saxon.trans CompilerInfo XPathException)
-           (org.mulgara.connection Connection ConnectionFactory)
-           (org.mulgara.query Answer Query)
-           (org.mulgara.query.operation Command CreateGraph Insertion Load Deletion DropGraph)
-           (org.mulgara.sparql SparqlInterpreter)
-           (org.mulgara.itql TqlInterpreter)))
+           (org.apache.jena.fuseki.http DatasetAdapter DatasetGraphAccessorHTTP UpdateRemote)
+           (com.hp.hpl.jena.graph Node)
+           (com.hp.hpl.jena.query QueryExecutionFactory)
+           (com.hp.hpl.jena.rdf.model Model ModelFactory)
+           (com.hp.hpl.jena.sparql.modify.request UpdateCreate UpdateLoad)
+           (com.hp.hpl.jena.update Update UpdateFactory UpdateRequest)
+           (com.hp.hpl.jena.sparql.lang UpdateParser)))
            
 (def xsl (ref nil))
 (def pxslt (ref nil))
 (def buffer (ref nil))
 (def flushing (ref false))
 (def output (ref nil))
-(def server (URI/create "rmi://localhost/server1"))
-(def graph (URI/create "rmi://localhost/papyri.info#pi"))
+(def server "http://localhost:8090/pi")
+(def graph "http://papyri.info/graph")
 (def param (ref nil))
 ;; NOTE hard-coded file and directory locations
 (def xslts {"DDB_EpiDoc_XML" "/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
@@ -52,11 +54,12 @@
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
-  (println (str "Loading " (if (nil? n) "500" n) " records to " server))
+  (println (str "Loading records to " server "/data"))
   (let [rdf (StringBuffer.)
-        times (if (not (nil? n)) n 500)
-        factory (ConnectionFactory.)
-        conn (.newConnection factory server)]
+        times (if (not (nil? n)) n 5000)
+        dga (DatasetGraphAccessorHTTP. (str server "/data"))
+        adapter (DatasetAdapter. dga)
+        ]
     (try
       (doto rdf
         (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
@@ -65,16 +68,17 @@
       (dotimes [n times]
         (let [string (.poll @buffer)]
           (if (not (nil? string))
-            (.append rdf string))))
+            (.append rdf string)
+            (Thread/sleep 1))))
       (doto rdf
         (.append "</rdf:RDF>"))
-      (.execute (Load. graph (ByteArrayInputStream. (.getBytes (.toString rdf) (Charset/forName "UTF-8"))) (MimeType. "application/rdf+xml")) conn)
+      (let [model (ModelFactory/createDefaultModel)]
+        (.read model (StringReader. (.toString rdf)) nil "RDF/XML")
+        (.add adapter graph model))
+      (Thread/sleep 2)
       (catch Exception e
-        (.println *err* (str (.getMessage e) " talking to Mulgara."))
-        (.printStackTrace e))
-      (finally
-        (doto conn
-          (.close))))))
+        (.println *err* (str (.getMessage e) " talking to Fuseki"))
+        (.printStackTrace e)))))
 
 (defn transform
   [file]
@@ -121,13 +125,13 @@
   (format 
     "prefix dc: <http://purl.org/dc/terms/> 
     select ?uri
-    from <rmi://localhost/papyri.info#pi>
-    where {?uri dc:identifier \"%s\"}"))
+    from <http://papyri.info/graph>
+    where {?uri dc:identifier \"%s\"}" filename))
     
 (defn execute-query
   [query]
-  (let [interpreter (SparqlInterpreter.)]
-    (.execute (.parseQuery interpreter query) (.newConnection (ConnectionFactory.) server))))
+  (let [exec (QueryExecutionFactory/sparqlService (str server "/update") query)]
+    (.execSelect exec)))
     
 (defn get-filename 
   [file]
@@ -136,155 +140,125 @@
 (defn url-from-file
   [file]
   (let [answer (execute-query (format-url-query (get-filename file)))]
-    (.toString (.getObject answer 0))))
+    (.toString (.getResource (.next answer) "uri"))))
           
 (defn -deleteGraph
   []
-  (let [factory (ConnectionFactory.)
-        conn (.newConnection factory server)
-        interpreter (SparqlInterpreter.)]
-      (.execute conn (DropGraph. graph))
-      (.close conn)))
+  (let [request (UpdateFactory/create)]
+    (.add request "DROP ALL")
+    (.add request (UpdateCreate. "http://papyri.info/graph"))
+    (println (.toString request))
+    (UpdateRemote/execute request (str server "/update") )))
       
 (defn -deleteUri
   [uri]
-  (let [deletesub (str "construct { <" uri "> ?p ?r }
-                        from <rmi://localhost/papyri.info#pi>
-                        where { <" uri "> ?p ?r }")
-        deleteobj (str "construct { ?s ?p <" uri ">}
-                        from <rmi://localhost/papyri.info#pi>
-                        where { ?s ?p <" uri ">}")]
-  (let [factory (ConnectionFactory.)
-        conn (.newConnection factory server)
-        interpreter (SparqlInterpreter.)]
-    (.execute conn (CreateGraph. graph))
-    (.execute (Deletion. graph, (.parseQuery interpreter deletesub)) conn)
-    (.execute (Deletion. graph, (.parseQuery interpreter deleteobj)) conn)
-    (.close conn))))
+  (let [deletesub (str "WITH <http://papyri.info/graph>
+                        DELETE { <" uri "> ?p ?r }
+                        WHERE { <" uri "> ?p ?r }")
+        deleteobj (str "WITH <http://papyri.info/graph>
+                        DELETE { ?s ?p <" uri ">}
+                        WHERE { ?s ?p <" uri ">}")
+        req (UpdateFactory/create)]
+    (.add req deletesub)
+    (.add req deleteobj)
+    (UpdateRemote/execute req (str server "/update") )))
     
 (defn -deleteRelation
   [uri]
-  (let [deleterel (str "construct { ?s <" uri "> ?r }
-                        from <rmi://localhost/papyri.info#pi>
-                        where { ?s <" uri "> ?r }")]
-  (let [factory (ConnectionFactory.)
-        conn (.newConnection factory server)
-        interpreter (SparqlInterpreter.)]
-    (.execute conn (CreateGraph. graph))
-    (.execute (Deletion. graph, (.parseQuery interpreter deleterel)) conn)
-    (.close conn))))
-    
+  (let [deleterel (str "WITH <http://papyri.info/graph>
+                        DELETE { ?s <" uri "> ?r }
+                        WHERE { ?s <" uri "> ?r }")
+        req (UpdateFactory/create)]
+    (.add req deleterel)
+    (UpdateRemote/execute req (str server "/update") )))
+
 (defn -loadFile
   [f]
-  (let [factory (ConnectionFactory.)
-        conn (.newConnection factory server)
-        file (File. f)]
-      (.execute conn (CreateGraph. graph))
-      (.execute (Load. (.toURI file) graph, true) conn)
-      (.close conn)))
+  (let [request (UpdateFactory/create)
+        query (str "LOAD <file:" f "> INTO <http://papyri.info/graph>")]
+    (.add request query)
+    (UpdateRemote/execute request (str server "/update") )))
     
 (defn -insertInferences
   [url]
   (if (not (nil? url))
-    (let [factory (ConnectionFactory.)
-    conn (.newConnection factory server)
-    interpreter (SparqlInterpreter.)]
-      (.execute conn (CreateGraph. graph))
-      (.execute
-       (Insertion. graph,
-       (.parseQuery interpreter
-        (str "prefix dc: <http://purl.org/dc/terms/> "
-             "construct{?s dc:hasPart <" url ">} "
-             "from <rmi://localhost/papyri.info#pi> "
-             "where { <" url "> dc:isPartOf ?s}"))) conn)
-      (.execute
-       (Insertion. graph,
-       (.parseQuery interpreter
-        (str "prefix dc: <http://purl.org/dc/terms/> "
-             "construct{?s dc:relation <" url ">} "
-             "from <rmi://localhost/papyri.info#pi> "
-             "where { <" url "> dc:relation ?s "
-             "filter regex(\"" url "\", \"^http://papyri.info\") "
-             "filter regex(str(?s), \"^http://papyri.info\")}"))) conn)
-      (.execute
-       (Insertion. graph,
-       (.parseQuery interpreter
-        (str "prefix dc: <http://purl.org/dc/terms/> "
-             "construct{<" url "> dc:relation ?o2} "
-             "from <rmi://localhost/papyri.info#pi> "
-             "where { <" url "> dc:relation ?o1 . "
-             "?o1 dc:relation ?o2 "
-             "filter (!sameTerm(<" url ">, ?o2))}"))) conn)
-      (.close conn))
-    (let [factory (ConnectionFactory.)
-          conn (.newConnection factory server)
-    interpreter (SparqlInterpreter.)]
-      (def hasPart (str "prefix dc: <http://purl.org/dc/terms/> "
-      "construct{?s dc:hasPart ?o} "
-      "from <rmi://localhost/papyri.info#pi> "
-      "where { ?o dc:isPartOf ?s}"))
-      (def relation "prefix dc: <http://purl.org/dc/terms/> 
-      construct{?s dc:relation ?o} 
-      from <rmi://localhost/papyri.info#pi> 
-      where { ?o dc:relation ?s}")
-      (def translations "prefix dc: <http://purl.org/dc/terms/>
-      construct { ?r1 <http://purl.org/dc/terms/relation> ?r2 }
-      from <rmi://localhost/papyri.info#pi>
-      where {
-      ?i dc:relation ?r1 .
-      ?i dc:relation ?r2 .
-      FILTER  regex(str(?i), \"^http://papyri.info/hgv\") 
-      FILTER  regex(str(?r1), \"^http://papyri.info/ddbdp\")
-      FILTER  regex(str(?r2), \"^http://papyri.info/hgvtrans\")}")
-      (def images "prefix dc: <http://purl.org/dc/terms/>
-      construct { ?r1 <http://purl.org/dc/terms/relation> ?r2 }
-      from <rmi://localhost/papyri.info#pi>
-      where {
-      ?c dc:isPartOf <http://papyri.info/apis> .
-      ?i dc:isPartOf ?c .
-      ?i dc:relation ?r1 .
-      ?i dc:relation ?r2 .
-      FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\")) 
-      FILTER  regex(str(?r2), \"^http://papyri.info/images\")}")
-      (def transitive-rels 
-        (if (nil? url) (str "prefix dc: <http://purl.org/dc/terms/>
-                             construct{?s dc:relation ?o2}
-                             from <rmi://localhost/papyri.info#pi>
-                             where { ?s dc:relation ?o1 .
-                                     ?o1 dc:relation ?o2 
-                             filter (!sameTerm(?s, ?o2))}")
-                        (str "prefix dc: <http://purl.org/dc/terms/>
-                              construct{<" url "> dc:relation ?o2}
-                              from <rmi://localhost/papyri.info#pi>
-                              where { <" url "> dc:relation ?o1 .
-                                      ?o1 dc:relation ?o2 
-                              filter (!sameTerm(<" url ">, ?o2))}")
-                        ))
-      (.execute conn (CreateGraph. graph))
-      (.execute (Insertion. graph, (.parseQuery interpreter hasPart)) conn)
-      (.execute (Insertion. graph, (.parseQuery interpreter relation)) conn)
-      (.execute (Insertion. graph, (.parseQuery interpreter translations)) conn)
-      (.execute (Insertion. graph, (.parseQuery interpreter images)) conn)
-      (.execute (Insertion. graph, (.parseQuery interpreter transitive-rels)) conn)
-      (.close conn))))
+    (let [request (UpdateFactory/create)
+          haspart (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                       "WITH <http://papyri.info/graph> "
+                       "INSERT {?s dc:hasPart <" url ">} "
+                       "WHERE { <" url "> dc:isPartOf ?s}")
+          relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                        "WITH <http://papyri.info/graph> "
+                        "INSERT {?s dc:relation <" url ">} "
+                        "WHERE { <" url "> dc:relation ?s "
+                        "FILTER regex(\"" url "\", \"^http://papyri.info\") "
+                        "FILTER regex(str(?s), \"^http://papyri.info\")}")
+          transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                               "WITH <http://papyri.info/graph> "
+                               "INSERT {<" url "> dc:relation ?o2} "
+                               "WHERE { <" url "> dc:relation ?o1 . "
+                               "?o1 dc:relation ?o2 "
+                               "FILTER (!sameTerm(<" url ">, ?o2))}")]
+      (.add request haspart)
+      (.add request relation)
+      (.add request transitive-rels)
+      (UpdateRemote/execute request (str server "/update") ))
+    (let [request (UpdateFactory/create)
+          hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                       "WITH <http://papyri.info/graph> "
+                       "INSERT{?s dc:hasPart ?o} "
+                       "WHERE { ?o dc:isPartOf ?s}")
+          relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                        "WITH <http://papyri.info/graph> "
+                        "INSERT {?s dc:relation ?o} "
+                        "WHERE { ?o dc:relation ?s}")
+          translations (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                            "WITH <http://papyri.info/graph> "
+                            "INSERT { ?r1 <http://purl.org/dc/terms/relation> ?r2 } "
+                            "WHERE { "
+                            "?i dc:relation ?r1 . "
+                            "?i dc:relation ?r2 . "
+                            "FILTER  regex(str(?i), \"^http://papyri.info/hgv\") "
+                            "FILTER  regex(str(?r1), \"^http://papyri.info/ddbdp\") "
+                            "FILTER  regex(str(?r2), \"^http://papyri.info/hgvtrans\")}")
+          images (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                      "WITH <http://papyri.info/graph> "
+                      "INSERT { ?r1 <http://purl.org/dc/terms/relation> ?r2 } "
+                      "WHERE { "
+                      "?c dc:isPartOf <http://papyri.info/apis> . "
+                      "?i dc:isPartOf ?c . "
+                      "?i dc:relation ?r1 . "
+                      "?i dc:relation ?r2 . "
+                      "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\")) "
+                      "FILTER  regex(str(?r2), \"^http://papyri.info/images\")}")
+          transitive-rels "PREFIX dc: <http://purl.org/dc/terms/>
+                           WITH <http://papyri.info/graph> 
+                           INSERT {?s dc:relation ?o2}
+                           WHERE { ?s dc:relation ?o1 .
+                                   ?o1 dc:relation ?o2 
+                           FILTER (!sameTerm(?s, ?o2))}"]
+      (.add request hasPart)
+      (.add request relation)
+      (.add request translations)
+      (.add request images)
+      (.add request transitive-rels)
+      (UpdateRemote/execute request (str server "/update") ))))
       
 (defn load-map 
   [file]
-  (def nthreads 5)
+  (def nthreads 2)
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
   (let [xsl (choose-xslt file)]
     (init-xslt xsl))
-  (let [factory (ConnectionFactory.)
-      conn (.newConnection factory server)
-      create (CreateGraph. graph)]
-    (.execute conn create)
-    (.close conn))
+  (let [request (UpdateFactory/create)]
+    (.add request "CREATE SILENT GRAPH <http://papyri.info/graph>")
+    (UpdateRemote/execute request (str server "/update") ))
   (let [pool (Executors/newFixedThreadPool nthreads)
       files (file-seq (File. file))
       tasks (map (fn [x]
         (fn []
           (transform x)
-          (when (> (count @buffer) 500)
+          (when (> (count @buffer) 5000)
             (flush-buffer nil))))
         (filter #(.endsWith (.getName %) ".xml") files))]
       (doseq [future (.invokeAll pool tasks)]
