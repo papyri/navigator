@@ -174,10 +174,11 @@
 
 (defn -loadFile
   [f]
-  (let [request (UpdateFactory/create)
-        query (str "LOAD <file:" f "> INTO <http://papyri.info/graph>")]
-    (.add request query)
-    (UpdateRemote/execute request (str server "/update") )))
+  (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
+        adapter (DatasetAdapter. dga)
+        model (ModelFactory/createDefaultModel)]
+    (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
+    (.add adapter graph model)))
     
 (defn -insertInferences
   [url]
@@ -296,7 +297,7 @@
       (load-map (str idproot "/HGV_trans_EpiDoc"))
       (println "Processing Bibliography")
       (load-map (str idproot "/Biblio")))
-  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/collection.rdf")
+  (-loadFile "/data/papyri.info/idp.data/RDF/collection.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
   (-insertInferences nil))
