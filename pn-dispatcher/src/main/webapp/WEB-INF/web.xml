@@ -40,7 +40,7 @@
             <param-value>/data/papyri.info/pn/idp.html</param-value>
         </init-param>
         <init-param>
-            <param-name>mulgaraUrl</param-name>
+            <param-name>sparqlUrl</param-name>
             <param-value>http://localhost:8090</param-value>
         </init-param>
         <init-param>
@@ -97,7 +97,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlGraph</param-name>
-            <param-value>rmi://localhost/papyri.info#pi</param-value>
+            <param-value>http://papyri.info/graph</param-value>
         </init-param>
         <init-param>
             <param-name>browseServletPath</param-name>

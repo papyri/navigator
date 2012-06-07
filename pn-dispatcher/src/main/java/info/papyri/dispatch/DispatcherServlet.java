@@ -24,12 +24,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name="DispatcherServlet", urlPatterns={"/dispatch"})
 public class DispatcherServlet extends HttpServlet {
 
-  private static String graph = "rmi://localhost/papyri.info#pi";
-  private static String path = "/sparql/";
-  private String mulgara;
+  private static String graph = "http://papyri.info/graph";
+  private static String path = "/query/";
+  private String sparqlServer;
   private enum Method {
-    RDF ("rdfxml"),
-    N3,
+    RDF ,
+    N3 ("tsv"),
+    TURTLE,
     JSON,
     SOURCE,
     ATOM;
@@ -54,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    mulgara = config.getInitParameter("mulgaraUrl");
+    sparqlServer = config.getInitParameter("sparqlUrl");
   }
    
     /** 
@@ -76,7 +77,7 @@ public class DispatcherServlet extends HttpServlet {
           format = method.toString();
         }
       }
-      if ("rdfxml".equals(format) || "n3".equals(format) || "json".equals(format) || "xml".equals(format)) {
+      if ("rdfxml".equals(format) || "turtle".equals(format) || "n3".equals(format) || "json".equals(format)) {
         query.delete(query.lastIndexOf("/"), query.length());
         String domain;
         if (query.indexOf("/") > 0) {
@@ -101,15 +102,17 @@ public class DispatcherServlet extends HttpServlet {
         } if ("biblio".equals(domain)) {
           params.put("query", biblio(query.toString()));
         }
-        params.put("default-graph-uri", graph);
-        params.put("format", format);
 
         BufferedInputStream in = null;
         BufferedOutputStream out = null;
         HttpURLConnection http = null;
         try {
-          URL m = new URL(mulgara + path + "?" + readParams(params));
+          URL m = new URL(sparqlServer + path + "?" + readParams(params));
           http = (HttpURLConnection)m.openConnection();
+          if ("rdfxml".equals(format)) http.addRequestProperty("Accept", "application/rdf+xml");
+          if ("turtle".equals(format)) http.addRequestProperty("Accept", "text/turtle");
+          if ("n3".equals(format)) http.addRequestProperty("Accept", "text/plain");
+          if ("json".equals(format)) http.addRequestProperty("Accept", "application/rdf+json");
           http.setConnectTimeout(2000);
           if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
             response.setContentType(http.getContentType());
@@ -200,7 +203,7 @@ public class DispatcherServlet extends HttpServlet {
         return "prefix dc: <http://"
              +  "purl.org/dc/terms/> construct{<http:/" 
              +  "/papyri.info/ddbdp/" + parts[0] + "> ?Predicate ?Object}"
-             +  " from <rmi://localhost/papyri.info#pi>" 
+             +  " from <http://papyri.info/graph>" 
              +  " where { <http://papyri.info/ddbdp/" + parts[0] + ">"
              +  " ?Predicate ?Object } "
              + "order by ?Object";
@@ -209,7 +212,7 @@ public class DispatcherServlet extends HttpServlet {
         return "prefix dc: <http://"
              +  "purl.org/dc/terms/> construct{<http://"  
              +  "papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + "> ?Predicate ?Object} "
-             +  "from <rmi://localhost/papyri.info#pi> where "
+             +  "from <http://papyri.info/graph> where "
              +  "{ <http://papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + ">"
              +  " ?Predicate ?Object } "
              + "order by ?Object";
@@ -241,12 +244,12 @@ public class DispatcherServlet extends HttpServlet {
       if (!in.contains(".")) {
         return "prefix dc: <http://purl.org/dc/terms/> " 
              + "construct{<http://papyri.info/apis/" + in + "> ?Predicate ?Object} "
-             +  "from <rmi://localhost/papyri.info#pi> "
+             +  "from <http://papyri.info/graph> "
              +  "where { <http://papyri.info/apis/" + in + "> ?Predicate ?Object} "
              + "order by ?Object";
       }
       return "construct{<http://papyri.info/apis/" + in + "/source> " 
-           +  "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> "
+           +  "?Predicate ?Object} from <http://papyri.info/graph> "
            +  "where {<http://papyri.info/apis/" + in + "/source> ?Predicate ?Object} "
              + "order by ?Object";
     }
@@ -262,27 +265,27 @@ public class DispatcherServlet extends HttpServlet {
       }
       if (in.matches("\\d+[a-z]*")) {
         return "construct{<http://papyri.info/hgv/" + in + "/source> " +
-                "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> " +
+                "?Predicate ?Object} from <http://papyri.info/graph> " +
                 "where {<http://papyri.info/hgv/" + in + "/source> ?Predicate ?Object} "
              + "order by ?Object";
       }
       return "prefix dc: <http://purl.org/dc/terms/> " +
               "construct{<http://papyri.info/hgv/" + in + "> ?Predicate ?Object} " +
-              "from <rmi://localhost/papyri.info#pi> " +
+              "from <http://papyri.info/graph> " +
               "where {<http://papyri.info/hgv/" + in + "> ?Predicate ?Object} "
              + "order by ?Object";
     }
 
     protected String hgvtrans(String in) {
       return "construct{<http://papyri.info/hgvtrans/" + in + "/source> " +
-                "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> " +
+                "?Predicate ?Object} from <http://papyri.info/graph> " +
                 "where {<http://papyri.info/hgvtrans/" + in + "/source> ?Predicate ?Object} "
              + "order by ?Object";
     }
     
     protected String biblio(String in) {
       return "construct{<http://papyri.info/biblio/" + in + "> " +
-                "?Predicate ?Object} from <rmi://localhost/papyri.info#pi> " +
+                "?Predicate ?Object} from <http://papyri.info/graph> " +
                 "where {<http://papyri.info/biblio/" + in + "> ?Predicate ?Object} "
              + "order by ?Object";
     }
