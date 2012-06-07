@@ -320,7 +320,7 @@ public class CollectionBrowser extends HttpServlet {
             return new DocumentCollectionBrowseRecord(collection, infoBits[0], infoBits[1]);
             
         }
-        return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));cd ..
+        return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
     }
        
     /**
