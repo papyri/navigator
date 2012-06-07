@@ -153,7 +153,7 @@ public class CollectionBrowser extends HttpServlet {
         
         StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
         queryBuilder.append("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ");
-        queryBuilder.append("SELECT ?child ?grandchild ?label ?label2 ");
+        queryBuilder.append("SELECT ?child ?label ?type ");
         queryBuilder.append("FROM ");
         queryBuilder.append(SPARQL_GRAPH);
         queryBuilder.append(" ");
@@ -180,10 +180,8 @@ public class CollectionBrowser extends HttpServlet {
         queryBuilder.append("WHERE { <http://papyri.info/");
         queryBuilder.append(subj);
         queryBuilder.append("> dc:hasPart ?child . ");
-        queryBuilder.append("OPTIONAL { ?child dc:hasPart ?grandchild . } ");
-        queryBuilder.append("OPTIONAL { ?grandchild rdfs:label ?label . } ");
-        queryBuilder.append("OPTIONAL { ?grandchild dc:hasPart ?greatgrandchild . } ");
-        queryBuilder.append("OPTIONAL { ?greatgrandchild rdfs:label ?label2 . } }");
+        queryBuilder.append("OPTIONAL { ?child dc:bibliographicCitation ?label . } ");
+        queryBuilder.append("OPTIONAL { ?child rdfs:Type ?type . } ");
 
         return queryBuilder.toString();
         
@@ -240,13 +238,11 @@ public class CollectionBrowser extends HttpServlet {
             
             JsonNode result = rnit.next();
             String child = result.path("child").path("value").getValueAsText();
-            String grandchild = result.path("grandchild").path("value").getValueAsText();
-            String labelTest1 = stringifyUnicodeLiterals(result.path("label").path("value").getValueAsText());
-            String labelTest2 = stringifyUnicodeLiterals(result.path("label2").path("value").getValueAsText());
-            String label = (labelTest1 == null || labelTest1.equals("")) ? labelTest2 : labelTest1;
+            String type = result.path("type").path("value").getValueAsText();
+            String label = stringifyUnicodeLiterals(result.path("label").path("value").getValueAsText());
             if(!childLog.contains(child)){
                 
-                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, grandchild, label);
+                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, type, label);
                 records.add(dbr);
                 childLog.add(child);
                        
@@ -303,9 +299,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String grandchild, String seriesLabel){
-
-        Boolean grandchildIsDocument = grandchild.matches(".*/source$");
+    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String type, String label){
         
         String[] uriBits = child.split("/");
         int sIndex = 2;
@@ -314,53 +308,19 @@ public class CollectionBrowser extends HttpServlet {
         if("apis".equals(collection)){
             
             String series = uriBits[sIndex + 2];
-            return new DocumentCollectionBrowseRecord(collection, series, grandchildIsDocument);
+            return new DocumentCollectionBrowseRecord(collection, series, true);
             
         }
         String otherInfo = uriBits[sIndex + 2];
         if("ddbdp".equals(collection)){
             
             String delimiter = ";";
-            if(otherInfo.indexOf(delimiter) == -1) return new DocumentCollectionBrowseRecord(collection, otherInfo, grandchildIsDocument);
+            if(otherInfo.indexOf(delimiter) == -1) return new DocumentCollectionBrowseRecord(collection, otherInfo, "http://purl.org/ontology/bibo/Book".equals(type));
             String[] infoBits = otherInfo.split(delimiter);
             return new DocumentCollectionBrowseRecord(collection, infoBits[0], infoBits[1]);
             
         }
-        // hgv records only past this point
-        // because there is no real regularity in hgv nomenclature
-        // we rely essentially upon getting the 'difference' between the child and grandchild paths
-        
-        // first, we remove from the child string everything already specified in the url
-        
-        ArrayList<String> pathInfo = this.getCollectionInfo(pathParts);
-        Iterator<String> piits = pathInfo.iterator();
-        String significantChildSubstring = child;
-        while(piits.hasNext()){
-            
-            String pinf = piits.next();
-            significantChildSubstring = significantChildSubstring.substring(significantChildSubstring.indexOf(pinf) + pinf.length());           
-            
-        }
-
-        // remove leading slash (arises in the case of collections)
-        
-        if(significantChildSubstring.startsWith("/")) significantChildSubstring = significantChildSubstring.substring(1);
-        
-        if(pathParts.size() == ORG_HIERARCHY.indexOf(SolrField.series)){
-             
-             return new DocumentCollectionBrowseRecord(collection, significantChildSubstring, grandchildIsDocument, seriesLabel);
-
-            
-        }
-        else{
-            
-            
-             return new DocumentCollectionBrowseRecord(collection, pathParts.get(SolrField.series), significantChildSubstring, seriesLabel);
-
-            
-        }
-
-        
+        return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
     }
        
     /**

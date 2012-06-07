@@ -5,6 +5,7 @@
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:bibo="http://purl.org/ontology/bibo/"
     exclude-result-prefixes="xs tei" version="2.0">
     <xsl:output omit-xml-declaration="yes"/>
     <xsl:param name="DDB-root"/>
@@ -42,16 +43,22 @@
                 <xsl:choose>
                   <xsl:when test="$bibl//tei:biblScope[@type='volume'][not(matches(., '\s+'))]">
                         <rdf:Description rdf:about="http://papyri.info/hgv/{$title}_{normalize-space($bibl//tei:biblScope[@type='volume'])}">
+                          <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/><xsl:text> </xsl:text><xsl:value-of select="$bibl//tei:biblScope[@type='volume']"/></dcterms:bibliographicCitation>
+                          <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Book"/>
                             <dcterms:isPartOf>
                                 <rdf:Description rdf:about="http://papyri.info/hgv/{$title}">
-                                    <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
+                                  <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Series"/>
+                                  <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dcterms:bibliographicCitation>
+                                   <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
                                 </rdf:Description>
                             </dcterms:isPartOf>
                         </rdf:Description>
                     </xsl:when>
                     <xsl:otherwise>
                         <rdf:Description rdf:about="http://papyri.info/hgv/{$title}">
-                            <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
+                          <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dcterms:bibliographicCitation>
+                          <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Book"/>
+                          <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
                         </rdf:Description>
                     </xsl:otherwise>
                 </xsl:choose>
