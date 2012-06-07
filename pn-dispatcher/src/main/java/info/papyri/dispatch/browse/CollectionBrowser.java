@@ -181,7 +181,7 @@ public class CollectionBrowser extends HttpServlet {
         queryBuilder.append(subj);
         queryBuilder.append("> dc:hasPart ?child . ");
         queryBuilder.append("OPTIONAL { ?child dc:bibliographicCitation ?label . } ");
-        queryBuilder.append("OPTIONAL { ?child rdfs:Type ?type . } ");
+        queryBuilder.append("OPTIONAL { ?child rdfs:Type ?type . } }");
 
         return queryBuilder.toString();
         
@@ -320,7 +320,7 @@ public class CollectionBrowser extends HttpServlet {
             return new DocumentCollectionBrowseRecord(collection, infoBits[0], infoBits[1]);
             
         }
-        return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
+        return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));cd ..
     }
        
     /**
