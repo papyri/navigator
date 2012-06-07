@@ -152,7 +152,6 @@ public class CollectionBrowser extends HttpServlet {
     String buildSparqlQuery(LinkedHashMap<SolrField, String> pathParts){
         
         StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
-        queryBuilder.append("PREFIX pyr: <http://papyri.info/> ");
         queryBuilder.append("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ");
         queryBuilder.append("SELECT ?child ?grandchild ?label ?label2 ");
         queryBuilder.append("FROM ");
@@ -178,7 +177,7 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
-        queryBuilder.append("WHERE { <pyr:");
+        queryBuilder.append("WHERE { <http://papyri.info/");
         queryBuilder.append(subj);
         queryBuilder.append("> dc:hasPart ?child . ");
         queryBuilder.append("OPTIONAL { ?child dc:hasPart ?grandchild . } ");
