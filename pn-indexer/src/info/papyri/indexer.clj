@@ -481,9 +481,9 @@
 
 (defn collect-row  
   "Builds a row of results from Jena into a vector."
-  [row]
+  [row rvars]
   (let [*row* (transient [])]
-    (doseq [svar (.getResultVars row)]
+    (doseq [svar rvars]
       (conj! *row* (.toString (.get row svar))))
     (persistent! *row*)))
                     
@@ -496,9 +496,10 @@
         (loop [result []]
           (if (.next answer)
             (recur (conj result
-                         (collect-row answer)))
+                         (collect-row answer (.getResultVars answer))))
             result))))
     (catch Exception e 
+      (println (.getMessage e))
       (println query))))
 
 
