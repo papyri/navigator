@@ -622,7 +622,7 @@
           (transform (if (.startsWith (first x) "http")
             (str (.replace (first x) "papyri.info" nserver) "/rdf")
             (first x))
-          (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8))
+          (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9) (nth x 10))
           (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
            (catch Exception e
        (.printStackTrace e)
