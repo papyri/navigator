@@ -27,9 +27,9 @@ import org.codehaus.jackson.JsonNode;
  */
 @WebServlet(name = "Reader", urlPatterns = {"/reader"})
 public class Reader extends HttpServlet {
-  private static String graph = "rmi://localhost/papyri.info#pi";
-  private static String path = "/sparql/";
-  private String mulgara;
+  private static String graph = "http://papyri.info/graph";
+  private static String path = "/pi/query";
+  private String sparqlServer;
   private String xmlPath = "";
   private String htmlPath = "";
   private FileUtils util;
@@ -43,7 +43,7 @@ public class Reader extends HttpServlet {
     htmlPath = config.getInitParameter("htmlPath");
     util = new FileUtils(xmlPath, htmlPath);
     solrutil = new SolrUtils(config);
-    mulgara = config.getInitParameter("mulgaraUrl");
+    sparqlServer = config.getInitParameter("sparqlUrl");
   }
 
   /**
@@ -164,15 +164,17 @@ public class Reader extends HttpServlet {
 
   private File resolveFile(String page, String type) {
     File result = null;
-    String sparql = "prefix dc: <http://purl.org/dc/terms/> "
-                  + "select ?related "
-                  + "from <rmi://localhost/papyri.info#pi> "
-                  + "where { <" + page +"> dc:relation ?related . "
-                  + "optional { ?related dc:isReplacedBy ?orig } . "
-                  + "filter (!bound(?orig)) . "
-                  + "filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }";
+    StringBuilder sparql = new StringBuilder();
+    sparql.append("prefix dc: <http://purl.org/dc/terms/> ");
+    sparql.append("select ?related ");
+    sparql.append("from ");
+    sparql.append(graph);
+    sparql.append(" where { <" + page +"> dc:relation ?related . ");
+    sparql.append("optional { ?related dc:isReplacedBy ?orig } . ");
+    sparql.append("filter (!bound(?orig)) . ");
+    sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }");
     try {
-      URL m = new URL(mulgara + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
+      URL m = new URL(sparqlServer + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&format=json");
       HttpURLConnection http = (HttpURLConnection)m.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();
