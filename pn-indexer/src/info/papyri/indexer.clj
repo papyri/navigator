@@ -49,10 +49,7 @@
     (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
-    (org.mulgara.connection Connection ConnectionFactory)
-    (org.mulgara.query Answer ConstructQuery Query)
-    (org.mulgara.query.operation Command CreateGraph)
-    (org.mulgara.sparql SparqlInterpreter)
+    (com.hp.hpl.jena.query QueryExecutionFactory)
     (org.xml.sax InputSource)
     (org.xml.sax.helpers DefaultHandler)))
       
@@ -61,9 +58,7 @@
 (def xsltpath "/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8083/solr/")
-(def numbersurl "http://localhost:8090/sparql?query=")
-(def server (URI/create "rmi://localhost/server1"))
-(def graph (URI/create "rmi://localhost/papyri.info#pi"))
+(def numbersurl "http://localhost:8090/pi/query?query=")
 (def nthreads 10)
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
@@ -314,8 +309,8 @@
   "Constructs a set of triples where A `<dc:relation>` B if A `<dc:hasPart>` B."
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {<%s> dc:relation ?a}
-            from <rmi://localhost/papyri.info#pi>
+            select ?a
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a }" url url))
             
 (defn is-part-of-query
@@ -323,7 +318,7 @@
 	[url]
 	(format "prefix dc: <http://purl.org/dc/terms/>
 			select ?p ?gp ?ggp
-			from <rmi://localhost/papyri.info#pi>
+			from <http://papyri.info/graph>
 			where{ <%s> dc:isPartOf ?p .
 				   ?p dc:isPartOf ?gp .
 				   optional { ?gp dc:isPartOf ?ggp }
@@ -334,8 +329,8 @@
   "Retrieves a set of triples where A `<dc:relation>` B when A is a child of the given URI."
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {?a dc:relation ?b}
-            from <rmi://localhost/papyri.info#pi>
+            ?a ?b
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:relation ?b}" url))
 
@@ -344,15 +339,15 @@
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where { <%s> dc:relation ?a }" url))
 
 (defn batch-replaces-query
   "Gets the set of triples where A `<dc:replaces>` B for a given collection."
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {?a dc:replaces ?b}
-            from <rmi://localhost/papyri.info#pi>
+            select ?a ?b
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:replaces ?b }" url))
 
@@ -360,8 +355,8 @@
   "Gets the set of triples where A `<dc:source` B for a given collection."
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {?a dc:source ?b}
-            from <rmi://localhost/papyri.info#pi>
+            select ?a ?b
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:source ?b }" url))
         
@@ -370,7 +365,7 @@
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where { <%s> dc:source ?a  }" url))        
         
 (defn batch-other-source-query
@@ -378,8 +373,8 @@
   related HGV docs with sources."
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {?a dc:source ?b}
-            from <rmi://localhost/papyri.info#pi>
+            select ?a ?b
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:relation ?hgv .
                     ?hgv dc:source ?b }" url))
@@ -389,7 +384,7 @@
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where { <%s> dc:relation ?hgv .
                     ?hgv dc:source ?a }" url))        
         		                                    
@@ -399,8 +394,8 @@
   there are related sources with bibliography."
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {?a dc:bibliographicCitation ?c}
-            from <rmi://localhost/papyri.info#pi>
+            select ?a ?c
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:source ?b .
                     ?b dc:bibliographicCitation ?c }" url))  
@@ -410,7 +405,7 @@
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where { <%s> dc:source ?b .
                     ?b dc:bibliographicCitation ?a }" url)) 
                     
@@ -419,8 +414,8 @@
   relationship with HGV records."
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {?a dc:bibliographicCitation ?c}
-            from <rmi://localhost/papyri.info#pi>
+            select ?a ?c
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:relation ?hgv .
                     ?hgv dc:source ?b .
@@ -432,7 +427,7 @@
 	[url]
     (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where { <%s> dc:relation ?hgv .
                     ?hgv dc:source ?b .
                     ?b dc:bibliographicCitation ?a }" url)) 
@@ -441,8 +436,8 @@
   [url]
   (format "prefix cito: <http://purl.org/spar/cito/>
           prefix dc: <http://purl.org/dc/terms/> 
-          construct {?a dc:relation ?c}
-          from <rmi://localhost/papyri.info#pi>
+          select ?a ?c
+          from <http://papyri.info/graph>
           where {<%s> dc:hasPart ?a .
                  ?a dc:source ?b .
                  ?b cito:isCitedBy ?c }" url))
@@ -453,7 +448,7 @@
   (let [uri (.replace url "/source" "/work")]
     (format "prefix cito: <http://purl.org/spar/cito/>
              select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where {<%s> cito:isCitedBy ?a }" uri)))
             
 (defn replaces-query
@@ -461,15 +456,15 @@
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where { <%s> dc:replaces ?a }" url))
 
 (defn batch-is-replaced-by-query
   "Finds items in a given collection that are replaced by other items."
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            construct {?a dc:isReplacedBy ?b}
-            from <rmi://localhost/papyri.info#pi>
+            select ?a ?b
+            from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:isReplacedBy ?b }" url))
 
@@ -478,34 +473,32 @@
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
-            from <rmi://localhost/papyri.info#pi>
+            from <http://papyri.info/graph>
             where { <%s> dc:isReplacedBy ?a }" url))
 
 ;; ## Mulgara functions
 
 (defn collect-row  
-  "Builds a row of results from Mulgara into a vector."
+  "Builds a row of results from Jena into a vector."
   [row]
   (let [*row* (transient [])]
-    (dotimes [n (.getNumberOfVariables row)]
-      (conj! *row* (.toString (.getObject row n))))
+    (doseq [svar (.getResultVars row)]
+      (conj! *row* (.toString (.get row svar))))
     (persistent! *row*)))
                     
 (defn execute-query
   "Executes the query provided and returns a vector. of vectors containing the results"
   [query]
-  (let [interpreter (SparqlInterpreter.)
-        answerlist (ArrayList.)
-        conn (.newConnection (ConnectionFactory.) server)]
-    (try
-    (with-open [answer (.execute (.parseQuery interpreter query) conn)]
-      (loop [result []]
-        (if (.next answer)
-          (recur (conj result
-                       (collect-row answer)))
-          result)))
+  (try
+    (with-open [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
+      (let [answer (.execSelect exec)]
+        (loop [result []]
+          (if (.next answer)
+            (recur (conj result
+                         (collect-row answer)))
+            result))))
     (catch Exception e 
-      (println query)))))
+      (println query))))
 
 
 ;; ## Data queueing functions

@@ -1,6 +1,7 @@
 (defproject pn-mapping "1.0-SNAPSHOT"
   :description "Loads triple data into the papyri.info numbers server"
-  :repositories {"apache" "https://repository.apache.org/content/repositories/releases/"
+  :repositories {"papyri.info" "http://dev.papyri.info/maven"
+                 "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
