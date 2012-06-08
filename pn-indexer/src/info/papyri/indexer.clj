@@ -330,7 +330,7 @@
   "Retrieves a set of triples where A `<dc:relation>` B when A is a child of the given URI."
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
-            ?a ?b
+            select ?a ?b
             from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
                     ?a dc:relation ?b}" url))
