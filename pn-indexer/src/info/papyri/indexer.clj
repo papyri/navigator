@@ -60,6 +60,7 @@
 (def solrurl "http://localhost:8083/solr/")
 (def numbersurl "http://localhost:8090/pi/query?query=")
 (def nthreads 10)
+(def server "http://localhost:8090/pi")
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
