@@ -25,10 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 public class DispatcherServlet extends HttpServlet {
 
   private static String graph = "http://papyri.info/graph";
-  private static String path = "/query/";
+  private static String path = "/pi/query/";
   private String sparqlServer;
   private enum Method {
-    RDF ,
+    RDF ("rdfxml"),
     N3 ("tsv"),
     TURTLE,
     JSON,
