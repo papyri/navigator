@@ -153,7 +153,7 @@ public class CollectionBrowser extends HttpServlet {
         
         StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
         queryBuilder.append("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ");
-        queryBuilder.append("SELECT ?child ?label ?type, ?parent ");
+        queryBuilder.append("SELECT ?child ?label ?type ?parent ");
         queryBuilder.append("FROM ");
         queryBuilder.append(SPARQL_GRAPH);
         queryBuilder.append(" ");
