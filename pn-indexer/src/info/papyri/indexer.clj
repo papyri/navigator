@@ -494,9 +494,9 @@
     (with-open [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
       (let [answer (.execSelect exec)]
         (loop [result []]
-          (if (.next answer)
+          (if (.hasNext answer)
             (recur (conj result
-                         (collect-row answer (.getResultVars answer))))
+                         (collect-row (.next answer) (.getResultVars answer))))
             result))))
     (catch Exception e 
       (println (.getMessage e))
