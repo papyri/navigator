@@ -4,7 +4,7 @@
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
         <init-param>
-            <param-name>mulgaraUrl</param-name>
+            <param-name>sparqlUrl</param-name>
             <param-value>http://localhost:8090</param-value>
         </init-param>
     </servlet>
