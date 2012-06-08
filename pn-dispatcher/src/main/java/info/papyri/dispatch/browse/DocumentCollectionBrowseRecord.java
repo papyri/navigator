@@ -77,10 +77,10 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         @Override
         public String getHTML(){
             
-            String href = assembleLink();
+            String href = assembleLink().replaceAll(" ", "_");
             String seriesRepresentation = (unicodeLabel == null || unicodeLabel.equals("")) ? series : unicodeLabel;
             String displayString = seriesRepresentation + (volume == null ? "" : " " + volume);
-            displayString = displayString.replaceAll("_", " ");
+            displayString = displayString;
             String html = "<li><a href='" + href + "'>" + displayString + "</li>";
             return html;
             
