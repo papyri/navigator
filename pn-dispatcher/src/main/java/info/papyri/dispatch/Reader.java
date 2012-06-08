@@ -167,9 +167,9 @@ public class Reader extends HttpServlet {
     StringBuilder sparql = new StringBuilder();
     sparql.append("prefix dc: <http://purl.org/dc/terms/> ");
     sparql.append("select ?related ");
-    sparql.append("from ");
+    sparql.append("from <");
     sparql.append(graph);
-    sparql.append(" where { <" + page +"> dc:relation ?related . ");
+    sparql.append("> where { <" + page +"> dc:relation ?related . ");
     sparql.append("optional { ?related dc:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
     sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }");
