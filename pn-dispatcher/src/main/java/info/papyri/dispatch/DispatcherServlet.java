@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 public class DispatcherServlet extends HttpServlet {
 
   private static String graph = "http://papyri.info/graph";
-  private static String path = "/pi/query/";
+  private static String path = "/pi/query";
   private String sparqlServer;
   private enum Method {
     RDF ("rdfxml"),
-    N3 ("tsv"),
+    N3,
     TURTLE,
     JSON,
     SOURCE,
@@ -193,8 +193,8 @@ public class DispatcherServlet extends HttpServlet {
       if ("".equals(in) || in == null) {
         return "prefix dc: <http://purl"
              +  ".org/dc/terms/> construct{<http://papyri."
-             +  "info/ddbdp> ?Predicate ?Object} from <rmi:/"
-             +  "/localhost/papyri.info#pi> where { <http://papyri.info/ddbdp>" 
+             +  "info/ddbdp> ?Predicate ?Object} from "
+             +  "<http://papyri.info/graph> where { <http://papyri.info/ddbdp>" 
              +  " ?Predicate ?Object } "
              + "order by ?Object";
       }
