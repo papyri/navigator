@@ -222,8 +222,8 @@ public class DispatcherServlet extends HttpServlet {
         return "construct{<http://"
              +  "papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + ";" + parts[2]  
              +  "/source>  ?Predicate"  
-             +  " ?Object} from <rmi://localhost/"  
-             +  "papyri.info#pi> where {<http://"  
+             +  " ?Object} from <http://papyri.info/graph> "  
+             +  "where {<http://"  
              +  "papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + ";" + parts[2]  
              +  "/source> ?Predicate"  
              +  " ?Object} "
@@ -236,8 +236,7 @@ public class DispatcherServlet extends HttpServlet {
       if ("".equals(in) || in == null) {
         return "prefix dc: <http://purl"
              +  ".org/dc/terms/> construct{<http://papyri."
-             +  "info/apis> ?Predicate ?Object} from <rmi:/"
-             +  "/localhost/papyri.info#pi> " 
+             +  "info/apis> ?Predicate ?Object} from <http://papyri.info/graph> " 
              +  "where { <http://papyri.info/apis> ?Predicate ?Object} "
              + "order by ?Object";
       }
@@ -258,8 +257,7 @@ public class DispatcherServlet extends HttpServlet {
       if ("".equals(in) || in == null) {
         return "prefix dc: <http://purl"
              +  ".org/dc/terms/> construct{<http://papyri."
-             +  "info/hgv> ?Predicate ?Object} from <rmi:/"
-             +  "/localhost/papyri.info#pi> " 
+             +  "info/hgv> ?Predicate ?Object} from <http://papyri.info/graph> " 
              +  "where { <http://papyri.info/hgv> ?Predicate ?Object} "
              + "order by ?Object";
       }
