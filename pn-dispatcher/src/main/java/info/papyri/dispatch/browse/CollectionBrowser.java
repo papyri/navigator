@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse;
 
+import info.papyri.dispatch.FileUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -328,7 +329,7 @@ public class CollectionBrowser extends HttpServlet {
         if (parentLabel == null || "".equals(parentLabel)) {
           return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
         } else {
-          return new DocumentCollectionBrowseRecord(collection, parentLabel, label);
+          return new DocumentCollectionBrowseRecord(collection, parentLabel, FileUtils.substringAfter(label, parentLabel).trim());
         }
         
     }
