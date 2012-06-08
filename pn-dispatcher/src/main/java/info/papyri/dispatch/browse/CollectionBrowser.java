@@ -153,7 +153,7 @@ public class CollectionBrowser extends HttpServlet {
         
         StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
         queryBuilder.append("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ");
-        queryBuilder.append("SELECT ?child ?label ?type ");
+        queryBuilder.append("SELECT ?child ?label ?type, ?parent ");
         queryBuilder.append("FROM ");
         queryBuilder.append(SPARQL_GRAPH);
         queryBuilder.append(" ");
@@ -180,6 +180,9 @@ public class CollectionBrowser extends HttpServlet {
         queryBuilder.append("WHERE { <http://papyri.info/");
         queryBuilder.append(subj);
         queryBuilder.append("> dc:hasPart ?child . ");
+        queryBuilder.append("OPTIONAL {<http://papyri.info/");
+        queryBuilder.append(subj);
+        queryBuilder.append("> dc:bibliographicCitation ?parent . } ");
         queryBuilder.append("OPTIONAL { ?child dc:bibliographicCitation ?label . } ");
         queryBuilder.append("OPTIONAL { ?child rdfs:Type ?type . } }");
 
@@ -240,9 +243,10 @@ public class CollectionBrowser extends HttpServlet {
             String child = result.path("child").path("value").getValueAsText();
             String type = result.path("type").path("value").getValueAsText();
             String label = stringifyUnicodeLiterals(result.path("label").path("value").getValueAsText());
+            String parent = stringifyUnicodeLiterals(result.path("parent").path("value").getValueAsText());
             if(!childLog.contains(child)){
                 
-                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, type, label);
+                DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, type, label, parent);
                 records.add(dbr);
                 childLog.add(child);
                        
@@ -299,7 +303,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String type, String label){
+    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String type, String label, String parentLabel){
         
         String[] uriBits = child.split("/");
         int sIndex = 2;
@@ -320,7 +324,13 @@ public class CollectionBrowser extends HttpServlet {
             return new DocumentCollectionBrowseRecord(collection, infoBits[0], infoBits[1]);
             
         }
-        return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
+        // we're in HGV-land
+        if (parentLabel == null || "".equals(parentLabel)) {
+          return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
+        } else {
+          return new DocumentCollectionBrowseRecord(collection, parentLabel, label);
+        }
+        
     }
        
     /**
