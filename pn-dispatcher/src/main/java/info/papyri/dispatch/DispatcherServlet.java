@@ -219,7 +219,8 @@ public class DispatcherServlet extends HttpServlet {
       }
       if (parts.length == 3) {
           parts[2] = encode(parts[2]);
-        return "construct{<http://"
+        return "prefix dc: <http://purl.org/dc/terms/> "
+             +  "construct{<http://"
              +  "papyri.info/ddbdp/" + parts[0] + ";" + parts[1] + ";" + parts[2]  
              +  "/source>  ?Predicate"  
              +  " ?Object} from <http://papyri.info/graph> "  
@@ -247,10 +248,11 @@ public class DispatcherServlet extends HttpServlet {
              +  "where { <http://papyri.info/apis/" + in + "> ?Predicate ?Object} "
              + "order by ?Object";
       }
-      return "construct{<http://papyri.info/apis/" + in + "/source> " 
-           +  "?Predicate ?Object} from <http://papyri.info/graph> "
-           +  "where {<http://papyri.info/apis/" + in + "/source> ?Predicate ?Object} "
-             + "order by ?Object";
+      return "prefix dc: <http://purl.org/dc/terms/> "
+           + "construct{<http://papyri.info/apis/" + in + "/source> " 
+           + "?Predicate ?Object} from <http://papyri.info/graph> "
+           + "where {<http://papyri.info/apis/" + in + "/source> ?Predicate ?Object} "
+           + "order by ?Object";
     }
     
     protected String hgv(String in) {
@@ -262,7 +264,8 @@ public class DispatcherServlet extends HttpServlet {
              + "order by ?Object";
       }
       if (in.matches("\\d+[a-z]*")) {
-        return "construct{<http://papyri.info/hgv/" + in + "/source> " +
+        return "prefix dc: <http://purl.org/dc/terms/> " +
+                "construct{<http://papyri.info/hgv/" + in + "/source> " +
                 "?Predicate ?Object} from <http://papyri.info/graph> " +
                 "where {<http://papyri.info/hgv/" + in + "/source> ?Predicate ?Object} "
              + "order by ?Object";
@@ -275,14 +278,16 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected String hgvtrans(String in) {
-      return "construct{<http://papyri.info/hgvtrans/" + in + "/source> " +
+      return "prefix dc: <http://purl.org/dc/terms/> " +
+              "construct{<http://papyri.info/hgvtrans/" + in + "/source> " +
                 "?Predicate ?Object} from <http://papyri.info/graph> " +
                 "where {<http://papyri.info/hgvtrans/" + in + "/source> ?Predicate ?Object} "
              + "order by ?Object";
     }
     
     protected String biblio(String in) {
-      return "construct{<http://papyri.info/biblio/" + in + "> " +
+      return "prefix dc: <http://purl.org/dc/terms/> " +
+              "construct{<http://papyri.info/biblio/" + in + "> " +
                 "?Predicate ?Object} from <http://papyri.info/graph> " +
                 "where {<http://papyri.info/biblio/" + in + "> ?Predicate ?Object} "
              + "order by ?Object";
