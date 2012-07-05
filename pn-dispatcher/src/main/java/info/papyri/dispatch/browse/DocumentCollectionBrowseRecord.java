@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse;
 
+import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.facet.IdentifierFacet;
 
 /**
@@ -102,13 +103,18 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         }
         
         private String assembleLinkToCollection(){
-            
-            String href = CollectionBrowser.BROWSE_SERVLET + "/" + collection;
-            String seriesIdent = "/" + series;
-            String volumeIdent = volume == null ? "" : "/" + volume;
-            href += seriesIdent + volumeIdent;
-            if(this.isDocumentParent) href += "/documents/page1";
-            return href;                      
+            StringBuilder href = new StringBuilder();
+            href.append(CollectionBrowser.BROWSE_SERVLET);
+            href.append("/");
+            href.append(collection);
+            href.append("/");
+            href.append(FileUtils.stripDiacriticals(series));
+            if (volume != null) {
+              href.append("/");
+              href.append(volume);
+            }
+            if(this.isDocumentParent) href.append("/documents/page1");
+            return href.toString();                      
             
         }
         

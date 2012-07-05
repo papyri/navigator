@@ -28,7 +28,7 @@
     </xsl:if>
     <div class="biblio">
       <h4>Provisional papyri.info output</h4>
-      <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="source">xml</a><xsl:text>] [</xsl:text><a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text></p>
+      <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="{t:idno[@type='pi']}/source">xml</a><xsl:text>] [</xsl:text><a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text></p>
     </div>
     <xsl:if test="count(t:relatedItem[@type='mentions']/t:bibl) &gt; 0">
       <div class="biblio">

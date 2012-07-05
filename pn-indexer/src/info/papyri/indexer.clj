@@ -307,12 +307,13 @@
 ;; Each of the following functions formats a SPARQL query.
 
 (defn has-part-query
-  "Constructs a set of triples where A `<dc:relation>` B if A `<dc:hasPart>` B."
+  "Constructs a set of triples where A `<dc:hasPart>` B."
   [url]
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a }" url url))
+            where { <%s> dc:hasPart ?a 
+            filter not exists {?a dc:isReplacedBy ?b }}" url ))
             
 (defn is-part-of-query
   "Reurns a flattened list of parent, child, grandchild URIs."
@@ -323,7 +324,6 @@
 			where{ <%s> dc:isPartOf ?p .
 				   ?p dc:isPartOf ?gp .
 				   optional { ?gp dc:isPartOf ?ggp }
-			
 			}" url))
             
 (defn batch-relation-query
@@ -521,17 +521,17 @@
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
        ]
+    (when (not is-replaced-by
     (.add @html (list (str "file:" (get-filename url))
                       (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
                       (list "related" (apply str (interpose " " (for [x relations] (first x)))))
                       (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
-                      (list "isReplacedBy" (apply str (interpose " " (for [x is-replaced-by] (first x)))))
                       (list "isPartOf" (apply str (interpose " " (first is-part-of))))
                       (list "sources" (apply str (interpose " " (for [x source](first x)))))
                       (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                       (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
                       (list "selfUrl" (substring-before url "/source"))
-                      (list "server" nserver)))))
+                      (list "server" nserver)))))))
 
 (defn queue-items
   "Adds children of the given collection or volume to the @html queue for processing,
@@ -573,7 +573,6 @@
                              (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
                              (list "related" (apply str (interpose " " (for [x related] (last x)))))
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
-                             (list "isReplacedBy" (apply str (interpose " " (for [x reprint-in] (last x)))))
                              (list "isPartOf" (apply str (interpose " " all-urls)))   
                              (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
                              (list "citationForm" (apply str (interpose "" (for [x citations](last x))))) 

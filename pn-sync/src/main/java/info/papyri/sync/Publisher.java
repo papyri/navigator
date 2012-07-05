@@ -79,7 +79,7 @@ public class Publisher implements Runnable {
           }
           if (files.size() > 0) {
             status = MAPPING;
-            logger.info("Mapping files starting at " + new Date());
+            logger.info("Mapping " + files.size() +" files starting at " + new Date());
             map.mapFiles(files);
             status = INFERENCING;
             for (String file : files) {
@@ -92,8 +92,12 @@ public class Publisher implements Runnable {
               urls.add(GitWrapper.filenameToUri(diff));
             }
             indexer.index(urls);
+            logger.info("Committing...");
             success = callSolrMethod("commit");
+            logger.info("Optimizing...");
             success = callSolrMethod("optimize");
+          } else {
+            logger.info("No files to map.");
           }
         }
         status = IDLE;
