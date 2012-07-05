@@ -32,9 +32,9 @@ import org.apache.log4j.Logger;
 public class GitWrapper {
   
   private static GitWrapper git;
-  private static String graph = "rmi://localhost/papyri.info#pi";
-  private static String path = "/sparql/";
-  private static String mulgara = "http://localhost:8090";
+  private static String graph = "http://papyri.info/graph";
+  private static String path = "/pi/query";
+  private static String sparqlserver = "http://localhost:8090";
   private static Logger logger = Logger.getLogger("pn-sync");
   
   public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
@@ -251,10 +251,10 @@ public class GitWrapper {
     if (file.contains("DDB")) {
       String sparql = "prefix dc: <http://purl.org/dc/terms/> "
                   + "select ?id "
-                  + "from <rmi://localhost/papyri.info#pi> "
+                  + "from <http://papyri.info/graph> "
                   + "where { ?id dc:identifier \"" + file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")) + "\" }";
       try {
-        URL m = new URL(mulgara + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&format=json");
+        URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&output=json");
         JsonNode root = getDDbDPJson(m);
         result.append(root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText());
       } catch (Exception e) {
