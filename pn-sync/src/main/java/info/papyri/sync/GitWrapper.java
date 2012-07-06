@@ -185,7 +185,7 @@ public class GitWrapper {
   private void push(String repo) throws Exception {
     logger.info("Starting push to " + repo + ".");
     try {
-      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo);
+      ProcessBuilder pb = new ProcessBuilder("git", "push", repo);
       pb.directory(git.gitDir);
       pb.start().waitFor();
     } catch (Exception e) {
