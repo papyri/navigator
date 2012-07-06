@@ -521,7 +521,7 @@
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
        ]
-    (when (not is-replaced-by
+    (when (not is-replaced-by)
     (.add @html (list (str "file:" (get-filename url))
                       (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
                       (list "related" (apply str (interpose " " (for [x relations] (first x)))))
@@ -531,7 +531,7 @@
                       (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                       (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
                       (list "selfUrl" (substring-before url "/source"))
-                      (list "server" nserver)))))))
+                      (list "server" nserver))))))
 
 (defn queue-items
   "Adds children of the given collection or volume to the @html queue for processing,
