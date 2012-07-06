@@ -125,9 +125,7 @@ public class GitWrapper {
               + "user=" + git.dbUser + "&password=" + git.dbPass);
       Statement st = connect.createStatement();
       ResultSet rs = st.executeQuery("SELECT hash FROM sync_history WHERE date = (SELECT MAX(date) FROM sync_history)");
-      if (!rs.next()) {
-        result = getHead();
-      } else {
+      if (rs.next()) {
         result = rs.getString("hash");
       }
     } finally {
@@ -169,7 +167,7 @@ public class GitWrapper {
   }
 
   private void pull(String repo) throws Exception {
-    logger.info("Starting pull.");
+    logger.info("Starting pull on " + repo + ".");
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, "master");
       pb.directory(git.gitDir);
@@ -185,7 +183,7 @@ public class GitWrapper {
   }
   
   private void push(String repo) throws Exception {
-    logger.info("Starting push");
+    logger.info("Starting push to " + repo + ".");
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "pull", repo);
       pb.directory(git.gitDir);
