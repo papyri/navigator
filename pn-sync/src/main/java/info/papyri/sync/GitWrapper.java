@@ -263,12 +263,19 @@ public class GitWrapper {
       if (file.contains("HGV_meta")) {
         result.append("hgv/");
         result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append("/source");
       }
       if (file.contains("APIS")) {
         result.append("apis/");
         result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append("/source");
       }
-      result.append("/source");
+      if (file.contains("Biblio")) {
+        result.append("biblio/");
+        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append("/ref");
+      }
+      
     }
     logger.debug(result);
     return result.toString();
