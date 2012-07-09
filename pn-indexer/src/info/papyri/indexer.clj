@@ -521,7 +521,7 @@
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
        ]
-    (when (not is-replaced-by)
+    (when (not (first is-replaced-by))
     (.add @html (list (str "file:" (get-filename url))
                       (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
                       (list "related" (apply str (interpose " " (for [x relations] (first x)))))
