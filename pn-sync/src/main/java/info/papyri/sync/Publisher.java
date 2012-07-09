@@ -97,8 +97,9 @@ public class Publisher implements Runnable {
             logger.info("Publishing files starting at " + new Date());
             List<String> urls = new ArrayList<String>();
             for (String diff : diffs) {
-              urls.add(GitWrapper.filenameToUri(diff));
+              urls.add(GitWrapper.filenameToUri(base + File.separator + diff));
             }
+            logger.info("Indexing files starting at " + new Date());
             indexer.index(urls);
             logger.info("Committing...");
             success = callSolrMethod("commit");
@@ -129,6 +130,7 @@ public class Publisher implements Runnable {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost post = new HttpPost(uri.toString());
         StringEntity entity = new StringEntity("<" + action + " />");
+        post.setEntity(entity);
         ResponseHandler<String> rh = new BasicResponseHandler();
         String response = httpclient.execute(post, rh);
         Document doc = db.parse(new InputSource(new StringReader(response)));
