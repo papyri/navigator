@@ -91,7 +91,7 @@ public class Publisher implements Runnable {
             status = INFERENCING;
             logger.info("Running inferencing on " + files.size() + " files starting at " + new Date());
             for (String file : files) {
-              map.insertInferences(file);
+              map.insertInferences(GitWrapper.filenameToUri(file));
             }
             status = PUBLISHING;
             logger.info("Publishing files starting at " + new Date());
