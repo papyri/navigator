@@ -11,16 +11,23 @@ import info.papyri.map;
 import info.papyri.indexer;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.httpclient.methods.PostMethod;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 /**
  *
  * @author hcayless
@@ -119,9 +126,12 @@ public class Publisher implements Runnable {
       uri.append(SOLR);
       if ("commit".equals(action) || "optimize".equals(action)) {
         uri.append("solr/pn-search/update");
-        PostMethod post = new PostMethod(uri.toString());
-        post.setRequestBody("<" + action + " />");
-        Document doc = db.parse(post.getResponseBodyAsStream());
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost post = new HttpPost(uri.toString());
+        StringEntity entity = new StringEntity("<" + action + " />");
+        ResponseHandler<String> rh = new BasicResponseHandler();
+        String response = httpclient.execute(post, rh);
+        Document doc = db.parse(new InputSource(new StringReader(response)));
         NodeList nl = doc.getElementsByTagName("int");
         for (int i = 0 ; i < nl.getLength(); i++) {
           Element elt = (Element)nl.item(i);
