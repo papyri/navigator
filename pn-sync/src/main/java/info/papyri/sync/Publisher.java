@@ -101,10 +101,6 @@ public class Publisher implements Runnable {
             }
             logger.info("Indexing files starting at " + new Date());
             indexer.index(urls);
-            logger.info("Committing...");
-            success = callSolrMethod("commit");
-            logger.info("Optimizing...");
-            success = callSolrMethod("optimize");
           } else {
             logger.info("No files to map.");
           }
