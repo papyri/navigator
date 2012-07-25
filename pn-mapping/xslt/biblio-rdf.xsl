@@ -23,7 +23,7 @@
   <xsl:template match="/t:bibl">
     <xsl:variable name="citation"><xsl:call-template name="buildCitation"/></xsl:variable>
     <rdf:Description rdf:about="{$id}">
-      <rdfs:type rdf:resource="http://purl.org/dc/terms/BibliographicResource"/>
+      <rdf:type rdf:resource="http://purl.org/dc/terms/BibliographicResource"/>
       <dcterms:isReferencedBy rdf:resource="{$cite}"/>
       <dcterms:bibliographicCitation><xsl:value-of select="$citation"/></dcterms:bibliographicCitation>
       <xsl:apply-templates select="t:relatedItem"/>

@@ -744,7 +744,8 @@
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
-
+  (dosync (ref-set html (ConcurrentLinkedQueue.)))
+  
   (if (nil? (first args))
     (do
       (println "Queueing DDbDP...")
