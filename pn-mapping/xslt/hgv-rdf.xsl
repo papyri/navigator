@@ -44,10 +44,10 @@
                   <xsl:when test="$bibl//tei:biblScope[@type='volume'][not(matches(., '\s+'))]">
                         <rdf:Description rdf:about="http://papyri.info/hgv/{$title}_{normalize-space($bibl//tei:biblScope[@type='volume'])}">
                           <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/><xsl:text> </xsl:text><xsl:value-of select="$bibl//tei:biblScope[@type='volume']"/></dcterms:bibliographicCitation>
-                          <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Book"/>
+                          <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
                             <dcterms:isPartOf>
                                 <rdf:Description rdf:about="http://papyri.info/hgv/{$title}">
-                                  <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Series"/>
+                                  <rdf:type rdf:resource="http://purl.org/ontology/bibo/Series"/>
                                   <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dcterms:bibliographicCitation>
                                    <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
                                 </rdf:Description>
@@ -57,7 +57,7 @@
                     <xsl:otherwise>
                         <rdf:Description rdf:about="http://papyri.info/hgv/{$title}">
                           <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dcterms:bibliographicCitation>
-                          <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Book"/>
+                          <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
                           <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
                         </rdf:Description>
                     </xsl:otherwise>

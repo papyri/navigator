@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import static java.util.concurrent.TimeUnit.*;
 
@@ -53,7 +55,15 @@ public class SyncServlet extends HttpServlet {
     }
     git = GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
-    scheduler.scheduleWithFixedDelay(publisher, 10, 60, MINUTES);
+    // Run at 5 minutes past the hour, and every hour thereafter.
+    Calendar cal = Calendar.getInstance();
+    int start = cal.get(Calendar.MINUTE);
+    if (start > 5) {
+      start = (60 - start) + 5;
+    } else {
+      start = 5 - start;
+    }
+    scheduler.scheduleWithFixedDelay(publisher, start, 60, MINUTES);
     System.out.println("Syncing scheduled.");
   }
 

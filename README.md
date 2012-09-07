@@ -46,7 +46,7 @@ The pi.conf file assumes that Tomcat will be running on port 8083.
 The Numbers Server
 ------------------
 
-The numbers server used is Mulgara 2.1.9. It is assumed to be available on port 8090.
+The numbers server triple store is Jena-Fuseki 0.2.2. It is assumed to be available on port 8090.
 
 The Solr Server
 ---------------

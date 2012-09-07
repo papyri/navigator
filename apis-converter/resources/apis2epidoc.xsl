@@ -27,7 +27,7 @@
                         <msDesc>
                             <msIdentifier>
                                 <xsl:copy-of select="document('repositories.xml')//t:msIdentifier[@xml:id = substring-before(//cu001, '.')]/t:*"/>
-                                <idno type="invNo"><xsl:value-of select="//cu090"/></idno>
+                                <idno type="invno"><xsl:value-of select="//cu090"/></idno>
                             </msIdentifier>
                             <msContents>
                                 <xsl:if test="//cu520"><summary><xsl:value-of select="//cu520"></xsl:value-of></summary></xsl:if>

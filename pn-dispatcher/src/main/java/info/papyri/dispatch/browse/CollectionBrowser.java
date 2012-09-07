@@ -153,7 +153,7 @@ public class CollectionBrowser extends HttpServlet {
     String buildSparqlQuery(LinkedHashMap<SolrField, String> pathParts){
         
         StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
-        queryBuilder.append("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ");
+        queryBuilder.append("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ");
         queryBuilder.append("SELECT ?child ?label ?type ?parent ");
         queryBuilder.append("FROM ");
         queryBuilder.append(SPARQL_GRAPH);
@@ -185,7 +185,7 @@ public class CollectionBrowser extends HttpServlet {
         queryBuilder.append(subj);
         queryBuilder.append("> dc:bibliographicCitation ?parent . } ");
         queryBuilder.append("OPTIONAL { ?child dc:bibliographicCitation ?label . } ");
-        queryBuilder.append("OPTIONAL { ?child rdfs:Type ?type . } }");
+        queryBuilder.append("OPTIONAL { ?child rdf:type ?type . } }");
 
         return queryBuilder.toString();
         
