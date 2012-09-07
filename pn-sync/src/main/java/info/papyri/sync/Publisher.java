@@ -38,6 +38,7 @@ public class Publisher implements Runnable {
   private static String urlBase = "http://papyri.info/";
   private boolean success = true;
   public static String IDLE = "Currently idle.";
+  public static String SYNCING = "Syncing files.";
   public static String MAPPING = "Mapping files.";
   public static String INFERENCING = "Generating inferences.";
   public static String PUBLISHING = "Publishing new files.";
@@ -69,10 +70,11 @@ public class Publisher implements Runnable {
 
   @Override
   public void run() {
-    if (success && status == IDLE) {
+    if (success && IDLE.equals(status)) {
       started = new Date();
       lastrun = started;
       try {
+        status = SYNCING;
         String head = GitWrapper.getLastSync();
         logger.info("Syncing at " + new Date());
         GitWrapper.executeSync();
@@ -97,7 +99,10 @@ public class Publisher implements Runnable {
             logger.info("Publishing files starting at " + new Date());
             List<String> urls = new ArrayList<String>();
             for (String diff : diffs) {
-              urls.add(GitWrapper.filenameToUri(base + File.separator + diff));
+              String url = GitWrapper.filenameToUri(base + File.separator + diff);
+              if (url != null) {
+                urls.add(GitWrapper.filenameToUri(base + File.separator + diff));
+              }
             }
             logger.info("Indexing files starting at " + new Date());
             indexer.index(urls);
