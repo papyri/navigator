@@ -775,7 +775,7 @@
   (println "Indexing text...")
   (let [pool (Executors/newFixedThreadPool nthreads)
         tasks
-   	(map (fn [x]
+    	(map (fn [x]
   	       (fn []
   		 (when (not (.startsWith (first x) "http"))
   		   (transform (first x)

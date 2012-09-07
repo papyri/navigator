@@ -68,20 +68,19 @@ public class GitWrapperTest {
     }
     assertTrue(true);
   }
-  /*
+  
   @Test
   public void testIndexing() {
-    System.out.println("Testing Indexing");
+    System.out.println("Indexing test disabled due to long duration of index optimization. Uncomment code in testIndexing() to run.");
     List<String> l = new ArrayList<String>();
     l.add("http://papyri.info/ddbdp/bgu;1;2/source");
     l.add("http://papyri.info/ddbdp/bgu;1;3/source");
     try {
-      indexer.index(l);
+      //indexer.index(l);
     } catch (Exception e) {
       e.printStackTrace();
     }
     assertTrue(true);
   }
-   * 
-   */
+   
 }
