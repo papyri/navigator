@@ -100,7 +100,7 @@ public class Publisher implements Runnable {
             List<String> urls = new ArrayList<String>();
             for (String diff : diffs) {
               String url = GitWrapper.filenameToUri(base + File.separator + diff);
-              if (url != null) {
+              if (!"".equals(url)) {
                 urls.add(GitWrapper.filenameToUri(base + File.separator + diff));
               }
             }

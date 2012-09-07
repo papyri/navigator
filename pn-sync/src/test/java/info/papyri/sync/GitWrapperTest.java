@@ -4,15 +4,13 @@
  */
 package info.papyri.sync;
 
-import java.util.List;
+import info.papyri.map;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
-import info.papyri.map;
-import info.papyri.indexer;
 
 /**
  *
@@ -39,6 +37,14 @@ public class GitWrapperTest {
     System.out.println("filenameToUri for DDbDP");
     String file = "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml";
     String expResult = "http://papyri.info/ddbdp/bgu;1;2/source";
+    String result = GitWrapper.filenameToUri(file);
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testBrokenFilenameToURI() {
+    String file = "DDB_EpiDoc_XML/p.rain.unterricht/p.rain.unterricht. /p.rain.unterricht. .61.xml";
+    String expResult = "";
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
