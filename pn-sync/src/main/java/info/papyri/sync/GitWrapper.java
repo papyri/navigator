@@ -254,7 +254,7 @@ public class GitWrapper {
       try {
         URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&output=json");
         JsonNode root = getDDbDPJson(m);
-        result.append(root.path("results").path("bindings").path(0).path("id").path("value").getValueAsText());
+        result.append(root.path("results").path("bindings").path(0).path("id").path("value").asText());
       } catch (Exception e) {
         logger.error("Failed to resolve URI.", e);
       }
