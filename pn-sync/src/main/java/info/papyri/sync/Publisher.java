@@ -82,9 +82,14 @@ public class Publisher implements Runnable {
         if (!head.equals(GitWrapper.getHead())) {
           List<String> diffs = GitWrapper.getDiffs(head);
           List<String> files = new ArrayList<String>();
+          List<String> urls = new ArrayList<String>();
           for (String diff : diffs) {
-            files.add(base + File.separator + diff);
-            logger.debug(base + File.separator + diff);
+            String url = GitWrapper.filenameToUri(base + File.separator + diff);
+            if (!"".equals(url)) {
+              files.add(base + File.separator + diff);
+              logger.debug(base + File.separator + diff);
+              urls.add(url);
+            }
           }
           if (files.size() > 0) {
             status = MAPPING;
@@ -92,18 +97,10 @@ public class Publisher implements Runnable {
             map.mapFiles(files);
             status = INFERENCING;
             logger.info("Running inferencing on " + files.size() + " files starting at " + new Date());
-            for (String file : files) {
-              map.insertInferences(GitWrapper.filenameToUri(file));
+            for (String url : urls) {
+              map.insertInferences(url);
             }
             status = PUBLISHING;
-            logger.info("Publishing files starting at " + new Date());
-            List<String> urls = new ArrayList<String>();
-            for (String diff : diffs) {
-              String url = GitWrapper.filenameToUri(base + File.separator + diff);
-              if (!"".equals(url)) {
-                urls.add(GitWrapper.filenameToUri(base + File.separator + diff));
-              }
-            }
             logger.info("Indexing files starting at " + new Date());
             indexer.index(urls);
           } else {
