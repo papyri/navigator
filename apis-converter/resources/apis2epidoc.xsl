@@ -2,6 +2,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="xs t" version="2.0">
     <xsl:output indent="yes"/>
+  
+  <xsl:variable name="base">/Users/hcayless/Development/APIS/apis_translations/</xsl:variable>
     
     <xsl:template match="/">
       <xsl:processing-instruction name="xml-model">href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
@@ -19,15 +21,15 @@
                     <publicationStmt>
                         <authority>APIS</authority>
                         <idno type="apisid"><xsl:value-of select="normalize-space(//cu001)"/></idno>
-                        <idno type="controlNo"><xsl:value-of select="normalize-space(//cu035)"/></idno>
+                        <xsl:if test="//cu035"><idno type="controlNo"><xsl:value-of select="normalize-space(//cu035)"/></idno></xsl:if>
                         <!-- makes an attempt to create a match on the ddb-readable field in the mapping doc -->
-                        <xsl:for-each select="//cu510_dd"><idno type="ddbdp"><xsl:value-of select="normalize-space(replace(lower-case(.),':','.'))"/></idno></xsl:for-each>
+                        <xsl:for-each select="//cu510_dd"><idno type="ddbdp"><xsl:value-of select="replace(normalize-space(replace(lower-case(.),':','.')),'\.\.','.')"/></idno></xsl:for-each>
                     </publicationStmt>
                     <sourceDesc>
                         <msDesc>
                             <msIdentifier>
                                 <xsl:copy-of select="document('repositories.xml')//t:msIdentifier[@xml:id = substring-before(//cu001, '.')]/t:*"/>
-                                <idno type="invno"><xsl:value-of select="//cu090"/></idno>
+                                <idno type="invNo"><xsl:value-of select="//cu090"/></idno>
                             </msIdentifier>
                             <msContents>
                                 <xsl:if test="//cu520"><summary><xsl:value-of select="//cu520"></xsl:value-of></summary></xsl:if>
@@ -200,7 +202,17 @@
                 <body>
                     <xsl:for-each select="//cu500_t">
                         <div type="translation">
-                            <ab><xsl:value-of select="."/></ab>
+                          <xsl:variable name="extern" select="contains(., 'mmfclob')"/>
+                          <xsl:choose>
+                            <xsl:when test="$extern and unparsed-text-available(concat($base, substring-before(substring-after(., '&lt;mmfclob&gt;/www/data/cu/libraries/inside/projects/metadata/translator/conv/'), '&lt;/mmfclob&gt;')))">
+                              <ab>
+                                <xsl:value-of select="unparsed-text(concat($base, substring-before(substring-after(., '&lt;mmfclob&gt;/www/data/cu/libraries/inside/projects/metadata/translator/conv/'), '&lt;/mmfclob&gt;')))"/>
+                              </ab>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <ab><xsl:value-of select="."/></ab>
+                            </xsl:otherwise>
+                          </xsl:choose>
                         </div>
                     </xsl:for-each>
                     <div type="bibliography" subtype="citations">
@@ -289,4 +301,5 @@
         <xsl:otherwise>CE</xsl:otherwise>
       </xsl:choose>
     </xsl:template>
+  
 </xsl:stylesheet>

@@ -130,12 +130,12 @@
     
 (defn execute-query
   [query]
-  (let [exec (QueryExecutionFactory/sparqlService (str server "/update") query)]
+  (let [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
     (.execSelect exec)))
     
 (defn get-filename 
   [file]
-  (substring-before (.substring (inc (.lastIndexOf file "/"))) ".xml"))
+  (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     
 (defn url-from-file
   [file]
@@ -159,6 +159,8 @@
                         DELETE { ?s ?p <" uri ">}
                         WHERE { ?s ?p <" uri ">}")
         req (UpdateFactory/create)]
+    (println deletesub)
+    (println deleteobj)
     (.add req deletesub)
     (.add req deleteobj)
     (UpdateRemote/execute req (str server "/update") )))

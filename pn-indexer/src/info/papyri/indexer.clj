@@ -476,6 +476,15 @@
             select ?a
             from <http://papyri.info/graph>
             where { <%s> dc:isReplacedBy ?a }" url))
+            
+(defn images-query
+  "Finds images related to the given url"
+  [url]
+  (format "prefix dc: <http://purl.org/dc/terms/>
+           select ?image
+           from <http://papyri.info/graph>
+           where { <%s> ?p ?image }
+           order by ?p" (str url "/images")))
 
 ;; ## Mulgara functions
 
@@ -488,7 +497,7 @@
     (persistent! *row*)))
                     
 (defn execute-query
-  "Executes the query provided and returns a vector. of vectors containing the results"
+  "Executes the query provided and returns a vector of vectors containing the results"
   [query]
   (try
     (with-open [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
@@ -520,6 +529,7 @@
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
+        images (map (fn [row] (execute-query (images-query (first row)))) relations)
        ]
     (when (not (first is-replaced-by))
     (.add @html (list (str "file:" (get-filename url))
@@ -528,6 +538,7 @@
                       (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
                       (list "isPartOf" (apply str (interpose " " (first is-part-of))))
                       (list "sources" (apply str (interpose " " (for [x source](first x)))))
+                      (list "images" (apply str (interpose " " (for [x images] (first x)))))
                       (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                       (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
                       (list "selfUrl" (substring-before url "/source"))

@@ -84,7 +84,9 @@ public class XSLTService extends HttpServlet {
         while (itr.hasNext()) {
           String key = itr.next();
           out.print("\""+key+"\"");
-          if (itr.hasNext()) out.print(",");
+          if (itr.hasNext()) {
+            out.print(",");
+          }
         }
         out.print("]}");
         if(request.getParameter("jsonp") != null) {

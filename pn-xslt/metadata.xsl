@@ -373,7 +373,7 @@
                  <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-start-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
-                 <xsl:value-of select="$date-start"></xsl:value-of>
+                 <xsl:value-of select="abs($date-start)"></xsl:value-of>
                 <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-start-era-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
@@ -388,7 +388,7 @@
                  <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-end-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
-                 <xsl:value-of select="$date-end"></xsl:value-of>
+                 <xsl:value-of select="abs($date-end)"></xsl:value-of>
                  <xsl:value-of select="$and"></xsl:value-of>
                  <xsl:value-of select="$date-end-era-param"></xsl:value-of>
                  <xsl:text>=</xsl:text>
@@ -435,7 +435,7 @@
   </xsl:template>
   
   <xsl:function name="pi:trim-date-to-year">
-    <xsl:param name="raw-date"></xsl:param>
+    <xsl:param name="raw-date"/>
     <xsl:variable name="cooked-date">
     <xsl:analyze-string select="$raw-date" regex="(-?\d{{4}})(-\d{{1,2}}){{0,2}}">
       <xsl:matching-substring>
@@ -445,22 +445,22 @@
     </xsl:variable>
     <xsl:variable name="trimmed-date">
       <xsl:choose>
-        <xsl:when test="substring($cooked-date, 1, 1) eq '0'"><xsl:value-of select="substring($cooked-date, 2)"></xsl:value-of></xsl:when>
-        <xsl:otherwise><xsl:value-of select="$cooked-date"></xsl:value-of></xsl:otherwise>
+        <xsl:when test="substring($cooked-date, 1, 1) eq '0'"><xsl:value-of select="substring($cooked-date, 2)"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="$cooked-date"/></xsl:otherwise>
       </xsl:choose>    
     </xsl:variable>
-    <xsl:sequence select="number($trimmed-date)"></xsl:sequence>
+    <xsl:sequence select="number($trimmed-date)"/>
   </xsl:function>
   
   <xsl:function name="pi:get-era">
-    <xsl:param name="raw-year"></xsl:param>
+    <xsl:param name="raw-year"/>
     <xsl:variable name="era">
       <xsl:choose>
       <xsl:when test="number($raw-year) lt 0">BCE</xsl:when>
       <xsl:otherwise>CE</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:sequence select="$era"></xsl:sequence>
+    <xsl:sequence select="$era"/>
   </xsl:function>
   
   <!-- Notes -->

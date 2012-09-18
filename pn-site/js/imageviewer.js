@@ -4,12 +4,12 @@ var metadataURL;   // URL to the file that supplies djatoka with parameters for 
 var djatokaserverURL = "http://dl-img.home.nyu.edu";  // djatoka server URL
 
 function initImage() {
-  var images = jQuery("#image img").detach();
+  var images = jQuery("#image a").detach();
   jQuery("#image ul").replaceWith('<div id="olimage"></div>');
   if (images.length > 1) {
     jQuery("#olimage").after('<form><select id="imglist" onchange="loadImage(this[this.selectedIndex].value)"></select></form>');
     images.each(function(i) {
-      var imgname = jQuery(this).attr("src").substr(jQuery(this).attr("src").lastIndexOf("/") + 1);
+      var imgname = jQuery(this).attr("href").substr(jQuery(this).attr("src").lastIndexOf("/") + 1);
       jQuery("#imglist").append('<option value="' + jQuery(this).attr("src") + '">' + imgname + '</option>');
     });
   }
