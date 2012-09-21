@@ -51,7 +51,7 @@
     files))
     
 (defn rpad
-  [s num ch]
+  [s length ch]
   (if (< (count s) length)
     (let [r (StringBuilder.)]
       (dotimes [n (- length (count s))]
