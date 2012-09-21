@@ -55,9 +55,20 @@
 (def compt 
   (proxy [Comparator] []
     (compare [o1 o2]
-    (let [no1 (.replaceAll o1 "\\.b\\." ".v.")
-          no2 (.replaceAll o2 "\\.b\\." ".v.")]
-          (.compareTo no1 no2)))))
+      (let [no1 (.replaceAll o1 "\\.b\\." ".v.")
+            no2 (.replaceAll o2 "\\.b\\." ".v.")
+            pattern #"([^.]+)\.(apis).([^.]+).(f|v)\.([^.]+).([^.]+)"]
+        (if (re-find pattern no1)
+          (let [m1 (re-matcher pattern no1)
+                m2 (re-matcher pattern no2)]
+            (re-find m1)
+            (re-find m2)
+            (let [g1 (re-groups m1)
+                  g2 (re-groups m2)]
+              (.compareTo 
+                (str (first g1) "." (second g1) "." (nth g1 2) "." (nth g1 4) "." (nth g1 3) "." (last g1))
+                (str (first g2) "." (second g2) "." (nth g2 2) "." (nth g2 4) "." (nth g2 3) "." (last g2)))))
+          (.compareTo no1 no2))))))
 
 (defn image-dir
   [filename]
@@ -109,17 +120,17 @@
                 image
                 (create-property "http://www.w3.org/2000/01/rdf-schema#label")
                 (create-plain-literal "Verso"))))
-            (when (or (.contains (image-name li) ".b.") (.endsWith (image-name li) "cc"))
+            (when (.endsWith (image-name li) "cc")
               (.add model (create-statement
                 image
                 (create-property "http://www.w3.org/2000/01/rdf-schema#label")
                 (create-plain-literal "Concave"))))
-            (when (or (.contains (image-name li) ".b.") (.endsWith (image-name li) "cv"))
+            (when (.endsWith (image-name li) "cv")
               (.add model (create-statement
                 image
                 (create-property "http://www.w3.org/2000/01/rdf-schema#label")
                 (create-plain-literal "Convex"))))))))
-    (.write model (FileOutputStream. (File. "test.rdf")))))
+    (.write model (FileOutputStream. (File. (last args))))))
 
 
 
