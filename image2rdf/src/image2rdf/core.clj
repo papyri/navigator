@@ -49,6 +49,15 @@
           (conj names prefix))))
     []
     files))
+    
+(defn rpad
+  [s num ch]
+  (if (< (count s) length)
+    (let [r (StringBuilder.)]
+      (dotimes [n (- length (count s))]
+        (.append r ch))
+      (str s r))
+    s))
 	
 ;; we want order: recto, verso, which is often simple sort order,
 ;; but APIS images are sometimes labeled "f(ront)", "b(ack)"
@@ -66,8 +75,8 @@
             (let [g1 (re-groups m1)
                   g2 (re-groups m2)]
               (.compareTo 
-                (str (first g1) "." (second g1) "." (nth g1 2) "." (nth g1 4) "-0." (nth g1 3) "." (last g1))
-                (str (first g2) "." (second g2) "." (nth g2 2) "." (nth g2 4) "-0." (nth g2 3) "." (last g2)))))
+                (str (first g1) "." (second g1) "." (nth g1 2) "." (nth g1 4) "." (nth g1 3) "." (last g1))
+                (str (first g2) "." (second g2) "." (nth g2 2) "." (rpad (nth g2 4) 3 "0") "." (nth g2 3) "." (last g2)))))
           (.compareTo no1 no2))))))
 
 (defn image-dir
