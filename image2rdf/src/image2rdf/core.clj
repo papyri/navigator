@@ -75,8 +75,8 @@
             (let [g1 (re-groups m1)
                   g2 (re-groups m2)]
               (.compareTo 
-                (str (first g1) "." (second g1) "." (nth g1 2) "." (rpad (nth g1 4) 3 "-") "." (nth g1 3) "." (last g1))
-                (str (first g2) "." (second g2) "." (nth g2 2) "." (rpad (nth g2 4) 3 "-") "." (nth g2 3) "." (last g2)))))
+                (str (nth g1 1) "." (nth g1 2) "." (nth g1 3) "." (rpad (nth g1 5) 3 "-") "." (nth g1 4) "." (last g1))
+                (str (nth g2 1) "." (nth g2 2) "." (nth g2 3) "." (rpad (nth g2 5) 3 "-") "." (nth g2 4) "." (last g2)))))
           (.compareTo no1 no2))))))
 
 (defn image-dir
