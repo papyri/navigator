@@ -320,7 +320,7 @@
                         <h2>Image<xsl:if test="count($images) &gt; 1">s</xsl:if></h2>
                         <ul>
                           <xsl:for-each select="$images">
-                            <li><img src="{.}" alt="papyrus image"/></li>
+                            <li><a href="{.}.jp2" alt="papyrus image"/></li>
                           </xsl:for-each>
                         </ul>
                         <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 

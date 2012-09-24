@@ -67,7 +67,7 @@
       (let [no1 (.replaceAll o1 "\\.b\\." ".v.")
             no2 (.replaceAll o2 "\\.b\\." ".v.")
             pattern #"([^.]+)\.(apis).([^.]+).(f|v)\.([^.]+).([^.]+)"]
-        (if (re-find pattern no1)
+        (if (and (re-find pattern no1) (re-find pattern no2))
           (let [m1 (re-matcher pattern no1)
                 m2 (re-matcher pattern no2)]
             (re-find m1)
