@@ -81,7 +81,7 @@
 
 (defn image-dir
   [filename]
-  (let [md (DigestUtils/md5Hex filename)]
+  (let [md (DigestUtils/md5Hex (str filename "\n"))]
     (.substring (.toString md) 0 2)))
     
 (defn image-name
