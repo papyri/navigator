@@ -49,15 +49,35 @@
           (conj names prefix))))
     []
     files))
+    
+(defn rpad
+  [s length ch]
+  (if (< (count s) length)
+    (let [r (StringBuilder.)]
+      (dotimes [n (- length (count s))]
+        (.append r ch))
+      (str s r))
+    s))
 	
 ;; we want order: recto, verso, which is often simple sort order,
 ;; but APIS images are sometimes labeled "f(ront)", "b(ack)"
 (def compt 
   (proxy [Comparator] []
     (compare [o1 o2]
-    (let [no1 (.replaceAll o1 "\\.b\\." ".v.")
-          no2 (.replaceAll o2 "\\.b\\." ".v.")]
-          (.compareTo no1 no2)))))
+      (let [no1 (.replaceAll o1 "\\.b\\." ".v.")
+            no2 (.replaceAll o2 "\\.b\\." ".v.")
+            pattern #"([^.]+)\.(apis).([^.]+).(f|v)\.([^.]+).([^.]+)"]
+        (if (re-find pattern no1)
+          (let [m1 (re-matcher pattern no1)
+                m2 (re-matcher pattern no2)]
+            (re-find m1)
+            (re-find m2)
+            (let [g1 (re-groups m1)
+                  g2 (re-groups m2)]
+              (.compareTo 
+                (str (nth g1 1) "." (nth g1 2) "." (nth g1 3) "." (rpad (nth g1 5) 3 "-") "." (nth g1 4) "." (last g1))
+                (str (nth g2 1) "." (nth g2 2) "." (nth g2 3) "." (rpad (nth g2 5) 3 "-") "." (nth g2 4) "." (last g2)))))
+          (.compareTo no1 no2))))))
 
 (defn image-dir
   [filename]
@@ -109,17 +129,17 @@
                 image
                 (create-property "http://www.w3.org/2000/01/rdf-schema#label")
                 (create-plain-literal "Verso"))))
-            (when (or (.contains (image-name li) ".b.") (.endsWith (image-name li) "cc"))
+            (when (.endsWith (image-name li) "cc")
               (.add model (create-statement
                 image
                 (create-property "http://www.w3.org/2000/01/rdf-schema#label")
                 (create-plain-literal "Concave"))))
-            (when (or (.contains (image-name li) ".b.") (.endsWith (image-name li) "cv"))
+            (when (.endsWith (image-name li) "cv")
               (.add model (create-statement
                 image
                 (create-property "http://www.w3.org/2000/01/rdf-schema#label")
                 (create-plain-literal "Convex"))))))))
-    (.write model (FileOutputStream. (File. "test.rdf")))))
+    (.write model (FileOutputStream. (File. (last args))))))
 
 
 
