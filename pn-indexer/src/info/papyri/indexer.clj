@@ -485,8 +485,9 @@
              prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
              select ?image
              from <http://papyri.info/graph>
-             where { <%s> ?p ?image 
-                       minus { <%s> rdf:type ?image } }
+             where { <%1$s> ?p ?image .
+                     <%1$s> rdf:type rdf:Seq
+                       minus { <%1$s> rdf:type ?image } }
              order by ?p" uri )))
 
 ;; ## Jena functions
@@ -532,7 +533,10 @@
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
-        images (conj (execute-query (images-query url)) (map (fn [row] (execute-query (images-query (first row)))) relations))
+        images (flatten (conj '() (execute-query (images-query url)) 
+                     (filter 
+                       (fn [x] (> (count x) 0))
+                       (for [r relations] (execute-query (images-query (first r)))))))
        ]
     (when (not (first is-replaced-by))
     (.add @html (list (str "file:" (get-filename url))
@@ -541,7 +545,7 @@
                       (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
                       (list "isPartOf" (apply str (interpose " " (first is-part-of))))
                       (list "sources" (apply str (interpose " " (for [x source](first x)))))
-                      (list "images" (apply str (interpose " " (for [x images] (first x)))))
+                      (list "images" (apply str (interpose " " images)))
                       (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                       (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
                       (list "selfUrl" (substring-before url "/source"))
