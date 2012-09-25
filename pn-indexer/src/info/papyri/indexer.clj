@@ -480,13 +480,16 @@
 (defn images-query
   "Finds images related to the given url"
   [url]
-  (format "prefix dc: <http://purl.org/dc/terms/>
-           select ?image
-           from <http://papyri.info/graph>
-           where { <%s> ?p ?image }
-           order by ?p" (str url "/images")))
+  (let [uri (.replace url "/source" "/images")]
+    (format "prefix dc: <http://purl.org/dc/terms/>
+             prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+             select ?image
+             from <http://papyri.info/graph>
+             where { <%s> ?p ?image 
+                       minus { <%s> rdf:type ?image } }
+             order by ?p" uri )))
 
-;; ## Mulgara functions
+;; ## Jena functions
 
 (defn collect-row  
   "Builds a row of results from Jena into a vector."
@@ -529,7 +532,7 @@
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
-        images (map (fn [row] (execute-query (images-query (first row)))) relations)
+        images (conj (execute-query (images-query url)) (map (fn [row] (execute-query (images-query (first row)))) relations))
        ]
     (when (not (first is-replaced-by))
     (.add @html (list (str "file:" (get-filename url))
