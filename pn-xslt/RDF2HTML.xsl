@@ -82,6 +82,7 @@
   <xsl:param name="biblio"/>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
+  <xsl:variable name="imgs" select="tokenize($images, '\s+')"/>
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
@@ -128,7 +129,7 @@
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
-    <xsl:variable name="image" select="count($images) gt 0"/>
+    <xsl:variable name="image" select="count($imgs) gt 0"/>
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
    
@@ -317,10 +318,10 @@
                     </div>
                     <xsl:if test="$image">
                       <div id="image" class="image data"> 
-                        <h2>Image<xsl:if test="count($images) &gt; 1">s</xsl:if></h2>
+                        <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
                         <ul>
-                          <xsl:for-each select="$images">
-                            <li><a href="{.}.jp2" alt="papyrus image"/></li>
+                          <xsl:for-each select="$imgs">
+                            <li><a href="{.}" alt="papyrus image"/></li>
                           </xsl:for-each>
                         </ul>
                         <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
@@ -430,6 +431,7 @@
   
   <xsl:template match="t:TEI" mode="apistrans">
     <xsl:if test=".//t:div[@type = 'translation']/t:ab">
+      <xsl:if test="contains(.//t:div[@type = 'translation'], '&#x00A0;')"><xsl:message>fuck off</xsl:message></xsl:if>
     <div class="translation data">
       <h2>APIS Translation (English)</h2>
       <p><xsl:value-of select=".//t:div[@type = 'translation']/t:ab"/></p>
