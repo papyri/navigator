@@ -333,7 +333,8 @@
             select ?a ?b
             from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
-                    ?a dc:relation ?b}" url))
+                    ?a dc:relation ?b
+                    filter(regex(str(?b),'/images$'))}" url))
 
 (defn relation-query
   "Returns URIs that are the object of `<dc:relation>`s where the given URI is the subject."
@@ -341,7 +342,8 @@
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
-            where { <%s> dc:relation ?a }" url))
+            where { <%s> dc:relation ?a 
+                    filter(regex(str(?b),'/images$'))}" url))
 
 (defn batch-replaces-query
   "Gets the set of triples where A `<dc:replaces>` B for a given collection."
