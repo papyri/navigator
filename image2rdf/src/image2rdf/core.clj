@@ -105,6 +105,16 @@
             matching-files (filter (fn [item] 
                                      (and (.startsWith (.getName item) prefix) (.matches (.replace (.getName item) prefix "") "^\\D.*")))
                                    files)]
+        (.add model 
+          (create-statement
+            (create-resource (str up "/" prefix "/images"))
+            (create-property "http://purl.org/dc/terms/relation")
+            (create-resource (str up "/" prefix "/source"))))
+        (.add model 
+          (create-statement
+            (create-resource (str up "/" prefix "/source"))
+            (create-property "http://purl.org/dc/terms/relation")
+            (create-resource (str up "/" prefix "/images"))))
         (doseq [li matching-files]
           (let [image (create-resource (str "http://papyri.info/images/" (image-dir (image-name li)) "/" (image-name li)))]
             (.add rdfseq image)
