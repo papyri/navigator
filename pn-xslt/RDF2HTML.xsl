@@ -431,10 +431,11 @@
   
   <xsl:template match="t:TEI" mode="apistrans">
     <xsl:if test=".//t:div[@type = 'translation']/t:ab">
-      <xsl:if test="contains(.//t:div[@type = 'translation'], '&#x00A0;')"><xsl:message>fuck off</xsl:message></xsl:if>
     <div class="translation data">
       <h2>APIS Translation (English)</h2>
-      <p><xsl:value-of select=".//t:div[@type = 'translation']/t:ab"/></p>
+      <xsl:for-each select=".//t:div[@type = 'translation']/t:ab">
+        <p><xsl:value-of select="."/></p>
+      </xsl:for-each>
     </div>
     </xsl:if>
   </xsl:template>

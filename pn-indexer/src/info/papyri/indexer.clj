@@ -585,7 +585,12 @@
                                                          (not (.contains (.toString (last s)) "/images/")))) 
                                             related)] 
                                     (substring-before (substring-after (last x) "http://papyri.info/") "/"))) 
-                             exclude)]
+                             exclude)
+             images (flatten (conj '() (execute-query (images-query url)) 
+                          (filter 
+                            (fn [x] (> (count x) 0))
+                            (for [r relations] (execute-query (images-query (first r)))))))
+            ]
         (if (nil? exclusion)
           ( .add @html (list (str "file:" (get-filename (last item)))
                              (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
@@ -593,6 +598,7 @@
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
                              (list "isPartOf" (apply str (interpose " " all-urls)))   
                              (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
+                             (list "images" (apply str (interpose " " images)))
                              (list "citationForm" (apply str (interpose "" (for [x citations](last x))))) 
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x))))) 
                              (list "selfUrl" (substring-before (last item) "/source"))     
