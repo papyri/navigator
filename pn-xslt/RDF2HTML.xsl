@@ -321,7 +321,7 @@
                         <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
                         <ul>
                           <xsl:for-each select="$imgs">
-                            <li><a href="{.}" alt="papyrus image"/></li>
+                            <li><a href="{.}" alt="papyrus image"/><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></li>
                           </xsl:for-each>
                         </ul>
                         <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
@@ -384,11 +384,11 @@
                   <div class="text">
                     <xsl:if test="$image">
                     <div id="image" class="image data"> 
-                      <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
+                      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
                       <ul>
-                        <xsl:for-each select="$relations[contains(., 'images/')]">
+                        <xsl:for-each select="$imgs">
                           <xsl:sort order="descending"/>
-                          <li><a href="{.}" class="imagelink" alt="papyrus image"/></li>
+                          <li><a href="{.}" class="imagelink" alt="papyrus image"><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></a></li>
                         </xsl:for-each>
                       </ul>
                       <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
