@@ -59,7 +59,7 @@
 (def htpath "/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8083/solr/")
 (def numbersurl "http://localhost:8090/pi/query?query=")
-(def nthreads 10)
+(def nthreads (.availableProcessors (Runtime/getRuntime)))
 (def server "http://localhost:8090/pi")
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
@@ -488,7 +488,8 @@
                    ?i rdf:type rdf:Seq .
                    ?i ?p ?image .
                       filter (?a != ?image)
-                      filter (?image != rdf:Seq) }
+                      filter (?image != rdf:Seq) 
+                      filter (?p != dc:relation)}
            order by ?a ?p" url))
             
 (defn images-query
