@@ -49,7 +49,7 @@ function init() {
     jQuery.getJSON("/sparql/?query="
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
         + "select ?subject "
-        + "from <rmi://localhost/papyri.info#pi> "
+        + "from <http://papyri.info/graph> "
         + "where { ?subject dc:references <http://papyri.info" + getPath().replace(/\/jQuery/, "") + "/source>}")
         + "&output=json", function(data) {
             if (data.results.bindings.length > 0) {
