@@ -249,7 +249,7 @@
       
 (defn load-map 
   [file]
-  (def nthreads 2)
+  (def nthreads (.availableProcessors (Runtime/getRuntime)))
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
   (let [xsl (choose-xslt file)]
     (init-xslt xsl))
