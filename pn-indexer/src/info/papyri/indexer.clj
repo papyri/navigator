@@ -481,14 +481,15 @@
   [url]
   (format "prefix dc: <http://purl.org/dc/terms/>
            prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-           select ?image
+           select ?a ?image
            from <http://papyri.info/graph>
            where { <%s> dc:hasPart ?a .
                    ?a dc:relation ?i .
-                   ?i rdf:type rdf:Seq
-                   ?i ?p ?image 
-                     minus { ?i rdf:type rdf:Seq } }
-           order by ?p" url))
+                   ?i rdf:type rdf:Seq .
+                   ?i ?p ?image .
+                      filter (?a != ?image)
+                      filter (?image != rdf:Seq) }
+           order by ?a ?p" url))
             
 (defn images-query
   "Finds images related to the given url"
@@ -580,7 +581,7 @@
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
         all-biblio (execute-query (batch-cited-by-query url))
-        all-images (execute-query (batch-image-query url))]	
+        all-images (execute-query (batch-images-query url))]	
     (doseq [item items]
       (let  [related (if (empty? relations) ()
                        (filter (fn [x] (= (first x) (last item))) relations))
@@ -609,9 +610,9 @@
                              (list "related" (apply str (interpose " " (for [x related] (last x)))))
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
                              (list "isPartOf" (apply str (interpose " " all-urls)))   
-                             (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
+                             (list "sources" (apply str (interpose " " (for [x sources] (last x)))))  
                              (list "images" (apply str (interpose " " (for [x images] (last x)))))
-                             (list "citationForm" (apply str (interpose "" (for [x citations](last x))))) 
+                             (list "citationForm" (apply str (interpose "" (for [x citations] (last x))))) 
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x))))) 
                              (list "selfUrl" (substring-before (last item) "/source"))     
                              (list "server" nserver)))
