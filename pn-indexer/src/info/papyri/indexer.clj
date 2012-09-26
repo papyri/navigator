@@ -477,6 +477,19 @@
             from <http://papyri.info/graph>
             where { <%s> dc:isReplacedBy ?a }" url))
             
+(defn batch-images-query
+  [url]
+  (format "prefix dc: <http://purl.org/dc/terms/>
+           prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+           select ?image
+           from <http://papyri.info/graph>
+           where { <%s> dc:hasPart ?a .
+                   ?a dc:relation ?i .
+                   ?i rdf:type rdf:Seq
+                   ?i ?p ?image 
+                     minus { ?i rdf:type rdf:Seq } }
+           order by ?p" url))
+            
 (defn images-query
   "Finds images related to the given url"
   [url]
@@ -487,7 +500,7 @@
              from <http://papyri.info/graph>
              where { <%1$s> ?p ?image .
                      <%1$s> rdf:type rdf:Seq
-                       minus { <%1$s> rdf:type ?image } }
+                       minus { <%1$s> rdf:type rdf:Seq } }
              order by ?p" uri )))
 
 ;; ## Jena functions
@@ -566,7 +579,8 @@
         all-citations (if (empty? (re-seq #"/hgv/" url))
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
-        all-biblio (execute-query (batch-cited-by-query url))]	
+        all-biblio (execute-query (batch-cited-by-query url))
+        all-images (execute-query (batch-image-query url))]	
     (doseq [item items]
       (let  [related (if (empty? relations) ()
                        (filter (fn [x] (= (first x) (last item))) relations))
@@ -586,10 +600,8 @@
                                             related)] 
                                     (substring-before (substring-after (last x) "http://papyri.info/") "/"))) 
                              exclude)
-             images (flatten (conj '() (execute-query (images-query url)) 
-                          (filter 
-                            (fn [x] (> (count x) 0))
-                            (for [r relations] (execute-query (images-query (first r)))))))
+             images (if (empty? all-images) ()
+                      (filter (fn [x] (= (first x) (last item))) all-images))
             ]
         (if (nil? exclusion)
           ( .add @html (list (str "file:" (get-filename (last item)))
@@ -598,7 +610,7 @@
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
                              (list "isPartOf" (apply str (interpose " " all-urls)))   
                              (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
-                             (list "images" (apply str (interpose " " images)))
+                             (list "images" (apply str (interpose " " (for [x images] (last x)))))
                              (list "citationForm" (apply str (interpose "" (for [x citations](last x))))) 
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x))))) 
                              (list "selfUrl" (substring-before (last item) "/source"))     
