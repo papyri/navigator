@@ -137,7 +137,7 @@
           <xsl:variable name="series-name">
             <xsl:value-of select=".//t:title[@level='s'][1]"></xsl:value-of>
           </xsl:variable>
-          <a href="{concat($facet-root, $series-param, '=', $series-name)}" title="More in series {$series-name}" target="_blank">More in series <xsl:value-of select="$series-name"></xsl:value-of></a>
+          <a href="{concat($facet-root, $series-param, '=', $series-name)}" title="More in series {$series-name}" target="_blank" rel="nofollow">More in series <xsl:value-of select="$series-name"></xsl:value-of></a>
           <xsl:if test=".//t:biblScope[@type='volume']">
             <xsl:variable name="series-name">
             <xsl:value-of select=".//t:title[@level='s'][1]"></xsl:value-of>
@@ -145,7 +145,7 @@
             <xsl:variable name="volume-name">
               <xsl:value-of select=".//t:biblScope[@type='volume']"></xsl:value-of>
             </xsl:variable>
-            <a href="{concat($facet-root, $series-param, '=', $series-name, '&amp;', $volume-param, '=', $volume-name)}" title="More in series {$series-name}, vol. {$volume-name}" target="_blank">More in series <xsl:value-of select="$series-name"/>, vol. <xsl:value-of select="$volume-name"/></a>
+            <a href="{concat($facet-root, $series-param, '=', $series-name, '&amp;', $volume-param, '=', $volume-name)}" title="More in series {$series-name}, vol. {$volume-name}" target="_blank" rel="nofollow">More in series <xsl:value-of select="$series-name"/>, vol. <xsl:value-of select="$volume-name"/></a>
           </xsl:if>
             </div>
         </xsl:if>
@@ -274,7 +274,7 @@
             <xsl:variable name="provenance-value">
               <xsl:value-of select="normalize-space(string-join(/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"></xsl:value-of>
             </xsl:variable>
-            <div class="more-like-this"><a href="{concat($facet-root, $provenance-param, '=', $provenance-value)}" title="More from {$provenance-value}" target="_blank">More from <xsl:value-of select="$provenance-value"></xsl:value-of></a></div>
+            <div class="more-like-this"><a href="{concat($facet-root, $provenance-param, '=', $provenance-value)}" title="More from {$provenance-value}" target="_blank" rel="nofollow">More from <xsl:value-of select="$provenance-value"></xsl:value-of></a></div>
           </xsl:if>
       </td>
     </tr>
@@ -315,7 +315,7 @@
               <xsl:if test="index-of($all-langs-found, $ident)">
                 <xsl:if test="key('lang-codes', $ident)">
                   <xsl:variable name="expansion"><xsl:value-of select="key('lang-codes', $ident)"></xsl:value-of></xsl:variable>
-                  <a href="{concat($facet-root, $language-param, '=', $ident)}" title="More texts in {$expansion}" target="_blank">More texts in <xsl:value-of select="$expansion"></xsl:value-of></a>
+                  <a href="{concat($facet-root, $language-param, '=', $ident)}" title="More texts in {$expansion}" target="_blank" rel="nofollow">More texts in <xsl:value-of select="$expansion"></xsl:value-of></a>
                 </xsl:if>
               </xsl:if>             
             </xsl:for-each>
@@ -428,7 +428,7 @@
             <xsl:value-of select="$date-mode-value"></xsl:value-of>
           </xsl:variable>
           <xsl:variable name="anchor" select="concat($facet-root, $date-mode, $date-start-querystring, $date-end-querystring)"></xsl:variable>
-          <div class="more-like-this"><a href="{$anchor}" title="More from this timespan" target="_blank">More from the period <xsl:value-of select="$span-label"></xsl:value-of></a></div>
+          <div class="more-like-this"><a href="{$anchor}" title="More from this timespan" target="_blank" rel="nofollow">More from the period <xsl:value-of select="$span-label"></xsl:value-of></a></div>
         </xsl:if>
       </td>
     </tr>
