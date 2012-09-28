@@ -74,6 +74,7 @@
     
     <add>
       <doc>
+        <field name="project">IDP</field>
         <xsl:if test="$ddbdp = true()">
           <field name="collection">ddbdp</field>
         </xsl:if>

@@ -76,11 +76,13 @@
   <xsl:param name="isReplacedBy"/>
   <xsl:param name="isPartOf"/>
   <xsl:param name="sources"/>
+  <xsl:param name="images"/>
   <xsl:param name="citationForm"/>
   <xsl:param name="selfUrl"/>
   <xsl:param name="biblio"/>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
+  <xsl:variable name="imgs" select="tokenize($images, '\s+')"/>
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
@@ -127,7 +129,7 @@
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
-    <xsl:variable name="image" select="contains($related, 'http://papyri.info/images')"/>
+    <xsl:variable name="image" select="count($imgs) gt 0"/>
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
    
@@ -316,11 +318,10 @@
                     </div>
                     <xsl:if test="$image">
                       <div id="image" class="image data"> 
-                        <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
+                        <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
                         <ul>
-                          <xsl:for-each select="$relations[contains(., 'images/')]">
-                            <xsl:sort order="descending"/>
-                            <li><img src="{.}" alt="papyrus image"/></li>
+                          <xsl:for-each select="$imgs">
+                            <li><a href="{.}" alt="papyrus image"/><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></li>
                           </xsl:for-each>
                         </ul>
                         <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
@@ -383,11 +384,11 @@
                   <div class="text">
                     <xsl:if test="$image">
                     <div id="image" class="image data"> 
-                      <h2>Image<xsl:if test="count($relations[contains(., 'images/')]) &gt; 1">s</xsl:if></h2>
+                      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
                       <ul>
-                        <xsl:for-each select="$relations[contains(., 'images/')]">
+                        <xsl:for-each select="$imgs">
                           <xsl:sort order="descending"/>
-                          <li><img src="{.}" alt="papyrus image"/></li>
+                          <li><a href="{.}" class="imagelink" alt="papyrus image"><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></a></li>
                         </xsl:for-each>
                       </ul>
                       <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
@@ -432,7 +433,9 @@
     <xsl:if test=".//t:div[@type = 'translation']/t:ab">
     <div class="translation data">
       <h2>APIS Translation (English)</h2>
-      <p><xsl:value-of select=".//t:div[@type = 'translation']/t:ab"/></p>
+      <xsl:for-each select=".//t:div[@type = 'translation']/t:ab">
+        <p><xsl:value-of select="."/></p>
+      </xsl:for-each>
     </div>
     </xsl:if>
   </xsl:template>

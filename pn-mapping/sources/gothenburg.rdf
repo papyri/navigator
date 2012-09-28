@@ -1,0 +1,1801 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.0="http://purl.org/ontology/bibo/"
+    xmlns:j.1="http://xmlns.com/foaf/0.1/"
+    xmlns:j.2="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.60/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.60/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.109/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/f2/gothenburg.apis.109"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.109/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6b/gothenburg.apis.97.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.97/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/20/gothenburg.apis.111">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.111/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.108/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/3c/gothenburg.apis.108.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/5b/gothenburg.apis.108.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.108/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.114/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.114/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/1d/gothenburg.apis.77">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.77/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.122/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.122/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bc/gothenburg.apis.46">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.46/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/95/gothenburg.apis.117.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.117/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/69/gothenburg.apis.45.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.45/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c9/gothenburg.apis.87.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.87/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.16/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.16/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2b/gothenburg.apis.61">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.61/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.13/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/da/gothenburg.apis.13"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.13/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/b1/gothenburg.apis.104">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.104/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.11/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/00/gothenburg.apis.11"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.11/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.9/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/33/gothenburg.apis.9.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/e6/gothenburg.apis.9.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.9/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/be/gothenburg.apis.54">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.54/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/0e/gothenburg.apis.107">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.107/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.32/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.32/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.39/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/ab/gothenburg.apis.39"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.39/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.96/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.96/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.104/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/b1/gothenburg.apis.104"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.104/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.99/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.99/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.83/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/09/gothenburg.apis.83.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/28/gothenburg.apis.83.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.83/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.93/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.93/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.124/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/47/gothenburg.apis.124"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.124/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.69/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/ca/gothenburg.apis.69"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.69/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a6/gothenburg.apis.24.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.24/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.123/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/1b/gothenburg.apis.123"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.123/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.36/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/ec/gothenburg.apis.36"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.36/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.116/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.116/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/28/gothenburg.apis.83.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.83/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.82/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/bf/gothenburg.apis.82.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/3b/gothenburg.apis.82.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.82/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/08/gothenburg.apis.24.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.24/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/27/gothenburg.apis.17">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.17/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.98/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.98/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/77/gothenburg.apis.18">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.18/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.78/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.78/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.5/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d2/gothenburg.apis.5"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.5/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ab/gothenburg.apis.106">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.106/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/67/gothenburg.apis.122">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.122/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/56/gothenburg.apis.20">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.20/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/3c/gothenburg.apis.108.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.108/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.34/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.34/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/87/gothenburg.apis.14">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.14/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.88/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/2d/gothenburg.apis.88.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/87/gothenburg.apis.88.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.88/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/b2/gothenburg.apis.99">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.99/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.81/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/9a/gothenburg.apis.81"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.81/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/30/gothenburg.apis.55">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.55/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.45/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.45/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e3/gothenburg.apis.8">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.8/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/04/gothenburg.apis.76">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.76/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.13/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.13/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.94/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/24/gothenburg.apis.94.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/9a/gothenburg.apis.94.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.94/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d5/gothenburg.apis.79">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.79/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/3b/gothenburg.apis.87.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.87/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.110/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/bb/gothenburg.apis.110"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.110/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a3/gothenburg.apis.12">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.12/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.111/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/20/gothenburg.apis.111"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.111/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.35/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.35/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.2/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d2/gothenburg.apis.2"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.2/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.20/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.20/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.68/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.68/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.89/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/2a/gothenburg.apis.89.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/a8/gothenburg.apis.89.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.89/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.85/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.85/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d5/gothenburg.apis.78">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.78/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f8/gothenburg.apis.113.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.113/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.115/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.115/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.67/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.67/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/0f/gothenburg.apis.133">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.133/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.91/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.91/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.127/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.127/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/08/gothenburg.apis.65">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.65/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6c/gothenburg.apis.103">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.103/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.121/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/f2/gothenburg.apis.121"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.121/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.7/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/f7/gothenburg.apis.7"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.7/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.31/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.31/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.62/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.62/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/0d/gothenburg.apis.73">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.73/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/47/gothenburg.apis.124">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.124/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.63/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/ad/gothenburg.apis.63"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.63/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.35/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/4c/gothenburg.apis.35"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.35/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.102/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.102/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.38/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.38/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.46/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.46/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.19/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/c7/gothenburg.apis.19"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.19/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.33/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.33/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a3/gothenburg.apis.23">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.23/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.10/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.10/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e3/gothenburg.apis.31">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.31/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.75/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/fd/gothenburg.apis.75"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.75/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/04/gothenburg.apis.52">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.52/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.17/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.17/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.75/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.75/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.119/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.119/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ac/gothenburg.apis.16.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.16/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.70/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.70/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.80/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/15/gothenburg.apis.80"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.80/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.18/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/77/gothenburg.apis.18"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.18/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.65/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/08/gothenburg.apis.65"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.65/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.28/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.28/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.8/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/e3/gothenburg.apis.8"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.8/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/fd/gothenburg.apis.95.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.95/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.43/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/3d/gothenburg.apis.43"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.43/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.30/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.30/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.111/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.111/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/09/gothenburg.apis.83.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.83/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.124/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.124/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.74/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.74/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.101/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.101/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.122/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/67/gothenburg.apis.122"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.122/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ec/gothenburg.apis.36">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.36/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6e/gothenburg.apis.68">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.68/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.46/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/bc/gothenburg.apis.46"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.46/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.58/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/8a/gothenburg.apis.58"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.58/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/08/gothenburg.apis.21.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.21/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.109/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.109/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/59/gothenburg.apis.27.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.27/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.95/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/30/gothenburg.apis.95.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/fd/gothenburg.apis.95.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.95/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.130/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.130/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.128/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d2/gothenburg.apis.128"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.128/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.66/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.66/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d5/gothenburg.apis.130">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.130/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.102/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/0d/gothenburg.apis.102"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.102/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.58/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.58/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c1/gothenburg.apis.34">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.34/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.33/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/a0/gothenburg.apis.33.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/20/gothenburg.apis.33.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.33/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.17/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/27/gothenburg.apis.17"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.17/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/da/gothenburg.apis.132">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.132/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.29/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/5f/gothenburg.apis.29"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.29/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.70/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/c0/gothenburg.apis.70"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.70/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.51/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.51/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.64/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.64/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/77/gothenburg.apis.27.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.27/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.112/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/4f/gothenburg.apis.112"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.112/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ed/gothenburg.apis.113.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.113/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/78/gothenburg.apis.115">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.115/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/29/gothenburg.apis.60">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.60/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.63/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.63/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.108/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.108/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.129/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.129/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ad/gothenburg.apis.63">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.63/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.8/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.8/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.112/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.112/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/4c/gothenburg.apis.35">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.35/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.19/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.19/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.57/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/aa/gothenburg.apis.57"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.57/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.44/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.44/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.92/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/e9/gothenburg.apis.92.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/2e/gothenburg.apis.92.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.92/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.105/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/44/gothenburg.apis.105"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.105/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.126/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.126/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.64/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/11/gothenburg.apis.64"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.64/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.50/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/10/gothenburg.apis.50"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.50/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.1/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.1/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.125/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.125/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/3f/gothenburg.apis.48.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.48/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.56/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.56/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.48/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.48/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e4/gothenburg.apis.45.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.45/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.32/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/61/gothenburg.apis.32.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/d8/gothenburg.apis.32.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.32/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.6/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.6/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.101/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/18/gothenburg.apis.101"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.101/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.5/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.5/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/1b/gothenburg.apis.123">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.123/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.125/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/01/gothenburg.apis.125.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/7b/gothenburg.apis.125.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.125/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/5b/gothenburg.apis.108.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.108/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.14/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.14/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.79/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.79/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.84/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/a5/gothenburg.apis.84.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/22/gothenburg.apis.84.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.84/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.45/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/e4/gothenburg.apis.45.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/69/gothenburg.apis.45.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.45/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.14/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/87/gothenburg.apis.14"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.14/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.30/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/f1/gothenburg.apis.30"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.30/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/4c/gothenburg.apis.96.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.96/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.106/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/ab/gothenburg.apis.106"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.106/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/4f/gothenburg.apis.112">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.112/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.4/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/6e/gothenburg.apis.4"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.4/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.99/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/b2/gothenburg.apis.99"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.99/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/05/gothenburg.apis.49">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.49/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/00/gothenburg.apis.11">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.11/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/16/gothenburg.apis.48.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.48/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.80/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.80/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.97/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/a9/gothenburg.apis.97.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/6b/gothenburg.apis.97.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.97/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.131/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.131/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.40/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/bf/gothenburg.apis.40"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.40/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.6/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/f7/gothenburg.apis.6"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.6/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.81/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.81/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a9/gothenburg.apis.97.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.97/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.107/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/0e/gothenburg.apis.107"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.107/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.120/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.120/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.21/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/08/gothenburg.apis.21.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/df/gothenburg.apis.21.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.21/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/de/gothenburg.apis.42">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.42/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.22/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/28/gothenburg.apis.22"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.22/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2a/gothenburg.apis.89.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.89/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/1d/gothenburg.apis.53">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.53/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.18/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.18/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.118/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d6/gothenburg.apis.118"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.118/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.47/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/85/gothenburg.apis.47.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/34/gothenburg.apis.47.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.47/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.87/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/c9/gothenburg.apis.87.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/3b/gothenburg.apis.87.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.87/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.25/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/6d/gothenburg.apis.25"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.25/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/eb/gothenburg.apis.62">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.62/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/81/gothenburg.apis.86.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.86/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/63/gothenburg.apis.131">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.131/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/3d/gothenburg.apis.43">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.43/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.76/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/04/gothenburg.apis.76"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.76/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.60/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/29/gothenburg.apis.60"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.60/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.106/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.106/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/5a/gothenburg.apis.116">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.116/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e9/gothenburg.apis.92.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.92/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.86/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.86/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bb/gothenburg.apis.110">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.110/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/22/gothenburg.apis.84.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.84/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/1d/gothenburg.apis.119.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.119/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.3/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d3/gothenburg.apis.3"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.3/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/88/gothenburg.apis.93.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.93/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/8f/gothenburg.apis.91.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.91/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.72/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/6d/gothenburg.apis.72"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.72/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.91/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/bb/gothenburg.apis.91.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/8f/gothenburg.apis.91.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.91/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.100/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/81/gothenburg.apis.100"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.100/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bf/gothenburg.apis.40">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.40/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.86/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/fc/gothenburg.apis.86.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/81/gothenburg.apis.86.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.86/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.9/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.9/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.26/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.26/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.43/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.43/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.11/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.11/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.42/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/de/gothenburg.apis.42"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.42/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.83/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.83/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.54/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.54/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.1/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/6b/gothenburg.apis.1"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.1/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.103/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.103/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a8/gothenburg.apis.89.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.89/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.41/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/fb/gothenburg.apis.41"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.41/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ab/gothenburg.apis.39">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.39/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/18/gothenburg.apis.101">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.101/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.117/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/95/gothenburg.apis.117.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/16/gothenburg.apis.117.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.117/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/5e/gothenburg.apis.16.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.16/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.133/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/0f/gothenburg.apis.133"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.133/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.121/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.121/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/16/gothenburg.apis.117.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.117/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f4/gothenburg.apis.26">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.26/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.44/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/c8/gothenburg.apis.44"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.44/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.113/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/f8/gothenburg.apis.113.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/ed/gothenburg.apis.113.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.113/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d6/gothenburg.apis.118">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.118/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/dd/gothenburg.apis.51">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.51/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.12/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.12/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.10/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/08/gothenburg.apis.10"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.10/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f7/gothenburg.apis.7">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.7/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/33/gothenburg.apis.9.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.9/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.100/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.100/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.20/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/56/gothenburg.apis.20"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.20/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a5/gothenburg.apis.84.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.84/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.25/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.25/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.68/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/6e/gothenburg.apis.68"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.68/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.61/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.61/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.77/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.77/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.76/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.76/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/8a/gothenburg.apis.58">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.58/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.73/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/0d/gothenburg.apis.73"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.73/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.48/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/16/gothenburg.apis.48.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/3f/gothenburg.apis.48.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.48/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.90/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/06/gothenburg.apis.90"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.90/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.40/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.40/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.110/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.110/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f7/gothenburg.apis.6">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.6/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f1/gothenburg.apis.30">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.30/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/28/gothenburg.apis.22">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.22/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.27/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/77/gothenburg.apis.27.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/59/gothenburg.apis.27.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.27/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d8/gothenburg.apis.32.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.32/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.28/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/96/gothenburg.apis.28"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.28/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.61/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/2b/gothenburg.apis.61"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.61/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/11/gothenburg.apis.64">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.64/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.36/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.36/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/fb/gothenburg.apis.41">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.41/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/72/gothenburg.apis.37">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.37/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.37/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.37/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/85/gothenburg.apis.47.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.47/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/76/gothenburg.apis.85.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.85/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6e/gothenburg.apis.4">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.4/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.41/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.41/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.132/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/da/gothenburg.apis.132"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.132/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.42/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.42/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/81/gothenburg.apis.100">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.100/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/10/gothenburg.apis.50">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.50/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.3/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.3/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/9a/gothenburg.apis.94.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.94/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.118/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.118/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.115/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/78/gothenburg.apis.115"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.115/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.129/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/8b/gothenburg.apis.129"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.129/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2d/gothenburg.apis.88.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.88/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f2/gothenburg.apis.109">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.109/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.24/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.24/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.87/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.87/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.59/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.59/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.104/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.104/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.89/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.89/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.131/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/63/gothenburg.apis.131"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.131/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/0e/gothenburg.apis.85.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.85/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/58/gothenburg.apis.126">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.126/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.26/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/f4/gothenburg.apis.26"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.26/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.85/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/0e/gothenburg.apis.85.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/76/gothenburg.apis.85.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.85/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.73/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.73/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.98/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/c8/gothenburg.apis.98"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.98/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.62/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/eb/gothenburg.apis.62"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.62/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.29/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.29/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.113/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.113/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.74/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/54/gothenburg.apis.74"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.74/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.22/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.22/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2e/gothenburg.apis.71">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.71/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/8b/gothenburg.apis.129">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.129/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.34/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/c1/gothenburg.apis.34"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.34/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.4/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.4/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c8/gothenburg.apis.98">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.98/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/aa/gothenburg.apis.57">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.57/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.123/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.123/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a0/gothenburg.apis.33.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.33/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.130/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d5/gothenburg.apis.130"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.130/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/54/gothenburg.apis.74">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.74/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/34/gothenburg.apis.47.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.47/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6b/gothenburg.apis.1">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.1/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.21/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.21/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.16/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/5e/gothenburg.apis.16.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/ac/gothenburg.apis.16.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.16/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/9c/gothenburg.apis.67">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.67/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c0/gothenburg.apis.70">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.70/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bf/gothenburg.apis.82.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.82/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.54/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/be/gothenburg.apis.54"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.54/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/b0/gothenburg.apis.93.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.93/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.105/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.105/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.55/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.55/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/3b/gothenburg.apis.82.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.82/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/9a/gothenburg.apis.81">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.81/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/44/gothenburg.apis.105">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.105/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.69/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.69/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.71/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/2e/gothenburg.apis.71"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.71/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/24/gothenburg.apis.94.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.94/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.50/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.50/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c7/gothenburg.apis.19">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.19/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/96/gothenburg.apis.28">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.28/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.27/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.27/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.95/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.95/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c7/gothenburg.apis.38">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.38/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/06/gothenburg.apis.90">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.90/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.126/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/58/gothenburg.apis.126"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.126/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.2/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.2/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.127/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/09/gothenburg.apis.127"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.127/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e6/gothenburg.apis.9.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.9/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.67/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/9c/gothenburg.apis.67"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.67/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6d/gothenburg.apis.25">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.25/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.94/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.94/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.117/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.117/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.128/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.128/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.114/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/f9/gothenburg.apis.114"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.114/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.90/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.90/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.53/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/1d/gothenburg.apis.53"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.53/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.47/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.47/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/87/gothenburg.apis.88.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.88/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.23/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.23/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bb/gothenburg.apis.91.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.91/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.39/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.39/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/08/gothenburg.apis.10">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.10/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2e/gothenburg.apis.92.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.92/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.96/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/4c/gothenburg.apis.96.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/33/gothenburg.apis.96.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.96/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.84/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.84/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/fc/gothenburg.apis.86.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.86/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.24/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/08/gothenburg.apis.24.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/a6/gothenburg.apis.24.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.24/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.93/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/b0/gothenburg.apis.93.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/88/gothenburg.apis.93.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.93/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/da/gothenburg.apis.13">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.13/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ca/gothenburg.apis.69">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.69/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.59/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/21/gothenburg.apis.59"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.59/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/df/gothenburg.apis.21.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.21/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.79/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d5/gothenburg.apis.79"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.79/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.132/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.132/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.55/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/30/gothenburg.apis.55"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.55/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/0d/gothenburg.apis.102">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.102/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.97/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.97/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.38/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/c7/gothenburg.apis.38"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.38/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.7/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.7/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.120/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/ef/gothenburg.apis.120"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.120/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/15/gothenburg.apis.80">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.80/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.53/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.53/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/09/gothenburg.apis.127">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.127/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/30/gothenburg.apis.95.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.95/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d2/gothenburg.apis.128">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.128/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.65/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.65/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d2/gothenburg.apis.2">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.2/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/5f/gothenburg.apis.29">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.29/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.133/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.133/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/21/gothenburg.apis.59">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.59/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.88/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.88/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.57/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.57/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ef/gothenburg.apis.120">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.120/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.49/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.49/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.72/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.72/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/7f/gothenburg.apis.56">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.56/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6d/gothenburg.apis.72">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.72/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c8/gothenburg.apis.44">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.44/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.66/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/bf/gothenburg.apis.66"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.66/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/fd/gothenburg.apis.119.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.119/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/01/gothenburg.apis.125.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.125/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.82/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.82/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.71/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.71/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f9/gothenburg.apis.114">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.114/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.31/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/e3/gothenburg.apis.31"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.31/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.77/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/1d/gothenburg.apis.77"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.77/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/61/gothenburg.apis.32.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.32/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.103/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/6c/gothenburg.apis.103"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.103/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.119/images">
+    <rdf:_2 rdf:resource="http://papyri.info/images/fd/gothenburg.apis.119.v"/>
+    <rdf:_1 rdf:resource="http://papyri.info/images/1d/gothenburg.apis.119.r"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.119/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/20/gothenburg.apis.33.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.33/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/7b/gothenburg.apis.125.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.125/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.37/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/72/gothenburg.apis.37"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.37/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.52/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/04/gothenburg.apis.52"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.52/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.51/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/dd/gothenburg.apis.51"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.51/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.107/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.107/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.52/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.52/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.56/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/7f/gothenburg.apis.56"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.56/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.116/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/5a/gothenburg.apis.116"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.116/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f2/gothenburg.apis.121">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.121/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d2/gothenburg.apis.5">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.5/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/fd/gothenburg.apis.75">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.75/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.78/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/d5/gothenburg.apis.78"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.78/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.49/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/05/gothenburg.apis.49"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.49/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.92/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.92/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/33/gothenburg.apis.96.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.96/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d3/gothenburg.apis.3">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.3/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bf/gothenburg.apis.66">
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/gothenburg.apis.66/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.12/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/a3/gothenburg.apis.12"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.12/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/gothenburg.apis.23/images">
+    <rdf:_1 rdf:resource="http://papyri.info/images/a3/gothenburg.apis.23"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/gothenburg.apis.23/source"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+</rdf:RDF>

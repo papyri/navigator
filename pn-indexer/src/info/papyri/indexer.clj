@@ -59,7 +59,7 @@
 (def htpath "/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8083/solr/")
 (def numbersurl "http://localhost:8090/pi/query?query=")
-(def nthreads 10)
+(def nthreads (.availableProcessors (Runtime/getRuntime)))
 (def server "http://localhost:8090/pi")
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
@@ -333,7 +333,8 @@
             select ?a ?b
             from <http://papyri.info/graph>
             where { <%s> dc:hasPart ?a .
-                    ?a dc:relation ?b}" url))
+                    ?a dc:relation ?b
+                    filter(!regex(str(?b),'/images$'))}" url))
 
 (defn relation-query
   "Returns URIs that are the object of `<dc:relation>`s where the given URI is the subject."
@@ -341,7 +342,8 @@
   (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
-            where { <%s> dc:relation ?a }" url))
+            where { <%s> dc:relation ?a 
+                    filter(!regex(str(?b),'/images$'))}" url))
 
 (defn batch-replaces-query
   "Gets the set of triples where A `<dc:replaces>` B for a given collection."
@@ -476,8 +478,36 @@
             select ?a
             from <http://papyri.info/graph>
             where { <%s> dc:isReplacedBy ?a }" url))
+            
+(defn batch-images-query
+  [url]
+  (format "prefix dc: <http://purl.org/dc/terms/>
+           prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+           select ?a ?image
+           from <http://papyri.info/graph>
+           where { <%s> dc:hasPart ?a .
+                   ?a dc:relation ?i .
+                   ?i rdf:type rdf:Seq .
+                   ?i ?p ?image .
+                      filter (?a != ?image)
+                      filter (?image != rdf:Seq) 
+                      filter (?p != dc:relation)}
+           order by ?a ?p" url))
+            
+(defn images-query
+  "Finds images related to the given url"
+  [url]
+  (let [uri (.replace url "/source" "/images")]
+    (format "prefix dc: <http://purl.org/dc/terms/>
+             prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+             select ?image
+             from <http://papyri.info/graph>
+             where { <%1$s> ?p ?image .
+                     <%1$s> rdf:type rdf:Seq
+                       minus { <%1$s> rdf:type rdf:Seq } }
+             order by ?p" uri )))
 
-;; ## Mulgara functions
+;; ## Jena functions
 
 (defn collect-row  
   "Builds a row of results from Jena into a vector."
@@ -488,7 +518,7 @@
     (persistent! *row*)))
                     
 (defn execute-query
-  "Executes the query provided and returns a vector. of vectors containing the results"
+  "Executes the query provided and returns a vector of vectors containing the results"
   [query]
   (try
     (with-open [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
@@ -520,6 +550,10 @@
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
+        images (flatten (conj '() (execute-query (images-query url)) 
+                     (filter 
+                       (fn [x] (> (count x) 0))
+                       (for [r relations] (execute-query (images-query (first r)))))))
        ]
     (when (not (first is-replaced-by))
     (.add @html (list (str "file:" (get-filename url))
@@ -528,6 +562,7 @@
                       (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
                       (list "isPartOf" (apply str (interpose " " (first is-part-of))))
                       (list "sources" (apply str (interpose " " (for [x source](first x)))))
+                      (list "images" (apply str (interpose " " images)))
                       (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                       (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
                       (list "selfUrl" (substring-before url "/source"))
@@ -548,7 +583,8 @@
         all-citations (if (empty? (re-seq #"/hgv/" url))
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
-        all-biblio (execute-query (batch-cited-by-query url))]	
+        all-biblio (execute-query (batch-cited-by-query url))
+        all-images (execute-query (batch-images-query url))]	
     (doseq [item items]
       (let  [related (if (empty? relations) ()
                        (filter (fn [x] (= (first x) (last item))) relations))
@@ -567,15 +603,19 @@
                                                          (not (.contains (.toString (last s)) "/images/")))) 
                                             related)] 
                                     (substring-before (substring-after (last x) "http://papyri.info/") "/"))) 
-                             exclude)]
+                             exclude)
+             images (if (empty? all-images) ()
+                      (filter (fn [x] (= (first x) (last item))) all-images))
+            ]
         (if (nil? exclusion)
           ( .add @html (list (str "file:" (get-filename (last item)))
                              (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
                              (list "related" (apply str (interpose " " (for [x related] (last x)))))
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x))))) 
                              (list "isPartOf" (apply str (interpose " " all-urls)))   
-                             (list "sources" (apply str (interpose " " (for [x sources](last x)))))  
-                             (list "citationForm" (apply str (interpose "" (for [x citations](last x))))) 
+                             (list "sources" (apply str (interpose " " (for [x sources] (last x)))))  
+                             (list "images" (apply str (interpose " " (for [x images] (last x)))))
+                             (list "citationForm" (apply str (interpose "" (for [x citations] (last x))))) 
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x))))) 
                              (list "selfUrl" (substring-before (last item) "/source"))     
                              (list "server" nserver)))

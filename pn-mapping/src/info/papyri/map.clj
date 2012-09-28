@@ -130,12 +130,12 @@
     
 (defn execute-query
   [query]
-  (let [exec (QueryExecutionFactory/sparqlService (str server "/update") query)]
+  (let [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
     (.execSelect exec)))
     
 (defn get-filename 
   [file]
-  (substring-before (.substring (inc (.lastIndexOf file "/"))) ".xml"))
+  (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     
 (defn url-from-file
   [file]
@@ -159,6 +159,8 @@
                         DELETE { ?s ?p <" uri ">}
                         WHERE { ?s ?p <" uri ">}")
         req (UpdateFactory/create)]
+    (println deletesub)
+    (println deleteobj)
     (.add req deletesub)
     (.add req deleteobj)
     (UpdateRemote/execute req (str server "/update") )))
@@ -247,7 +249,7 @@
       
 (defn load-map 
   [file]
-  (def nthreads 2)
+  (def nthreads (.availableProcessors (Runtime/getRuntime)))
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
   (let [xsl (choose-xslt file)]
     (init-xslt xsl))
@@ -298,7 +300,21 @@
       (println "Processing Bibliography")
       (load-map (str idproot "/Biblio")))
   (-loadFile "/data/papyri.info/idp.data/RDF/collection.rdf")
-  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/apis-images.n3")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/0.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/1.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/2.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/3.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/4.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/5.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/6.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/7.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/8.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/9.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/a.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/b.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/c.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/d.rdf")
+  (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/gothenburg.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
   (-insertInferences nil))
 
