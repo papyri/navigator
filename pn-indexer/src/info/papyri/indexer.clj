@@ -343,7 +343,7 @@
             select ?a
             from <http://papyri.info/graph>
             where { <%s> dc:relation ?a 
-                    filter(!regex(str(?b),'/images$'))}" url))
+                    filter(!regex(str(?a),'/images$'))}" url))
 
 (defn batch-replaces-query
   "Gets the set of triples where A `<dc:replaces>` B for a given collection."
@@ -514,7 +514,7 @@
   [row rvars]
   (let [*row* (transient [])]
     (doseq [svar rvars]
-      (conj! *row* (.toString (.get row svar))))
+      (when (not (nil? (.get row svar))) (conj! *row* (.toString (.get row svar)))))
     (persistent! *row*)))
                     
 (defn execute-query
@@ -800,7 +800,6 @@
     (doseq [arg (first args)] (queue-item arg)))
 
   (dosync (ref-set text @html))
-   
   ;; Generate HTML
   (println "Generating HTML...")
   (generate-html)
