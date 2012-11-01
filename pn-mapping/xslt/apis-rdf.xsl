@@ -79,13 +79,23 @@
         <xsl:for-each select="tokenize(., '\s')">
           <xsl:variable name="dir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>
           <xsl:if test="doc-available(concat('file://', $root, '/HGV_meta_EpiDoc/HGV', $dir, '/', ., '.xml'))">
-            <dcterms:relation rdf:resource="http://papyri.info/hgv/{.}/source"/>
+            <dcterms:relation>
+              <rdf:Description
+                rdf:about="http://papyri.info/hgv/{.}/source">
+                <dcterms:relation rdf:resource="{$id}"/>
+              </rdf:Description>
+            </dcterms:relation>
           </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
       <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'TM']">
         <xsl:for-each select="tokenize(., '\s')">
-          <dcterms:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+          <dcterms:relation>
+            <rdf:Description
+              rdf:about="http://www.trismegistos.org/text/{.}">
+              <dcterms:relation rdf:resource="{$id}"/>
+            </rdf:Description>
+          </dcterms:relation>
         </xsl:for-each>
       </xsl:for-each>
     </rdf:Description>
