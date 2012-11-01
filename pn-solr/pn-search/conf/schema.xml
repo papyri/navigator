@@ -119,6 +119,7 @@
     <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="nome" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="project" type="string" indexed="true" stored="false" default="papyri.info" multiValued="false"/>
     <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
     <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="title" type="text" indexed="false" stored="true" multiValued="false"/>

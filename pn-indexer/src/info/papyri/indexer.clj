@@ -343,7 +343,7 @@
             select ?a
             from <http://papyri.info/graph>
             where { <%s> dc:relation ?a 
-                    filter(!regex(str(?a),'/images$'))}" url))
+            filter(!regex(str(?a),'/images$'))}" url))
 
 (defn batch-replaces-query
   "Gets the set of triples where A `<dc:replaces>` B for a given collection."
