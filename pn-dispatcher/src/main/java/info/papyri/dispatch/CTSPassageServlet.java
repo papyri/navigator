@@ -146,6 +146,12 @@ public class CTSPassageServlet extends HttpServlet {
         for (int i = 0; i < end.length; i++) {
           refEnd.addPart(end[i]);
         }
+      } else {
+        String[] start = location.split(".");
+        for (int i = 0; i < start.length; i++) {
+          refStart.addPart(start[i]);
+          refEnd.addPart(start[i]);
+        }
       }
     }
     
