@@ -72,8 +72,8 @@
             <param-value>/search</param-value>
         </init-param>
         <init-param>
-        <param-name>instructionsPath</param-name>
-        <param-value>/data/papyri.info/pn/instructions</param-value>
+            <param-name>instructionsPath</param-name>
+            <param-value>/data/papyri.info/pn/instructions</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -133,40 +133,44 @@
         </init-param>
     </servlet>
     <servlet>
-    <servlet-name>AtomFeed</servlet-name>
-    <servlet-class>info.papyri.dispatch.atom.AtomFeedServlet</servlet-class>
+        <servlet-name>AtomFeed</servlet-name>
+        <servlet-class>info.papyri.dispatch.atom.AtomFeedServlet</servlet-class>
         <init-param>
             <param-name>solrUrl</param-name>
             <param-value>http://localhost:8083/solr/</param-value>
-        </init-param>   
+        </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
             <param-value>/pn-search</param-value>
         </init-param>
     </servlet>
     <servlet>
-      <servlet-name>XSLTService</servlet-name>
-      <servlet-class>info.papyri.dispatch.XSLTService</servlet-class>
-      <init-param>
-        <param-name>epidoc</param-name>
-        <param-value>/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
-      </init-param>
-      <init-param>
-        <param-name>papyri.info-full</param-name>
-        <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2HTML.xsl</param-value>
-      </init-param>
-      <init-param>
-        <param-name>papyri.info-solr</param-name>
-        <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2Solr.xsl</param-value>
-      </init-param>
-      <init-param>
-        <param-name>papyri.info-text</param-name>
-        <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeText.xsl</param-value>
-      </init-param>
-      <init-param>
-        <param-name>papyri.info-fragment</param-name>
-        <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeFragment.xsl</param-value>
-      </init-param>
+        <servlet-name>XSLTService</servlet-name>
+        <servlet-class>info.papyri.dispatch.XSLTService</servlet-class>
+        <init-param>
+            <param-name>epidoc</param-name>
+            <param-value>/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-full</param-name>
+            <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2HTML.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-solr</param-name>
+            <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2Solr.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-text</param-name>
+            <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeText.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-fragment</param-name>
+            <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeFragment.xsl</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>CTSPassageServlet</servlet-name>
+        <servlet-class>info.papyri.dispatch.CTSPassageServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
@@ -195,6 +199,10 @@
     <servlet-mapping>
         <servlet-name>AtomFeed</servlet-name>
         <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CTSPassageServlet</servlet-name>
+        <url-pattern>/CTSPassageServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -157,12 +157,13 @@ public class CTSPassageServlet extends HttpServlet {
 
     @Override
     public void startDocument() throws SAXException {
-      throw new UnsupportedOperationException("Not supported yet.");
+      out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+      out.write("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">");
     }
 
     @Override
     public void endDocument() throws SAXException {
-      throw new UnsupportedOperationException("Not supported yet.");
+      out.write("</TEI>");
     }
 
     @Override
@@ -191,20 +192,6 @@ public class CTSPassageServlet extends HttpServlet {
           out.write("=\"");
           out.write(atts.getValue(i));
           out.write("\"");
-        }
-        if (xmlns) {
-          for (String key : uris.keySet()) {
-            out.write(" xmlns");
-            if ("".equals(uris.get(key))) {
-              out.write("=\"");
-            } else {
-              out.write(":");
-              out.write(uris.get(key));
-              out.write("=\"");
-            }
-            out.write(key);
-            out.write("\"");
-          }
         }
         inElt = true;
       }
