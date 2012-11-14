@@ -92,7 +92,7 @@ public class Reader extends HttpServlet {
           }
         }
         if (file == null) {
-          response.sendError(response.SC_NOT_FOUND);
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
           if (request.getParameter("q") != null) {
             sendWithHighlight(response, file, request.getParameter("q"));
@@ -102,7 +102,7 @@ public class Reader extends HttpServlet {
         }
       }
     } else {
-      response.sendError(response.SC_NOT_FOUND);
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
@@ -119,14 +119,14 @@ public class Reader extends HttpServlet {
           size = reader.read(buffer);
         }
       } catch (IOException e) {
-        response.sendError(response.SC_NOT_FOUND);
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
         System.out.println("Failed to send " + f);
       } finally {
         reader.close();
         out.close();
       }
     } else {
-      response.sendError(response.SC_NOT_FOUND);
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
@@ -158,7 +158,7 @@ public class Reader extends HttpServlet {
         out.close();
       }
     } else {
-      response.sendError(response.SC_NOT_FOUND);
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
@@ -169,7 +169,7 @@ public class Reader extends HttpServlet {
     sparql.append("select ?related ");
     sparql.append("from <");
     sparql.append(graph);
-    sparql.append("> where { <" + page +"> dc:relation ?related . ");
+    sparql.append("> where { <").append(page).append("> dc:relation ?related . ");
     sparql.append("optional { ?related dc:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
     sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }");
@@ -180,7 +180,7 @@ public class Reader extends HttpServlet {
       ObjectMapper o = new ObjectMapper();
       JsonNode root = o.readValue(http.getInputStream(), JsonNode.class);
       Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
-      String uri = "";
+      String uri;
       while (i.hasNext()) {
         uri = FileUtils.substringBefore(i.next().path("related").path("value").getValueAsText(), "/source");
         if (uri.contains("ddbdp/")) {
@@ -189,7 +189,9 @@ public class Reader extends HttpServlet {
         if (uri.contains("hgv/")) {
           result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
         }
-        if (result.exists()) break;
+        if (result.exists()) {
+          break;
+        }
       }
       
     } catch (Exception e) {

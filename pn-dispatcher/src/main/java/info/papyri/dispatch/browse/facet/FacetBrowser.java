@@ -128,6 +128,7 @@ public class FacetBrowser extends HttpServlet {
          * by each of the facets in turn.
          */
         SolrQuery solrQuery = buildFacetQuery(page, facets, docsPerPage);
+        solrQuery.add("project", "IDP");
         
         ArrayList<CustomApplicationException> exceptionLog = collectFacetExceptions(facets);
                

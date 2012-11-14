@@ -149,6 +149,9 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
          */
         
         private String trimUnderscores(String scored){
+          if ("_".equals(scored)) {
+            return "";
+          }
             
             // trim leading underscores
             while(scored.indexOf("_") == 0){
