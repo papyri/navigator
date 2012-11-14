@@ -17,12 +17,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.JsonNode;
-
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 
 
 /**
@@ -247,16 +246,54 @@ public class GitWrapper {
   public static String filenameToUri(String file) {
     StringBuilder result = new StringBuilder();
     if (file.contains("DDB")) {
-      String sparql = "prefix dc: <http://purl.org/dc/terms/> "
-                  + "select ?id "
-                  + "from <http://papyri.info/graph> "
-                  + "where { ?id dc:identifier \"" + file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")) + "\" }";
+      StringBuilder sparql = new StringBuilder();
+      sparql.append("prefix dc: <http://purl.org/dc/terms/> ")
+            .append("select ?id ")
+            .append("from <http://papyri.info/graph> ")
+            .append("where { ?id dc:identifier \"")
+            .append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")))
+            .append("\" }");
       try {
-        URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&output=json");
-        JsonNode root = getDDbDPJson(m);
-        result.append(root.path("results").path("bindings").path(0).path("id").path("value").asText());
+        // If the numbers server already knows the id for the filename, use that
+        // because it will be 100% accurate. 
+        URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+        JsonNode root = getJson(m);
+        if (root.path("results").path("bindings").size() > 0) {
+          result.append(root.path("results").path("bindings").path(0).path("id").path("value").asText());
+        // Otherwise, attempt to infer the identifier from the filename. 
+        } else {
+          result.append("http://papyri.info/ddbdp/");
+          List<String> collections = GitWrapper.loadDDbCollections();
+          Iterator<String> i = collections.iterator();
+          while (i.hasNext()) {
+            String collection = i.next().substring("http://papyri.info/ddbdp/".length());
+            if (file.substring(file.indexOf("/") + 1).startsWith(collection)) {
+              result.append(collection).append(";");
+              // name should be of the form bgu.1.2, so lose the "bgu."
+              String rest = file.substring(file.indexOf("/") + 1 + collection.length() + 2); 
+              if (rest.contains(".")) {
+                result.append(rest.substring(0, rest.lastIndexOf(".")));
+                result.append(";");
+                result.append(rest.lastIndexOf(".") + 1);
+              } else {
+                result.append(";;");
+                result.append(rest);
+              }
+              result.append("/source");
+              if (result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d)+;(\\w|\\d)*;(\\w|\\d)/source")) {
+                return result.toString(); // Early return
+              } else {
+                throw new Exception("Malformed file name: " + file);
+              }
+            }
+          }
+          // If we made it through the collection list without a match,
+          // something is wrong.
+          throw new Exception("Unknown collection in file: " + file);
+        }
       } catch (Exception e) {
         logger.error("Failed to resolve URI.", e);
+        result.delete(0, result.length());
       }
     } else {
       result.append("http://papyri.info/");
@@ -281,11 +318,69 @@ public class GitWrapper {
     return result.toString();
   }
   
-  private static JsonNode getDDbDPJson(URL q) throws java.io.IOException {
+  public static String lookupDDbDPID(String id) {
+    StringBuilder sparql = new StringBuilder();
+    sparql.append("prefix dc: <http://purl.org/dc/terms/> ")
+          .append("select ?id ")
+          .append("from <http://papyri.info/graph> ")
+          .append("where { ?id dc:relation <")
+          .append(id)
+          .append("> ")
+          .append("filter regex(str(?id), \"^http://papyri.info/ddbdp/.*\") ")
+          .append("filter not exists {?id dc:isReplacedBy ?b} }");
+    try {
+      URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+      JsonNode root = getJson(m);
+      if (root.path("results").path("bindings").size() > 0) {
+        return root.path("results").path("bindings").path(0).path("id").path("value").asText();
+      } else {
+        if (id.contains("/apis/")) {
+          sparql = new StringBuilder();
+          sparql.append("prefix dc: <http://purl.org/dc/terms/> ")
+                .append("select ?id ")
+                .append("from <http://papyri.info/graph> ")
+                .append("where { ?id dc:relation <")
+                .append(id)
+                .append("> ")
+                .append("filter regex(str(?id), \"^http://papyri.info/hgv/.*\") }");
+          m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+          root = getJson(m);
+          if (root.path("results").path("bindings").size() > 0) {
+            return root.path("results").path("bindings").path(0).path("id").path("value").asText();
+          }
+        }
+      }
+    } catch (Exception e) {
+      logger.error("Failed to look up query: \n" + sparql.toString());
+    }
+    return null;
+  }
+  
+  private static JsonNode getJson(URL q) throws java.io.IOException {
       HttpURLConnection http = (HttpURLConnection)q.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();
       JsonNode result = o.readValue(http.getInputStream(), JsonNode.class);
       return result;
+  }
+  
+  private static List<String> loadDDbCollections() {
+    List<String> result = new ArrayList<String>();
+    String sparql = "prefix dc: <http://purl.org/dc/terms/> "
+            + "select ?id "
+            + "from <http://papyri.info/graph> "
+            + "where { <http://papyri.info/ddbdp> dc:hasPart ?id } "
+            + "order by desc(?id)";
+    try {
+        URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+        JsonNode root = getJson(m);
+        Iterator<JsonNode> i = root.path("results").path("bindings").getElements();
+        while (i.hasNext()) {
+          result.add(i.next().path("id").path("value").asText());
+        }
+      } catch (Exception e) {
+        logger.error("Failed to resolve URI.", e);
+      }
+    return result;
   }
 }

@@ -166,6 +166,15 @@
     </tr>
   </xsl:template>
   
+  <xsl:template match="t:div[@type = 'commentary'][@subtype = 'mentionedDates']" mode="metadata">
+    <tr>
+      <th>Mentioned Dates</th>
+      <td><ul><xsl:for-each select="t:list/t:item">
+        <li><b><xsl:value-of select="t:ref"/>:</b> <xsl:value-of select="t:date"/></li>
+      </xsl:for-each></ul></td>
+    </tr>
+  </xsl:template>
+  
   <!-- Print Illustrations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='illustrations']" mode="metadata">
     <tr>

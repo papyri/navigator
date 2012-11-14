@@ -20,6 +20,8 @@ public class GitWrapperTest {
   
   public GitWrapperTest() {
   }
+  
+  private String base = "/data/papyri.info/idp.data";
 
   @BeforeClass
   public static void setUpClass() throws Exception {
@@ -35,14 +37,33 @@ public class GitWrapperTest {
   @Test
   public void testFilenameToUriDDbDP() {
     System.out.println("filenameToUri for DDbDP");
-    String file = "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml";
+    String file = base + "/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml";
     String expResult = "http://papyri.info/ddbdp/bgu;1;2/source";
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
   
   @Test
+  public void test2LevelFilenameToUriDDbDP() {
+    System.out.println("2 level filenameToUri for DDbDP");
+    String file = base + "/DDB_EpiDoc_XML/p.vet.aelii/p.vet.aelii.9.xml";
+    String expResult = "http://papyri.info/ddbdp/p.vet.aelii;;9/source";
+    String result = GitWrapper.filenameToUri(file);
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testLookupDDbDPID() {
+    System.out.println("Looking up DDbDP ID");
+    String id = "http://papyri.info/apis/gothenburg.apis.14/source";
+    String expResult = "http://papyri.info/ddbdp/sb;20";
+    String result = GitWrapper.lookupDDbDPID(id);
+    assertEquals(expResult, result);
+  }
+  
+  @Test
   public void testBrokenFilenameToURI() {
+    System.out.println("Broken filename to URI");
     String file = "DDB_EpiDoc_XML/p.rain.unterricht/p.rain.unterricht. /p.rain.unterricht. .61.xml";
     String expResult = "";
     String result = GitWrapper.filenameToUri(file);

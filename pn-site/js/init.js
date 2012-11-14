@@ -46,7 +46,7 @@ function init() {
       },
       timeout: 10000
     });
-    jQuery.getJSON("/sparql/?query="
+    jQuery.getJSON("/sparql?query="
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
         + "select ?subject "
         + "from <http://papyri.info/graph> "
