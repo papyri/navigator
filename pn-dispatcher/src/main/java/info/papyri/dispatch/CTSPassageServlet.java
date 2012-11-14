@@ -242,6 +242,7 @@ public class CTSPassageServlet extends HttpServlet {
     
     private void matchRef(String localName, Attributes atts) {
       xmlns = false;
+      
       if ("div".equals(localName) && "textPart".equals(atts.getValue("type"))) {
         String n = atts.getValue("n");
         if (n != null) {
@@ -249,20 +250,20 @@ public class CTSPassageServlet extends HttpServlet {
         }
       }
       if ("lb".equals(localName)) {
-        if (stopNext) {
-          write = false;
-          return;
-        }
         String n = atts.getValue("n");
         if (n != null) {
           currentRef.addPart(n);
         }
       }
-      if (currentRef.equals(refStart)) {
+      if (stopNext && !refEnd.matches(currentRef)) {
+        write = false;
+        return;
+      }
+      if (refStart.matches(currentRef)) {
         write = true;
         xmlns = true;
       }
-      if (currentRef.equals(refEnd)) {
+      if (refEnd.matches(currentRef)) {
         stopNext = true;
       }
     }
@@ -292,8 +293,7 @@ public class CTSPassageServlet extends HttpServlet {
       return result.toString();
     }
     
-    @Override
-    public boolean equals(Object o) {
+    public boolean matches(Object o) {
       if (!(o instanceof Ref)) {
         return false;
       }
