@@ -57,7 +57,7 @@ public class CTSPassageServlet extends HttpServlet {
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
-    response.setContentType("text/html;charset=UTF-8");
+    response.setContentType("application/xml;charset=UTF-8");
     String cts = request.getParameter("urn");
     String id = FileUtils.substringAfter(cts, "urn:cts:papyri.info:ddbdp.", false);
     String location = FileUtils.substringAfter(id, ":", false);
