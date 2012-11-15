@@ -242,6 +242,7 @@ public class CTSPassageServlet extends HttpServlet {
     
     private void matchRef(String localName, Attributes atts) {
       xmlns = false;
+      
       if ("div".equals(localName) && "textpart".equals(atts.getValue("type"))) {
         if (atts.getIndex("subtype") < 0) {
           currentRef.removePart("side");

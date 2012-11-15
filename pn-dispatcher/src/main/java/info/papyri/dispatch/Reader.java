@@ -61,7 +61,7 @@ public class Reader extends HttpServlet {
       if (page.contains("current") && (page.contains("-citations-") || page.contains("index.html"))) {
         response.sendError(HttpServletResponse.SC_GONE);
       } else if (page.endsWith(".html")) {
-        if (page.contains("ddb/html") || page.contains("aggrega     ted/html")) {
+        if (page.contains("ddb/html") || page.contains("aggregated/html")) {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         } else if (page.contains("hgvmeta")) {
