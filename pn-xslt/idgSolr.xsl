@@ -162,13 +162,13 @@
             <field name="text">
               <xsl:value-of select="$orignfc"></xsl:value-of>
             </field>
-            <field name="transcription_id">
+            <!--<field name="transcription_id">
              <xsl:value-of
                 select="replace(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, '')"
                 />
             </field>
             <field name="transcription_id">
-        <!--      <xsl:value-of select="translate($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')"></xsl:value-of> -->
+        <!-\-      <xsl:value-of select="translate($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')"></xsl:value-of> -\->
               <xsl:value-of select="replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')"></xsl:value-of>
             </field>
             <field name="transcription_ic">
@@ -244,7 +244,7 @@
             </field>
             <xsl:if test="string-length($textnfd) > 0">
               <field name="has_transcription">true</field>
-            </xsl:if>
+            </xsl:if>-->
             <xsl:variable name="languages"
               select="distinct-values(//t:div[@type='edition']/descendant-or-self::*/@xml:lang)"/>
             <xsl:for-each select="//t:langUsage/t:language">
@@ -273,6 +273,7 @@
                     select="pi:get-docs($relations[contains(., '/apis/')][1], 'xml')"/>
                   <xsl:with-param name="alterity">other</xsl:with-param>
                 </xsl:call-template>
+                <xsl:message>Calling metadata</xsl:message>
                 <xsl:call-template name="metadata">
                   <xsl:with-param name="hgv-docs"
                     select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
