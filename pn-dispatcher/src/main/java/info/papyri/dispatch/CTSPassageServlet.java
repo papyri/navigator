@@ -68,6 +68,7 @@ public class CTSPassageServlet extends HttpServlet {
     if (location.length() > 0) {
       PrintWriter out = response.getWriter();
       CTSContentHandler handler = new CTSContentHandler();
+      handler.setup(out);
       handler.parseReference(location);
       try {
         XMLReader reader = XMLReaderFactory.createXMLReader();
@@ -130,19 +131,23 @@ public class CTSPassageServlet extends HttpServlet {
     private Ref currentRef = new Ref();
     
     
+    public void setup(PrintWriter out) {
+      this.out = out;
+    }
+    
     public void parseReference(String location) {
       if (location.contains("-")) {
         String[] loc = location.split("-");
-        String[] start = loc[0].split(".");
+        String[] start = loc[0].split("\\.");
         for (int i = 0; i < start.length; i++) {
           refStart.addPart(start[i]);
         }
-        String[] end = loc[1].split(".");
+        String[] end = loc[1].split("\\.");
         for (int i = 0; i < end.length; i++) {
           refEnd.addPart(end[i]);
         }
       } else {
-        String[] start = location.split(".");
+        String[] start = location.split("\\.");
         for (int i = 0; i < start.length; i++) {
           refStart.addPart(start[i]);
           refEnd.addPart(start[i]);
@@ -185,6 +190,10 @@ public class CTSPassageServlet extends HttpServlet {
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
       matchRef(localName, atts);
       if (write) {
+        if (inElt) {
+          out.write(">");
+          inElt = false;
+        }
         out.write("<");
         out.write(qName);
         for (int i = 0; i < atts.getLength(); i++) {
@@ -238,16 +247,26 @@ public class CTSPassageServlet extends HttpServlet {
     private void matchRef(String localName, Attributes atts) {
       xmlns = false;
       
-      if ("div".equals(localName) && "textPart".equals(atts.getValue("type"))) {
+      if ("div".equals(localName) && "textpart".equals(atts.getValue("type"))) {
+        if (atts.getIndex("subtype") < 0) {
+          currentRef.removePart("side");
+        } else {
+          currentRef.removePart(atts.getValue("subtype"));
+        }
         String n = atts.getValue("n");
         if (n != null) {
-          currentRef.addPart(n);
+          if (atts.getIndex("subtype") < 0) {
+            currentRef.addPart(n, "side");
+          } else {
+            currentRef.addPart(n, atts.getValue("subtype"));
+          }
         }
       }
       if ("lb".equals(localName)) {
+        currentRef.removePart("line");
         String n = atts.getValue("n");
         if (n != null) {
-          currentRef.addPart(n);
+          currentRef.addPart(n, "line");
         }
       }
       if (stopNext && !refEnd.matches(currentRef)) {
@@ -267,10 +286,30 @@ public class CTSPassageServlet extends HttpServlet {
   class Ref {
     
     private List<String> ref = new ArrayList<String>();
+    private List<String> parts = new ArrayList<String>();
     
     public void addPart(String part) {
       ref.add(part);
     }
+    
+    public void addPart(String part, String label) {
+      ref.add(part);
+      parts.add(label);
+    }
+    
+    public void removePart(String label) {
+      int remove = parts.indexOf(label);
+      if (remove > 0) {
+        int size = parts.size();
+        for (int i = 0; i < size; i++) {
+          if (i >= remove) {
+            parts.remove(i);
+            ref.remove(i);
+          }
+        }
+      }
+    }
+    
     
     public String last() {
       return ref.get(ref.size() - 1);
