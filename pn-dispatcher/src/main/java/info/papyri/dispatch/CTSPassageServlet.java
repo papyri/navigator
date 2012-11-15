@@ -42,7 +42,8 @@ public class CTSPassageServlet extends HttpServlet {
     super.init(config);
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
-    util = new FileUtils(xmlPath, htmlPath);
+    System.out.println("XML Path: " + xmlPath);
+    util = new FileUtils("/data/papyri.info/idp.data", htmlPath);
   }
 
   /**
@@ -59,12 +60,9 @@ public class CTSPassageServlet extends HttpServlet {
           throws ServletException, IOException {
     response.setContentType("application/xml;charset=UTF-8");
     String cts = request.getParameter("urn");
-    System.out.println(cts);
     String id = FileUtils.substringAfter(cts, "urn:cts:papyri.info:ddbdp.", false);
     String location = FileUtils.substringAfter(id, ":", false);
     File f = util.getXmlFile("ddbdp", FileUtils.substringBefore(id, ":"));
-    System.out.println(f.getAbsolutePath());
-    System.out.println(location);
     if (location.length() > 0) {
       PrintWriter out = response.getWriter();
       CTSContentHandler handler = new CTSContentHandler();
@@ -73,7 +71,6 @@ public class CTSPassageServlet extends HttpServlet {
       try {
         XMLReader reader = XMLReaderFactory.createXMLReader();
         reader.setContentHandler(handler);
-        reader.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
         reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
         reader.setFeature("http://xml.org/sax/features/validation", false);
         InputSource is = new InputSource(new java.io.FileInputStream(f));
@@ -108,7 +105,6 @@ public class CTSPassageServlet extends HttpServlet {
         }
       } catch (IOException e) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        System.out.println("Failed to send " + f);
       } finally {
         reader.close();
         out.close();
@@ -130,11 +126,10 @@ public class CTSPassageServlet extends HttpServlet {
     private Ref refEnd = new Ref();
     private Ref currentRef = new Ref();
     
-    
     public void setup(PrintWriter out) {
       this.out = out;
-    }
-    
+    }   
+ 
     public void parseReference(String location) {
       if (location.contains("-")) {
         String[] loc = location.split("-");
@@ -158,18 +153,18 @@ public class CTSPassageServlet extends HttpServlet {
 
     @Override
     public void setDocumentLocator(Locator lctr) {
-      throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void startDocument() throws SAXException {
       out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
       out.write("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">");
+      out.write("<text><div><ab>");
     }
 
     @Override
     public void endDocument() throws SAXException {
-      out.write("</TEI>");
+      out.write("</text></div></ab></TEI>");
     }
 
     @Override
@@ -212,6 +207,7 @@ public class CTSPassageServlet extends HttpServlet {
       if (write) {
         if (inElt) {
           out.write("/>");
+          inElt = false;
         } else {
           out.write("</");
           out.write(qName);
@@ -268,7 +264,7 @@ public class CTSPassageServlet extends HttpServlet {
         if (n != null) {
           currentRef.addPart(n, "line");
         }
-      }
+      } 
       if (stopNext && !refEnd.matches(currentRef)) {
         write = false;
         return;
@@ -299,18 +295,14 @@ public class CTSPassageServlet extends HttpServlet {
     
     public void removePart(String label) {
       int remove = parts.indexOf(label);
-      if (remove > 0) {
-        int size = parts.size();
-        for (int i = 0; i < size; i++) {
-          if (i >= remove) {
-            parts.remove(i);
-            ref.remove(i);
-          }
+      if (remove >= 0) {
+        for (int i = parts.size() - 1; i >= remove; i--) {
+          parts.remove(i);
+          ref.remove(i);
         }
       }
     }
-    
-    
+ 
     public String last() {
       return ref.get(ref.size() - 1);
     }
@@ -332,6 +324,9 @@ public class CTSPassageServlet extends HttpServlet {
         return false;
       }
       Ref r = (Ref)o;
+      if (r.ref.size() < ref.size()) {
+        return false;
+      }
       for (int i = 0; i < ref.size(); i++) {
         if (!ref.get(i).equals(r.ref.get(i))) {
           return false;
