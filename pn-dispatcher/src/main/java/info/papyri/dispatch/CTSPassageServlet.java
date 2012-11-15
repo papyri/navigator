@@ -42,7 +42,8 @@ public class CTSPassageServlet extends HttpServlet {
     super.init(config);
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
-    util = new FileUtils(xmlPath, htmlPath);
+    System.out.println("XML Path: " + xmlPath);
+    util = new FileUtils("/data/papyri.info/idp.data", htmlPath);
   }
 
   /**
@@ -59,20 +60,17 @@ public class CTSPassageServlet extends HttpServlet {
           throws ServletException, IOException {
     response.setContentType("application/xml;charset=UTF-8");
     String cts = request.getParameter("urn");
-    System.out.println(cts);
     String id = FileUtils.substringAfter(cts, "urn:cts:papyri.info:ddbdp.", false);
     String location = FileUtils.substringAfter(id, ":", false);
     File f = util.getXmlFile("ddbdp", FileUtils.substringBefore(id, ":"));
-    System.out.println(f.getAbsolutePath());
-    System.out.println(location);
     if (location.length() > 0) {
       PrintWriter out = response.getWriter();
       CTSContentHandler handler = new CTSContentHandler();
+      handler.setup(out);
       handler.parseReference(location);
       try {
         XMLReader reader = XMLReaderFactory.createXMLReader();
         reader.setContentHandler(handler);
-        reader.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
         reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
         reader.setFeature("http://xml.org/sax/features/validation", false);
         InputSource is = new InputSource(new java.io.FileInputStream(f));
@@ -107,7 +105,6 @@ public class CTSPassageServlet extends HttpServlet {
         }
       } catch (IOException e) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        System.out.println("Failed to send " + f);
       } finally {
         reader.close();
         out.close();
@@ -129,20 +126,23 @@ public class CTSPassageServlet extends HttpServlet {
     private Ref refEnd = new Ref();
     private Ref currentRef = new Ref();
     
-    
+    public void setup(PrintWriter out) {
+      this.out = out;
+    }   
+ 
     public void parseReference(String location) {
       if (location.contains("-")) {
         String[] loc = location.split("-");
-        String[] start = loc[0].split(".");
+        String[] start = loc[0].split("\\.");
         for (int i = 0; i < start.length; i++) {
           refStart.addPart(start[i]);
         }
-        String[] end = loc[1].split(".");
+        String[] end = loc[1].split("\\.");
         for (int i = 0; i < end.length; i++) {
           refEnd.addPart(end[i]);
         }
       } else {
-        String[] start = location.split(".");
+        String[] start = location.split("\\.");
         for (int i = 0; i < start.length; i++) {
           refStart.addPart(start[i]);
           refEnd.addPart(start[i]);
@@ -153,18 +153,18 @@ public class CTSPassageServlet extends HttpServlet {
 
     @Override
     public void setDocumentLocator(Locator lctr) {
-      throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void startDocument() throws SAXException {
       out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
       out.write("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">");
+      out.write("<text><div><ab>");
     }
 
     @Override
     public void endDocument() throws SAXException {
-      out.write("</TEI>");
+      out.write("</text></div></ab></TEI>");
     }
 
     @Override
@@ -185,6 +185,10 @@ public class CTSPassageServlet extends HttpServlet {
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
       matchRef(localName, atts);
       if (write) {
+        if (inElt) {
+          out.write(">");
+          inElt = false;
+        }
         out.write("<");
         out.write(qName);
         for (int i = 0; i < atts.getLength(); i++) {
@@ -203,6 +207,7 @@ public class CTSPassageServlet extends HttpServlet {
       if (write) {
         if (inElt) {
           out.write("/>");
+          inElt = false;
         } else {
           out.write("</");
           out.write(qName);
@@ -237,19 +242,28 @@ public class CTSPassageServlet extends HttpServlet {
     
     private void matchRef(String localName, Attributes atts) {
       xmlns = false;
-      
-      if ("div".equals(localName) && "textPart".equals(atts.getValue("type"))) {
+      if ("div".equals(localName) && "textpart".equals(atts.getValue("type"))) {
+        if (atts.getIndex("subtype") < 0) {
+          currentRef.removePart("side");
+        } else {
+          currentRef.removePart(atts.getValue("subtype"));
+        }
         String n = atts.getValue("n");
         if (n != null) {
-          currentRef.addPart(n);
+          if (atts.getIndex("subtype") < 0) {
+            currentRef.addPart(n, "side");
+          } else {
+            currentRef.addPart(n, atts.getValue("subtype"));
+          }
         }
       }
       if ("lb".equals(localName)) {
+        currentRef.removePart("line");
         String n = atts.getValue("n");
         if (n != null) {
-          currentRef.addPart(n);
+          currentRef.addPart(n, "line");
         }
-      }
+      } 
       if (stopNext && !refEnd.matches(currentRef)) {
         write = false;
         return;
@@ -267,11 +281,27 @@ public class CTSPassageServlet extends HttpServlet {
   class Ref {
     
     private List<String> ref = new ArrayList<String>();
+    private List<String> parts = new ArrayList<String>();
     
     public void addPart(String part) {
       ref.add(part);
     }
     
+    public void addPart(String part, String label) {
+      ref.add(part);
+      parts.add(label);
+    }
+    
+    public void removePart(String label) {
+      int remove = parts.indexOf(label);
+      if (remove >= 0) {
+        for (int i = parts.size() - 1; i >= remove; i--) {
+          parts.remove(i);
+          ref.remove(i);
+        }
+      }
+    }
+ 
     public String last() {
       return ref.get(ref.size() - 1);
     }
@@ -293,6 +323,9 @@ public class CTSPassageServlet extends HttpServlet {
         return false;
       }
       Ref r = (Ref)o;
+      if (r.ref.size() < ref.size()) {
+        return false;
+      }
       for (int i = 0; i < ref.size(); i++) {
         if (!ref.get(i).equals(r.ref.get(i))) {
           return false;
