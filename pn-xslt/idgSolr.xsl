@@ -87,9 +87,11 @@
         <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
           <xsl:when test="$collection = 'ddbdp'">
-            <field name="id">urn:cts:papyri.info:ddbdp.<xsl:value-of select="/TEI/teiHeader/fileDesc/publicationStmt/t:idno[@type='ddb-hybrid']"/></field>
+            <field name="id">urn:cts:papyri.info:ddbdp.<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']"/></field>
             <field name="type">work</field>
-            <xsl:for-each
+            <field name="identifier">http://papyri.info/ddbdp/<xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']"
+            /></field>
+            <!--<xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type != 'HGV']">
               <xsl:choose>
                 <xsl:when test="@type='ddb-hybrid'">
@@ -117,18 +119,18 @@
                   </xsl:choose>
                 </xsl:otherwise>
               </xsl:choose>
-            </xsl:for-each>
+            </xsl:for-each>-->
             <!--<xsl:for-each select="$relations">
               <field name="identifier">
                 <xsl:value-of select="."/>
               </field>
             </xsl:for-each>-->
-            <xsl:for-each
+            <!--<xsl:for-each
               select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'HGV']">
               <xsl:for-each select="tokenize(., ' ')">
                 <field name="identifier">http://papyri.info/hgv/<xsl:value-of select="."/></field>
               </xsl:for-each>
-            </xsl:for-each>
+            </xsl:for-each>-->
             <xsl:variable name="text">
               <xsl:variable name="temp-reg-edition">
                 <xsl:element name="reg-edition-wrapper">
@@ -301,12 +303,12 @@
           </xsl:when>
           <xsl:when test="$collection = 'hgv'">
             <field name="id"><xsl:value-of select="$id"/></field>
-            <xsl:for-each
+            <!--<xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'TM']">
               <field name="identifier">
                 <xsl:value-of select="."/>
               </field>
-            </xsl:for-each>
+            </xsl:for-each>-->
             <xsl:call-template name="facetfields">
               <xsl:with-param name="docs" select="/"/>
               <xsl:with-param name="alterity">self</xsl:with-param>
