@@ -78,12 +78,12 @@
         <xsl:if test="$ddbdp = true()">
           <field name="collection">ddbdp</field>
         </xsl:if>
-        <xsl:if test="$hgv = true()">
+        <!--<xsl:if test="$hgv = true()">
           <field name="collection">hgv</field>
-        </xsl:if>
-        <xsl:if test="$apis = true()">
+        </xsl:if>-->
+        <!--<xsl:if test="$apis = true()">
           <field name="collection">apis</field>
-        </xsl:if>
+        </xsl:if>-->
         <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
           <xsl:when test="$collection = 'ddbdp'">
