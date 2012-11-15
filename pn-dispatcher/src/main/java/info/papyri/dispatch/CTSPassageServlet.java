@@ -63,6 +63,7 @@ public class CTSPassageServlet extends HttpServlet {
     String location = FileUtils.substringAfter(id, ":", false);
     File f = util.getXmlFile("ddbdp", FileUtils.substringBefore(id, ":"));
     if (location.length() > 0) {
+      PrintWriter out = response.getWriter();
       CTSContentHandler handler = new CTSContentHandler();
       handler.parseReference(location);
       try {
@@ -77,26 +78,16 @@ public class CTSPassageServlet extends HttpServlet {
       } catch (Exception e) {
         e.printStackTrace();
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      } finally {      
+        out.close();
       }
     } else {
       send(response, f);
     }
     
     
-    PrintWriter out = response.getWriter();
-    try {
-      /* TODO output your page here. You may use following sample code. */
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<title>Servlet CTSPassageServlet</title>");      
-      out.println("</head>");
-      out.println("<body>");
-      out.println("<h1>Servlet CTSPassageServlet at " + request.getContextPath() + "</h1>");
-      out.println("</body>");
-      out.println("</html>");
-    } finally {      
-      out.close();
-    }
+
+    
   }
   
   private void send(HttpServletResponse response, File f)
@@ -134,6 +125,7 @@ public class CTSPassageServlet extends HttpServlet {
     private Ref refStart = new Ref();
     private Ref refEnd = new Ref();
     private Ref currentRef = new Ref();
+    
     
     public void parseReference(String location) {
       if (location.contains("-")) {
