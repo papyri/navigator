@@ -118,11 +118,11 @@
                 </xsl:otherwise>
               </xsl:choose>
             </xsl:for-each>
-            <xsl:for-each select="$relations">
+            <!--<xsl:for-each select="$relations">
               <field name="identifier">
                 <xsl:value-of select="."/>
               </field>
-            </xsl:for-each>
+            </xsl:for-each>-->
             <xsl:for-each
               select="t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'HGV']">
               <xsl:for-each select="tokenize(., ' ')">
