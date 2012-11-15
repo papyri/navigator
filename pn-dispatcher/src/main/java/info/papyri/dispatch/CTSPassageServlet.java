@@ -59,9 +59,12 @@ public class CTSPassageServlet extends HttpServlet {
           throws ServletException, IOException {
     response.setContentType("application/xml;charset=UTF-8");
     String cts = request.getParameter("urn");
+    System.out.println(cts);
     String id = FileUtils.substringAfter(cts, "urn:cts:papyri.info:ddbdp.", false);
     String location = FileUtils.substringAfter(id, ":", false);
     File f = util.getXmlFile("ddbdp", FileUtils.substringBefore(id, ":"));
+    System.out.println(f.getAbsolutePath());
+    System.out.println(location);
     if (location.length() > 0) {
       PrintWriter out = response.getWriter();
       CTSContentHandler handler = new CTSContentHandler();
