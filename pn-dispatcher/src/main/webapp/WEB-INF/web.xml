@@ -209,8 +209,8 @@
         <url-pattern>/atom/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CTSPassageServlet</servlet-name>
-        <url-pattern>/CTSPassageServlet</url-pattern>
+        <servlet-name>CTSServlet</servlet-name>
+        <url-pattern>/CTSServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
