@@ -158,13 +158,10 @@ public class CTSPassageServlet extends HttpServlet {
     @Override
     public void startDocument() throws SAXException {
       out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-      out.write("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">");
-      out.write("<text><div><ab>");
     }
 
     @Override
     public void endDocument() throws SAXException {
-      out.write("</text></div></ab></TEI>");
     }
 
     @Override
@@ -184,7 +181,7 @@ public class CTSPassageServlet extends HttpServlet {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
       matchRef(localName, atts);
-      if (write) {
+      if (currentRef.isPartOf(refStart) || write) {
         if (inElt) {
           out.write(">");
           inElt = false;
@@ -204,7 +201,7 @@ public class CTSPassageServlet extends HttpServlet {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-      if (write) {
+      if (currentRef.isPartOf(refStart) || write) {
         if (inElt) {
           out.write("/>");
           inElt = false;
@@ -218,7 +215,7 @@ public class CTSPassageServlet extends HttpServlet {
 
     @Override
     public void characters(char[] chars, int start, int len) throws SAXException {
-      if (write) {
+      if (currentRef.isPartOf(refStart) || write) {
         if (inElt) {
           out.write(">");
           inElt = false;
@@ -319,11 +316,7 @@ public class CTSPassageServlet extends HttpServlet {
       return result.toString();
     }
     
-    public boolean matches(Object o) {
-      if (!(o instanceof Ref)) {
-        return false;
-      }
-      Ref r = (Ref)o;
+    public boolean matches(Ref r) {
       if (r.ref.size() < ref.size()) {
         return false;
       }
@@ -333,6 +326,10 @@ public class CTSPassageServlet extends HttpServlet {
         }
       }
       return true;
+    }
+    
+    public boolean isPartOf(Ref r) {
+      return ref.size() == 0 || r.toString().contains(toString());
     }
   }
 
