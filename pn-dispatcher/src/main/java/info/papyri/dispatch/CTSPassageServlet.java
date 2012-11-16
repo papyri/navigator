@@ -214,9 +214,6 @@ public class CTSPassageServlet extends HttpServlet {
       if ("div".equals(localName)) {
         currentRef.pop();
       }
-      if ("lb".equals(localName)) {
-        currentRef.removePart("line");
-      }
     }
 
     @Override
@@ -257,6 +254,7 @@ public class CTSPassageServlet extends HttpServlet {
         }
       }
       if ("lb".equals(localName)) {
+        currentRef.removePart("line");
         String n = atts.getValue("n");
         if (n != null) {
           currentRef.addPart(n, "line");
