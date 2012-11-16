@@ -201,6 +201,9 @@ public class CTSPassageServlet extends HttpServlet {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
+      if ("lb".equals(localName) || "div".equals(localName)) {
+        currentRef.pop();
+      }
       if (currentRef.isPartOf(refStart) || write) {
         if (inElt) {
           out.write("/>");
@@ -241,11 +244,6 @@ public class CTSPassageServlet extends HttpServlet {
       xmlns = false;
       
       if ("div".equals(localName) && "textpart".equals(atts.getValue("type"))) {
-        if (atts.getIndex("subtype") < 0) {
-          currentRef.removePart("side");
-        } else {
-          currentRef.removePart(atts.getValue("subtype"));
-        }
         String n = atts.getValue("n");
         if (n != null) {
           if (atts.getIndex("subtype") < 0) {
@@ -256,7 +254,6 @@ public class CTSPassageServlet extends HttpServlet {
         }
       }
       if ("lb".equals(localName)) {
-        currentRef.removePart("line");
         String n = atts.getValue("n");
         if (n != null) {
           currentRef.addPart(n, "line");
@@ -283,6 +280,7 @@ public class CTSPassageServlet extends HttpServlet {
     
     public void addPart(String part) {
       ref.add(part);
+      parts.add(Integer.toString(ref.size()));
     }
     
     public void addPart(String part, String label) {
@@ -297,6 +295,14 @@ public class CTSPassageServlet extends HttpServlet {
           parts.remove(i);
           ref.remove(i);
         }
+      }
+    }
+    
+    public void pop() {
+      int remove = ref.size() - 1;
+      if (remove >= 0) {
+        parts.remove(remove);
+        ref.remove(remove);
       }
     }
  
