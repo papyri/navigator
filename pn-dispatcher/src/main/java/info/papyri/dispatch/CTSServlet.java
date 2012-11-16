@@ -30,12 +30,14 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author hcayless
  */
-public class CTSPassageServlet extends HttpServlet {
+public class CTSServlet extends HttpServlet {
   
   private String xmlPath = "";
   private String htmlPath = "";
   private FileUtils util;
   private byte[] buffer = new byte[8192];
+  File inventory = new File("/data/papyri.info/cts/fakeTextInventory.xml");
+
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -59,33 +61,38 @@ public class CTSPassageServlet extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("application/xml;charset=UTF-8");
-    String cts = request.getParameter("urn");
-    String id = FileUtils.substringAfter(cts, "urn:cts:papyri.info:ddbdp.", false);
-    String location = FileUtils.substringAfter(id, ":", false);
-    File f = util.getXmlFile("ddbdp", FileUtils.substringBefore(id, ":"));
-    if (location.length() > 0) {
-      PrintWriter out = response.getWriter();
-      CTSContentHandler handler = new CTSContentHandler();
-      handler.setup(out);
-      handler.parseReference(location);
-      try {
-        XMLReader reader = XMLReaderFactory.createXMLReader();
-        reader.setContentHandler(handler);
-        reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
-        reader.setFeature("http://xml.org/sax/features/validation", false);
-        InputSource is = new InputSource(new java.io.FileInputStream(f));
-        is.setSystemId(f.getAbsoluteFile().getParentFile().getAbsolutePath() + "/");
-        reader.parse(is);
-      } catch (Exception e) {
-        e.printStackTrace();
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      } finally {      
-        out.close();
-      }
-    } else {
-      send(response, f);
+    String req = request.getParameter("request");
+    if ("GetCapabilities".equals(req)) {
+      send(response,inventory);
     }
-    
+    if ("GetPassage".equals(req)) {
+      String cts = request.getParameter("urn");
+      String id = FileUtils.substringAfter(cts, "urn:cts:papyri.info:ddbdp.", false);
+      String location = FileUtils.substringAfter(id, ":", false);
+      File f = util.getXmlFile("ddbdp", FileUtils.substringBefore(id, ":"));
+      if (location.length() > 0) {
+        PrintWriter out = response.getWriter();
+        CTSContentHandler handler = new CTSContentHandler();
+        handler.setup(out);
+        handler.parseReference(location);
+        try {
+          XMLReader reader = XMLReaderFactory.createXMLReader();
+          reader.setContentHandler(handler);
+          reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+          reader.setFeature("http://xml.org/sax/features/validation", false);
+          InputSource is = new InputSource(new java.io.FileInputStream(f));
+          is.setSystemId(f.getAbsoluteFile().getParentFile().getAbsolutePath() + "/");
+          reader.parse(is);
+        } catch (Exception e) {
+          e.printStackTrace();
+          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {      
+          out.close();
+        }
+      } else {
+        send(response, f);
+      }
+    }
     
 
     

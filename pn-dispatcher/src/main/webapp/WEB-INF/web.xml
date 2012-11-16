@@ -169,8 +169,16 @@
         </init-param>
     </servlet>
     <servlet>
-        <servlet-name>CTSPassageServlet</servlet-name>
-        <servlet-class>info.papyri.dispatch.CTSPassageServlet</servlet-class>
+        <servlet-name>CTSServlet</servlet-name>
+        <servlet-class>info.papyri.dispatch.CTSServlet</servlet-class>
+        <init-param>
+            <param-name>xmlPath</param-name>
+            <param-value>/data/papyri.info/idp.data</param-value>
+        </init-param>
+        <init-param>
+            <param-name>htmlPath</param-name>
+            <param-value>/data/papyri.info/pn/idp.html</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
