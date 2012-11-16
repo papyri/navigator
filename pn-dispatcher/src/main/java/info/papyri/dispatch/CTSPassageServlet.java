@@ -201,8 +201,11 @@ public class CTSPassageServlet extends HttpServlet {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-      if ("lb".equals(localName) || "div".equals(localName)) {
+      if ("div".equals(localName)) {
         currentRef.pop();
+      }
+      if ("lb".equals(localName)) {
+        currentRef.removePart("line");
       }
       if (currentRef.isPartOf(refStart) || write) {
         if (inElt) {
