@@ -203,9 +203,6 @@ public class CTSPassageServlet extends HttpServlet {
     public void endElement(String uri, String localName, String qName) throws SAXException {
       if ("div".equals(localName)) {
         currentRef.removePart("line");
-        if (write) {
-          currentRef.pop();
-        }
       }
       if (currentRef.isPartOf(refStart) || write) {
         if (inElt) {
@@ -216,6 +213,9 @@ public class CTSPassageServlet extends HttpServlet {
           out.write(qName);
           out.write(">");
         }
+      }
+      if ("div".equals(localName)) {
+        currentRef.pop();
       }
     }
 
