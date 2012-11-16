@@ -208,7 +208,7 @@ public class CTSServlet extends HttpServlet {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-      if ("div".equals(localName)) {
+      if ("ab".equals(localName)) {
         currentRef.removePart("line");
       }
       if (currentRef.isPartOf(refStart) || write) {
