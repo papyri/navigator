@@ -510,9 +510,9 @@ public class CTSServlet extends HttpServlet {
     @Override
     public String toString() {
       StringBuilder result = new StringBuilder();
-      for (String p : ref) {
-        result.append(p);
-        if (!p.equals(last())) {
+      for (int i = 0; i < ref.size(); i++) {
+        result.append(ref.get(i));
+        if (i < ref.size() - 1) {
           result.append(".");
         }
       }
