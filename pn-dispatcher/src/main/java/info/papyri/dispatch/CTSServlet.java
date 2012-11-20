@@ -294,7 +294,13 @@ public class CTSServlet extends HttpServlet {
     }
 
     @Override
-    public void endElement(String string, String string1, String string2) throws SAXException {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+      if ("ab".equals(localName)) {
+        currentRef.removePart("line");
+      }
+      if ("div".equals(localName)) {
+        currentRef.pop();
+      }
     }
 
     @Override
@@ -535,7 +541,7 @@ public class CTSServlet extends HttpServlet {
     }
     
     public boolean isPartOf(Ref r) {
-      return ref.isEmpty() || r.contains(this);
+      return !ref.isEmpty() && r.contains(this);
     }
   }
 
