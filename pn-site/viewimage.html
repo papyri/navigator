@@ -3,15 +3,26 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Papyri.info</title>
-  <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <style type="text/css" media="screen">
+    html {
+      min-height:100%;
+      height:100%;
+    }
+    body {
+      height: 100%;
+    }
+    div#bd {
+      height: 100%;
+    }
+  </style>
   <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
 
     var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-19774706-1']);<a href="feedback.html" id="" title="feedback">feedback</a>
+    _gaq.push(['_setAccount', 'UA-19774706-1']);
     _gaq.push(['_trackPageview']);
 
     (function() {
@@ -24,19 +35,12 @@
 
 </head>
 
-<body onload="init()">
-  <div id="d">
-    <div id="hd">
-      <h1>Papyri.info</h1>
-      <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>
-   </div>
-    <div id="bd">
-      <div id="image"></div>
-      <div id="select">
-        <select name="images" id="images" multiple onchange="" size="1">
-        </select>
-      </div>
-    </div>
+<body>
+  <div id="bd">
+    <div id="image" style="height:80%"></div>
+    <div id="select">
+    <select name="images" id="images" onchange="" size="1">
+    </select>
   </div>
   <script type="text/javascript" charset="utf-8">
   var OUlayer;       // layer for an open layers map
@@ -98,13 +102,13 @@
 
       /* set the center of the map to the center of the height and width */      
       map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
-      map.zoomTo(2);
+      map.zoomTo(OUlayer.getViewerLevel());
 
   }
   jQuery.getJSON("/sparql?query="
           + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
           + "prefix rdf: <http://www.w3.org/2000/01/rdf-schema#>"
-          + "select ?o ?l"
+          + "select ?o ?l "
           + "from <http://papyri.info/graph> "
           + "where { <http://papyri.info" + getPath() + "> ?p ?o . "
           + "        ?o rdf:label ?l } order by ?p")
@@ -113,8 +117,8 @@
                   jQuery.each(data.results.bindings, function(i, row) {
                       var val = row.o.value;
                       jQuery("#images").append('<option value="'+ val + '">' + row.l.value +'</option>');
-                      
-                  })
+                  });
+                  initImage();
               }
       });
   </script>
