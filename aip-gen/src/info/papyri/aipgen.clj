@@ -54,9 +54,9 @@
         ls (deref (get lists id))]
     (for [file (filter (fn [f] (not (.isDirectory f))) files)
           :let [fid (lpad (str (swap! id-counter inc)) 8)]]
-        (element :mets:file {:ID (str id "-" fid), :CHECKSUM (sha1 file), 
+        (element :mets:file {:ID (str (name id) "-" fid), :CHECKSUM (sha1 file), 
                              :CHECKSUMTYPE "SHA-1"}
-          (do (.put ls (.getPath file) (str id "-" fid))
+          (do (.put ls (.getPath file) (str (name id) "-" fid))
           (element :mets:FLocat {:LOCTYPE "URL" :xlink:type "simple" 
                    :xlink:href (substring-after (.getPath file) (str base "/"))}))))))
                    
@@ -81,18 +81,17 @@
         (element :mets:agent {:ROLE "DISSEMINATOR", :TYPE "ORGANIZATION"} "NYU Digital Library Technology Services"))
       (element :mets:fileSec {}
         (element :mets:fileGrp {:ADMID "git-md"}
-          (dosync (ref-set current-list :git))
-          (fileSec :git "git"))
+          (fileSec :git "git")))
         (element :mets:fileGrp {:ADMID "html-md"}
-          (do (dosync (ref-set current-list :html))
+          (do 
             (reset! id-counter 0)
             (fileSec :html "html")))
         (element :mets:fileGrp {:ADMID "text-md"}
-          (do (dosync (ref-set current-list :text))
+          (do 
             (reset! id-counter 0)
             (fileSec :text "text")))
         (element :mets:fileGrp {:ADMID "ddb-md"}
-          (do (dosync (ref-set current-list :xml))
+          (do 
             (reset! id-counter 0)
             (fileSec :xml "xml/DDB_EpiDoc_XML"))
           (fileSec :xml "xml/RDF"))
@@ -105,21 +104,26 @@
         (element :mets:fileGrp {:ADMID "biblio-md"}
           (fileSec :xml "xml/Biblio"))
         (element :mets:fileGrp {:ADMID "rdf-md"}
-          (do (dosync (ref-set current-list :rdf))
-          (reset! id-counter 0)
-          (fileSec :rdf "rdf"))))
+          (do 
+            (reset! id-counter 0)
+            (fileSec :rdf "rdf"))))
       (element :mets:structMap {:TYPE "PHYSICAL"}
         (element :mets:div {}
           (element :mets:div {:ORDER "1"}
-            (structMap (File. (str base "/files/data/" @package-dir "/git"))))
+            (do (dosync (ref-set current-list :git))
+              (structMap (File. (str base "/files/data/" @package-dir "/git"))))
           (element :mets:div {:ORDER "2"}
-            (structMap (File. (str base "/files/data/" @package-dir "/html"))))
+            (do (dosync (ref-set current-list :html))
+              (structMap (File. (str base "/files/data/" @package-dir "/html")))))
           (element :mets:div {:ORDER "3"}
-            (structMap (File. (str base "/files/data/" @package-dir "/text"))))
+            (do (dosync (ref-set current-list :text))
+              (structMap (File. (str base "/files/data/" @package-dir "/text")))))
           (element :mets:div {:ORDER "4"}
-            (structMap (File. (str base "/files/data/" @package-dir "/xml"))))
+            (do (dosync (ref-set current-list :xml))
+              (structMap (File. (str base "/files/data/" @package-dir "/xml")))))
           (element :mets:div {:ORDER "5"}
-            (structMap (File. (str base "/files/data/" @package-dir "/rdf"))))))) 
+            (do (dosync (ref-set current-list :rdf))
+              (structMap (File. (str base "/files/data/" @package-dir "/rdf"))))))) 
       out)))
         
 (defn -main
