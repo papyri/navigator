@@ -84,17 +84,17 @@
           (dosync (ref-set current-list :git))
           (fileSec :git "git"))
         (element :mets:fileGrp {:ADMID "html-md"}
-          (dosync (ref-set current-list :html))
-          (do (reset! id-counter 0)
-          (fileSec :html "html")))
+          (do (dosync (ref-set current-list :html))
+            (reset! id-counter 0)
+            (fileSec :html "html")))
         (element :mets:fileGrp {:ADMID "text-md"}
-          (dosync (ref-set current-list :text))
-          (do (reset! id-counter 0)
-          (fileSec :text "text")))
+          (do (dosync (ref-set current-list :text))
+            (reset! id-counter 0)
+            (fileSec :text "text")))
         (element :mets:fileGrp {:ADMID "ddb-md"}
-          (dosync (ref-set current-list :xml))
-          (do (reset! id-counter 0)
-          (fileSec :xml "xml/DDB_EpiDoc_XML"))
+          (do (dosync (ref-set current-list :xml))
+            (reset! id-counter 0)
+            (fileSec :xml "xml/DDB_EpiDoc_XML"))
           (fileSec :xml "xml/RDF"))
         (element :mets:fileGrp {:ADMID "apis-md"}
           (fileSec :xml "xml/APIS"))
@@ -105,8 +105,8 @@
         (element :mets:fileGrp {:ADMID "biblio-md"}
           (fileSec :xml "xml/Biblio"))
         (element :mets:fileGrp {:ADMID "rdf-md"}
-          (dosync (ref-set current-list :rdf))
-          (do (reset! id-counter 0)
+          (do (dosync (ref-set current-list :rdf))
+          (reset! id-counter 0)
           (fileSec :rdf "rdf"))))
       (element :mets:structMap {:TYPE "PHYSICAL"}
         (element :mets:div {}
