@@ -9,6 +9,9 @@
 (def base "/data/papyri.info/packages/AIP")
 (def package-dir (ref nil))
 (def id-counter (atom 0))
+(def lists {:git (ref (ConcurrentSkipListMap.)), :html (ref (ConcurrentSkipListMap.)), 
+  :text (ref (ConcurrentSkipListMap.)), :xml (ref (ConcurrentSkipListMap.)), :rdf (ref (ConcurrentSkipListMap.))})
+(def current-list (ref nil))
 
 (defn emit-fragment
   "Prints the given Element tree as XML text to stream.
@@ -41,17 +44,28 @@
     
 (defn sha1
   [file]
-  (let [dg (DigestUtils/sha1Hex (FileInputStream. file))]
-    (.toString dg)))
+  (with-open [fis (FileInputStream. file)]
+    (.toString (DigestUtils/sha1Hex fis))))
 
-(defn files
-  [dir]
-  (let [files (file-seq (File. (str base "/" @package-dir "/" dir)))]
-    (for [file (filter (fn [f] (not (.isDirectory f))) files)]
-        (element :mets:file {:ID (str dir "-" (lpad (str (swap! id-counter inc)) 6)), :CHECKSUM (sha1 file), 
+(defn fileSec
+  [id, dir]
+  (let [files (file-seq (File. (str base "/" @package-dir "/" dir)))
+        ls (deref (id lists))]
+    (for [file (filter (fn [f] (not (.isDirectory f))) files)
+          :let [fid (lpad (str (swap! id-counter inc)) 8)]]
+        (.put ls (.getPath file) (str id "-" fid))
+        (element :mets:file {:ID (str id "-" fid), :CHECKSUM (sha1 file), 
                              :CHECKSUMTYPE "SHA-1"}
           (element :mets:FLocat {:LOCTYPE "URL" :xlink:type "simple" 
-                   :xlink:href (substring-after (.getPath file) base)})))))
+                   :xlink:href (substring-after (.getPath file) (str base "/")})))))
+                   
+(defn structMap
+  [file]
+  (if (.isDirectory file)
+    (element :mets:div {:LABEL (.getName file)}
+      (for [f (.listFiles file)]
+        (structMap file)))
+    (element :mets:fptr {:FILEID ((.getPath file)(deref (@current-list lists)))})))
 
 (defn mets 
   [id, out]
@@ -66,24 +80,45 @@
         (element :mets:agent {:ROLE "DISSEMINATOR", :TYPE "ORGANIZATION"} "NYU Digital Library Technology Services"))
       (element :mets:fileSec {}
         (element :mets:fileGrp {:ADMID "git-md"}
-          (files "git"))
+          (dosync (ref-set current-list :git))
+          (files :git "git"))
         (element :mets:fileGrp {:ADMID "html-md"}
-          (files "html"))
+          (dosync (ref-set current-list :html))
+          (reset! id-counter 0)
+          (files :html "html"))
         (element :mets:fileGrp {:ADMID "text-md"}
-          (files "text"))
+          (dosync (ref-set current-list :text))
+          (reset! id-counter 0)
+          (files :text "text"))
         (element :mets:fileGrp {:ADMID "ddb-md"}
-          (files "xml/DDB_EpiDoc_XML")
-          (files "xml/RDF"))
+          (dosync (ref-set current-list :xml))
+          (reset! id-counter 0)
+          (files :xml "xml/DDB_EpiDoc_XML")
+          (files :xml "xml/RDF"))
         (element :mets:fileGrp {:ADMID "apis-md"}
-          (files "xml/APIS"))
+          (files :xml "xml/APIS"))
         (element :mets:fileGrp {:ADMID "hgv-md"}
-          (files "xml/HGV_meta_EpiDoc")
-          (files "xml/HGV_metadata")
-          (files "xml/HGV_trans_EpiDoc"))
+          (files :xml "xml/HGV_meta_EpiDoc")
+          (files :xml "xml/HGV_metadata")
+          (files :xml "xml/HGV_trans_EpiDoc"))
         (element :mets:fileGrp {:ADMID "biblio-md"}
-          (files "xml/Biblio"))
+          (files :xml "xml/Biblio"))
         (element :mets:fileGrp {:ADMID "rdf-md"}
-          (files "rdf")))) out)))
+          (dosync (ref-set current-list :rdf))
+          (reset! id-counter 0)
+          (files :rdf "rdf"))
+        (element :mets:structMap {:TYPE "PHYSICAL"}
+          (element :mets:div {}
+            (element :mets:div {:ORDER "1"}
+              (structMap (File. (str base "/files/data/git"))))
+            (element :mets:div {:ORDER "2"}
+              (structMap (File. (str base "/files/data/html"))))
+            (element :mets:div {:ORDER "3"}
+              (structMap (File. (str base "/files/data/text"))))    
+            (element :mets:div {:ORDER "4"}
+              (structMap (File. (str base "/files/data/xml")))) 
+            (element :mets:div {:ORDER "5"}
+              (structMap (File. (str base "/files/data/rdf")))))))) out)))
         
 (defn -main
   "I don't do a whole lot."
