@@ -110,19 +110,19 @@
       (element :mets:structMap {:TYPE "PHYSICAL"}
         (element :mets:div {}
           (element :mets:div {:ORDER "1"}
-            (do (dosync (ref-set current-list (:git lists)))
+            (do (dosync (ref-set current-list (deref (:git lists))))
               (structMap (File. (str base "/files/data/" @package-dir "/git")))))
           (element :mets:div {:ORDER "2"}
-            (do (dosync (ref-set current-list (:html lists)))
+            (do (dosync (ref-set current-list (deref (:html lists))))
               (structMap (File. (str base "/files/data/" @package-dir "/html")))))
           (element :mets:div {:ORDER "3"}
-            (do (dosync (ref-set current-list (:text lists)))
+            (do (dosync (ref-set current-list (deref (:text lists))))
               (structMap (File. (str base "/files/data/" @package-dir "/text")))))
           (element :mets:div {:ORDER "4"}
-            (do (dosync (ref-set current-list (:xml lists)))
+            (do (dosync (ref-set current-list (deref (:xml lists))))
               (structMap (File. (str base "/files/data/" @package-dir "/xml")))))
           (element :mets:div {:ORDER "5"}
-            (do (dosync (ref-set current-list (:rdf lists)))
+            (do (dosync (ref-set current-list (deref (:rdf lists))))
               (structMap (File. (str base "/files/data/" @package-dir "/rdf")))))))) 
       out)))
         
