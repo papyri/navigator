@@ -9,24 +9,10 @@
   
 (def base "/data/papyri.info/packages/AIP")
 (def package-dir (ref nil))
-(def id-counter (atom 0))
+(def id-counters {:git (atom 0), :html (atom 0), :text (atom 0), :xml (atom 0), :rdf (atom 0)})
 (def lists {:git (ref (ConcurrentSkipListMap.)), :html (ref (ConcurrentSkipListMap.)), 
   :text (ref (ConcurrentSkipListMap.)), :xml (ref (ConcurrentSkipListMap.)), :rdf (ref (ConcurrentSkipListMap.))})
 (def current-list (ref nil))
-
-(defn emit-fragment
-  "Prints the given Element tree as XML text to stream.
-   Options:
-    :encoding <str>          Character encoding to use"
-  [e ^java.io.Writer stream & {:as opts}]
-  (let [^javax.xml.stream.XMLStreamWriter writer (-> (javax.xml.stream.XMLOutputFactory/newInstance)
-                                                     (.createXMLStreamWriter stream))]
-
-    (when (instance? java.io.OutputStreamWriter stream)
-      (check-stream-encoding stream (or (:encoding opts) "UTF-8")))
-      (doseq [event (flatten-elements [e])]
-      (emit-event event writer))
-    stream))
 
 (defn lpad
   [string length]
@@ -51,7 +37,8 @@
 (defn fileSec
   [id, dir]
   (let [files (file-seq (File. (str base "/files/data/" @package-dir "/" dir)))
-        ls (deref (get lists id))]
+        ls (deref (get lists id))
+        id-counter (get id-counters id)]
     (for [file (filter (fn [f] (not (.isDirectory f))) files)
           :let [fid (lpad (str (swap! id-counter inc)) 8)]]
         (element :mets:file {:ID (str (name id) "-" fid), :CHECKSUM (sha1 file), 
@@ -110,15 +97,15 @@
       (element :mets:structMap {:TYPE "PHYSICAL"}
         (element :mets:div {}
           (element :mets:div {:ORDER "1"}
-            (structMap (:git File. (str base "/files/data/" @package-dir "/git"))))
+            (structMap :git File. (str base "/files/data/" @package-dir "/git")))
           (element :mets:div {:ORDER "2"}
-            (structMap (:html File. (str base "/files/data/" @package-dir "/html"))))
+            (structMap :html File. (str base "/files/data/" @package-dir "/html")))
           (element :mets:div {:ORDER "3"}
-            (structMap (:text File. (str base "/files/data/" @package-dir "/text"))))
+            (structMap :text File. (str base "/files/data/" @package-dir "/text")))
           (element :mets:div {:ORDER "4"}
-            (structMap (:xml File. (str base "/files/data/" @package-dir "/xml"))))
+            (structMap :xml File. (str base "/files/data/" @package-dir "/xml")))
           (element :mets:div {:ORDER "5"}
-            (structMap (:rdf File. (str base "/files/data/" @package-dir "/rdf"))))))) 
+            (structMap :rdf File. (str base "/files/data/" @package-dir "/rdf")))))) 
       out)))
         
 (defn -main
