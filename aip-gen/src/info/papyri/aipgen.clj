@@ -53,7 +53,8 @@
     (element :mets:div {:LABEL (.getName file)}
       (for [f (.listFiles file)]
         (structMap id f)))
-    (element :mets:fptr {:FILEID (.get (deref (get lists id)) (.getPath file))})))
+    (element :mets:div {:LABEL (.replaceFirst (.getName file) "\\.\\w+$" "")}
+      (element :mets:fptr {:FILEID (.get (deref (get lists id)) (.getPath file))}))))
 
 (defn mets 
   [id, out]
