@@ -50,7 +50,7 @@
 
 (defn fileSec
   [id, dir]
-  (let [files (file-seq (File. (str base "/" @package-dir "/" dir)))
+  (let [files (file-seq (File. (str base "/files/data/" @package-dir "/" dir)))
         ls (deref (get lists id))]
     (for [file (filter (fn [f] (not (.isDirectory f))) files)
           :let [fid (lpad (str (swap! id-counter inc)) 8)]]
@@ -66,7 +66,7 @@
     (element :mets:div {:LABEL (.getName file)}
       (for [f (.listFiles file)]
         (structMap f)))
-    (element :mets:fptr {:FILEID (get (deref (get lists @current-list)) (.getPath file))})))
+    (element :mets:fptr {:FILEID (.get @current-list (.getPath file))})))
 
 (defn mets 
   [id, out]
@@ -81,7 +81,7 @@
         (element :mets:agent {:ROLE "DISSEMINATOR", :TYPE "ORGANIZATION"} "NYU Digital Library Technology Services"))
       (element :mets:fileSec {}
         (element :mets:fileGrp {:ADMID "git-md"}
-          (fileSec :git "git")))
+          (fileSec :git "git"))
         (element :mets:fileGrp {:ADMID "html-md"}
           (do 
             (reset! id-counter 0)
@@ -110,20 +110,20 @@
       (element :mets:structMap {:TYPE "PHYSICAL"}
         (element :mets:div {}
           (element :mets:div {:ORDER "1"}
-            (do (dosync (ref-set current-list :git))
-              (structMap (File. (str base "/files/data/" @package-dir "/git"))))
+            (do (dosync (ref-set current-list (:git lists)))
+              (structMap (File. (str base "/files/data/" @package-dir "/git")))))
           (element :mets:div {:ORDER "2"}
-            (do (dosync (ref-set current-list :html))
+            (do (dosync (ref-set current-list (:html lists)))
               (structMap (File. (str base "/files/data/" @package-dir "/html")))))
           (element :mets:div {:ORDER "3"}
-            (do (dosync (ref-set current-list :text))
+            (do (dosync (ref-set current-list (:text lists)))
               (structMap (File. (str base "/files/data/" @package-dir "/text")))))
           (element :mets:div {:ORDER "4"}
-            (do (dosync (ref-set current-list :xml))
+            (do (dosync (ref-set current-list (:xml lists)))
               (structMap (File. (str base "/files/data/" @package-dir "/xml")))))
           (element :mets:div {:ORDER "5"}
-            (do (dosync (ref-set current-list :rdf))
-              (structMap (File. (str base "/files/data/" @package-dir "/rdf"))))))) 
+            (do (dosync (ref-set current-list (:rdf lists)))
+              (structMap (File. (str base "/files/data/" @package-dir "/rdf")))))))) 
       out)))
         
 (defn -main
