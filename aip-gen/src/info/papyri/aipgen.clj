@@ -70,17 +70,11 @@
         (element :mets:fileGrp {:ADMID "git-md"}
           (fileSec :git "git"))
         (element :mets:fileGrp {:ADMID "html-md"}
-          (do 
-            (reset! id-counter 0)
-            (fileSec :html "html")))
+          (fileSec :html "html"))
         (element :mets:fileGrp {:ADMID "text-md"}
-          (do 
-            (reset! id-counter 0)
-            (fileSec :text "text")))
+          (fileSec :text "text"))
         (element :mets:fileGrp {:ADMID "ddb-md"}
-          (do 
-            (reset! id-counter 0)
-            (fileSec :xml "xml/DDB_EpiDoc_XML"))
+          (fileSec :xml "xml/DDB_EpiDoc_XML")
           (fileSec :xml "xml/RDF"))
         (element :mets:fileGrp {:ADMID "apis-md"}
           (fileSec :xml "xml/APIS"))
@@ -91,21 +85,19 @@
         (element :mets:fileGrp {:ADMID "biblio-md"}
           (fileSec :xml "xml/Biblio"))
         (element :mets:fileGrp {:ADMID "rdf-md"}
-          (do 
-            (reset! id-counter 0)
-            (fileSec :rdf "rdf"))))
+          (fileSec :rdf "rdf")))
       (element :mets:structMap {:TYPE "PHYSICAL"}
         (element :mets:div {}
           (element :mets:div {:ORDER "1"}
-            (structMap :git File. (str base "/files/data/" @package-dir "/git")))
+            (structMap :git (File. (str base "/files/data/" @package-dir "/git"))))
           (element :mets:div {:ORDER "2"}
-            (structMap :html File. (str base "/files/data/" @package-dir "/html")))
+            (structMap :html (File. (str base "/files/data/" @package-dir "/html"))))
           (element :mets:div {:ORDER "3"}
-            (structMap :text File. (str base "/files/data/" @package-dir "/text")))
+            (structMap :text (File. (str base "/files/data/" @package-dir "/text"))))
           (element :mets:div {:ORDER "4"}
-            (structMap :xml File. (str base "/files/data/" @package-dir "/xml")))
+            (structMap :xml (File. (str base "/files/data/" @package-dir "/xml"))))
           (element :mets:div {:ORDER "5"}
-            (structMap :rdf File. (str base "/files/data/" @package-dir "/rdf")))))) 
+            (structMap :rdf (File. (str base "/files/data/" @package-dir "/rdf"))))))) 
       out)))
         
 (defn -main
