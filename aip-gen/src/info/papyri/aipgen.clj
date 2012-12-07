@@ -61,12 +61,12 @@
                    :xlink:href (substring-after (.getPath file) (str base "/"))}))))))
                    
 (defn structMap
-  [file]
+  [id, file]
   (if (.isDirectory file)
     (element :mets:div {:LABEL (.getName file)}
       (for [f (.listFiles file)]
-        (structMap f)))
-    (element :mets:fptr {:FILEID (.get @current-list (.getPath file))})))
+        (structMap id f)))
+    (element :mets:fptr {:FILEID (.get (deref (get lists id)) (.getPath file))})))
 
 (defn mets 
   [id, out]
@@ -110,32 +110,15 @@
       (element :mets:structMap {:TYPE "PHYSICAL"}
         (element :mets:div {}
           (element :mets:div {:ORDER "1"}
-            (do (dosync (ref-set current-list (deref (:git lists))))
-              (structMap (File. (str base "/files/data/" @package-dir "/git")))))
+            (structMap (:git File. (str base "/files/data/" @package-dir "/git"))))
           (element :mets:div {:ORDER "2"}
-            (do 
-              (dosync 
-                (ref-set (:git lists) nil)
-                (ref-set current-list (deref (:html lists))))
-              (structMap (File. (str base "/files/data/" @package-dir "/html")))))
+            (structMap (:html File. (str base "/files/data/" @package-dir "/html"))))
           (element :mets:div {:ORDER "3"}
-            (do 
-              (dosync 
-                (ref-set (:html lists) nil)
-                (ref-set current-list (deref (:text lists))))
-              (structMap (File. (str base "/files/data/" @package-dir "/text")))))
+            (structMap (:text File. (str base "/files/data/" @package-dir "/text"))))
           (element :mets:div {:ORDER "4"}
-            (do 
-              (dosync 
-                (ref-set (:text lists) nil)
-                (ref-set current-list (deref (:xml lists))))
-              (structMap (File. (str base "/files/data/" @package-dir "/xml")))))
+            (structMap (:xml File. (str base "/files/data/" @package-dir "/xml"))))
           (element :mets:div {:ORDER "5"}
-            (do 
-              (dosync 
-                (ref-set (:xml lists) nil)
-                (ref-set current-list (deref (:rdf lists))))
-              (structMap (File. (str base "/files/data/" @package-dir "/rdf")))))))) 
+            (structMap (:rdf File. (str base "/files/data/" @package-dir "/rdf"))))))) 
       out)))
         
 (defn -main
