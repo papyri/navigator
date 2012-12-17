@@ -267,6 +267,7 @@ public class GitWrapper {
           result.append("http://papyri.info/ddbdp/");
           List<String> collections = GitWrapper.loadDDbCollections();
           Iterator<String> i = collections.iterator();
+          boolean match = false;
           while (i.hasNext()) {
             String collection = i.next().substring("http://papyri.info/ddbdp/".length());
             if (file.substring(file.indexOf("/") + 1).startsWith(collection)) {
@@ -283,6 +284,7 @@ public class GitWrapper {
               }
               result.append("/source");
               if (result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d)+;(\\w|\\d)*;(\\w|\\d)/source")) {
+                match = true;
                 break; // Early return
               } else {
                 throw new Exception("Malformed file name: " + file);
@@ -291,7 +293,9 @@ public class GitWrapper {
           }
           // If we made it through the collection list without a match,
           // something is wrong.
-          throw new Exception("Unknown collection in file: " + file);
+          if (!match) {
+            throw new Exception("Unknown collection in file: " + file);
+          }
         }
       } catch (Exception e) {
         logger.error("Failed to resolve URI.", e);
