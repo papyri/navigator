@@ -57,7 +57,7 @@ public class GitWrapperTest {
     System.out.println("Looking up DDbDP ID");
     String id = "http://papyri.info/apis/gothenburg.apis.14/source";
     String expResult = "http://papyri.info/ddbdp/sb;20";
-    String result = GitWrapper.lookupDDbDPID(id);
+    String result = GitWrapper.lookupMainId(id);
     assertEquals(expResult, result);
   }
   

@@ -747,7 +747,7 @@
 	(.optimize)))))
 
 (defn -loadBiblio 
-  "Loads bibliographic data into the biblio-search SOlr index."
+  "Loads bibliographic data into the biblio-search Solr index."
   []
   (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
   (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")

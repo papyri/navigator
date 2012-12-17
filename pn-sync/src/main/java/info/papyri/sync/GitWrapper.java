@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package info.papyri.sync;
 
 import java.io.BufferedReader;
@@ -172,7 +168,9 @@ public class GitWrapper {
       pb.directory(git.gitDir);
       pb.start().waitFor();
       git.head = getHead();
-      if (!git.head.equals(getLastSync())) storeHead();
+      if (!git.head.equals(getLastSync())) {
+        storeHead();
+      }
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
@@ -244,6 +242,10 @@ public class GitWrapper {
   }
   
   public static String filenameToUri(String file) {
+    return filenameToUri(file, false);
+  }
+  
+  public static String filenameToUri(String file, boolean resolve) {
     StringBuilder result = new StringBuilder();
     if (file.contains("DDB")) {
       StringBuilder sparql = new StringBuilder();
@@ -281,7 +283,7 @@ public class GitWrapper {
               }
               result.append("/source");
               if (result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d)+;(\\w|\\d)*;(\\w|\\d)/source")) {
-                return result.toString(); // Early return
+                break; // Early return
               } else {
                 throw new Exception("Malformed file name: " + file);
               }
@@ -315,10 +317,21 @@ public class GitWrapper {
       
     }
     logger.debug(result);
-    return result.toString();
+    if (!resolve || result.toString().contains("/biblio/")) {
+      return result.toString();
+    } else {
+      // APIS and HGV files might be aggregated with a DDbDP text.
+      String uri = lookupMainId(result.toString());
+      if (uri != null) {
+        return uri;
+      } else {
+        return result.toString();
+      }
+    }
+    
   }
   
-  public static String lookupDDbDPID(String id) {
+  public static String lookupMainId(String id) {
     StringBuilder sparql = new StringBuilder();
     sparql.append("prefix dc: <http://purl.org/dc/terms/> ")
           .append("select ?id ")
