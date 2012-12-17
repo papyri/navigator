@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
@@ -32,6 +33,7 @@ public class SyncServlet extends HttpServlet {
   private Publisher publisher;
   private static final ScheduledExecutorService scheduler =
           Executors.newScheduledThreadPool(1);
+  private static Logger logger = Logger.getLogger("pn-sync");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -59,7 +61,7 @@ public class SyncServlet extends HttpServlet {
       start = 5 - start;
     }
     scheduler.scheduleWithFixedDelay(publisher, start, 60, MINUTES);
-    System.out.println("Syncing scheduled.");
+    logger.debug("Syncing scheduled.");
   }
 
   /** 
@@ -94,18 +96,20 @@ public class SyncServlet extends HttpServlet {
           try {
             StringBuilder result = new StringBuilder();
             result.append("{ \"updates\":[");
-            List<String> diffs = git.getDiffsSince(request.getParameter("since"));
+            List<String> diffs = GitWrapper.getDiffsSince(request.getParameter("since"));
             for (int i = 0; i < diffs.size(); i++) {
               result.append("\"");
-              result.append(git.filenameToUri(diffs.get(i)));
+              result.append(GitWrapper.filenameToUri(diffs.get(i)));
               result.append("\"");
-              if (i < (diffs.size() - 1)) result.append(",");
+              if (i < (diffs.size() - 1)) {
+                result.append(",");
+              }
             }
             result.append("]}");
             out.println(result.toString());
           } catch (Exception e) {
             out.println("{ \"error\": \"" + e.getMessage() + "\"}");
-            e.printStackTrace();
+            logger.error("Update failed.", e);
           }
         }
       }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package info.papyri.sync;
 
 import info.papyri.indexer;
@@ -82,7 +78,7 @@ public class Publisher implements Runnable {
           List<String> files = new ArrayList<String>();
           List<String> urls = new ArrayList<String>();
           for (String diff : diffs) {
-            String url = GitWrapper.filenameToUri(base + File.separator + diff);
+            String url = GitWrapper.filenameToUri(base + File.separator + diff, false);
             if (!"".equals(url)) {
               files.add(base + File.separator + diff);
               logger.debug(base + File.separator + diff);
@@ -97,6 +93,14 @@ public class Publisher implements Runnable {
             logger.info("Running inferencing on " + files.size() + " files starting at " + new Date());
             for (String url : urls) {
               map.insertInferences(url);
+            }
+            urls.clear();
+            // Reload the url list, this time resolving files that should be aggregated.
+            for (String diff : diffs) {
+              String url = GitWrapper.filenameToUri(base + File.separator + diff, true);
+              if (!"".equals(url)) {
+                urls.add(url);
+              }
             }
             status = PUBLISHING;
             logger.info("Indexing files starting at " + new Date());

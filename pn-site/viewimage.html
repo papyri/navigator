@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Papyri.info</title>
+  <style type="text/css" media="screen">
+    html {
+      min-height:100%;
+      height:100%;
+    }
+    body {
+      height: 100%;
+    }
+    div#bd {
+      height: 100%;
+    }
+    body,div#image {
+      background:black;
+    }
+    div#select {
+      text-align:center;
+      padding:1em;
+    }
+    select#images {
+      min-width:150px;
+      font-size:18px;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-19774706-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+</head>
+
+<body>
+  <div id="bd">
+    <div id="image" style="height:90%"></div>
+    <div id="select">
+    <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value)" size="1">
+    </select>
+  </div>
+  <script type="text/javascript" charset="utf-8">
+  var OUlayer;       // layer for an open layers map
+  var map;           // open layers map for an image
+  var metadataURL;   // URL to the file that supplies djatoka with parameters for an image.  
+  var djatokaserverURL = "http://dl-img.home.nyu.edu";  // djatoka server URL
+  
+  function getPath() {
+      var result = window.location.href.substring(window.location.href.indexOf(window.location.pathname));
+      if (window.location.search.length > 0) {
+          result = result.substring(0, result.indexOf(window.location.search));
+      }
+      if (window.location.hash.length > 0 && result.indexOf("#") > 0) {
+          result = result.substring(0, result.indexOf(window.location.hash));
+      }
+      return result;
+  }
+
+  function initImage() {
+    loadImage(jQuery("#images option").attr("value"));
+  }
+
+  function loadImage(imageURL) {
+
+      if (map) {
+          map.destroy();
+      }
+
+      /* Initialize URLs */
+      metadataURL = "/dispatch/images?url=" + imageURL;        
+
+      /*
+         Create open layers layer calling the OpenURL class. This class
+         calculates the parameters needed to create a new open layers
+         map. 
+       */ 
+      OUlayer = new OpenLayers.Layer.OpenURL( "OpenURL",
+        djatokaserverURL, {layername: 'basic', format:'image/jpeg', 
+        rft_id:imageURL, metadataUrl:metadataURL}); 
+
+      /* set the rest of the djatoka server URL after the host name */       
+      OpenLayers.Layer.OpenURL.djatokaURL = '/adore-djatoka/resolver';
+
+
+      /* Get the parameters needed to create a new open layers map. */ 
+      var metadata = OUlayer.getImageMetadata();
+      var resolutions = OUlayer.getResolutions();
+      var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
+      var tileSize = OUlayer.getTileSize();
+
+      var options = { resolutions: resolutions,
+                      maxExtent: maxExtent,
+                      tileSize: tileSize};
+      map = new OpenLayers.Map('image', options);
+      map.addLayer(OUlayer);
+
+      var lon = metadata.width / 2;
+      var lat = metadata.height / 2;
+
+      /* set the center of the map to the center of the height and width */      
+      map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
+      map.zoomTo(OUlayer.getLevels() - OUlayer.getViewerLevel());
+
+  }
+  jQuery.getJSON("/sparql?query="
+          + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
+          + "prefix rdf: <http://www.w3.org/2000/01/rdf-schema#>"
+          + "select ?o ?l "
+          + "from <http://papyri.info/graph> "
+          + "where { <http://papyri.info" + getPath() + "> ?p ?o . "
+          + "        ?o rdf:label ?l } order by ?p")
+          + "&format=json", function(data) {
+              if (data.results.bindings.length > 0) {
+                  jQuery.each(data.results.bindings, function(i, row) {
+                      var val = row.o.value;
+                      jQuery("#images").append('<option value="'+ val + '">' + row.l.value +'</option>');
+                  });
+                  initImage();
+              }
+      });
+  </script>
+</body>
+</html>

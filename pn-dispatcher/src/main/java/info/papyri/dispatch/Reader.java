@@ -1,8 +1,8 @@
 package info.papyri.dispatch;
 
-import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -11,15 +11,14 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.regex.Pattern;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
@@ -61,7 +60,7 @@ public class Reader extends HttpServlet {
       if (page.contains("current") && (page.contains("-citations-") || page.contains("index.html"))) {
         response.sendError(HttpServletResponse.SC_GONE);
       } else if (page.endsWith(".html")) {
-        if (page.contains("ddb/html") || page.contains("aggrega     ted/html")) {
+        if (page.contains("ddb/html") || page.contains("aggregated/html")) {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         } else if (page.contains("hgvmeta")) {
@@ -92,7 +91,7 @@ public class Reader extends HttpServlet {
           }
         }
         if (file == null) {
-          response.sendError(response.SC_NOT_FOUND);
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else {
           if (request.getParameter("q") != null) {
             sendWithHighlight(response, file, request.getParameter("q"));
@@ -102,7 +101,7 @@ public class Reader extends HttpServlet {
         }
       }
     } else {
-      response.sendError(response.SC_NOT_FOUND);
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
@@ -119,14 +118,14 @@ public class Reader extends HttpServlet {
           size = reader.read(buffer);
         }
       } catch (IOException e) {
-        response.sendError(response.SC_NOT_FOUND);
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
         System.out.println("Failed to send " + f);
       } finally {
         reader.close();
         out.close();
       }
     } else {
-      response.sendError(response.SC_NOT_FOUND);
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
@@ -158,7 +157,7 @@ public class Reader extends HttpServlet {
         out.close();
       }
     } else {
-      response.sendError(response.SC_NOT_FOUND);
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
@@ -169,7 +168,7 @@ public class Reader extends HttpServlet {
     sparql.append("select ?related ");
     sparql.append("from <");
     sparql.append(graph);
-    sparql.append("> where { <" + page +"> dc:relation ?related . ");
+    sparql.append("> where { <").append(page).append("> dc:relation ?related . ");
     sparql.append("optional { ?related dc:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
     sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }");
@@ -180,7 +179,7 @@ public class Reader extends HttpServlet {
       ObjectMapper o = new ObjectMapper();
       JsonNode root = o.readValue(http.getInputStream(), JsonNode.class);
       Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
-      String uri = "";
+      String uri;
       while (i.hasNext()) {
         uri = FileUtils.substringBefore(i.next().path("related").path("value").getValueAsText(), "/source");
         if (uri.contains("ddbdp/")) {
@@ -189,7 +188,9 @@ public class Reader extends HttpServlet {
         if (uri.contains("hgv/")) {
           result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
         }
-        if (result.exists()) break;
+        if (result.exists()) {
+          break;
+        }
       }
       
     } catch (Exception e) {
