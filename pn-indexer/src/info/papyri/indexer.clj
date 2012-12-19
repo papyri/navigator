@@ -649,6 +649,24 @@
 
 ;; ## File generation and indexing functions
 
+(defn delete-html
+ "Get rid of any old/stale versions of related files"
+ [files]
+ (when (> (count files) 0)
+   (doseq [file (.split files "\\s")]
+     (let [f (File. (get-html-filename file))]
+       (when (.exists f)
+         (.delete f))))))
+         
+(defn delete-text
+  "Get rid of any old/stale versions of related files"
+  [files]
+  (when (> (count files) 0)
+    (doseq [file (.split files "\\s")]
+      (let [f (File. (get-text-filename file))]
+        (when (.exists f)
+          (.delete f))))))
+
 (defn generate-html
   "Builds the HTML files for the PN."
   []
@@ -656,15 +674,17 @@
     tasks (map (fn [x]
          (fn []
            (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
-          ;(println "Transforming " (first x) " to " (get-html-filename (first x)))
-          (transform (if (.startsWith (first x) "http")
-            (str (.replace (first x) "papyri.info" nserver) "/rdf")
-            (first x))
-          (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9))
-          (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
-           (catch Exception e
-       (.printStackTrace e)
-       (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
+            ;(println "Transforming " (first x) " to " (get-html-filename (first x)))
+              (delete-html (last (nth x 2)))
+              (delete-html (last (nth x 3)))
+              (transform (if (.startsWith (first x) "http")
+                (str (.replace (first x) "papyri.info" nserver) "/rdf")
+                (first x))
+                (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9))
+                (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
+             (catch Exception e
+               (.printStackTrace e)
+               (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
        @html)]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
@@ -680,16 +700,18 @@
         tasks (map (fn [x]
          (fn []
            (when (not (.startsWith (first x) "http"))
-       (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
-            (transform (if (.startsWith (first x) "http")
-            							   ((println "File is " + (first x))
-                                           (str (.replace (first x) "papyri.info" nserver) "/rdf"))
-                                           (first x))
-           (list (second x) (nth x 2) (nth x 3) (nth x 4))
-           (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)
-            (catch Exception e
-        (.printStackTrace e)
-        (println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
+      (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
+        (delete-text (last (nth x 2)))
+        (delete-text (last (nth x 3)))
+        (transform (if (.startsWith (first x) "http")
+        							   ((println "File is " + (first x))
+                                       (str (.replace (first x) "papyri.info" nserver) "/rdf"))
+                                       (first x))
+        (list (second x) (nth x 2) (nth x 3) (nth x 4))
+        (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)
+        (catch Exception e
+          (.printStackTrace e)
+          (println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
        @text)]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
