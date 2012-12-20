@@ -244,7 +244,7 @@
             (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
               (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt")))))))
        (catch Exception e
-   (println (str (.getMessage e) " processing " url ".")))))
+         (println (str (.getMessage e) " processing " url ".")))))
           
 (defn get-html-filename
   "Resolves the filename of the local HTML file associated with the given URL."
@@ -283,7 +283,7 @@
               (str htpath "/APIS/index.html")
               (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html")))))))
        (catch Exception e
-   (println (str (.getMessage e) " processing " url ".")))))
+         (println (str (.getMessage e) " processing " url ".")))))
 
 (defn transform
   "Runs an XSLT transform on the `java.io.File` in the first parameter, 
