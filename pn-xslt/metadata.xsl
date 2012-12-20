@@ -159,7 +159,7 @@
   </xsl:template>
   
   <!-- Commentary -->
-  <xsl:template match="t:div[@type = 'commentary']" mode="metadata">
+  <xsl:template match="t:div[@type = 'commentary'][@subtype != 'mentionedDates']" mode="metadata">
     <tr>
       <th>Commentary</th>
       <td><xsl:value-of select="t:p"/></td>
