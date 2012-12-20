@@ -654,18 +654,22 @@
  [files]
  (when (> (count files) 0)
    (doseq [file (.split files "\\s")]
-     (let [f (File. (get-html-filename file))]
-       (when (.exists f)
-         (.delete f))))))
+     (let [fname (get-html-filename file)] 
+     (when-not (nil? fname)
+       (let [f (File. fname)]
+         (when (.exists f)
+           (.delete f))))))))
          
 (defn delete-text
   "Get rid of any old/stale versions of related files"
   [files]
   (when (> (count files) 0)
     (doseq [file (.split files "\\s")]
-      (let [f (File. (get-text-filename file))]
-        (when (.exists f)
-          (.delete f))))))
+      (let [fname (get-txt-filename file)]
+      (when-not (nil? fname)
+        (let [f (File. fname)]
+          (when (.exists f)
+            (.delete f))))))))
 
 (defn generate-html
   "Builds the HTML files for the PN."
