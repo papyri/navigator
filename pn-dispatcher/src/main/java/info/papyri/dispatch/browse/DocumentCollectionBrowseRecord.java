@@ -149,26 +149,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
          */
         
         private String trimUnderscores(String scored){
-          if ("_".equals(scored)) {
-            return "";
-          }
-            
-            // trim leading underscores
-            while(scored.indexOf("_") == 0){
-                
-                scored = scored.substring(1);
-                
-            }
-            // trim trailing underscores
-            while(scored.indexOf("_") == scored.length() - 1){
-                
-                scored = scored.substring(0, scored.length() - 1);
-                
-            }
-            
-            return scored;
-            
-            
+          return scored.replaceAll("(^_|_$)", ""); 
         }
         
         public String getCollection() { return collection; }
