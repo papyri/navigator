@@ -270,7 +270,7 @@ public class GitWrapper {
           boolean match = false;
           while (i.hasNext()) {
             String collection = i.next().substring("http://papyri.info/ddbdp/".length());
-            if (file.substring(file.indexOf("/") + 1).startsWith(collection)) {
+            if (file.substring(file.lastIndexOf("/") + 1).startsWith(collection)) {
               result.append(collection).append(";");
               // name should be of the form bgu.1.2, so lose the "bgu."
               String rest = file.substring(file.indexOf("/") + 1 + collection.length() + 2); 

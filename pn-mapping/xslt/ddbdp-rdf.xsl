@@ -41,16 +41,16 @@
                 <xsl:choose>
                     <xsl:when test="$ddb-seq[2] = ''">
                         <rdf:Description rdf:about="http://papyri.info/ddbdp/{$ddb-seq[1]}">
-                          <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Book"/>
+                          <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
                            <dcterms:isPartOf rdf:resource="http://papyri.info/ddbdp"/>
                         </rdf:Description>
                     </xsl:when>
                     <xsl:otherwise>
                         <rdf:Description rdf:about="http://papyri.info/ddbdp/{$ddb-seq[1]};{$ddb-seq[2]}">
-                          <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Book"/>
+                          <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
                             <dcterms:isPartOf>
                                 <rdf:Description rdf:about="http://papyri.info/ddbdp/{$ddb-seq[1]}">
-                                  <rdfs:Type rdf:resource="http://purl.org/ontology/bibo/Series"/>
+                                  <rdf:type rdf:resource="http://purl.org/ontology/bibo/Series"/>
                                   <dcterms:isPartOf rdf:resource="http://papyri.info/ddbdp"/>
                                 </rdf:Description>
                             </dcterms:isPartOf>
