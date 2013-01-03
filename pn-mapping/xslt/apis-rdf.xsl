@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
   <xsl:param name="root">/data/papyri.info/idp.data</xsl:param>
   <xsl:param name="DDB-root">/data/papyri.info/idp.data/DDB_EpiDoc_XML</xsl:param>
 
   <xsl:template match="/tei:TEI">
+    <rdf:RDF>
     <xsl:variable name="id">http://papyri.info/apis/<xsl:value-of
         select="//tei:publicationStmt/tei:idno[@type = 'apisid']/text()"/>/source</xsl:variable>
     <rdf:Description rdf:about="{$id}">
@@ -98,7 +102,27 @@
           </dcterms:relation>
         </xsl:for-each>
       </xsl:for-each>
+      <xsl:if test="//tei:facsimile">
+        <dcterms:relation rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images"/>
+      </xsl:if>
     </rdf:Description>
+    <xsl:if test="//tei:facsimile">
+      <rdf:Seq rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images">
+        <xsl:for-each select="//tei:facsimile//tei:graphic">
+          <xsl:sort select="ancestor::tei:surfaceGrp/@n"/>
+          <rdf:li>
+            <rdf:Description rdf:about="{@url}">
+              <xsl:if test="../@type">
+                <rdfs:label><xsl:value-of select="../@type"/></rdfs:label>
+              </xsl:if>
+              <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+              <foaf:depicts rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"/>
+            </rdf:Description>
+          </rdf:li>
+        </xsl:for-each>
+      </rdf:Seq>
+    </xsl:if>
+    </rdf:RDF>
   </xsl:template>
 
 </xsl:stylesheet>
