@@ -11,7 +11,6 @@
   <xsl:param name="DDB-root">/data/papyri.info/idp.data/DDB_EpiDoc_XML</xsl:param>
 
   <xsl:template match="/tei:TEI">
-    <rdf:RDF>
     <xsl:variable name="id">http://papyri.info/apis/<xsl:value-of
         select="//tei:publicationStmt/tei:idno[@type = 'apisid']/text()"/>/source</xsl:variable>
     <rdf:Description rdf:about="{$id}">
@@ -122,7 +121,6 @@
         </xsl:for-each>
       </rdf:Seq>
     </xsl:if>
-    </rdf:RDF>
   </xsl:template>
 
 </xsl:stylesheet>
