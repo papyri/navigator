@@ -8,7 +8,7 @@
   
   <xsl:variable name="base">/Users/hcayless/Development/APIS/apis_translations/</xsl:variable>
   <!-- Expects an XML-form Excel Spreadsheet with the columns filename (w/ recto/verso and .jp2 suffix stripped), inv. no., apis id, image url -->
-  <xsl:variable name="image-doc" select="doc('/dev/null')"/>
+  <xsl:variable name="image-doc" select="doc('file:/Users/hcayless/Development/APIS/P-Lund.xml')"/>
   <xsl:variable name="id">http://papyri.info/apis/<xsl:value-of select="normalize-space(//cu001)"/>/source</xsl:variable>
     
     <xsl:template match="/">
@@ -208,7 +208,7 @@
           <xsl:if test="count($images) gt 0">
             <facsimile>
               <xsl:for-each-group select="$images" group-by="ms:Cell[1]/ms:Data">
-                <surfaceGrp n="{replace(current-group()[1]/ms:Cell[1]/ms:Data,'P.Lund','')}">
+                <surfaceGrp n="{replace(current-group()[1]/ms:Cell[1]/ms:Data,'P.Lund0*','')}">
                   <xsl:for-each select="current-group()">
                     <surface>
                       <xsl:choose>

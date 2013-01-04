@@ -112,7 +112,7 @@
           <rdf:li>
             <rdf:Description rdf:about="{@url}">
               <xsl:if test="../@type">
-                <rdfs:label><xsl:value-of select="ancestor::tei:surfaceGrp/@n"/><xsl:text> </xsl:text><xsl:value-of select="../@type"/></rdfs:label>
+                <rdfs:label><xsl:value-of select="substring(@url, 30)"/><xsl:text> </xsl:text><xsl:value-of select="../@type"/></rdfs:label>
               </xsl:if>
               <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
               <foaf:depicts rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"/>
