@@ -500,11 +500,13 @@
   (let [uri (.replace url "/source" "/images")]
     (format "prefix dc: <http://purl.org/dc/terms/>
              prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+             prefix olo: <http://purl.org/ontology/olo/core#>
              select ?image
              from <http://papyri.info/graph>
-             where { <%1$s> ?p ?image .
-                     <%1$s> rdf:type rdf:Seq
-                       minus { <%1$s> rdf:type rdf:Seq } }" uri )))
+             where { <%1$s> olo:slot ?slot .
+                      ?slot olo:item ?image .
+                      ?slot olo:index ?i}
+                      order by ?i" uri )))
              
  (defn images-query
    "Finds images related to the given url"
@@ -512,11 +514,13 @@
    (let [uri (.replace url "/source" "/images")]
      (format "prefix dc: <http://purl.org/dc/terms/>
               prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+              prefix olo: <http://purl.org/ontology/olo/core#>
               select ?image
               from <http://papyri.info/graph>
-              where { <%1$s> ?p ?image .
-                      <%1$s> rdf:type rdf:Seq
-                        minus { <%1$s> rdf:type rdf:Seq } }" uri )))
+              where { <%1$s> olo:slot ?slot .
+                      ?slot olo:item ?image .
+                      ?slot olo:index ?i}
+                      order by ?i" uri )))
 
 ;; ## Jena functions
 
