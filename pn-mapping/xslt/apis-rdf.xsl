@@ -5,6 +5,7 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:olo="http://purl.org/ontology/olo/core#"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
   <xsl:param name="root">/data/papyri.info/idp.data</xsl:param>
@@ -106,20 +107,26 @@
       </xsl:if>
     </rdf:Description>
     <xsl:if test="//tei:facsimile">
-      <rdf:Seq rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images">
+      <rdf:Description rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images">
+        <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+        <olo:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="count(//tei:facsimile//tei:graphic)"/></olo:length>
         <xsl:for-each select="//tei:facsimile//tei:graphic">
-          <xsl:sort select="ancestor::tei:surfaceGrp/@n"/>
-          <rdf:li>
-            <rdf:Description rdf:about="{@url}">
-              <xsl:if test="../@type">
-                <rdfs:label><xsl:value-of select="substring(@url, 30)"/><xsl:text> </xsl:text><xsl:value-of select="../@type"/></rdfs:label>
-              </xsl:if>
-              <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
-              <foaf:depicts rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"/>
+          <olo:slot>
+            <rdf:Description rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images/{position()}">
+              <olo:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"></olo:index>
+              <olo:item>
+                <rdf:Description rdf:about="{@url}">
+                  <xsl:if test="../@type">
+                    <rdfs:label><xsl:value-of select="substring(@url, 30)"/><xsl:text> </xsl:text><xsl:value-of select="../@type"/></rdfs:label>
+                  </xsl:if>
+                  <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+                  <foaf:depicts rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"/>
+                </rdf:Description>
+              </olo:item>
             </rdf:Description>
-          </rdf:li>
+          </olo:slot>
         </xsl:for-each>
-      </rdf:Seq>
+      </rdf:Description>
     </xsl:if>
   </xsl:template>
 
