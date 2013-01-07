@@ -504,8 +504,19 @@
              from <http://papyri.info/graph>
              where { <%1$s> ?p ?image .
                      <%1$s> rdf:type rdf:Seq
-                       minus { <%1$s> rdf:type rdf:Seq } }
-             order by ?p" uri )))
+                       minus { <%1$s> rdf:type rdf:Seq } }" uri )))
+             
+ (defn images-query
+   "Finds images related to the given url"
+   [url]
+   (let [uri (.replace url "/source" "/images")]
+     (format "prefix dc: <http://purl.org/dc/terms/>
+              prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+              select ?image
+              from <http://papyri.info/graph>
+              where { <%1$s> ?p ?image .
+                      <%1$s> rdf:type rdf:Seq
+                        minus { <%1$s> rdf:type rdf:Seq } }" uri )))
 
 ;; ## Jena functions
 
@@ -555,18 +566,21 @@
                        (fn [x] (> (count x) 0))
                        (for [r relations] (execute-query (images-query (first r)))))))
        ]
-    (when (not (first is-replaced-by))
-    (.add @html (list (str "file:" (get-filename url))
-                      (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
-                      (list "related" (apply str (interpose " " (for [x relations] (first x)))))
-                      (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
-                      (list "isPartOf" (apply str (interpose " " (first is-part-of))))
-                      (list "sources" (apply str (interpose " " (for [x source](first x)))))
-                      (list "images" (apply str (interpose " " images)))
-                      (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
-                      (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
-                      (list "selfUrl" (substring-before url "/source"))
-                      (list "server" nserver))))))
+     ;; If doc is being replaced, don't publish it, but make sure to publish its replacement.
+     ;; This might be redundant, but we can't be sure.
+    (if (not (first is-replaced-by))
+      (.add @html (list (str "file:" (get-filename url))
+                  (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
+                  (list "related" (apply str (interpose " " (for [x relations] (first x)))))
+                  (list "replaces" (apply str (interpose " " (for [x replaces] (first x))))) 
+                  (list "isPartOf" (apply str (interpose " " (first is-part-of))))
+                  (list "sources" (apply str (interpose " " (for [x source](first x)))))
+                  (list "images" (apply str (interpose " " images)))
+                  (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
+                  (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
+                  (list "selfUrl" (substring-before url "/source"))
+                  (list "server" nserver)))
+      (queue-item (last is-replaced-by)))))
 
 (defn queue-items
   "Adds children of the given collection or volume to the @html queue for processing,
