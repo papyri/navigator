@@ -119,10 +119,13 @@
   jQuery.getJSON("/sparql?query="
           + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
           + "prefix rdf: <http://www.w3.org/2000/01/rdf-schema#>"
+          + "prefix olo: <http://purl.org/ontology/olo/core#>"
           + "select ?o ?l "
           + "from <http://papyri.info/graph> "
-          + "where { <http://papyri.info" + getPath() + "> ?p ?o . "
-          + "        ?o rdf:label ?l } order by ?p")
+          + "where { <http://papyri.info" + getPath() + "> olo:slot ?slot . "
+          + "        ?slot olo:item ?o ."
+          + "        ?slot olo:index ?i ."
+          + "        ?o rdf:label ?l } order by ?i")
           + "&format=json", function(data) {
               if (data.results.bindings.length > 0) {
                   jQuery.each(data.results.bindings, function(i, row) {

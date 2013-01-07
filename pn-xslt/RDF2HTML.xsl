@@ -321,7 +321,6 @@
                         <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
                         <ul>
                           <xsl:for-each select="$imgs">
-                            <xsl:sort select="substring-after(substring-after(.,'images/'),'/')"></xsl:sort>
                             <li><a href="{.}" alt="papyrus image"/><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></li>
                           </xsl:for-each>
                         </ul>
