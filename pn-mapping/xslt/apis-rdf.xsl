@@ -113,7 +113,7 @@
         <xsl:for-each select="//tei:facsimile//tei:graphic">
           <olo:slot>
             <rdf:Description rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images/{position()}">
-              <olo:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"></olo:index>
+              <olo:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="position()"></xsl:value-of></olo:index>
               <olo:item>
                 <rdf:Description rdf:about="{@url}">
                   <xsl:if test="../@type">

@@ -483,16 +483,18 @@
   [url]
   (format "prefix dc: <http://purl.org/dc/terms/>
            prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+           prefix olo: <http://purl.org/ontology/olo/core#>
            select ?a ?image
            from <http://papyri.info/graph>
            where { <%s> dc:hasPart ?a .
                    ?a dc:relation ?i .
-                   ?i rdf:type rdf:Seq .
-                   ?i ?p ?image .
+                   ?i rdf:type olo:OrderedList .
+                   ?i olo:slot ?slot .
+                   ?slot olo:index ?index
+                   ?slot olo:item ?image .
                       filter (?a != ?image)
-                      filter (?image != rdf:Seq) 
                       filter (?p != dc:relation)}
-           order by ?a ?p" url))
+           order by ?a ?index" url))
             
 (defn images-query
   "Finds images related to the given url"
@@ -505,21 +507,7 @@
              from <http://papyri.info/graph>
              where { <%1$s> olo:slot ?slot .
                       ?slot olo:item ?image .
-                      ?slot olo:index ?i}
-                      order by ?i" uri )))
-             
- (defn images-query
-   "Finds images related to the given url"
-   [url]
-   (let [uri (.replace url "/source" "/images")]
-     (format "prefix dc: <http://purl.org/dc/terms/>
-              prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              prefix olo: <http://purl.org/ontology/olo/core#>
-              select ?image
-              from <http://papyri.info/graph>
-              where { <%1$s> olo:slot ?slot .
-                      ?slot olo:item ?image .
-                      ?slot olo:index ?i}
+                      ?slot olo:index ?i }
                       order by ?i" uri )))
 
 ;; ## Jena functions
