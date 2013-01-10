@@ -490,10 +490,8 @@
                    ?a dc:relation ?i .
                    ?i rdf:type olo:OrderedList .
                    ?i olo:slot ?slot .
-                   ?slot olo:index ?index
-                   ?slot olo:item ?image .
-                      filter (?a != ?image)
-                      filter (?p != dc:relation)}
+                   ?slot olo:index ?index .
+                   ?slot olo:item ?image }
            order by ?a ?index" url))
             
 (defn images-query
