@@ -132,14 +132,19 @@
   [query]
   (let [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
     (.execSelect exec)))
-    
-(defn get-filename 
+  
+(defn get-identifier 
   [file]
-  (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+  (cond 
+    (.contains file "DDB_EpiDoc_XML") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")
+    (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "Biblio") (str "papyri.info/biblio/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml") "/ref")))
     
 (defn url-from-file
   [file]
-  (let [answer (execute-query (format-url-query (get-filename file)))]
+  (let [answer (execute-query (format-url-query (get-identifier file)))]
     (.toString (.getResource (.next answer) "uri"))))
           
 (defn -deleteGraph
