@@ -3,19 +3,37 @@
     xmlns:j.0="http://purl.org/ontology/bibo/"
     xmlns:j.1="http://xmlns.com/foaf/0.1/"
     xmlns:j.2="http://purl.org/dc/terms/"
+    xmlns:j.3="http://purl.org/ontology/olo/core#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p340c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/85/columbia.apis.p340c.b.0.300"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p340c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p340c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p476c/source">
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p476c/images"/>
   </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p335c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/f3/columbia.apis.p335c.f.0.300"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p329c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/ce/columbia.apis.p329c.f.0.300"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p188c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/36/columbia.apis.p188c.f.0.600"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p188c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p188c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p322c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/59/columbia.apis.p322c.f.0.300"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/76/columbia.apis.p326c.f.0.300">
     <rdfs:label>Recto</rdfs:label>
@@ -27,17 +45,39 @@
     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
     <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p340c/original"/>
   </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p326c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/76/columbia.apis.p326c.f.0.300"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p476c/images">
-    <rdf:_3 rdf:resource="http://papyri.info/images/da/columbia.apis.p476c.f.1-0.600"/>
-    <rdf:_2 rdf:resource="http://papyri.info/images/e4/columbia.apis.p476c.f.0-0.600"/>
-    <rdf:_1 rdf:resource="http://papyri.info/images/d3/columbia.apis.p476c.f.0.600"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p476c/images/3"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p476c/images/2"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p476c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p476c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p179c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/75/columbia.apis.p179c.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/59/columbia.apis.p322c.f.0.300">
     <rdfs:label>Recto</rdfs:label>
     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
     <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p322c/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p476c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/d3/columbia.apis.p476c.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p328c/images">
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p328c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p328c/source"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p334c/source">
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p334c/images"/>
@@ -47,10 +87,10 @@
     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
     <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p188c/original"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p328c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/f9/columbia.apis.p328c.f.0.600"/>
-    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p328c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p476c/images/3">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/da/columbia.apis.p476c.f.1-0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/f9/columbia.apis.p328c.f.0.600">
     <rdfs:label>Recto</rdfs:label>
@@ -65,18 +105,24 @@
     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
     <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p476c/original"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p179c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/75/columbia.apis.p179c.f.0.600"/>
-    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p179c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p179c/source">
-    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p179c/images"/>
-  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/d3/columbia.apis.p476c.f.0.600">
     <rdfs:label>Recto</rdfs:label>
     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
     <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p476c/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p179c/images">
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p179c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p179c/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p179c/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p179c/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p188c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/36/columbia.apis.p188c.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/e4/columbia.apis.p476c.f.0-0.600">
     <rdfs:label>Recto</rdfs:label>
@@ -86,13 +132,13 @@
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p326c/source">
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p326c/images"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p340c/source">
-    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p340c/images"/>
-  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/da/columbia.apis.p334c.f.0.600">
     <rdfs:label>Recto</rdfs:label>
     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
     <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p334c/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p340c/source">
+    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p340c/images"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/75/columbia.apis.p179c.f.0.600">
     <rdfs:label>Recto</rdfs:label>
@@ -102,6 +148,17 @@
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p335c/source">
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p335c/images"/>
   </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f3/columbia.apis.p335c.f.0.300">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p335c/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p322c/images">
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p322c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p322c/source"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/images/ce/columbia.apis.p329c.f.0.300">
     <rdfs:label>Recto</rdfs:label>
     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
@@ -110,40 +167,54 @@
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p322c/source">
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p322c/images"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p322c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/59/columbia.apis.p322c.f.0.300"/>
-    <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p322c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://papyri.info/images/f3/columbia.apis.p335c.f.0.300">
-    <rdfs:label>Recto</rdfs:label>
-    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
-    <j.1:depicts rdf:resource="http://papyri.info/apis/columbia.apis.p335c/original"/>
-  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p335c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/f3/columbia.apis.p335c.f.0.300"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p335c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p335c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p476c/images/2">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/e4/columbia.apis.p476c.f.0-0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p329c/source">
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p329c/images"/>
   </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p328c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/f9/columbia.apis.p328c.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p326c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/76/columbia.apis.p326c.f.0.300"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p326c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p326c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p340c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/85/columbia.apis.p340c.b.0.300"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p328c/source">
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p328c/images"/>
   </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p334c/images/1">
+    <j.3:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:index>
+    <j.3:item rdf:resource="http://papyri.info/images/da/columbia.apis.p334c.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p329c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/ce/columbia.apis.p329c.f.0.300"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p329c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p329c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://papyri.info/apis/columbia.apis.p334c/images">
-    <rdf:_1 rdf:resource="http://papyri.info/images/da/columbia.apis.p334c.f.0.600"/>
+    <j.3:slot rdf:resource="http://papyri.info/apis/columbia.apis.p334c/images/1"/>
+    <j.3:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.3:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
     <j.2:relation rdf:resource="http://papyri.info/apis/columbia.apis.p334c/source"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/>
   </rdf:Description>
 </rdf:RDF>

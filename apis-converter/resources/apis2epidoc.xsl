@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="xs t" version="2.0">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:t="http://www.tei-c.org/ns/1.0" 
+    xmlns:ms="urn:schemas-microsoft-com:office:spreadsheet"
+    exclude-result-prefixes="xs t" version="2.0">
     <xsl:output indent="yes"/>
   
   <xsl:variable name="base">/Users/hcayless/Development/APIS/apis_translations/</xsl:variable>
+  <!-- Expects an XML-form Excel Spreadsheet with the columns filename (w/ recto/verso and .jp2 suffix stripped), inv. no., apis id, image url -->
+  <xsl:variable name="image-doc" select="doc('file:/Users/hcayless/Development/APIS/P-Lund.xml')"/>
+  <xsl:variable name="id">http://papyri.info/apis/<xsl:value-of select="normalize-space(//cu001)"/>/source</xsl:variable>
     
     <xsl:template match="/">
-      <xsl:processing-instruction name="xml-model">href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
+      <xsl:processing-instruction name="xml-model">href="http://www.stoa.org/epidoc/schema/8.10/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
 </xsl:text>
         <TEI
             xmlns="http://www.tei-c.org/ns/1.0">
@@ -198,6 +204,24 @@
                     </xsl:if>
                 </profileDesc>
             </teiHeader>
+          <xsl:variable name="images" select="$image-doc//ms:Row[contains(ms:Cell[3]/ms:Data,$id)]"/>
+          <xsl:if test="count($images) gt 0">
+            <facsimile>
+              <xsl:for-each-group select="$images" group-by="ms:Cell[1]/ms:Data">
+                <surfaceGrp n="{replace(current-group()[1]/ms:Cell[1]/ms:Data,'P.Lund0*','')}">
+                  <xsl:for-each select="current-group()">
+                    <surface>
+                      <xsl:choose>
+                        <xsl:when test="ends-with(ms:Cell[4]/ms:Data, 'r')"><xsl:attribute name="type">recto</xsl:attribute></xsl:when>
+                        <xsl:when test="ends-with(ms:Cell[4]/ms:Data, 'v')"><xsl:attribute name="type">verso</xsl:attribute></xsl:when>
+                      </xsl:choose>
+                      <graphic url="{ms:Cell[4]/ms:Data}"/>
+                    </surface>
+                  </xsl:for-each>
+                </surfaceGrp>
+              </xsl:for-each-group>
+            </facsimile>
+          </xsl:if>
             <text>
                 <body>
                     <xsl:for-each select="//cu500_t">

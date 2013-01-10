@@ -1,6 +1,7 @@
 (ns image2rdf.core
   (:import 
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
+    (com.hp.hpl.jena.datatypes.xsd XSDDatatype)
     (org.apache.commons.codec.digest DigestUtils)
     (java.io File FileOutputStream)
     (java.util Comparator)
@@ -17,6 +18,10 @@
   (ResourceFactory/createProperty uri))
   ([namespace local]
    (ResourceFactory/createProperty namespace local)))
+
+(defn create-typed-literal
+ [literal, type]
+ (ResourceFactory/createTypedLiteral literal type))
 
 (defn create-plain-literal
   [literal]
@@ -101,54 +106,86 @@
         prefixes (get-prefixes files (re-pattern (second args)))]
     (doseq [prefix prefixes]
       (let [apisrec (str up "/" prefix)
-            rdfseq (create-seq model (str up "/" prefix "/images"))
+            images (create-resource (str up "/" prefix "/images"))
+            source (create-resource (str up "/" prefix "/source"))
             matching-files (filter (fn [item] 
                                      (and (.startsWith (.getName item) prefix) (.matches (.replace (.getName item) prefix "") "^\\D.*")))
                                    files)]
         (.add model 
           (create-statement
-            (create-resource (str up "/" prefix "/images"))
+            images
             (create-property "http://purl.org/dc/terms/relation")
-            (create-resource (str up "/" prefix "/source"))))
+            source))
+        (.add model
+          (create-statement
+            images
+            (create-property "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+            (create-resource "http://purl.org/ontology/olo/core#OrderedList")))
+        (.add model
+          (create-statement
+            images
+            (create-property "http://purl.org/ontology/olo/core#length")
+            (create-typed-literal (str (count matching-files)) (XSDDatatype/XSDinteger))))
         (.add model 
           (create-statement
-            (create-resource (str up "/" prefix "/source"))
+            source
             (create-property "http://purl.org/dc/terms/relation")
-            (create-resource (str up "/" prefix "/images"))))
-        (doseq [li matching-files]
-          (let [image (create-resource (str "http://papyri.info/images/" (image-dir (image-name li)) "/" (image-name li)))]
-            (.add rdfseq image)
-            (when (.matches apisrec "^http://papyri\\.info/apis/\\w+\\.apis\\.(?:\\w|\\d)+$")
-              (.add model 
+            images))
+        (let [i (atom 0)]
+          (doseq [li matching-files]
+            (let [image (create-resource (str "http://papyri.info/images/" (image-dir (image-name li)) "/" (image-name li)))
+                  imgindex (create-resource (str up "/" prefix "/images/" (swap! i inc)))]
+              (.add model
+                (create-statement
+                  images
+                  (create-property "http://purl.org/ontology/olo/core#slot")
+                  imgindex))
+              (.add model
+                (create-statement
+                  imgindex
+                  (create-property "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+                  (create-resource "http://purl.org/ontology/olo/core#Slot")))
+              (.add model
+                (create-statement
+                  imgindex
+                  (create-property "http://purl.org/ontology/olo/core#item")
+                  image))
+              (.add model
+                (create-statement
+                  imgindex
+                  (create-property "http://purl.org/ontology/olo/core#index")
+                  (create-typed-literal (str @i) (XSDDatatype/XSDinteger))))
+              (when (.matches apisrec "^http://papyri\\.info/apis/\\w+\\.apis\\.(?:\\w|\\d)+$")
+                (.add model 
+                  (create-statement 
+                    image 
+                    (create-property "http://xmlns.com/foaf/0.1/depicts") 
+                    (create-resource (str apisrec "/original")))))
+              (.add model
                 (create-statement 
                   image 
-                  (create-property "http://xmlns.com/foaf/0.1/depicts") 
-                  (create-resource (str apisrec "/original")))))
-            (.add model
-              (create-statement 
-                image 
-                (create-property "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") 
-                (create-resource "http://purl.org/ontology/bibo/Image")))
-            (when (or (.contains (image-name li) ".f.") (.endsWith (image-name li) "r"))
-              (.add model (create-statement
-                image
-                (create-property "http://www.w3.org/2000/01/rdf-schema#label")
-                (create-plain-literal "Recto"))))
-            (when (or (.contains (image-name li) ".b.") (.matches (image-name li) ".*[^c]v$"))
-              (.add model (create-statement
-                image
-                (create-property "http://www.w3.org/2000/01/rdf-schema#label")
-                (create-plain-literal "Verso"))))
-            (when (.endsWith (image-name li) "cc")
-              (.add model (create-statement
-                image
-                (create-property "http://www.w3.org/2000/01/rdf-schema#label")
-                (create-plain-literal "Concave"))))
-            (when (.endsWith (image-name li) "cv")
-              (.add model (create-statement
-                image
-                (create-property "http://www.w3.org/2000/01/rdf-schema#label")
-                (create-plain-literal "Convex"))))))))
+                  (create-property "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") 
+                  (create-resource "http://purl.org/ontology/bibo/Image")))
+              (when (or (.contains (image-name li) ".f.") (.endsWith (image-name li) "r"))
+                (.add model (create-statement
+                  image
+                  (create-property "http://www.w3.org/2000/01/rdf-schema#label")
+                  (create-plain-literal "Recto"))))
+              (when (or (.contains (image-name li) ".b.") (.matches (image-name li) ".*[^c]v$"))
+                (.add model (create-statement
+                  image
+                  (create-property "http://www.w3.org/2000/01/rdf-schema#label")
+                  (create-plain-literal "Verso"))))
+              (when (.endsWith (image-name li) "cc")
+                (.add model (create-statement
+                  image
+                  (create-property "http://www.w3.org/2000/01/rdf-schema#label")
+                  (create-plain-literal "Concave"))))
+              (when (.endsWith (image-name li) "cv")
+                (.add model (create-statement
+                  image
+                  (create-property "http://www.w3.org/2000/01/rdf-schema#label")
+                  (create-plain-literal "Convex")))))))))
     (.write model (FileOutputStream. (File. (last args))))))
 
 

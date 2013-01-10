@@ -196,15 +196,29 @@
                         "WHERE { <" url "> dc:relation ?s "
                         "FILTER regex(\"" url "\", \"^http://papyri.info\") "
                         "FILTER regex(str(?s), \"^http://papyri.info\")}")
+          converse-relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                                 "WITH <http://papyri.info/graph> "
+                                 "INSERT {<" url "> dc:relation ?o} "
+                                 "WHERE { ?o dc:relation <" url "> "
+                                 "FILTER regex(\"" url "\", \"^http://papyri.info\") "
+                                 "FILTER regex(str(?o), \"^http://papyri.info\")}")
           transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                "WITH <http://papyri.info/graph> "
                                "INSERT {<" url "> dc:relation ?o2} "
                                "WHERE { <" url "> dc:relation ?o1 . "
                                "?o1 dc:relation ?o2 "
+                               "FILTER (!sameTerm(<" url ">, ?o2))}")
+          converse-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                               "WITH <http://papyri.info/graph> "
+                               "INSERT {?o2 dc:relation <" url ">} "
+                               "WHERE { ?o1 dc:relation <" url "> . "
+                               "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")]
       (.add request haspart)
       (.add request relation)
+      (.add request converse-relation)
       (.add request transitive-rels)
+      (.add request converse-rels)
       (UpdateRemote/execute request (str server "/update") ))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
