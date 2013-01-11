@@ -140,12 +140,14 @@
     (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
-    (.contains file "Biblio") (str "papyri.info/biblio/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml") "/ref")))
+    (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")))
     
 (defn url-from-file
   [file]
-  (let [answer (execute-query (format-url-query (get-identifier file)))]
-    (.toString (.getResource (.next answer) "uri"))))
+  (if (not (.contains file "Biblio"))
+    (let [answer (execute-query (format-url-query (get-identifier file)))]
+      (.toString (.getResource (.next answer) "uri")))
+    (str "http://papyri.info/biblio/" (get-identifier file) "/ref")))
           
 (defn -deleteGraph
   []
