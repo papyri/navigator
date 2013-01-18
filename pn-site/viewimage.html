@@ -125,7 +125,7 @@
           + "where { <http://papyri.info" + getPath() + "> olo:slot ?slot . "
           + "        ?slot olo:item ?o ."
           + "        ?slot olo:index ?i ."
-          + "        ?o rdf:label ?l } order by ?i")
+          + "        optional {?o rdf:label ?l} } order by ?i")
           + "&format=json", function(data) {
               if (data.results.bindings.length > 0) {
                   jQuery.each(data.results.bindings, function(i, row) {
