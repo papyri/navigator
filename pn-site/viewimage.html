@@ -25,6 +25,10 @@
       min-width:150px;
       font-size:18px;
     }
+    #download {
+      font-family: Verdana, Arial, Helvetica, sans-serif;
+      color: white;
+    }
   </style>
   <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
@@ -50,7 +54,7 @@
   <div id="bd">
     <div id="image" style="height:90%"></div>
     <div id="select">
-    <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value);setDownLoadLink(this.options[this.selectedIndex].value);" size="1">
+    <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value);setDownloadLink(this.options[this.selectedIndex].value);" size="1">
     </select>
     <span id="download"></span>
   </div>
@@ -75,7 +79,7 @@
     loadImage(jQuery("#images option").attr("value"));
   }
   
-  function setDowloadLink(uri) {
+  function setDownloadLink(uri) {
     jQuery("#download").html('<a href="' + uri + '" rel="nofollow">Download</a>');
   }
 
