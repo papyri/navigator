@@ -223,9 +223,9 @@
                                "FILTER (!sameTerm(<" url ">, ?o2))}")]
       (.add request haspart)
       (.add request relation)
-      (.add request converse-relation)
       (.add request transitive-rels)
       (.add request converse-rels)
+      (.add request converse-relation)
       (UpdateRemote/execute request (str server "/update") ))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
