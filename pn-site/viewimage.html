@@ -50,8 +50,9 @@
   <div id="bd">
     <div id="image" style="height:90%"></div>
     <div id="select">
-    <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value)" size="1">
+    <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value);setDownLoadLink(this.options[this.selectedIndex].value);" size="1">
     </select>
+    <span id="download"></span>
   </div>
   <script type="text/javascript" charset="utf-8">
   var OUlayer;       // layer for an open layers map
@@ -72,6 +73,10 @@
 
   function initImage() {
     loadImage(jQuery("#images option").attr("value"));
+  }
+  
+  function setDowloadLink(uri) {
+    jQuery("#download").html('<a href="' + uri + '" rel="nofollow">Download</a>');
   }
 
   function loadImage(imageURL) {
@@ -130,6 +135,7 @@
               if (data.results.bindings.length > 0) {
                   jQuery.each(data.results.bindings, function(i, row) {
                       var val = row.o.value;
+                      if (i == 0) setDownloadLink(val);
                       jQuery("#images").append('<option value="'+ val + '">' + row.l.value +'</option>');
                   });
                   initImage();

@@ -848,7 +848,7 @@
   	       (fn []
   		 (when (not (.startsWith (first x) "http"))
   		   (transform (first x)
-  			      (list (second x) (nth x 2))
+  			      (list (second x) (nth x 2) (nth x 6))
   			      (dochandler) @solrtemplates)))) @text)]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
