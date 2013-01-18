@@ -58,7 +58,7 @@
 
 (defn mets 
   [id, out]
-  (let [df (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ssZ")
+  (let [df (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss")
         date (Date.)]
     (indent (element :mets:mets {:OBJID id, :TYPE "Text", :xmlns:mets "http://www.loc.gov/METS/", 
         :xmlns:xlink "http://www.w3.org/1999/xlink", :xmlns:xsi "http://www.w3.org/2001/XMLSchema-instance",

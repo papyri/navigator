@@ -56,6 +56,7 @@
 
   <xsl:param name="collection"/>
   <xsl:param name="related"/>
+  <xsl:param name="images"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
@@ -70,7 +71,6 @@
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
-    <xsl:variable name="image" select="contains($related, 'info:fedora/ldpd')"/>
     
     <add>
       <doc>
@@ -869,7 +869,7 @@
     <!-- note difference here - 'images' are *online* images, 'illustrations' are print-publication images -->
     <xsl:param name="docs" select="node()"/>
     <xsl:if
-      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or contains($related, 'images/')">
+      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or not(empty($images))">
       <field name="images">true</field>
       <xsl:for-each select="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure']">
         <field name="image_path">
@@ -881,12 +881,10 @@
           <xsl:value-of select=".//t:graphic/@url"/>
         </field>
       </xsl:for-each>
-      <xsl:for-each select="$relations">
-        <xsl:if test="contains(. , 'images/')">
-          <field name="image_path">
-            <xsl:value-of select="."/>
-          </field>
-        </xsl:if>
+      <xsl:for-each select="$images">
+        <field name="image_path">
+          <xsl:value-of select="."/>
+        </field>
       </xsl:for-each>
     </xsl:if>
     <xsl:if
