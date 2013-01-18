@@ -106,7 +106,6 @@ public class CollectionBrowser extends HttpServlet {
             records = buildCollectionList(pathParts, resultNode);    
             String html = this.buildHTML(pathParts, records);
             displayBrowseResult(response, html);
-
     }
     
     /**

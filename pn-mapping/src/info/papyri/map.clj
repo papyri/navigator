@@ -223,9 +223,9 @@
                                "FILTER (!sameTerm(<" url ">, ?o2))}")]
       (.add request haspart)
       (.add request relation)
-      (.add request converse-relation)
       (.add request transitive-rels)
       (.add request converse-rels)
+      (.add request converse-relation)
       (UpdateRemote/execute request (str server "/update") ))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
@@ -253,7 +253,7 @@
                       "?i dc:isPartOf ?c . "
                       "?i dc:relation ?r1 . "
                       "?i dc:relation ?r2 . "
-                      "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\")) "
+                      "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
                       "FILTER  regex(str(?r2), \"^http://papyri.info/apis/[^/]+/images\")}")
           transitive-rels "PREFIX dc: <http://purl.org/dc/terms/>
                            WITH <http://papyri.info/graph> 
