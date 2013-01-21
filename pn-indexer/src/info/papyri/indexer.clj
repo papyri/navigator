@@ -226,14 +226,14 @@
     (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".txt") "/xml/" "/")
     (if (.contains url "ddbdp")
       (let [url (decode-url url)]
-  (when (.endsWith url "/source")
-    (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
-      (if (= (second identifier) "")
-        (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-       (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")
-        (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) 
-       "/" (first identifier) "." (second identifier) "."
-       (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")))))
+        (when (.endsWith url "/source")
+          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
+            (if (= (second identifier) "")
+              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
+             (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")
+              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) 
+             "/" (first identifier) "." (second identifier) "."
+             (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")))))
       (if (.contains url "hgv")
         (when (.endsWith url "/source")
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
@@ -244,7 +244,9 @@
             (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
               (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt")))))))
        (catch Exception e
-         (println (str (.getMessage e) " processing " url ".")))))
+         (when-not (nil? e)
+           (println (str (.getMessage e) " processing " url "."))))))
+
           
 (defn get-html-filename
   "Resolves the filename of the local HTML file associated with the given URL."
@@ -283,7 +285,8 @@
               (str htpath "/APIS/index.html")
               (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html")))))))
        (catch Exception e
-         (println (str (.getMessage e) " processing " url ".")))))
+         (when-not (nil? e)
+           (println (str (.getMessage e) " processing " url "."))))))
 
 (defn transform
   "Runs an XSLT transform on the `java.io.File` in the first parameter, 
@@ -805,10 +808,9 @@
   (doto @solrbiblio
     (.commit)
     (.optimize)))
-
-   
-(defn -index 
-  "Runs the main PN indexing process."
+    
+(defn -generatePages
+  "Builds the HTML and plain text pages for the PN"
   [& args]
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
@@ -836,7 +838,14 @@
 
   ;; Generate text
   (println "Generating text...")
-  (generate-text)
+  (generate-text))
+
+   
+(defn -index 
+  "Runs the main PN indexing process."
+  [& args]
+  
+  (-generatePages args)
 
   (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 5))
 	  (.setRequestWriter @solr (BinaryRequestWriter.)))
@@ -874,5 +883,7 @@
     (case (first args) 
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
-      (-index args))
+      "generate-pages" (-generatePages)
+      (do (-generatePages args)
+          (-index args))
     (-index)))

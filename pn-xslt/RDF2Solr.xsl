@@ -869,16 +869,21 @@
     <!-- note difference here - 'images' are *online* images, 'illustrations' are print-publication images -->
     <xsl:param name="docs" select="node()"/>
     <xsl:if
-      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or not(empty($images))">
+      test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:facsimile or not(empty($images))">
       <field name="images">true</field>
       <xsl:for-each select="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure']">
         <field name="image_path">
-          <xsl:value-of select=".//t:graphic/@url"/>
+          <xsl:value-of select=".//t:graphic[1]/@url"/>
         </field>
       </xsl:for-each>
       <xsl:for-each select="/t:TEI/t:text/t:body/t:div[@type = 'figure']">
         <field name="image_path">
-          <xsl:value-of select=".//t:graphic/@url"/>
+          <xsl:value-of select=".//t:graphic[1]/@url"/>
+        </field>
+      </xsl:for-each>
+      <xsl:for-each select="/t:TEI/t:facsimile">
+        <field name="image_path">
+          <xsl:value-of select=".//t:graphic[1]/@url"/>
         </field>
       </xsl:for-each>
       <xsl:for-each select="$images">
@@ -891,7 +896,7 @@
       test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure']">
       <field name="images-ext">true</field>
     </xsl:if>
-    <xsl:if test="contains($related, 'images/')">
+    <xsl:if test="/t:TEI/t:facsimile or contains($related, 'images/')">
       <field name="images-int">true</field>
     </xsl:if>
     <xsl:if
