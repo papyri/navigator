@@ -888,7 +888,7 @@
       </xsl:for-each>
       <xsl:for-each select="$images">
         <field name="image_path">
-          <xsl:value-of select="."/>
+          <xsl:value-of select="tokenize($images,' ')[1]"/>
         </field>
       </xsl:for-each>
     </xsl:if>
