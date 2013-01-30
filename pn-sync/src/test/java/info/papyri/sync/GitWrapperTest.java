@@ -48,7 +48,7 @@ public class GitWrapperTest {
     System.out.println("filenameToUri for plausible but non-existent DDbDP");
     //Fake filename — does not exist in numbers server
     String file = base + "/DDB_EpiDoc_XML/sb/sb.26/sb.26.1234.xml";
-    String expResult = "http://papyri.info/ddbdp/sb;26;16687/source";
+    String expResult = "http://papyri.info/ddbdp/sb;26;1234/source";
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
