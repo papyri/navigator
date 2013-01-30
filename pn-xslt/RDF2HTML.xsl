@@ -245,8 +245,8 @@
                     </div>
                   </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
-                    <span id="canonical-uri-label">Canonical URI:</span>
-                    <span id="canonical-uri-value"><xsl:value-of select="$selfUrl"/></span>
+                    <span id="canonical-uri-label">Canonical URI: </span>
+                    <span id="canonical-uri-value"><a href="{$selfUrl}"><xsl:value-of select="$selfUrl"/></a></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
@@ -317,18 +317,7 @@
                         This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
                     </div>
                     <xsl:if test="$image">
-                      <div id="image" class="image data"> 
-                        <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
-                        <ul>
-                          <xsl:for-each select="$imgs">
-                            <li><a href="{.}" alt="papyrus image"/><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></li>
-                          </xsl:for-each>
-                        </ul>
-                        <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
-                          concerning the use and reproduction of digital images included in APIS.  Please contact 
-                          the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
-                          if you wish to use any image in APIS.</p>
-                      </div>
+                      <xsl:call-template name="images"/>
                     </xsl:if>
                     <xsl:if test="$translation">
                       <xsl:for-each select="pi:get-docs($relations[contains(., 'hgvtrans')], 'xml')/t:TEI//t:div[@type = 'translation']">
@@ -383,18 +372,7 @@
                   </div>
                   <div class="text">
                     <xsl:if test="$image">
-                    <div id="image" class="image data"> 
-                      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if></h2>
-                      <ul>
-                        <xsl:for-each select="$imgs">
-                          <li><a href="{.}" class="imagelink" alt="papyrus image"><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></a></li>
-                        </xsl:for-each>
-                      </ul>
-                      <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
-                        concerning the use and reproduction of digital images included in APIS.  Please contact 
-                        the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
-                        if you wish to use any image in APIS or to publish any material from APIS.</p>
-                    </div>
+                      <xsl:call-template name="images"/>
                     </xsl:if>
                     <xsl:if test="$translation">
                       <xsl:apply-templates select="/t:TEI" mode="apistrans"/>
@@ -408,6 +386,21 @@
         </div>
       </body>
     </html>
+  </xsl:template>
+  
+  <xsl:template name="images">
+    <div id="image" class="image data"> 
+      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if> [<a href="{$selfUrl}/images" target="_blank">open in new window</a>]</h2>
+        <ul>
+          <xsl:for-each select="$imgs">
+            <li><a href="{.}" class="imagelink" alt="papyrus image"><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></a></li>
+          </xsl:for-each>
+        </ul>
+        <p class="rights"><b>Notice</b>: Each library participating in APIS has its own policy 
+          concerning the use and reproduction of digital images included in APIS.  Please contact 
+          the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
+          if you wish to use any image in APIS or to publish any material from APIS.</p>
+    </div>
   </xsl:template>
   
   <xsl:function name="pi:get-toc">
