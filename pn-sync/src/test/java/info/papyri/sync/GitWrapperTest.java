@@ -44,8 +44,18 @@ public class GitWrapperTest {
   }
   
   @Test
+  public void testFakeFilenameToUriDDbDP() {
+    System.out.println("filenameToUri for plausible but non-existent DDbDP");
+    //Fake filename — does not exist in numbers server
+    String file = base + "/DDB_EpiDoc_XML/sb/sb.26/sb.26.1234.xml";
+    String expResult = "http://papyri.info/ddbdp/sb;26;16687/source";
+    String result = GitWrapper.filenameToUri(file);
+    assertEquals(expResult, result);
+  }
+  
+  @Test
   public void test2LevelFilenameToUriDDbDP() {
-    System.out.println("2 level filenameToUri for DDbDP");
+    System.out.println("filenameToUri for 2 level DDbDP");
     String file = base + "/DDB_EpiDoc_XML/p.vet.aelii/p.vet.aelii.9.xml";
     String expResult = "http://papyri.info/ddbdp/p.vet.aelii;;9/source";
     String result = GitWrapper.filenameToUri(file);
