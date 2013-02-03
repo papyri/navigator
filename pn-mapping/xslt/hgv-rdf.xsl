@@ -6,6 +6,7 @@
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:bibo="http://purl.org/ontology/bibo/"
+    xmlns:gawd="http://gawd.atlantides.org/terms/"
     exclude-result-prefixes="xs tei" version="2.0">
     <xsl:output omit-xml-declaration="yes"/>
     <xsl:param name="DDB-root"/>
@@ -102,7 +103,22 @@
             </dcterms:source>
             <rdfs:label><xsl:value-of select="$unicode-title"></xsl:value-of></rdfs:label>
         </rdf:Description>
+      <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">
+        <xsl:for-each select="//tei:msDesc/tei:history/tei:provenance[@type='located']/tei:p/tei:placeName[contains(@ref,'http://pleiades')]">
+          <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/original">
+            <xsl:variable name="label" select="string(.)"/>
+            <xsl:for-each select="tokenize(@ref,'\s')">
+              <xsl:if test="starts-with(.,'http://pleiades')">
+                <gawd:findspot>
+                  <rdf:Description rdf:about="{.}#this">
+                    <rdfs:label><xsl:value-of select="$label"/></rdfs:label>
+                  </rdf:Description>
+                </gawd:findspot>
+              </xsl:if>
+            </xsl:for-each>
+          </rdf:Description>
+        </xsl:for-each>
+      </xsl:if>
     </xsl:template>
-    
     <xsl:template match="TEI.2"/>
 </xsl:stylesheet>
