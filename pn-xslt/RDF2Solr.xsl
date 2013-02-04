@@ -896,7 +896,7 @@
       test="$docs/t:TEI/t:text/t:body/t:div[@type = 'figure'] or /t:TEI/t:text/t:body/t:div[@type = 'figure']">
       <field name="images-ext">true</field>
     </xsl:if>
-    <xsl:if test="/t:TEI/t:facsimile or count($images) gt 0">
+    <xsl:if test="/t:TEI/t:facsimile or contains($images, 'papyri.info')">
       <field name="images-int">true</field>
     </xsl:if>
     <xsl:if
