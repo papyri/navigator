@@ -828,7 +828,7 @@
       (println "Queueing APIS...")
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv") ())
       (println (str "Queued " (count @html) " documents.")))
-    (doseq [arg (first args)] (queue-item arg)))
+    (doseq [arg args] (queue-item arg)))
 
   (dosync (ref-set text @html))
   ;; Generate HTML
@@ -842,10 +842,8 @@
    
 (defn -index 
   "Runs the main PN indexing process."
-  [& args]
+  []
   
-  (-generatePages args)
-
   (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 5))
 	  (.setRequestWriter @solr (BinaryRequestWriter.)))
   
@@ -878,11 +876,13 @@
 
 
 (defn -main [& args]
+  (println (string? (first args)))
   (if (> (count args) 0)
     (case (first args) 
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
-      "generate-pages" (-generatePages)
+      "generate-pages" (-generatePages (rest args))
       (do (-generatePages args)
-          (-index args))
-    (-index)))
+        (-index)))
+    (do (-generatePages) 
+      (-index))))
