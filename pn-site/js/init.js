@@ -51,7 +51,7 @@ function init() {
         + "select ?subject "
         + "from <http://papyri.info/graph> "
         + "where { ?subject dc:references <http://papyri.info" + getPath().replace(/\/jQuery/, "") + "/source>}")
-        + "&output=json", function(data) {
+        + "&format=json", function(data) {
             if (data.results.bindings.length > 0) {
                 jQuery("#controls").append('<div id="related" class="ui-widget-content ui-corner-all" style="margin-left:2em"><h4>related resources</h4></div>')
                 jQuery.each(data.results.bindings, function(i, row) {

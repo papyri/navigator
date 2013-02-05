@@ -48,7 +48,7 @@ public class GitWrapperTest {
     System.out.println("filenameToUri for plausible but non-existent DDbDP");
     //Fake filename — does not exist in numbers server
     String file = base + "/DDB_EpiDoc_XML/sb/sb.26/sb.26.1234.xml";
-    String expResult = "http://papyri.info/ddbdp/sb;26;16687/source";
+    String expResult = "http://papyri.info/ddbdp/sb;26;1234/source";
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
@@ -105,20 +105,19 @@ public class GitWrapperTest {
     }
     assertTrue(true);
   }
-  /*
+  
   @Test
   public void testIndexing() {
-    System.out.println("Testing Indexing");
+    System.out.println("Indexing test disabled due to long duration of index optimization. Uncomment code in testIndexing() to run.");
     List<String> l = new ArrayList<String>();
     l.add("http://papyri.info/ddbdp/bgu;1;2/source");
     l.add("http://papyri.info/ddbdp/bgu;1;3/source");
     try {
-      indexer.index(l);
+      //indexer.index(l);
     } catch (Exception e) {
       e.printStackTrace();
     }
     assertTrue(true);
   }
-   * 
-   */
+   
 }
