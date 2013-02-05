@@ -55,6 +55,6 @@ function loadImage(imageURL) {
 
     /* set the center of the map to the center of the height and width */      
     map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
-    map.zoomTo(2);
+    map.zoomTo(OUlayer.getOptimalViewerLevel());
 
 }

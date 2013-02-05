@@ -65,12 +65,12 @@
   var djatokaserverURL = "http://dl-img.home.nyu.edu";  // djatoka server URL
   
   function getPath() {
-      var result = window.location.href.substring(window.location.href.indexOf(window.location.pathname));
+      var result = window.location.href.substring(window.location.href.indexOf(window.location.pathname)).replace(/\/images$/, "/source");
       if (window.location.search.length > 0) {
           result = result.substring(0, result.indexOf(window.location.search)).replace(/\/images$/, "/source");
       }
       if (window.location.hash.length > 0 && result.indexOf("#") > 0) {
-          result = result.substring(0, result.indexOf(window.location.hash));
+          result = result.substring(0, result.indexOf(window.location.hash)).replace(/\/images$/, "/source");
       }
       return result;
   }
@@ -122,7 +122,7 @@
 
       /* set the center of the map to the center of the height and width */      
       map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
-      map.zoomTo(OUlayer.getLevels() - OUlayer.getViewerLevel());
+      map.zoomTo(OUlayer.getOptimalViewerLevel());
 
   }
   jQuery.getJSON("/sparql?query="
@@ -141,7 +141,11 @@
                   jQuery.each(data.results.bindings, function(i, row) {
                       var val = row.o.value;
                       if (i == 0) setDownloadLink(val);
-                      jQuery("#images").append('<option value="'+ val + '">' + row.l.value +'</option>');
+                      if (row.l) {
+                        jQuery("#images").append('<option value="'+ val + '">' + row.l.value +'</option>');
+                      } else {
+                        jQuery("#images").append('<option value="'+ val + '">' + val.substring(30) +'</option>');
+                      }
                   });
                   initImage();
               }

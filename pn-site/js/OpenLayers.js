@@ -21290,6 +21290,19 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
       return this.levels;
     },
 
+    getOptimalViewerLevel: function() {
+            if (this.map) {
+                return Math.floor(Math.min(this.getLevels(), this.getLevels() - Math.max(
+                (Math.log(this.imgMetadata.width) - Math.log(this.map.getSize().w)),
+                    (Math.log(this.imgMetadata.height) - Math.log(this.map.getSize().h))) / Math.log(2)));
+            } else {
+                return Math.floor(Math.min(this.getLevels(), this.getLevels() - Math.max(
+                    (Math.log(this.imgMetadata.width) - Math.log(OpenLayers.Layer.OpenURL.viewerWidth)),
+                    (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight))) / Math.log(2)));
+            }
+            
+       },
+
     getViewerLevel: function() {
         if (this.map) {
             return Math.ceil(Math.min(this.getLevels(), this.getLevels() - Math.max(
