@@ -255,38 +255,38 @@
     (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".html") "/xml/" "/")
     (if (.contains url "ddbdp")
       (let [url (decode-url url)]
-  (if (.endsWith url "/source")
-        (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
-          (if (= (second identifier) "")
-            (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-     (.replace (.replace (last identifier) "," "-") "/" "_") ".html")
-            (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) 
-     "/" (first identifier) "." (second identifier) "."
-     (.replace (.replace (last identifier) "," "-") "/" "_") ".html")))
-        (if (= url "http://papyri.info/ddbdp")
-          (str htpath "/DDB_EpiDoc_XML/index.html")
-    (if (.contains url ";")
-      (let [identifier (.split (substring-after url "http://papyri.info/ddbdp/") ";")]
-        (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) "/index.html"))
-      (str htpath "/DDB_EpiDoc_XML/" (substring-after url "http://papyri.info/ddbdp/") "/index.html")))))
-      (if (.contains url "hgv")
         (if (.endsWith url "/source")
-          (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
-                id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".html"))
-          (if (= url "http://papyri.info/hgv")
-            (str htpath "/HGV_meta_EpiDoc/index.html")
-            (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
-        (when (.contains url "/apis")
-          (if (.endsWith url "/source")
-            (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-              (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".html"))
+          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
+            (if (= (second identifier) "")
+              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
+                (.replace (.replace (last identifier) "," "-") "/" "_") ".html")
+              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) 
+                "/" (first identifier) "." (second identifier) "."
+                (.replace (.replace (last identifier) "," "-") "/" "_") ".html")))
+          (if (= url "http://papyri.info/ddbdp")
+            (str htpath "/DDB_EpiDoc_XML/index.html")
+            (if (.contains url ";")
+              (let [identifier (.split (substring-after url "http://papyri.info/ddbdp/") ";")]
+                (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) "/index.html"))
+              (str htpath "/DDB_EpiDoc_XML/" (substring-after url "http://papyri.info/ddbdp/") "/index.html")))))
+    (if (.contains url "/hgv/")
+      (if (.endsWith url "/source")
+        (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
+              id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+          (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".html"))
+        (if (= url "http://papyri.info/hgv")
+          (str htpath "/HGV_meta_EpiDoc/index.html")
+          (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
+      (when (.contains url "/apis")
+        (if (.endsWith url "/source")
+          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
+            (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".html"))
             (if (= url "http://papyri.info/apis")
               (str htpath "/APIS/index.html")
               (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html")))))))
-       (catch Exception e
-         (when-not (nil? e)
-           (println (str (.getMessage e) " processing " url "."))))))
+    (catch Exception e
+       (when-not (nil? e)
+         (println (str (.getMessage e) " processing " url "."))))))
 
 (defn transform
   "Runs an XSLT transform on the `java.io.File` in the first parameter, 
@@ -843,7 +843,7 @@
    
 (defn -index 
   "Runs the main PN indexing process."
-  [& args]
+  [args]
   
   (-generatePages args)
 
@@ -885,5 +885,5 @@
       "biblio" (-loadBiblio)
       "generate-pages" (-generatePages)
       (do (-generatePages args)
-          (-index args))
+          (-index args)))
     (-index)))
