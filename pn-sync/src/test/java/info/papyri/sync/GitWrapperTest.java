@@ -37,8 +37,8 @@ public class GitWrapperTest {
   @Test
   public void testFilenameToUriDDbDP() {
     System.out.println("filenameToUri for DDbDP");
-    String file = base + "/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml";
-    String expResult = "http://papyri.info/ddbdp/bgu;1;2/source";
+    String file = base + "/DDB_EpiDoc_XML/p.mich/p.mich.20/p.mich.20.809.xml";
+    String expResult = "http://papyri.info/ddbdp/p.mich;20;809/source";
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }

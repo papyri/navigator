@@ -273,17 +273,17 @@ public class GitWrapper {
             if (file.substring(file.lastIndexOf("/") + 1).startsWith(collection)) {
               result.append(collection).append(";");
               // name should be of the form bgu.1.2, so lose the "bgu."
-              String rest = file.substring(file.lastIndexOf("/") + collection.length() + 2); 
+              String rest = file.substring(file.lastIndexOf("/") + collection.length() + 2).replaceAll("\\.xml$", ""); 
               if (rest.contains(".")) {
                 result.append(rest.substring(0, rest.indexOf(".")));
                 result.append(";");
-                result.append(rest.substring(rest.indexOf(".") + 1, rest.lastIndexOf(".")));
+                result.append(rest.substring(rest.indexOf(".") + 1));
               } else {
                 result.append(";;");
                 result.append(rest);
               }
               result.append("/source");
-              if (result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d)+;(\\w|\\d)*;(\\w|\\d)+/source")) {
+              if (result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d)*;(\\w|\\d)+/source")) {
                 match = true;
                 break; // Early return
               } else {
