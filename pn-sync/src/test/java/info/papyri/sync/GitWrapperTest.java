@@ -61,6 +61,15 @@ public class GitWrapperTest {
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
+          
+  @Test
+  public void test2LevelFilenameToUriDDbDP2() {
+    System.out.println("filenameToUri for 2 level DDbDP");
+    String file = base + "/DDB_EpiDoc_XML/p.count/p.count.45.xml";
+    String expResult = "http://papyri.info/ddbdp/p.count;;45/source";
+    String result = GitWrapper.filenameToUri(file);
+    assertEquals(expResult, result);
+  }
   
   @Test
   public void testLookupDDbDPID() {

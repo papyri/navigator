@@ -279,7 +279,7 @@ public class GitWrapper {
                 result.append(";");
                 result.append(rest.substring(rest.indexOf(".") + 1));
               } else {
-                result.append(";;");
+                result.append(";");
                 result.append(rest);
               }
               result.append("/source");
