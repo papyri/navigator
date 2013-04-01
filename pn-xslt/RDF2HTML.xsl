@@ -398,7 +398,7 @@
               <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
               <xsl:when test="count(t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]) &gt; 0">
                 <xsl:for-each select="t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]">
-                  <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:apply-templates/></li>
+                  <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"></xsl:value-of></a>]: <xsl:apply-templates/></li>
                 </xsl:for-each>                                     
               </xsl:when>
               <xsl:otherwise>
@@ -411,7 +411,7 @@
               <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
               <xsl:when test="count(t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')])">
                 <xsl:for-each select="t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')]">
-                  <li><xsl:value-of select="@when"/> [<xsl:value-of select="@who"/>]: <xsl:value-of select="."/></li>
+                  <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"></xsl:value-of></a>]: <xsl:value-of select="."/></li>
                 </xsl:for-each>                                                    
               </xsl:when>
               <xsl:otherwise>
