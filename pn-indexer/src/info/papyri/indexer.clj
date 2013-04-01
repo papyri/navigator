@@ -332,17 +332,18 @@
 (defn batch-relation-query
   "Retrieves a set of triples where A `<dc:relation>` B when A is a child of the given URI."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+            prefix dcterms: <http://purl.org/dc/terms/> 
             select ?a ?b
             from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a .
+            where { <%s> dcterms:hasPart ?a .
                     ?a dc:relation ?b
                     filter(!regex(str(?b),'/images$'))}" url))
 
 (defn relation-query
   "Returns URIs that are the object of `<dc:relation>`s where the given URI is the subject."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
             select ?a
             from <http://papyri.info/graph>
             where { <%s> dc:relation ?a 
@@ -351,102 +352,110 @@
 (defn batch-replaces-query
   "Gets the set of triples where A `<dc:replaces>` B for a given collection."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+            prefix dcterms: <http://purl.org/dc/terms/>
             select ?a ?b
             from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a .
+            where { <%s> dcterms:hasPart ?a .
                     ?a dc:replaces ?b }" url))
 
 (defn batch-hgv-source-query
   "Gets the set of triples where A `<dc:source` B for a given collection."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a ?b
-            from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a .
-                    ?a dc:source ?b }" url))
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              prefix dcterms: <http://purl.org/dc/terms/>
+              select ?a ?b
+              from <http://papyri.info/graph>
+              where { <%s> dcterms:hasPart ?a .
+                      ?a dc:source ?b }" url))
         
 (defn hgv-source-query
   "Returns A where the given URI `<dc:source>` A."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a
-            from <http://papyri.info/graph>
-            where { <%s> dc:source ?a  }" url))        
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              select ?a
+              from <http://papyri.info/graph>
+              where { <%s> dc:source ?a  }" url))        
         
 (defn batch-other-source-query
   "Gets `dc:source`s for items in a given collection where there are 
   related HGV docs with sources."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a ?b
-            from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a .
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              prefix dcterms: <http://purl.org/dc/terms/>
+              select ?a ?b
+              from <http://papyri.info/graph>
+              where { <%s> dcterms:hasPart ?a .
                     ?a dc:relation ?hgv .
                     ?hgv dc:source ?b }" url))
                     
 (defn other-source-query
   "Gets `dc:source`s for the given URI using related HGV docs."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a
-            from <http://papyri.info/graph>
-            where { <%s> dc:relation ?hgv .
-                    ?hgv dc:source ?a }" url))        
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              select ?a
+              from <http://papyri.info/graph>
+              where { <%s> dc:relation ?hgv .
+                      ?hgv dc:source ?a }" url))        
         		                                    
         		                
 (defn batch-hgv-citation-query
   "Gets `dc:bibliographicCitation`s for items in a given collection where 
   there are related sources with bibliography."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a ?c
-            from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a .
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              prefix dcterms: <http://purl.org/dc/terms/>
+              select ?a ?c
+              from <http://papyri.info/graph>
+              where { <%s> dcterms:hasPart ?a .
                     ?a dc:source ?b .
-                    ?b dc:bibliographicCitation ?c }" url))  
+                    ?b dcterms:bibliographicCitation ?c }" url))  
                     
 (defn hgv-citation-query
   "Gets a bibliographic citation for the given URI, using the related source."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a
-            from <http://papyri.info/graph>
-            where { <%s> dc:source ?b .
-                    ?b dc:bibliographicCitation ?a }" url)) 
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              prefix dcterms: <http://purl.org/dc/terms/>
+              select ?a
+              from <http://papyri.info/graph>
+              where { <%s> dc:source ?b .
+                      ?b dcterms:bibliographicCitation ?a }" url)) 
                     
 (defn batch-other-citation-query
   "Gets bibliographic citations for items in a given collection, via their
   relationship with HGV records."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a ?c
-            from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a .
-                    ?a dc:relation ?hgv .
-                    ?hgv dc:source ?b .
-                    ?b dc:bibliographicCitation ?c }" url))  
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              prefix dcterms: <http://purl.org/dc/terms/>
+              select ?a ?c
+              from <http://papyri.info/graph>
+              where { <%s> dcterms:hasPart ?a .
+                      ?a dc:relation ?hgv .
+                      ?hgv dc:source ?b .
+                      ?b dcterms:bibliographicCitation ?c }" url))  
                     
 (defn other-citation-query
   "Gets bibliographic citations for a given item via its relationship
   to HGV records."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/terms/> 
-            select ?a
-            from <http://papyri.info/graph>
-            where { <%s> dc:relation ?hgv .
-                    ?hgv dc:source ?b .
-                    ?b dc:bibliographicCitation ?a }" url)) 
+    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              prefix dcterms: <http://purl.org/dc/terms/>
+              select ?a
+              from <http://papyri.info/graph>
+              where { <%s> dc:relation ?hgv .
+                      ?hgv dc:source ?b .
+                      ?b dcterms:bibliographicCitation ?a }" url)) 
 
 (defn batch-cited-by-query
   [url]
   (format "prefix cito: <http://purl.org/spar/cito/>
-          prefix dc: <http://purl.org/dc/terms/> 
-          select ?a ?c
-          from <http://papyri.info/graph>
-          where {<%s> dc:hasPart ?a .
-                 ?a dc:source ?b .
-                 ?b cito:isCitedBy ?c }" url))
+           prefix dc: <http://purl.org/dc/elements/1.1/> 
+           prefix dcterms: <http://purl.org/dc/terms/>
+           select ?a ?c
+           from <http://papyri.info/graph>
+           where {<%s> dcterms:hasPart ?a .
+                  ?a dc:source ?b .
+                  ?b cito:isCitedBy ?c }" url))
 
 (defn cited-by-query
   "Looks for Cito citations coming from biblio"
@@ -454,8 +463,8 @@
   (let [uri (.replace url "/source" "/work")]
     (format "prefix cito: <http://purl.org/spar/cito/>
              select ?a
-            from <http://papyri.info/graph>
-            where {<%s> cito:isCitedBy ?a }" uri)))
+             from <http://papyri.info/graph>
+             where {<%s> cito:isCitedBy ?a }" uri)))
             
 (defn replaces-query
   "Finds items that the given item replaces."
@@ -484,12 +493,13 @@
             
 (defn batch-images-query
   [url]
-  (format "prefix dc: <http://purl.org/dc/terms/>
+  (format "prefix dc: <http://purl.org/dc/elements/1.1/>
+           prefix dcterms: <http://purl.org/dc/terms/>
            prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
            prefix olo: <http://purl.org/ontology/olo/core#>
            select ?a ?image
            from <http://papyri.info/graph>
-           where { <%s> dc:hasPart ?a .
+           where { <%s> dcterms:hasPart ?a .
                    ?a dc:relation ?i .
                    ?i rdf:type olo:OrderedList .
                    ?i olo:slot ?slot .
@@ -501,9 +511,7 @@
   "Finds images related to the given url"
   [url]
   (let [uri (.replace url "/source" "/images")]
-    (format "prefix dc: <http://purl.org/dc/terms/>
-             prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-             prefix olo: <http://purl.org/ontology/olo/core#>
+    (format "prefix olo: <http://purl.org/ontology/olo/core#>
              select ?image
              from <http://papyri.info/graph>
              where { <%1$s> olo:slot ?slot .
@@ -621,7 +629,7 @@
                              (list "isPartOf" (apply str (interpose " " all-urls)))   
                              (list "sources" (apply str (interpose " " (for [x sources] (last x)))))  
                              (list "images" (apply str (interpose " " (for [x images] (last x)))))
-                             (list "citationForm" (apply str (interpose "" (for [x citations] (last x))))) 
+                             (list "citationForm" (apply str (interpose ", " (for [x citations] (last x))))) 
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x))))) 
                              (list "selfUrl" (substring-before (last item) "/source"))     
                              (list "server" nserver)))
@@ -811,7 +819,7 @@
     
 (defn -generatePages
   "Builds the HTML and plain text pages for the PN"
-  [& args]
+  [args]
   (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
@@ -844,7 +852,7 @@
   "Runs the main PN indexing process."
   []
   
-  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 5))
+  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 2))
 	  (.setRequestWriter @solr (BinaryRequestWriter.)))
   
   ;; Index docs queued in @text

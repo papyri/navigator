@@ -103,6 +103,8 @@ public class Publisher implements Runnable {
               }
             }
             status = PUBLISHING;
+            logger.info("Generating pages starting at " + new Date());
+            indexer.generatePages(urls);
             logger.info("Indexing files starting at " + new Date());
             indexer.index(urls);
           } else {

@@ -424,7 +424,7 @@
    <xsl:template name="support">
       <!-- called by template "hirend" above; decides whether text support is "ostrakon" or other (prob. = "papyrus") -->
       <xsl:choose>
-         <xsl:when test="starts-with(//t:idno[@type='filename'],'o.')">
+         <xsl:when test="starts-with(./ancestor::t:TEI//t:idno[@type='filename'],'o.')">
             <xsl:text> ostrakon</xsl:text>
          </xsl:when>
          <xsl:otherwise>

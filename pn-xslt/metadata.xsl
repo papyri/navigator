@@ -42,6 +42,7 @@
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary" mode="metadata"/>
             <!-- Publications -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
+            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/>
             <!-- Inv. Id -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno" mode="metadata"/>
             <!-- Physical Desc. -->
@@ -156,6 +157,18 @@
         <td><xsl:value-of select="."/></td>
       </tr>
     </xsl:for-each>
+  </xsl:template>
+  
+  <!-- APIS Citations -->
+  <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="{count(.//t:bibl)}">Citations</th>
+      <td>
+        <xsl:for-each select=".//t:bibl">
+          <p><xsl:apply-templates/></p>
+        </xsl:for-each>
+      </td>
+    </tr>
   </xsl:template>
   
   <!-- Commentary -->
