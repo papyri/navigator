@@ -409,7 +409,8 @@
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/d.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/gothenburg.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
-  (-insertInferences nil))
+  (-insertInferences nil)
+  (-insertPelagiosAnnotations nil))
 
 (defn -main
   [& args]
@@ -423,11 +424,10 @@
             (= function "delete-relation") (-deleteRelation (second args))
             (= function "insert-inferences") (if (> (count args) 1)
               (for [file (rest args)] 
-                (do
-                  (-insertInferences (url-from-file file))
-                  (-insertPelagiosAnnotations (url-from-file file))))
-              (do 
-                (-insertInferences nil)
-                (-insertPelagiosAnnotations nil)))
+                (-insertInferences (url-from-file file)))
+              (-insertInferences nil))
+            (= function "insert-pelagios") (if (> (count args) 1)
+              (-insertPelagiosAnnotations (url-from-file file))
+              (-insertPelagionsAnnotations nil))
             (= function "help") (print help)))
     ((print help))))
