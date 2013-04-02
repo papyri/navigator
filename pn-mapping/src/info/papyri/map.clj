@@ -11,6 +11,7 @@
             #^{:static true} [mapFiles [java.util.List] void]
             #^{:static true} [mapAll [java.util.List] void]
             ])
+  (:require [clojure.string :as str])
   (:import (java.io BufferedReader ByteArrayInputStream ByteArrayOutputStream File FileInputStream FileOutputStream FileReader StringReader StringWriter)
            (java.net URI)
            (java.nio.charset Charset)
@@ -27,7 +28,8 @@
            (com.hp.hpl.jena.rdf.model Model ModelFactory)
            (com.hp.hpl.jena.sparql.modify.request UpdateCreate UpdateLoad)
            (com.hp.hpl.jena.update Update UpdateFactory UpdateRequest)
-           (com.hp.hpl.jena.sparql.lang UpdateParser)))
+           (com.hp.hpl.jena.sparql.lang UpdateParser)
+           (org.apache.commons.codec.digest DigestUtils)))
            
 (def xsl (ref nil))
 (def pxslt (ref nil))
@@ -58,12 +60,13 @@
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 5000)
         dga (DatasetGraphAccessorHTTP. (str server "/data"))
-        adapter (DatasetAdapter. dga)
-        ]
+        adapter (DatasetAdapter. dga)]
     (try
       (doto rdf
         (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
+        xmlns:dc=\"http://purl.org/dc/elements/1.1/\"
         xmlns:dcterms=\"http://purl.org/dc/terms/\" 
+        xmlns:oac=\"http://www.openannotation.org/ns/\" 
         xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"))
       (dotimes [n times]
         (let [string (.poll @buffer)]
@@ -123,7 +126,7 @@
 (defn format-url-query
   [filename] 
   (format 
-    "prefix dc: <http://purl.org/dc/terms/> 
+    "prefix dc: <http://purl.org/dc/elements/1.1/> 
     select ?uri
     from <http://papyri.info/graph>
     where {?uri dc:identifier \"%s\"}" filename))
@@ -154,7 +157,6 @@
   (let [request (UpdateFactory/create)]
     (.add request "DROP ALL")
     (.add request (UpdateCreate. "http://papyri.info/graph"))
-    (println (.toString request))
     (UpdateRemote/execute request (str server "/update") )))
       
 (defn -deleteUri
@@ -166,8 +168,6 @@
                         DELETE { ?s ?p <" uri ">}
                         WHERE { ?s ?p <" uri ">}")
         req (UpdateFactory/create)]
-    (println deletesub)
-    (println deleteobj)
     (.add req deletesub)
     (.add req deleteobj)
     (UpdateRemote/execute req (str server "/update") )))
@@ -177,6 +177,14 @@
   (let [deleterel (str "WITH <http://papyri.info/graph>
                         DELETE { ?s <" uri "> ?r }
                         WHERE { ?s <" uri "> ?r }")
+        req (UpdateFactory/create)]
+    (.add req deleterel)
+    (UpdateRemote/execute req (str server "/update") )))
+    
+(defn -deleteTriple
+  [s p o]
+  (let [deleterel (str "WITH <http://papyri.info/graph>
+                        DELETE { <" s "> <" p "> <" o "> }")
         req (UpdateFactory/create)]
     (.add req deleterel)
     (UpdateRemote/execute req (str server "/update") )))
@@ -198,6 +206,67 @@
     (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
     (.add adapter graph model)))
     
+(defn -insertPelagiosAnnotations
+  [url]
+  (if-not (nil? url)
+    (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
+          adapter (DatasetAdapter. dga)
+          model (ModelFactory/createDefaultModel)
+          pi-uri (str/replace url "/source" "/original")
+          query (str "PREFIX lawd: <http://lawd.info/ontology/> "
+                     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+                     "SELECT ?pleiades ?label "
+                     "FROM <http://papyri.info/graph> "
+                     "WHERE { <" pi-uri "> lawd:foundAt ?pleiades . "
+                            " ?pleiades rdfs:label ?label }")
+          answer (execute-query query)]
+          (when (.hasNext answer)
+            (let [ans (.next answer)
+                  pleiades (.toString (.getResource ans "pleiades"))
+                  label (.toString (.getLiteral ans "label"))
+                  ann-id (DigestUtils/md5Hex (str "<" pi-uri "> <http://lawd.info/ontology/foundAt> <" pleiades ">"))
+                  rdf (str "<rdf:RDF "
+                              "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
+                              "xmlns:dc=\"http://purl.org/dc/terms/\" "
+                              "xmlns:oac=\"http://www.openannotation.org/ns/\" "
+                              "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" 
+                              "<rdf:Description rdf:about=\"" (str/replace url "/source" (str "/annotation/" ann-id)) "\">"
+                                "<rdf:type rdf:resource=\"http://www.openannotation.org/ns/Annotation\"/>"
+                                "<rdfs:label>" label "</rdfs:label>"
+                                "<oac:hasBody rdf:resource=\"" pleiades "\"/>"
+                                "<oac:hasTarget rdf:resource=\"" url "\"/>"
+                                "<oac:motivatedBy rdf:resource=\"http://www.openannotation.org/ns/linking\"/>"
+                              "</rdf:Description>"
+                            "</rdf:RDF>")]
+              (.read model (StringReader. rdf) nil "RDF/XML")
+              (.add adapter graph model))))
+    (let [query (str "PREFIX lawd: <http://lawd.info/ontology/> "
+                     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+                     "SELECT ?uri ?pleiades ?label "
+                     "FROM <http://papyri.info/graph> "
+                     "WHERE { ?uri lawd:foundAt ?pleiades . "
+                            " ?pleiades rdfs:label ?label }")
+          answer (execute-query query)
+          nthreads (.availableProcessors (Runtime/getRuntime))
+          pool (Executors/newFixedThreadPool nthreads)]
+      (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
+      (while (.hasNext answer)
+        (let [ans (.next answer)
+              uri (.toString (.getResource ans "uri"))
+              pleiades (.toString (.getResource ans "pleiades"))
+              label (.toString (.getLiteral ans "label"))
+              ann-id (DigestUtils/md5Hex (str "<" uri "> <http://lawd.info/ontology/foundAt> <" pleiades ">"))]
+          (.add @buffer (str "<rdf:Description rdf:about=\"" (str/replace uri "/original" (str "/annotation/" ann-id)) "\">"
+                              "<rdf:type rdf:resource=\"http://www.openannotation.org/ns/Annotation\"/>"
+                              "<rdfs:label>" label "</rdfs:label>"
+                              "<oac:hasBody rdf:resource=\"" pleiades "\"/>"
+                              "<oac:hasTarget rdf:resource=\"" (str/replace uri "/original" "") "\"/>"
+                              "<oac:motivatedBy rdf:resource=\"http://www.openannotation.org/ns/linking\"/>"
+                            "</rdf:Description>"))
+          (when (> (count @buffer) 5000)
+            (flush-buffer nil))))
+        (flush-buffer (count @buffer)))))
+    
 (defn -insertInferences
   [url]
   (if (not (nil? url))
@@ -206,25 +275,25 @@
                        "WITH <http://papyri.info/graph> "
                        "INSERT {?s dc:hasPart <" url ">} "
                        "WHERE { <" url "> dc:isPartOf ?s}")
-          relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
+          relation (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                         "WITH <http://papyri.info/graph> "
                         "INSERT {?s dc:relation <" url ">} "
                         "WHERE { <" url "> dc:relation ?s "
                         "FILTER regex(\"" url "\", \"^http://papyri.info\") "
                         "FILTER regex(str(?s), \"^http://papyri.info\")}")
-          converse-relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
+          converse-relation (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                                  "WITH <http://papyri.info/graph> "
                                  "INSERT {<" url "> dc:relation ?o} "
                                  "WHERE { ?o dc:relation <" url "> "
                                  "FILTER regex(\"" url "\", \"^http://papyri.info\") "
                                  "FILTER regex(str(?o), \"^http://papyri.info\")}")
-          transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
+          transitive-rels (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                                "WITH <http://papyri.info/graph> "
                                "INSERT {<" url "> dc:relation ?o2} "
                                "WHERE { <" url "> dc:relation ?o1 . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
-          converse-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
+          converse-rels (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                                "WITH <http://papyri.info/graph> "
                                "INSERT {?o2 dc:relation <" url ">} "
                                "WHERE { ?o1 dc:relation <" url "> . "
@@ -241,11 +310,11 @@
                        "WITH <http://papyri.info/graph> "
                        "INSERT{?s dc:hasPart ?o} "
                        "WHERE { ?o dc:isPartOf ?s}")
-          relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
+          relation (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                         "WITH <http://papyri.info/graph> "
                         "INSERT {?s dc:relation ?o} "
                         "WHERE { ?o dc:relation ?s}")
-          translations (str "PREFIX dc: <http://purl.org/dc/terms/> "
+          translations (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                             "WITH <http://papyri.info/graph> "
                             "INSERT { ?r1 <http://purl.org/dc/terms/relation> ?r2 } "
                             "WHERE { "
@@ -254,17 +323,18 @@
                             "FILTER  regex(str(?i), \"^http://papyri.info/hgv\") "
                             "FILTER  regex(str(?r1), \"^http://papyri.info/ddbdp\") "
                             "FILTER  regex(str(?r2), \"^http://papyri.info/hgvtrans\")}")
-          images (str "PREFIX dc: <http://purl.org/dc/terms/> "
+          images (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
+                      "PREFIX dcterms: <http://purl.org/dc/terms/>"
                       "WITH <http://papyri.info/graph> "
                       "INSERT { ?r1 <http://purl.org/dc/terms/relation> ?r2 } "
                       "WHERE { "
-                      "?c dc:isPartOf <http://papyri.info/apis> . "
-                      "?i dc:isPartOf ?c . "
+                      "?c dcterms:isPartOf <http://papyri.info/apis> . "
+                      "?i dcterms:isPartOf ?c . "
                       "?i dc:relation ?r1 . "
                       "?i dc:relation ?r2 . "
                       "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
                       "FILTER  regex(str(?r2), \"^http://papyri.info/apis/[^/]+/images\")}")
-          transitive-rels "PREFIX dc: <http://purl.org/dc/terms/>
+          transitive-rels "PREFIX dc: <http://purl.org/dc/elements/1.1/>
                            WITH <http://papyri.info/graph> 
                            INSERT {?s dc:relation ?o2}
                            WHERE { ?s dc:relation ?o1 .
@@ -346,7 +416,8 @@
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/d.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/gothenburg.rdf")
   (-loadFile "/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
-  (-insertInferences nil))
+  (-insertInferences nil)
+  (-insertPelagiosAnnotations nil))
 
 (defn -main
   [& args]
@@ -363,5 +434,9 @@
               (for [file (rest args)] 
                 (-insertInferences (url-from-file file)))
               (-insertInferences nil))
+            (= function "insert-pelagios") (if (> (count args) 1)
+              (for [file (rest args)]
+                (-insertPelagiosAnnotations (url-from-file file)))
+              (-insertPelagiosAnnotations nil))
             (= function "help") (print help)))
     ((print help))))

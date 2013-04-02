@@ -3,6 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:tei="http://www.tei-c.org/ns/1.0" 
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     exclude-result-prefixes="xs tei" version="2.0">
@@ -14,13 +15,13 @@
         <xsl:variable name="id">http://papyri.info/ddbdp/<xsl:value-of select="replace(normalize-unicode($ddb-seq[1], 'NFD'), '[^.a-z0-9]', '')"/>;<xsl:value-of select="$ddb-seq[2]"/>;<xsl:value-of select="encode-for-uri($ddb-seq[3])"/>/source</xsl:variable>
         <xsl:variable name="perseus-id" select="//tei:publicationStmt/tei:idno[@type = 'ddb-perseus-style']"/>
         <rdf:Description rdf:about="{$id}">
-            <dcterms:identifier>papyri.info/ddbdp/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()"/></dcterms:identifier>
-            <dcterms:source>
+            <dc:identifier>papyri.info/ddbdp/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()"/></dc:identifier>
+            <dc:source>
               <rdf:Description rdf:about="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/work">
-                <dcterms:source rdf:resource="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/original"/>
+                <dc:source rdf:resource="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/original"/>
               </rdf:Description>
-            </dcterms:source>
-            <dcterms:identifier><xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']/text()"/></dcterms:identifier>
+            </dc:source>
+            <dc:identifier><xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']/text()"/></dc:identifier>
             <xsl:for-each select="distinct-values(//tei:text/tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-in']/@n)">
                 <xsl:for-each select="tokenize(., '\|')">
                 <xsl:variable name="ddb-reprint-seq" select="tokenize(., ';')"/>
@@ -62,13 +63,13 @@
             <xsl:for-each select="tokenize(., '\s')">
               <xsl:variable name="dir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>
               <xsl:if test="doc-available(concat('file://', $root, '/HGV_meta_EpiDoc/HGV', $dir, '/', ., '.xml'))">
-                <dcterms:relation rdf:resource="http://papyri.info/hgv/{.}/source"/>
+                <dc:relation rdf:resource="http://papyri.info/hgv/{.}/source"/>
               </xsl:if>
             </xsl:for-each>
           </xsl:for-each>
           <xsl:for-each select="//tei:idno[@type = 'TM']">
             <xsl:for-each select="tokenize(., '\s')">
-              <dcterms:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+              <dc:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
             </xsl:for-each>
           </xsl:for-each>
         </rdf:Description>

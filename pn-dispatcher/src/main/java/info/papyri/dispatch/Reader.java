@@ -164,12 +164,13 @@ public class Reader extends HttpServlet {
   private File resolveFile(String page, String type) {
     File result = null;
     StringBuilder sparql = new StringBuilder();
+    sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ");
     sparql.append("prefix dc: <http://purl.org/dc/terms/> ");
     sparql.append("select ?related ");
     sparql.append("from <");
     sparql.append(graph);
     sparql.append("> where { <").append(page).append("> dc:relation ?related . ");
-    sparql.append("optional { ?related dc:isReplacedBy ?orig } . ");
+    sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
     sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }");
     try {

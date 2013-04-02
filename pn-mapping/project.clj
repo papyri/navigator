@@ -14,5 +14,6 @@
                  [org.apache.jena/jena-iri "0.9.1"]
                  [org.apache.jena/jena-arq "2.9.1"]
                  [org.apache.jena/jena-fuseki "0.2.2"]
-                 [commons-logging/commons-logging "1.1.1"]]
+                 [commons-logging/commons-logging "1.1.1"]
+                 [commons-codec/commons-codec "1.7"]]
   :main info.papyri.map)

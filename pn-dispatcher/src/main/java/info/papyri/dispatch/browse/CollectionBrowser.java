@@ -151,7 +151,8 @@ public class CollectionBrowser extends HttpServlet {
     
     String buildSparqlQuery(LinkedHashMap<SolrField, String> pathParts){
         
-        StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/terms/> ");
+        StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/elements/1.1/> ");
+        queryBuilder.append("PREFIX dcterms: <http://purl.org/dc/terms/> ");
         queryBuilder.append("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ");
         queryBuilder.append("SELECT ?child ?label ?type ?parent ");
         queryBuilder.append("FROM ");
@@ -179,11 +180,11 @@ public class CollectionBrowser extends HttpServlet {
         
         queryBuilder.append("WHERE { <http://papyri.info/");
         queryBuilder.append(subj);
-        queryBuilder.append("> dc:hasPart ?child . ");
+        queryBuilder.append("> dcterms:hasPart ?child . ");
         queryBuilder.append("OPTIONAL {<http://papyri.info/");
         queryBuilder.append(subj);
-        queryBuilder.append("> dc:bibliographicCitation ?parent . } ");
-        queryBuilder.append("OPTIONAL { ?child dc:bibliographicCitation ?label . } ");
+        queryBuilder.append("> dcterms:bibliographicCitation ?parent . } ");
+        queryBuilder.append("OPTIONAL { ?child dcterms:bibliographicCitation ?label . } ");
         queryBuilder.append("OPTIONAL { ?child rdf:type ?type . } }");
 
         return queryBuilder.toString();
