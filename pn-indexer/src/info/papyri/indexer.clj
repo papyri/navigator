@@ -892,5 +892,5 @@
       "generate-pages" (-generatePages (rest args))
       (do (-generatePages args)
         (-index)))
-    (do (-generatePages) 
+    (do (-generatePages args) 
       (-index))))
