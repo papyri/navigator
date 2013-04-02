@@ -181,6 +181,15 @@
     (.add req deleterel)
     (UpdateRemote/execute req (str server "/update") )))
 
+(defn -deleteTriple
+  [s p o]
+  (let [deleterel (str "WITH <http://papyri.info/graph>
+                        DELETE { <" s "> <" p "> <" o "> }
+                        WHERE { <" s "> <" p "> <" o "> }")
+        req (UpdateFactory/create)]
+    (.add req deleterel)
+    (UpdateRemote/execute req (str server "/update") )))
+
 (defn -loadFile
   [f]
   (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
@@ -349,6 +358,7 @@
             (= function "delete-graph") (-deleteGraph)
             (= function "delete-uri") (-deleteUri (second args))
             (= function "delete-relation") (-deleteRelation (second args))
+            (= function "delete-triple") (-deleteTriple (second args) (nth args 2) (nth args 3))
             (= function "insert-inferences") (if (> (count args) 1)
               (for [file (rest args)] 
                 (-insertInferences (url-from-file file)))
