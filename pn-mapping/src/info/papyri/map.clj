@@ -205,7 +205,7 @@
           pi-uri (str/replace url "/source" "/original")
           query (str "PREFIX lawd: <http://lawd.info/ontology/> "
                      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-                     "SELECT ?pleiades ?label"
+                     "SELECT ?pleiades ?label "
                      "FROM <http://papyri.info/graph> "
                      "WHERE { <" pi-uri "> lawd:foundAt ?pleiades . "
                             " ?pleiades rdfs:label ?label }")
@@ -213,7 +213,7 @@
           (when (.hasNext answer)
             (let [ans (.next answer)
                   pleiades (.toString (.getResource ans "pleiades"))
-                  label (.toString (.getValue ans "label"))
+                  label (.toString (.getLiteral ans "label"))
                   ann-id (DigestUtils/md5Hex (str "<" pi-uri "> <http://lawd.info/ontology/foundAt> <" pleiades ">"))
                   rdf (str "<rdf:RDF "
                               "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
@@ -227,14 +227,14 @@
                                 "<oac:hasTarget rdf:resource=\"" url "\"/>"
                               "</rdf:Description>"
                             "</rdf:RDF>")]
-              (.read model (StringReader. rdf))
+              (.read model (StringReader. rdf) nil "RDF/XML")
               (.add adapter graph model))))
     (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
           adapter (DatasetAdapter. dga)
           model (ModelFactory/createDefaultModel)
           query (str "PREFIX lawd: <http://lawd.info/ontology/> "
                      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-                     "SELECT ?uri ?pleiades ?label"
+                     "SELECT ?uri ?pleiades ?label "
                      "FROM <http://papyri.info/graph> "
                      "WHERE { ?uri lawd:foundAt ?pleiades . "
                             " ?pleiades rdfs:label ?label }")
@@ -243,7 +243,7 @@
             (let [ans (.next answer)
                   uri (.toString (.getResource ans "uri"))
                   pleiades (.toString (.getResource ans "pleiades"))
-                  label (.toString (.getValue ans "label"))
+                  label (.toString (.getLiteral ans "label"))
                   ann-id (DigestUtils/md5Hex (str "<" uri "> <http://lawd.info/ontology/foundAt> <" pleiades ">"))
                   rdf (str "<rdf:RDF "
                               "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
@@ -257,7 +257,7 @@
                                 "<oac:hasTarget rdf:resource=\"" (str/replace uri "/original" "") "\"/>"
                               "</rdf:Description>"
                             "</rdf:RDF>")]
-              (.read model (StringReader. rdf))
+              (.read model (StringReader. rdf) nil "RDF/XML")
               (.add adapter graph model))))))
     
 (defn -insertInferences
@@ -427,7 +427,8 @@
                 (-insertInferences (url-from-file file)))
               (-insertInferences nil))
             (= function "insert-pelagios") (if (> (count args) 1)
-              (-insertPelagiosAnnotations (url-from-file file))
-              (-insertPelagionsAnnotations nil))
+              (for [file (rest args)]
+                (-insertPelagiosAnnotations (url-from-file file)))
+              (-insertPelagiosAnnotations nil))
             (= function "help") (print help)))
     ((print help))))
