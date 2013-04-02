@@ -229,36 +229,31 @@
                             "</rdf:RDF>")]
               (.read model (StringReader. rdf) nil "RDF/XML")
               (.add adapter graph model))))
-    (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
-          adapter (DatasetAdapter. dga)
-          model (ModelFactory/createDefaultModel)
-          query (str "PREFIX lawd: <http://lawd.info/ontology/> "
+    (let [query (str "PREFIX lawd: <http://lawd.info/ontology/> "
                      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
                      "SELECT ?uri ?pleiades ?label "
                      "FROM <http://papyri.info/graph> "
                      "WHERE { ?uri lawd:foundAt ?pleiades . "
                             " ?pleiades rdfs:label ?label }")
-          answer (execute-query query)]
-          (while (.hasNext answer)
-            (let [ans (.next answer)
-                  uri (.toString (.getResource ans "uri"))
-                  pleiades (.toString (.getResource ans "pleiades"))
-                  label (.toString (.getLiteral ans "label"))
-                  ann-id (DigestUtils/md5Hex (str "<" uri "> <http://lawd.info/ontology/foundAt> <" pleiades ">"))
-                  rdf (str "<rdf:RDF "
-                              "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
-                              "xmlns:dc=\"http://purl.org/dc/terms/\" "
-                              "xmlns:oac=\"http://www.openannotation.org/ns/\" "
-                              "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" 
-                              "<rdf:Description rdf:about=\"" (str/replace uri "/original" (str "/annotation/" ann-id)) "\">"
-                                "<rdf:type rdf:resource=\"http://www.openannotation.org/ns/Annotation\"/>"
-                                "<rdfs:label>" label "</rdfs:label>"
-                                "<oac:hasBody rdf:resource=\"" pleiades "\"/>"
-                                "<oac:hasTarget rdf:resource=\"" (str/replace uri "/original" "") "\"/>"
-                              "</rdf:Description>"
-                            "</rdf:RDF>")]
-              (.read model (StringReader. rdf) nil "RDF/XML")
-              (.add adapter graph model))))))
+          answer (execute-query query)
+          nthreads (.availableProcessors (Runtime/getRuntime))
+          pool (Executors/newFixedThreadPool nthreads)]
+      (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
+      (while (.hasNext answer)
+        (let [ans (.next answer)
+              uri (.toString (.getResource ans "uri"))
+              pleiades (.toString (.getResource ans "pleiades"))
+              label (.toString (.getLiteral ans "label"))
+              ann-id (DigestUtils/md5Hex (str "<" uri "> <http://lawd.info/ontology/foundAt> <" pleiades ">"))]
+          (.add @buffer (str "<rdf:Description rdf:about=\"" (str/replace uri "/original" (str "/annotation/" ann-id)) "\">"
+                              "<rdf:type rdf:resource=\"http://www.openannotation.org/ns/Annotation\"/>"
+                              "<rdfs:label>" label "</rdfs:label>"
+                              "<oac:hasBody rdf:resource=\"" pleiades "\"/>"
+                              "<oac:hasTarget rdf:resource=\"" (str/replace uri "/original" "") "\"/>"
+                            "</rdf:Description>"))
+          (when (> (count @buffer) 5000)
+            (flush-buffer nil))))
+        (flush-buffer (count @buffer)))))
     
 (defn -insertInferences
   [url]
