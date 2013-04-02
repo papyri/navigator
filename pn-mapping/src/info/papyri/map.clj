@@ -66,6 +66,7 @@
         (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
         xmlns:dc=\"http://purl.org/dc/elements/1.1/\"
         xmlns:dcterms=\"http://purl.org/dc/terms/\" 
+        xmlns:oac=\"http://www.openannotation.org/ns/\" 
         xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"))
       (dotimes [n times]
         (let [string (.poll @buffer)]
@@ -225,6 +226,7 @@
                                 "<rdfs:label>" label "</rdfs:label>"
                                 "<oac:hasBody rdf:resource=\"" pleiades "\"/>"
                                 "<oac:hasTarget rdf:resource=\"" url "\"/>"
+                                "<oac:motivatedBy rdf:resource=\"http://www.openannotation.org/ns/linking\"/>"
                               "</rdf:Description>"
                             "</rdf:RDF>")]
               (.read model (StringReader. rdf) nil "RDF/XML")
@@ -250,6 +252,7 @@
                               "<rdfs:label>" label "</rdfs:label>"
                               "<oac:hasBody rdf:resource=\"" pleiades "\"/>"
                               "<oac:hasTarget rdf:resource=\"" (str/replace uri "/original" "") "\"/>"
+                              "<oac:motivatedBy rdf:resource=\"http://www.openannotation.org/ns/linking\"/>"
                             "</rdf:Description>"))
           (when (> (count @buffer) 5000)
             (flush-buffer nil))))
