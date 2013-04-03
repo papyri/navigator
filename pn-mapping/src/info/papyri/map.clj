@@ -317,7 +317,7 @@
           images (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                       "PREFIX dcterms: <http://purl.org/dc/terms/>"
                       "WITH <http://papyri.info/graph> "
-                      "INSERT { ?r1 <http://purl.org/dc/terms/relation> ?r2 } "
+                      "INSERT { ?r1 <http://purl.org/dc/elements/1.1/relation> ?r2 } "
                       "WHERE { "
                       "?c dcterms:isPartOf <http://papyri.info/apis> . "
                       "?i dcterms:isPartOf ?c . "
