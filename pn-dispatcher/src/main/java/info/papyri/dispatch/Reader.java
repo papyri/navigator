@@ -165,7 +165,7 @@ public class Reader extends HttpServlet {
     File result = null;
     StringBuilder sparql = new StringBuilder();
     sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ");
-    sparql.append("prefix dc: <http://purl.org/dc/terms/> ");
+    sparql.append("prefix dcterms: <http://purl.org/dc/terms/> ");
     sparql.append("select ?related ");
     sparql.append("from <");
     sparql.append(graph);
