@@ -249,7 +249,7 @@ public class GitWrapper {
     StringBuilder result = new StringBuilder();
     if (file.contains("DDB")) {
       StringBuilder sparql = new StringBuilder();
-      sparql.append("prefix dc: <http://purl.org/dc/terms/> ")
+      sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ")
             .append("select ?id ")
             .append("from <http://papyri.info/graph> ")
             .append("where { ?id dc:identifier \"")
