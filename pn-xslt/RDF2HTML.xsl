@@ -275,7 +275,7 @@
                   </xsl:if>
                   <div class="text">
                     <xsl:apply-templates select="/t:TEI" mode="text"/>
-                    <xsl:for-each select="pi:get-docs($relations[contains(., '/ddbdp/')] except $replaces, 'xml')/t:TEI">
+                    <xsl:for-each select="pi:get-docs($relations[contains(., '/ddbdp/') and not(contains($replaces,.))], 'xml')/t:TEI">
                       <xsl:apply-templates select="." mode="text"/>
                     </xsl:for-each>
                     <xsl:if test="$image">

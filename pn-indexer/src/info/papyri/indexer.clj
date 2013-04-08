@@ -27,7 +27,8 @@
 (ns info.papyri.indexer
   (:gen-class
    :name info.papyri.indexer
-   :methods [#^{:static true} [index [java.util.List] void]
+   :methods [#^{:static true} [index [] void]
+             #^{:static true} [generatePages [java.util.List] void]
              #^{:static true} [loadBiblio [] void]
              #^{:static true} [loadLemmas [] void]])
   (:import
