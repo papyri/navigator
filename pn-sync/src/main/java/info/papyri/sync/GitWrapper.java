@@ -338,13 +338,14 @@ public class GitWrapper {
   public static String lookupMainId(String id) {
     StringBuilder sparql = new StringBuilder();
     sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ")
+          .append("prefix dct: <http://purl.org/dc/terms/> ")
           .append("select ?id ")
           .append("from <http://papyri.info/graph> ")
           .append("where { ?id dc:relation <")
           .append(id)
           .append("> ")
           .append("filter regex(str(?id), \"^http://papyri.info/ddbdp/.*\") ")
-          .append("filter not exists {?id dc:isReplacedBy ?b} }");
+          .append("filter not exists {?id dct:isReplacedBy ?b} }");
     try {
       URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
       JsonNode root = getJson(m);
