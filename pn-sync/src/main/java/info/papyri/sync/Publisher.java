@@ -106,7 +106,7 @@ public class Publisher implements Runnable {
             logger.info("Generating pages starting at " + new Date());
             indexer.generatePages(urls);
             logger.info("Indexing files starting at " + new Date());
-            indexer.index(urls);
+            indexer.index();
           } else {
             logger.info("No files to map.");
           }
