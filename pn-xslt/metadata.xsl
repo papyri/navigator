@@ -171,6 +171,8 @@
     </tr>
   </xsl:template>
   
+  <xsl:template match="t:note[parent::t:bibl]"><xsl:text> </xsl:text>[<xsl:apply-templates/>]</xsl:template>
+  
   <!-- Commentary -->
   <xsl:template match="t:div[@type = 'commentary'][@subtype != 'mentionedDates']" mode="metadata">
     <tr>
