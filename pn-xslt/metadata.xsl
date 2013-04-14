@@ -162,13 +162,18 @@
   <!-- APIS Citations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
     <tr>
-      <th class="rowheader">Citations</th>
+      <th class="rowheader" rowspan="{count(.//t:bibl)}">Citations</th>
       <td>
-        <xsl:for-each select=".//t:bibl">
-          <p><xsl:apply-templates/></p>
+        <xsl:for-each select=".//t:bibl[not(preceding-sibling::t:bibl)]">
+          <xsl:apply-templates/>
         </xsl:for-each>
       </td>
     </tr>
+    <xsl:for-each select=".//t:bibl[preceding-sibling::t:bibl]">
+      <tr>
+        <td><xsl:apply-templates/></td>
+      </tr>
+    </xsl:for-each>
   </xsl:template>
   
   <xsl:template match="t:note[parent::t:bibl]"><xsl:text> </xsl:text>[<xsl:apply-templates/>]</xsl:template>
