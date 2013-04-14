@@ -162,7 +162,7 @@
   <!-- APIS Citations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
     <tr>
-      <th class="rowheader" rowspan="{count(.//t:bibl)}">Citations</th>
+      <th class="rowheader">Citations</th>
       <td>
         <xsl:for-each select=".//t:bibl">
           <p><xsl:apply-templates/></p>
