@@ -126,7 +126,7 @@
 
   }
   jQuery.getJSON("/sparql?query="
-          + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
+          + encodeURIComponent("prefix dc: <http://purl.org/dc/elements/1.1/> "
           + "prefix rdf: <http://www.w3.org/2000/01/rdf-schema#>"
           + "prefix olo: <http://purl.org/ontology/olo/core#>"
           + "select ?o ?l "
@@ -144,7 +144,7 @@
                       if (row.l) {
                         jQuery("#images").append('<option value="'+ val + '">' + row.l.value +'</option>');
                       } else {
-                        jQuery("#images").append('<option value="'+ val + '">' + val.substring(30) +'</option>');
+                        jQuery("#images").append('<option value="'+ val + '">' + val.substring(29) +'</option>');
                       }
                   });
                   initImage();
