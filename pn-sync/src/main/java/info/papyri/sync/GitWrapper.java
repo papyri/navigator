@@ -265,35 +265,30 @@ public class GitWrapper {
         // Otherwise, attempt to infer the identifier from the filename. 
         } else {
           result.append("http://papyri.info/ddbdp/");
-          List<String> collections = GitWrapper.loadDDbCollections();
-          Iterator<String> i = collections.iterator();
-          boolean match = false;
-          while (i.hasNext()) {
-            String collection = i.next().substring("http://papyri.info/ddbdp/".length());
-            if (file.substring(file.lastIndexOf("/") + 1).startsWith(collection)) {
-              result.append(collection).append(";");
-              // name should be of the form bgu.1.2, so lose the "bgu."
-              String rest = file.substring(file.lastIndexOf("/") + collection.length() + 2).replaceAll("\\.xml$", ""); 
-              if (rest.contains(".")) {
-                result.append(rest.substring(0, rest.indexOf(".")));
-                result.append(";");
-                result.append(rest.substring(rest.indexOf(".") + 1));
-              } else {
-                result.append(";");
-                result.append(rest);
-              }
-              result.append("/source");
-              if (result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d)*;(\\w|\\d)+/source")) {
-                match = true;
-                break; // Early return
-              } else {
-                throw new Exception("Malformed file name: " + file);
-              }
+          String collection = file.substring(file.indexOf("DDB_EpiDoc_XML/") + "DDB_EpiDoc_XML/".length());
+          collection = collection.substring(0, collection.indexOf("/"));
+          sparql = new StringBuilder();
+          sparql.append("SELECT * ")
+                  .append("FROM <http://papyri.info/graph> ")
+                  .append("WHERE { <http://papyri.info/ddbdp/").append(collection).append("> ?p ?o }");
+          m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+          root = getJson(m);
+          if (root.path("results").path("bindings").size() > 0) {
+            result.append(collection).append(";");
+            String rest = file.substring(file.lastIndexOf("/") + collection.length() + 2).replaceAll("\\.xml$", "");
+            if (rest.contains(".")) {
+              result.append(rest.substring(0, rest.indexOf(".")));
+              result.append(";");
+              result.append(rest.substring(rest.indexOf(".") + 1));
+            } else {
+              result.append(";");
+              result.append(rest);
             }
-          }
-          // If we made it through the collection list without a match,
-          // something is wrong.
-          if (!match) {
+            result.append("/source");
+            if (!result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d)*;(\\w|\\d)+/source")) {
+              throw new Exception("Malformed file name: " + file);
+            }
+          } else {
             throw new Exception("Unknown collection in file: " + file);
           }
         }
