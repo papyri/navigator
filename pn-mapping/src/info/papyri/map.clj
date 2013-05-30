@@ -189,15 +189,6 @@
     (.add req deleterel)
     (UpdateRemote/execute req (str server "/update") )))
 
-(defn -deleteTriple
-  [s p o]
-  (let [deleterel (str "WITH <http://papyri.info/graph>
-                        DELETE { <" s "> <" p "> <" o "> }
-                        WHERE { <" s "> <" p "> <" o "> }")
-        req (UpdateFactory/create)]
-    (.add req deleterel)
-    (UpdateRemote/execute req (str server "/update") )))
-
 (defn -loadFile
   [f]
   (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
@@ -310,13 +301,13 @@
                        "WITH <http://papyri.info/graph> "
                        "INSERT{?s dc:hasPart ?o} "
                        "WHERE { ?o dc:isPartOf ?s}")
-          relation (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
+          relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
                         "WITH <http://papyri.info/graph> "
                         "INSERT {?s dc:relation ?o} "
                         "WHERE { ?o dc:relation ?s}")
-          translations (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
+          translations (str "PREFIX dc: <http://purl.org/dc/terms/> "
                             "WITH <http://papyri.info/graph> "
-                            "INSERT { ?r1 <http://purl.org/dc/terms/relation> ?r2 } "
+                            "INSERT { ?r1 dc:relation ?r2 } "
                             "WHERE { "
                             "?i dc:relation ?r1 . "
                             "?i dc:relation ?r2 . "
@@ -326,19 +317,19 @@
           images (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
                       "PREFIX dcterms: <http://purl.org/dc/terms/>"
                       "WITH <http://papyri.info/graph> "
-                      "INSERT { ?r1 <http://purl.org/dc/elements/1.1/relation> ?r2 } "
+                      "INSERT { ?r1 dcterms:relation ?r2 } "
                       "WHERE { "
                       "?c dcterms:isPartOf <http://papyri.info/apis> . "
                       "?i dcterms:isPartOf ?c . "
-                      "?i dc:relation ?r1 . "
-                      "?i dc:relation ?r2 . "
+                      "?i dcterms:relation ?r1 . "
+                      "?i dcterms:relation ?r2 . "
                       "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
                       "FILTER  regex(str(?r2), \"^http://papyri.info/apis/[^/]+/images\")}")
-          transitive-rels "PREFIX dc: <http://purl.org/dc/elements/1.1/>
+          transitive-rels "PREFIX dc: <http://purl.org/dc/terms/>
                            WITH <http://papyri.info/graph> 
-                           INSERT {?s dc:relation ?o2}
-                           WHERE { ?s dc:relation ?o1 .
-                                   ?o1 dc:relation ?o2 
+                           INSERT {?s dcterms:relation ?o2}
+                           WHERE { ?s dcterms:relation ?o1 .
+                                   ?o1 dcterms:relation ?o2 
                            FILTER (!sameTerm(?s, ?o2))}"]
       (.add request hasPart)
       (.add request relation)
@@ -429,7 +420,6 @@
             (= function "delete-graph") (-deleteGraph)
             (= function "delete-uri") (-deleteUri (second args))
             (= function "delete-relation") (-deleteRelation (second args))
-            (= function "delete-triple") (-deleteTriple (second args) (nth args 2) (nth args 3))
             (= function "insert-inferences") (if (> (count args) 1)
               (for [file (rest args)] 
                 (-insertInferences (url-from-file file)))
