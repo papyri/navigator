@@ -169,7 +169,7 @@ public class Reader extends HttpServlet {
     sparql.append("select ?related ");
     sparql.append("from <");
     sparql.append(graph);
-    sparql.append("> where { <").append(page).append("> dc:relation ?related . ");
+    sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
     sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
     sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }");

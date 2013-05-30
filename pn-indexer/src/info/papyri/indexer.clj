@@ -331,20 +331,20 @@
 			}" url))
             
 (defn batch-relation-query
-  "Retrieves a set of triples where A `<dc:relation>` B when A is a child of the given URI."
+  "Retrieves a set of triples where A `<dcterms:relation>` B when A is a child of the given URI."
   [url]
   (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
             prefix dcterms: <http://purl.org/dc/terms/> 
             select ?a ?b
             from <http://papyri.info/graph>
             where { <%s> dcterms:hasPart ?a .
-                    ?a dc:relation ?b
+                    ?a dcterms:relation ?b
                     filter(!regex(str(?b),'/images$'))}" url))
 
 (defn relation-query
   "Returns URIs that are the object of `<dc:relation>`s where the given URI is the subject."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+  (format  "prefix dc: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
             where { <%s> dc:relation ?a 
@@ -358,7 +358,7 @@
             select ?a ?b
             from <http://papyri.info/graph>
             where { <%s> dcterms:hasPart ?a .
-                    ?a dc:replaces ?b }" url))
+                    ?a dcterms:replaces ?b }" url))
 
 (defn batch-hgv-source-query
   "Gets the set of triples where A `<dc:source` B for a given collection."
@@ -394,9 +394,10 @@
   "Gets `dc:source`s for the given URI using related HGV docs."
 	[url]
     (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+              prefix dcterms: <http://purl.org/dc/terms/>
               select ?a
               from <http://papyri.info/graph>
-              where { <%s> dc:relation ?hgv .
+              where { <%s> dcterms:relation ?hgv .
                       ?hgv dc:source ?a }" url))        
         		                                    
         		                
@@ -419,7 +420,7 @@
               prefix dcterms: <http://purl.org/dc/terms/>
               select ?a
               from <http://papyri.info/graph>
-              where { <%s> dc:source ?b .
+              where { <%s> dcterms:source ?b .
                       ?b dcterms:bibliographicCitation ?a }" url)) 
                     
 (defn batch-other-citation-query
@@ -431,8 +432,8 @@
               select ?a ?c
               from <http://papyri.info/graph>
               where { <%s> dcterms:hasPart ?a .
-                      ?a dc:relation ?hgv .
-                      ?hgv dc:source ?b .
+                      ?a dcterms:relation ?hgv .
+                      ?hgv dcterms:source ?b .
                       ?b dcterms:bibliographicCitation ?c }" url))  
                     
 (defn other-citation-query
@@ -443,8 +444,8 @@
               prefix dcterms: <http://purl.org/dc/terms/>
               select ?a
               from <http://papyri.info/graph>
-              where { <%s> dc:relation ?hgv .
-                      ?hgv dc:source ?b .
+              where { <%s> dcterms:relation ?hgv .
+                      ?hgv dcterms:source ?b .
                       ?b dcterms:bibliographicCitation ?a }" url)) 
 
 (defn batch-cited-by-query
@@ -501,7 +502,7 @@
            select ?a ?image
            from <http://papyri.info/graph>
            where { <%s> dcterms:hasPart ?a .
-                   ?a dc:relation ?i .
+                   ?a dcterms:relation ?i .
                    ?i rdf:type olo:OrderedList .
                    ?i olo:slot ?slot .
                    ?slot olo:index ?index .
