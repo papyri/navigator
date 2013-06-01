@@ -218,7 +218,7 @@ public class DispatcherServlet extends HttpServlet {
            .append("          ?s2 ?p2 <http://papyri.info/ddbdp> } ")
            .append("from <http://papyri.info/graph> ")
            .append("where {{ <http://papyri.info/ddbdp> ?Predicate ?Object } ")
-           .append("union { ?s2 p2 <http://papyri.info/ddbdp> }} ")
+           .append("union { ?s2 ?p2 <http://papyri.info/ddbdp> }} ")
            .append("order by ?Object");
         return out.toString();
       }
@@ -228,7 +228,7 @@ public class DispatcherServlet extends HttpServlet {
            .append("          ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0]).append("> } ")
            .append("from <http://papyri.info/graph> ")
            .append("where {{ <http://papyri.info/ddbdp/").append(parts[0]).append("> ?Predicate ?Object } ")
-           .append("union { ?s2 p2 <http://papyri.info/ddbdp/").append(parts[0]).append("> }} ")
+           .append("union { ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0]).append("> }} ")
            .append("order by ?Object");
         return out.toString();
       }
@@ -240,7 +240,7 @@ public class DispatcherServlet extends HttpServlet {
            .append("from <http://papyri.info/graph> ")
            .append("where {{ <http://papyri.info/ddbdp/")
                 .append(parts[0]).append(";").append(parts[1]).append("/source> ?Predicate ?Object } ")
-           .append("union { ?s2 p2 <http://papyri.info/ddbdp/")
+           .append("union { ?s2 ?p2 <http://papyri.info/ddbdp/")
                 .append(parts[0]).append(";").append(parts[1]).append("/source> }} ")
            .append("order by ?Object");
         return out.toString();
@@ -254,7 +254,7 @@ public class DispatcherServlet extends HttpServlet {
            .append("from <http://papyri.info/graph> ")
            .append("where {{ <http://papyri.info/ddbdp/")
                 .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("/source> ?Predicate ?Object } ")
-           .append("union { ?s2 p2 <http://papyri.info/ddbdp/")
+           .append("union { ?s2 ?p2 <http://papyri.info/ddbdp/")
                 .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("/source> }} ")
            .append("order by ?Object");
         return out.toString();  
