@@ -61,6 +61,15 @@ public class GitWrapperTest {
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
+  
+  @Test
+  public void testContainedFilenameToUriDDbDP() {
+    System.out.println("filenameToUri for file where collection name contains another collection name");
+    String file = base + "/DDB_EpiDoc_XML/o.theb.taxes/o.theb.taxes.2/o.theb.taxes.2.21.xml";
+    String expResult = "http://papyri.info/ddbdp/o.theb.taxes;2;21/source";
+    String result = GitWrapper.filenameToUri(file);
+    assertEquals(expResult, result);
+  }
           
   @Test
   public void test2LevelFilenameToUriDDbDP2() {

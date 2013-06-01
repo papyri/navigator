@@ -164,12 +164,19 @@
     <tr>
       <th class="rowheader" rowspan="{count(.//t:bibl)}">Citations</th>
       <td>
-        <xsl:for-each select=".//t:bibl">
-          <p><xsl:apply-templates/></p>
+        <xsl:for-each select=".//t:bibl[not(preceding-sibling::t:bibl)]">
+          <xsl:apply-templates/>
         </xsl:for-each>
       </td>
     </tr>
+    <xsl:for-each select=".//t:bibl[preceding-sibling::t:bibl]">
+      <tr>
+        <td><xsl:apply-templates/></td>
+      </tr>
+    </xsl:for-each>
   </xsl:template>
+  
+  <xsl:template match="t:note[parent::t:bibl]"><xsl:text> </xsl:text>[<xsl:apply-templates/>]</xsl:template>
   
   <!-- Commentary -->
   <xsl:template match="t:div[@type = 'commentary'][@subtype != 'mentionedDates']" mode="metadata">

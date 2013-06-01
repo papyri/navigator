@@ -23,6 +23,7 @@
         <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
         Ancient World</a></p>
       <div id="about-nav"> 
+        <h3 id="about-hdr">About:</h3>
         <ul class="nav">
           <li><a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a></li>
           <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
@@ -32,7 +33,6 @@
           <li><a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/about.html">APIS</a></li>
           <li class="last-child"><a href="/about.html" title="Advanced Papyrological Information System">Papyri.info</a></li>    
         </ul>
-        <h3 id="about-hdr">About:</h3>
       </div>
     </div>
     <div class="spacer"></div>

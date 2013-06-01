@@ -66,42 +66,42 @@
                 </xsl:choose>
             </dcterms:isPartOf>
             <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">
-                <dc:relation>
+                <dcterms:relation>
                     <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/source">
-                        <dc:relation rdf:resource="{$id}"/>
+                        <dcterms:relation rdf:resource="{$id}"/>
                     </rdf:Description>
-                </dc:relation>
+                </dcterms:relation>
             </xsl:if>
           <xsl:for-each select="//tei:idno[@type = 'TM']">
-            <dc:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
-            <dc:relation>
+            <dcterms:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+            <dcterms:relation>
               <rdf:Description rdf:about="http://papyri.info/trismegistos/{.}">
-                <dc:relation rdf:resource="{$id}"/>
+                <dcterms:relation rdf:resource="{$id}"/>
               </rdf:Description>
-            </dc:relation>
+            </dcterms:relation>
           </xsl:for-each>
             <xsl:for-each select="//tei:text/tei:body/tei:div[@type='figure']//tei:graphic[contains(@url, 'columbia.edu') and contains(@url, 'key')]">
-                <dc:relation>
+                <dcterms:relation>
                     <rdf:Description rdf:about="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source">
-                        <dc:relation rdf:resource="{$id}"/>
+                        <dcterms:relation rdf:resource="{$id}"/>
                       <xsl:if test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid'] and doc-available($ddb-doc-uri)">
-                            <dc:relation>
+                            <dcterms:relation>
                                 <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/source">
-                                    <dc:relation rdf:resource="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source"/>
+                                    <dcterms:relation rdf:resource="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source"/>
                                 </rdf:Description>
-                            </dc:relation>
+                            </dcterms:relation>
                         </xsl:if>
                     </rdf:Description>
-                </dc:relation>
+                </dcterms:relation>
             </xsl:for-each>
-            <dc:source>
-                <rdf:Description rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}/frbr:Work">
+            <dcterms:source>
+                <rdf:Description rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}/work">
                   <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/><xsl:if test="$bibl//tei:biblScope[@type='volume']"><xsl:text> </xsl:text><xsl:value-of select="$bibl//tei:biblScope[@type='volume']"/></xsl:if><xsl:if test="$bibl//tei:biblScope[@type='numbers']">, <xsl:value-of select="$bibl//tei:biblScope[@type='numbers']"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope[@type!='volume' and @type!='numbers']"><xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each></dcterms:bibliographicCitation>
                 <xsl:for-each select="//tei:text/tei:body//tei:bibl[@type='publication'][@subtype='other']">
-                    <dc:relation><xsl:value-of select="."/></dc:relation>
+                    <dcterms:relation><xsl:value-of select="."/></dcterms:relation>
                 </xsl:for-each>
                 </rdf:Description>
-            </dc:source>
+            </dcterms:source>
             <rdfs:label><xsl:value-of select="$unicode-title"></xsl:value-of></rdfs:label>
         </rdf:Description>
       <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">

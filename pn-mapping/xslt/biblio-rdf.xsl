@@ -4,6 +4,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:cito="http://purl.org/spar/cito/"
+  xmlns:lawd="http://lawd.info/ontology/"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
   exclude-result-prefixes="t" version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
@@ -24,7 +25,12 @@
     <xsl:variable name="citation"><xsl:call-template name="buildCitation"/></xsl:variable>
     <rdf:Description rdf:about="{$id}">
       <rdf:type rdf:resource="http://purl.org/dc/terms/BibliographicResource"/>
-      <dcterms:isReferencedBy rdf:resource="{$cite}"/>
+      <lawd:representedBy>
+        <rdf:Description rdf:about="{$cite}">
+          <rdf:type rdf:resource="http://lawd.info/ontology/Citation"/>
+          <lawd:represents rdf:resource="{$id}"/>
+        </rdf:Description>
+      </lawd:representedBy>
       <dcterms:bibliographicCitation><xsl:value-of select="$citation"/></dcterms:bibliographicCitation>
       <xsl:apply-templates select="t:relatedItem"/>
     </rdf:Description>
