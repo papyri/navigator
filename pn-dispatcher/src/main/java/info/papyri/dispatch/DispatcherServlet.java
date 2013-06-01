@@ -234,28 +234,28 @@ public class DispatcherServlet extends HttpServlet {
       }
       if (parts.length == 2) {
         out.append("construct{<http://papyri.info/ddbdp/").append(parts[0])
-                .append(";").append(parts[1]).append("> ?Predicate ?Object . ")
+                .append(";").append(parts[1]).append("/source> ?Predicate ?Object . ")
            .append("          ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0])
-                .append(";").append(parts[1]).append("> } ")   
+                .append(";").append(parts[1]).append("/source> } ")   
            .append("from <http://papyri.info/graph> ")
            .append("where {{ <http://papyri.info/ddbdp/")
-                .append(parts[0]).append(";").append(parts[1]).append("> ?Predicate ?Object } ")
+                .append(parts[0]).append(";").append(parts[1]).append("/source> ?Predicate ?Object } ")
            .append("union { ?s2 p2 <http://papyri.info/ddbdp/")
-                .append(parts[0]).append(";").append(parts[1]).append("> }} ")
+                .append(parts[0]).append(";").append(parts[1]).append("/source> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (parts.length == 3) {
         parts[2] = encode(parts[2]);
         out.append("construct{<http://papyri.info/ddbdp/").append(parts[0])
-                .append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object . ")
+                .append(";").append(parts[1]).append(";").append(parts[2]).append("/source> ?Predicate ?Object . ")
            .append("          ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0])
-                .append(";").append(parts[1]).append(";").append(parts[2]).append("> } ")   
+                .append(";").append(parts[1]).append(";").append(parts[2]).append("/source> } ")   
            .append("from <http://papyri.info/graph> ")
            .append("where {{ <http://papyri.info/ddbdp/")
-                .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object } ")
+                .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("/source> ?Predicate ?Object } ")
            .append("union { ?s2 p2 <http://papyri.info/ddbdp/")
-                .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> }} ")
+                .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("/source> }} ")
            .append("order by ?Object");
         return out.toString();  
       }
