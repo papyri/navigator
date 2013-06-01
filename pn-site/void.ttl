@@ -1,4 +1,4 @@
-@prefix : <http://papyri.info/graph/pelagios> .
+@prefix : <http://papyri.info/graph/pelagios/> .
 @prefix void: <http://rdfs.org/ns/void#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
