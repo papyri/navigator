@@ -12,4 +12,4 @@
    void:dataDump <http://papyri.info/papyri.info.pelagios.ttl>;
    void:feature <http://www.w3.org/ns/formats/turtle>;
 
-   foaf:homepage <http://papyri.info>;
+   foaf:homepage <http://papyri.info> .
