@@ -3,7 +3,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-:papyri.info a void:Dataset;
+:papyri a void:Dataset;
    dcterms:title "Papyri.info Place Annotations";
    dcterms:description "Places of origin or findspots for documentary papyri.";
 
