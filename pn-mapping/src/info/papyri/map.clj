@@ -293,8 +293,8 @@
           replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {<" url "> dc:relation ?o} "
-                             "WHERE {<" url "> dc:replaces ?p .
-                                     ?p dc:relation ?o }")]
+                             "WHERE {<" url "> dc:replaces ?s .
+                                     ?s dc:relation ?o }")]
       (.add request haspart)
       (.add request relation)
       (.add request transitive-rels)
@@ -340,7 +340,7 @@
           replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {?s dc:relation ?o} "
-                             "WHERE { ?s2 dc:isReplacedBy ?s .
+                             "WHERE { ?s dc:replaces ?s2 .
                                       ?s2 dc:relation ?o }")]
       (.add request hasPart)
       (.add request relation)
