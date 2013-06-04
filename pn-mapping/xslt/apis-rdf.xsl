@@ -3,8 +3,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-  xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:dct="http://purl.org/dc/terms/"
   xmlns:foaf="http://xmlns.com/foaf/0.1/"
   xmlns:olo="http://purl.org/ontology/olo/core#"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
@@ -16,17 +15,17 @@
     <xsl:variable name="id">http://papyri.info/apis/<xsl:value-of
         select="//tei:publicationStmt/tei:idno[@type = 'apisid']/text()"/>/source</xsl:variable>
     <rdf:Description rdf:about="{$id}">
-      <dc:identifier>papyri.info/apis/<xsl:value-of
-          select="//tei:publicationStmt/tei:idno[@type = 'apisid']/text()"/></dc:identifier>
-      <dc:identifier>
+      <dct:identifier>papyri.info/apis/<xsl:value-of
+          select="//tei:publicationStmt/tei:idno[@type = 'apisid']/text()"/></dct:identifier>
+      <dct:identifier>
         <xsl:value-of select="//tei:sourceDesc/tei:msDesc/tei:msIdentifier/tei:idno"/>
-      </dc:identifier>
-      <dcterms:isPartOf>
+      </dct:identifier>
+      <dct:isPartOf>
         <rdf:Description
           rdf:about="http://papyri.info/apis/{substring-before(//tei:publicationStmt/tei:idno[@type = 'apisid'], '.')}">
-          <dcterms:isPartOf rdf:resource="http://papyri.info/apis"/>
+          <dct:isPartOf rdf:resource="http://papyri.info/apis"/>
         </rdf:Description>
-      </dcterms:isPartOf>
+      </dct:isPartOf>
       <!-- Captures old-style DDbDP references -->
       <xsl:for-each select="//tei:bibl[@type = 'ddbdp']">
         <xsl:variable name="ddb-seq" select=" tokenize(., ':')"/>
@@ -48,18 +47,18 @@
         <xsl:if test="not(doc-available($ddb-doc-uri))"><xsl:message><xsl:value-of select="$ddb-doc-uri"/> not available.</xsl:message></xsl:if>
         <xsl:if test="doc-available($ddb-doc-uri)">
           <xsl:variable name="ddb-doc" select="doc($ddb-doc-uri)"/>
-          <dcterms:relation>
+          <dct:relation>
             <rdf:Description
               rdf:about="http://papyri.info/ddbdp/{$ddb-doc//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/source">
-              <dcterms:relation rdf:resource="{$id}"/>
+              <dct:relation rdf:resource="{$id}"/>
             </rdf:Description>
-          </dcterms:relation>
+          </dct:relation>
           <xsl:for-each select="tokenize($ddb-doc//tei:titleStmt/tei:title/@n, '\s')">
-            <dcterms:relation>
+            <dct:relation>
               <rdf:Description rdf:about="http://papyri.info/hgv/{.}/source">
-                <dcterms:relation rdf:resource="{$id}"/>
+                <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
-            </dcterms:relation>
+            </dct:relation>
           </xsl:for-each>
         </xsl:if>
       </xsl:for-each>
@@ -72,39 +71,39 @@
           </xsl:choose>
         </xsl:variable>
         <xsl:if test="doc-available($ddb-doc-uri)">
-          <dcterms:relation>
+          <dct:relation>
             <rdf:Description
               rdf:about="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/source">
-              <dc:relation rdf:resource="{$id}"/>
+              <dct:relation rdf:resource="{$id}"/>
             </rdf:Description>
-          </dcterms:relation>
+          </dct:relation>
         </xsl:if>
       </xsl:if>
       <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'HGV']">
         <xsl:for-each select="tokenize(., '\s')">
           <xsl:variable name="dir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>
           <xsl:if test="doc-available(concat('file://', $root, '/HGV_meta_EpiDoc/HGV', $dir, '/', ., '.xml'))">
-            <dcterms:relation>
+            <dct:relation>
               <rdf:Description
                 rdf:about="http://papyri.info/hgv/{.}/source">
-                <dcterms:relation rdf:resource="{$id}"/>
+                <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
-            </dcterms:relation>
+            </dct:relation>
           </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
       <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'TM']">
         <xsl:for-each select="tokenize(., '\s')">
-          <dcterms:relation>
+          <dct:relation>
             <rdf:Description
               rdf:about="http://www.trismegistos.org/text/{.}">
-              <dcterms:relation rdf:resource="{$id}"/>
+              <dct:relation rdf:resource="{$id}"/>
             </rdf:Description>
-          </dcterms:relation>
+          </dct:relation>
         </xsl:for-each>
       </xsl:for-each>
       <xsl:if test="//tei:facsimile">
-        <dcterms:relation rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images"/>
+        <dct:relation rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images"/>
       </xsl:if>
     </rdf:Description>
     <xsl:if test="//tei:facsimile">
@@ -127,7 +126,7 @@
         </xsl:for-each>
       </rdf:Description>
       <rdf:Description rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/source">
-        <dcterms:source rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"/>
+        <dct:source rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"/>
       </rdf:Description>
     </xsl:if>
   </xsl:template>

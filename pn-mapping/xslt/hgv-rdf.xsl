@@ -3,8 +3,7 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:dct="http://purl.org/dc/terms/"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:bibo="http://purl.org/ontology/bibo/"
     xmlns:lawd="http://lawd.info/ontology/"
@@ -26,82 +25,82 @@
             </xsl:choose>
         </xsl:variable>
         <rdf:Description rdf:about="{$id}">
-            <dc:identifier>papyri.info/hgv/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type='filename']"/></dc:identifier>
+            <dct:identifier>papyri.info/hgv/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type='filename']"/></dct:identifier>
             <xsl:for-each select="//tei:publicationStmt/tei:idno[@type='TM']">
-                <dc:identifier>tm:<xsl:value-of select="."/></dc:identifier>
+                <dct:identifier>tm:<xsl:value-of select="."/></dct:identifier>
             </xsl:for-each>
-            <dc:identifier>
+            <dct:identifier>
                 <rdf:Description>
                     <xsl:attribute name="rdf:about"><xsl:value-of select="$cite_uri"/></xsl:attribute>
-                    <dc:identifier rdf:resource="{$id}"/>
+                    <dct:identifier rdf:resource="{$id}"/>
                 </rdf:Description>
-            </dc:identifier>
+            </dct:identifier>
           <!--
-            <dcterms:references>
+            <dct:references>
                 <xsl:attribute name="rdf:resource">http://papyri.info/navigator/full/hgv_<xsl:value-of select="encode-for-uri($bibl/tei:title[@level='s'])"/>_<xsl:value-of select="$bibl//tei:biblScope[@type='volume'][not(matches(., '\s+'))]"/>:<xsl:value-of select="encode-for-uri($bibl//tei:biblScope[@type='numbers'])"/><xsl:for-each select="$bibl//tei:biblScope[@type='parts']">:<xsl:value-of select="replace(encode-for-uri(.), '%', '%25')"/></xsl:for-each></xsl:attribute>
-            </dcterms:references>
+            </dct:references>
           -->
-            <dcterms:isPartOf>
+            <dct:isPartOf>
                 <xsl:choose>
                   <xsl:when test="$bibl//tei:biblScope[@type='volume'][not(matches(., '\s+'))]">
                         <rdf:Description rdf:about="http://papyri.info/hgv/{$title}_{normalize-space($bibl//tei:biblScope[@type='volume'])}">
-                          <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/><xsl:text> </xsl:text><xsl:value-of select="$bibl//tei:biblScope[@type='volume']"/></dcterms:bibliographicCitation>
+                          <dct:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/><xsl:text> </xsl:text><xsl:value-of select="$bibl//tei:biblScope[@type='volume']"/></dct:bibliographicCitation>
                           <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
-                            <dcterms:isPartOf>
+                            <dct:isPartOf>
                                 <rdf:Description rdf:about="http://papyri.info/hgv/{$title}">
                                   <rdf:type rdf:resource="http://purl.org/ontology/bibo/Series"/>
-                                  <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dcterms:bibliographicCitation>
-                                   <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
+                                  <dct:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dct:bibliographicCitation>
+                                   <dct:isPartOf rdf:resource="http://papyri.info/hgv"/>
                                 </rdf:Description>
-                            </dcterms:isPartOf>
+                            </dct:isPartOf>
                         </rdf:Description>
                     </xsl:when>
                     <xsl:otherwise>
                         <rdf:Description rdf:about="http://papyri.info/hgv/{$title}">
-                          <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dcterms:bibliographicCitation>
+                          <dct:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/></dct:bibliographicCitation>
                           <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
-                          <dcterms:isPartOf rdf:resource="http://papyri.info/hgv"/>
+                          <dct:isPartOf rdf:resource="http://papyri.info/hgv"/>
                         </rdf:Description>
                     </xsl:otherwise>
                 </xsl:choose>
-            </dcterms:isPartOf>
+            </dct:isPartOf>
             <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">
-                <dcterms:relation>
+                <dct:relation>
                     <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/source">
-                        <dcterms:relation rdf:resource="{$id}"/>
+                        <dct:relation rdf:resource="{$id}"/>
                     </rdf:Description>
-                </dcterms:relation>
+                </dct:relation>
             </xsl:if>
           <xsl:for-each select="//tei:idno[@type = 'TM']">
-            <dcterms:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
-            <dcterms:relation>
+            <dct:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+            <dct:relation>
               <rdf:Description rdf:about="http://papyri.info/trismegistos/{.}">
-                <dcterms:relation rdf:resource="{$id}"/>
+                <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
-            </dcterms:relation>
+            </dct:relation>
           </xsl:for-each>
             <xsl:for-each select="//tei:text/tei:body/tei:div[@type='figure']//tei:graphic[contains(@url, 'columbia.edu') and contains(@url, 'key')]">
-                <dcterms:relation>
+                <dct:relation>
                     <rdf:Description rdf:about="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source">
-                        <dcterms:relation rdf:resource="{$id}"/>
+                        <dct:relation rdf:resource="{$id}"/>
                       <xsl:if test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid'] and doc-available($ddb-doc-uri)">
-                            <dcterms:relation>
+                            <dct:relation>
                                 <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/source">
-                                    <dcterms:relation rdf:resource="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source"/>
+                                    <dct:relation rdf:resource="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source"/>
                                 </rdf:Description>
-                            </dcterms:relation>
+                            </dct:relation>
                         </xsl:if>
                     </rdf:Description>
-                </dcterms:relation>
+                </dct:relation>
             </xsl:for-each>
-            <dcterms:source>
+            <dct:source>
                 <rdf:Description rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}/work">
-                  <dcterms:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/><xsl:if test="$bibl//tei:biblScope[@type='volume']"><xsl:text> </xsl:text><xsl:value-of select="$bibl//tei:biblScope[@type='volume']"/></xsl:if><xsl:if test="$bibl//tei:biblScope[@type='numbers']">, <xsl:value-of select="$bibl//tei:biblScope[@type='numbers']"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope[@type!='volume' and @type!='numbers']"><xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each></dcterms:bibliographicCitation>
+                  <dct:bibliographicCitation><xsl:value-of select="$bibl/tei:title[@level='s']"/><xsl:if test="$bibl//tei:biblScope[@type='volume']"><xsl:text> </xsl:text><xsl:value-of select="$bibl//tei:biblScope[@type='volume']"/></xsl:if><xsl:if test="$bibl//tei:biblScope[@type='numbers']">, <xsl:value-of select="$bibl//tei:biblScope[@type='numbers']"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope[@type!='volume' and @type!='numbers']"><xsl:text> </xsl:text><xsl:value-of select="."/></xsl:for-each></dct:bibliographicCitation>
                 <xsl:for-each select="//tei:text/tei:body//tei:bibl[@type='publication'][@subtype='other']">
-                    <dcterms:relation><xsl:value-of select="."/></dcterms:relation>
+                    <dct:relation><xsl:value-of select="."/></dct:relation>
                 </xsl:for-each>
                 </rdf:Description>
-            </dcterms:source>
+            </dct:source>
             <rdfs:label><xsl:value-of select="$unicode-title"></xsl:value-of></rdfs:label>
         </rdf:Description>
       <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">
