@@ -290,12 +290,17 @@
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
-          replaces-rels (str "")]
+          replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
+                             "WITH <http://papyri.info/graph> "
+                             "INSERT {<" url "> dc:relation ?o} "
+                             "WHERE {<" url "> dc:replaces ?p .
+                                     ?p dc:relation ?o }")]
       (.add request haspart)
       (.add request relation)
       (.add request transitive-rels)
       (.add request converse-rels)
       (.add request converse-relation)
+      (.add request replaces-rels)
       (UpdateRemote/execute request (str server "/update") ))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
@@ -326,12 +331,17 @@
                       "?i dcterms:relation ?r2 . "
                       "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
                       "FILTER  regex(str(?r2), \"^http://papyri.info/apis/[^/]+/images\")}")
-          transitive-rels "PREFIX dc: <http://purl.org/dc/terms/>
-                           WITH <http://papyri.info/graph> 
-                           INSERT {?s dc:relation ?o2}
-                           WHERE { ?s dc:relation ?o1 .
-                                   ?o1 dc:relation ?o2 
-                           FILTER (!sameTerm(?s, ?o2))}"]
+          transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                                "WITH <http://papyri.info/graph> "
+                                "INSERT {?s dc:relation ?o2} "
+                                "WHERE { ?s dc:relation ?o1 . "
+                                         "?o1 dc:relation ?o2 "
+                                "FILTER (!sameTerm(?s, ?o2))}")
+          replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                             "WITH <http://papyri.info/graph> "
+                             "INSERT {?s dc:relation ?o} "
+                             "WHERE { ?s2 dc:isReplacedBy ?s .
+                                      ?s2 dc:relation ?o }")]
       (.add request hasPart)
       (.add request relation)
       (.add request translations)

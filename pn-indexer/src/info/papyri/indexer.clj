@@ -311,152 +311,142 @@
 ;; Each of the following functions formats a SPARQL query.
 
 (defn has-part-query
-  "Constructs a set of triples where A `<dc:hasPart>` B."
+  "Constructs a set of triples where A `<dct:hasPart>` B."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dct: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a 
-            filter not exists {?a dc:isReplacedBy ?b }}" url ))
+            where { <%s> dct:hasPart ?a 
+            filter not exists {?a dct:isReplacedBy ?b }}" url ))
             
 (defn is-part-of-query
   "Returns a flattened list of parent, child, grandchild URIs."
 	[url]
-	(format "prefix dc: <http://purl.org/dc/terms/>
+	(format "prefix dct: <http://purl.org/dc/terms/>
 			select ?p ?gp ?ggp
 			from <http://papyri.info/graph>
-			where{ <%s> dc:isPartOf ?p .
-				   ?p dc:isPartOf ?gp .
-				   optional { ?gp dc:isPartOf ?ggp }
+			where{ <%s> dct:isPartOf ?p .
+				   ?p dct:isPartOf ?gp .
+				   optional { ?gp dct:isPartOf ?ggp }
 			}" url))
             
 (defn batch-relation-query
-  "Retrieves a set of triples where A `<dcterms:relation>` B when A is a child of the given URI."
+  "Retrieves a set of triples where A `<dct:relation>` B when A is a child of the given URI."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-            prefix dcterms: <http://purl.org/dc/terms/> 
+  (format  "prefix dct: <http://purl.org/dc/terms/> 
             select ?a ?b
             from <http://papyri.info/graph>
-            where { <%s> dcterms:hasPart ?a .
-                    ?a dcterms:relation ?b
+            where { <%s> dct:hasPart ?a .
+                    ?a dct:relation ?b
                     filter(!regex(str(?b),'/images$'))}" url))
 
 (defn relation-query
-  "Returns URIs that are the object of `<dc:relation>`s where the given URI is the subject."
+  "Returns URIs that are the object of `<dct:relation>`s where the given URI is the subject."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dct: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
-            where { <%s> dc:relation ?a 
+            where { <%s> dct:relation ?a 
             filter(!regex(str(?a),'/images$'))}" url))
 
 (defn batch-replaces-query
-  "Gets the set of triples where A `<dc:replaces>` B for a given collection."
+  "Gets the set of triples where A `<dct:replaces>` B for a given collection."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-            prefix dcterms: <http://purl.org/dc/terms/>
+  (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a ?b
             from <http://papyri.info/graph>
-            where { <%s> dcterms:hasPart ?a .
-                    ?a dcterms:replaces ?b }" url))
+            where { <%s> dct:hasPart ?a .
+                    ?a dct:replaces ?b }" url))
 
 (defn batch-hgv-source-query
-  "Gets the set of triples where A `<dc:source` B for a given collection."
+  "Gets the set of triples where A `<dct:source` B for a given collection."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-              prefix dcterms: <http://purl.org/dc/terms/>
+    (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?b
               from <http://papyri.info/graph>
-              where { <%s> dcterms:hasPart ?a .
-                      ?a dc:source ?b }" url))
+              where { <%s> dct:hasPart ?a .
+                      ?a dct:source ?b }" url))
         
 (defn hgv-source-query
-  "Returns A where the given URI `<dc:source>` A."
+  "Returns A where the given URI `<dct:source>` A."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
+    (format  "prefix dct: <http://purl.org/dc/terms/> 
               select ?a
               from <http://papyri.info/graph>
-              where { <%s> dc:source ?a  }" url))        
+              where { <%s> dct:source ?a  }" url))        
         
 (defn batch-other-source-query
-  "Gets `dc:source`s for items in a given collection where there are 
+  "Gets `dct:source`s for items in a given collection where there are 
   related HGV docs with sources."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-              prefix dcterms: <http://purl.org/dc/terms/>
+    (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?b
               from <http://papyri.info/graph>
-              where { <%s> dcterms:hasPart ?a .
-                    ?a dc:relation ?hgv .
-                    ?hgv dc:source ?b }" url))
+              where { <%s> dct:hasPart ?a .
+                    ?a dct:relation ?hgv .
+                    ?hgv dct:source ?b }" url))
                     
 (defn other-source-query
-  "Gets `dc:source`s for the given URI using related HGV docs."
+  "Gets `dct:source`s for the given URI using related HGV docs."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-              prefix dcterms: <http://purl.org/dc/terms/>
+    (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
               from <http://papyri.info/graph>
-              where { <%s> dcterms:relation ?hgv .
-                      ?hgv dc:source ?a }" url))        
+              where { <%s> dct:relation ?hgv .
+                      ?hgv dct:source ?a }" url))        
         		                                    
         		                
 (defn batch-hgv-citation-query
-  "Gets `dc:bibliographicCitation`s for items in a given collection where 
+  "Gets `dct:bibliographicCitation`s for items in a given collection where 
   there are related sources with bibliography."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-              prefix dcterms: <http://purl.org/dc/terms/>
+    (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?c
               from <http://papyri.info/graph>
-              where { <%s> dcterms:hasPart ?a .
-                    ?a dc:source ?b .
-                    ?b dcterms:bibliographicCitation ?c }" url))  
+              where { <%s> dct:hasPart ?a .
+                    ?a dct:source ?b .
+                    ?b dct:bibliographicCitation ?c }" url))  
                     
 (defn hgv-citation-query
   "Gets a bibliographic citation for the given URI, using the related source."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-              prefix dcterms: <http://purl.org/dc/terms/>
+    (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
               from <http://papyri.info/graph>
-              where { <%s> dcterms:source ?b .
-                      ?b dcterms:bibliographicCitation ?a }" url)) 
+              where { <%s> dct:source ?b .
+                      ?b dct:bibliographicCitation ?a }" url)) 
                     
 (defn batch-other-citation-query
   "Gets bibliographic citations for items in a given collection, via their
   relationship with HGV records."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-              prefix dcterms: <http://purl.org/dc/terms/>
+    (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?c
               from <http://papyri.info/graph>
-              where { <%s> dcterms:hasPart ?a .
-                      ?a dcterms:relation ?hgv .
-                      ?hgv dcterms:source ?b .
-                      ?b dcterms:bibliographicCitation ?c }" url))  
+              where { <%s> dct:hasPart ?a .
+                      ?a dct:relation ?hgv .
+                      ?hgv dct:source ?b .
+                      ?b dct:bibliographicCitation ?c }" url))  
                     
 (defn other-citation-query
   "Gets bibliographic citations for a given item via its relationship
   to HGV records."
 	[url]
-    (format  "prefix dc: <http://purl.org/dc/elements/1.1/> 
-              prefix dcterms: <http://purl.org/dc/terms/>
+    (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
               from <http://papyri.info/graph>
-              where { <%s> dcterms:relation ?hgv .
-                      ?hgv dcterms:source ?b .
-                      ?b dcterms:bibliographicCitation ?a }" url)) 
+              where { <%s> dct:relation ?hgv .
+                      ?hgv dct:source ?b .
+                      ?b dct:bibliographicCitation ?a }" url)) 
 
 (defn batch-cited-by-query
   [url]
   (format "prefix cito: <http://purl.org/spar/cito/>
-           prefix dc: <http://purl.org/dc/elements/1.1/> 
-           prefix dcterms: <http://purl.org/dc/terms/>
+           prefix dct: <http://purl.org/dc/terms/>
            select ?a ?c
            from <http://papyri.info/graph>
-           where {<%s> dcterms:hasPart ?a .
-                  ?a dc:source ?b .
+           where {<%s> dct:hasPart ?a .
+                  ?a dct:source ?b .
                   ?b cito:isCitedBy ?c }" url))
 
 (defn cited-by-query
@@ -471,38 +461,37 @@
 (defn replaces-query
   "Finds items that the given item replaces."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dct: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
-            where { <%s> dc:replaces ?a }" url))
+            where { <%s> dct:replaces ?a }" url))
 
 (defn batch-is-replaced-by-query
   "Finds items in a given collection that are replaced by other items."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dct: <http://purl.org/dc/terms/> 
             select ?a ?b
             from <http://papyri.info/graph>
-            where { <%s> dc:hasPart ?a .
-                    ?a dc:isReplacedBy ?b }" url))
+            where { <%s> dct:hasPart ?a .
+                    ?a dct:isReplacedBy ?b }" url))
 
 (defn is-replaced-by-query
   "Finds any item that replaces the given item."
   [url]
-  (format  "prefix dc: <http://purl.org/dc/terms/> 
+  (format  "prefix dct: <http://purl.org/dc/terms/> 
             select ?a
             from <http://papyri.info/graph>
-            where { <%s> dc:isReplacedBy ?a }" url))
+            where { <%s> dct:isReplacedBy ?a }" url))
             
 (defn batch-images-query
   [url]
-  (format "prefix dc: <http://purl.org/dc/elements/1.1/>
-           prefix dcterms: <http://purl.org/dc/terms/>
+  (format "prefix dct: <http://purl.org/dc/terms/>
            prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
            prefix olo: <http://purl.org/ontology/olo/core#>
            select ?a ?image
            from <http://papyri.info/graph>
-           where { <%s> dcterms:hasPart ?a .
-                   ?a dcterms:relation ?i .
+           where { <%s> dct:hasPart ?a .
+                   ?a dct:relation ?i .
                    ?i rdf:type olo:OrderedList .
                    ?i olo:slot ?slot .
                    ?slot olo:index ?index .
