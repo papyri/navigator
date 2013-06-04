@@ -347,6 +347,7 @@
       (.add request translations)
       (.add request images)
       (.add request transitive-rels)
+      (.add request replaces-rels)
       (UpdateRemote/execute request (str server "/update") ))))
       
 (defn load-map 
