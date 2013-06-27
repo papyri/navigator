@@ -930,7 +930,8 @@
   </xsl:template>
 
   <xsl:template
-    match="text()[local-name(following-sibling::*[1]) = 'lb' and following-sibling::t:lb[1][@type='inWord']]">
+    match="text()[local-name(following-sibling::*[1]) = 'lb' and 
+    (following-sibling::t:lb[1][@type='inWord'] or following-sibling::t:lb[1][@break='no'])]">
     <xsl:value-of select="replace(., '\s+$', '')"/>
   </xsl:template>
 
