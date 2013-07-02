@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teilgandl.xsl 1540 2011-08-18 14:17:39Z gabrielbodard $ -->
+<!-- $Id: htm-teilgandl.xsl 1841 2012-12-05 15:16:13Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
   <xsl:include href="teilgandl.xsl"/>
 
   <xsl:template match="t:lg">
-      <div class="textpart">
-      <!-- Found in htm-tpl-lang.xsl -->
-      <xsl:call-template name="attr-lang"/>
-         <xsl:apply-templates/>
-      </div>
+     <xsl:choose>
+        <!-- in IOSPE, if preceded by ab, will be called inside that div (in htm-teiab.xsl) -->
+        <xsl:when test="$leiden-style='iospe' and preceding-sibling::t:*[1][local-name()='ab']"/>
+        <xsl:otherwise>
+        <div class="textpart">
+         <!-- Found in htm-tpl-lang.xsl -->
+         <xsl:call-template name="attr-lang"/>
+            <xsl:apply-templates/>
+         </div>
+        </xsl:otherwise>
+     </xsl:choose>
   </xsl:template>
 
 

@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: tpl-reasonlost.xsl 1435 2011-06-02 16:49:44Z gabrielbodard $ -->
+<!-- $Id: tpl-reasonlost.xsl 1801 2012-09-28 14:17:18Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
+
+<!-- ****DEPRECATED**** -->
+<!-- As far as I'm aware this stylesheet is not used anywhere any more.
+      The matching of square brackets is now performed by  [htm|txt]-tpl-sqbrackets.xsl
+      which is called after all other processing is completed, just prior to printing the output
+      (and called in start-text.xsl or tpl-structure.xsl)
+   -->
 
   <!-- Templates for opening and closing brackets for gap and supplied [@reason = 'lost'] -->
   

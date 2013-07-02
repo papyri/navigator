@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teigap.xsl 1463 2011-07-11 16:31:59Z gabrielbodard $ -->
+<!-- $Id: teigap.xsl 1801 2012-09-28 14:17:18Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -102,7 +102,10 @@
          <xsl:text>?</xsl:text>
       </xsl:if>
 
-      <xsl:call-template name="extent-string"/>
+      <xsl:if test="not(preceding::node()[1][self::text()][normalize-space(.)=''][preceding-sibling::node()[1][self::t:gap[@reason='illegible']]])
+         and not(preceding::node()[1][self::t:gap[@reason='illegible']])">
+         <xsl:call-template name="extent-string"/>
+      </xsl:if>
    </xsl:template>
 
 
@@ -115,8 +118,13 @@
             <xsl:text>[</xsl:text>
          </xsl:when>
          <xsl:otherwise>            
-            <!-- Found in tpl-reasonlost.xsl -->
-            <xsl:call-template name="lost-opener"/>
+            <!-- *NB* the lost-opener and lost-closer templates, found in tpl-reasonlost.xsl,
+           are no longer used in this version of the stylesheets. They used to serve to limit
+           the superfluous square brackets between adjacent gap and supplied elements,
+           but this function is now performed by regex in [htm|txt]-tpl-sqbrackets.xsl
+           which is called after all other templates are completed.
+        -->
+            <xsl:text>[</xsl:text>
          </xsl:otherwise>
       </xsl:choose>
       <xsl:if
@@ -129,7 +137,11 @@
             <xsl:call-template name="verse-string"/>
          </xsl:when>
          <xsl:otherwise>
-            <xsl:call-template name="extent-string"/>
+            <!-- Don't display again if there is a preceding adjecent gap of the same kind -->
+            <xsl:if test="not(preceding::node()[1][self::text()][normalize-space(.)=''][preceding-sibling::node()[1][self::t:gap[@reason='lost']]])
+               and not(preceding::node()[1][self::t:gap[@reason='lost']])">
+               <xsl:call-template name="extent-string"/>
+            </xsl:if>
          </xsl:otherwise>
       </xsl:choose>
 
@@ -158,8 +170,13 @@
             <xsl:text>]</xsl:text>
          </xsl:when>
          <xsl:otherwise>
-            <!-- Found in tpl-reasonlost.xsl -->
-            <xsl:call-template name="lost-closer"/>
+            <!-- *NB* the lost-opener and lost-closer templates, found in tpl-reasonlost.xsl,
+           are no longer used in this version of the stylesheets. They used to serve to limit
+           the superfluous square brackets between adjacent gap and supplied elements,
+           but this function is now performed by regex in [htm|txt]-tpl-sqbrackets.xsl
+           which is called after all other templates are completed.
+        -->
+            <xsl:text>]</xsl:text>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teihi.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-teihi.xsl 1777 2012-06-27 16:23:48Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -47,9 +47,16 @@
          <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
          <xsl:when test="@rend='ligature'">
             <xsl:element name="span">
-               <xsl:attribute name="class">ligature</xsl:attribute>
+               <xsl:choose>
+                  <xsl:when test="$leiden-style=('petrae','iospe')">
+                     <xsl:attribute name="class">petraeligature</xsl:attribute>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:attribute name="class">ligature</xsl:attribute>
+                  </xsl:otherwise>
+               </xsl:choose>
                <xsl:attribute name="title">Ligature: these characters are joined</xsl:attribute>
-               <xsl:apply-templates/>
+               <xsl:apply-imports/>
             </xsl:element>
          </xsl:when>
          <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

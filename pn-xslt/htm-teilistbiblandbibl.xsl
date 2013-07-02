@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teilistbiblandbibl.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-teilistbiblandbibl.xsl 1851 2013-01-28 16:37:55Z simonastoyanova $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -11,7 +11,7 @@
   </xsl:template>
 
 
-  <xsl:template match="t:bibl">
+  <xsl:template match="t:listBibl//t:bibl">
       <li>
          <xsl:apply-templates/>
       </li>

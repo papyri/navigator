@@ -15,17 +15,25 @@
     <value>edh-names</value>
     <value>edh-web</value>
     <value>ila</value>
+    <value>iospe</value>
     <value>london</value>
     <value>petrae</value>
     <value>panciera</value>
+    <value>rib</value>
     <value>seg</value>
     <value>sammelbuch</value>
   </parameter>
   
   <parameter>
-    <name>meta-style</name>
+    <name>edn-structure</name>
     <value on="yes">default</value>
+    <value>ddbdp</value>
     <value>hgv</value>
+    <value>inslib</value>
+    <value>iospe</value>
+    <value>edh</value>
+    <value>edh-db</value>
+    <value>rib</value>
     <value>sammelbuch</value>
   </parameter>
   
@@ -47,9 +55,15 @@
     <value on="yes">ddbdp</value>
   </parameter>
   
-  <!-- Line increment — ignored -->
+  <!-- Line-numbering increment -->
   <parameter>
     <name>line-inc</name>
     <value>5</value>
   </parameter>
+  
+  <parameter>
+    <name>css-loc</name>
+    <value>../xsl/global.css</value>
+  </parameter>
+  
 </parameters>

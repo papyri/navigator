@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: start-txt.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: start-txt.xsl 1801 2012-09-28 14:17:18Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
                 exclude-result-prefixes="t" version="2.0">
@@ -51,11 +51,23 @@
   <xsl:include href="tpl-reasonlost.xsl"/>
   <xsl:include href="tpl-certlow.xsl"/>
   <xsl:include href="tpl-text.xsl"/>
+  <xsl:include href="txt-tpl-sqbrackets.xsl"/>
 
 
   <xsl:template match="/">
     <!-- No templates for metadata just yet -->
-    <xsl:apply-templates/>
+    
+   <!-- <xsl:apply-templates/>-->
+    
+    <xsl:variable name="main-text">
+      <xsl:apply-templates/>
+    </xsl:variable>
+        
+    <!-- Templates found in txt-tpl-sqbrackets.xsl -->
+    <xsl:for-each select="$main-text">
+      <xsl:call-template name="sqbrackets"/>
+    </xsl:for-each>
+    
   </xsl:template>
   
 </xsl:stylesheet>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teidivedition.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-teidivedition.xsl 1828 2012-11-05 17:41:43Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -25,23 +25,28 @@
 
    <!-- Textpart div -->
    <xsl:template match="t:div[@type='textpart']" priority="1">
-      <xsl:variable name="div-loc">
-         <xsl:for-each select="ancestor::t:div[@type='textpart']">
+       <xsl:variable name="div-type">
+           <xsl:for-each select="ancestor::t:div[@type!='edition']">
+               <xsl:value-of select="@type"/>
+               <xsl:text>-</xsl:text>
+           </xsl:for-each>
+       </xsl:variable>
+       <xsl:variable name="div-loc">
+         <xsl:for-each select="ancestor::t:div[@type='textpart'][@n]">
             <xsl:value-of select="@n"/>
             <xsl:text>-</xsl:text>
          </xsl:for-each>
       </xsl:variable>
-      <span class="textpartnumber" id="ab{$div-loc}{@n}">
-         <!-- add ancestor textparts -->
-         <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and @subtype">
-            <xsl:value-of select="@subtype"/>
-            <xsl:text> </xsl:text>
-         </xsl:if>
-         <xsl:if test="@n">
-            <xsl:value-of select="@n"/>
-         </xsl:if>
-      </span>
-      <!--<xsl:element name="br"/>-->
+      <xsl:if test="@n">
+         <span class="textpartnumber" id="{$div-type}ab{$div-loc}{@n}">
+           <!-- add ancestor textparts -->
+           <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and @subtype">
+              <xsl:value-of select="@subtype"/>
+              <xsl:text> </xsl:text>
+           </xsl:if>
+              <xsl:value-of select="@n"/>
+         </span>
+      </xsl:if>
       <xsl:apply-templates/>
    </xsl:template>
 </xsl:stylesheet>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teig.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-teig.xsl 1777 2012-06-27 16:23:48Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -17,9 +17,11 @@
         <!-- Found in teig.xsl -->
         <xsl:call-template name="g-ddbdp"/>
          </xsl:when>
-         <xsl:when test="$leiden-style = 'london'">
-            <xsl:call-template name="g-london"/>
-         </xsl:when>
+        <xsl:when test="$leiden-style = 'london'">
+           <xsl:call-template name="g-london"/>
+        </xsl:when><xsl:when test="$leiden-style = 'iospe'">
+           <xsl:call-template name="g-iospe"/>
+        </xsl:when>
          <xsl:when test="$edition-type = 'diplomatic'">
             <xsl:text> </xsl:text>
             <em>
