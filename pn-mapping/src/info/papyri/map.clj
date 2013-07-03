@@ -30,7 +30,7 @@
            (com.hp.hpl.jena.update Update UpdateFactory UpdateRequest)
            (com.hp.hpl.jena.sparql.lang UpdateParser)
            (org.apache.commons.codec.digest DigestUtils)))
-           
+
 (def xsl (ref nil))
 (def pxslt (ref nil))
 (def buffer (ref nil))
@@ -50,7 +50,7 @@
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
-     
+
 (defn substring-before
   [string1 string2]
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
@@ -63,10 +63,10 @@
         adapter (DatasetAdapter. dga)]
     (try
       (doto rdf
-        (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" 
+        (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
         xmlns:dc=\"http://purl.org/dc/elements/1.1/\"
-        xmlns:dcterms=\"http://purl.org/dc/terms/\" 
-        xmlns:oac=\"http://www.openannotation.org/ns/\" 
+        xmlns:dcterms=\"http://purl.org/dc/terms/\"
+        xmlns:oac=\"http://www.openannotation.org/ns/\"
         xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"))
       (dotimes [n times]
         (let [string (.poll @buffer)]
@@ -95,26 +95,26 @@
       (.transform transformer (StreamSource. (FileInputStream. file)) outstr)
       ;; (println (.toString out))
       (.add @buffer (.toString out))
-      (catch Exception e 
+      (catch Exception e
         (.println *err* (str (.getMessage e) " processing file " file))))))
 
 (defn init-xslt
     [xslt]
   (when (not= xslt @xsl)
     (dosync (ref-set xsl xslt))
-    (if (.contains xslt "ddbdp-rdf") 
+    (if (.contains xslt "ddbdp-rdf")
       (dosync (ref-set param (list "root" idproot)))
       (dosync (ref-set param (list "DDB-root" ddbroot))))
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
         configuration (Configuration.)
         compiler-info (CompilerInfo.)]
-        (doto xsl-src 
+        (doto xsl-src
           (.setSystemId xslt))
         (doto compiler-info
           (.setErrorListener (StandardErrorListener.))
           (.setURIResolver (StandardURIResolver. configuration)))
         (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
-          
+
 (defn choose-xslt
   [file]
   (cond (.contains (str file) "DDB_EpiDoc_XML") (xslts "DDB_EpiDoc_XML")
@@ -122,43 +122,43 @@
     (.contains (str file) "APIS") (xslts "APIS")
     (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")
     (.contains (str file) "Biblio") (xslts "Biblio")))
-    
+
 (defn format-url-query
-  [filename] 
-  (format 
-    "prefix dc: <http://purl.org/dc/elements/1.1/> 
+  [filename]
+  (format
+    "prefix dc: <http://purl.org/dc/elements/1.1/>
     select ?uri
     from <http://papyri.info/graph>
     where {?uri dc:identifier \"%s\"}" filename))
-    
+
 (defn execute-query
   [query]
   (let [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
     (.execSelect exec)))
-  
-(defn get-identifier 
+
+(defn get-identifier
   [file]
-  (cond 
+  (cond
     (.contains file "DDB_EpiDoc_XML") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")
     (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")))
-    
+
 (defn url-from-file
   [file]
   (if (not (.contains file "Biblio"))
     (let [answer (execute-query (format-url-query (get-identifier file)))]
       (.toString (.getResource (.next answer) "uri")))
     (str "http://papyri.info/biblio/" (get-identifier file) "/ref")))
-          
+
 (defn -deleteGraph
   []
   (let [request (UpdateFactory/create)]
     (.add request "DROP ALL")
     (.add request (UpdateCreate. "http://papyri.info/graph"))
     (UpdateRemote/execute request (str server "/update") )))
-      
+
 (defn -deleteUri
   [uri]
   (let [deletesub (str "WITH <http://papyri.info/graph>
@@ -171,7 +171,7 @@
     (.add req deletesub)
     (.add req deleteobj)
     (UpdateRemote/execute req (str server "/update") )))
-    
+
 (defn -deleteRelation
   [uri]
   (let [deleterel (str "WITH <http://papyri.info/graph>
@@ -180,7 +180,7 @@
         req (UpdateFactory/create)]
     (.add req deleterel)
     (UpdateRemote/execute req (str server "/update") )))
-    
+
 (defn -deleteTriple
   [s p o]
   (let [deleterel (str "WITH <http://papyri.info/graph>
@@ -196,7 +196,7 @@
         model (ModelFactory/createDefaultModel)]
     (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
     (.add adapter graph model)))
-    
+
 (defn -insertPelagiosAnnotations
   [url]
   (if-not (nil? url)
@@ -220,7 +220,7 @@
                               "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
                               "xmlns:dc=\"http://purl.org/dc/terms/\" "
                               "xmlns:oac=\"http://www.openannotation.org/ns/\" "
-                              "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" 
+                              "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">"
                               "<rdf:Description rdf:about=\"" (str/replace url "/source" (str "/annotation/" ann-id)) "\">"
                                 "<rdf:type rdf:resource=\"http://www.openannotation.org/ns/Annotation\"/>"
                                 "<rdfs:label>" label "</rdfs:label>"
@@ -257,7 +257,7 @@
           (when (> (count @buffer) 5000)
             (flush-buffer nil))))
         (flush-buffer (count @buffer)))))
-    
+
 (defn -insertInferences
   [url]
   (if (not (nil? url))
@@ -290,17 +290,12 @@
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
-          replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
-                             "WITH <http://papyri.info/graph> "
-                             "INSERT {<" url "> dc:relation ?o} "
-                             "WHERE {<" url "> dc:replaces ?s .
-                                     ?s dc:relation ?o }")]
+          ]
       (.add request haspart)
       (.add request relation)
       (.add request transitive-rels)
       (.add request converse-rels)
       (.add request converse-relation)
-      (.add request replaces-rels)
       (UpdateRemote/execute request (str server "/update") ))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
@@ -336,21 +331,15 @@
                                 "INSERT {?s dc:relation ?o2} "
                                 "WHERE { ?s dc:relation ?o1 . "
                                          "?o1 dc:relation ?o2 "
-                                "FILTER (!sameTerm(?s, ?o2))}")
-          replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                             "WITH <http://papyri.info/graph> "
-                             "INSERT {?s dc:relation ?o} "
-                             "WHERE { ?s dc:replaces ?s2 .
-                                      ?s2 dc:relation ?o }")]
+                                "FILTER (!sameTerm(?s, ?o2))}")]
       (.add request hasPart)
       (.add request relation)
       (.add request translations)
       (.add request images)
       (.add request transitive-rels)
-      (.add request replaces-rels)
       (UpdateRemote/execute request (str server "/update") ))))
-      
-(defn load-map 
+
+(defn load-map
   [file]
   (def nthreads (.availableProcessors (Runtime/getRuntime)))
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
@@ -372,7 +361,7 @@
       (doto pool
         (.shutdown)))
   (flush-buffer (count @buffer)))
-    
+
 (defn -mapFiles
   [files]
   (println (str "Mapping " (.size files) " files."))
@@ -383,13 +372,13 @@
          (init-xslt xsl))
        (transform file))
     (flush-buffer (count @buffer))))
-   
+
 
 (defn -mapAll
   [args]
-  (if (> (count args) 0) 
+  (if (> (count args) 0)
     (load-map (first args)))
-    (do 
+    (do
       (println "Deleting Relations")
       (-deleteRelation "http://purl.org/dc/terms/relation")
       (println "Processing DDB_EpiDoc_XML")
@@ -433,7 +422,7 @@
             (= function "delete-uri") (-deleteUri (second args))
             (= function "delete-relation") (-deleteRelation (second args))
             (= function "insert-inferences") (if (> (count args) 1)
-              (for [file (rest args)] 
+              (for [file (rest args)]
                 (-insertInferences (url-from-file file)))
               (-insertInferences nil))
             (= function "insert-pelagios") (if (> (count args) 1)
