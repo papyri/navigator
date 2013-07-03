@@ -290,12 +290,17 @@
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
-          ]
+          replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
+                             "WITH <http://papyri.info/graph> "
+                             "INSERT {<" url "> dc:replaces ?o} "
+                             "WHERE {<" url "> dc:replaces ?s .
+                                     ?s dc:replaces ?o }")]
       (.add request haspart)
       (.add request relation)
       (.add request transitive-rels)
       (.add request converse-rels)
       (.add request converse-relation)
+      (.add request replaces-rels)
       (UpdateRemote/execute request (str server "/update") ))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
@@ -331,12 +336,18 @@
                                 "INSERT {?s dc:relation ?o2} "
                                 "WHERE { ?s dc:relation ?o1 . "
                                          "?o1 dc:relation ?o2 "
-                                "FILTER (!sameTerm(?s, ?o2))}")]
+                                "FILTER (!sameTerm(?s, ?o2))}")
+          replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                             "WITH <http://papyri.info/graph> "
+                             "INSERT {?s dc:replaces ?o} "
+                             "WHERE { ?s dc:replaces ?s2 .
+                                      ?s2 dc:replaces ?o }")]
       (.add request hasPart)
       (.add request relation)
       (.add request translations)
       (.add request images)
       (.add request transitive-rels)
+      (.add request replaces-rels)
       (UpdateRemote/execute request (str server "/update") ))))
 
 (defn load-map
