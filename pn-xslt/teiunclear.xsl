@@ -101,6 +101,6 @@
             <xsl:with-param name="text-content" select="$text-content"/>
          </xsl:call-template>
       </xsl:if>
-   </xsl:template>
+   </xsl:template>-->
 
 </xsl:stylesheet>

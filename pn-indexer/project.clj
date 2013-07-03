@@ -12,7 +12,7 @@
                  [org.apache.jena/jena-core "2.7.1"]
                  [org.apache.jena/jena-iri "0.9.1"]
                  [org.apache.jena/jena-arq "2.9.1"]
-                 [net.sf.saxon/saxon-he "9.2.0.2"]
+                 [net.sf.saxon/Saxon-HE "9.5.1-1"]
                  [com.ibm.icu/icu4j "3.8"]
                  [log4j/log4j "1.2.16"]
                  [org.slf4j/slf4j-api "1.6.1"]
