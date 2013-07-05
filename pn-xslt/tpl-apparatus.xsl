@@ -703,7 +703,6 @@
                </xsl:when>
                <!-- if the text node is a first child and a space hasn't been located yet... -->
                <xsl:when test="not($step/preceding-sibling::node()[1])">
-                 <xsl:message>690</xsl:message>
                   <xsl:variable name="temp-buildup">
                      <xsl:choose>
                         <xsl:when test="$origin='hi'">
@@ -1154,7 +1153,6 @@
                   </xsl:call-template>
                </xsl:when>
                <xsl:otherwise>
-                 <xsl:message>Drink! <xsl:copy-of select="preceding-sibling::node()[1]"/></xsl:message>
                   <xsl:call-template name="recurse_back">
                      <xsl:with-param name="step" select="preceding-sibling::node()[1]"/>
                   </xsl:call-template>
