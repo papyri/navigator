@@ -14,7 +14,6 @@
   <xsl:import href="txt-teidivedition.xsl"/>
   <xsl:import href="txt-teigap.xsl"/>
   <xsl:import href="txt-teihead.xsl"/>
-  <xsl:import href="txt-teilb.xsl"/>
   <xsl:import href="txt-teilgandl.xsl"/>
   <xsl:import href="txt-teilistanditem.xsl"/>
   <xsl:import href="txt-teilistbiblandbibl.xsl"/>
@@ -38,7 +37,6 @@
   <xsl:import href="teisicandcorr.xsl"/>
   <xsl:import href="teispace.xsl"/>
   <xsl:import href="teisupplied.xsl"/>
-  <xsl:import href="teisurplus.xsl"/>
   <xsl:import href="teiunclear.xsl"/>
   <xsl:import href="txt-tpl-apparatus.xsl"/>
   <xsl:import href="txt-tpl-linenumberingtab.xsl"/>
