@@ -662,10 +662,8 @@
       </xsl:choose>      
    </xsl:template>   
    
-   
-
    <xsl:template name="recurse_back">
-      <!-- Recurse trhough preceding sibling nodes until a space or carriage return is found -->
+      <!-- Recurse through preceding sibling nodes until a space or carriage return is found -->
       <!-- Used by hirend, appcontent -->
       <!-- When used by hirend ($origin='hi'), will strip diacritics -->
       <xsl:param name="step"/>
@@ -681,10 +679,31 @@
          <xsl:when test="$step[self::text()]">
             <xsl:choose>
                <xsl:when test="matches($step, '[\s\n\r\t]')">
-                  <xsl:copy-of select="$buildup"/>
+                 <xsl:choose>
+                   <xsl:when test="string-length($buildup) = 0">
+                     <xsl:choose>
+                       <xsl:when test="$origin='hi'">
+                         <xsl:call-template name="trans-string">
+                           <xsl:with-param name="trans-text">
+                             <xsl:call-template name="string-after-space">
+                               <xsl:with-param name="test-string" select="$step"/>
+                             </xsl:call-template>
+                           </xsl:with-param>
+                         </xsl:call-template>
+                       </xsl:when>
+                       <xsl:otherwise>
+                         <xsl:call-template name="string-after-space">
+                           <xsl:with-param name="test-string" select="$step"/>
+                         </xsl:call-template>
+                       </xsl:otherwise>
+                     </xsl:choose>
+                   </xsl:when>
+                   <xsl:otherwise><xsl:copy-of select="$buildup"/></xsl:otherwise>
+                 </xsl:choose>
                </xsl:when>
                <!-- if the text node is a first child and a space hasn't been located yet... -->
                <xsl:when test="not($step/preceding-sibling::node()[1])">
+                 <xsl:message>690</xsl:message>
                   <xsl:variable name="temp-buildup">
                      <xsl:choose>
                         <xsl:when test="$origin='hi'">
@@ -780,7 +799,7 @@
                         <xsl:with-param name="origin" select="$origin"/>
                      </xsl:call-template>
                   </xsl:variable>
-                  <xsl:apply-templates select="$builddown"/>
+                 <xsl:apply-templates select="$builddown/node()"/>
                   <xsl:copy-of select="$buildup"/>
                </xsl:when>
                <xsl:otherwise>
@@ -899,7 +918,7 @@
    </xsl:template>
 
    <xsl:template name="recurse_forward">
-      <!-- Recurse trhough following sibling nodes until a space or carriage return is found -->
+      <!-- Recurse through following sibling nodes until a space or carriage return is found -->
       <!-- Used by hirend, appcontent -->
       <xsl:param name="step"/>
 
@@ -1014,14 +1033,14 @@
                   </xsl:call-template>
                </xsl:when>
                <xsl:when test="($step[self::text] or $step[self::*]) and matches($step, '[\s\n\r\t]')">
-                  <xsl:variable name="buildown">
+                  <xsl:variable name="builddown">
                      <xsl:call-template name="recurse_down">
                         <xsl:with-param name="step" select="$step"/>
                         <xsl:with-param name="origin" select="$origin"/>
                      </xsl:call-template>
                   </xsl:variable>
                   <xsl:variable name="resolve">
-                     <xsl:apply-templates select="$buildown"/>
+                     <xsl:apply-templates select="$builddown/node()"/>
                   </xsl:variable>
                   <xsl:value-of select="$resolve"/>
                </xsl:when>
@@ -1072,6 +1091,24 @@
             <xsl:element name="{$step/name()}" xmlns="http://www.tei-c.org/ns/1.0">
                <xsl:sequence select="$step/@*"/>
                <xsl:choose>
+                 <xsl:when test="local-name($step/node()[1]) = '' and matches($step/node()[1], '[\s\t\r\n]')">
+                   <xsl:choose>
+                     <xsl:when test="$origin='hi'">
+                       <xsl:call-template name="trans-string">
+                         <xsl:with-param name="trans-text">
+                           <xsl:call-template name="string-before-space">
+                             <xsl:with-param name="test-string" select="$step/node()[1]"/>
+                           </xsl:call-template>
+                         </xsl:with-param>
+                       </xsl:call-template>
+                     </xsl:when>
+                     <xsl:otherwise>
+                       <xsl:call-template name="string-before-space">
+                         <xsl:with-param name="test-string" select="$step/node()[1]"/>
+                       </xsl:call-template>
+                     </xsl:otherwise>
+                   </xsl:choose>
+                 </xsl:when>
                   <xsl:when test="$step/text() and not($step/*)">
                      <xsl:choose>
                         <xsl:when test="$origin='hi'">
@@ -1117,6 +1154,7 @@
                   </xsl:call-template>
                </xsl:when>
                <xsl:otherwise>
+                 <xsl:message>Drink! <xsl:copy-of select="preceding-sibling::node()[1]"/></xsl:message>
                   <xsl:call-template name="recurse_back">
                      <xsl:with-param name="step" select="preceding-sibling::node()[1]"/>
                   </xsl:call-template>
@@ -1367,7 +1405,7 @@
    <xsl:template name="support">
       <!-- called by template "hirend" above; decides whether text support is "ostrakon" or other (prob. = "papyrus") -->
       <xsl:choose>
-         <xsl:when test="starts-with(//t:idno[@type='filename'],'o.')">
+         <xsl:when test="starts-with(ancestor::t:TEI//t:idno[@type='filename'],'o.')">
             <xsl:text> ostrakon</xsl:text>
          </xsl:when>
          <xsl:otherwise>
