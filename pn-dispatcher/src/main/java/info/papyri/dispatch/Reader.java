@@ -142,7 +142,6 @@ public class Reader extends HttpServlet {
         query.append(")");
         query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
         q = query.toString();
-        System.out.println(q);
       } catch (Exception e) {
         e.printStackTrace();
       }

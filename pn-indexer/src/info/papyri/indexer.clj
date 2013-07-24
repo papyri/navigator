@@ -359,7 +359,8 @@
             select ?a ?b
             from <http://papyri.info/graph>
             where { <%s> dct:hasPart ?a .
-                    ?a dct:replaces ?b }" url))
+                    ?a dct:replaces ?b .
+                    ?b dct:isReplacedBy ?a }" url))
 
 (defn batch-hgv-source-query
   "Gets the set of triples where A `<dct:source` B for a given collection."
@@ -544,7 +545,6 @@
 (defn queue-item
   "Adds the given URL to the @html queue for processing, along with associated data."
   [url]
-  (println (get-filename url))
   (let [relations (execute-query (relation-query url))
         replaces (execute-query (replaces-query url))
         is-replaced-by (execute-query (is-replaced-by-query url))

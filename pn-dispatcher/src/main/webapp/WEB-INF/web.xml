@@ -13,7 +13,7 @@
         <servlet-class>info.papyri.dispatch.Search</servlet-class>
         <init-param>
             <param-name>home</param-name>
-            <param-value>/data/papyri.info/pn/home</param-value>
+            <param-value>/srv/data/papyri.info/pn/home</param-value>
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
@@ -21,11 +21,11 @@
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -33,11 +33,11 @@
         <servlet-class>info.papyri.dispatch.Reader</servlet-class>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
@@ -53,7 +53,7 @@
         <servlet-class>info.papyri.dispatch.browse.facet.FacetBrowser</servlet-class>
         <init-param>
             <param-name>home</param-name>
-            <param-value>/data/papyri.info/pn/home</param-value>
+            <param-value>/srv/data/papyri.info/pn/home</param-value>
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
@@ -61,7 +61,7 @@
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
@@ -73,7 +73,7 @@
         </init-param>
         <init-param>
             <param-name>instructionsPath</param-name>
-            <param-value>/data/papyri.info/pn/instructions</param-value>
+            <param-value>/srv/data/papyri.info/pn/instructions</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -85,7 +85,7 @@
         <servlet-class>info.papyri.dispatch.browse.CollectionBrowser</servlet-class>
         <init-param>
             <param-name>home</param-name>
-            <param-value>/data/papyri.info/pn/home</param-value>
+            <param-value>/srv/data/papyri.info/pn/home</param-value>
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
@@ -93,7 +93,7 @@
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
         </init-param>
         <init-param>
             <param-name>sparqlGraph</param-name>
@@ -117,7 +117,7 @@
         <servlet-class>info.papyri.dispatch.BiblioSearch</servlet-class>
         <init-param>
             <param-name>home</param-name>
-            <param-value>/data/papyri.info/pn/home</param-value>
+            <param-value>/srv/data/papyri.info/pn/home</param-value>
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
@@ -125,11 +125,11 @@
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -149,23 +149,23 @@
         <servlet-class>info.papyri.dispatch.XSLTService</servlet-class>
         <init-param>
             <param-name>epidoc</param-name>
-            <param-value>/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-full</param-name>
-            <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2HTML.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/RDF2HTML.xsl</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-solr</param-name>
-            <param-value>/data/papyri.info/git/navigator/pn-xslt/RDF2Solr.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/RDF2Solr.xsl</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-text</param-name>
-            <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeText.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeText.xsl</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-fragment</param-name>
-            <param-value>/data/papyri.info/git/navigator/pn-xslt/MakeFragment.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeFragment.xsl</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -173,11 +173,11 @@
         <servlet-class>info.papyri.dispatch.CTSServlet</servlet-class>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
