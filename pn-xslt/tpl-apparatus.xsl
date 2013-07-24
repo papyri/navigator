@@ -351,7 +351,7 @@
       <!-- Used by: txPtchild, appcontent, teiaddanddel.xsl#t:add -->
       <xsl:param name="addpath" select="''"/>
       <xsl:param name="delpath"/><xsl:choose>
-         <!-- Old encoding: (stil supported) -->
+         <!-- Old encoding: (still supported) -->
          <xsl:when test="(
             not(preceding-sibling::node())
             or matches(preceding-sibling::node()[1][self::text()], '[\s\n\r\t]')
@@ -662,6 +662,8 @@
       </xsl:choose>      
    </xsl:template>   
    
+   <!-- The recurse_* templates handle isolating the piece of text that will be printed in the apparatus,
+        by finding the word breaks before and after it.-->
    <xsl:template name="recurse_back">
       <!-- Recurse through preceding sibling nodes until a space or carriage return is found -->
       <!-- Used by hirend, appcontent -->
@@ -830,7 +832,7 @@
    <xsl:template name="recurse_down_back">
       <!-- Recurse through child nodes until a space or carriage return is found. Re-create elements when necessary -->
       <!-- Used by recurse_back -->
-      <!-- Handles buidlup for right-to-left space/return search -->
+      <!-- Handles buildup for right-to-left space/return search -->
       <xsl:param name="step"/>
       <xsl:param name="buildup"/>
       <xsl:param name="origin"/>
@@ -889,11 +891,7 @@
                         <xsl:variable name="curstep-id" select="generate-id($step)"/>
                         <xsl:choose>
                            <xsl:when test="matches(., '[\s\n\r\t]')"/>
-                           <xsl:when test="for $i in following::text()[generate-id(ancestor::node()[1])=$curstep-id]
-                                           return
-                                             if (matches($i, '[\s\n\r\t]'))
-                                                then false()
-                                                else true()">
+                           <xsl:when test="following::text()[generate-id(ancestor::node()[1])=$curstep-id and matches(., '[\s\n\r\t]')]">
                               <xsl:call-template name="recurse_down_back">
                                  <xsl:with-param name="step" select="following-sibling::node()[1]"/>
                                  <xsl:with-param name="buildup" select="buildup"/>

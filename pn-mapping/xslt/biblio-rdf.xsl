@@ -11,8 +11,8 @@
   
   <xsl:include href="/data/papyri.info/git/navigator/pn-xslt/htm-teibibl.xsl"/>
 
-  <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
-  <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
+  <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
   <xsl:variable name="abbreviation-marker">&#x00B0;</xsl:variable>
   <xsl:variable name="id">http://papyri.info/biblio/<xsl:value-of
@@ -31,7 +31,7 @@
           <lawd:represents rdf:resource="{$id}"/>
         </rdf:Description>
       </lawd:representedBy>
-      <dcterms:bibliographicCitation><xsl:value-of select="$citation"/></dcterms:bibliographicCitation>
+      <dcterms:bibliographicCitation><xsl:value-of select="normalize-unicode($citation, 'NFC')"/></dcterms:bibliographicCitation>
       <xsl:apply-templates select="t:relatedItem"/>
     </rdf:Description>
   </xsl:template>

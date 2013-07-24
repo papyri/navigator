@@ -57,8 +57,8 @@
   <xsl:param name="collection"/>
   <xsl:param name="related"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
-  <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
-  <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
+  <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="line-inc">1</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
 

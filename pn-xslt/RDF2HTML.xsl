@@ -84,8 +84,8 @@
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
   <xsl:variable name="imgs" select="tokenize($images, '\s+')"/>
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
-  <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
-  <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
+  <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="doc-id">
     <xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']"><xsl:value-of select="//t:idno[@type='apisid']"/></xsl:when>

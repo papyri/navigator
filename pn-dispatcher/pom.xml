@@ -15,9 +15,9 @@
       <url>http://download.java.net/maven/2</url>
     </repository>
     <repository>
-      <id>papyri.info</id>
+      <id>libdc3-dev-01</id>
       <name>Maven Repo for the papyri.info project</name>
-      <url>http://dev.papyri.info/maven</url>
+      <url>http://libdc3-dev-01.oit.duke.edu/maven/</url>
     </repository>
     <repository>
       <releases>

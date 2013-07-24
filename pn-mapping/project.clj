@@ -1,12 +1,12 @@
 (defproject pn-mapping "1.0-SNAPSHOT"
   :description "Loads triple data into the papyri.info numbers server"
-  :repositories {"papyri.info" "http://dev.papyri.info/maven"
+  :repositories {"papyri.info" "http://libdc3-dev-01.oit.duke.edu/maven/"
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
   :jvm-opts ["-Xmx1g"]
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
-                 [net.sf.saxon/saxon-he "9.2.0.2"]
+                 [net.sf.saxon/Saxon-HE "9.4.0-9"]
                  [xerces/xercesImpl "2.9.1"]
                  [xml-apis/xml-apis "1.3.04"]
                  [xml-resolver/xml-resolver "1.2"]

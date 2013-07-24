@@ -31,10 +31,12 @@
              #^{:static true} [generatePages [java.util.List] void]
              #^{:static true} [loadBiblio [] void]
              #^{:static true} [loadLemmas [] void]])
+  (:require
+    [clojure.java.io :as io])
   (:import
     (clojure.lang ISeq)
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
-    (java.io File FileInputStream FileOutputStream FileReader StringWriter FileWriter)
+    (java.io File FileInputStream FileOutputStream FileReader ObjectInputStream ObjectOutputStream StringWriter FileWriter)
     (java.net URI URL URLEncoder URLDecoder)
     (java.nio.charset Charset)
     (java.text Normalizer Normalizer$Form)
@@ -44,7 +46,8 @@
     (javax.xml.transform Result )
     (javax.xml.transform.sax SAXResult)
     (javax.xml.transform.stream StreamSource StreamResult)
-    (net.sf.saxon Configuration FeatureKeys PreparedStylesheet StandardErrorListener StandardURIResolver TransformerFactoryImpl)
+    (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
+    (net.sf.saxon.lib StandardErrorListener StandardURIResolver)
     (net.sf.saxon.trans CompilerInfo XPathException)
     (org.apache.solr.client.solrj SolrServer SolrQuery)
     (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
@@ -55,9 +58,9 @@
     (org.xml.sax.helpers DefaultHandler)))
       
 ;; NOTE: hard-coded paths and addresses
-(def filepath "/data/papyri.info/idp.data")
-(def xsltpath "/data/papyri.info/git/navigator/pn-xslt")
-(def htpath "/data/papyri.info/pn/idp.html")
+(def filepath "/srv/data/papyri.info/idp.data")
+(def xsltpath "/srv/data/papyri.info/git/navigator/pn-xslt")
+(def htpath "/srv/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8083/solr/")
 (def numbersurl "http://localhost:8090/pi/query?query=")
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
@@ -235,7 +238,7 @@
               (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) 
              "/" (first identifier) "." (second identifier) "."
              (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")))))
-      (if (.contains url "hgv")
+      (if (.contains url "/hgv/")
         (when (.endsWith url "/source")
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
@@ -572,7 +575,7 @@
                   (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
                   (list "selfUrl" (substring-before url "/source"))
                   (list "server" nserver)))
-      (queue-item (last is-replaced-by)))))
+      (queue-item (first (last is-replaced-by))))))
 
 (defn queue-items
   "Adds children of the given collection or volume to the @html queue for processing,
@@ -732,7 +735,7 @@
 (defn print-words 
   "Dumps accumulated word lists into a file."
   []
-     (let [out (FileWriter. (File. "/data/papyri.info/words.txt"))]
+     (let [out (FileWriter. (File. "/srv/data/papyri.info/words.txt"))]
        (for [word @words]
    (.write out (str word "\n")))))
 
@@ -771,8 +774,8 @@
 	    *index* 0]
     (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "morph-search/") 5000 5))
 	    (.setRequestWriter @solr (BinaryRequestWriter.)))
-    (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
-    (load-morphs "/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
+    (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
+    (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
     (let [solr (CommonsHttpSolrServer. (str solrurl "morph-search/"))]
       (doto solr
 	(.commit)
@@ -808,14 +811,9 @@
     (.commit)
     (.optimize)))
     
-(defn -generatePages
-  "Builds the HTML and plain text pages for the PN"
+(defn queue-docs
   [args]
-  (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
-  (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
-  (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
   (dosync (ref-set html (ConcurrentLinkedQueue.)))
-  
   (if (nil? (first args))
     (do
       (println "Queueing DDbDP...")
@@ -827,8 +825,10 @@
       (println "Queueing APIS...")
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv") ())
       (println (str "Queued " (count @html) " documents.")))
-    (doseq [arg args] (queue-item arg)))
-
+    (doseq [arg args] (queue-item arg))))
+    
+(defn generate-pages
+  []
   (dosync (ref-set text @html))
   ;; Generate HTML
   (println "Generating HTML...")
@@ -837,7 +837,33 @@
   ;; Generate text
   (println "Generating text...")
   (generate-text))
-
+  
+(defn get-cached 
+  [file, args]
+  (if (.exists (io/as-file file))
+    (let [queue (ConcurrentLinkedQueue.)
+          ois (ObjectInputStream. (io/input-stream file))]
+      (.readObject queue ois)
+      (dosync (ref-set html queue)))
+    (queue-docs args)))
+    
+(defn cache 
+  [file]
+  (let [oos (ObjectOutputStream. (io/output-stream file))]
+    (.writeObject oos @html)))
+    
+(defn -generatePages
+  "Builds the HTML and plain text pages for the PN"
+  [args]
+  (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
+  (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
+  (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
+  (case (first args)
+        "-serialize" (do (get-cached (second args) (rest (rest args)))
+                         (generate-pages)
+                         (cache (second args)))
+        (do (queue-docs args)
+            (generate-pages))))
    
 (defn -index 
   "Runs the main PN indexing process."
@@ -875,7 +901,6 @@
 
 
 (defn -main [& args]
-  (println (string? (first args)))
   (if (> (count args) 0)
     (case (first args) 
       "load-lemmas" (-loadLemmas)

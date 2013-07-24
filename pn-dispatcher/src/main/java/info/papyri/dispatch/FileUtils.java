@@ -4,11 +4,11 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList; 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
@@ -353,6 +353,10 @@ public class FileUtils {
     String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
     int index = 0;
     for (Pattern pattern : patterns) {
+      // If pattern is something dumb, like '.', skip it.
+      if (bustedRegexes.contains(pattern.toString())) {
+        continue;
+      }
       StringBuilder hl = new StringBuilder();
       Matcher m = pattern.matcher(text);
       while (m.find()) {
@@ -403,6 +407,10 @@ public class FileUtils {
     List<String> result = new ArrayList<String>();
     String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$3ⓞ").replaceAll(hyphenatedLineNum, "Ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
     for (Pattern pattern : patterns) {
+      // If pattern is something dumb, like '.', skip it.
+      if (bustedRegexes.contains(pattern.toString())) {
+        continue;
+      }
       Matcher m = pattern.matcher(text);
       int prevEnd = 0;
       while (m.find()) {
@@ -452,7 +460,9 @@ public class FileUtils {
 
     public Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "¥");
-      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
+      ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "")
+              .replaceAll("\"([^\"]+)\"~\\d+", "$1")
+              .replaceAll("^\\{![^}]+\\}", ""));
       QueryLexer ql = new QueryLexer(a);
       CommonTokenStream tokens = new CommonTokenStream(ql);
       QueryParser qp = new QueryParser(tokens);
@@ -504,7 +514,6 @@ public class FileUtils {
   }
    
   public Pattern[] getSubstringHighlightPatterns(String query){
-      
       List<String> tokens = getTokensFromQuery(query);
       Pattern[] patterns = new Pattern[tokens.size()];
       for(int i = 0; i < tokens.size(); i++){
@@ -519,7 +528,6 @@ public class FileUtils {
   }
   
   public Pattern[] getPhraseHighlightPatterns(String query){
-      
       List<String> tokens = getTokensFromQuery(query);
       Pattern[] patterns = new Pattern[tokens.size()];
       for(int i = 0; i < tokens.size(); i++){
@@ -537,7 +545,6 @@ public class FileUtils {
 
     
    public List<String> getTokensFromQuery(String query){
-       
       String q = query.replace("*", "£").replace("?", "¥");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
       QueryLexer ql = new QueryLexer(a);
@@ -641,7 +648,6 @@ public class FileUtils {
    }
    
     Pattern[] buildPatterns(String q){
-      
       ArrayList<Pattern> patterns = new ArrayList<Pattern>();
       String[] qbits = q.split("\\)");
       for(int i = 0; i < qbits.length; i++){
@@ -787,4 +793,5 @@ public class FileUtils {
   private static String hlStartMark = "Ⓐ";
   private static String hlEnd = "</span>";
   private static String hlEndMark = "Ⓑ";
+  private static List<String> bustedRegexes = Arrays.asList(".","\\s",".*",".+",".?");
 }

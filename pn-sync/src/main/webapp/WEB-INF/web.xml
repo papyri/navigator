@@ -13,7 +13,7 @@
         </init-param>
         <init-param>
             <param-name>gitDir</param-name>
-            <param-value>/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
             <param-name>dbUser</param-name>

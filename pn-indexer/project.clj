@@ -1,5 +1,5 @@
 (defproject pn-indexer "1.0-SNAPSHOT"
-  :repositories {"papyri.info" "http://dev.papyri.info/maven"
+  :repositories {"papyri.info" "http://libdc3-dev-01.oit.duke.edu/maven/"
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
   :jvm-opts ["-Xmx1g"]
@@ -12,7 +12,7 @@
                  [org.apache.jena/jena-core "2.7.1"]
                  [org.apache.jena/jena-iri "0.9.1"]
                  [org.apache.jena/jena-arq "2.9.1"]
-                 [net.sf.saxon/Saxon-HE "9.5.1-1"]
+                 [net.sf.saxon/Saxon-HE "9.4.0-9"]
                  [com.ibm.icu/icu4j "3.8"]
                  [log4j/log4j "1.2.16"]
                  [org.slf4j/slf4j-api "1.6.1"]

@@ -114,8 +114,8 @@ public class GitWrapperTest {
   public void testMapping() {
     System.out.println("Testing Mapping");
     List<String> l = new ArrayList<String>();
-    l.add("/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
-    l.add("/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.3.xml");
+    l.add("/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
+    l.add("/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.3.xml");
     try {
       map.mapFiles(l);
     } catch (Throwable e) {

@@ -116,13 +116,11 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
           continue;
         }
         if (searchClause.getAllClauseRoles().contains(ClauseRole.REGEX)) {
-
           String trimmedRegex = trimRegex(transformedString);
           Pattern[] regexPatterns = matchRegexToDocument(trimmedRegex);
           hilites.addAll(Arrays.asList(regexPatterns));
 
         } else if (searchClause.parseForSearchType() == StringSearchFacet.SearchType.PROXIMITY) {
-
           transformedString = transformedString.replaceAll("(\\d+)w", "");
           tempRegex = "Prox";
           hilites.addAll(Arrays.asList(util.getPhraseHighlightPatterns(transformedString)));
@@ -185,15 +183,13 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
         found = found.replaceAll("([()\\[\\]{}\\.])", ".");
         found = found.replaceAll("\\s{2,}", "\\\\b");
-        found = found.replaceAll("\\s", " ");
         String[] foundBits = found.split("[\\d]+\\.");
         for (int i = 0; i < foundBits.length; i++) {
-
           String fbit = foundBits[i].trim();
+          fbit = fbit.replaceAll("\\s", "\\\\s+");
           highlightWords.add(fbit);
           Pattern foundPattern = Pattern.compile(fbit, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNIX_LINES | Pattern.DOTALL);
           patterns.add(foundPattern);
-
         }
       }
 
@@ -447,7 +443,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
   @Override
   public String getHTML() {
-
     StringBuilder anchor = new StringBuilder();
     anchor.append("<a href='");
     anchor.append(generateLink());

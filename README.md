@@ -63,18 +63,19 @@ Directory Structure
 
 The directory structure is expected to conform to:
 
-/data/papyri.info/solr - for Solr home  
-/data/papyri.info/mulgara/server1 - for numbers server data storage  
-/data/papyri.info/git/navigator - holding the gthub-synchronised application files themselves  
-/data/papyri.info/idp.data - IDP XML files (the 'mothership' repository), as given at <https://github.com/papyri/idp.data>  
-/data/papyri.info/PN/idp.html - the IDP HTML files generated from the files in /data/papyri.info/idp.data  
-/data.papyri.info/PN/home - the HTML, CSS, JS, and image files used throughout the site and in interactive interfaces. This directory can consist simply of a symlink to /data/papyri.info/git/navigator/pn-site.  
+/srv/data/papyri.info/solr - for Solr home  
+/srv/data/papyri.info/jena - for numbers server data storage  
+/srv/data/papyri.info/git/navigator - holding the gthub-synchronised application files themselves  
+/srv/data/papyri.info/idp.data - IDP XML files (the 'mothership' repository), as given at <https://github.com/papyri/idp.data>  
+/srv/data/papyri.info/pn/idp.html - the IDP HTML files generated from the files in /data/papyri.info/idp.data  
+/srv/data.papyri.info/pn/home - the HTML, CSS, JS, and image files used throughout the site and in interactive interfaces. This directory can consist simply of a symlink to /srv/data/papyri.info/git/navigator/pn-site.  
 
+Adapting to a different directory structure is straightforward, but will mean 
 
 Building and Running
 ====================
 
-Java servlets are built using Maven 3.0.3. Once Maven is installed, dependency calculation and download should proceed automatically - though note in particular the existence of the project's Maven repo at <http://dev.papyri.info/maven>.
+Java servlets are built using Maven 3.0.3. Once Maven is installed, dependency calculation and download should proceed automatically - though note in particular the existence of the project's Maven repo at <http://libdc3-dev-01.oit.duke.edu/maven/>.
 
 Applications written in Clojure (pn-mapping, pn-indexer, and pn-lemmas) will require [leiningen](https://github.com/technomancy/leiningen "leiningen on github") - which is itself Maven-based.
 

@@ -1,12 +1,12 @@
 package info.papyri.dispatch.browse.facet;
 
-import info.papyri.dispatch.browse.facet.customexceptions.FacetNotFoundException;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
+import info.papyri.dispatch.browse.facet.customexceptions.FacetNotFoundException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
