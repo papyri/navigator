@@ -52,14 +52,35 @@ function init() {
         + "from <http://papyri.info/graph> "
         + "where { ?subject dc:references <http://papyri.info" + getPath().replace(/\/jQuery/, "") + "/source>}")
         + "&format=json", function(data) {
-            if (data.results.bindings.length > 0) {
-                jQuery("#controls").append('<div id="related" class="ui-widget-content ui-corner-all" style="margin-left:2em"><h4>related resources</h4></div>')
-                jQuery.each(data.results.bindings, function(i, row) {
-                    var val = row.subject.value;
-                    jQuery("#related").append('<a href="'+ val + '" style="margin-left:1em" target="_blank">GLRT</a>');
-                })
-            }
+          if (data.results.bindings.length > 0) {
+            var loc = jQuery("div#bibliography").length > 0 ? jQuery("div#bibliography") : jQuery("div.metadata:last");
+            loc.after('<div id="related"><h3>related resources</h3></div>')
+            jQuery.each(data.results.bindings, function(i, row) {
+              var val = row.subject.value;
+              jQuery("#related").append('<a href="'+ val + '" style="margin-left:1em" target="_blank">GLRT</a>');
+            })
+          }
     });
+    var biblio = jQuery("div#bibliography li>a");
+    if (biblio.length > 0) {
+      var sparql = "/sparql?query="
+        + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
+        + "SELECT * "
+        + "FROM <http://papyri.info/graph> "
+        + "WHERE { ");
+      jQuery("div#bibliography li>a").each( function (i) {
+        sparql += encodeURIComponent("<"+this.href+"> dc:bibliographicCitation ?cite" + i + (i < biblio.length - 1?" . ":""));
+      });
+      sparql += encodeURIComponent(" }") + "&format=json";
+      jQuery.getJSON(sparql, function(data) {
+        jQuery("div#bibliography li>a").each( function(i) {
+          jQuery(this).text(data.results.bindings[0]["cite" + i].value);
+        });
+      });
+    }
+    
+    var bibl = jQuery("div#bibliography li>a");
+    
     
     addLinearBrowseControls();
 }
