@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
           <groupId>net.sf.saxon</groupId>
-          <artifactId>saxon-HE</artifactId>
+          <artifactId>Saxon-HE</artifactId>
           <version>9.4.0-9</version>
         </dependency>
         <dependency>
