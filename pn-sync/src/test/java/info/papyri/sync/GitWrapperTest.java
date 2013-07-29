@@ -90,6 +90,14 @@ public class GitWrapperTest {
   }
   
   @Test
+  public void testFileNameWithPageNumberToURI() {
+    String id = "http://papyri.info/ddbdp/upz;1;pg604,8b/source";
+    String file = "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/upz/upz.1/upz.1.pg604-8b.xml";
+    String result = GitWrapper.filenameToUri(file,true);
+    assertEquals(id, result);
+  }
+  
+  @Test
   public void testBrokenFilenameToURI() {
     System.out.println("Broken filename to URI");
     String file = "DDB_EpiDoc_XML/p.rain.unterricht/p.rain.unterricht. /p.rain.unterricht. .61.xml";

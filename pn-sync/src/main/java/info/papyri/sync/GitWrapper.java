@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -249,7 +250,7 @@ public class GitWrapper {
     StringBuilder result = new StringBuilder();
     if (file.contains("DDB")) {
       StringBuilder sparql = new StringBuilder();
-      sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ")
+      sparql.append("prefix dc: <http://purl.org/dc/terms/> ")
             .append("select ?id ")
             .append("from <http://papyri.info/graph> ")
             .append("where { ?id dc:identifier \"")
@@ -261,7 +262,7 @@ public class GitWrapper {
         URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
         JsonNode root = getJson(m);
         if (root.path("results").path("bindings").size() > 0) {
-          result.append(root.path("results").path("bindings").path(0).path("id").path("value").asText());
+          result.append(URLDecoder.decode(root.path("results").path("bindings").path(0).path("id").path("value").asText(),"UTF-8"));
         // Otherwise, attempt to infer the identifier from the filename. 
         } else {
           result.append("http://papyri.info/ddbdp/");
@@ -285,7 +286,7 @@ public class GitWrapper {
               result.append(rest);
             }
             result.append("/source");
-            if (!result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d)*;(\\w|\\d)+/source")) {
+            if (!result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d)*;(\\w|\\d|-|,)+/source")) {
               throw new Exception("Malformed file name: " + file);
             }
           } else {
