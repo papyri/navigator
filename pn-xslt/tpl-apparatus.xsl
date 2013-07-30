@@ -118,7 +118,7 @@
                                     <xsl:with-param name="part"><xsl:value-of select="$part3" /></xsl:with-param>
                                     <xsl:with-param name="pos">first</xsl:with-param>
                                  </xsl:call-template></xsl:when>
-                              <xsl:when test="contains($part3, ' : ')"><xsl:value-of select="substring-before($part3, ' :')"/></xsl:when>
+                              <xsl:when test="contains($part3, ' : ') and lem/@resp"><xsl:value-of select="substring-before($part3, ' :')"/></xsl:when>
                               <xsl:otherwise>Current edition</xsl:otherwise>
                            </xsl:choose>
                            
@@ -128,7 +128,6 @@
                            <xsl:when test="$childtype='subst'"> reports </xsl:when>
                            <xsl:otherwise> gives </xsl:otherwise>
                         </xsl:choose> 
-                        
                         
                         <xsl:choose>
                            <xsl:when test="$childtype = 'subst'"><xsl:value-of select="normalize-space($part1)" />, then changed to <xsl:value-of select="normalize-space($part2)" /></xsl:when>
@@ -1428,12 +1427,12 @@
       </xsl:variable>
       <xsl:variable name="no-l">
          <xsl:choose>
-            <xsl:when test="$apptype = 'siccorr'"><xsl:value-of select="substring-before(replace($scribeswitch, 'l. ', 'for which correct to '), '(corr)')"
+            <xsl:when test="$apptype = 'siccorr'"><xsl:value-of select="substring-before(replace($scribeswitch, 'l\. ', 'for which correct to '), '(corr)')"
                /></xsl:when>
-            <xsl:when test="$apptype = ('origreg', 'subst', 'appalt', 'apped')"><xsl:value-of select="replace($scribeswitch, 'l. ', 'for which read ')"/></xsl:when>
-            <xsl:when test="contains($scribeswitch, 'prev. ed.')"><xsl:value-of select="replace($scribeswitch, 'l. ', 'for which read ')"/></xsl:when>
-            <xsl:when test="$apptype = 'appbl'"><xsl:value-of select="replace($scribeswitch, 'l. ', 'normalises to ')"/></xsl:when>
-            <xsl:otherwise><xsl:value-of select="replace($scribeswitch, 'l. ', 'Scribe wrote ')"
+            <xsl:when test="$apptype = ('origreg', 'subst', 'appalt', 'apped')"><xsl:value-of select="replace($scribeswitch, 'l\. ', 'for which read ')"/></xsl:when>
+            <xsl:when test="contains($scribeswitch, 'prev. ed.')"><xsl:value-of select="replace($scribeswitch, 'l\. ', 'for which read ')"/></xsl:when>
+            <xsl:when test="$apptype = 'appbl'"><xsl:value-of select="replace($scribeswitch, 'l\. ', 'normalises to ')"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="replace($scribeswitch, 'l\. ', 'Scribe wrote ')"
                /></xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
