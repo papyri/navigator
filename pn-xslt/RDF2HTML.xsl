@@ -386,7 +386,11 @@
   <xsl:template match="t:TEI" mode="text">
     <div class="transcription data">
       <h2>DDbDP transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
-      <xsl:apply-templates select="."/>
+      <xsl:variable name="text">
+        <xsl:apply-templates select="."/>
+      </xsl:variable>
+      <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
+      <xsl:apply-templates select="$text" mode="sqbrackets"/>
       <div id="history">
         <div id="history-headers">
           <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>

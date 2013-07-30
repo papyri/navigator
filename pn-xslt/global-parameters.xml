@@ -26,8 +26,8 @@
   
   <parameter>
     <name>edn-structure</name>
-    <value on="yes">default</value>
-    <value>ddbdp</value>
+    <value>default</value>
+    <value on="yes">ddbdp</value>
     <value>hgv</value>
     <value>inslib</value>
     <value>iospe</value>

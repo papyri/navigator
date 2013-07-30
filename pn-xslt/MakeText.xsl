@@ -47,7 +47,7 @@
   
   <xsl:include href="txt-tpl-apparatus.xsl"/>
   <xsl:include href="txt-tpl-linenumberingtab.xsl"/>
-  
+  <xsl:include href="txt-tpl-sqbrackets.xsl"/>
   <xsl:include href="tpl-reasonlost.xsl"/>
   <xsl:include href="tpl-certlow.xsl"/>
   <xsl:include href="tpl-text.xsl"/>
@@ -72,7 +72,8 @@
     <xsl:choose>
       <xsl:when test="$collection = 'ddbdp'">
         <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
-        <xsl:apply-templates/>
+        <xsl:variable name="text"><xsl:apply-templates/></xsl:variable>
+        <xsl:apply-templates select="$text" mode="sqbrackets"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:apply-templates select="/t:TEI" mode="metadata"/>
