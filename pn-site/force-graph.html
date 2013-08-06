@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Papyri.info</title>
+  <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <style>
+
+  div.content {
+    padding: 1em;
+  }
+  div.content body {
+    text-align:left;
+  }
+  .titleBox {
+      fill: white;
+  }
+
+  .title {
+      font-family: Verdana, Arial, Helvetica, sans-serif;
+      font-size: 18px;
+  }
+
+  .label {
+      display: none;
+  }
+  .showlabel body {
+      background: white;
+      border: thin solid gray;
+      font-family: Verdana, Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      padding: 5px;
+      margin: 0px;
+  }
+
+  .showlabel span {
+      overflow:hidden;
+      margin-right: -5px;
+  }
+
+  .showlabel a {
+     color: black;
+  }
+
+  .showlabelbg {
+      fill: white;
+      stroke: black;
+      stroke-width: 1px;
+  }
+
+  .node {
+    stroke: black;
+    stroke-width: .5px;
+  }
+
+  .link {
+    stroke: #999;
+    stroke-opacity: .6;
+  }
+
+  line.highlight {
+    stroke:dodgerblue;
+    stroke-opacity: 1;
+  }
+  circle.highlight {
+    stroke:dodgerblue;
+    stroke-width:3px;
+  }
+
+  </style>
+  <script src="/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-19774706-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+</head>
+
+<body onload="init()">
+  <div id="d">
+    <div id="hd">
+      <h1>Papyri.info</h1>
+      <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>
+   </div>
+    <div id="bd">
+      <div class="nav">
+          <!-- left nav -->
+          <form method="get" accept-charset="utf-8">
+            <ul class="nav">
+              <li>Browse: </li>
+              <li>
+                <a href="/browse/ddbdp/">DDbDP</a>
+              </li>
+              <li>
+                <a href="/browse/hgv/">HGV</a>
+              </li>
+              <li>
+                <a href="/browse/apis/">APIS</a>
+              </li>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              </li>
+              <li>or Search:</li>
+              <li>
+                <a href="/search">Data</a>
+              </li>
+              <li>
+                <a href="/bibliosearch">Bibliography</a>
+              </li>
+            </ul>
+          </form>
+        </div>
+      <div id="main">
+        <div class="content">
+        </div>
+      </div>
+   </div>
+    <div id="footer">
+      <div id="footer-left-col">
+        <div id="secondary-nav">
+          <ul class="nav">
+            <li><a href="/" title="Project Home">Home</a></li>
+            <li><a href="#" title="Site help">Help</a></li>
+            <!-- following two links SoSOL only -->
+            <!-- <li><a href="">Leiden<sup>+</sup> Text Help</a></li> -->
+            <!-- <li><a href="">Leiden<sup>+</sup> Translation Help</a></li> -->
+            <!-- insert link for SoSOL admin email here -->
+            <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
+            <li><a href="/resources.html" title="Papyrological tools and resources">Resources</a></li>
+            <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
+            <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
+          </ul>
+        </div>
+        <div class="spacer"></div>
+      </div>
+      <div id="footer-right-col">
+        <p>Produced by</p>
+        <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a> 
+          <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
+          Ancient World</a></p>
+        <div id="about-nav"> 
+          <ul class="nav">
+            <li><a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a></li>
+            <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
+            <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
+              der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
+            <li><a href="http://idp.atlantides.org/trac/idp/wiki/DDBDP" title="Duke Databank of Documentary Papyri - Home">DDbDp</a></li>
+            <li><a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/about.html">APIS</a></li>
+            <li class="last-child"><a href="/about.html" title="Advanced Papyrological Information System">Papyri.info</a></li>    
+          </ul>
+          <h3 id="about-hdr">About:</h3>
+        </div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+  </div>
+    <script type="text/javascript" charset="utf-8">
+      jQuery("#searchbutton").button();
+      jQuery("#editorbutton").button();
+    </script>
+    <script src="/js/d3.v3.min.js"></script>
+    <script src="/js/colorbrewer.js"></script>
+    <script>
+      var url,query,jsonUri;
+      if (window.location.search) {
+        url = decodeURIComponent(window.location.search.substr(1).split("=")[1]);
+        query = url;
+        var sparql = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
+        sparql +=    "CONSTRUCT { <" + query + "> ?p ?o . "
+        sparql +=    "?s2 ?p2 <" + query + "> } "
+        sparql +=    "FROM <http://papyri.info/graph> "
+        sparql +=    "WHERE { {<" + query + "> ?p ?o } "
+        sparql +=    "UNION {?s2 ?p2 <" + query + ">} } ";
+        sparql +=    "LIMIT 500";
+        jsonUri = "/sparql?query=" + encodeURIComponent(sparql);
+      } else {
+        url = window.location.href.replace(/:\/\/[^\/]+/, "://papyri.info");
+        if (url.match(/\/biblio\//)) {
+          query = url.replace(/\/graph$/, "/ref");
+        } else {
+          query = url.replace(/\/graph$/, "/source");
+        }
+        
+        jsonUri = window.location.href.replace(/\/graph$/, "/json");
+      } 
+
+
+      var width = 1040,
+          height = 700;
+
+      var nodeTypes = ["uri", "center", "bnode", "literal", "property", "type"];
+
+      var color = d3.scale.ordinal()
+          .domain(nodeTypes)
+          .range(colorbrewer.Accent[8]);
+
+      var force = d3.layout.force()
+          .charge(-100)
+          .linkDistance(50)
+          .size([width, height]);
+
+      var svg = d3.select("div.content").append("svg")
+          .attr("width", width)
+          .attr("height", height);
+
+      var makeId = function(name) {
+        var id = "id" + name.replace(/\W/g, "");
+        return id;
+      }
+
+
+      var xhr = d3.xhr(jsonUri);
+      xhr.header("Accept", "application/rdf+json");
+      xhr.get(function(error, request) {
+        // Get a JSON RDF representation, and transform it into a list of graph nodes and links
+        var json = JSON.parse(request.responseText);
+        var k = Object.keys(json);
+        var nodes = {};
+        //add the query node:
+        nodes[query] = {type: "center", links: {}};
+        if (json[query]) {
+          var l = Object.keys(json[query]);
+          for (var h = 0; h < l.length; h++) {
+            var property = l[h] + "|x," + h;
+            nodes[property] = {};
+            nodes[property].type = "property";
+            nodes[property].links = {};
+            if (nodes[query].links[property]) {
+              nodes[query].links[property] += 1;
+            } else {
+              nodes[query].links[property] = 1;
+            }
+            var m = json[query][l[h]];
+            for (var g = 0; g < m.length; g++) {
+              if(!nodes[m[g].value]) {
+                nodes[m[g].value] = {};
+                nodes[m[g].value].links = {};
+                if (m[g].value == query) {
+                  nodes[m[g].value].type = "center";
+                } else if (l[h] == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
+                  nodes[m[g].value].type = "type";
+                } else {
+                  nodes[m[g].value].type = m[g].type;
+                }
+              }
+              if (nodes[property].links[m[g].value]) {
+                nodes[property].links[m[g].value] += 1;
+              } else {
+                nodes[property].links[m[g].value] = 1;
+              }
+            }
+          }
+        }
+        for (var i = 0; i < k.length; i++) {
+          if (!nodes[k[i]]) {
+            nodes[k[i]] = {};
+            nodes[k[i]].type = k[i].substring(0,1) == "_"?"bnode":"uri";
+            nodes[k[i]].links = {};
+          }
+          var l = Object.keys(json[k[i]]);
+          for (var h = 0; h < l.length; h++) {
+            if (k[i] !=  query) {
+              if (json[k[i]][l[h]].length == 1) {
+                property = l[h] + "|" + json[k[i]][l[h]][0].value;
+              } else {
+                property = l[h] + "|" + i + "," + h;
+              }
+              nodes[property] = {};
+              nodes[property].type = "property";
+              nodes[property].links = {};
+              if (nodes[k[i]].links[property]) {
+                nodes[k[i]].links[property] += 1;
+              } else {
+                nodes[k[i]].links[property] = 1;
+              }
+              var m = json[k[i]][l[h]];
+              for (var g = 0; g < m.length; g++) {
+                if(!nodes[m[g].value]) {
+                  nodes[m[g].value] = {};
+                  nodes[m[g].value].links = {};
+                  if (m[g].value == query) {
+                    nodes[m[g].value].type = "center";
+                  } else if (l[h] == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
+                    nodes[m[g].value].type = "type";
+                  } else {
+                    nodes[m[g].value].type = m[g].type;
+                  }
+                }
+                if (nodes[property].links[m[g].value]) {
+                  nodes[property].links[m[g].value] += 1;
+                } else {
+                  nodes[property].links[m[g].value] = 1;
+                }
+              }
+            }
+
+          }
+        }
+        var graphNodes = [];
+        var links = [];
+        var gNodeList = Object.keys(nodes);
+        for (var i = 0; i < gNodeList.length; i++) {
+          graphNodes[i] = {"name":gNodeList[i],"group":nodeTypes.indexOf(nodes[gNodeList[i]].type)};
+          if (graphNodes[i].name == query) {
+            graphNodes[i].weight = 1000;
+          }
+          var ln = Object.keys(nodes[gNodeList[i]].links);
+          for (var j = 0; j < ln.length; j++) {
+            links.push({"source":i,"target":gNodeList.indexOf(ln[j]),"value":nodes[gNodeList[i]].links[ln[j]]});
+          }
+        }
+        // Now, build the graph:
+        force
+          .nodes(graphNodes)
+          .links(links)
+          .start();
+
+        svg.append("svg:defs").selectAll("marker")
+          .data(["end"])      // Different link/path types can be defined here
+        .enter().append("svg:marker")    // This section adds in the arrows
+          .attr("id", String)
+          .attr("viewBox", "0 -5 10 10")
+          .attr("refX", 30)
+          .attr("refY", 0)
+          .attr("markerWidth", 6)
+          .attr("markerHeight", 6)
+          .attr("orient", "auto")
+        .append("svg:path")
+          .attr("d", "M-5,-5L10,0L0,5");
+
+
+        var link = svg.selectAll(".link")
+          .data(links)
+        .enter().append("line")
+          .attr("class", function(d) {return "link " + makeId(d.source.name) + " " + makeId(d.target.name)})
+          .attr("marker-end", "url(#end)")
+          .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+        var node = svg.selectAll(".node")
+            .data(graphNodes)
+          .enter().append("g")
+            .each(function(d, i) {
+              var g = d3.select(this);
+              g.attr("id", function(d) {return makeId(d.name)});
+              var c;
+              if (nodeTypes[d.group] == "uri") {
+                c =  g.append("a")
+                .attr("xlink:href","/browse-graph?s=" + encodeURIComponent(d.name))
+                      .append("circle");
+              } else {
+                c = g.append("circle");
+              }
+              c.attr("class", function(d) { return "node " + makeId(d.name)});
+
+
+              if (nodeTypes[d.group] == "center") {
+                c.attr("r", 12);
+              } else {
+                c.attr("r", 6);
+              }
+              c.style("fill", function(d) { return color(d.group); });
+              g.call(force.drag);
+            });
+
+        node.append("rect")
+          .attr("class", "labelbg")
+          .attr("x",10)
+          .attr("y","-.55em")
+          .attr("rx",3)
+          .attr("ry",3);
+
+        node.append("foreignObject")
+          .attr("class","label")
+          .attr("dx", 18)
+          .attr("dy",".45em")
+          .attr("width", "20em")
+          .attr("height","200px")
+          .append("xhtml:html")
+          .append("body")
+          .append("span")
+          .attr("style","text-align:left;")
+          .each(function(d, i) {
+            var span = d3.select(this);
+            var name = d.name.replace(/\|.+$/,'')
+            if ((nodeTypes[d.group] == "uri" || nodeTypes[d.group] == "center") && d.name.match(/^http/)) {
+              span.append("a")
+                .attr("href", name)
+                .attr("target", "_blank")
+                .text(d.name);
+            } else if (nodeTypes[d.group] == "bnode") {
+              span.text("_bnode");
+            } else {
+              span.text(name);
+            }
+          });
+
+
+        node.on("mouseover", mouseover);
+        node.on("mouseout", mouseout);
+
+        force.on("tick", function() {
+          link.attr("x1", function(d) { return d.source.x; })
+              .attr("y1", function(d) { return d.source.y; })
+              .attr("x2", function(d) { return d.target.x; })
+              .attr("y2", function(d) { return d.target.y; });
+          node.attr("transform", function(d) {return "translate(" + d.x + "," + d.y + ")"});
+        });
+
+
+        svg.append("svg:g")
+          .attr("width",100)
+          .attr("height", 30)
+          .append("text")
+          .attr("class", "title")
+          .attr("x",20)
+          .attr("y",20)
+          .text("Graph for " + query);
+
+      });
+
+      var mouseover = function () {
+        var g = d3.select(this);
+        var t = d3.select(g.node().lastElementChild);
+        t.attr("class","showlabel");
+        /*g.select("rect")
+          .attr("class","showlabelbg")
+          .attr("width",t.node().getBBox().width + 8)
+          .attr("height", t.node().getBBox().height + 8);*/
+        var n = g.node();
+        var parent = n.parentNode;
+        parent.removeChild(n);
+        parent.appendChild(n);
+        d3.selectAll("." + g.attr("id"))
+          .classed("highlight", true);
+      }
+
+      var mouseout = function() {
+        var g = d3.select(this);
+        d3.select(g.node().lastElementChild).attr("class","label");
+        d3.selectAll("." + g.attr("id"))
+          .classed("highlight", false);
+      }
+
+    </script>
+  </body>
+</html>
