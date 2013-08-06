@@ -2,7 +2,7 @@
   :repositories {"papyri.info" "http://libdc3-dev-01.oit.duke.edu/maven/"
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
-  :jvm-opts ["-Xmx1g"]
+  :jvm-opts ["-Xmx1g" "-Djava.awt.headless=true"]
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [ant/ant-launcher "1.6.2"]
                  [org.apache.maven/maven-ant-tasks "2.0.10"]

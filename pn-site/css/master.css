@@ -325,6 +325,20 @@ border:thin solid silver;
 margin:2em;
 padding:1em;
 }
+div#ld {
+clear: both;
+float: left;
+margin-left: 1em;
+width: 100%;
+}
+div#ld h2 {
+margin-right:1.5em;
+}
+div#ld p {
+margin:0.3em;
+font-family: Verdana, Helvetica, sans-serif;
+font-size: 80%;
+}
 
 /* Copied from http://papyri.info/global.css */
 .latinnum {

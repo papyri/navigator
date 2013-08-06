@@ -7,7 +7,7 @@
   xmlns:lawd="http://lawd.info/ontology/"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
   exclude-result-prefixes="t" version="2.0">
-  <xsl:output omit-xml-declaration="yes"/>
+  <xsl:output omit-xml-declaration="yes" indent="no"/>
   
   <xsl:include href="/data/papyri.info/git/navigator/pn-xslt/htm-teibibl.xsl"/>
 
@@ -31,7 +31,7 @@
           <lawd:represents rdf:resource="{$id}"/>
         </rdf:Description>
       </lawd:representedBy>
-      <dcterms:bibliographicCitation><xsl:value-of select="normalize-unicode($citation, 'NFC')"/></dcterms:bibliographicCitation>
+      <dcterms:bibliographicCitation><xsl:value-of select="normalize-unicode(replace($citation, '(\s\s+|\\n|\t)', ' '), 'NFC')"/></dcterms:bibliographicCitation>
       <xsl:apply-templates select="t:relatedItem"/>
     </rdf:Description>
   </xsl:template>

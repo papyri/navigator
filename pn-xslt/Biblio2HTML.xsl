@@ -51,6 +51,16 @@
             <div id="main">
               <div class="content ui-corner-all">
                 <xsl:apply-templates select="t:bibl"/>
+                <div id="ld" class="data">
+                  <xsl:variable name="id" select="/t:bibl/t:idno[@type='pi']"/>
+                  <xsl:variable name="url">/biblio/<xsl:value-of select="$id"/></xsl:variable>
+                  <h2>Linked Data</h2>
+                  <p><a href="{$url}/rdf">RDF/XML</a> | 
+                    <a href="{$url}/turtle">Turtle</a> | 
+                    <a href="{$url}/n3">N-Triples</a> |
+                    <a href="{$url}/json">JSON</a> | 
+                    <a href="{$url}/graph">Graph Visualization</a></p>
+                </div>
               </div>
             </div>
           </div>

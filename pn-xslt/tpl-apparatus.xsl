@@ -239,7 +239,7 @@
                      <xsl:with-param name="obf" select="normalize-space($titleagg)"/>
                   </xsl:call-template>
                </xsl:variable>
-               <xsl:attribute name="title" select="$title"/>
+              <xsl:attribute name="title"><xsl:apply-templates select="$title" mode="sqbrackets"/></xsl:attribute>
                <!-- <xsl:if test="$apptype = ('appbl')"> and $childtype != ''">  'siccorr', 'subst', 'origreg', 'appalt' and $childtype='subst'"> -->
                <xsl:value-of select="normalize-space(replace(replace($part1, 'FNORD(\S)*', ''), '\(\*\)', ''))"/>               
                <xsl:if test="normalize-space($part1) != '' and (not(ends-with(normalize-space($part1), ','))) and (not(ends-with(normalize-space($part1), '.')))">,</xsl:if> <!--  --><xsl:text> </xsl:text><xsl:value-of select="normalize-space(replace(replace($part3, 'FNORD(\S)*', ''), '\(\*\)', ''))"/>

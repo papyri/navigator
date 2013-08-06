@@ -341,6 +341,14 @@
                     </xsl:if>
                   </div>
                 </xsl:if>
+                <div id="ld" class="data">
+                  <h2>Linked Data</h2>
+                  <p><a href="{replace($selfUrl,'http://papyri.info','')}/rdf">RDF/XML</a> | 
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/turtle">Turtle</a> | 
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/n3">N-Triples</a> |
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/json">JSON</a> | 
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/graph">Graph Visualization</a></p>
+                </div>
               </div>
             </div>
           </div>
