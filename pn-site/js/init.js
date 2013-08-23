@@ -46,6 +46,7 @@ function init() {
       },
       timeout: 10000
     });
+    if (window.location.pathname.indexOf("/editor") < 0) {
     jQuery.getJSON("/sparql?query="
         + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
         + "select ?subject "
@@ -61,6 +62,7 @@ function init() {
             })
           }
     });
+    }
     var biblio = jQuery("div#bibliography li>a");
     if (biblio.length > 0) {
       var sparql = "/sparql?query="
