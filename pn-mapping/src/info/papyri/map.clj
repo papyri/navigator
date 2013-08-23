@@ -294,13 +294,19 @@
                              "WITH <http://papyri.info/graph> "
                              "INSERT {<" url "> dc:replaces ?o} "
                              "WHERE {<" url "> dc:replaces ?s .
-                                     ?s dc:replaces ?o }")]
+                                     ?s dc:replaces ?o }")
+          replaces-relations (str "PREFIX dc: <http://purl.org/terms/> "
+                             "WITH <http://papyri.info/graph> "
+                             "INSERT {<" url "> dc:relation ?o} "
+                             "WHERE {<" url "> dc:replaces ?s .
+                                     ?o dc:relation ?s }")]
       (.add request haspart)
       (.add request relation)
       (.add request transitive-rels)
       (.add request converse-rels)
       (.add request converse-relation)
       (.add request replaces-rels)
+      (.add request replaces-relations)
       (UpdateRemote/execute request (str server "/update") ))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
@@ -341,13 +347,21 @@
                              "WITH <http://papyri.info/graph> "
                              "INSERT {?s dc:replaces ?o} "
                              "WHERE { ?s dc:replaces ?s2 .
-                                      ?s2 dc:replaces ?o }")]
+                                      ?s2 dc:replaces ?o }")
+          replaces-relations (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                                  "WITH <http://papyri.info/graph> "
+                                  "INSERT {?s dc:relation ?o} "
+                                  "WHERE { ?s dc:replaces ?s2 .
+                                           ?o dc:relation ?s2 "
+                                  "FILTER (!sameTerm(?s, ?o))}")]
       (.add request hasPart)
       (.add request relation)
       (.add request translations)
       (.add request images)
       (.add request transitive-rels)
       (.add request replaces-rels)
+      (.add request replaces-relations)
+      (.add request relation) ;; repeat in order to pick up new dc:relations
       (UpdateRemote/execute request (str server "/update") ))))
 
 (defn load-map
