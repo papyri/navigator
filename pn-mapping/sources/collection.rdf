@@ -1,1223 +1,1222 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF 
-    xmlns dc="http://purl.org/dc/elements/1.1/"
-    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:dc="http://purl.org/dc/terms/"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <rdf:Description rdf:about="http://papyri.info/ddbdp/bgu">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0001"/>
-        <dcterms:bibliographicCitation>BGU</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>BGU</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.ep.lat">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0002"/>
-        <dcterms:bibliographicCitation>C.Epist.Lat.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Epist.Lat.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.etiq.mom">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0003"/>
-        <dcterms:bibliographicCitation>C.Etiq.Mom.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Etiq.Mom.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.illum.pap">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0004"/>
-        <dcterms:bibliographicCitation>C.Illum.Pap.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Illum.Pap.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.jud.syr.eg">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0005"/>
-        <dcterms:bibliographicCitation>C.Jud.Syr.Eg.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Jud.Syr.Eg.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.pap.gr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0006"/>
-        <dcterms:bibliographicCitation>C.Pap.Gr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Pap.Gr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/chr.mitt">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0007"/>
-        <dcterms:bibliographicCitation>Chrest.Mitt.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Chrest.Mitt.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/chr.wilck">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0008"/>
-        <dcterms:bibliographicCitation>Chrest.Wilck.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Chrest.Wilck.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/cpl">
-      <dcterms:bibliographicCitation>CPL</dcterms:bibliographicCitation>
+      <dc:bibliographicCitation>CPL</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/cpr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0009"/>
-        <dcterms:bibliographicCitation>CPR</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>CPR</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.abu.mina">
-        <dcterms:bibliographicCitation>O.Abu Mina</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Abu Mina</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.amst">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0010"/>
-        <dcterms:bibliographicCitation>O.Amst.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Amst.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.ashm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0011"/>
-        <dcterms:bibliographicCitation>O.Ashm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Ashm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.ashm.shelt">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0012"/>
-        <dcterms:bibliographicCitation>O.Ashm.Shelt.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Ashm.Shelt.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.berl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0013"/>
-        <dcterms:bibliographicCitation>O.Berl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Berl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.bodl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0014"/>
-        <dcterms:bibliographicCitation>O.Bodl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Bodl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.brux">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0015"/>
-        <dcterms:bibliographicCitation>O.Brux.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Brux.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.bu.njem">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0016"/>
-        <dcterms:bibliographicCitation>O.Bu Njem</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Bu Njem</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.buch">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0017"/>
-        <dcterms:bibliographicCitation>O.Buch.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Buch.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.cair">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0018"/>
-        <dcterms:bibliographicCitation>O.Cair.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Cair.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.camb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0019"/>
-        <dcterms:bibliographicCitation>O.Camb.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Camb.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.claud">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0020"/>
-        <dcterms:bibliographicCitation>O.Claud.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Claud.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.cret.chers">
-        <dcterms:bibliographicCitation>O.Cret.Chers.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Cret.Chers.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.deiss">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0021"/>
-        <dcterms:bibliographicCitation>O.Deiss.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Deiss.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.douch">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0022"/>
-        <dcterms:bibliographicCitation>O.Douch</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Douch</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.edfou">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0023"/>
-        <dcterms:bibliographicCitation>O.Edfou</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Edfou</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.elkab">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0024"/>
-        <dcterms:bibliographicCitation>O.Elkab</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Elkab</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.erem">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0025"/>
-        <dcterms:bibliographicCitation>O.Erem.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Erem.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.fay">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0026"/>
-        <dcterms:bibliographicCitation>O.Fay.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Fay.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.florida">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0027"/>
-        <dcterms:bibliographicCitation>O.Florida</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Florida</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.joach">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0028"/>
-        <dcterms:bibliographicCitation>O.Joach.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Joach.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.leid">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0029"/>
-        <dcterms:bibliographicCitation>O.Leid.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Leid.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.lund">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0030"/>
-        <dcterms:bibliographicCitation>O.Lund.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Lund.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.masada">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0031"/>
-        <dcterms:bibliographicCitation>O.Masada</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Masada</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.medin.madi">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0032"/>
-        <dcterms:bibliographicCitation>O.Medin.Madi</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Medin.Madi</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.mich">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0033"/>
-        <dcterms:bibliographicCitation>O.Mich.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Mich.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.minor">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0034"/>
-        <dcterms:bibliographicCitation>O.Minor</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Minor</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.narm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0035"/>
-        <dcterms:bibliographicCitation>O.Narm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Narm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.oasis">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0036"/>
-        <dcterms:bibliographicCitation>O.Oasis</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Oasis</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.ont.mus">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0037"/>
-        <dcterms:bibliographicCitation>O.Ont.Mus.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Ont.Mus.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.oslo">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0038"/>
-        <dcterms:bibliographicCitation>O.Oslo</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Oslo</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.paris">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0039"/>
-        <dcterms:bibliographicCitation>O.Paris</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Paris</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.petr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0040"/>
-        <dcterms:bibliographicCitation>O.Petr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Petr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.sarga">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0041"/>
-        <dcterms:bibliographicCitation>O.Sarga</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Sarga</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.stras">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0042"/>
-        <dcterms:bibliographicCitation>O.Stras.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Stras.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.tebt.pad">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0043"/>
-        <dcterms:bibliographicCitation>O.Tebt.Pad.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Tebt.Pad.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.tebt">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0044"/>
-        <dcterms:bibliographicCitation>O.Tebt.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Tebt.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.theb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0045"/>
-        <dcterms:bibliographicCitation>O.Theb.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Theb.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.vleem">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0046"/>
-        <dcterms:bibliographicCitation>O.Vleem.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Vleem.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.wadi.hamm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0047"/>
-        <dcterms:bibliographicCitation>O.Wadi Hamm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Wadi Hamm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.waqfa">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0048"/>
-        <dcterms:bibliographicCitation>O.Waqfa</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Waqfa</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.wilb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0049"/>
-        <dcterms:bibliographicCitation>O.Wilb.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Wilb.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.wilck">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0050"/>
-        <dcterms:bibliographicCitation>O.Wilck.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Wilck.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.aberd">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0051"/>
-        <dcterms:bibliographicCitation>P.Aberd.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Aberd.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.abinn">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0052"/>
-        <dcterms:bibliographicCitation>P.Abinn.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Abinn.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.achm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0053"/>
-        <dcterms:bibliographicCitation>P.Achm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Achm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.adl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0054"/>
-        <dcterms:bibliographicCitation>P.Adl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Adl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.alex.giss">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0055"/>
-        <dcterms:bibliographicCitation>P.Alex.Giss.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Alex.Giss.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.alex">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0056"/>
-        <dcterms:bibliographicCitation>P.Alex.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Alex.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.amh">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0057"/>
-        <dcterms:bibliographicCitation>P.Amh.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Amh.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.amst">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0058"/>
-        <dcterms:bibliographicCitation>P.Amst.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Amst.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.anag">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0059"/>
-        <dcterms:bibliographicCitation>P.Anag.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Anag.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ant">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0060"/>
-        <dcterms:bibliographicCitation>P.Ant.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ant.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.apoll">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0061"/>
-        <dcterms:bibliographicCitation>P.Apoll.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Apoll.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ashm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0062"/>
-        <dcterms:bibliographicCitation>P.Ashm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ashm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.athen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0063"/>
-        <dcterms:bibliographicCitation>P.Athen.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Athen.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.athen.xyla">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0064"/>
-        <dcterms:bibliographicCitation>P.Athen.Xyla</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Athen.Xyla</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.aust.herr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0065"/>
-        <dcterms:bibliographicCitation>P.Aust.Herr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Aust.Herr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.babatha">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0066"/>
-        <dcterms:bibliographicCitation>P.Babatha</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Babatha</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bacch">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0067"/>
-        <dcterms:bibliographicCitation>P.Bacch.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bacch.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bad">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0068"/>
-        <dcterms:bibliographicCitation>P.Bad.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bad.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bal">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0069"/>
-        <dcterms:bibliographicCitation>P.Bal.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bal.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bas">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0070"/>
-        <dcterms:bibliographicCitation>P.Bas.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bas.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.batav">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0071"/>
-        <dcterms:bibliographicCitation>P.Batav.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Batav.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.bibl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0072"/>
-        <dcterms:bibliographicCitation>P.Berl.Bibl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Bibl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.bork">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0073"/>
-        <dcterms:bibliographicCitation>P.Berl.Bork.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Bork.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.brash">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0074"/>
-        <dcterms:bibliographicCitation>P.Berl.Brash.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Brash.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.frisk">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0075"/>
-        <dcterms:bibliographicCitation>P.Berl.Frisk</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Frisk</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.leihg">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0076"/>
-        <dcterms:bibliographicCitation>P.Berl.Leihg.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Leihg.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.moeller">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0077"/>
-        <dcterms:bibliographicCitation>P.Berl.Moeller</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Moeller</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.sarisch">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0078"/>
-        <dcterms:bibliographicCitation>P.Berl.Sarisch.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Sarisch.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.thun">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0079"/>
-        <dcterms:bibliographicCitation>P.Berl.Thun.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Thun.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.zill">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0080"/>
-        <dcterms:bibliographicCitation>P.Berl.Zill.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Zill.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bon">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0081"/>
-        <dcterms:bibliographicCitation>P.Bon.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bon.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bour">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0082"/>
-        <dcterms:bibliographicCitation>P.Bour.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bour.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.brem">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0083"/>
-        <dcterms:bibliographicCitation>P.Brem.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Brem.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.brook">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0084"/>
-        <dcterms:bibliographicCitation>P.Brook.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Brook.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.brux">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0085"/>
-        <dcterms:bibliographicCitation>P.Brux.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Brux.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bub">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0086"/>
-        <dcterms:bibliographicCitation>P.Bub.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bub.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.goodsp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0087"/>
-        <dcterms:bibliographicCitation>P.Cair.Goodsp.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Goodsp.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.isid">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0088"/>
-        <dcterms:bibliographicCitation>P.Cair.Isid.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Isid.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.masp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0089"/>
-        <dcterms:bibliographicCitation>P.Cair.Masp.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Masp.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.mich">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0090"/>
-        <dcterms:bibliographicCitation>P.Cair.Mich.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Mich.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.preis">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0091"/>
-        <dcterms:bibliographicCitation>P.Cair.Preis.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Preis.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.salem">
-        <dcterms:bibliographicCitation>P.Cair.Salem</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Salem</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.zen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0092"/>
-        <dcterms:bibliographicCitation>P.Cair.Zen.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Zen.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.charite">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0093"/>
-        <dcterms:bibliographicCitation>P.Charite</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Charite</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.clackson">
-        <dcterms:bibliographicCitation>P.Clackson</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Clackson</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.col">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0094"/>
-        <dcterms:bibliographicCitation>P.Col.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Col.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.col.teeter">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0095"/>
-        <dcterms:bibliographicCitation>P.Col.Teeter</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Col.Teeter</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.coll.youtie">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0096"/>
-        <dcterms:bibliographicCitation>P.Coll.Youtie</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Coll.Youtie</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.corn">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0097"/>
-        <dcterms:bibliographicCitation>P.Corn.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Corn.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.customs">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0098"/>
-        <dcterms:bibliographicCitation>P.Customs</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Customs</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.david">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0099"/>
-        <dcterms:bibliographicCitation>P.David</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.David</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.diog">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0100"/>
-        <dcterms:bibliographicCitation>P.Diog.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Diog.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.dion">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0101"/>
-        <dcterms:bibliographicCitation>P.Dion.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Dion.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.dubl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0102"/>
-        <dcterms:bibliographicCitation>P.Dubl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Dubl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.dura">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0103"/>
-        <dcterms:bibliographicCitation>P.Dura</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Dura</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.edfou">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0104"/>
-        <dcterms:bibliographicCitation>P.Edfou</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Edfou</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.eleph">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0105"/>
-        <dcterms:bibliographicCitation>P.Eleph.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Eleph.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.enteux">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0106"/>
-        <dcterms:bibliographicCitation>P.Enteux.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Enteux.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.erasm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0107"/>
-        <dcterms:bibliographicCitation>P.Erasm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Erasm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.erl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0108"/>
-        <dcterms:bibliographicCitation>P.Erl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Erl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.fam.tebt">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0109"/>
-        <dcterms:bibliographicCitation>P.Fam.Tebt.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Fam.Tebt.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.fay">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0110"/>
-        <dcterms:bibliographicCitation>P.Fay.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Fay.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.flor">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0111"/>
-        <dcterms:bibliographicCitation>P.Flor.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Flor.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.fouad">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0112"/>
-        <dcterms:bibliographicCitation>P.Fouad</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Fouad</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.frankf">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0113"/>
-        <dcterms:bibliographicCitation>P.Frankf.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Frankf.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.freer">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0114"/>
-        <dcterms:bibliographicCitation>P.Freer</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Freer</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.freib">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0115"/>
-        <dcterms:bibliographicCitation>P.Freib.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Freib.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.fuad.i.univ">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0116"/>
-        <dcterms:bibliographicCitation>P.Fuad I Univ.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Fuad I Univ.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.gen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0117"/>
-        <dcterms:bibliographicCitation>P.Gen.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Gen.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.genova">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0118"/>
-        <dcterms:bibliographicCitation>P.Genova</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Genova</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.giss">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0119"/>
-        <dcterms:bibliographicCitation>P.Giss.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Giss.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.giss.univ">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0120"/>
-        <dcterms:bibliographicCitation>P.Giss.Univ.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Giss.Univ.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.got">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0121"/>
-        <dcterms:bibliographicCitation>P.Got.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Got.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.grad">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0122"/>
-        <dcterms:bibliographicCitation>P.Grad.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Grad.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.graux">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0123"/>
-        <dcterms:bibliographicCitation>P.Graux</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Graux</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.grenf">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0124"/>
-        <dcterms:bibliographicCitation>P.Grenf.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Grenf.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.gron">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0125"/>
-        <dcterms:bibliographicCitation>P.Gron.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Gron.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.gur">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0126"/>
-        <dcterms:bibliographicCitation>P.Gur.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Gur.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.hal">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0127"/>
-        <dcterms:bibliographicCitation>P.Hal.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Hal.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.hamb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0128"/>
-        <dcterms:bibliographicCitation>P.Hamb.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Hamb.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.harr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0129"/>
-        <dcterms:bibliographicCitation>P.Harr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Harr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.haun">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0130"/>
-        <dcterms:bibliographicCitation>P.Haun.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Haun.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.heid">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0131"/>
-        <dcterms:bibliographicCitation>P.Heid.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Heid.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.hels">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0132"/>
-        <dcterms:bibliographicCitation>P.Hels.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Hels.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.herm.landl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0133"/>
-        <dcterms:bibliographicCitation>P.Herm.Landl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Herm.Landl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.herm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0134"/>
-        <dcterms:bibliographicCitation>P.Herm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Herm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.hib">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0135"/>
-        <dcterms:bibliographicCitation>P.Hib.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Hib.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.hombert">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0136"/>
-        <dcterms:bibliographicCitation>P.Hombert</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Hombert</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.iand.inv.653">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0137"/>
-        <dcterms:bibliographicCitation>P.Iand.inv. 653</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Iand.inv. 653</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.iand">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0138"/>
-        <dcterms:bibliographicCitation>P.Iand.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Iand.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ifao">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0139"/>
-        <dcterms:bibliographicCitation>P.IFAO</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.IFAO</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ital">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0140"/>
-        <dcterms:bibliographicCitation>P.Ital.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ital.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.jena">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0141"/>
-        <dcterms:bibliographicCitation>P.Jena</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Jena</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.kar.goodsp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0142"/>
-        <dcterms:bibliographicCitation>P.Kar.Goodsp.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Kar.Goodsp.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.kell">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0143"/>
-        <dcterms:bibliographicCitation>P.Kell.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Kell.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.koeln">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0144"/>
-        <dcterms:bibliographicCitation>P.Koeln</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Koeln</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.kroll">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0145"/>
-        <dcterms:bibliographicCitation>P.Kroll</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Kroll</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.kron">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0146"/>
-        <dcterms:bibliographicCitation>P.Kron.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Kron.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.laur">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0147"/>
-        <dcterms:bibliographicCitation>P.Laur.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Laur.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.leeds.mus">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0148"/>
-        <dcterms:bibliographicCitation>P.Leeds Mus.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Leeds Mus.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.leid.inst">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0149"/>
-        <dcterms:bibliographicCitation>P.Leid.Inst.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Leid.Inst.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.leipz">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0150"/>
-        <dcterms:bibliographicCitation>P.Leipz.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Leipz.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.leit">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0151"/>
-        <dcterms:bibliographicCitation>P.Leit.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Leit.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.lille">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0152"/>
-        <dcterms:bibliographicCitation>P.Lille</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Lille</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.lips">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0153"/>
-        <dcterms:bibliographicCitation>P.Lips.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Lips.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.lond">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0154"/>
-        <dcterms:bibliographicCitation>P.Lond.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Lond.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.lund">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0155"/>
-        <dcterms:bibliographicCitation>P.Lund</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Lund</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.marm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0156"/>
-        <dcterms:bibliographicCitation>P.Marm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Marm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.masada">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0157"/>
-        <dcterms:bibliographicCitation>P.Masada</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Masada</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.matr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0158"/>
-        <dcterms:bibliographicCitation>P.Matr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Matr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mert">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0159"/>
-        <dcterms:bibliographicCitation>P.Mert.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mert.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.meyer">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0160"/>
-        <dcterms:bibliographicCitation>P.Meyer</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Meyer</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mich.aphrod">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0161"/>
-        <dcterms:bibliographicCitation>P.Mich.Aphrod.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mich.Aphrod.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mich.mchl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0162"/>
-        <dcterms:bibliographicCitation>P.Mich.Mchl</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mich.Mchl</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mich">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0163"/>
-        <dcterms:bibliographicCitation>P.Mich.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mich.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.michael">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0164"/>
-        <dcterms:bibliographicCitation>P.Michael.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Michael.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mil.congr.xiv">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0165"/>
-        <dcterms:bibliographicCitation>P.Mil.Congr.XIV</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mil.Congr.XIV</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mil.congr.xix">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0166"/>
-        <dcterms:bibliographicCitation>P.Mil.Congr.XIX</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mil.Congr.XIX</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mil.congr.xvii">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0167"/>
-        <dcterms:bibliographicCitation>P.Mil.Congr.XVII</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mil.Congr.XVII</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mil.congr.xviii">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0168"/>
-        <dcterms:bibliographicCitation>P.Mil.Congr.XVIII</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mil.Congr.XVIII</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mil">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0169"/>
-        <dcterms:bibliographicCitation>P.Mil.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mil.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mil.vogl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0170"/>
-        <dcterms:bibliographicCitation>P.Mil.Vogl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mil.Vogl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.muench">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0171"/>
-        <dcterms:bibliographicCitation>P.Muench.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Muench.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mur">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0172"/>
-        <dcterms:bibliographicCitation>P.Mur.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mur.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.nag.hamm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0173"/>
-        <dcterms:bibliographicCitation>P.Nag Hamm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Nag Hamm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.neph">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0174"/>
-        <dcterms:bibliographicCitation>P.Neph.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Neph.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ness">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0175"/>
-        <dcterms:bibliographicCitation>P.Ness.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ness.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.nyu">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0176"/>
-        <dcterms:bibliographicCitation>P.NYU</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.NYU</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.oslo">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0177"/>
-        <dcterms:bibliographicCitation>P.Oslo</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Oslo</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.oxf">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0178"/>
-        <dcterms:bibliographicCitation>P.Oxf.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Oxf.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.oxy.descr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0179"/>
-        <dcterms:bibliographicCitation>P.Oxy.Descr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Oxy.Descr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.oxy.hels">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0180"/>
-        <dcterms:bibliographicCitation>P.Oxy.Hels.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Oxy.Hels.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.oxy">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0181"/>
-        <dcterms:bibliographicCitation>P.Oxy.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Oxy.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.panop.beatty">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0182"/>
-        <dcterms:bibliographicCitation>P.Panop.Beatty</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Panop.Beatty</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.panop">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0183"/>
-        <dcterms:bibliographicCitation>P.Panop.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Panop.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.paris">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0184"/>
-        <dcterms:bibliographicCitation>P.Paris</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Paris</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.petaus">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0185"/>
-        <dcterms:bibliographicCitation>P.Petaus</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Petaus</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.petr.2">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0186"/>
-        <dcterms:bibliographicCitation>P.Petr.2</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Petr.2</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.petr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0187"/>
-        <dcterms:bibliographicCitation>P.Petr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Petr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.phil">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0188"/>
-        <dcterms:bibliographicCitation>P.Phil.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Phil.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.poethke">
-        <dcterms:bibliographicCitation>P.Poethke</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Poethke</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.prag">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0189"/>
-        <dcterms:bibliographicCitation>P.Prag.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Prag.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.prag.varcl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0190"/>
-        <dcterms:bibliographicCitation>P.Prag.Varcl</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Prag.Varcl</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.princ.roll">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0191"/>
-        <dcterms:bibliographicCitation>P.Princ.Roll</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Princ.Roll</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.princ">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0192"/>
-        <dcterms:bibliographicCitation>P.Princ.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Princ.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.quseir">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0193"/>
-        <dcterms:bibliographicCitation>P.Quseir</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Quseir</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.rain.cent">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0194"/>
-        <dcterms:bibliographicCitation>P.Rain.Cent.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Rain.Cent.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.rein">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0195"/>
-        <dcterms:bibliographicCitation>P.Rein.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Rein.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.rev">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0196"/>
-        <dcterms:bibliographicCitation>P.Rev.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Rev.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ross.georg">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0197"/>
-        <dcterms:bibliographicCitation>P.Ross.Georg.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ross.Georg.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ryl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0198"/>
-        <dcterms:bibliographicCitation>P.Ryl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ryl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.sakaon">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0199"/>
-        <dcterms:bibliographicCitation>P.Sakaon</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Sakaon</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.sarap">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0200"/>
-        <dcterms:bibliographicCitation>P.Sarap.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Sarap.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.schoyen">
-        <dcterms:bibliographicCitation>P.Schoyen</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Schoyen</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.sel.warga">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0201"/>
-        <dcterms:bibliographicCitation>P.Sel.Warga</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Sel.Warga</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.select">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0202"/>
-        <dcterms:bibliographicCitation>P.Select.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Select.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.sorb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0203"/>
-        <dcterms:bibliographicCitation>P.Sorb.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Sorb.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.soter">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0204"/>
-        <dcterms:bibliographicCitation>P.Soter.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Soter.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.stras">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0205"/>
-        <dcterms:bibliographicCitation>P.Stras.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Stras.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.tebt">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0206"/>
-        <dcterms:bibliographicCitation>P.Tebt.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Tebt.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.tebt.tait">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0207"/>
-        <dcterms:bibliographicCitation>P.Tebt.Tait</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Tebt.Tait</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.tebt.wall">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0208"/>
-        <dcterms:bibliographicCitation>P.Tebt.Wall</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Tebt.Wall</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.theon">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0209"/>
-        <dcterms:bibliographicCitation>P.Theon.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Theon.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.thmouis">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0210"/>
-        <dcterms:bibliographicCitation>P.Thmouis</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Thmouis</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.tor.amen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0211"/>
-        <dcterms:bibliographicCitation>P.Tor.Amen.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Tor.Amen.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.tor.choach">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0212"/>
-        <dcterms:bibliographicCitation>P.Tor.Choach.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Tor.Choach.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.tor">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0213"/>
-        <dcterms:bibliographicCitation>P.Tor.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Tor.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.turner">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0214"/>
-        <dcterms:bibliographicCitation>P.Turner</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Turner</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ups.frid">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0215"/>
-        <dcterms:bibliographicCitation>P.Ups.Frid</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ups.Frid</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vars">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0216"/>
-        <dcterms:bibliographicCitation>P.Vars.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vars.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vat.aphrod">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0217"/>
-        <dcterms:bibliographicCitation>P.Vat.Aphrod.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vat.Aphrod.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vind.bosw">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0218"/>
-        <dcterms:bibliographicCitation>P.Vind.Bosw.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vind.Bosw.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vind.pher">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0219"/>
-        <dcterms:bibliographicCitation>P.Vind.Pher.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vind.Pher.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vind.sal">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0220"/>
-        <dcterms:bibliographicCitation>P.Vind.Sal.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vind.Sal.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vind.sijp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0221"/>
-        <dcterms:bibliographicCitation>P.Vind.Sijp.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vind.Sijp.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vind.tand">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0222"/>
-        <dcterms:bibliographicCitation>P.Vind.Tand.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vind.Tand.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.vind.worp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0223"/>
-        <dcterms:bibliographicCitation>P.Vind.Worp</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Vind.Worp</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.warr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0224"/>
-        <dcterms:bibliographicCitation>P.Warr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Warr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.wash.univ">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0225"/>
-        <dcterms:bibliographicCitation>P.Wash.Univ.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Wash.Univ.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.wisc">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0226"/>
-        <dcterms:bibliographicCitation>P.Wisc.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Wisc.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.wuerzb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0227"/>
-        <dcterms:bibliographicCitation>P.Wuerzb.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Wuerzb.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.yale">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0228"/>
-        <dcterms:bibliographicCitation>P.Yale</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Yale</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.zen.pestm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0229"/>
-        <dcterms:bibliographicCitation>P.Zen.Pestm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Zen.Pestm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/pap.agon">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0230"/>
-        <dcterms:bibliographicCitation>Pap.Agon.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Pap.Agon.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/pap.biling">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0231"/>
-        <dcterms:bibliographicCitation>Pap.Biling.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Pap.Biling.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/pap.choix">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0232"/>
-        <dcterms:bibliographicCitation>Pap.Choix</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Pap.Choix</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/psi.congr.xi">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0233"/>
-        <dcterms:bibliographicCitation>PSI Congr.XI</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>PSI Congr.XI</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/psi.congr.xvii">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0234"/>
-        <dcterms:bibliographicCitation>PSI Congr.XVII</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>PSI Congr.XVII</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/psi.congr.xx">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0235"/>
-        <dcterms:bibliographicCitation>PSI Congr.XX</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>PSI Congr.XX</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/psi.congr.xxi">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0236"/>
-        <dcterms:bibliographicCitation>PSI Congr.XXI</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>PSI Congr.XXI</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/psi.corr">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0237"/>
-        <dcterms:bibliographicCitation>PSI Corr.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>PSI Corr.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/psi">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0238"/>
-        <dcterms:bibliographicCitation>PSI</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>PSI</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/sb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0239"/>
-        <dcterms:bibliographicCitation>SB</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>SB</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/stud.pal">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0240"/>
-        <dcterms:bibliographicCitation>Stud.Pal.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Stud.Pal.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/t.alb">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0241"/>
-        <dcterms:bibliographicCitation>T.Alb.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>T.Alb.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/t.mom.louvre">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0242"/>
-        <dcterms:bibliographicCitation>T.Mom.Louvre</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>T.Mom.Louvre</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/t.varie">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0243"/>
-        <dcterms:bibliographicCitation>T.Varie</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>T.Varie</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/t.vindol">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0244"/>
-        <dcterms:bibliographicCitation>T.Vindol.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>T.Vindol.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/upz">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0245"/>
-        <dcterms:bibliographicCitation>UPZ</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>UPZ</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bodl">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0246"/>
-        <dcterms:bibliographicCitation>P.Bodl.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bodl.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.hever">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0247"/>
-        <dcterms:bibliographicCitation>P.Hever</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Hever</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.naqlun">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0248"/>
-        <dcterms:bibliographicCitation>P.Naqlun</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Naqlun</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.pommersf">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0249"/>
-        <dcterms:bibliographicCitation>P.Pommersf.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Pommersf.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.berenike">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0250"/>
-        <dcterms:bibliographicCitation>O.Berenike</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Berenike</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ammon">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0251"/>
-        <dcterms:bibliographicCitation>P.Ammon</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ammon</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.benaki">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0252"/>
-        <dcterms:bibliographicCitation>P.Benaki</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Benaki</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.salmen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0253"/>
-        <dcterms:bibliographicCitation>P.Berl.Salmen.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Salmen.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.bingen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0254"/>
-        <dcterms:bibliographicCitation>P.Bingen</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Bingen</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.harrauer">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0255"/>
-        <dcterms:bibliographicCitation>P.Harrauer</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Harrauer</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.petra">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0256"/>
-        <dcterms:bibliographicCitation>P.Petra</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Petra</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.polit.iud">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0257"/>
-        <dcterms:bibliographicCitation>P.Polit.Iud.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Polit.Iud.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.thomas">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0258"/>
-        <dcterms:bibliographicCitation>P.Thomas</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Thomas</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.eirene">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0259"/>
-        <dcterms:bibliographicCitation>P.Eirene</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Eirene</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.chic.haw">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0260"/>
-        <dcterms:bibliographicCitation>P.Chic.Haw.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Chic.Haw.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.dion.herm">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0261"/>
-        <dcterms:bibliographicCitation>P.Dion.Herm.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Dion.Herm.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.eleph.wagner">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0262"/>
-        <dcterms:bibliographicCitation>P.Eleph.Wagner</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Eleph.Wagner</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.louvre">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0263"/>
-        <dcterms:bibliographicCitation>P.Louvre</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Louvre</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.mon.apollo">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0264"/>
-        <dcterms:bibliographicCitation>P.Mon.Apollo</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Mon.Apollo</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.palaurib">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0265"/>
-        <dcterms:bibliographicCitation>P.PalauRib.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.PalauRib.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.gen.2">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0266"/>
-        <dcterms:bibliographicCitation>P.Gen.2</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Gen.2</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.diosk">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0267"/>
-        <dcterms:bibliographicCitation>P.Diosk.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Diosk.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.jud.des.misc">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0268"/>
-        <dcterms:bibliographicCitation>P.Jud.Des.Misc.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Jud.Des.Misc.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.erl.diosp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0269"/>
-        <dcterms:bibliographicCitation>P.Erl.Diosp.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Erl.Diosp.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.dryton">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0270"/>
-        <dcterms:bibliographicCitation>P.Dryton</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Dryton</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.kell">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0271"/>
-        <dcterms:bibliographicCitation>O.Kell.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Kell.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.giss.apoll">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0272"/>
-        <dcterms:bibliographicCitation>P.Giss.Apoll.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Giss.Apoll.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.bawit.ifao">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0273"/>
-        <dcterms:bibliographicCitation>O.BawitIFAO</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.BawitIFAO</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.euphrates">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0274"/>
-        <dcterms:bibliographicCitation>P.Euphrates</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Euphrates</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.congr.xv">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0275"/>
-        <dcterms:bibliographicCitation>P.Congr.XV</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Congr.XV</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.paramone">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0276"/>
-        <dcterms:bibliographicCitation>P.Paramone</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Paramone</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/psi.com">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0277"/>
-        <dcterms:bibliographicCitation>PSI.Com</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>PSI.Com</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.horak">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0278"/>
-        <dcterms:bibliographicCitation>P.Horak</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Horak</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/chla">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0279"/>
-        <dcterms:bibliographicCitation>Ch.L.A.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Ch.L.A.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/rom.mil.rec">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0280"/>
-        <dcterms:bibliographicCitation>Rom.Mil.Rec.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Rom.Mil.Rec.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.zauzich">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0281"/>
-        <dcterms:bibliographicCitation>P.Zauzich</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Zauzich</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.heid">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0282"/>
-        <dcterms:bibliographicCitation>O.Heid.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Heid.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.haw">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0283"/>
-        <dcterms:bibliographicCitation>P.Haw.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Haw.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.cair.cat">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0284"/>
-        <dcterms:bibliographicCitation>O.Cair.Cat.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Cair.Cat.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.rain.unterricht">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0285"/>
-        <dcterms:bibliographicCitation>P.Rain.Unterricht</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Rain.Unterricht</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.brux.bawit">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0286"/>
-        <dcterms:bibliographicCitation>P.Brux.Bawit</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Brux.Bawit</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/o.krok">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0287"/>
-        <dcterms:bibliographicCitation>O.Krok.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>O.Krok.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.count">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0288"/>
-        <dcterms:bibliographicCitation>P.Count</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Count</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.berl.cohen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0289"/>
-        <dcterms:bibliographicCitation>P.Berl.Cohen</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Berl.Cohen</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.iand.zen">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0290"/>
-        <dcterms:bibliographicCitation>P.Iand.Zen.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Iand.Zen.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.sijp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0291"/>
-        <dcterms:bibliographicCitation>P.Sijp.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Sijp.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.pap.jud">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0292"/>
-        <dcterms:bibliographicCitation>C.Pap.Jud.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Pap.Jud.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/jur.pap">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0293"/>
-        <dcterms:bibliographicCitation>Jur.Pap.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>Jur.Pap.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.ord.ptol">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0294"/>
-        <dcterms:bibliographicCitation>C.Ord.Ptol.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Ord.Ptol.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.ups">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0295"/>
-        <dcterms:bibliographicCitation>P.Ups.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Ups.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/c.pap.lat">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0296"/>
-        <dcterms:bibliographicCitation>C.Pap.Lat.</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>C.Pap.Lat.</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.cair.salem">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0297"/>
-        <dcterms:bibliographicCitation>P.Cair.Salem</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Cair.Salem</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/mper.xiii">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0298"/>
-        <dcterms:bibliographicCitation>MPER XIII</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>MPER XIII</dc:bibliographicCitation>
     </rdf:Description>
     <rdf:Description rdf:about="http://papyri.info/ddbdp/p.worp">
         <dc:identifier rdf:resource="Perseus:text:1999.05.0299"/>
-        <dcterms:bibliographicCitation>P.Worp</dcterms:bibliographicCitation>
+        <dc:bibliographicCitation>P.Worp</dc:bibliographicCitation>
     </rdf:Description>
 </rdf:RDF>
