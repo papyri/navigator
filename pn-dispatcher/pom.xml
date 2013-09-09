@@ -222,7 +222,8 @@
   </profiles>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
   </properties>
 </project>
 
