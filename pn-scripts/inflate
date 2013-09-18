@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+import sys
+import zlib
+
+def main():
+  input = sys.argv[1]
+  output = sys.argv[2]
+  file = open(input, "rb")
+  data = file.read()
+  file.close()
+  unzipped = zlib.decompress(data)
+  fout = open(output, "wb")
+  fout.write(unzipped)
+  fout.close()
+
+if __name__ == "__main__":
+  sys.exit(main())
