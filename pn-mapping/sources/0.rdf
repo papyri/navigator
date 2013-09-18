@@ -2,7 +2,7 @@
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:j.0="http://purl.org/ontology/bibo/"
     xmlns:j.1="http://xmlns.com/foaf/0.1/"
-    xmlns:j.2="http://purl.org/terms/"
+    xmlns:j.2="http://purl.org/dc/terms/"
     xmlns:j.3="http://purl.org/ontology/olo/core#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
   <rdf:Description rdf:about="http://papyri.info/images/cd/columbia.apis.p1040.f.0.600">
