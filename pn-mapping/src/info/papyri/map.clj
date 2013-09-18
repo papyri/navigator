@@ -184,7 +184,8 @@
 (defn -deleteTriple
   [s p o]
   (let [deleterel (str "WITH <http://papyri.info/graph>
-                        DELETE { <" s "> <" p "> <" o "> }")
+                        DELETE { <" s "> <" p "> <" o "> }
+                        WHERE { <" s "> <" p "> <" o "> }")
         req (UpdateFactory/create)]
     (.add req deleterel)
     (UpdateRemote/execute req (str server "/update") )))
