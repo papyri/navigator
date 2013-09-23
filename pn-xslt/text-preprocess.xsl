@@ -63,6 +63,16 @@
   <!-- Suppress abbreviation markers -->
   <xsl:template match="t:am"/>
   
+  <!-- NON-REGULARIZATION -->
+  <!-- Choose original, uncorrected choices -->
+  <!-- to enable, comment out previous two templates and uncomment the following two -->
+  <!--<xsl:template match="t:choice">
+    <xsl:apply-templates select="t:sic|t:orig|t:abbr"/>
+  </xsl:template>-->
+  
+  <!-- Suppress abbreviation expansions -->
+  <!--<xsl:template match="t:ex"/>-->
+  
   <!-- Suppress alternate readings in apparatus -->
   <xsl:template match="t:app">
     <xsl:apply-templates select="t:lem"/>
