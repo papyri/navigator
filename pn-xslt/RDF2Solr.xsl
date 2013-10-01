@@ -38,7 +38,7 @@
   <xsl:import href="teispace.xsl"/>
   <xsl:import href="teisupplied.xsl"/>
   <xsl:import href="teiunclear.xsl"/>
-  <xsl:import href="txt-tpl-apparatus.xsl"/>
+  <xsl:import href="tpl-apparatus.xsl"/>
   <xsl:import href="txt-tpl-linenumberingtab.xsl"/>
   <xsl:import href="tpl-reasonlost.xsl"/>
   <xsl:import href="tpl-certlow.xsl"/>
@@ -964,12 +964,8 @@
         .//t:hi[@rend = 'diaeresis' or @rend = 'varia' or @rend = 'oxia' or @rend = 'dasia' or @rend = 'psili' or @rend = 'perispomeni'] |
         .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
 
-        <xsl:call-template name="app-link">
-          <xsl:with-param name="location" select="'apparatus'"/>
-        </xsl:call-template>
-
         <!-- Found in tpl-apparatus.xsl -->
-        <xsl:call-template name="ddbdp-app"/>
+        <xsl:call-template name="ddbdp-app"/><xsl:text> </xsl:text>
       </xsl:for-each>
     </xsl:if>
   </xsl:template>
@@ -1053,7 +1049,15 @@
     <xsl:apply-templates select="$temp-node//t:div[@type='edition']"></xsl:apply-templates>
   </xsl:template>
 
-
+  <xsl:template name="app-link">
+    <xsl:param name="location"/>
+  </xsl:template>
+  
+  <xsl:template name="lbrk-app">
+    <xsl:text>
+&#xD;</xsl:text>
+  </xsl:template>
+  
   <xsl:template name="ddbdp-app">
     <xsl:choose>
       <!-- choice -->
