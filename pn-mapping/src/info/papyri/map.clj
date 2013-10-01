@@ -407,6 +407,8 @@
     (do
       (println "Deleting Relations")
       (-deleteRelation "http://purl.org/dc/terms/relation")
+      (-deleteRelation "http://purl.org/dc/terms/replaces")
+      (-deleteRelation "http://purl.org/dc/terms/isReplacedBy")
       (-deleteRelation "http://purl.org/dc/terms/identifier")
       (-deleteRelation "http://purl.org/dc/terms/bibliographicCitation")
       (-deleteRelation "http://www.w3.org/2000/01/rdf-schema#label")
