@@ -7,6 +7,7 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:bibo="http://purl.org/ontology/bibo/"
     xmlns:lawd="http://lawd.info/ontology/"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
     exclude-result-prefixes="xs tei" version="2.0">
     <xsl:output omit-xml-declaration="yes"/>
     <xsl:param name="DDB-root"/>
@@ -102,6 +103,17 @@
                 </rdf:Description>
             </dct:source>
             <rdfs:label><xsl:value-of select="$unicode-title"></xsl:value-of></rdfs:label>
+          <foaf:page>
+            <xsl:variable name="page">
+              <xsl:choose>
+                <xsl:when test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid'] and doc-available($ddb-doc-uri)">http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}</xsl:when>
+                <xsl:otherwise>http://papyri.info/hgv/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type='filename']"/></xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <rdf:Description rdf:about="{$page}">
+              <foaf:topic rdf:resource="{$id}"/>
+            </rdf:Description>
+          </foaf:page>
         </rdf:Description>
       <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">
         <xsl:for-each select="//tei:msDesc/tei:history/tei:provenance[@type='located']/tei:p/tei:placeName[contains(@ref,'http://pleiades')]">
