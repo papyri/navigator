@@ -105,6 +105,11 @@
       <xsl:if test="//tei:facsimile">
         <dct:relation rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images"/>
       </xsl:if>
+      <foaf:page>
+        <rdf:Description rdf:about="{substring-before($id, '/source')}">
+          <foaf:topic rdf:resource="{$id}"/>
+        </rdf:Description>
+      </foaf:page>
     </rdf:Description>
     <xsl:if test="//tei:facsimile">
       <rdf:Description rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images">
