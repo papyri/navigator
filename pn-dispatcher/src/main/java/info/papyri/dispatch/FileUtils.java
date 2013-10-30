@@ -291,16 +291,27 @@ public class FileUtils {
    * @return the File contents
    */
   public String loadFile(File f) {
+    if (!f.exists()) {
+      return "";
+    }
     StringBuilder t = new StringBuilder();
+    InputStreamReader reader = null;
     try {
-      InputStreamReader reader = new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8"));
+      reader = new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8"));
       int size = -1;
       while ((size = reader.read(buffer)) > 0) {
         t.append(buffer, 0, size);
       }
-      reader.close();
     } catch (Exception e) {
       e.printStackTrace(System.out);
+    } finally {
+      try {
+        if (reader != null) {
+          reader.close();
+        }
+      } catch (IOException e) {
+        System.out.println(e.getMessage());
+      }
     }
     return t.toString();
   }
