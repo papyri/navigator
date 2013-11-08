@@ -439,7 +439,7 @@
   (-loadFile "/srv/data/papyri.info/git/navigator/pn-mapping/sources/d.rdf")
   (-loadFile "/srv/data/papyri.info/git/navigator/pn-mapping/sources/gothenburg.rdf")
   (-loadFile "/srv/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
-  (doseq [f (filter #(.startsWith % "places-")) (file-seq "/srv/data/papyri.info/pleiades")]
+  (doseq [f (filter #(.startsWith % "places-") (file-seq "/srv/data/papyri.info/pleiades"))]
     -loadFile f)
   (-insertInferences nil)
   (-insertPelagiosAnnotations nil))
