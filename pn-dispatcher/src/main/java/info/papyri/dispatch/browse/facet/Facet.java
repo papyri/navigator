@@ -2,6 +2,7 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
+import info.papyri.dispatch.ServletUtils;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -390,7 +391,7 @@ abstract public class Facet {
     
     public String getDisplayValue(String value){
         
-        return value;
+        return ServletUtils.scrub(value);
         
     }
     
