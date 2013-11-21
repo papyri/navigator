@@ -2,6 +2,7 @@ package info.papyri.dispatch.browse.facet;
 
 import edu.unc.epidoc.transcoder.TransCoder;
 import info.papyri.dispatch.FileUtils;
+import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import info.papyri.dispatch.browse.facet.customexceptions.IncompleteClauseException;
@@ -752,7 +753,7 @@ public class StringSearchFacet extends Facet{
             
         }
         return searchClauses.get(k).get(0).getDisplayString(display.toString());
-        
+       
         
     }
     
@@ -1724,11 +1725,12 @@ public class StringSearchFacet extends Facet{
         */
        
        String getDisplayString(String searchString){
-
+         
+         String ss = ServletUtils.scrub(searchString);
            if(this.parseForSearchType() == SearchType.USER_DEFINED){
                
                Pattern pattern = Pattern.compile(".*?(\\d+)$");
-               Matcher matcher = pattern.matcher(searchString);
+               Matcher matcher = pattern.matcher(ss);
                
                if(matcher.matches()){
                    
@@ -1736,16 +1738,15 @@ public class StringSearchFacet extends Facet{
                    
                }
                
-               String procCaps = String.valueOf(searchString.charAt(0)).toUpperCase();
-               searchString = procCaps + searchString.substring(1);
+               ss = Character.toUpperCase(ss.charAt(0)) + ss.substring(1);
                
            }
            
-           if(this.parseForSearchType() == SearchType.REGEX) searchString = searchString.replaceAll(REGEX_MARKER, "");
-           if(this.parseForSearchType() == SearchType.LEMMA) searchString = searchString.replaceAll(LEX_MARKER, "");
-           searchString = searchString.trim();
+           if(this.parseForSearchType() == SearchType.REGEX) ss = ss.replaceAll(REGEX_MARKER, "");
+           if(this.parseForSearchType() == SearchType.LEMMA) ss = ss.replaceAll(LEX_MARKER, "");
+           ss = ss.trim();
            
-           StringBuilder dv = new StringBuilder(searchString);
+           StringBuilder dv = new StringBuilder(ss);
            dv.append("<br/>");
            if(!getProximityDisplayString().equals("")){
             

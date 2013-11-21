@@ -2,6 +2,7 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.LanguageCode;
 import info.papyri.dispatch.browse.SolrField;
+import info.papyri.dispatch.ServletUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,24 +35,20 @@ public class TranslationFacet extends Facet {
     
     @Override
     public String getDisplayValue(String languageCode){
-        
-        String displayValue = "";
-        
+                
         try{
             
             String swappedLanguageCode = languageCode.replaceAll("-", "_");
             LanguageCode lang = LanguageCode.valueOf(swappedLanguageCode);
-            displayValue = lang.expanded();
+            return lang.expanded();
             
         } 
         catch(IllegalArgumentException iae){
             
-            displayValue = languageCode;
+            return ServletUtils.scrub(languageCode);
             
         }
-      
-        return displayValue;
-        
+              
     }
     
     @Override

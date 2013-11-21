@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
@@ -660,7 +661,7 @@ public class IdentifierFacet extends Facet{
     public String getDisplayValue(String value){
         
         if(apisOnlyHTMLValue.equals(value)) return apisOnlyHTMLLabel;
-        return value.replaceAll("[_*]", " ");
+        return ServletUtils.scrub(value).replaceAll("[_*]", " ");
         
     }
     
