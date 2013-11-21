@@ -1,6 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
+import info.papyri.dispatch.ServletUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -260,7 +261,12 @@ public class DateFacet extends Facet {
     public String getDisplayValue(String date){
         
         if(date.equals("Unknown")) return date;
-        int rawDate = Integer.valueOf(date);
+        int rawDate;
+        try {
+          rawDate = Integer.valueOf(date);
+        } catch (NumberFormatException e) {
+          return ServletUtils.scrub(date);
+        }
         // convert zero value to 1 CE
         rawDate = rawDate == 0 ? 1 : rawDate;
         

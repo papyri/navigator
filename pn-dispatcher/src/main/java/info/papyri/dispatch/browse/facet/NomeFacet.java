@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.browse.SolrField;
 
 /**
@@ -24,11 +25,10 @@ public class NomeFacet extends Facet {
     
     @Override
     public String getDisplayValue(String value){
-        
-        String firstChar = String.valueOf(value.charAt(0)).toUpperCase();
-        String remainder = value.substring(1).toLowerCase();
-        return firstChar + remainder;
-        
+      
+      StringBuilder result = new StringBuilder(ServletUtils.scrub(value));
+      result.setCharAt(0, Character.toUpperCase(result.charAt(0)));
+      return result.toString();
         
     }
     
