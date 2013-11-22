@@ -1,11 +1,15 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.browse.facet.FacetBrowser;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.regex.Pattern;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import junit.framework.TestCase;
 import org.apache.solr.client.solrj.SolrQuery;
 
@@ -16,11 +20,44 @@ import org.apache.solr.client.solrj.SolrQuery;
 public class StringSearchFacetIT extends TestCase {
     
     private StringSearchFacet testInstance;    
+
     StringSearchFacet.SearchTarget t = StringSearchFacet.SearchTarget.TEXT;
+    private FacetBrowser fb;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        ServletConfig mock = new ServletConfig() {
+
+          @Override
+          public String getServletName() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          }
+
+          @Override
+          public ServletContext getServletContext() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          }
+
+          @Override
+          public String getInitParameter(String string) {
+            if ("home".equals(string)) {
+              return "/srv/data/papyri.info/pn/home";
+            }
+            if ("solrUrl".equals(string)) {
+              return "http://localhost:8083/solr/";
+            }
+            return null;
+          }
+
+          @Override
+          public Enumeration getInitParameterNames() {
+            return null;
+          }
+          
+        };
+        fb = new FacetBrowser();
+        fb.init(mock);
         testInstance = new StringSearchFacet();    
 
     }
