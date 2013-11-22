@@ -98,6 +98,22 @@ public class GitWrapperTest {
   }
   
   @Test
+  public void testFileNameWithPageNumberToURI2() {
+    String id = "http://papyri.info/ddbdp/stud.pal;4;pg58-78/source";
+    String file = "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/stud.pal/stud.pal.4/stud.pal.4.pg58-78.xml";
+    String result = GitWrapper.filenameToUri(file, true);
+    assertEquals(id, result);
+  }
+  
+  @Test
+  public void testFileNameWithMultiEditionToURI() {
+    String id = "http://papyri.info/ddbdp/p.tebt;3.2;974/source";
+    String file = "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/p.tebt/p.tebt.3.2/p.tebt.3.2.974.xml";
+    String result = GitWrapper.filenameToUri(file, true);
+    assertEquals (id, result);
+  }
+  
+  @Test
   public void testBrokenFilenameToURI() {
     System.out.println("Broken filename to URI");
     String file = "DDB_EpiDoc_XML/p.rain.unterricht/p.rain.unterricht. /p.rain.unterricht. .61.xml";

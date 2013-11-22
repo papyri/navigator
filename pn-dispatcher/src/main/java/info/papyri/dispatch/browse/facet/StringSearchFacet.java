@@ -741,8 +741,13 @@ public class StringSearchFacet extends Facet{
     
     @Override
     public String getDisplayValue(String facetValue){
-        
-        Integer k = Integer.valueOf(facetValue);
+      
+      Integer k;
+      try {
+        k = Integer.valueOf(facetValue);
+      } catch (NumberFormatException e) {
+        return "Facet value not found.";
+      }
         if(!searchClauses.containsKey(k)) return "Facet value not found";  
         Iterator<SearchClause> scit = searchClauses.get(k).iterator();
         StringBuilder display = new StringBuilder();

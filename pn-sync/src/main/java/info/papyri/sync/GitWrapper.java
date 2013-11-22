@@ -286,7 +286,7 @@ public class GitWrapper {
               result.append(rest);
             }
             result.append("/source");
-            if (!result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d)*;(\\w|\\d|-|,)+/source")) {
+            if (!result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d)*;(\\w|\\d|-|,|\\(|\\))+/source")) {
               throw new Exception("Malformed file name: " + file);
             }
           } else {

@@ -41,7 +41,7 @@ public class LanguageFacet extends Facet{
     public String getDisplayValue(String languageCode){
         
         languageCode = LanguageCode.filterModernLanguageCodes(languageCode);
-        String displayValue = "";
+        String displayValue;
         
         try{
             
