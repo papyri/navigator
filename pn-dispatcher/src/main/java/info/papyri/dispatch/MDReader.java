@@ -66,8 +66,9 @@ public class MDReader extends HttpServlet {
         String line;
         while ((line = reader.readLine()) != null) {
           out.println(line);
-          if (line.contains("<div class=\"content\">")) {
+          if (line.contains("<div class=\"markdown\">")) {
             out.write(peg.markdownToHtml(mdf.toString()));
+            out.flush();
             reader.readLine(); // assume template has a throwaway line inside the content div
           }
         }
