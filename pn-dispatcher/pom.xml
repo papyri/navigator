@@ -110,7 +110,11 @@
       <artifactId>saxon-he</artifactId>
       <version>9.4.0.3</version>
     </dependency>
-    
+    <dependency>
+      <groupId>org.pegdown</groupId>
+      <artifactId>pegdown</artifactId>
+      <version>1.4.1</version>
+    </dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>

@@ -49,6 +49,18 @@
         </init-param>
     </servlet>
     <servlet>
+      <servlet-name>MDReader</servlet-name>
+      <servlet-class>info.papyri.dispatch.MDReader</servlet-class>
+      <init-param>
+        <param-name>docs</param-name>
+        <param-value>/srv/data/papyri.info/pn/home/docs</param-value>
+      </init-param>
+      <init-param>
+        <param-name>template</</param-name>
+        <param-value>/srv/data/papyri.info/pn/home/template.html</param-value>
+      </init-param>
+    </servlet>
+    <servlet>
         <servlet-name>FacetBrowser</servlet-name>
         <servlet-class>info.papyri.dispatch.browse.facet.FacetBrowser</servlet-class>
         <init-param>
@@ -187,6 +199,10 @@
     <servlet-mapping>
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>MDReader</servlet-name>
+      <url-pattern>/docs</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
