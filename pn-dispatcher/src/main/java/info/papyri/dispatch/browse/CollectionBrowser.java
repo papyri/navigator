@@ -495,6 +495,7 @@ public class CollectionBrowser extends HttpServlet {
         
     }// </editor-fold>
 
+
   private String buildHTML(EnumMap<SolrField, String> pathParts, ArrayList<DocumentCollectionBrowseRecord> records) {
     StringBuilder html = new StringBuilder("<h2>");
     html.append(pathParts.get(SolrField.collection));
