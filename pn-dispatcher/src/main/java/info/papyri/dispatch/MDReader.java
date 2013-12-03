@@ -59,8 +59,9 @@ public class MDReader extends HttpServlet {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
         StringBuilder mdf = new StringBuilder();
         char[] ch = new char[1024];
-        while (reader.read(ch) > 0) {
-          mdf.append(ch);
+        int c = 0;
+        while ((c = reader.read(ch)) > 0) {
+          mdf.append(ch, 0, c);
         }
         reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
         String line;
@@ -68,7 +69,6 @@ public class MDReader extends HttpServlet {
           out.println(line);
           if (line.contains("<div class=\"markdown\">")) {
             out.write(peg.markdownToHtml(mdf.toString()));
-            out.flush();
             reader.readLine(); // assume template has a throwaway line inside the content div
           }
         }
