@@ -67,7 +67,8 @@
             </dct:isPartOf>
             <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">
                 <dct:relation>
-                    <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/source">
+                    <rdf:Description>
+                    	<xsl:attribute name="rdf:about">http://papyri.info/ddbdp/<xsl:value-of select="replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')"/>;<xsl:value-of select="$ddb[2]"/>;<xsl:value-of select="encode-for-uri($ddb[3])"/>/source</xsl:attribute>
                         <dct:relation rdf:resource="{$id}"/>
                     </rdf:Description>
                 </dct:relation>
@@ -86,7 +87,8 @@
                         <dct:relation rdf:resource="{$id}"/>
                       <xsl:if test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid'] and doc-available($ddb-doc-uri)">
                             <dct:relation>
-                                <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/source">
+                                <rdf:Description> 
+                                    <xsl:attribute name="rdf:about">http://papyri.info/ddbdp/<xsl:value-of select="replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')"/>;<xsl:value-of select="$ddb[2]"/>;<xsl:value-of select="encode-for-uri($ddb[3])"/>/source</xsl:attribute>
                                     <dct:relation rdf:resource="http://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source"/>
                                 </rdf:Description>
                             </dct:relation>
@@ -106,7 +108,7 @@
           <foaf:page>
             <xsl:variable name="page">
               <xsl:choose>
-                <xsl:when test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid'] and doc-available($ddb-doc-uri)">http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}</xsl:when>
+                <xsl:when test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid'] and doc-available($ddb-doc-uri)">http://papyri.info/ddbdp/<xsl:value-of select="replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')"/>;<xsl:value-of select="$ddb[2]"/>;<xsl:value-of select="encode-for-uri($ddb[3])"/></xsl:when>
                 <xsl:otherwise>http://papyri.info/hgv/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type='filename']"/></xsl:otherwise>
               </xsl:choose>
             </xsl:variable>
@@ -117,7 +119,8 @@
         </rdf:Description>
       <xsl:if test="(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']) and doc-available($ddb-doc-uri)">
         <xsl:for-each select="//tei:msDesc/tei:history/tei:provenance[@type='located']/tei:p/tei:placeName[contains(@ref,'http://pleiades')]">
-          <rdf:Description rdf:about="http://papyri.info/ddbdp/{replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')};{$ddb[2]};{encode-for-uri($ddb[3])}/original">
+          <rdf:Description>
+            <xsl:attribute name="rdf:about">http://papyri.info/ddbdp/<xsl:value-of select="replace(normalize-unicode($ddb[1], 'NFD'), '[^.a-z0-9]', '')"/>;<xsl:value-of select="$ddb[2]"/>;<xsl:value-of select="encode-for-uri($ddb[3])"/>/original</xsl:attribute>
             <xsl:variable name="label" select="string(.)"/>
             <xsl:for-each select="tokenize(@ref,'\s')">
               <xsl:if test="starts-with(.,'http://pleiades')">
