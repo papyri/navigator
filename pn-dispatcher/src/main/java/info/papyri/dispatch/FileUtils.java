@@ -200,6 +200,9 @@ public class FileUtils {
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
+        if (parts.length != 3) { //exit early if not a well-formed name
+          return null;
+        }
         if ("".equals(parts[1])) {
           return new File(pathname.append("/DDB_EpiDoc_XML/")
                   .append(parts[0]).append("/")

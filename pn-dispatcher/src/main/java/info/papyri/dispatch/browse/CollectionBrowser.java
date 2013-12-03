@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -99,7 +100,7 @@ public class CollectionBrowser extends HttpServlet {
         
             response.setContentType("text/html;charset=UTF-8");
             request.setCharacterEncoding("UTF-8");        
-            LinkedHashMap<SolrField, String> pathParts = parseRequest(request);
+            EnumMap<SolrField, String> pathParts = parseRequest(request);
             ArrayList<DocumentCollectionBrowseRecord> records = new ArrayList<DocumentCollectionBrowseRecord>();
             String sparqlQuery = buildSparqlQuery(pathParts);
             JsonNode resultNode = runSparqlQuery(sparqlQuery);
@@ -120,17 +121,17 @@ public class CollectionBrowser extends HttpServlet {
      *
      */
     
-    private LinkedHashMap<SolrField, String> parseRequest (HttpServletRequest request){
+    private EnumMap<SolrField, String> parseRequest (HttpServletRequest request){
                 
         String docPath = "documents";
         String queryParam = request.getParameter("q");
         int docIndex = queryParam.indexOf(docPath);
         String pathInfo = (docIndex == -1 ? queryParam : queryParam.substring(0, docIndex - 1));
-        LinkedHashMap<SolrField, String> pathComponents = new LinkedHashMap<SolrField, String>();
+        EnumMap<SolrField, String> pathComponents = new EnumMap<SolrField, String>(SolrField.class);
         
         String[] pathParts = pathInfo.split("/");
         
-        for(int i = 0; i < pathParts.length; i++){
+        for(int i = 0; i < pathParts.length && i < ORG_HIERARCHY.size(); i++){
 
             pathComponents.put(ORG_HIERARCHY.get(i), pathParts[i]);
             
@@ -149,7 +150,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */ 
     
-    String buildSparqlQuery(LinkedHashMap<SolrField, String> pathParts){
+    String buildSparqlQuery(EnumMap<SolrField, String> pathParts){
         
         StringBuilder queryBuilder = new StringBuilder("PREFIX dc:<http://purl.org/dc/elements/1.1/> ");
         queryBuilder.append("PREFIX dcterms: <http://purl.org/dc/terms/> ");
@@ -233,7 +234,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    ArrayList<DocumentCollectionBrowseRecord> buildCollectionList(LinkedHashMap<SolrField, String> pathParts, JsonNode resultNode){
+    ArrayList<DocumentCollectionBrowseRecord> buildCollectionList(EnumMap<SolrField, String> pathParts, JsonNode resultNode){
         
         ArrayList<DocumentCollectionBrowseRecord> records = new ArrayList<DocumentCollectionBrowseRecord>();
         Iterator<JsonNode> rnit = resultNode.iterator();
@@ -304,7 +305,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      */
     
-    DocumentCollectionBrowseRecord parseUriToCollectionRecord(LinkedHashMap<SolrField, String> pathParts, String child, String type, String label, String parentLabel){
+    DocumentCollectionBrowseRecord parseUriToCollectionRecord(EnumMap<SolrField, String> pathParts, String child, String type, String label, String parentLabel){
         
         String[] uriBits = child.split("/");
         int sIndex = 2;
@@ -493,6 +494,10 @@ public class CollectionBrowser extends HttpServlet {
         return "Servlet for browsing collections above  individual document level";
         
     }// </editor-fold>
+
+  private String buildHTML(EnumMap<SolrField, String> pathParts, ArrayList<DocumentCollectionBrowseRecord> records) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
     
 
     
