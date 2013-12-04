@@ -53,7 +53,7 @@
       <servlet-class>info.papyri.dispatch.MDReader</servlet-class>
       <init-param>
         <param-name>docs</param-name>
-        <param-value>/srv/data/papyri.info/pn/home/docs</param-value>
+        <param-value>/srv/data/papyri.info/pn/docs</param-value>
       </init-param>
       <init-param>
         <param-name>template</param-name>
