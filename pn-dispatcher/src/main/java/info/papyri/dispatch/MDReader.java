@@ -103,7 +103,7 @@ public class MDReader extends HttpServlet {
           }
         }
       } else {
-        ServletUtils.send(response, f);
+        ServletUtils.send(response, cf);
       }
     } else {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
