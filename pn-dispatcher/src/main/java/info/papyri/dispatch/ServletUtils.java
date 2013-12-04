@@ -26,6 +26,11 @@ public class ServletUtils {
   public static String scrub(String in) {
     return in.replaceAll("<[^>]+>", "");
   }
+
+  public static void send(HttpServletResponse response, File f)
+          throws ServletException, IOException {
+    send(response, f, new byte[8094]);
+  }
   
   public static void setupLogging(ServletContext sc, String log4j) {
     if (log4j == null) {
