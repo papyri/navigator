@@ -60,7 +60,6 @@ public class MDReader extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
-    PrintWriter out = response.getWriter();
     StringBuilder requestPath = new StringBuilder(DOCSHOME);
     requestPath.append("/").append(request.getParameter("f")).append(".md");
     File f = new File(requestPath.toString());
@@ -69,9 +68,10 @@ public class MDReader extends HttpServlet {
     PrintWriter cacheOut = null;
     if (f.exists()) {
       if (f.lastModified() > cf.lastModified()) {
+        PrintWriter out = response.getWriter();
         try {
           BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
-          cfTmp = File.createTempFile(cf.getName(), null);
+          cfTmp = File.createTempFile(cf.getName(), null, f.getParentFile());
           cacheOut = new PrintWriter(new OutputStreamWriter (new FileOutputStream(cfTmp), Charset.forName("UTF-8")));
           StringBuilder mdf = new StringBuilder();
           char[] ch = new char[1024];
@@ -107,7 +107,6 @@ public class MDReader extends HttpServlet {
       }
     } else {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      out.close();
     }
   }
 
