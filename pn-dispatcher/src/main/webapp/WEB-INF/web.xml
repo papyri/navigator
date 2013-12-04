@@ -56,7 +56,7 @@
         <param-value>/srv/data/papyri.info/pn/home/docs</param-value>
       </init-param>
       <init-param>
-        <param-name>template</</param-name>
+        <param-name>template</param-name>
         <param-value>/srv/data/papyri.info/pn/home/template.html</param-value>
       </init-param>
     </servlet>
