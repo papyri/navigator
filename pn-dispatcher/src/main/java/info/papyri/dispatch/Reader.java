@@ -96,7 +96,7 @@ public class Reader extends HttpServlet {
           if (request.getParameter("q") != null) {
             sendWithHighlight(response, file, request.getParameter("q"));
           } else {
-            send(response, file);
+            ServletUtils.send(response, file, buffer);
           }
         }
       }
@@ -105,29 +105,6 @@ public class Reader extends HttpServlet {
     }
   }
 
-  private void send(HttpServletResponse response, File f)
-          throws ServletException, IOException {
-    FileInputStream reader = null;
-    OutputStream out = response.getOutputStream();
-    if (f != null && f.exists()) {
-      try {
-        reader = new FileInputStream(f);
-        int size = reader.read(buffer);
-        while (size > 0) { 
-          out.write(buffer, 0, size);
-          size = reader.read(buffer);
-        }
-      } catch (IOException e) {
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        System.out.println("Failed to send " + f);
-      } finally {
-        reader.close();
-        out.close();
-      }
-    } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-  }
 
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
     throws ServletException, IOException {

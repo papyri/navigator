@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,17 +22,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.pegdown.PegDownProcessor;
+
 /**
  *
  * @author hcayless
  */
 @WebServlet(name = "MDReader", urlPatterns = {"/docs"})
 public class MDReader extends HttpServlet {
-  
+
   private static String DOCSHOME;
   private static String TEMPLATE;
   private PegDownProcessor peg;
-  
+
   @Override
   public void init(ServletConfig config) {
     DOCSHOME = config.getInitParameter("docs");
@@ -38,6 +42,12 @@ public class MDReader extends HttpServlet {
   }
 
   /**
+   * Reads a MarkDown file from the directory specified in the "docs" web.xml
+   * param, and converts it into HTML, interpolating it into the HTML file
+   * specified in the "template" param. The HTML output is cached and the
+   * cached file is used for subsequent requests until the MarkDown file is
+   * updated.
+   * 
    * Processes requests for both HTTP
    * <code>GET</code> and
    * <code>POST</code> methods.
@@ -54,28 +64,46 @@ public class MDReader extends HttpServlet {
     StringBuilder requestPath = new StringBuilder(DOCSHOME);
     requestPath.append("/").append(request.getParameter("f")).append(".md");
     File f = new File(requestPath.toString());
+    File cf = new File(requestPath.toString().replaceAll("\\.md$", ".html"));
+    File cfTmp = null;
+    PrintWriter cacheOut = null;
     if (f.exists()) {
-      try {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
-        StringBuilder mdf = new StringBuilder();
-        char[] ch = new char[1024];
-        int c = 0;
-        while ((c = reader.read(ch)) > 0) {
-          mdf.append(ch, 0, c);
-        }
-        reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
-        String line;
-        while ((line = reader.readLine()) != null) {
-          out.println(line);
-          if (line.contains("<div class=\"markdown\">")) {
-            out.write(peg.markdownToHtml(mdf.toString()));
-            reader.readLine(); // assume template has a throwaway line inside the content div
+      if (f.lastModified() > cf.lastModified()) {
+        try {
+          BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
+          cfTmp = File.createTempFile(cf.getName(), null);
+          cacheOut = new PrintWriter(new OutputStreamWriter (new FileOutputStream(cfTmp), Charset.forName("UTF-8")));
+          StringBuilder mdf = new StringBuilder();
+          char[] ch = new char[1024];
+          int c;
+          while ((c = reader.read(ch)) > 0) {
+            mdf.append(ch, 0, c);
+          }
+          reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
+          String line;
+          while ((line = reader.readLine()) != null) {
+            out.println(line);
+            cacheOut.println(line);
+            if (line.contains("<div class=\"markdown\">")) {
+              String md = peg.markdownToHtml(mdf.toString());
+              out.write(md);
+              cacheOut.write(md);
+              reader.readLine(); // assume template has a throwaway line inside the content div
+            }
+          }
+        } catch (IOException e) {
+          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
+          out.close();
+          if (cacheOut != null) {
+            cacheOut.close();
+          }
+          if (cfTmp != null) {
+            cfTmp.renameTo(cf);
           }
         }
-      } catch (IOException e) {
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      } finally {      
-        out.close();
+      } else {
+        ServletUtils.send(response, f);
       }
     } else {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
