@@ -15,10 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-<<<<<<< HEAD
-=======
-import java.io.OutputStream;
->>>>>>> Added caching for transformed MarkDown files.
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import javax.servlet.ServletConfig;
@@ -30,10 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
-<<<<<<< HEAD
 import org.pegdown.plugins.PegDownPlugins;
-=======
->>>>>>> Added caching for transformed MarkDown files.
 
 /**
  *
@@ -45,10 +38,7 @@ public class MDReader extends HttpServlet {
   private static String DOCSHOME;
   private static String TEMPLATE;
   private PegDownProcessor peg;
-<<<<<<< HEAD
   private static Logger logger = Logger.getLogger("pn-dispatch");
-=======
->>>>>>> Added caching for transformed MarkDown files.
 
   @Override
   public void init(ServletConfig config) {
@@ -91,16 +81,10 @@ public class MDReader extends HttpServlet {
     PrintWriter cacheOut = null;
     if (f.exists()) {
       if (f.lastModified() > cf.lastModified()) {
-<<<<<<< HEAD
         PrintWriter out = response.getWriter();
         try {
           BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
           cfTmp = File.createTempFile(cf.getName(), null, f.getParentFile());
-=======
-        try {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
-          cfTmp = File.createTempFile(cf.getName(), null);
->>>>>>> Added caching for transformed MarkDown files.
           cacheOut = new PrintWriter(new OutputStreamWriter (new FileOutputStream(cfTmp), Charset.forName("UTF-8")));
           StringBuilder mdf = new StringBuilder();
           char[] ch = new char[1024];
