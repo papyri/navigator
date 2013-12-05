@@ -4,9 +4,11 @@
  */
 package info.papyri.sync;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,7 +31,6 @@ import org.apache.log4j.PropertyConfigurator;
 @WebServlet(name = "Sync", urlPatterns = {"/sync"})
 public class SyncServlet extends HttpServlet {
 
-  private GitWrapper git;
   private Publisher publisher;
   private static final ScheduledExecutorService scheduler =
           Executors.newScheduledThreadPool(1);
@@ -50,7 +51,7 @@ public class SyncServlet extends HttpServlet {
         BasicConfigurator.configure();
       }
     }
-    git = GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
+    GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
     // Run at 5 minutes past the hour, and every hour thereafter.
     Calendar cal = Calendar.getInstance();
@@ -60,7 +61,23 @@ public class SyncServlet extends HttpServlet {
     } else {
       start = 5 - start;
     }
+    // check for updates to idp.data repo and sync them across Github and Canonical
     scheduler.scheduleWithFixedDelay(publisher, start, 60, MINUTES);
+    final File mdDir = new File(config.getInitParameter("mdDir"));
+    // pull any changes
+    scheduler.scheduleWithFixedDelay(new Runnable() {
+      @Override
+      public void run() {
+        ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", "master");
+        pb.directory(mdDir);
+        try {
+          pb.start().waitFor();
+          logger.info("MarkDown directory synced at " + new Date());
+        } catch (Exception e) {
+          logger.error("Failed to sync MarkDown directory " + mdDir, e);
+        } 
+      }
+    }, start + 30, 60, MINUTES);
     logger.debug("Syncing scheduled.");
   }
 

@@ -16,6 +16,10 @@
             <param-value>/srv/data/papyri.info/idp.data</param-value>
         </init-param>
         <init-param>
+          <param-name>mdDir</param-name>
+          <param-value>/srv/data/papyri.info/pn/docs</param-value>
+        </init-param>
+        <init-param>
             <param-name>dbUser</param-name>
             <param-value>pn</param-value>
         </init-param>

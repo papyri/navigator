@@ -88,6 +88,7 @@ public class GitWrapper {
     // execute indexing on file list
   }
   
+  @SuppressWarnings({"null", "ConstantConditions"})
   public static String getPreviousSync() throws Exception {
     String result = null;
     Connection connect = null;
@@ -111,6 +112,7 @@ public class GitWrapper {
     return result;
   }
 
+  @SuppressWarnings({"null", "ConstantConditions"})
   public static String getLastSync() throws Exception {
     String result = null;
     Connection connect = null;
@@ -130,6 +132,7 @@ public class GitWrapper {
     return result;
   }
 
+  @SuppressWarnings({"null", "ConstantConditions"})
   private void storeHead() throws Exception {
     Connection connect = null;
     Class.forName("com.mysql.jdbc.Driver");
