@@ -840,3 +840,15 @@ div.more-like-this a:after{
 
 /* END LINEAR BROWSING ADDITIONS */
 
+/* Begin Markdown section */
+
+div.markdown {
+  margin: 1em;
+}
+div.markdown strong {
+  font-weight: bold;
+}
+
+div.markdown ul li {
+  margin-left: 2em;
+}
