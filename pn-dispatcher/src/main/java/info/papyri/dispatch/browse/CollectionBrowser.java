@@ -384,7 +384,6 @@ public class CollectionBrowser extends HttpServlet {
     
     private ArrayList<String> getCollectionInfo(LinkedHashMap<SolrField, String> pathParts){
         
-        
         ArrayList<String> collectionBits = new ArrayList<String>();
         
         for(Map.Entry<SolrField, String> entry : pathParts.entrySet()){
@@ -404,6 +403,7 @@ public class CollectionBrowser extends HttpServlet {
      * 
      * @param records The list of records to be displayed
      * @return String A String of html
+     * @deprecated 
      */
     String buildHTML(LinkedHashMap<SolrField, String> pathParts, ArrayList<DocumentCollectionBrowseRecord> records){
         
@@ -496,7 +496,11 @@ public class CollectionBrowser extends HttpServlet {
     }// </editor-fold>
 
   private String buildHTML(EnumMap<SolrField, String> pathParts, ArrayList<DocumentCollectionBrowseRecord> records) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    StringBuilder html = new StringBuilder("<h2>");
+    html.append(pathParts.get(SolrField.collection));
+    html.append("</h2>"); 
+    html = buildCollectionsHTML(html, records);
+    return html.toString();
   }
     
 
