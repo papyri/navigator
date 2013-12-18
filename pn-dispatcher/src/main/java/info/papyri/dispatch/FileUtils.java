@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -31,6 +32,8 @@ public class FileUtils {
   }
 
   private char[] buffer = new char[8192];
+  private static Logger logger = Logger.getLogger("pn-dispatch");
+  
   /**
    * Returns the HTML <code>java.io.File</code> for the given collection
    * and item.
@@ -306,14 +309,14 @@ public class FileUtils {
         t.append(buffer, 0, size);
       }
     } catch (Exception e) {
-      e.printStackTrace(System.out);
+      logger.error("Failed to read " + f.getAbsolutePath(), e);
     } finally {
       try {
         if (reader != null) {
           reader.close();
         }
       } catch (IOException e) {
-        System.out.println(e.getMessage());
+        logger.error(e.getLocalizedMessage(), e);
       }
     }
     return t.toString();

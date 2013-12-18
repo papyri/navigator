@@ -12,7 +12,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import javax.servlet.ServletConfig;
@@ -21,6 +20,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.pegdown.PegDownProcessor;
 
 /**
@@ -33,12 +33,14 @@ public class MDReader extends HttpServlet {
   private static String DOCSHOME;
   private static String TEMPLATE;
   private PegDownProcessor peg;
+  private static Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) {
     DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
     peg = new PegDownProcessor();
+    ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
   }
 
   /**

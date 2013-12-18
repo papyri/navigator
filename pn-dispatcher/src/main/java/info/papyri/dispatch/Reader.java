@@ -1,9 +1,7 @@
 package info.papyri.dispatch;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -34,6 +34,7 @@ public class Reader extends HttpServlet {
   private FileUtils util;
   private SolrUtils solrutil;
   private byte[] buffer = new byte[8192];
+  private static Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -43,6 +44,7 @@ public class Reader extends HttpServlet {
     util = new FileUtils(xmlPath, htmlPath);
     solrutil = new SolrUtils(config);
     sparqlServer = config.getInitParameter("sparqlUrl");
+    ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
   }
 
   /**
@@ -70,7 +72,7 @@ public class Reader extends HttpServlet {
       } else if (page.contains("/")) {
         String collection = FileUtils.substringBefore(page, "/");
         String item = FileUtils.substringAfter(page, "/").replaceAll("/$", "");
-        File file = null;
+        File file;
         if (item.endsWith("/source")) {
           response.setContentType("application/xml;charset=UTF-8");
           file = util.getXmlFile(collection, item.replace("/source", ""));
@@ -120,7 +122,7 @@ public class Reader extends HttpServlet {
         query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
         q = query.toString();
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.error("Error expanding lemmas.", e);
       }
     }
     if (f != null && f.exists()) {
@@ -128,7 +130,7 @@ public class Reader extends HttpServlet {
         Pattern[] patterns = util.buildPatterns(q);
         out.write(util.highlight(patterns, util.loadFile(f)));
       } catch (Exception e) {
-        e.printStackTrace(System.out);
+        logger.error("Error while writing highligted file " + f.getAbsolutePath(), e);
       } finally {
         out.close();
       }
@@ -171,8 +173,7 @@ public class Reader extends HttpServlet {
       }
       
     } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println(sparql);
+      logger.error("Unable to resolve file using query; " + sparql, e);
       return null;
     }
     return result;

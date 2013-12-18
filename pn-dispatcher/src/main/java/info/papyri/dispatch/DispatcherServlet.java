@@ -16,6 +16,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -27,6 +28,7 @@ public class DispatcherServlet extends HttpServlet {
   private static String graph = "http://papyri.info/graph";
   private static String path = "/pi/query";
   private String sparqlServer;
+  private static Logger logger = Logger.getLogger("pn-dispatch");
   private enum Method {
     RDF ("rdfxml"),
     N3,
@@ -49,13 +51,13 @@ public class DispatcherServlet extends HttpServlet {
       return this.name;
     }
 
-
   }
 
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
     sparqlServer = config.getInitParameter("sparqlUrl");
+    ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
   }
    
     /** 
@@ -138,7 +140,7 @@ public class DispatcherServlet extends HttpServlet {
             response.sendError(http.getResponseCode());
           }
         } catch (SocketTimeoutException e) {
-          e.printStackTrace(System.out);
+          logger.error("Socket timeout during numbers server request.", e);
         } finally {
           if (out != null) {
             out.close();
@@ -383,7 +385,7 @@ public class DispatcherServlet extends HttpServlet {
         String result = URLEncoder.encode(in, "UTF-8");
         return result.replaceAll("\\+", "%2B");
       } catch (Exception e) {
-        //TODO: add warning;
+        logger.warn("Error encoding '" + in + "'", e);
         return in;
       }
     }
