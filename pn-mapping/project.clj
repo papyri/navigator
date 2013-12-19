@@ -1,6 +1,6 @@
 (defproject pn-mapping "1.0-SNAPSHOT"
   :description "Loads triple data into the papyri.info numbers server"
-  :repositories {"papyri.info" "http://libdc3-dev-01.oit.duke.edu/maven/"
+  :repositories {"papyri.info" "http://dev.papyri.info/maven/"
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
   :jvm-opts ["-Xmx1g"]

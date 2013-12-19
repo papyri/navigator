@@ -75,7 +75,7 @@ Adapting to a different directory structure is straightforward, but will mean
 Building and Running
 ====================
 
-Java servlets are built using Maven 3.0.3. Once Maven is installed, dependency calculation and download should proceed automatically - though note in particular the existence of the project's Maven repo at <http://libdc3-dev-01.oit.duke.edu/maven/>.
+Java servlets are built using Maven 3.0.3. Once Maven is installed, dependency calculation and download should proceed automatically - though note in particular the existence of the project's Maven repo at <http://dev.papyri.info/maven/>.
 
 Applications written in Clojure (pn-mapping, pn-indexer, and pn-lemmas) will require [leiningen](https://github.com/technomancy/leiningen "leiningen on github") - which is itself Maven-based.
 

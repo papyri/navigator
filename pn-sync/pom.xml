@@ -17,7 +17,7 @@
       <repository>
         <name>papyri.info</name>
         <id>papyri.info</id>
-        <url>http://libdc3-dev-01.oit.duke.edu/maven/</url>
+        <url>http://dev.papyri.info/maven/</url>
       </repository>
     </repositories>
     
