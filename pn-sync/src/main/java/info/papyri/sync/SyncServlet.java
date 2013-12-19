@@ -64,7 +64,7 @@ public class SyncServlet extends HttpServlet {
     // check for updates to idp.data repo and sync them across Github and Canonical
     scheduler.scheduleWithFixedDelay(publisher, start, 60, MINUTES);
     final File mdDir = new File(config.getInitParameter("mdDir"));
-    // pull any changes
+    // pull any changes to site-docs so they get published
     scheduler.scheduleWithFixedDelay(new Runnable() {
       @Override
       public void run() {
@@ -77,7 +77,7 @@ public class SyncServlet extends HttpServlet {
           logger.error("Failed to sync MarkDown directory " + mdDir, e);
         } 
       }
-    }, start + 30, 60, MINUTES);
+    }, start + 15, 15, MINUTES);
     logger.debug("Syncing scheduled.");
   }
 
