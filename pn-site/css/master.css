@@ -851,4 +851,11 @@ div.markdown strong {
 
 div.markdown ul li {
   margin-left: 2em;
+  line-height: 150%;
+  list-style-type: disc;
+}
+
+div.markdown ul.about li {
+  list-style-type: none;
+  margin-left: 0em;
 }
