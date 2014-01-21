@@ -467,7 +467,7 @@
         </xsl:if>
       </xsl:when>
       <xsl:when
-        test="$docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'] and not($ddbdp)">
+        test="$docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'] and $alterity = 'self'">
         <!-- DDBDP document -->
         <xsl:variable name="sort"
           select="tokenize($docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'], ';')"/>
