@@ -60,13 +60,13 @@
   <xsl:variable name="outbase"/>
   <xsl:variable name="line-inc">5</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
-
+  <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+  <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
+  <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
   <xsl:include href="pi-functions.xsl"/>
 
   <xsl:template match="/">
-    <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
-    <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
-    <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
+    
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     
@@ -467,7 +467,7 @@
         </xsl:if>
       </xsl:when>
       <xsl:when
-        test="$docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid']">
+        test="$docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'] and not($ddbdp)">
         <!-- DDBDP document -->
         <xsl:variable name="sort"
           select="tokenize($docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'], ';')"/>
