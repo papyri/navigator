@@ -859,3 +859,7 @@ div.markdown ul.about li {
   list-style-type: none;
   margin-left: 0em;
 }
+
+div.markdown em {
+  font-style: italic;
+}
