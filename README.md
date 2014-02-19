@@ -70,7 +70,7 @@ The directory structure is expected to conform to:
 /srv/data/papyri.info/pn/idp.html - the IDP HTML files generated from the files in /data/papyri.info/idp.data  
 /srv/data.papyri.info/pn/home - the HTML, CSS, JS, and image files used throughout the site and in interactive interfaces. This directory can consist simply of a symlink to /srv/data/papyri.info/git/navigator/pn-site.  
 
-Adapting to a different directory structure is straightforward, but will mean 
+Adapting to a different directory structure is straightforward, but will mean finding where there are hard-coded directory locations and changing them.
 
 Building and Running
 ====================
