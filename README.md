@@ -51,7 +51,7 @@ The numbers server triple store is Jena-Fuseki 0.2.2. It is assumed to be availa
 The Solr Server
 ---------------
 
-As noted above, Solr home is assumed to be located at /data/papyri.info/solr. With the exception of the data directory, this directory should contain the files and structure given in pn-solr, or simply symlinks to these.
+As noted above, Solr home is assumed to be located at /srv/data/papyri.info/solr. With the exception of the data directory, this directory should contain the files and structure given in pn-solr, or simply symlinks to these.
 
 Because Solr runs in the same webapps directory as dispatch.war, it will also be available over port 8083.
 
