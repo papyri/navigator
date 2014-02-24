@@ -8,7 +8,7 @@
   (:use (clojure.data xml)
         (clojure.java io)))
 
-(def base "/Volumes/papyri.info/dev-dl-papyri/packages/AIP/")
+(def base "/Volumes/LaCie-R/papyri.info/AIP")
 (def package-dir (ref nil))
 (def id-counters {:git (atom 0), :html (atom 0), :text (atom 0), :xml (atom 0), :rdf (atom 0)})
 (def lists {:git (ref (ConcurrentSkipListMap.)), :html (ref (ConcurrentSkipListMap.)),
@@ -73,27 +73,27 @@
           (element :mets:name {} "NYU Digital Library Technology Services")))
         (element :mets:dmdSec {:ID "git-dmd"}
           (element :mets:mdRef {:LOCTYPE "URL", :xlink:type "simple",
-                                :xlink:href (str "files/" @package-dir "/metadata/git-rmd.xml"),
+                                :xlink:href (str "files/" @package-dir "/metadata/git-dmd.xml"),
                                 :MDTYPE "METSRIGHTS" :CHECKSUM (sha1 (File. (str base "/" id "/files/" @package-dir "/metadata/git-dmd.xml")))
                                 :CHECKSUMTYPE "SHA-1"}))
         (element :mets:dmdSec {:ID "html-dmd"}
           (element :mets:mdRef {:LOCTYPE "URL", :xlink:type "simple",
-                                :xlink:href (str "files/" @package-dir "/metadata/git-rmd.xml"),
+                                :xlink:href (str "files/" @package-dir "/metadata/html-dmd.xml"),
                                 :MDTYPE "METSRIGHTS" :CHECKSUM (sha1 (File. (str base "/" id "/files/" @package-dir "/metadata/html-dmd.xml")))
                                 :CHECKSUMTYPE "SHA-1"}))
         (element :mets:dmdSec {:ID "text-dmd"}
           (element :mets:mdRef {:LOCTYPE "URL", :xlink:type "simple",
-                                :xlink:href (str "files/" @package-dir "/metadata/git-rmd.xml"),
+                                :xlink:href (str "files/" @package-dir "/metadata/text-dmd.xml"),
                                 :MDTYPE "METSRIGHTS" :CHECKSUM (sha1 (File. (str base "/" id "/files/" @package-dir "/metadata/text-dmd.xml")))
                                 :CHECKSUMTYPE "SHA-1"}))
         (element :mets:dmdSec {:ID "xml-dmd"}
           (element :mets:mdRef {:LOCTYPE "URL", :xlink:type "simple",
-                                :xlink:href (str "files/" @package-dir "/metadata/git-rmd.xml"),
+                                :xlink:href (str "files/" @package-dir "/metadata/xml-dmd.xml"),
                                 :MDTYPE "METSRIGHTS" :CHECKSUM (sha1 (File. (str base "/" id "/files/" @package-dir "/metadata/xml-dmd.xml")))
                                 :CHECKSUMTYPE "SHA-1"}))
         (element :mets:dmdSec {:ID "rdf-dmd"}
           (element :mets:mdRef {:LOCTYPE "URL", :xlink:type "simple",
-                                :xlink:href (str "files/" @package-dir "/metadata/git-rmd.xml"),
+                                :xlink:href (str "files/" @package-dir "/metadata/rdf-dmd.xml"),
                                 :MDTYPE "METSRIGHTS" :CHECKSUM (sha1 (File. (str base "/" id "/files/" @package-dir "/metadata/rdf-dmd.xml")))
                                 :CHECKSUMTYPE "SHA-1"}))
         (element :mets:amdSec {:ID "amd_001"}
@@ -172,7 +172,6 @@
       out)))
 
 (defn -main
-  "I don't do a whole lot."
   [& args]
   (dosync (ref-set package-dir (second args)))
   (with-open [out (java.io.FileWriter. (str base "/" (first args) "/" (first args) "-" @package-dir ".xml"))]
