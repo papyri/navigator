@@ -81,6 +81,7 @@ public class XSLTService extends HttpServlet {
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
+<<<<<<< HEAD
     PrintWriter out;
     if ("GET".equals(request.getMethod())) {
       if (request.getParameter("doc") != null) {

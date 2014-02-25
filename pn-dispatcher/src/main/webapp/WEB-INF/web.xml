@@ -180,8 +180,16 @@
             <param-value>text/html</param-value>
         </init-param>
         <init-param>
+            <param-name>papyri.info-full-type</param-name>
+            <param-value>text/html</param-value>
+        </init-param>
+        <init-param>
             <param-name>papyri.info-solr</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeSolr.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-solr-type</param-name>
+            <param-value>text/html</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-solr-type</param-name>
@@ -209,7 +217,7 @@
         </init-param>
         <init-param>
           <param-name>standoff-apparatus-type</param-name>
-          <param-value>application/xml</param-value>
+          <param-value>application/xml+tei</param-value>
         </init-param>
     </servlet>
     <servlet>
