@@ -48,6 +48,7 @@ public class XSLTService extends HttpServlet {
     log = LoggerFactory.getLogger(this.getClass());
     Enumeration<String> names = config.getInitParameterNames();
     xslts = new HashMap<String, XsltExecutable>();
+    resultTypes = new HashMap<String, String>();
     while (names.hasMoreElements()) {
       String name = names.nextElement();
       if (name.contains("-type")) {
