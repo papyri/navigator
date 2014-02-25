@@ -160,6 +160,10 @@
         <servlet-name>XSLTService</servlet-name>
         <servlet-class>info.papyri.dispatch.XSLTService</servlet-class>
         <init-param>
+            <param-name>xmlPath</param-name>
+            <param-value>/srv/data/papyri.info/idp.data</param-value>
+        </init-param> 
+        <init-param>
             <param-name>epidoc</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
         </init-param>
