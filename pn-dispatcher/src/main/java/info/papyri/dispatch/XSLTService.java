@@ -69,7 +69,6 @@ public class XSLTService extends HttpServlet {
         }
       }
     }
-
   }
 
   /** 
