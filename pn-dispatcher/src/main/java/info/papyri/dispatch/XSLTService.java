@@ -81,12 +81,12 @@ public class XSLTService extends HttpServlet {
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
-    PrintWriter out = response.getWriter();
+    PrintWriter out;
     if ("GET".equals(request.getMethod())) {
       if (request.getParameter("doc") != null) {
+        response.setContentType(resultTypes.get(request.getParameter("xsl") + "-type") + ";charset=UTF-8");
+        out = response.getWriter();
         try {
-          out = response.getWriter();
-          response.setContentType(resultTypes.get(request.getParameter("xsl") + "-type") + ";charset=UTF-8");
           XsltTransformer xslt = xslts.get(request.getParameter("xsl")).load();
           if (request.getParameter("coll") != null) {
             xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
@@ -101,6 +101,7 @@ public class XSLTService extends HttpServlet {
         }
       } else {
         response.setContentType("application/json");
+        out = response.getWriter();
         if(request.getParameter("jsonp") != null) {
           out.print(request.getParameter("jsonp"));
           out.print("(");
@@ -121,8 +122,9 @@ public class XSLTService extends HttpServlet {
         out.close();
       }
     } else {
+      response.setContentType(resultTypes.get(request.getParameter("xsl") + "-type") + ";charset=UTF-8");
+      out = response.getWriter();
       try {
-        response.setContentType("text/html;charset=UTF-8");
         XsltTransformer xslt = xslts.get(request.getParameter("xsl")).load();
         if (request.getParameter("coll") != null) {
           xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
