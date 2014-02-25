@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,7 +88,7 @@ public class XSLTService extends HttpServlet {
               xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
             }
             URL doc = new URL(request.getParameter("doc"));
-            xslt.setSource(new StreamSource(doc.openStream()));
+            xslt.setSource(new StreamSource(new InputStreamReader(doc.openStream(), Charset.forName("UTF-8"))));
             xslt.setDestination(new Serializer(response.getWriter()));
             xslt.transform();
           } catch (Exception e) {
