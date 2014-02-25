@@ -217,7 +217,7 @@
         </init-param>
         <init-param>
           <param-name>standoff-apparatus-type</param-name>
-          <param-value>application/xml+tei</param-value>
+          <param-value>application/xml</param-value>
         </init-param>
     </servlet>
     <servlet>
