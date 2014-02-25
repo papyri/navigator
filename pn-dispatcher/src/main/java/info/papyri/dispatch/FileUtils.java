@@ -30,6 +30,15 @@ public class FileUtils {
     this.xmlPath = xmlPath;
     this.htmlPath = htmlPath;
   }
+  
+  /*
+   * Constructor for cases where only XML file resolution will be needed. 
+   * NOTE: methods dealing with HTML files will throw a NullPointerException
+   * @param xmlPath the root path where the XML sources are to be found
+   */
+  public FileUtils(String xmlPath) {
+    this.xmlPath = xmlPath;
+  }
 
   private char[] buffer = new char[8192];
   private static Logger logger = Logger.getLogger("pn-dispatch");

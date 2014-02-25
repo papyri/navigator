@@ -42,17 +42,20 @@ public class XSLTService extends HttpServlet {
 
   private HashMap<String, XsltExecutable> xslts;
   private HashMap<String, String> resultTypes;
+  private FileUtils util;
   private Processor processor = new Processor(false);
   private Logger log;
 
   @Override
   public void init(ServletConfig config) {
     log = LoggerFactory.getLogger(this.getClass());
+    util = new FileUtils(config.getInitParameter("xmlPath"));
     Enumeration<String> names = config.getInitParameterNames();
     xslts = new HashMap<String, XsltExecutable>();
     resultTypes = new HashMap<String, String>();
     while (names.hasMoreElements()) {
       String name = names.nextElement();
+      if (name.contains("Path")) continue;
       if (name.contains("-type")) {
         resultTypes.put(name, config.getInitParameter(name));
       } else {
@@ -78,60 +81,61 @@ public class XSLTService extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     PrintWriter out = response.getWriter();
-    try {
-      if ("GET".equals(request.getMethod())) {
-        if (request.getParameter("doc") != null) {
-          try {
-            response.setContentType(resultTypes.get(request.getParameter("xsl") + "-type") + ";charset=UTF-8");
-            XsltTransformer xslt = xslts.get(request.getParameter("xsl")).load();
-            if (request.getParameter("coll") != null) {
-              xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
-            }
-            URL doc = new URL(request.getParameter("doc"));
-            xslt.setSource(new StreamSource(new InputStreamReader(doc.openStream(), Charset.forName("UTF-8"))));
-            xslt.setDestination(new Serializer(response.getWriter()));
-            xslt.transform();
-          } catch (Exception e) {
-            log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
-          }
-        } else {
-          response.setContentType("application/json");
-          if(request.getParameter("jsonp") != null) {
-            out.print(request.getParameter("jsonp"));
-            out.print("(");
-          }
-          out.print("{\"xslts\":[");
-          Iterator<String> itr = xslts.keySet().iterator();
-          while (itr.hasNext()) {
-            String key = itr.next();
-            out.print("\""+key+"\"");
-            if (itr.hasNext()) {
-              out.print(",");
-            }
-          }
-          out.print("]}");
-          if(request.getParameter("jsonp") != null) {
-            out.print(")");
-          }
-        }
-      } else {
+    if ("GET".equals(request.getMethod())) {
+      if (request.getParameter("doc") != null) {
         try {
-          response.setContentType("text/html;charset=UTF-8");
+          out = response.getWriter();
+          response.setContentType(resultTypes.get(request.getParameter("xsl") + "-type") + ";charset=UTF-8");
           XsltTransformer xslt = xslts.get(request.getParameter("xsl")).load();
           if (request.getParameter("coll") != null) {
             xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
           }
-          xslt.setSource(new StreamSource(request.getReader()));
-          xslt.setDestination(new Serializer(response.getWriter()));
+          xslt.setSource(new StreamSource(util.getXmlFileFromId(request.getParameter("doc"))));
+          xslt.setDestination(new Serializer(out));
           xslt.transform();
         } catch (Exception e) {
           log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
+        } finally {
+          out.close();
         }
+      } else {
+        response.setContentType("application/json");
+        if(request.getParameter("jsonp") != null) {
+          out.print(request.getParameter("jsonp"));
+          out.print("(");
+        }
+        out.print("{\"xslts\":[");
+        Iterator<String> itr = xslts.keySet().iterator();
+        while (itr.hasNext()) {
+          String key = itr.next();
+          out.print("\""+key+"\"");
+          if (itr.hasNext()) {
+            out.print(",");
+          }
+        }
+        out.print("]}");
+        if(request.getParameter("jsonp") != null) {
+          out.print(")");
+        }
+        out.close();
       }
-    } finally {
-      out.close();
+    } else {
+      try {
+        response.setContentType("text/html;charset=UTF-8");
+        XsltTransformer xslt = xslts.get(request.getParameter("xsl")).load();
+        if (request.getParameter("coll") != null) {
+          xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
+        }
+        xslt.setSource(new StreamSource(request.getReader()));
+        xslt.setDestination(new Serializer(out));
+        xslt.transform();
+      } catch (Exception e) {
+        log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
+      } finally {
+        out.close();
+      }
     }
-  }
+  } 
 
   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
   /** 
