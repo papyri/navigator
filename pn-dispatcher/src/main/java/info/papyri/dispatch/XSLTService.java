@@ -14,12 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
-import java.io.BufferedReader;
+import java.net.URL;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
@@ -41,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class XSLTService extends HttpServlet {
 
   private HashMap<String, XsltExecutable> xslts;
+  private HashMap<String, String> resultTypes;
   private Processor processor = new Processor(false);
   private Logger log;
 
@@ -51,12 +50,16 @@ public class XSLTService extends HttpServlet {
     xslts = new HashMap<String, XsltExecutable>();
     while (names.hasMoreElements()) {
       String name = names.nextElement();
-      try {
-        XsltCompiler compiler = processor.newXsltCompiler();
-        XsltExecutable xslt = compiler.compile(new StreamSource(new File(config.getInitParameter(name))));
-        xslts.put(name, xslt);
-      } catch (SaxonApiException e) {
-        log.error("Failed to compile "+name+".", e);
+      if (name.contains("-type")) {
+        resultTypes.put(name, config.getInitParameter(name));
+      } else {
+        try {
+          XsltCompiler compiler = processor.newXsltCompiler();
+          XsltExecutable xslt = compiler.compile(new StreamSource(new File(config.getInitParameter(name))));
+          xslts.put(name, xslt);
+        } catch (SaxonApiException e) {
+          log.error("Failed to compile "+name+".", e);
+        }
       }
     }
 
@@ -74,23 +77,39 @@ public class XSLTService extends HttpServlet {
     PrintWriter out = response.getWriter();
     try {
       if ("GET".equals(request.getMethod())) {
-        response.setContentType("application/json");
-        if(request.getParameter("jsonp") != null) {
-          out.print(request.getParameter("jsonp"));
-          out.print("(");
-        }
-        out.print("{\"xslts\":[");
-        Iterator<String> itr = xslts.keySet().iterator();
-        while (itr.hasNext()) {
-          String key = itr.next();
-          out.print("\""+key+"\"");
-          if (itr.hasNext()) {
-            out.print(",");
+        if (request.getParameter("doc") != null) {
+          try {
+            response.setContentType(resultTypes.get(request.getParameter("xsl") + "-type") + ";charset=UTF-8");
+            XsltTransformer xslt = xslts.get(request.getParameter("xsl")).load();
+            if (request.getParameter("coll") != null) {
+              xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
+            }
+            URL doc = new URL(request.getParameter("doc"));
+            xslt.setSource(new StreamSource(doc.openStream()));
+            xslt.setDestination(new Serializer(response.getWriter()));
+            xslt.transform();
+          } catch (Exception e) {
+            log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
           }
-        }
-        out.print("]}");
-        if(request.getParameter("jsonp") != null) {
-          out.print(")");
+        } else {
+          response.setContentType("application/json");
+          if(request.getParameter("jsonp") != null) {
+            out.print(request.getParameter("jsonp"));
+            out.print("(");
+          }
+          out.print("{\"xslts\":[");
+          Iterator<String> itr = xslts.keySet().iterator();
+          while (itr.hasNext()) {
+            String key = itr.next();
+            out.print("\""+key+"\"");
+            if (itr.hasNext()) {
+              out.print(",");
+            }
+          }
+          out.print("]}");
+          if(request.getParameter("jsonp") != null) {
+            out.print(")");
+          }
         }
       } else {
         try {

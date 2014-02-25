@@ -164,20 +164,48 @@
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
         </init-param>
         <init-param>
+            <param-name>epidoc-type</param-name>
+            <param-value>text/html</param-value>
+        </init-param>
+        <init-param>
             <param-name>papyri.info-full</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/RDF2HTML.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-full-type</param-name>
+            <param-value>text/html</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-solr</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/RDF2Solr.xsl</param-value>
         </init-param>
         <init-param>
+            <param-name>papyri.info-solr-type</param-name>
+            <param-value>text/html</param-value>
+        </init-param>
+        <init-param>
             <param-name>papyri.info-text</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeText.xsl</param-value>
         </init-param>
         <init-param>
+            <param-name>papyri.info-text-type</param-name>
+            <param-value>text/plain</param-value>
+        </init-param>
+        <init-param>
             <param-name>papyri.info-fragment</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeFragment.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-fragment-type</param-name>
+            <param-value>text/html</param-value>
+        </init-param>
+        <init-param>
+          <param-name>standoff-apparatus</param-name>
+          <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/standoff-apparatus.xsl</param-value>
+        </init-param>
+        <init-param>
+          <param-name>standoff-apparatus-type</param-name>
+          <param-value>application/xml+tei</param-value>
         </init-param>
     </servlet>
     <servlet>
