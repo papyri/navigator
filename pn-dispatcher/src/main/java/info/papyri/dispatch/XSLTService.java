@@ -58,6 +58,7 @@ public class XSLTService extends HttpServlet {
       if (name.contains("Path")) continue;
       if (name.contains("-type")) {
         resultTypes.put(name, config.getInitParameter(name));
+        log.info("Adding " + name + ": " + config.getInitParameter(name));
       } else {
         try {
           XsltCompiler compiler = processor.newXsltCompiler();
@@ -108,7 +109,7 @@ public class XSLTService extends HttpServlet {
         Iterator<String> itr = xslts.keySet().iterator();
         while (itr.hasNext()) {
           String key = itr.next();
-          out.print("\""+key+"\"");
+          out.print("{\""+key+"\": \""+resultTypes.get(key+"-type")+"\"}");
           if (itr.hasNext()) {
             out.print(",");
           }
