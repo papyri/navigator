@@ -12,6 +12,7 @@
   </doc>
   
   <xsl:template match="/">
+    <xsl:processing-instruction name="xml-stylesheet">type="text/xsl" href="/annotator/xslt/teibp.xsl"</xsl:processing-instruction>
     <xsl:choose>
       <xsl:when test="//t:div[@type='apparatus']">
         <xsl:apply-templates select="node()|comment()|processing-instruction()" mode="unmake-app"/>
