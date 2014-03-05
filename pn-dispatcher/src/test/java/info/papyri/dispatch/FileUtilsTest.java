@@ -29,8 +29,8 @@ public class FileUtilsTest extends TestCase {
     super.tearDown();
   }
   
-  private static String BASEDATA = "/srv/data/papyri.info/idp.data";
-  private static String BASEHTML = "/srv/data/papyri.info/pn/idp.html";
+  private static String BASEDATA = "/srv/data/papyri.info/idp.data/";
+  private static String BASEHTML = "/srv/data/papyri.info/pn/idp.html/";
 
   /**
    * Test of getHtmlFile method, of class FileUtils.
@@ -39,7 +39,7 @@ public class FileUtilsTest extends TestCase {
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    File expResult = new File(BASEHTML + "/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.html");
+    File expResult = new File(BASEHTML + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.html");
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
   }
@@ -48,7 +48,7 @@ public class FileUtilsTest extends TestCase {
     String collection = "biblio";
     String item = "1234";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    File expResult = new File(BASEHTML + "/biblio/2/1234.html");
+    File expResult = new File(BASEHTML + "biblio/2/1234.html");
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
   }
@@ -60,7 +60,7 @@ public class FileUtilsTest extends TestCase {
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    File expResult = new File(BASEHTML + "/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.txt");
+    File expResult = new File(BASEHTML + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.txt");
     File result = instance.getTextFile(collection, item);
     assertEquals(expResult, result);
   }
@@ -72,7 +72,7 @@ public class FileUtilsTest extends TestCase {
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    File expResult = new File(BASEDATA + "/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
+    File expResult = new File(BASEDATA + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
     File result = instance.getXmlFile(collection, item);
     assertEquals(expResult, result);
   }

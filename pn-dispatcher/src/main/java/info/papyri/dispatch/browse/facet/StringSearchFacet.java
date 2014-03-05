@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
@@ -2791,8 +2792,7 @@ public class StringSearchFacet extends Facet{
          * @throws InternalQueryException 
          */
         
-        String expandLemma(String declinedForm) throws InternalQueryException{
-            
+        String expandLemma(String declinedForm) throws InternalQueryException {
            
            try{
                if(Character.toString(declinedForm.charAt(declinedForm.length() - 1)).equals("σ")){
@@ -2819,11 +2819,10 @@ public class StringSearchFacet extends Facet{
                declinedForm = "(" + declinedForm + ")";
                return declinedForm;
            
-           }
-           catch(Exception e){
-               
+           } catch (SolrServerException sse) {
+             throw new InternalQueryException("Unable to connect to server.");
+           } catch (Exception e){
                throw new InternalQueryException();
-               
            }
            
        }

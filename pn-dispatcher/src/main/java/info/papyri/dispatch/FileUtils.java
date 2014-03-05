@@ -57,7 +57,7 @@ public class FileUtils {
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if (parts.length == 2) {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          return new File(pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
                   .append("/")
                   .append(parts[0])
@@ -65,7 +65,7 @@ public class FileUtils {
                   .append(parts[1])
                   .append("/index.html").toString());
         } else if ("".equals(parts[1])) {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          return new File(pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
                   .append("/")
                   .append(parts[0])
@@ -73,7 +73,7 @@ public class FileUtils {
                   .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B"))
                   .append(".html").toString());
         } else {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          return new File(pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
                   .append("/")
                   .append(parts[0])
@@ -89,35 +89,35 @@ public class FileUtils {
         }
       } else {
         if ("".equals(item)) {
-          return new File(pathname.append("/DDB_EpiDoc_XML/index.html").toString());
+          return new File(pathname.append("DDB_EpiDoc_XML/index.html").toString());
         } else {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          return new File(pathname.append("DDB_EpiDoc_XML/")
                   .append(item)
                   .append("/index.html").toString());
         }
       }
     } else if ("hgv".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
-        return new File(pathname.append("/HGV_meta_EpiDoc/HGV")
+        return new File(pathname.append("HGV_meta_EpiDoc/HGV")
                 .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
                 .append(".html").toString());
       } else {
         if ("".equals(item)) {
-          return new File(pathname.append("/HGV_meta_EpiDoc/index.html").toString());
+          return new File(pathname.append("HGV_meta_EpiDoc/index.html").toString());
         } else {
-          return new File(pathname.append("/HGV_meta_EpiDoc/")
+          return new File(pathname.append("HGV_meta_EpiDoc/")
                   .append(item)
                   .append("/index.html").toString());
         }
       }
     } else if ("apis".equals(collection)) {
       if ("".equals(item)) {
-        return new File(pathname.append("/APIS/index.html").toString());
+        return new File(pathname.append("APIS/index.html").toString());
       } else if (item.contains(".")) {
         String[] parts = item.split("\\.");
-        return new File(pathname.append("/APIS/")
+        return new File(pathname.append("APIS/")
                 .append(parts[0])
                 .append("/")
                 .append(parts[0])
@@ -125,12 +125,12 @@ public class FileUtils {
                 .append(parts[2])
                 .append(".html").toString());
       } else {
-        return new File(pathname.append("/APIS/")
+        return new File(pathname.append("APIS/")
                 .append(item)
                 .append("/index.html").toString());
       }
     } else if ("biblio".equals(collection)) {
-      return new File(pathname.append("/biblio/")
+      return new File(pathname.append("biblio/")
               .append((int)Math.ceil(Double.parseDouble(item) / 1000))
               .append("/")
               .append(item)
@@ -153,7 +153,7 @@ public class FileUtils {
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if ("".equals(parts[1])) {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          return new File(pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
                   .append("/")
                   .append(parts[0])
@@ -161,7 +161,7 @@ public class FileUtils {
                   .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "%2B").replace("+", "%2B"))
                   .append(".txt").toString());
         } else {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          return new File(pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
                   .append("/")
                   .append(parts[0])
@@ -178,7 +178,7 @@ public class FileUtils {
       }
     } else if ("hgv".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
-        return new File(pathname.append("/HGV_meta_EpiDoc/HGV")
+        return new File(pathname.append("HGV_meta_EpiDoc/HGV")
                 .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
@@ -187,7 +187,7 @@ public class FileUtils {
     } else if ("apis".equals(collection)) {
       if (item.contains(".")) {
         String[] parts = item.split("\\.");
-        return new File(pathname.append("/APIS/")
+        return new File(pathname.append("APIS/")
                 .append(parts[0])
                 .append("/")
                 .append(parts[0])
@@ -207,6 +207,14 @@ public class FileUtils {
    * @return the XML file
    */
   public File getXmlFile(String collection, String item) {
+    return new File(getXmlFilePath(collection, item));
+  }
+  
+  public String getXmlFilePathFromId(String id) {
+     return this.getXmlFilePath(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+  }
+  
+  public String getXmlFilePath(String collection, String item) {
     StringBuilder pathname = new StringBuilder();
     pathname.append(xmlPath);
     if ("ddbdp".equals(collection)) {
@@ -216,14 +224,14 @@ public class FileUtils {
           return null;
         }
         if ("".equals(parts[1])) {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0]).append("/")
                   .append(parts[0])
                   .append(".")
                   .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+"))
-                  .append(".xml").toString());
+                  .append(".xml").toString();
         } else {
-          return new File(pathname.append("/DDB_EpiDoc_XML/")
+          pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
                   .append("/")
                   .append(parts[0])
@@ -234,38 +242,44 @@ public class FileUtils {
                   .append(".")
                   .append(parts[1])
                   .append(".")
-                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+")) + ".xml");
+                  .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+"))
+                  .append(".xml");
         }
       }
+      return pathname.toString();
     } else if ("hgv".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
-        return new File(pathname.append("/HGV_meta_EpiDoc/HGV")
+        pathname.append("HGV_meta_EpiDoc/HGV")
                 .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
-                .append(".xml").toString());
+                .append(".xml").toString();
       }
+      return pathname.toString();
     } else if ("hgvtrans".equals(collection)) {
-      return new File(pathname.append("/HGV_trans_EpiDoc/")
+      pathname.append("HGV_trans_EpiDoc/")
               .append(item)
-              .append(".xml").toString());
+              .append(".xml").toString();
+      return pathname.toString();
     } else if ("apis".equals(collection)) {
       if (item.contains(".")) {
         String[] parts = item.split("\\.");
-        return new File(pathname.append("/APIS/")
+        pathname.append("APIS/")
                 .append(parts[0])
                 .append("/xml/")
                 .append(parts[0])
                 .append(".apis.")
                 .append(parts[2])
-                .append(".xml").toString());
+                .append(".xml").toString();
       }
+      return pathname.toString();
     }  else if ("biblio".equals(collection)) {
-      return new File(pathname.append("/Biblio/")
+      pathname.append("biblio/")
               .append((int)Math.ceil(Double.parseDouble(item) / 1000))
               .append("/")
               .append(item)
-              .append(".xml").toString());
+              .append(".xml").toString();
+      return pathname.toString();
     }
     return null;
   }

@@ -21,11 +21,11 @@
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/srv/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data/</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -33,11 +33,11 @@
         <servlet-class>info.papyri.dispatch.Reader</servlet-class>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/srv/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data/</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
@@ -73,7 +73,7 @@
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
@@ -105,7 +105,7 @@
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
         <init-param>
             <param-name>sparqlGraph</param-name>
@@ -137,11 +137,11 @@
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/srv/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data/</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -161,7 +161,7 @@
         <servlet-class>info.papyri.dispatch.XSLTService</servlet-class>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/srv/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data/</param-value>
         </init-param> 
         <init-param>
             <param-name>epidoc</param-name>
@@ -217,12 +217,20 @@
         <servlet-class>info.papyri.dispatch.CTSServlet</servlet-class>
         <init-param>
             <param-name>xmlPath</param-name>
-            <param-value>/srv/data/papyri.info/idp.data</param-value>
+            <param-value>/srv/data/papyri.info/idp.data/</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
-            <param-value>/srv/data/papyri.info/pn/idp.html</param-value>
+            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
+    </servlet>
+    <servlet>
+      <servlet-name>GitAPI</servlet-name>
+      <servlet-class>info.papyri.dispatch.GitAPI</servlet-class>
+      <init-param>
+        <param-name>repository</param-name>
+        <param-value>/srv/data/papyri.info/idp.data/.git</param-value>
+      </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
@@ -259,6 +267,10 @@
     <servlet-mapping>
         <servlet-name>CTSServlet</servlet-name>
         <url-pattern>/CTSServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>XSLTServlet</servlet-name>
+        <url-pattern>/epidocinator</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

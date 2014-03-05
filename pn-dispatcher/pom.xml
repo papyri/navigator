@@ -30,6 +30,11 @@
       <url>http://snapshots.maven.codehaus.org/maven2</url>
       <layout>default</layout>
     </repository>
+    <repository>
+      <id>eclipse</id>
+      <name>jgit-repository</name>
+      <url>https://repo.eclipse.org/content/groups/releases/</url>
+    </repository>
     <!--
     <repository> 
       <id>solr-trunk</id> 
@@ -54,6 +59,11 @@
 <artifactId>lucene-queryparser</artifactId>
 <version>3.4.0</version>
 </dependency>-->
+    <dependency>
+      <groupId>org.pegdown</groupId>
+      <artifactId>pegdown</artifactId>
+      <version>1.4.2</version>
+    </dependency>
     <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-web-api</artifactId>
@@ -111,9 +121,9 @@
       <version>9.4.0.3</version>
     </dependency>
     <dependency>
-      <groupId>org.pegdown</groupId>
-      <artifactId>pegdown</artifactId>
-      <version>1.4.1</version>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>3.3.0.201403021825-r</version>
     </dependency>
     <!-- Test Dependencies -->
     <dependency>
