@@ -4,7 +4,6 @@
  */
 package info.papyri.dispatch;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,13 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import javax.servlet.ServletConfig;
 import org.apache.log4j.Logger;
-import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.errors.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
@@ -60,7 +57,7 @@ public class GitAPI extends HttpServlet {
     try {
       out.println("{");
       out.print("\"sha\": \"");
-      out.print(git.getCommitSHA(path));
+      out.print(git.getLastCommitSHA(path));
       out.println("\"");
       out.println("}");
     } catch (Exception e) {
@@ -81,17 +78,17 @@ public class GitAPI extends HttpServlet {
       }
     }
     
-    public RevCommit getCommit(String file)
+    public RevCommit getLastCommit(String file)
             throws AmbiguousObjectException, MissingObjectException,
             IncorrectObjectTypeException, IOException, GitAPIException {
       Iterable<RevCommit> commits = git.log().add(repo.resolve(Constants.HEAD)).addPath(file).setMaxCount(1).call();
       return commits.iterator().next();
     }
     
-    public String getCommitSHA(String file)
+    public String getLastCommitSHA(String file)
             throws AmbiguousObjectException, MissingObjectException,
             IncorrectObjectTypeException, IOException, GitAPIException {
-      return getCommit(file).name();
+      return getLastCommit(file).name();
     }
     
     private Repository repo;

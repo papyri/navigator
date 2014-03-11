@@ -624,7 +624,7 @@ gap[reason=lost][unit=character]:before {
  * <gap reason="lost" quantity="?" unit="character"/>
  */
 gap[reason=lost][unit=character][quantity]:after {
-  content: ']';
+  content: attr(data-content) ']';
 }
 /*
  * <gap reason="lost" extent="unknown" unit="character"/>
@@ -2012,4 +2012,21 @@ width: 330px;
 .head-font {
   font-family: Arvo, sans-serif;
   font-weight: normal;
+}
+
+/* Annotations */
+div.ann-widget {
+  position: absolute;
+  top: 200px;
+  right: 200px;
+  border: thin solid gray;
+  padding: 0.5em;
+}
+div.ann-widget h3 {
+  margin: 0;
+}
+span.close-widget {
+  cursor: pointer;
+  font-size: 70%;
+  float:right;
 }

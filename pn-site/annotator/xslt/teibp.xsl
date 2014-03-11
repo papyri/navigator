@@ -66,6 +66,8 @@
 				</div>
 			  	<script type="text/javascript" src="/annotator/js/xpointer.js"/>
         	<script type="text/javascript" src="/annotator/js/generator.js"/>
+        	<script type="text/javascript" src="/annotator/js/uuid.js"/>
+        	<script type="text/javascript" src="/annotator/js/annotate.js"/>
         	<script type="text/javascript" src="/annotator/js/epidoc.js"/>
 			</body>
 		</html>

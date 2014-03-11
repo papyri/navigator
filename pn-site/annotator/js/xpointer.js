@@ -275,7 +275,7 @@ var XPointer = {
     if (contextNode.childNodes.length == 0 || contextNode.localName == "lb") {
       var following = [];
       var currNode = contextNode.nextSibling;
-      while (currNode && currNode.localName != "lb") {
+      while (currNode && following.length < 100) {
         following.push(jQuery(currNode).text());
         currNode = currNode.nextSibling;
       }

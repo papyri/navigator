@@ -1,8 +1,10 @@
 /*
- *  Dependency: uuid.js from https://github.com/broofa/node-uuid
+ *  Dependencies:   uuid.js from https://github.com/broofa/node-uuid
+ *                  $
+ *                  generator.js
  */
 
-var oa-context = {
+var OAContext = {
   "oa" :     "http://www.w3.org/ns/oa#",
   "cnt" :    "http://www.w3.org/2011/content#",
   "dc" :     "http://purl.org/dc/elements/1.1/",
@@ -52,16 +54,15 @@ var oa-context = {
 };
 
 var Annotator = {
-  template: ,
-  user: null,
-  create: function(body, xpointer, version, motivation) {
+  create: function(body, xpointer, version, user, motivation) {
     var buffer = new Array(64);
     uuid.v1(null,buffer,0);
     uuid.v1(null,buffer,16);
     uuid.v1(null,buffer,32);
+    uuid.v1(null,buffer,48);
     var annotation = {
-      "@context": oa-context,
-      "@id": (window.location.href + uuri.unparse(buffer, 0)),
+      "@context": OAContext,
+      "@id": (uuid.unparse(buffer, 0)),
       "@type": "oa:Annotation",
       "hasBody": {
         "@id": "urn:uuid:" + uuid.unparse(buffer, 16),
@@ -82,12 +83,43 @@ var Annotator = {
           "@type": "dctypes:Text",
           "version" : version
         },
+        "annotatedBy": user,
         "motivatedBy": motivation
       }
     };
     return annotation;
   }, 
-  create: function(xpointer) {
+  openWidget: function(user) {
+    if (user != null) {
+      var version;
+      $.getJSON(window.location.pathname.replace("/annotate","/version"), function(data) {
+        version = data["sha"];
+      });
+      $("body").append(
+        '<div class="ann-widget">' +
+          '<h3>Annotation <span class="close-widget">close</span></h3>' +
+          '<form>' +
+            '<input type="hidden" name="target" value="' + Generator.xpointer() + '" id="target">' +
+            '<select name="motivation" id="motivation">' +
+              '<option value="editing" selected>edit</option>' +
+              '<option value="commenting">comment</option>' +
+            '</select><br>' +
+            '<textarea name="body" id="body"></textarea><br>' +
+            '<input type="button" value="save" name="save">' +
+          '</form>' +
+        '</div>');
+      $("span.close-widget").click(Annotator.closeWidget);
+      $("input[name=save]").click({"version": version, "user":user}, Annotator.save);
+    } else {
+      alert("You must be logged in to annotate.");
+    }
+  },
+  closeWidget: function() {
+    $(".ann-widget").remove();
+  },
+  save: function(version, user) {
+    console.log(JSON.stringify(Annotator.create($("#body").val(), $("#target").val(), version, user, $("#motivation").val())));
+  }
     //set the target based on the current URL + xpointer
     //show a form for the user to fill in the body
     //set the body based on the form contents
@@ -97,10 +129,5 @@ var Annotator = {
     //  otherwise, oa:editing -- we might subclass that as insertion or change, but in general
     //    an xpointer resolving to a point + a text body == an insertion, a sequence +
     //    an empty string body == a deletion, a sequence + a non-empty string body == a change
-  },
-  id: null,
-  type: null,
-  target: null,
-  body: null,
-  motivation: null
+
 };

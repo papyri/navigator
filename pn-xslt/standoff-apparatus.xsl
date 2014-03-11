@@ -45,7 +45,7 @@
   </xsl:template>
   
   <xsl:template match="t:lem|t:orig|t:sic|t:add" mode="make-app">
-    <xsl:apply-templates/>
+    <xsl:apply-templates mode="make-app"/>
   </xsl:template>
   
   <xsl:template match="t:hi[@rend = 'diaeresis']" mode="make-app">

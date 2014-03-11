@@ -40,13 +40,13 @@
 (def graph "http://papyri.info/graph")
 (def param (ref nil))
 ;; NOTE hard-coded file and directory locations
-(def xslts {"DDB_EpiDoc_XML" "/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
-      "HGV_meta_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
-      "APIS" "/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
-      "HGV_trans_EpiDoc" "/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl",
-      "Biblio" "/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
-(def idproot "/data/papyri.info/idp.data")
-(def ddbroot "/data/papyri.info/idp.data/DDB_EpiDoc_XML")
+(def xslts {"DDB_EpiDoc_XML" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
+      "HGV_meta_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
+      "APIS" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
+      "HGV_trans_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl",
+      "Biblio" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
+(def idproot "/srv/data/papyri.info/idp.data")
+(def ddbroot "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML")
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
@@ -201,7 +201,7 @@
 (defn -insertPelagiosAnnotations
   [url]
   (if-not (nil? url)
-    (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
+    (let [dga (DatasetGraphAccessorHTTP. (str server "/srv/data"))
           adapter (DatasetAdapter. dga)
           model (ModelFactory/createDefaultModel)
           pi-uri (str/replace url "/source" "/original")

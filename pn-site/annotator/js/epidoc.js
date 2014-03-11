@@ -1,3 +1,18 @@
+/**
+ *  Dependencies:   jQuery
+ *                  xpointer.js
+ *                  generator.js
+ *                  annotate.js
+ */
+
+//Query and set up user URI
+var user;
+$.getJSON(window.location.origin + "/editor/user/info", function(data) {
+  if (data["name"]) {
+    user = window.location.origin + "/editor/users" + encodeURIComponent(data["name"]);
+  }
+});
+
 jQuery(window).load(function() {
   if (window.location.hash) {
     var p = XPointer.parsePointer(window.location.hash);
@@ -16,13 +31,16 @@ jQuery(window).on("hashchange", function(e) {
  });
 jQuery("text").click(function(e) {
   Generator.clear();
+  Annotator.closeWidget();
   var xpointer = Generator.xpointer();
   Generator.select(XPointer.resolve(XPointer.parsePointer(xpointer)));
+  Annotator.openWidget(user);
 });
 jQuery("lb").click(function(e) {
   Generator.clear();
   var xpointer = Generator.xpointer(e.currentTarget);
   Generator.select(XPointer.resolve(XPointer.parsePointer(xpointer)));
+  Annotator.openWidget(user);
 });
 
 //Pad gaps appropriately
