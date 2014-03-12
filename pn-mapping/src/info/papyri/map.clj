@@ -192,7 +192,7 @@
 
 (defn -loadFile
   [f]
-  (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
+  (let [dga (DatasetGraphAccessorHTTP. (str server "/srv/data"))
         adapter (DatasetAdapter. dga)
         model (ModelFactory/createDefaultModel)]
     (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
