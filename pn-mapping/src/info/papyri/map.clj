@@ -196,7 +196,13 @@
         adapter (DatasetAdapter. dga)
         model (ModelFactory/createDefaultModel)]
     (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
-    (.add adapter graph model)))
+    (try
+      (.add adapter graph model)
+      (catch Exception e
+        (println *err*)
+        (Thread/sleep 1000)
+        (-loadFile f)))))
+    
 
 (defn -insertPelagiosAnnotations
   [url]
