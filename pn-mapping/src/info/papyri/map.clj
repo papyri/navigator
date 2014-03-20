@@ -201,7 +201,7 @@
       (catch Exception e
         (println *err*)
         (Thread/sleep 1000)
-        (-loadFile f)))))
+        (.add adapter graph model)))))
     
 
 (defn -insertPelagiosAnnotations
