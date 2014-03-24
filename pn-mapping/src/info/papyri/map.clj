@@ -199,7 +199,7 @@
     (try
       (.add adapter graph model)
       (catch Exception e
-        (println *err*)
+        (.printStackTrace *err*)
         (Thread/sleep 1000)
         (.add adapter graph model)))))
     
