@@ -199,9 +199,13 @@
     (try
       (.add adapter graph model)
       (catch Exception e
+        (println (str "Error loading file: " f " ...trying again."))
         (.printStackTrace *err*)
         (Thread/sleep 1000)
-        (.add adapter graph model)))))
+        (try 
+          (.add adapter graph model)
+          (catch Exception ex
+            (println "Failed to load file.")))))))
     
 
 (defn -insertPelagiosAnnotations
