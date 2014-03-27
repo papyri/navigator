@@ -192,16 +192,21 @@
 
 (defn -loadFile
   [f]
-  (let [dga (DatasetGraphAccessorHTTP. (str server "/srv/data"))
+  (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
         adapter (DatasetAdapter. dga)
         model (ModelFactory/createDefaultModel)]
     (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
-    (.add adapter graph model)))
+    (try
+       (.add adapter graph model)
+       (catch Exception e
+         (println *err*)
+         (Thread/sleep 1000)
+         (.add adapter graph model)))))
 
 (defn -insertPelagiosAnnotations
   [url]
   (if-not (nil? url)
-    (let [dga (DatasetGraphAccessorHTTP. (str server "/srv/data"))
+    (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
           adapter (DatasetAdapter. dga)
           model (ModelFactory/createDefaultModel)
           pi-uri (str/replace url "/source" "/original")
