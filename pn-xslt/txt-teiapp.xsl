@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: txt-teiapp.xsl 1543 2011-08-31 15:47:37Z ryanfb $ -->
+<!-- $Id: txt-teiapp.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
                 version="2.0">
 
   <xsl:template match="t:app">
+      <xsl:param name="parm-apparatus-style" tunnel="yes" required="no"></xsl:param>
       <xsl:apply-templates/>
-      <xsl:if test="$apparatus-style = 'ddbdp'">
+      <xsl:if test="$parm-apparatus-style = 'ddbdp'">
       <!-- Found in txt-tpl-apparatus -->
       <xsl:call-template name="app-link">
             <xsl:with-param name="location" select="'text'"/>
@@ -16,8 +17,9 @@
 
 
   <xsl:template match="t:rdg">
+      <xsl:param name="parm-edition-type" tunnel="yes" required="no"></xsl:param>
       <xsl:choose>
-         <xsl:when test="$edition-type = 'diplomatic'">
+          <xsl:when test="$parm-edition-type = 'diplomatic'">
             <xsl:choose>
                <xsl:when test="@resp='previous'"/>
                <xsl:when test="@resp='autopsy'">
@@ -49,7 +51,6 @@
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>
-
 
 
 </xsl:stylesheet>

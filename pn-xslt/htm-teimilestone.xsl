@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teimilestone.xsl 1556 2011-09-26 15:00:38Z gabrielbodard $ -->
+<!-- $Id: htm-teimilestone.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
    <!-- More specific templates in teimilestone.xsl -->
 
    <xsl:template match="t:milestone">
-      <xsl:choose>
+       <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
+       <xsl:choose>
          <xsl:when
-            test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and ancestor::t:div[@type = 'translation']">
+             test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch') and ancestor::t:div[@type = 'translation']">
             <xsl:if test="@rend = 'break'">
                <br/>
             </xsl:if>
@@ -19,7 +20,7 @@
             </sup>
             <xsl:text> </xsl:text>
          </xsl:when>
-         <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+           <xsl:when test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch')">
             <xsl:choose>
                <xsl:when test="@rend = 'wavy-line'">
                   <xsl:if test="not(parent::t:supplied)">

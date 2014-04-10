@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teig.xsl 1777 2012-06-27 16:23:48Z gabrielbodard $ -->
+<!-- $Id: htm-teig.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -8,21 +8,27 @@
   <xsl:import href="teig.xsl"/>
 
   <xsl:template match="t:g">
+      <xsl:param name="parm-edition-type" tunnel="yes" required="no"></xsl:param>
+      <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
       <xsl:call-template name="lb-dash"/>
       <xsl:call-template name="w-space"/>
     
      <xsl:choose>
-        <xsl:when test="starts-with($leiden-style, 'edh')"/>
-         <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+         <xsl:when test="starts-with($parm-leiden-style, 'edh')"/>
+         <xsl:when test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch')">
         <!-- Found in teig.xsl -->
         <xsl:call-template name="g-ddbdp"/>
          </xsl:when>
-        <xsl:when test="$leiden-style = 'london'">
+         <xsl:when test="$parm-leiden-style = 'london'">
            <xsl:call-template name="g-london"/>
-        </xsl:when><xsl:when test="$leiden-style = 'iospe'">
+         </xsl:when>
+         <xsl:when test="$parm-leiden-style = 'iospe'">
            <xsl:call-template name="g-iospe"/>
         </xsl:when>
-         <xsl:when test="$edition-type = 'diplomatic'">
+         <xsl:when test="$parm-leiden-style = 'rib'">
+             <xsl:call-template name="g-rib"/>
+         </xsl:when>
+         <xsl:when test="$parm-edition-type = 'diplomatic'">
             <xsl:text> </xsl:text>
             <em>
                <span class="smaller">
@@ -31,7 +37,7 @@
             </em>
             <xsl:text> </xsl:text>
          </xsl:when>
-        <xsl:when test="$leiden-style = 'dohnicht'">
+         <xsl:when test="$parm-leiden-style = 'dohnicht'">
            <xsl:text>⊂</xsl:text>
            <xsl:apply-imports/>
            <xsl:text>⊃</xsl:text>

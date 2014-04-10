@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teinum.xsl 1739 2012-01-12 18:00:42Z gabrielbodard $ -->
+<!-- $Id: htm-teinum.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -7,9 +7,10 @@
    <xsl:import href="teinum.xsl"/>
 
    <xsl:template match="t:num">
-      <xsl:choose>
+       <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
+       <xsl:choose>
          <xsl:when
-            test="$leiden-style=('ddbdp','sammelbuch') 
+             test="$parm-leiden-style=('ddbdp','sammelbuch') 
             and string(.)">
             <span>
                <xsl:attribute name="title">
@@ -45,7 +46,7 @@
             </span>
          </xsl:when>
          <xsl:when
-            test="$leiden-style = 'panciera' and
+             test="$parm-leiden-style = 'panciera' and
             ancestor::t:*[@xml:lang][1][@xml:lang = 'la']">
             <span class="latinnum">
                <xsl:apply-imports/>

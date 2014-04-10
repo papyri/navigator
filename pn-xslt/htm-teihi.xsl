@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teihi.xsl 1777 2012-06-27 16:23:48Z gabrielbodard $ -->
+<!-- $Id: htm-teihi.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="t" version="2.0">
@@ -7,7 +7,8 @@
    <xsl:import href="teihi.xsl"/>
 
    <xsl:template match="t:hi">
-      <xsl:choose>
+       <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
+       <xsl:choose>
          <!-- No html code needed for these -->
          <xsl:when
             test="@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'">
@@ -23,6 +24,15 @@
                </xsl:attribute>
                <xsl:value-of select="translate(., 'aeiou', 'áéíóú')"/>
             </xsl:element>
+         </xsl:when>
+         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+         <!-- @rend='caps'                                                       -->
+         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+         <xsl:when test="@rend='intraline'">
+             <xsl:element name="span">
+                 <xsl:attribute name="class">caps</xsl:attribute>
+                 <xsl:apply-templates/>
+             </xsl:element>
          </xsl:when>
          <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
          <!-- @rend='intraline'                                                  -->
@@ -48,7 +58,7 @@
          <xsl:when test="@rend='ligature'">
             <xsl:element name="span">
                <xsl:choose>
-                  <xsl:when test="$leiden-style=('petrae','iospe')">
+                  <xsl:when test="$parm-leiden-style=('petrae','iospe')">
                      <xsl:attribute name="class">petraeligature</xsl:attribute>
                   </xsl:when>
                   <xsl:otherwise>
@@ -67,6 +77,15 @@
                <xsl:attribute name="class">normal</xsl:attribute>
                <xsl:apply-templates/>
             </xsl:element>
+         </xsl:when>
+         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+         <!-- @rend='plain'                                                      -->
+         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+         <xsl:when test="@rend='plain'">
+             <xsl:element name="span">
+                 <xsl:attribute name="class">plain</xsl:attribute>
+                 <xsl:apply-templates/>
+             </xsl:element>
          </xsl:when>
          <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
          <!-- @rend='reversed'                                                   -->
@@ -101,7 +120,7 @@
          <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
          <xsl:when test="@rend='subscript'">
             <xsl:choose>
-               <xsl:when test="$leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch'">
+                <xsl:when test="$parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch'">
                   <span style="vertical-align:sub;">
                      <xsl:apply-imports/>
                   </span>
@@ -117,7 +136,7 @@
          <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
          <xsl:when test="@rend='superscript'">
             <xsl:choose>
-               <xsl:when test="$leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch'">
+                <xsl:when test="$parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch'">
                   <span style="vertical-align:super;">
                      <xsl:apply-imports/>
                   </span>

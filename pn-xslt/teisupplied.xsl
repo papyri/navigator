@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teisupplied.xsl 1978 2013-06-27 17:10:15Z gabrielbodard $ -->
+<!-- $Id: teisupplied.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:t="http://www.tei-c.org/ns/1.0" 
    xmlns:EDF="http://epidoc.sourceforge.net/ns/functions"
@@ -7,8 +7,10 @@
                 version="2.0">
 
   <xsl:template match="t:supplied[@reason='lost']">
-     <xsl:param name="location" />
-      <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and child::t:*[1][local-name() = 'milestone'][@rend = 'paragraphos']">
+      <xsl:param name="parm-edition-type" tunnel="yes" required="no"></xsl:param>
+      <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
+      <xsl:param name="location" />
+      <xsl:if test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch') and child::t:*[1][local-name() = 'milestone'][@rend = 'paragraphos']">
          <br/>
       </xsl:if>
       <xsl:choose>
@@ -25,7 +27,7 @@
         -->
             <xsl:text>[</xsl:text>
             <xsl:choose>
-               <xsl:when test="$edition-type = 'diplomatic'">
+                <xsl:when test="$parm-edition-type = 'diplomatic'">
                   <xsl:variable name="supplied-content">
                      <xsl:value-of select="descendant::text()"/>
                   </xsl:variable>
@@ -62,7 +64,7 @@
             <!-- function EDF:f-wwrap declared in htm-teilb.xsl; tests if lb break=no immediately follows supplied -->
             <xsl:if test="EDF:f-wwrap(.) = true()">
                <!-- unless this is in the app part of a choice/subst/app in ddbdp -->
-               <xsl:if test="(not($leiden-style='ddbdp' and (ancestor::t:*[local-name()=('reg','corr','rdg') or self::t:del[parent::t:subst]]))) and (not($location = 'apparatus'))">
+                <xsl:if test="(not($parm-leiden-style='ddbdp' and (ancestor::t:*[local-name()=('reg','corr','rdg') or self::t:del[parent::t:subst]]))) and (not($location = 'apparatus'))">
                   <xsl:text>-</xsl:text>
                </xsl:if>
             </xsl:if>
@@ -79,8 +81,9 @@
   
 
   <xsl:template match="t:supplied[@reason='omitted']">
+      <xsl:param name="parm-edition-type" tunnel="yes" required="no"></xsl:param>
       <xsl:choose>
-         <xsl:when test="$edition-type='diplomatic'"/>
+          <xsl:when test="$parm-edition-type='diplomatic'"/>
          <xsl:when test="@evidence = 'parallel'">
         <!-- Found in [htm|txt]-teisupplied.xsl -->
         <xsl:call-template name="supplied-parallel"/>
@@ -109,7 +112,7 @@
       <xsl:apply-templates/>
       <xsl:call-template name="cert-low"/>
       <xsl:text>)</xsl:text>
-   </xsl:template>
-   
-   
+  </xsl:template>
+
+
 </xsl:stylesheet>

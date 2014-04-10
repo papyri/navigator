@@ -129,6 +129,7 @@
                            <xsl:otherwise> gives </xsl:otherwise>
                         </xsl:choose> 
                         
+                        
                         <xsl:choose>
                            <xsl:when test="$childtype = 'subst'"><xsl:value-of select="normalize-space($part1)" />, then changed to <xsl:value-of select="normalize-space($part2)" /></xsl:when>
                            <xsl:when test="$childtype != ''"><xsl:value-of select="normalize-space($part2)" /><xsl:text>, </xsl:text><xsl:value-of select="normalize-space($part1)" /></xsl:when>

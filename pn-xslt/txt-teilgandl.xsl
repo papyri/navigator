@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: txt-teilgandl.xsl 1543 2011-08-31 15:47:37Z ryanfb $ -->
+<!-- $Id: txt-teilgandl.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
                 version="2.0">
@@ -12,12 +12,14 @@
 
 
   <xsl:template match="t:l">
+      <xsl:param name="parm-line-inc" tunnel="yes" required="no"></xsl:param>
+      <xsl:param name="parm-verse-lines" tunnel="yes" required="no"></xsl:param>
       <xsl:choose>
-         <xsl:when test="$verse-lines = 'yes'">
+          <xsl:when test="$parm-verse-lines = 'yes'">
             <xsl:text>
 &#xD;</xsl:text>
             <xsl:choose>
-               <xsl:when test="number(@n) and @n mod $line-inc = 0 and not(@n = 0)">
+                <xsl:when test="number(@n) and @n mod $parm-line-inc = 0 and not(@n = 0)">
                   <xsl:text>	</xsl:text>
                   <xsl:value-of select="@n"/>
                   <xsl:text>	</xsl:text>

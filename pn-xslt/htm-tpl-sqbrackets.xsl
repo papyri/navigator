@@ -10,7 +10,7 @@
             <xd:p></xd:p>
         </xd:desc>
     </xd:doc>
-            
+
     <xsl:template match="comment()" mode="sqbrackets">
         <xsl:sequence select="."/>
     </xsl:template>

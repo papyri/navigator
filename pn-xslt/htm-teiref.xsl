@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-teiref.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-teiref.xsl 1725 2012-01-10 16:08:31Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -20,7 +20,7 @@
         <xsl:call-template name="reprint-text">
                <xsl:with-param name="direction" select="'in'"/>
             </xsl:call-template>
-            </xsl:when>
+         </xsl:when>
          <xsl:when test="@type = 'Perseus'">
             <xsl:variable name="col" select="substring-before(@href, ';')"/>
             <xsl:variable name="vol" select="substring-before(substring-after(@href,';'),';')"/>
@@ -30,7 +30,9 @@
             </a>
          </xsl:when>
          <xsl:otherwise>
-            <a href="{@target}"><xsl:apply-templates/></a>
+            <a href="{@target}">
+               <xsl:apply-templates/>
+            </a>
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>

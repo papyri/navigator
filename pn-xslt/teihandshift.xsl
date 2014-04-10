@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: teihandshift.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: teihandshift.xsl 2090 2013-10-24 15:23:22Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
 
   <xsl:template match="t:handShift">
+      <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
       <xsl:choose>
-         <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+          <xsl:when test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch')">
             <xsl:text>(hand </xsl:text>
             <xsl:value-of select="substring-after(@new, 'm')"/>
             <xsl:if test="@cert='low'">

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-tpl-apparatus.xsl 1725 2012-01-10 16:08:31Z gabrielbodard $ -->
+<!-- $Id: htm-tpl-apparatus.xsl 2112 2014-01-21 12:49:07Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
@@ -23,7 +23,8 @@
             <xsl:for-each select="(.//t:choice | .//t:subst | .//t:app)[not(ancestor::t:*[local-name()=('choice','subst','app')])] |
                .//t:hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')][not(ancestor::t:*[local-name()=('orig','reg','sic','corr','lem','rdg') 
                or self::t:del[@rend='corrected'] 
-               or self::t:add[@place='inline']][1][local-name()=('reg','corr','del','rdg')])] |
+               or self::t:add[@place='inline']][1][local-name()=('reg','corr','rdg') 
+               or self::t:del[@rend='corrected']])] |
            .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
                
                <!-- Found in tpl-apparatus.xsl -->

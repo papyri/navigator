@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: htm-tpl-lang.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
+<!-- $Id: htm-tpl-structure.xsl 1434 2011-05-31 18:23:56Z gabrielbodard $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="t" 
                 version="2.0">
-  <!-- Contains all language related named templates -->  
+  <!-- Contains named templates for default file structure (aka "metadata" aka "supporting data") -->  
+   
+  <!-- Specific named templates for HGV, InsLib, RIB, IOSPE, EDH, etc. are found in:
+               htm-tpl-struct-hgv.xsl
+               htm-tpl-struct-inslib.xsl
+               htm-tpl-struct-rib.xsl
+               htm-tpl-struct-iospe.xsl
+               htm-tpl-struct-edh.xsl
+               etc.
+  -->
    
    <xsl:template name="london-structure">
       <xsl:call-template name="default-structure"/>
@@ -11,6 +20,7 @@
    
    
    <xsl:template name="hgv-structure">
+      <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
       <html>
          <head>
             <title>
@@ -33,7 +43,7 @@
          <body>
             
             <!-- Heading for a ddb style file -->
-            <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+            <xsl:if test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch')">
                <h1>
                   <xsl:choose>
                      <xsl:when test="//t:sourceDesc//t:bibl/text()">
@@ -57,11 +67,12 @@
    </xsl:template>
    
    <xsl:template name="default-structure">
+      <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
       <html>
          <head>
             <title>
                <xsl:choose>
-                  <xsl:when test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+                   <xsl:when test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch')">
                      <xsl:choose>
                         <xsl:when test="//t:sourceDesc//t:bibl/text()">
                            <xsl:value-of select="//t:sourceDesc//t:bibl"/>
@@ -94,8 +105,9 @@
    </xsl:template>
 
    <xsl:template name="default-body-structure">
-      <!-- Heading for a ddb style file -->
-      <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch')">
+       <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
+       <!-- Heading for a ddb style file -->
+       <xsl:if test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch')">
          <h1>
             <xsl:choose>
                <xsl:when test="//t:sourceDesc//t:bibl/text()">
@@ -106,13 +118,12 @@
                </xsl:otherwise>
             </xsl:choose>
          </h1>
-      </xsl:if>         
+      </xsl:if>
       
       <!-- Main text output -->
       <xsl:variable name="maintxt">
          <xsl:apply-templates/>
       </xsl:variable>
-      
       <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
       <xsl:apply-templates select="$maintxt" mode="sqbrackets"/>
       
