@@ -8,8 +8,8 @@
 //Query and set up user URI
 var user;
 $.getJSON(window.location.origin + "/editor/user/info", function(data) {
-  if (data["name"]) {
-    user = window.location.origin + "/editor/users" + encodeURIComponent(data["name"]);
+  if (data.user["name"]) {
+    user = window.location.origin + "/editor/users/" + encodeURIComponent(data.user["name"]);
   }
 });
 
@@ -31,7 +31,6 @@ jQuery(window).on("hashchange", function(e) {
  });
 jQuery("text").click(function(e) {
   Generator.clear();
-  Annotator.closeWidget();
   var xpointer = Generator.xpointer();
   Generator.select(XPointer.resolve(XPointer.parsePointer(xpointer)));
   Annotator.openWidget(user);

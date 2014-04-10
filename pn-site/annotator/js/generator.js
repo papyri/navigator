@@ -4,6 +4,7 @@ rangy.config.checkSelectionRanges = false;
  *  on the page.
  */
 var Generator = {
+  /* Given a Rangy range, select the relevant text on the page or insert a "cursor". */
   select: function(range) {
     Generator.clear();
     var sel = rangy.getSelection();
@@ -19,6 +20,8 @@ var Generator = {
   clear: function() {
     jQuery("#cursor").remove();
   },
+  /* Tests whether the current document uses <lb/> tags.
+   */
   linebreaks: function(elt) {
     var lb = document.evaluate("ancestor::div[@type='edition']//lb", elt, null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);
     return lb.singleNodeValue?true:false;
@@ -73,7 +76,7 @@ var Generator = {
     elt = jQuery(elt);
     if (elt[0].nodeType == Node.TEXT_NODE) {
       if(Generator.linebreaks(elt[0])) {
-        //look next for preceding sibling line breaks in the same container with an @id or @n.
+        //look next for preceding line breaks in the same container with an @id or @n.
         var lb = document.evaluate("preceding::lb[1]",elt[0],null,XPathResult.FIRST_ORDERED_NODE_TYPE,null);
         lb = lb.singleNodeValue;
         if (lb != null) {

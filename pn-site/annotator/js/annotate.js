@@ -54,6 +54,7 @@ var OAContext = {
 };
 
 var Annotator = {
+  version: null,
   create: function(body, xpointer, version, user, motivation) {
     var buffer = new Array(64);
     uuid.v1(null,buffer,0);
@@ -82,22 +83,20 @@ var Annotator = {
           "@id": window.location.href,
           "@type": "dctypes:Text",
           "version" : version
-        },
-        "annotatedBy": user,
-        "motivatedBy": motivation
-      }
+        }
+      },
+      "annotatedBy": user,
+      "motivatedBy": motivation
     };
     return annotation;
   }, 
   openWidget: function(user) {
     if (user != null) {
       var version;
-      $.getJSON(window.location.pathname.replace("/annotate","/version"), function(data) {
-        version = data["sha"];
-      });
+      Annotator.closeWidget();
       $("body").append(
         '<div class="ann-widget">' +
-          '<h3>Annotation <span class="close-widget">close</span></h3>' +
+          '<h3>Annotation <span class="close-widget"><img src="/annotator/images/loading-1.gif"></span></h3>' +
           '<form>' +
             '<input type="hidden" name="target" value="' + Generator.xpointer() + '" id="target">' +
             '<select name="motivation" id="motivation">' +
@@ -108,8 +107,16 @@ var Annotator = {
             '<input type="button" value="save" name="save">' +
           '</form>' +
         '</div>');
-      $("span.close-widget").click(Annotator.closeWidget);
-      $("input[name=save]").click({"version": version, "user":user}, Annotator.save);
+      if (!Annotator.version) {
+        $.getJSON(window.location.pathname.replace("/annotate","/version"), function(data) {
+          Annotator.version = data["sha"];
+          $("input[name=save]").click({"version": Annotator.version, "user":user}, Annotator.save);
+          $("span.close-widget").html("×").click(Annotator.closeWidget);
+        });
+      } else {
+        $("input[name=save]").click({"version": Annotator.version, "user":user}, Annotator.save);
+        $("span.close-widget").html("×").click(Annotator.closeWidget);
+      }
     } else {
       alert("You must be logged in to annotate.");
     }
@@ -117,8 +124,13 @@ var Annotator = {
   closeWidget: function() {
     $(".ann-widget").remove();
   },
-  save: function(version, user) {
-    console.log(JSON.stringify(Annotator.create($("#body").val(), $("#target").val(), version, user, $("#motivation").val())));
+  save: function(e) {
+    $.post("/editor/text_notes/create", 
+          Annotator.create($("#body").val(), $("#target").val(), 
+            e.data["version"], e.data["user"], $("#motivation").val()),
+          function(data, status, xhr) {
+            Annotator.closeWidget();
+          });
   }
     //set the target based on the current URL + xpointer
     //show a form for the user to fill in the body
