@@ -10,7 +10,7 @@
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="2.0" exclude-result-prefixes="#all">
   
-  <xsl:import href="global-varsandparams.xsl"/>
+  <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="morelikethis-varsandparams.xsl"/>
   
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
@@ -274,9 +274,25 @@
                     </div>
                   </xsl:if>
                   <div class="text">
-                    <xsl:apply-templates select="/t:TEI" mode="text"/>
+                    <xsl:apply-templates select="/t:TEI" mode="text">
+                      <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                      <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                      <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                      <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                      <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                      <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                      <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                    </xsl:apply-templates>
                     <xsl:for-each select="pi:get-docs($relations[contains(., '/ddbdp/') and not(contains($replaces,.))], 'xml')/t:TEI">
-                      <xsl:apply-templates select="." mode="text"/>
+                      <xsl:apply-templates select="." mode="text">
+                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                      </xsl:apply-templates>
                     </xsl:for-each>
                     <xsl:if test="$image">
                       <xsl:call-template name="images"/>
@@ -287,7 +303,7 @@
                         <div class="translation data">
                           <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
                             [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
-                          <xsl:apply-templates />
+                          <xsl:apply-templates/>
                         </div>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
@@ -491,6 +507,46 @@
     <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
     <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
     <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+  </xsl:template>
+  
+  <!-- Override EpiDoc template in htm-teihead.xsl -->
+  <xsl:template match="t:div/t:head">
+    <h2>
+      <xsl:apply-templates/>
+    </h2>
+  </xsl:template>
+  
+  <!-- Override template in htm-teiref.xsl -->
+  <xsl:template match="t:ref">
+    <xsl:choose>
+      <xsl:when test="@type = 'reprint-from'">
+        <br/>
+        <!-- Found in teiref.xsl -->
+        <xsl:call-template name="reprint-text">
+          <xsl:with-param name="direction" select="'from'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@type = 'reprint-in'">
+        <br/>
+        <!-- Found in teiref.xsl -->
+        <xsl:call-template name="reprint-text">
+          <xsl:with-param name="direction" select="'in'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@type = 'Perseus'">
+        <xsl:variable name="col" select="substring-before(@href, ';')"/>
+        <xsl:variable name="vol" select="substring-before(substring-after(@href,';'),';')"/>
+        <xsl:variable name="no" select="substring-after(substring-after(@href,';'),';')"/>
+        <a href="http://www.perseus.tufts.edu/cgi-bin/ptext?doc=Perseus:text:1999.05.{$col}:volume={$vol}:document={$no}">
+          <xsl:apply-templates/>
+        </a>
+      </xsl:when>
+      <xsl:otherwise>
+        <a href="{@target}">
+          <xsl:apply-templates/>
+        </a>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="rdf:Description">

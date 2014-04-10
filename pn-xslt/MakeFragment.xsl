@@ -10,7 +10,7 @@
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="2.0" exclude-result-prefixes="#all">
   
-  <xsl:import href="global-varsandparams.xsl"/>
+  <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="morelikethis-varsandparams.xsl"/>
   
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
@@ -153,7 +153,15 @@
           <div class="text">
             <div class="transcription data">
               <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
-              <xsl:apply-templates select="/t:TEI"/>
+              <xsl:apply-templates select="/t:TEI">
+                <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+              </xsl:apply-templates>
               <div id="history">
                 <div id="history-headers">
                 <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
@@ -307,7 +315,47 @@
     </div>
     </xsl:if>
   </xsl:template>
-    
+  
+  <!-- Override EpiDoc template in htm-teihead.xsl -->
+  <xsl:template match="t:div/t:head">
+    <h2>
+      <xsl:apply-templates/>
+    </h2>
+  </xsl:template>
+  
+  <!-- Override template in htm-teiref.xsl -->
+  <xsl:template match="t:ref">
+    <xsl:choose>
+      <xsl:when test="@type = 'reprint-from'">
+        <br/>
+        <!-- Found in teiref.xsl -->
+        <xsl:call-template name="reprint-text">
+          <xsl:with-param name="direction" select="'from'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@type = 'reprint-in'">
+        <br/>
+        <!-- Found in teiref.xsl -->
+        <xsl:call-template name="reprint-text">
+          <xsl:with-param name="direction" select="'in'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@type = 'Perseus'">
+        <xsl:variable name="col" select="substring-before(@href, ';')"/>
+        <xsl:variable name="vol" select="substring-before(substring-after(@href,';'),';')"/>
+        <xsl:variable name="no" select="substring-after(substring-after(@href,';'),';')"/>
+        <a href="http://www.perseus.tufts.edu/cgi-bin/ptext?doc=Perseus:text:1999.05.{$col}:volume={$vol}:document={$no}">
+          <xsl:apply-templates/>
+        </a>
+      </xsl:when>
+      <xsl:otherwise>
+        <a href="{@target}">
+          <xsl:apply-templates/>
+        </a>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
   <!-- Commentary links -->
   <xsl:template match="t:div[@type='commentary']/t:list/t:item/t:ref">
     <a href="{parent::t:item/@corresp}"><xsl:apply-templates/></a>.

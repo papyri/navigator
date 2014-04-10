@@ -30,9 +30,7 @@
             </a>
          </xsl:when>
          <xsl:otherwise>
-            <a href="{@target}">
-               <xsl:apply-templates/>
-            </a>
+            <xsl:apply-templates/>
          </xsl:otherwise>
       </xsl:choose>
   </xsl:template>

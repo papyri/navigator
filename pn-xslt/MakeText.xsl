@@ -3,11 +3,12 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
                 xmlns:pi="http://papyri.info/ns"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="2.0" exclude-result-prefixes="">
 
   <xsl:output method="text" encoding="UTF-8" indent="no" omit-xml-declaration="yes"/>
 
-  <xsl:include href="global-varsandparams.xsl"/>
+  <xsl:include href="pi-global-varsandparams.xsl"/>
   
   <xsl:include href="txt-teiab.xsl"/>
   <xsl:include href="txt-teiapp.xsl"/>
@@ -72,7 +73,17 @@
     <xsl:choose>
       <xsl:when test="$collection = 'ddbdp'">
         <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
-        <xsl:variable name="text"><xsl:apply-templates/></xsl:variable>
+        <xsl:variable name="text">
+          <xsl:apply-templates>
+            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+            <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+            <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+            <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+            <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+            <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+            <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+          </xsl:apply-templates>
+        </xsl:variable>
         <xsl:apply-templates select="$text" mode="sqbrackets"/>
       </xsl:when>
       <xsl:otherwise>

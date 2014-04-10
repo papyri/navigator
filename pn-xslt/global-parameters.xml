@@ -9,7 +9,7 @@
   
   <parameter>
     <name>leiden-style</name>
-    <value on="yes">ddbdp</value>
+    <value>ddbdp</value>
     <value>dohnicht</value>
     <value>edh-itx</value>
     <value>edh-names</value>
@@ -17,8 +17,8 @@
     <value>ila</value>
     <value>iospe</value>
     <value>london</value>
+    <value on="yes">panciera</value>
     <value>petrae</value>
-    <value>panciera</value>
     <value>rib</value>
     <value>seg</value>
     <value>sammelbuch</value>
@@ -26,8 +26,8 @@
   
   <parameter>
     <name>edn-structure</name>
-    <value>default</value>
-    <value on="yes">ddbdp</value>
+    <value on="yes">default</value>
+    <value>ddbdp</value>
     <value>hgv</value>
     <value>inslib</value>
     <value>iospe</value>
@@ -51,8 +51,9 @@
   
   <parameter>
     <name>apparatus-style</name>
-    <value>default</value>
-    <value on="yes">ddbdp</value>
+    <value on="yes">default</value>
+    <value>ddbdp</value>
+    <!-- NB: change this parameter locally if you're running PN or SoSOL process! -->
   </parameter>
   
   <!-- Line-numbering increment -->
@@ -64,6 +65,11 @@
   <parameter>
     <name>css-loc</name>
     <value>../xsl/global.css</value>
+  </parameter>
+  
+<parameter>
+    <name>js-dir</name>
+    <value>../js/</value>
   </parameter>
   
 </parameters>

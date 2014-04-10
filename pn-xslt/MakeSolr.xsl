@@ -6,7 +6,7 @@
   exclude-result-prefixes="xs dc rdf pi tei t xd" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   version="2.0">
 
-  <xsl:import href="global-varsandparams.xsl"/>
+  <xsl:import href="pi-global-varsandparams.xsl"/>
 
   <xsl:import href="txt-teiab.xsl"/>
   <xsl:import href="txt-teiapp.xsl"/>
@@ -66,10 +66,8 @@
   <xsl:include href="pi-functions.xsl"/>
 
   <xsl:template match="/">
-    
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
-    
     <add>
       <doc>
         <field name="project">IDP</field>
