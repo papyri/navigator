@@ -855,8 +855,8 @@
 (defn -generatePages
   "Builds the HTML and plain text pages for the PN"
   [args]
-  (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
-  (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
+  (init-templates (str xsltpath "/MakeHTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
+  (init-templates (str xsltpath "/MakeSolr.xsl") nthreads "info.papyri.indexer/solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
   (case (first args)
         "-serialize" (do (get-cached (second args) (rest (rest args)))
