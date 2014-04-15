@@ -3,7 +3,7 @@
   :repositories {"papyri.info" "http://dev.papyri.info/maven/"
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
-  :jvm-opts ["-Xmx1g"]
+  :jvm-opts ["-Xms1G" "-Xmx1G"]
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [net.sf.saxon/Saxon-HE "9.4.0-9"]
