@@ -5,11 +5,8 @@
                 xmlns:pi="http://papyri.info/ns"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="2.0" exclude-result-prefixes="">
-
+  <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:output method="text" encoding="UTF-8" indent="no" omit-xml-declaration="yes"/>
-
-  <xsl:include href="pi-global-varsandparams.xsl"/>
-  
   <xsl:include href="txt-teiab.xsl"/>
   <xsl:include href="txt-teiapp.xsl"/>
   <xsl:include href="txt-teidiv.xsl"/>
@@ -60,7 +57,7 @@
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
-  <xsl:variable name="line-inc">1</xsl:variable>
+  <xsl:param name="line-inc">1</xsl:param>
   <xsl:variable name="resolve-uris" select="false()"/>
 
   <xsl:template match="/">
