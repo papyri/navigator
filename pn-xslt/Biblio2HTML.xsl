@@ -6,7 +6,7 @@
   exclude-result-prefixes="#all"
   version="2.0">
   
-  <xsl:import href="global-varsandparams.xsl"/>
+  <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>

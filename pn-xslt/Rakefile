@@ -1,0 +1,11 @@
+task setup: [] do 
+	if File.exists? "../epidoc-xslt"
+		sh "cd ../epidoc-xslt; svn up"
+	else
+		sh "svn checkout svn://svn.code.sf.net/p/epidoc/code/trunk/example-p5-xslt ../epidoc-xslt"
+	end
+end
+
+task clean: [] do
+	sh "rm -rf ../epidoc-xslt"
+end
