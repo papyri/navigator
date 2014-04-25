@@ -6,7 +6,7 @@ This folder contains most of the XSLT files used in the operation of the Papyrol
 Setup:
 ------
 
-The PN XSLTs depend on a subversion checkout of the EpiDoc XSLTs. This can be done automatically using Rake by running:
+The PN XSLTs depend on a subversion checkout of the [EpiDoc XSLTs](https://sourceforge.net/p/epidoc/wiki/Stylesheets/). This can be done automatically using [Rake](http://rake.rubyforge.org/) by running:
 
 `rake setup`
 
