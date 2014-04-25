@@ -41,7 +41,7 @@
         standoff app -->
   <xsl:template match="t:app|t:choice|t:subst" mode="make-app">
     <xsl:variable name="id" select="generate-id(.)"/>
-    <ref target="#{$id}" xml:id="ref-{$id}"><xsl:apply-templates select="t:lem|t:orig|t:sic|t:add"/></ref>
+    <ref target="#{$id}" xml:id="ref-{$id}"><xsl:apply-templates select="t:lem|t:orig|t:sic|t:add" mode="make-app"/></ref>
   </xsl:template>
   
   <xsl:template match="t:lem|t:orig|t:sic|t:add" mode="make-app">
