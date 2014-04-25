@@ -280,7 +280,7 @@
         <url-pattern>/CTSServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>XSLTServlet</servlet-name>
+        <servlet-name>XSLTService</servlet-name>
         <url-pattern>/epidocinator</url-pattern>
     </servlet-mapping>
     <session-config>
