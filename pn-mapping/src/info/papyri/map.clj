@@ -202,7 +202,6 @@
          (println *err*)
          (Thread/sleep 1000)
          (.add adapter graph model)))))
-
 (defn -insertPelagiosAnnotations
   [url]
   (if-not (nil? url)

@@ -3,54 +3,52 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
                 xmlns:pi="http://papyri.info/ns"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="2.0" exclude-result-prefixes="">
-
+  <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:output method="text" encoding="UTF-8" indent="no" omit-xml-declaration="yes"/>
-
-  <xsl:include href="global-varsandparams.xsl"/>
-  
-  <xsl:include href="txt-teiab.xsl"/>
-  <xsl:include href="txt-teiapp.xsl"/>
-  <xsl:include href="txt-teidiv.xsl"/>
-  <xsl:include href="txt-teidivedition.xsl"/>
-  <xsl:include href="txt-teig.xsl"/>
-  <xsl:include href="txt-teigap.xsl"/>
-  <xsl:include href="txt-teihead.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teiab.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teiapp.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teidiv.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teidivedition.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teig.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teigap.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teihead.xsl"/>
   <xsl:include href="pi-txt-teilb.xsl"/>
-  <xsl:include href="txt-teilgandl.xsl"/>
-  <xsl:include href="txt-teilistanditem.xsl"/>
-  <xsl:include href="txt-teilistbiblandbibl.xsl"/>
-  <xsl:include href="txt-teimilestone.xsl"/>
-  <xsl:include href="txt-teinote.xsl"/>
-  <xsl:include href="txt-teip.xsl"/>
-  <xsl:include href="txt-teispace.xsl"/>
-  <xsl:include href="txt-teisupplied.xsl"/>
-  <xsl:include href="txt-teiref.xsl"/>
-  <xsl:include href="teiabbrandexpan.xsl"/>
-  <xsl:include href="teiaddanddel.xsl"/>
-  <xsl:include href="teicertainty.xsl"/>
-  <xsl:include href="teichoice.xsl"/>
-  <xsl:include href="teihandshift.xsl"/>
-  <xsl:include href="teiheader.xsl"/>
-  <xsl:include href="teihi.xsl"/>
-  <xsl:include href="teimilestone.xsl"/>
-  <xsl:include href="teinum.xsl"/>
-  <xsl:include href="teiorig.xsl"/>
-  <xsl:include href="teiorigandreg.xsl"/>
-  <xsl:include href="teiq.xsl"/>
-  <xsl:include href="teiseg.xsl"/>
-  <xsl:include href="teisicandcorr.xsl"/>
-  <xsl:include href="teispace.xsl"/>
-  <xsl:include href="teisupplied.xsl"/>
-  <xsl:include href="teisurplus.xsl"/>
-  <xsl:include href="teiunclear.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teilgandl.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teilistanditem.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teilistbiblandbibl.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teimilestone.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teinote.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teip.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teispace.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teisupplied.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-teiref.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiabbrandexpan.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiaddanddel.xsl"/>
+  <xsl:include href="../epidoc-xslt/teicertainty.xsl"/>
+  <xsl:include href="../epidoc-xslt/teichoice.xsl"/>
+  <xsl:include href="../epidoc-xslt/teihandshift.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiheader.xsl"/>
+  <xsl:include href="../epidoc-xslt/teihi.xsl"/>
+  <xsl:include href="../epidoc-xslt/teimilestone.xsl"/>
+  <xsl:include href="../epidoc-xslt/teinum.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiorig.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiorigandreg.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiq.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiseg.xsl"/>
+  <xsl:include href="../epidoc-xslt/teisicandcorr.xsl"/>
+  <xsl:include href="../epidoc-xslt/teispace.xsl"/>
+  <xsl:include href="../epidoc-xslt/teisupplied.xsl"/>
+  <xsl:include href="../epidoc-xslt/teisurplus.xsl"/>
+  <xsl:include href="../epidoc-xslt/teiunclear.xsl"/>
   
-  <xsl:include href="txt-tpl-apparatus.xsl"/>
-  <xsl:include href="txt-tpl-linenumberingtab.xsl"/>
-  <xsl:include href="txt-tpl-sqbrackets.xsl"/>
-  <xsl:include href="tpl-reasonlost.xsl"/>
-  <xsl:include href="tpl-certlow.xsl"/>
-  <xsl:include href="tpl-text.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-tpl-apparatus.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-tpl-linenumberingtab.xsl"/>
+  <xsl:include href="../epidoc-xslt/txt-tpl-sqbrackets.xsl"/>
+  <xsl:include href="../epidoc-xslt/tpl-reasonlost.xsl"/>
+  <xsl:include href="../epidoc-xslt/tpl-certlow.xsl"/>
+  <xsl:include href="../epidoc-xslt/tpl-text.xsl"/>
   
   <xsl:include href="pi-functions.xsl"/>
 
@@ -59,7 +57,7 @@
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
-  <xsl:variable name="line-inc">1</xsl:variable>
+  <xsl:param name="line-inc">1</xsl:param>
   <xsl:variable name="resolve-uris" select="false()"/>
 
   <xsl:template match="/">
@@ -72,7 +70,17 @@
     <xsl:choose>
       <xsl:when test="$collection = 'ddbdp'">
         <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
-        <xsl:variable name="text"><xsl:apply-templates/></xsl:variable>
+        <xsl:variable name="text">
+          <xsl:apply-templates>
+            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+            <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+            <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+            <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+            <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+            <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+            <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+          </xsl:apply-templates>
+        </xsl:variable>
         <xsl:apply-templates select="$text" mode="sqbrackets"/>
       </xsl:when>
       <xsl:otherwise>

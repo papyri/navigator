@@ -4,7 +4,7 @@
   xmlns:EDF="http://epidoc.sourceforge.net/ns/functions"
    xmlns:t="http://www.tei-c.org/ns/1.0" version="1.0">
    <!-- Actual display and increment calculation found in teilb.xsl -->
-   <xsl:import href="teilb.xsl"/>
+   <xsl:import href="../epidoc-xslt/teilb.xsl"/>
 
    <xsl:template match="t:lb">
       <xsl:choose>

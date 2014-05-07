@@ -207,7 +207,7 @@
 (defn get-filename
   "Resolves the filename of the local XML file associated with the given URL."
   [url]
-  (if (.contains url "ddbdp/")
+  (try (if (.contains url "ddbdp/")
     (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
       (if (= (second identifier) "")
         (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
@@ -221,7 +221,10 @@
         (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
       (when (.contains url "apis/")
         (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-          (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
+          (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml")))))
+    (catch Exception e
+      (when-not (nil? e)
+        (println (str (.getMessage e) " processing " url "."))))))
 
 (defn get-txt-filename
   "Resolves the filename of the local text file associated with the given URL."
@@ -855,8 +858,8 @@
 (defn -generatePages
   "Builds the HTML and plain text pages for the PN"
   [args]
-  (init-templates (str xsltpath "/RDF2HTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
-  (init-templates (str xsltpath "/RDF2Solr.xsl") nthreads "info.papyri.indexer/solrtemplates")
+  (init-templates (str xsltpath "/MakeHTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
+  (init-templates (str xsltpath "/MakeSolr.xsl") nthreads "info.papyri.indexer/solrtemplates")
   (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
   (case (first args)
         "-serialize" (do (get-cached (second args) (rest (rest args)))

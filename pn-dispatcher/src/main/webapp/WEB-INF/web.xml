@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+<web-app version="3.0" 
+         xmlns="http://java.sun.com/xml/ns/javaee" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
@@ -173,7 +176,11 @@
         </init-param>
         <init-param>
             <param-name>papyri.info-full</param-name>
-            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/RDF2HTML.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeHTML.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-full-type</param-name>
+            <param-value>text/html</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-full-type</param-name>
@@ -181,7 +188,11 @@
         </init-param>
         <init-param>
             <param-name>papyri.info-solr</param-name>
-            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/RDF2Solr.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeSolr.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>papyri.info-solr-type</param-name>
+            <param-value>text/html</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-solr-type</param-name>
@@ -269,7 +280,7 @@
         <url-pattern>/CTSServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>XSLTServlet</servlet-name>
+        <servlet-name>XSLTService</servlet-name>
         <url-pattern>/epidocinator</url-pattern>
     </servlet-mapping>
     <session-config>

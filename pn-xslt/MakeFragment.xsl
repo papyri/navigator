@@ -10,64 +10,64 @@
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="2.0" exclude-result-prefixes="#all">
   
-  <xsl:import href="global-varsandparams.xsl"/>
+  <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="morelikethis-varsandparams.xsl"/>
   
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
-  <xsl:import href="htm-teiab.xsl"/>
-  <xsl:import href="htm-teiaddanddel.xsl"/>
-  <xsl:import href="htm-teiapp.xsl"/> 
-  <xsl:import href="htm-teidiv.xsl"/>
-  <xsl:import href="htm-teidivedition.xsl"/>
-  <xsl:import href="htm-teiemph.xsl"/>
-  <xsl:import href="htm-teiforeign.xsl"/>
-  <xsl:import href="htm-teifigure.xsl"/>
-  <xsl:import href="htm-teig.xsl"/>
-  <xsl:import href="htm-teigap.xsl"/>
-  <xsl:import href="htm-teihead.xsl"/>
-  <xsl:import href="htm-teihi.xsl"/>
-  <xsl:import href="htm-teilb.xsl"/>
-  <xsl:import href="htm-teilgandl.xsl"/>
-  <xsl:import href="htm-teilistanditem.xsl"/>
-  <xsl:import href="htm-teilistbiblandbibl.xsl"/>
-  <xsl:import href="htm-teimilestone.xsl"/>
-  <xsl:import href="htm-teinote.xsl"/>
-  <xsl:import href="htm-teinum.xsl"/>
-  <xsl:import href="htm-teip.xsl"/>
-  <xsl:import href="htm-teiseg.xsl"/>
-  <xsl:import href="htm-teispace.xsl"/>
-  <xsl:import href="htm-teisupplied.xsl"/>
-  <xsl:import href="htm-teiterm.xsl"/>
-  <xsl:import href="htm-teiref.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teiab.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teiaddanddel.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teiapp.xsl"/> 
+  <xsl:import href="../epidoc-xslt/htm-teidiv.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teidivedition.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teiforeign.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teifigure.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teig.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teigap.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teihead.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teihi.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teilb.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teilgandl.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teilistanditem.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teilistbiblandbibl.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teimilestone.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teinote.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teinum.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teip.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teiseg.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teispace.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teisupplied.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teiterm.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-teiref.xsl"/>
   
   <!-- tei stylesheets that are also used by start-txt -->
-  <xsl:import href="teiabbrandexpan.xsl"/>
-  <xsl:import href="teicertainty.xsl"/>
-  <xsl:import href="teichoice.xsl"/>
-  <xsl:import href="teihandshift.xsl"/>
-  <xsl:import href="teiheader.xsl"/>
-  <xsl:import href="teimilestone.xsl"/>
-  <xsl:import href="teiorig.xsl"/>
-  <xsl:import href="teiorigandreg.xsl"/>
-  <xsl:import href="teiq.xsl"/>
-  <xsl:import href="teisicandcorr.xsl"/>
-  <xsl:import href="teispace.xsl"/>
-  <xsl:import href="teisupplied.xsl"/>
-  <xsl:import href="teisurplus.xsl"/>
-  <xsl:import href="teiunclear.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiabbrandexpan.xsl"/>
+  <xsl:import href="../epidoc-xslt/teicertainty.xsl"/>
+  <xsl:import href="../epidoc-xslt/teichoice.xsl"/>
+  <xsl:import href="../epidoc-xslt/teihandshift.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiheader.xsl"/>
+  <xsl:import href="../epidoc-xslt/teimilestone.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiorig.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiorigandreg.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiq.xsl"/>
+  <xsl:import href="../epidoc-xslt/teisicandcorr.xsl"/>
+  <xsl:import href="../epidoc-xslt/teispace.xsl"/>
+  <xsl:import href="../epidoc-xslt/teisupplied.xsl"/>
+  <xsl:import href="../epidoc-xslt/teisurplus.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiunclear.xsl"/>
   
   <!-- html related stylesheets for named templates -->
-  <xsl:import href="htm-tpl-cssandscripts.xsl"/>
-  <xsl:import href="htm-tpl-apparatus.xsl"/>
-  <xsl:import href="htm-tpl-lang.xsl"/>
-  <xsl:import href="htm-tpl-metadata.xsl"/>
-  <xsl:import href="htm-tpl-license.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-tpl-cssandscripts.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-tpl-apparatus.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-tpl-lang.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-tpl-metadata.xsl"/>
+  <xsl:import href="../epidoc-xslt/htm-tpl-license.xsl"/>
   <!-- global named templates with no html, also used by start-txt -->
-  <xsl:import href="tpl-reasonlost.xsl"/>
-  <xsl:import href="tpl-certlow.xsl"/>
-  <xsl:import href="tpl-text.xsl"/>
-  <xsl:include href="htm-tpl-sqbrackets.xsl"/>
-  <xsl:include href="htm-tpl-structure.xsl"/>
+  <xsl:import href="../epidoc-xslt/tpl-reasonlost.xsl"/>
+  <xsl:import href="../epidoc-xslt/tpl-certlow.xsl"/>
+  <xsl:import href="../epidoc-xslt/tpl-text.xsl"/>
+  <xsl:include href="htm-teiemph.xsl"/>
+  <xsl:include href="../epidoc-xslt/htm-tpl-sqbrackets.xsl"/>
+  <xsl:include href="../epidoc-xslt/htm-tpl-structure.xsl"/>
   <xsl:include href="metadata.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
   <xsl:param name="collection"/>
@@ -153,7 +153,15 @@
           <div class="text">
             <div class="transcription data">
               <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
-              <xsl:apply-templates select="/t:TEI"/>
+              <xsl:apply-templates select="/t:TEI">
+                <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+              </xsl:apply-templates>
               <div id="history">
                 <div id="history-headers">
                 <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
@@ -307,7 +315,47 @@
     </div>
     </xsl:if>
   </xsl:template>
-    
+  
+  <!-- Override EpiDoc template in htm-teihead.xsl -->
+  <xsl:template match="t:div/t:head">
+    <h2>
+      <xsl:apply-templates/>
+    </h2>
+  </xsl:template>
+  
+  <!-- Override template in htm-teiref.xsl -->
+  <xsl:template match="t:ref">
+    <xsl:choose>
+      <xsl:when test="@type = 'reprint-from'">
+        <br/>
+        <!-- Found in teiref.xsl -->
+        <xsl:call-template name="reprint-text">
+          <xsl:with-param name="direction" select="'from'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@type = 'reprint-in'">
+        <br/>
+        <!-- Found in teiref.xsl -->
+        <xsl:call-template name="reprint-text">
+          <xsl:with-param name="direction" select="'in'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@type = 'Perseus'">
+        <xsl:variable name="col" select="substring-before(@href, ';')"/>
+        <xsl:variable name="vol" select="substring-before(substring-after(@href,';'),';')"/>
+        <xsl:variable name="no" select="substring-after(substring-after(@href,';'),';')"/>
+        <a href="http://www.perseus.tufts.edu/cgi-bin/ptext?doc=Perseus:text:1999.05.{$col}:volume={$vol}:document={$no}">
+          <xsl:apply-templates/>
+        </a>
+      </xsl:when>
+      <xsl:otherwise>
+        <a href="{@target}">
+          <xsl:apply-templates/>
+        </a>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
   <!-- Commentary links -->
   <xsl:template match="t:div[@type='commentary']/t:list/t:item/t:ref">
     <a href="{parent::t:item/@corresp}"><xsl:apply-templates/></a>.

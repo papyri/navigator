@@ -6,49 +6,50 @@
   exclude-result-prefixes="xs dc rdf pi tei t xd" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   version="2.0">
 
-  <xsl:import href="global-varsandparams.xsl"/>
+  <xsl:import href="pi-global-varsandparams.xsl"/>
 
-  <xsl:import href="txt-teiab.xsl"/>
-  <xsl:import href="txt-teiapp.xsl"/>
-  <xsl:import href="txt-teidiv.xsl"/>
-  <xsl:import href="txt-teidivedition.xsl"/>
-  <xsl:import href="txt-teigap.xsl"/>
-  <xsl:import href="txt-teihead.xsl"/>
-  <xsl:import href="txt-teilgandl.xsl"/>
-  <xsl:import href="txt-teilistanditem.xsl"/>
-  <xsl:import href="txt-teilistbiblandbibl.xsl"/>
-  <xsl:import href="txt-teimilestone.xsl"/> 
-  <xsl:import href="txt-teinote.xsl"/>
-  <xsl:import href="txt-teip.xsl"/>
-  <xsl:import href="txt-teispace.xsl"/>
-  <xsl:import href="txt-teisupplied.xsl"/>
-  <xsl:import href="txt-teiref.xsl"/>
-  <xsl:import href="teiabbrandexpan.xsl"/>
-  <xsl:import href="teiaddanddel.xsl"/>
-  <xsl:import href="teichoice.xsl"/>
-  <xsl:import href="teiheader.xsl"/>
-  <xsl:import href="teihi.xsl"/>
-  <xsl:import href="teimilestone.xsl"/>
-  <xsl:import href="teinum.xsl"/>
-  <xsl:import href="teiorig.xsl"/>
-  <xsl:import href="teiorigandreg.xsl"/>
-  <xsl:import href="teiq.xsl"/>
-  <xsl:import href="teiseg.xsl"/>
-  <xsl:import href="teisicandcorr.xsl"/>
-  <xsl:import href="teispace.xsl"/>
-  <xsl:import href="teisupplied.xsl"/>
-  <xsl:import href="teiunclear.xsl"/>
-  <xsl:import href="tpl-apparatus.xsl"/>
-  <xsl:import href="txt-tpl-linenumberingtab.xsl"/>
-  <xsl:import href="tpl-reasonlost.xsl"/>
-  <xsl:import href="tpl-certlow.xsl"/>
-  <xsl:import href="tpl-text.xsl"/>
-  <xsl:import href="pi-txt-teilb.xsl"/>
-  <xsl:import href="teisurplus.xsl"/>
-  <xsl:import href="orig-supplied.xsl"/>
-  <xsl:import href="reg-surplus.xsl"/>
-  <xsl:import href="orig-teiabbrandexpan.xsl"/>
-  <xsl:import href="reg-teiabbrandexpan.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teiab.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teiapp.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teidiv.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teidivedition.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teigap.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teihead.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teilgandl.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teilistanditem.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teilistbiblandbibl.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teimilestone.xsl"/> 
+  <xsl:import href="../epidoc-xslt/txt-teinote.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teip.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teispace.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teisupplied.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teiref.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiabbrandexpan.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiaddanddel.xsl"/>
+  <xsl:import href="../epidoc-xslt/teichoice.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiheader.xsl"/>
+  <xsl:import href="../epidoc-xslt/teihi.xsl"/>
+  <xsl:import href="../epidoc-xslt/teimilestone.xsl"/>
+  <xsl:import href="../epidoc-xslt/teinum.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiorig.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiorigandreg.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiq.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiseg.xsl"/>
+  <xsl:import href="../epidoc-xslt/teisicandcorr.xsl"/>
+  <xsl:import href="../epidoc-xslt/teispace.xsl"/>
+  <xsl:import href="../epidoc-xslt/teisupplied.xsl"/>
+  <xsl:import href="../epidoc-xslt/teiunclear.xsl"/>
+  <xsl:import href="../epidoc-xslt/tpl-apparatus.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-tpl-linenumberingtab.xsl"/>
+  <xsl:import href="../epidoc-xslt/tpl-reasonlost.xsl"/>
+  <xsl:import href="../epidoc-xslt/tpl-certlow.xsl"/>
+  <xsl:import href="../epidoc-xslt/tpl-text.xsl"/>
+  <xsl:import href="../epidoc-xslt/teisurplus.xsl"/>
+  
+  <xsl:include href="pi-txt-teilb.xsl"/>
+  <xsl:include href="orig-supplied.xsl"/>
+  <xsl:include href="reg-surplus.xsl"/>
+  <xsl:include href="orig-teiabbrandexpan.xsl"/>
+  <xsl:include href="reg-teiabbrandexpan.xsl"/>
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 
@@ -66,10 +67,8 @@
   <xsl:include href="pi-functions.xsl"/>
 
   <xsl:template match="/">
-    
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
-    
     <add>
       <doc>
         <field name="project">IDP</field>
