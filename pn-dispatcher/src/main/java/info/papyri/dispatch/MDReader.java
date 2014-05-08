@@ -4,6 +4,9 @@
  */
 package info.papyri.dispatch;
 
+import info.papyri.dispatch.pegdown.PNCustomLinkPlugin;
+import info.papyri.dispatch.pegdown.PNPegDownProcessor;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,7 +24,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
+import org.pegdown.plugins.PegDownPlugins;
 
 /**
  *
@@ -39,7 +44,13 @@ public class MDReader extends HttpServlet {
   public void init(ServletConfig config) {
     DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
-    peg = new PegDownProcessor();
+    PegDownPlugins.Builder plugins = PegDownPlugins.builder();
+    plugins.withPlugin(PNCustomLinkPlugin.class);
+    peg = new PNPegDownProcessor(
+            Extensions.NONE, 
+            PegDownProcessor.DEFAULT_MAX_PARSING_TIME,
+            plugins.build(),
+            new PNCustomLinkPlugin());
     ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
   }
 

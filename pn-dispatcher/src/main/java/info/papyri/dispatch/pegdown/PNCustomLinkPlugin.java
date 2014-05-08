@@ -6,12 +6,8 @@ package info.papyri.dispatch.pegdown;
 
 import static org.parboiled.BaseParser.ANY;
 import org.parboiled.Rule;
-import org.pegdown.plugins.PegDownPlugins;
 import info.papyri.dispatch.pegdown.ast.DDbLinkNode;
 import info.papyri.dispatch.pegdown.ast.BibLinkNode;
-import org.parboiled.support.StringBuilderVar;
-import org.parboiled.common.ArrayBuilder;
-import static org.pegdown.Extensions.WIKILINKS;
 import org.pegdown.Parser;
 import org.pegdown.Printer;
 import org.pegdown.ast.Node;
