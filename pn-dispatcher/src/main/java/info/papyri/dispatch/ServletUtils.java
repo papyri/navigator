@@ -45,24 +45,6 @@ public class ServletUtils {
     send(response, f, new byte[8094]);
   }
   
-  public static void setupLogging(ServletContext sc, String log4j) {
-    if (log4j == null) {
-      BasicConfigurator.configure();
-    } else {
-      try {
-        PropertyConfigurator.configure(sc.getRealPath("/") + log4j);
-      } catch (Exception e) {
-        System.out.println("Unable to load log4j properties from " + log4j);
-        BasicConfigurator.configure();
-      }
-    }
-  }
-
-  public static void send(HttpServletResponse response, File f)
-          throws ServletException, IOException {
-    send(response, f, new byte[8094]);
-  }
-  
   public static void send(HttpServletResponse response, File f, byte[] buffer)
           throws ServletException, IOException {
     FileInputStream reader;
