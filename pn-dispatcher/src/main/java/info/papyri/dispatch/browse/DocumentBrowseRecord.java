@@ -52,8 +52,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private static final Logger logger = Logger.getLogger("pn-dispatch");
 
   public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts) {
-
-    util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    //TODO: this should be configurable
+    util = new FileUtils("/srv/data/papyri.info/idp.data/", "/srv/data/papyri.info/pn/idp.html/");
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
     this.url = url;
