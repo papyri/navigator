@@ -7,6 +7,7 @@ package info.papyri.dispatch;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import junit.framework.TestCase;
 
 /**
@@ -334,6 +335,49 @@ public class FileUtilsTest extends TestCase {
       }
     }
     assertEquals(expResult.size(), matches);
+  }
+  
+  public void testFindMatchesFromPatterns() {
+      StringBuilder pattern = new StringBuilder();
+      pattern.append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*(σ|ς)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*τ")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*(ρ|ῥ)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*τ")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*γ")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*");
+      Pattern[] patterns = new Pattern[]{Pattern.compile(pattern.toString())};
+      String id = "http://papyri.info/ddbdp/bgu;1;2";
+      FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
+      String expResult = "<span class=\"highlight\">στρ(ατηγ</span>";
+      List<String> result = instance.highlightMatches(
+              instance.loadTextFromId(id), patterns);
+      assertTrue(result.get(0).contains(expResult));
   }
 
   public void testFindNgram() {
