@@ -1,7 +1,6 @@
 package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
-import java.net.URL;
 import java.util.ArrayList;
 import junit.framework.TestCase;
 
