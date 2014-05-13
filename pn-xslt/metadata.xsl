@@ -15,12 +15,18 @@
   <xsl:template match="t:TEI" mode="metadata">
     <xsl:variable name="md-collection"><xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
+      <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
       <xsl:otherwise>hgv</xsl:otherwise>
     </xsl:choose>
     </xsl:variable>
     <div class="metadata">
       <div class="{$md-collection} data">
         <xsl:choose>
+          <xsl:when test="$md-collection = 'dclp'">
+            <h2>
+              DCLP Data for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
+            </h2>
+          </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
               HGV Data for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
