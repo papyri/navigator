@@ -337,6 +337,15 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult.size(), matches);
   }
   
+  public void testFindMatchesIdiwLogw() {
+    String query = "\"ιδιω λογω\"";
+    String id = "http://papyri.info/ddbdp/p.ryl;2;215";
+    FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
+    List<String> expResult = new ArrayList<String>();
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    assertTrue(result.size() > 0);
+  }
+  
   public void testFindMatchesFromPatterns() {
       StringBuilder pattern = new StringBuilder();
       pattern.append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
