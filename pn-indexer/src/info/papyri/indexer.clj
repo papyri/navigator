@@ -32,11 +32,12 @@
              #^{:static true} [loadBiblio [] void]
              #^{:static true} [loadLemmas [] void]])
   (:require
-    [clojure.java.io :as io])
+    [clojure.java.io :as io]
+    [clojure.string :as st])
   (:import
     (clojure.lang ISeq)
     (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
-    (java.io File FileInputStream FileOutputStream FileReader ObjectInputStream ObjectOutputStream StringWriter FileWriter)
+    (java.io File FileInputStream FileOutputStream FileReader ObjectInputStream ObjectOutputStream PushbackReader StringWriter FileWriter)
     (java.net URI URL URLEncoder URLDecoder)
     (java.nio.charset Charset)
     (java.text Normalizer Normalizer$Form)
@@ -59,6 +60,7 @@
       
 ;; NOTE: hard-coded paths and addresses
 (def filepath "/srv/data/papyri.info/idp.data")
+(def tmpath "/srv/data/papyri.info/TM") 
 (def xsltpath "/srv/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/srv/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8083/solr/")
@@ -682,6 +684,123 @@
         (let [f (File. fname)]
           (when (.exists f)
             (.delete f))))))))
+
+(def re-start-end-quotes #"(^\"|\"$)")
+(def re-delimiter #"\",\"") 
+
+(defn unwrap-and-escape
+  [line]
+  (if-not (st/blank? line)
+    (map 
+      (fn[field]
+        (st/replace
+          (st/replace
+            (st/replace
+              (st/replace
+                (st/replace field re-start-end-quotes, "") 
+                "\\" "\\\\")
+              "\"" "\\\"")
+            "&" "&amp;")
+          "<" "&lt;"))
+      (st/split line re-delimiter))
+    '()))
+
+(defn write-tm-xml
+  [out name, fields, fieldnums, fns]
+  (.write out (str "<" name ">\n"))
+  (doseq [field fieldnums]
+    (.write out (str "  <field n=\"" field "\">" (nth fields field) "</field>\n")))
+    (doseq [f fns]
+      (f))
+  (.write out (str "</" name ">\n")))
+
+(defn tm-file
+  [n, name]
+  (File. (str tmpath "/dump/files/" (int (Math/floor (/ (Integer. n) 1000))) "/" n "-" name ".clj")))
+
+(defn process-tm-file
+  [f, n]
+  (with-open [rdr (io/reader (str tmpath "/dump/" f ".csv"))]
+    (let [lseq (line-seq rdr)
+          outfile (ref nil)
+          record (ref nil)]
+      (doseq [line lseq]
+        (let [fields (unwrap-and-escape line)]
+          (when-not (st/blank? (nth fields n))
+            (let [of (tm-file (st/trim (nth fields n)) f)]
+              (when (and (not (nil? @record)) (not= @outfile of)) ;; if we're on a new record, flush the old one
+                (with-open [out (io/writer @outfile)]
+                    (binding [*out* out
+                              *print-dup* true]
+                      (prn @record)
+                      (dosync (ref-set record nil)))))
+              (if-not (.exists of)  
+                (do ;; we're almost always creating a new file, so don't bother with expensive transactional stuff
+                  (.mkdirs (.getParentFile of))
+                  (with-open [out (io/writer of)]
+                    (binding [*out* out
+                              *print-dup* true]
+                      (prn (vector fields)))))
+                (do ;; if the file exists, we might already have it loaded from the last row, so don't re-read it
+                  (if-not (= @outfile of)
+                    (dosync
+                      (ref-set outfile of)
+                      (ref-set record (let [r (with-open [f (PushbackReader. (FileReader. @outfile))] (read f))]
+                                                (into [] (concat r (vector fields))))))
+                    (dosync
+                      (ref-set record (into [] (concat @record (vector fields))))))))))))
+      (when-not (nil? @outfile)
+        (with-open [out (io/writer @outfile)]
+          (binding [*out* out
+                    *print-dup* true]
+            (prn @record)))))))
+
+(defn map-tm-functions
+  [out name, fieldnums, rels]
+  (for [values rels]
+      (partial write-tm-xml out name values fieldnums [])))
+
+(defn preprocess-tm
+  "Converts TM data into XML for inclusion in the PN."
+  []
+  (process-tm-file "dates" 1)
+  (process-tm-file "texref" 1)
+  (process-tm-file "geotex" 1)
+  (process-tm-file "georef" 5)
+  (process-tm-file "ref" 7)
+  (process-tm-file "archref" 6)
+  (process-tm-file "collref" 2)
+  (let [rdr (io/reader (str tmpath "/dump/tex.csv"))
+        lseq (line-seq rdr)]
+    (doseq [line lseq]
+      (let [fields (unwrap-and-escape line)
+            outfile (File. (str tmpath "/files/" (int (Math/floor (/ (Integer. (nth fields 0)) 1000))) "/" (nth fields 0) ".xml"))] 
+        (.mkdirs (.getParentFile outfile))
+        (with-open [out (io/writer outfile)]
+          (let [datefile (tm-file (nth fields 0) "dates")
+                dates (when (.exists datefile) (with-open [f (PushbackReader. (FileReader. datefile))] (read f)))
+                texreffile (tm-file (nth fields 0) "texref")
+                texrefs (when (.exists texreffile) (with-open [f (PushbackReader. (FileReader. texreffile))] (read f)))
+                geotexfile (tm-file (nth fields 0) "geotex")
+                geotex (when (.exists geotexfile) (with-open [f (PushbackReader. (FileReader. geotexfile))] (read f)))
+                georeffile (tm-file (nth fields 0) "georef")
+                georefs (when (.exists georeffile) (with-open [f (PushbackReader. (FileReader. georeffile))] (read f)))
+                personreffile (tm-file (nth fields 0) "ref")
+                personrefs (when (.exists personreffile) (with-open [f (PushbackReader. (FileReader. personreffile))] (read f)))
+                archreffile (tm-file (nth fields 0) "archref")
+                archrefs (when (.exists archreffile) (with-open [f (PushbackReader. (FileReader. archreffile))] (read f)))
+                collreffile (tm-file (nth fields 0) "collref")
+                collrefs (when (.exists collreffile) (with-open [f (PushbackReader. (FileReader. collreffile))] (read f)))
+                fns (concat 
+                      (map-tm-functions out "date" [2 3 4 9 14] dates)
+                      (map-tm-functions out "texref" [1 2 3 4 5 14 15] texrefs)
+                      (map-tm-functions out "geotex" [2 28] geotex)
+                      (map-tm-functions out "georef" [0 7 25 35 36 37 38] georefs)
+                      (map-tm-functions out "personref" [0 132 53 54 55 56 151] personrefs)
+                      (map-tm-functions out "archref" [5 37] archrefs)
+                      (map-tm-functions out "collref" [1 14 15] collrefs)
+                      )]
+          (write-tm-xml out "text" fields [0 6 8 13 14 46 57 81 82 89] fns)))))))
 
 (defn generate-html
   "Builds the HTML files for the PN."

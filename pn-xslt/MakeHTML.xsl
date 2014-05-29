@@ -87,6 +87,7 @@
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="doc-id">
     <xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']"><xsl:value-of select="//t:idno[@type='apisid']"/></xsl:when>
@@ -261,6 +262,10 @@
                           </xsl:when>
                           <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                        <xsl:sort select="." order="ascending"/>
+                        
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
                         <xsl:sort select="." order="ascending"/>
