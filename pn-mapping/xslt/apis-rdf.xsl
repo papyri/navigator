@@ -63,7 +63,7 @@
         </xsl:if>
       </xsl:for-each>
       <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']">
-        <xsl:variable name="ddb" select="tokenize(normalize-space(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']), ';')"></xsl:variable>
+        <xsl:variable name="ddb" select="tokenize(normalize-space(.), ';')"></xsl:variable>
         <xsl:variable name="ddb-doc-uri">
           <xsl:choose>
             <xsl:when test="string-length($ddb[2]) = 0"><xsl:value-of select="concat('file://', $DDB-root, '/', $ddb[1], '/', $ddb[1], '.', encode-for-uri($ddb[3]), '.xml')"/></xsl:when>
@@ -73,7 +73,7 @@
         <xsl:if test="doc-available($ddb-doc-uri)">
           <dct:relation>
             <rdf:Description
-              rdf:about="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/source">
+              rdf:about="http://papyri.info/ddbdp/{./text()}/source">
               <dct:relation rdf:resource="{$id}"/>
             </rdf:Description>
           </dct:relation>

@@ -8,7 +8,6 @@ import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.log4j.Logger;
 
 /**
  * The
@@ -30,29 +30,30 @@ import org.apache.solr.client.solrj.SolrQuery;
 public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
   private ArrayList<String> itemIds = new ArrayList<String>();
-  private String preferredId;
-  private URL url;
-  private String documentTitle;
-  private String place;
-  private String date;
-  private String language;
-  private String translationLanguages;
-  private ArrayList<String> imagePaths;
-  private Boolean hasIllustration;
-  private String highlightString;
+  private final String preferredId;
+  private final URL url;
+  private final String documentTitle;
+  private final String place;
+  private final String date;
+  private final String language;
+  private final String translationLanguages;
+  private final ArrayList<String> imagePaths;
+  private final Boolean hasIllustration;
+  private final String highlightString;
   private String solrQueryString;
   private Long position;
   private Long total;
   public Pattern[] highlightTerms;
-  private ArrayList<String> highlightWords;
-  private FileUtils util;
+  private final ArrayList<String> highlightWords;
+  private final FileUtils util;
   private String tempRegex;
-  private SearchClause testClause;
-  private static IdComparator documentComparator = new IdComparator();
+  private final SearchClause testClause;
+  private static final IdComparator documentComparator = new IdComparator();
+  private static final Logger logger = Logger.getLogger("pn-dispatch");
 
   public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts) {
-
-    util = new FileUtils("/data/papyri.info/idp.data", "/data/papyri.info/pn/idp.html");
+    //TODO: this should be configurable
+    util = new FileUtils("/srv/data/papyri.info/idp.data/", "/srv/data/papyri.info/pn/idp.html/");
     this.preferredId = tidyPreferredId(prefId);
     this.itemIds = ids;
     this.url = url;
@@ -701,7 +702,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
       html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"7\">");
       for (String kwic : kwix) {
-
         html.append(kwic.replaceAll("\\s*ⓐ\\s*", "")); // TODO: why is this character sneaking through when the user does a regex word-boundary (\b) search?
         html.append("<br/>\n");
 
@@ -709,6 +709,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       html.append("</td></tr>");
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
+      logger.error("Highlightling failure", e);
     }
     return html.toString();
 

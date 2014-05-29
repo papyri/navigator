@@ -40,7 +40,7 @@ public class FileUtils {
     this.xmlPath = xmlPath;
   }
 
-  private char[] buffer = new char[8192];
+  private final char[] buffer = new char[8192];
   private static Logger logger = Logger.getLogger("pn-dispatch");
   
   /**
@@ -438,14 +438,19 @@ public class FileUtils {
   /**
    * Finds matches in a text file and returns the top 3 matches with HTML
    * highlighting applied and with context surrounding the highlighted text.
-   * @param query the text to match
    * @param t the text
+   * @param patterns the Regex patterns to match
    * @return A <code>java.util.List</code> containing the top 3 matches plus
    * context
    */
   public List<String> highlightMatches(String t, Pattern[] patterns) {
     List<String> result = new ArrayList<String>();
-    String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$3ⓞ").replaceAll(hyphenatedLineNum, "Ⓝ$3ⓜ").replaceAll(lineNum, "\nⓝ$3ⓜ").replace("\n", " ⓝ").replace("<", "&lt;").replace(">", "&gt;");
+    String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$4ⓞ")
+            .replaceAll(hyphenatedLineNum, "Ⓝ$4ⓜ")
+            .replaceAll(lineNum, "\nⓝ$4ⓜ")
+            .replace("\n", " ⓝ")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;");
     for (Pattern pattern : patterns) {
       // If pattern is something dumb, like '.', skip it.
       if (bustedRegexes.contains(pattern.toString())) {
@@ -496,8 +501,6 @@ public class FileUtils {
     return result;
   }
   
-
-
     public Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "¥");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "")
@@ -506,7 +509,7 @@ public class FileUtils {
       QueryLexer ql = new QueryLexer(a);
       CommonTokenStream tokens = new CommonTokenStream(ql);
       QueryParser qp = new QueryParser(tokens);
-      List<String> find = new ArrayList<String>();
+      List<String> find;
       try {
         qp.query();
         find = qp.getStrings();
@@ -826,9 +829,9 @@ public class FileUtils {
   private String htmlPath;
   private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ|Ⓜ[0-9a-z]+\\\\.ⓞ)*";
   private static String exclude = "(<span\\s[^>]+>[^<]+</span>|<a\\s[^>]+>[^<]+</a>|<[^>]+>|&\\w+;)";
-  private static String lineNum = "((\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
-  private static String hyphenatedLineNumInSupplied = "((?<![-])-\\](\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
-  private static String hyphenatedLineNum = "(-(\\s|\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
+  private static String lineNum = "((\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
+  private static String hyphenatedLineNumInSupplied = "((?<![-])-\\](\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
+  private static String hyphenatedLineNum = "(-(\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hlStart = "<span class=\"highlight\">";
   private static String hlStartMark = "Ⓐ";
   private static String hlEnd = "</span>";
