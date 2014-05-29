@@ -62,7 +62,7 @@
           </xsl:for-each>
         </xsl:if>
       </xsl:for-each>
-      <xsl:if test="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']">
+      <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']">
         <xsl:variable name="ddb" select="tokenize(normalize-space(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']), ';')"></xsl:variable>
         <xsl:variable name="ddb-doc-uri">
           <xsl:choose>
@@ -78,7 +78,7 @@
             </rdf:Description>
           </dct:relation>
         </xsl:if>
-      </xsl:if>
+      </xsl:for-each>
       <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'HGV']">
         <xsl:for-each select="tokenize(., '\s')">
           <xsl:variable name="dir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>
