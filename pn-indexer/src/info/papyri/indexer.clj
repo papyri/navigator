@@ -800,7 +800,7 @@
                       (map-tm-functions out "archref" [5 37] archrefs)
                       (map-tm-functions out "collref" [1 14 15] collrefs)
                       )]
-          (write-tm-xml out "text" fields [0 6 8 13 14 46 57 81 82 89] fns)))))))
+          (write-tm-xml out "text" fields [0 6 8 13 14 21 46 57 81 82 89] fns)))))))
 
 (defn generate-html
   "Builds the HTML files for the PN."
