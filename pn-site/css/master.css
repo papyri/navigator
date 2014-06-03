@@ -317,6 +317,10 @@ width: 20%;
 div#edition {
 margin-left: 3em;
 }
+div#bibliography {
+  clear:both;
+  float:left;
+}
 div.biblio {
 margin:1em;
 }

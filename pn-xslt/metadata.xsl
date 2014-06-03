@@ -103,7 +103,7 @@
   <xsl:template match="text" mode="metadata">
     <div class="metadata">
       <div class="TM data">
-        <h2>Trismegistos Data for <xsl:value-of select="field[@n='6']"/><xsl:value-of select="field[@n='8']"/></h2>
+        <h2>Trismegistos Data for <xsl:value-of select="field[@n='6']"/> <xsl:value-of select="field[@n='8']"/></h2>
         <table class="metadata">
           <tbody>
             <!-- Inventory Number -->
@@ -125,7 +125,7 @@
             <xsl:if test="string-length(field[@n='13']) gt 0">
               <tr>
                 <th>Reuse Type</th>
-                <td><xsl:value-of select="field[@n='13']"/>
+                <td><xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
                 <xsl:for-each select="tokenize(field[@n='14'], ', ')">
                   <a href="/trismegistos/{.}"><xsl:value-of select="."/></a><xsl:if test="position() != last()">, </xsl:if>
                 </xsl:for-each>
@@ -135,7 +135,7 @@
             <!-- Date -->
             <tr>
               <th>Date</th>
-              <td><xsl:value-of select="replace(field[@n='89'],'&amp;lt;br&amp;gt;','; ')"/></td>
+              <td><xsl:value-of select="replace(field[@n='89'],'&amp;lt;br&gt;','; ')"/></td>
             </tr>
             <!-- Language -->
             <tr>
@@ -170,11 +170,6 @@
                 <td><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">mentioned places</a></td>
               </tr>
             </xsl:if>
-            <tr>
-              <th class="rowheader">License</th>
-              <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
-                © Trismegistos.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
-            </tr>
           </tbody>
         </table>
       </div>
