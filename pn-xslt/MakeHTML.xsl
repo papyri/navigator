@@ -265,7 +265,6 @@
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
                         <xsl:sort select="." order="ascending"/>
-                        <xsl:message><xsl:value-of select="pi:get-filename(., 'xml')"/></xsl:message>
                         <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
                           <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
                         </xsl:if>
@@ -327,6 +326,12 @@
                 <xsl:if test="$collection = 'hgv'">
                   <div class="metadata">
                     <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+                    <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                      <xsl:sort select="." order="ascending"/>
+                      <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                        <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+                      </xsl:if>
+                    </xsl:for-each>
                     <xsl:if test="$apis">
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
                         <xsl:choose>
@@ -353,6 +358,12 @@
                   </xsl:if>
                 </xsl:if>
                 <xsl:if test="$collection = 'apis'">
+                  <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                    <xsl:sort select="." order="ascending"/>
+                    <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                      <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+                    </xsl:if>
+                  </xsl:for-each>
                   <div class="metadata">
                     <xsl:apply-templates select="/t:TEI" mode="metadata"/>
                     <xsl:call-template name="biblio"/>
