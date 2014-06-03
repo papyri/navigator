@@ -113,11 +113,11 @@
                 <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">;
                   <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">other inv.: </xsl:if>
                   <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
-                    <xsl:value-of select="field[@n='15']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
+                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
                   </xsl:for-each>
                   <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">formerly: </xsl:if>
                   <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
-                    <xsl:value-of select="field[@n='15']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
+                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
                   </xsl:for-each></xsl:if>
               </td>
             </tr>
@@ -127,7 +127,7 @@
                 <th>Reuse Type</th>
                 <td><xsl:value-of select="field[@n='13']"/>
                 <xsl:for-each select="tokenize(field[@n='14'], ', ')">
-                  <a href="/trismegistos/{.}"><xsl:value-of select="."/></a>
+                  <a href="/trismegistos/{.}"><xsl:value-of select="."/></a><xsl:if test="position() != last()">, </xsl:if>
                 </xsl:for-each>
                 <xsl:value-of select="field[@n='57']"/></td>
               </tr>
@@ -135,7 +135,7 @@
             <!-- Date -->
             <tr>
               <th>Date</th>
-              <td><xsl:value-of select="field[@n='89']"/></td>
+              <td><xsl:value-of select="replace(field[@n='89'],'&amp;lt;br&amp;gt;','; ')"/></td>
             </tr>
             <!-- Language -->
             <tr>
@@ -159,13 +159,15 @@
             <!-- People -->
             <xsl:if test="personref">
               <tr>
-                <td colspan="2"><a href="http://www.trismegistos.org/ref/ref_list.php?tex_id={field[@n='0']}">people mentioned in this document</a></td>
+                <th>People</th>
+                <td><a href="http://www.trismegistos.org/ref/ref_list.php?tex_id={field[@n='0']}">mentioned people</a></td>
               </tr>
             </xsl:if>
             <!-- Places -->
             <xsl:if test="georef">
               <tr>
-                <td colspan="2"><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">places mentioned in this document</a></td>
+                <th>Places</th>
+                <td><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">mentioned places</a></td>
               </tr>
             </xsl:if>
             <tr>
