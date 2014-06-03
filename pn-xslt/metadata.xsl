@@ -103,14 +103,14 @@
   <xsl:template match="text" mode="metadata">
     <div class="metadata">
       <div class="TM data">
-        <h2>Trismegistos Data for <xsl:value-of select="field[@n='6']"/></h2>
+        <h2>Trismegistos Data for <xsl:value-of select="field[@n='6']"/><xsl:value-of select="field[@n='8']"/></h2>
         <table class="metadata">
           <tbody>
             <!-- Inventory Number -->
             <tr>
               <th>Inv. no.</th>
               <td><xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/>
-                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">[
+                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">;
                   <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">other inv.: </xsl:if>
                   <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
                     <xsl:value-of select="field[@n='15']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
@@ -118,7 +118,7 @@
                   <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">formerly: </xsl:if>
                   <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
                     <xsl:value-of select="field[@n='15']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
-                  </xsl:for-each>]</xsl:if>
+                  </xsl:for-each></xsl:if>
               </td>
             </tr>
             <!-- Reuse -->
@@ -149,67 +149,30 @@
                 <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of select="field[@n='28']"/></a><xsl:if test="following-sibling::geotex">; </xsl:if>
               </xsl:for-each></td>
             </tr>
-            
-            <!-- Title -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/>
-            <!-- Author -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
-            <!-- Summary -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary" mode="metadata"/>
-            <!-- Publications -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/>
-            <!-- Inv. Id -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno" mode="metadata"/>
-            <!-- Physical Desc. -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p" mode="metadata"/>
-            <!-- Support / Dimensions -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support" mode="metadata"/>
-            <!-- Condition (conservation|preservation)-->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab" mode="metadata"/>
-            <!-- Layout (lines|recto/verso) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab" mode="metadata"/>
-            <!-- Hands -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc/t:p" mode="metadata"/>
-            <!-- Post-concordance BL Entries -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections']" mode="metadata"/>
-            <!-- Translations -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
-            <!-- Provenance -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
-            <!-- Material -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
-            <!-- Language -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang" mode="metadata"/>
-            <!-- Date -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
-            <!-- Commentary -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']" mode="metadata"/>
-            <!-- Notes (general|local|related) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note" mode="metadata"/>
-            <!-- Print Illustrations -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]" mode="metadata"/>
-            <!-- Subjects -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords" mode="metadata"/>
-            <!-- Associated Names -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']" mode="metadata"/>
-            <!-- Images -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
-            <xsl:choose>
-              <xsl:when test="$md-collection = 'hgv'">
-                <tr>
-                  <th class="rowheader">License</th>
-                  <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
-                    © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
-                </tr>
-              </xsl:when>
-              <xsl:otherwise>
-                <tr>
-                  <th class="rowheader">License</th>
-                  <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
-                </tr>                  
-              </xsl:otherwise>
-            </xsl:choose>
+            <!-- Archive -->
+            <xsl:if test="archref">
+              <tr>
+                <th>Archive</th>
+                <td><a href="http://www.trismegistos.org/archive/{archref/field[@n='5']}"><xsl:value-of select="archref/field[@n='37']"/></a></td>
+              </tr>
+            </xsl:if>
+            <!-- People -->
+            <xsl:if test="personref">
+              <tr>
+                <td colspan="2"><a href="http://www.trismegistos.org/ref/ref_list.php?tex_id={field[@n='0']}">people mentioned in this document</a></td>
+              </tr>
+            </xsl:if>
+            <!-- Places -->
+            <xsl:if test="georef">
+              <tr>
+                <td colspan="2"><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">places mentioned in this document</a></td>
+              </tr>
+            </xsl:if>
+            <tr>
+              <th class="rowheader">License</th>
+              <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
+                © Trismegistos.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
+            </tr>
           </tbody>
         </table>
       </div>

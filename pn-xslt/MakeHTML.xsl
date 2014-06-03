@@ -265,6 +265,7 @@
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
                         <xsl:sort select="." order="ascending"/>
+                        <xsl:message><xsl:value-of select="pi:get-filename(., 'xml')"/></xsl:message>
                         <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
                           <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
                         </xsl:if>

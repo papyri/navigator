@@ -8,8 +8,6 @@
   exclude-result-prefixes="xs"
   xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" version="2.0">
   
-  <xsl:variable name="tmpath"/>
-  
   <xsl:function name="pi:get-docs">
     <xsl:param name="urls"/>
     <xsl:param name="format"/>
@@ -86,7 +84,7 @@
       </xsl:when>
       <!-- Like http://www.trismegistos.org/text/11999 -->
       <xsl:when test="contains($url, 'trismegistos.org')">
-        <xsl:sequence select="concat($tmpath, '/', ceiling(number(substring-after($url,'http://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'http://www.trismegistos.org/text/'), '.xml')"/>
+        <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'http://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'http://www.trismegistos.org/text/'), '.xml')"/>
       </xsl:when>
       <!-- Like http://papyri.info/biblio/54953/source -->
       <xsl:when test="contains($url, 'biblio/')">
