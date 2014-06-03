@@ -62,7 +62,7 @@
   var OUlayer;       // layer for an open layers map
   var map;           // open layers map for an image
   var metadataURL;   // URL to the file that supplies djatoka with parameters for an image.  
-  var djatokaserverURL = "http://dl-img.home.nyu.edu";  // djatoka server URL
+  var djatokaserverURL = "http://libdc3-03.oit.duke.edu";  // djatoka server URL
   
   function getPath() {
       var result = window.location.href.substring(window.location.href.indexOf(window.location.pathname)).replace(/\/images$/, "/source");
@@ -90,7 +90,8 @@
       }
 
       /* Initialize URLs */
-      metadataURL = "/dispatch/images?url=" + imageURL;        
+      //metadataURL = "/dispatch/images?url=" + imageURL;        
+      metadataURL = djatokaserverURL + '/adore-djatoka/resolver?url_ver=Z39.88-2004&svc_id=info:lanl-repo/svc/getMetadata&rft_id=' + imageURL;
 
       /*
          Create open layers layer calling the OpenURL class. This class
