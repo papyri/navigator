@@ -24,4 +24,5 @@
                  [commons-codec/commons-codec "1.5"]]
   :dev-dependencies [[lein-marginalia "0.7.0-SNAPSHOT" :exclusions 
                        [org.clojure/clojure]]]
-  :main info.papyri.indexer)
+  :main info.papyri.indexer
+  :aot [info.papyri.indexer])
