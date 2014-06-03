@@ -142,6 +142,13 @@
               <th>Language</th>
               <td><xsl:value-of select="field[@n='21']"/></td>
             </tr>
+            <!-- Provenance -->
+            <tr>
+              <th>Provenance</th>
+              <td><xsl:for-each select="geotex">
+                <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of select="field[@n='28']"/></a><xsl:if test="following-sibling::geotex">; </xsl:if>
+              </xsl:for-each></td>
+            </tr>
             
             <!-- Title -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/>
