@@ -272,6 +272,8 @@
                     select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
                   <xsl:with-param name="apis-docs"
                     select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
+                  <xsl:with-param name="tm-docs" 
+                    select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
                   <xsl:with-param name="docs"
                     select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
                   />
@@ -636,6 +638,7 @@
   <xsl:template name="metadata">
     <xsl:param name="hgv-docs"/>
     <xsl:param name="apis-docs"/>
+    <xsl:param name="tm-docs"/>
     <xsl:param name="docs"/>
     <xsl:call-template name="title">
       <xsl:with-param name="hgv-docs"><xsl:copy-of select="$hgv-docs"></xsl:copy-of></xsl:with-param>
@@ -822,6 +825,38 @@
         select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
       <xsl:text> </xsl:text>
     </field>
+    
+    <field name="tm_metadata">
+      <xsl:for-each select="$tm-docs/text">
+        <xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
+        <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/><xsl:text> </xsl:text>
+        <!-- Inventory Number -->
+        <xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/><xsl:text> </xsl:text>
+        <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
+          <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]"><xsl:text> </xsl:text></xsl:if>
+        </xsl:for-each>
+        <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
+          <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]"><xsl:text> </xsl:text></xsl:if>
+        </xsl:for-each>
+        <!-- Reuse -->
+        <xsl:if test="string-length(field[@n='13']) gt 0">
+          <xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
+          <xsl:for-each select="tokenize(field[@n='14'], ', ')"><xsl:value-of select="."/><xsl:text> </xsl:text></xsl:for-each>
+          <xsl:value-of select="field[@n='57']"/>
+        </xsl:if>
+        <!-- Date -->
+        <xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/><xsl:text> </xsl:text>
+        <!-- Language -->
+        <xsl:value-of select="field[@n='21']"/><xsl:text> </xsl:text>
+        <!-- Provenance -->
+        <xsl:for-each select="geotex"><xsl:value-of select="field[@n='28']"/><xsl:text> </xsl:text></xsl:for-each>
+        <!-- Archive -->
+        <xsl:if test="archref">
+          <xsl:value-of select="archref/field[@n='37']"/><xsl:text> </xsl:text>
+        </xsl:if>
+      </xsl:for-each>
+    </field>
+    
     <xsl:choose>
       <xsl:when
         test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:p">

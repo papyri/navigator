@@ -103,7 +103,8 @@
   <xsl:template match="text" mode="metadata">
     <div class="metadata">
       <div class="TM data">
-        <h2>Trismegistos Data for <xsl:value-of select="field[@n='6']"/> <xsl:value-of select="field[@n='8']"/></h2>
+        <h2>Trismegistos Data for <xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
+          <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/></h2>
         <table class="metadata">
           <tbody>
             <!-- Inventory Number -->
@@ -135,7 +136,7 @@
             <!-- Date -->
             <tr>
               <th>Date</th>
-              <td><xsl:value-of select="replace(field[@n='89'],'&amp;lt;br&gt;','; ')"/></td>
+              <td><xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/></td>
             </tr>
             <!-- Language -->
             <tr>

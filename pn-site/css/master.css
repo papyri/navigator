@@ -313,11 +313,12 @@ div.metadata th {
 vertical-align: top;
 font-weight: bold;
 width: 20%;
+min-width: 150px;
 }
 div#edition {
 margin-left: 3em;
 }
-div#bibliography {
+div#bibliography, div#related {
   clear:both;
   float:left;
 }
