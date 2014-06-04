@@ -320,6 +320,8 @@
               </xsl:with-param>
               <xsl:with-param name="apis-docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
+              <xsl:with-param name="tm-docs" 
+                select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"
               />
@@ -339,8 +341,10 @@
               <xsl:with-param name="alterity">self</xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="metadata">
-              <xsl:with-param name="hgv-docs" select="/.."/>
+              <xsl:with-param name="hgv-docs" select="/"/>
               <xsl:with-param name="apis-docs" select="/"/>
+              <xsl:with-param name="tm-docs" 
+                select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
             <xsl:call-template name="translation">
