@@ -13,12 +13,23 @@
   <xsl:output method="html"/>
   
   <xsl:template match="t:TEI" mode="metadata">
-    <xsl:variable name="md-collection"><xsl:choose>
-      <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
-      <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
-      <xsl:otherwise>hgv</xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="md-collection">
+      <xsl:choose>
+        <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
+        <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
+        <xsl:otherwise>hgv</xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="file-uri" select="base-uri()"/>
+    
+    <!-- debugging output with xsl:message -->
+    <xsl:message xml:space="preserve">template match="t:TEI" mode="metadata"
+      t:title=='<xsl:value-of select="descendant::t:titleStmt/t:title[1]"/>'
+      idno@type="TM"=='<xsl:value-of select="descendant::t:idno[@type='TM']"/>'
+      $md-collection=='<xsl:value-of select="$md-collection"/>'
+      $file-uri=='<xsl:value-of select="$file-uri"/></xsl:message>'
+    <!-- end debugging output with xsl:message -->
+    
     <div class="metadata">
       <div class="{$md-collection} data">
         <xsl:choose>
