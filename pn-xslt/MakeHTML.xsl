@@ -129,6 +129,7 @@
   <xsl:template match="/">
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
+    <xsl:variable name="tm" select="contains($related, 'trismegistos.org/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
     <xsl:variable name="image" select="count($imgs) gt 0"/>
@@ -211,6 +212,9 @@
                       <label for="mdt">metadata</label><input type="checkbox" name="metadata" id="mdt" checked="checked"/><br/>
                       <xsl:if test="$hgv">
                         <label for="hgvm">HGV data</label><input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
+                      </xsl:if>
+                      <xsl:if test="tm">
+                        <label for="tmm">TM data</label><input type="checkbox" name="tm" id="tmm" checked="checked"/>
                       </xsl:if>
                       <xsl:if test="$apis">
                         <label for="apism">APIS catalog record</label><input type="checkbox" name="apis" id="apism" checked="checked"/>

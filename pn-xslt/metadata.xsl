@@ -23,12 +23,12 @@
         <xsl:choose>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
-              HGV Data for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
+              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
             </h2>
           </xsl:when>
           <xsl:otherwise>
             <h2>
-              APIS Catalog Record for <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
+              Catalog Record: <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
             </h2>
           </xsl:otherwise>
         </xsl:choose>
@@ -103,10 +103,15 @@
   <xsl:template match="text" mode="metadata">
     <div class="metadata">
       <div class="TM data">
-        <h2>Trismegistos Data for <xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
-          <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/></h2>
+        <h2>Trismegistos: <xsl:value-of select="field[@n='0']"/> [<a href="http://www.trismegistos.org/text/{field[@n='0']}">source</a>]</h2>
         <table class="metadata">
           <tbody>
+            <!-- Publications -->
+            <tr>
+              <th>Publications</th>
+              <td><xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
+                <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/></td>
+            </tr>
             <!-- Inventory Number -->
             <tr>
               <th>Inv. no.</th>

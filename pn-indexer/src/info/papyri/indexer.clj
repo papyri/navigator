@@ -697,11 +697,13 @@
           (st/replace
             (st/replace
               (st/replace
-                (st/replace field re-start-end-quotes, "") 
-                "\\" "\\\\")
-              "\"" "\\\"")
-            "&" "&amp;")
-          "<" "&lt;"))
+                (st/replace
+                  (st/replace field re-start-end-quotes, "") 
+                  "\\" "\\\\")
+                "\"" "\\\"")
+              "&" "&amp;")
+            "<" "&lt;"))
+          #"\x0B" "")
       (st/split line re-delimiter))
     '()))
 
