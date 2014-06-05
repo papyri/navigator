@@ -102,7 +102,7 @@
   
   <xsl:template match="text" mode="metadata">
     <div class="metadata">
-      <div class="TM data">
+      <div class="tm data">
         <h2>Trismegistos: <xsl:value-of select="field[@n='0']"/> [<a href="http://www.trismegistos.org/text/{field[@n='0']}">source</a>]</h2>
         <table class="metadata">
           <tbody>

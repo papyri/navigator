@@ -213,7 +213,7 @@
                       <xsl:if test="$hgv">
                         <label for="hgvm">HGV data</label><input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
                       </xsl:if>
-                      <xsl:if test="tm">
+                      <xsl:if test="$tm">
                         <label for="tmm">TM data</label><input type="checkbox" name="tm" id="tmm" checked="checked"/>
                       </xsl:if>
                       <xsl:if test="$apis">
