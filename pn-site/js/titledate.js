@@ -17,39 +17,6 @@ $(document).ready(function(){
               }
             }
           );
-          $("#titledate").append(function() {
-            var result = "";
-            result += $(".mdtitle:first").text();
-            if (result != "") {
-              result += " - ";
-            }
-            if ($("div.hgv .mddate").length > 0) {
-              result += $("div.hgv .mddate").map(function (i) {
-                return $(this).clone()
-                              .children()
-                              .remove()
-                              .end()
-                              .text();
-              }).get().join("; ");
-            } else {
-              result += $(".mddate:first").clone()
-                                          .children()
-                                          .remove()
-                                          .end()
-                                          .text();
-             
-            }
-            if ($(".mdprov").length > 0) {
-              result += " - ";
-              result += $(".mdprov:first").clone()
-                                          .children()
-                                          .remove()
-                                          .end()
-                                          .text();
-            }
-            return result;
-          });
-    
     	
     	  var showEditHistory = function(){
     	  
