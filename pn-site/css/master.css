@@ -322,6 +322,10 @@ div#bibliography, div#related {
   clear:both;
   float:left;
 }
+div#related {
+  clear:both;
+  float:left;
+}
 div.biblio {
 margin:1em;
 }
