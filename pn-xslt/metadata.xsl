@@ -13,14 +13,30 @@
   <xsl:output method="html"/>
   
   <xsl:template match="t:TEI" mode="metadata">
-    <xsl:variable name="md-collection"><xsl:choose>
-      <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
-      <xsl:otherwise>hgv</xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="md-collection">
+      <xsl:choose>
+        <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
+        <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
+        <xsl:otherwise>hgv</xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
+    
+    <xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,3)"/>
+	<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
+    <!-- debugging output with xsl:message -->
+    <xsl:message xml:space="preserve">template match="t:TEI" mode="metadata"
+      
+      $file-uri=='<xsl:value-of select="$file-uri"/></xsl:message>'
+    <!-- end debugging output with xsl:message -->
+    
     <div class="metadata">
       <div class="{$md-collection} data">
         <xsl:choose>
+          <xsl:when test="$md-collection = 'dclp'">
+            <h2>
+              DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+            </h2>
+          </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
               HGV Data for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
@@ -34,8 +50,10 @@
         </xsl:choose>
         <table class="metadata">
           <tbody>
-            <!-- Title -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/>
+             <!-- Title 
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/> -->
+			<!-- New Work -->
+			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl" mode="metadata"/>
             <!-- Author -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
             <!-- Summary -->
@@ -43,7 +61,7 @@
             <!-- Publications -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/>
-            <!-- Inv. Id -->
+            <!-- Fragments -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno" mode="metadata"/>
             <!-- Physical Desc. -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p" mode="metadata"/>
@@ -67,7 +85,11 @@
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang" mode="metadata"/>
             <!-- Date -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
-            <!-- Commentary -->
+            <!-- Custodial Events -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist" mode="metadata"/>
+			<!-- Reference Edition -->
+			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'referenceEdition']" mode="metadata"/>
+			<!-- Commentary -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']" mode="metadata"/>
             <!-- Notes (general|local|related) -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note" mode="metadata"/>
@@ -101,11 +123,19 @@
     </div>
   </xsl:template>
     
-  <!-- Title -->
+  <!-- Title 
   <xsl:template match="t:title" mode="metadata">
     <tr>
       <th class="rowheader" rowspan="1">Title</th>
       <td><xsl:if test="not(starts-with(., 'kein'))"><xsl:attribute name="class">mdtitle</xsl:attribute></xsl:if><xsl:value-of select="."/></td>
+    </tr>
+  </xsl:template>-->
+  
+  <!-- New Work -->
+  <xsl:template match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl" mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="1">Work</th>
+      <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
   
@@ -203,10 +233,10 @@
     </tr>
   </xsl:template>
   
-  <!-- Inv. Id -->
+  <!-- Fragments -->
   <xsl:template match="t:msIdentifier/t:idno" mode="metadata">
     <tr>
-      <th class="rowheader">Inv. Id</th>
+      <th class="rowheader">Fragments</th>
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
@@ -491,6 +521,27 @@
     </xsl:variable>
     <xsl:sequence select="$era"/>
   </xsl:function>
+  
+  <!-- Custodial Events --> 
+  <xsl:template match="t:custodialHist" mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="1">Custodial Events</th>
+	  <td><ul><xsl:for-each select="t:custEvent">
+        <li><xsl:value-of select="@from"/> - <xsl:value-of select="@to"/> : <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/> : <xsl:value-of select="@corresp"/></li>
+      </xsl:for-each></ul></td>
+      
+    </tr>
+  </xsl:template>
+  
+  <!-- Reference Edition-->
+  <xsl:template match="t:div[@type = 'bibliography' and @subtype = 'referenceEdition']" mode="metadata">
+  <tr>
+      <th>Reference Edition</th>
+      <td><ul><xsl:for-each select="t:listBibl/t:bibl">
+        <li><xsl:value-of select="t:author"/>, <xsl:value-of select="t:title"/> , <xsl:value-of select="t:date"/></li>
+      </xsl:for-each></ul></td>
+    </tr>
+  </xsl:template>
   
   <!-- Notes -->
   <xsl:template match="t:msItemStruct/t:note" mode="metadata">
