@@ -531,7 +531,16 @@
   <!-- Generate parallel reference string -->
   <xsl:template name="get-references">
     <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
-    <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
+    <xsl:if test="$collection = 'dclp'">Trismegistos </xsl:if>
+    <xsl:choose>
+      <xsl:when test="$collection = 'dclp'">
+	  <a href="http://www.trismegistos.org/text/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></a>
+	  </xsl:when>
+      <xsl:otherwise><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="$collection = 'dclp'">
+	= <a href="http://www.trismegistos.org/ldab/text.php?quick={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']}">LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of></a>
+	</xsl:if>
     <xsl:if test="count($relations[contains(., 'hgv/')]) gt 0"> = HGV </xsl:if>
     <xsl:for-each select="$relations[contains(., 'hgv/')]">
       <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
