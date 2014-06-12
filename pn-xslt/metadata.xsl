@@ -25,6 +25,7 @@
   	<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
     <!-- debugging output with xsl:message -->
     <xsl:message xml:space="preserve">template match="t:TEI" mode="metadata"
+      $file-uri1=='<xsl:value-of select="$file-uri1"/>'
       $file-uri=='<xsl:value-of select="$file-uri"/></xsl:message>'
     <!-- end debugging output with xsl:message -->
     
