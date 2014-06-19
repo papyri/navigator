@@ -164,29 +164,29 @@
        <xsl:if test="string-length($citationForm) > 0">
           <meta property="dc:bibliographicCitation" datatype="xsd:string" content="{replace($citationForm, '&quot;', '')}"/>
        </xsl:if>
-        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="{$cssbase}/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie.css" type="text/css" media="screen" charset="utf-8"/><![endif]]]></xsl:text>
+          <xsl:text><![CDATA[/ie.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
         </xsl:comment>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE 7]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie7.css" type="text/css" media="screen" charset="utf-8"/><![endif]]]></xsl:text>
+          <xsl:text><![CDATA[/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
         </xsl:comment>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE 8]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie8.css" type="text/css" media="screen" charset="utf-8"/><![endif]]]></xsl:text>
+          <xsl:text><![CDATA[/ie8.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
         </xsl:comment>        
         <xsl:comment>
           <xsl:text><![CDATA[[if IE 9]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie9.css" type="text/css" media="screen" charset="utf-8"/><![endif]]]></xsl:text>
+          <xsl:text><![CDATA[/ie9.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
         </xsl:comment>        
         
         <!-- document title -->
