@@ -11,23 +11,23 @@
   version="2.0" exclude-result-prefixes="#all">
   
   <xsl:output method="html"/>
-  
-  <xsl:template match="t:TEI" mode="metadata">
-    <xsl:variable name="md-collection">
+  <xsl:variable name="md-collection">
       <xsl:choose>
         <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
         <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
         <xsl:otherwise>hgv</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+  <xsl:template match="t:TEI" mode="metadata">
+    
     
     <xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,3)"/>
-  	<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
+	<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
     <!-- debugging output with xsl:message -->
-    <xsl:message xml:space="preserve">template match="t:TEI" mode="metadata"
-      $file-uri1=='<xsl:value-of select="$file-uri1"/>'
+    <!--<xsl:message xml:space="preserve">template match="t:TEI" mode="metadata"
+      
       $file-uri=='<xsl:value-of select="$file-uri"/></xsl:message>'
-    <!-- end debugging output with xsl:message -->
+     end debugging output with xsl:message -->
     
     <div class="metadata">
       <div class="{$md-collection} data">
@@ -50,8 +50,8 @@
         </xsl:choose>
         <table class="metadata">
           <tbody>
-             <!-- Title 
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/> -->
+             <!-- Title -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/> 
 			<!-- New Work -->
 			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl" mode="metadata"/>
             <!-- Author -->
@@ -61,8 +61,30 @@
             <!-- Publications -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/>
-            <!-- Fragments -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno" mode="metadata"/>
+            
+              <!-- Fragments / Inv. Id-->
+			<xsl:choose>
+				<xsl:when test="$md-collection = 'dclp'">
+				
+				<tr>
+					<th class="rowheader">Fragments</th>
+					<td><xsl:value-of select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"/></td>
+				</tr>
+				
+				</xsl:when>
+          
+				<xsl:when test="$md-collection = 'hgv'">
+			
+				</xsl:when>		  
+				<xsl:otherwise>
+				
+				<tr>
+					<th class="rowheader">Inv. Id</th>
+					<td><xsl:value-of select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"/></td>
+				</tr>
+				
+				</xsl:otherwise>
+			</xsl:choose>
             <!-- Physical Desc. -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p" mode="metadata"/>
             <!-- Support / Dimensions -->
@@ -123,20 +145,40 @@
     </div>
   </xsl:template>
     
-  <!-- Title 
+  <!-- Title -->
   <xsl:template match="t:title" mode="metadata">
-    <tr>
-      <th class="rowheader" rowspan="1">Title</th>
-      <td><xsl:if test="not(starts-with(., 'kein'))"><xsl:attribute name="class">mdtitle</xsl:attribute></xsl:if><xsl:value-of select="."/></td>
-    </tr>
-  </xsl:template>-->
+     <xsl:choose>
+				<xsl:when test="$md-collection = 'dclp'">
+			
+				</xsl:when>
+          
+				<xsl:otherwise>
+				<tr>
+					<th class="rowheader" rowspan="1">Title</th>
+					<td><xsl:if test="not(starts-with(., 'kein'))"><xsl:attribute name="class">mdtitle</xsl:attribute></xsl:if><xsl:value-of select="."/></td>
+				</tr>	
+				</xsl:otherwise>
+			</xsl:choose>
+	
+	
+  </xsl:template>
   
   <!-- New Work -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl" mode="metadata">
-    <tr>
-      <th class="rowheader" rowspan="1">Work</th>
-      <td><xsl:value-of select="."/></td>
-    </tr>
+  <xsl:choose>
+				<xsl:when test="$md-collection = 'dclp'">
+				
+				<tr>
+					<th class="rowheader" rowspan="1">Work</th>
+					<td><xsl:value-of select="."/></td>
+				</tr>
+				</xsl:when>
+          
+				<xsl:otherwise>
+				
+				</xsl:otherwise>
+			</xsl:choose>
+    
   </xsl:template>
   
   <!-- Author -->
@@ -233,13 +275,10 @@
     </tr>
   </xsl:template>
   
-  <!-- Fragments -->
-  <xsl:template match="t:msIdentifier/t:idno" mode="metadata">
-    <tr>
-      <th class="rowheader">Fragments</th>
-      <td><xsl:value-of select="."/></td>
-    </tr>
-  </xsl:template>
+  
+
+  
+  
   
   <!-- Physical Desc. -->
   <xsl:template match="t:physDesc/t:p" mode="metadata">
