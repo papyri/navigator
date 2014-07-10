@@ -532,7 +532,7 @@
   <!-- Generate Title -->
   <xsl:template name="title-references">
     <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
-    <xsl:if test="$collection = 'dclp'">Trismegistos </xsl:if>
+    <xsl:if test="$collection = 'dclp'">DCLP/Trismegistos </xsl:if>
     <xsl:choose>
       <xsl:when test="$collection = 'dclp'">
 	  <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
