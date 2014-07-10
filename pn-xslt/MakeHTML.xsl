@@ -191,7 +191,7 @@
         
         <!-- document title -->
         <title>
-          <xsl:call-template name="get-references"/>
+          <xsl:call-template name="title-references"/>
         </title>
         <!-- scripts -->
         <script src="{$jsbase}/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
@@ -527,6 +527,39 @@
   <!-- Commentary links -->
   <xsl:template match="t:div[@type='commentary']/t:list/t:item/t:ref">
     <a href="{parent::t:item/@corresp}"><xsl:apply-templates/></a>.
+  </xsl:template>
+  
+  <!-- Generate Title -->
+  <xsl:template name="title-references">
+    <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
+    <xsl:if test="$collection = 'dclp'">Trismegistos </xsl:if>
+    <xsl:choose>
+      <xsl:when test="$collection = 'dclp'">
+	  <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of>
+	  </xsl:when>
+      <xsl:otherwise><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="$collection = 'dclp'">
+	= LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of>
+	</xsl:if>
+    <xsl:if test="count($relations[contains(., 'hgv/')]) gt 0"> = HGV </xsl:if>
+    <xsl:for-each select="$relations[contains(., 'hgv/')]">
+      <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+        <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="."/>       
+        </xsl:for-each>
+        <xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
+        <xsl:if test="position() != last()"> = </xsl:if>
+      </xsl:if>
+    </xsl:for-each>
+    <xsl:for-each-group select="$relations[contains(., 'hgv/')]" group-by="replace(., '[a-z]', '')">
+      <xsl:if test="contains(., 'hgv')">
+        = Trismegistos <xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/>
+    </xsl:if></xsl:for-each-group>
+    <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+    <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+    <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
   </xsl:template>
   
   <!-- Generate parallel reference string -->
