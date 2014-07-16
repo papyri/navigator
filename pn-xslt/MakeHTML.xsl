@@ -398,8 +398,15 @@
                   </div>
                   <div class="text">
                     <xsl:comment>text information will go here</xsl:comment>
-                    <p>text information will go here</p>
+                    <div class="transcription data">
+      <h2>DCLP transcription: <xsl:value-of select="t:text/t:body/t:div[@type='edition']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
+      <xsl:variable name="text-dclp">
+        <xsl:apply-templates select="."/>
+      </xsl:variable>
+      <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
+      <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
                   </div>
+				  </div>
                 </xsl:if> 
                 <div id="ld" class="data">
                   <h2>Linked Data</h2>
