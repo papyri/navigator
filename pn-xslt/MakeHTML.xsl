@@ -401,11 +401,11 @@
                     <div class="transcription data">
                       <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
                       <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
-      <xsl:variable name="text-dclp">
-        <xsl:apply-templates select="//t:div[@type='edition']"/>
-      </xsl:variable>
-      <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
-      <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
+                      <xsl:variable name="text-dclp">
+                        <xsl:apply-templates select="//t:div[@type='edition']"/>
+                      </xsl:variable>
+                      <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
+                      <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
                   </div>
 				  </div>
                 </xsl:if> 
