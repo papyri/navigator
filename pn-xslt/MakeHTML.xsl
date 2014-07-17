@@ -404,7 +404,7 @@
                       <xsl:variable name="text-dclp">
                         <xsl:apply-templates select="//t:div[@type='edition']"/>
                       </xsl:variable>
-                      <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
+                      <!-- Moded templates found in htm-tpl-sqbrackets.xsl (this fixes/collapses abutting square brackets) -->
                       <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
                   </div>
 				  </div>
