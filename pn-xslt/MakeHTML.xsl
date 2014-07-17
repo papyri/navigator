@@ -399,7 +399,7 @@
                   <div class="text">
                     <xsl:comment>text information will go here</xsl:comment>
                     <div class="transcription data">
-      <h2>DCLP transcription: <xsl:value-of select="t:text/t:body/t:div[@type='edition']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
+                      <h2>DCLP Transcription <xsl:value-of select="t:text/t:body/t:div[@type='edition']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
       <xsl:variable name="text-dclp">
         <xsl:apply-templates select="."/>
       </xsl:variable>
