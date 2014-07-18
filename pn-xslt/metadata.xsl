@@ -660,193 +660,80 @@
 
           <xsl:for-each select="t:custEvent">
             <xsl:variable name="context-node" select="../../../../t:msIdentifier/t:idno/t:idno"/>
-
-            <xsl:choose>
-              <xsl:when test="t:ptr[@target]">
-                <xsl:variable name="link" select="t:ptr/@target"/>
-                <a href="{$link}">
-
-                  <xsl:choose>
-                    <xsl:when test="@corresp">
-                      <xsl:choose>
-                        <xsl:when test="@type">
-                          <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
-                              <xsl:when test="@from">
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                  select="@to"/>) :&#xA0; <xsl:variable name="token"
-                                  select="tokenize(@corresp,' ')"/>
-                                <xsl:for-each select="$token">
-                                  <xsl:variable name="frag" select="."/>
-                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-                                </xsl:for-each>
-                              </xsl:when>
-                              <xsl:otherwise>
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/> :&#xA0; <xsl:variable name="token"
-                                  select="tokenize(@corresp,' ')"/>
-                                <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
-                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                    <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-                                </xsl:for-each>
-                              </xsl:otherwise>
-                            </xsl:choose>
-                          </li>
-                        </xsl:when>
-                        <xsl:otherwise>
-                          <li>
-                            <xsl:choose>
-                              <xsl:when test="@from">
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                  select="@to"/>) :&#xA0; <xsl:variable name="token"
-                                  select="tokenize(@corresp,' ')"/>
-                                <xsl:for-each select="$token">
-                                  <xsl:variable name="frag" select="."/>
-                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-                                </xsl:for-each>
-                              </xsl:when>
-                              <xsl:otherwise>
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/> :&#xA0; <xsl:variable name="token"
-                                  select="tokenize(@corresp,' ')"/>
-                                <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
-                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                    <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-                                </xsl:for-each>
-                              </xsl:otherwise>
-                            </xsl:choose>
-                          </li>
-                        </xsl:otherwise>
-                      </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                      <xsl:choose>
-                        <xsl:when test="@type">
-                          <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
-                              <xsl:when test="@from">
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                  select="@to"/>) </xsl:when>
-                              <xsl:otherwise>
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/>
-                              </xsl:otherwise>
-                            </xsl:choose>
-                          </li>
-                        </xsl:when>
-                        <xsl:otherwise>
-                          <li>
-                            <xsl:choose>
-                              <xsl:when test="@from">
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                  select="@to"/>) </xsl:when>
-                              <xsl:otherwise>
-                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                  select="t:surname"/>
-                              </xsl:otherwise>
-                            </xsl:choose>
-                          </li>
-                        </xsl:otherwise>
-                      </xsl:choose>
-                    </xsl:otherwise>
-                  </xsl:choose>
-                </a>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:choose>
-                  <xsl:when test="@corresp">
-                    <xsl:choose>
-                      <xsl:when test="@type">
-                        <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
-                            <xsl:when test="@from">
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                select="@to"/>) :&#xA0; <xsl:variable name="token"
-                                select="tokenize(@corresp,' ')"/>
-                              <xsl:for-each select="$token">
-                                <xsl:variable name="frag" select="."/>
-                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-                              </xsl:for-each>
-                            </xsl:when>
-                            <xsl:otherwise>
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/> :&#xA0; <xsl:variable name="token"
-                                select="tokenize(@corresp,' ')"/>
-                              <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
-                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-                              </xsl:for-each>
-                            </xsl:otherwise>
-                          </xsl:choose>
-                        </li>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <li>
-                          <xsl:choose>
-                            <xsl:when test="@from">
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                select="@to"/>) :&#xA0; <xsl:variable name="token"
-                                select="tokenize(@corresp,' ')"/>
-                              <xsl:for-each select="$token">
-                                <xsl:variable name="frag" select="."/>
-                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-                              </xsl:for-each>
-                            </xsl:when>
-                            <xsl:otherwise>
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/> :&#xA0; <xsl:variable name="token"
-                                select="tokenize(@corresp,' ')"/>
-                              <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
-                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-                              </xsl:for-each>
-                            </xsl:otherwise>
-                          </xsl:choose>
-                        </li>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:choose>
-                      <xsl:when test="@type">
-                        <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
-                            <xsl:when test="@from">
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                select="@to"/>) </xsl:when>
-                            <xsl:otherwise>
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/>
-                            </xsl:otherwise>
-                          </xsl:choose>
-                        </li>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <li>
-                          <xsl:choose>
-                            <xsl:when test="@from">
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
-                                select="@to"/>) </xsl:when>
-                            <xsl:otherwise>
-                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
-                                select="t:surname"/>
-                            </xsl:otherwise>
-                          </xsl:choose>
-                        </li>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:otherwise>
-            </xsl:choose>
+            
+            <!-- capture the HTML serialization of the details we want to emit into a variable --> 
+            <xsl:variable name="interior">
+                
+              <!-- type of event -->
+              <xsl:if test="@type">
+                <xsl:value-of select="concat(upper-case(substring(@type, 1, 1)), substring(@type, 2))"/><xsl:text> by </xsl:text>
+              </xsl:if>
+              
+              <!-- responsible individual -->
+              <xsl:choose>
+                <xsl:when test="t:forename or t:surname">
+                  <xsl:value-of select="t:forename"/>
+                  <xsl:if test="t:forename and t:surname">
+                    <xsl:text> </xsl:text>
+                  </xsl:if>
+                  <xsl:value-of select="t:surname"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  [unidentified responsible individual]
+                </xsl:otherwise>
+              </xsl:choose>
+              
+              <!-- dates -->
+              <xsl:text> (</xsl:text>
+              <xsl:choose>
+                <xsl:when test="@from and @to and @from=@to">
+                  <xsl:value-of select="@from"/>
+                </xsl:when>
+                <xsl:when test="@from and @to">
+                  <xsl:value-of select="@from"/>
+                  <xsl:text>-</xsl:text>
+                  <xsl:value-of select="@to"/>
+                </xsl:when>
+                <xsl:when test="@from">
+                  <xsl:value-of select="@from"/>
+                  <xsl:text>-</xsl:text>
+                </xsl:when>
+                <xsl:when test="@to">
+                  <xsl:text>-</xsl:text>
+                  <xsl:value-of select="@to"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:text>date not indicated</xsl:text>
+                </xsl:otherwise>
+              </xsl:choose>
+              <xsl:text>)</xsl:text>
+              
+              <!-- corresponding fragments -->
+              <xsl:if test="@corresp">
+                <xsl:text>: </xsl:text>
+                <xsl:variable name="corr" select="@corresp"/>
+                <xsl:variable name="corrtokens" select="tokenize($corr,' ')"/>
+                <xsl:for-each select="$corrtokens">
+                  <xsl:variable name="frag" select="."/>
+                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
+                  <xsl:if test="substring-after($corr, normalize-space(.)) != ''">; </xsl:if>
+                </xsl:for-each>
+              </xsl:if>                
+            </xsl:variable>
+            
+            <!-- now emit the content we stored in the variable, wrapping it in a link if appropriate -->
+            <li>
+              <xsl:choose>
+                <xsl:when test="t:ptr[@target]">
+                  <a href="{t:ptr[@target]/@target}"><xsl:copy-of select="$interior"/></a>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:copy-of select="$interior"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </li>
+            
           </xsl:for-each>
 
         </ul>
