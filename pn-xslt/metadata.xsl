@@ -50,6 +50,11 @@
         </xsl:choose>
         <table class="metadata">
           <tbody>
+            <xsl:choose>
+              <xsl:when test="$md-collection='dclp'">
+                <!-- DCLP uses a different item order than other collections for metadata, so we need to invoke templates separately here -->
+              </xsl:when>
+              <xsl:otherwise>
             <!-- Title -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/>
             <!-- New Work -->
@@ -192,7 +197,9 @@
                 </tr>
               </xsl:otherwise>
             </xsl:choose>
-          </tbody>
+              </xsl:otherwise>
+            </xsl:choose>
+          </tbody>                    
         </table>
       </div>
       
