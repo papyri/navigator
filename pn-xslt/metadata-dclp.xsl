@@ -26,9 +26,19 @@
         <tr>
             <th class="rowheader">Fragments</th>
             <td>
-                <xsl:value-of
-                    select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
-                />
+                <xsl:for-each select="//t:msIdentifier/descendant::t:idno[@type='invNo']">
+                    <xsl:value-of select="."/>
+                    <xsl:if test="position() != last()">
+                        <xsl:choose>
+                            <xsl:when test="substring(., string-length(.), 1) = ';'">
+                                <xsl:text> </xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>; </xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:if>
+                </xsl:for-each>
             </td>
         </tr>
 
