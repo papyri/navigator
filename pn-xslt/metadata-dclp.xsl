@@ -64,6 +64,11 @@
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material"
             mode="metadata"/>
 
+        <!-- Form and Layout -->
+        <xsl:apply-templates
+            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc"
+            mode="dclp-metadata-form"/>
+        
         <!-- Genre -->
         <xsl:call-template name="dclp-keywords">
             <xsl:with-param name="label">Genre</xsl:with-param>
@@ -88,68 +93,9 @@
         <xsl:apply-templates
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist"
             mode="metadata"/>
-        
-        <!-- Author -->
-        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
-        
-        <!-- Summary -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary"
-            mode="metadata"/>
-        
-        <!-- Publications -->
-        <xsl:apply-templates
-            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
-            mode="metadata"/>
-        <xsl:apply-templates
-            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']"
-            mode="metadata"/>
-        
-        <!-- Physical Desc. -->
-        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p"
-            mode="metadata"/>
-        
-        <!-- Condition (conservation|preservation)-->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab"
-            mode="metadata"/>
-        
-        <!-- Layout (lines|recto/verso) -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab"
-            mode="metadata"/>
-        
-        <!-- Hands -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc/t:p"
-            mode="metadata"/>
-        
-        <!-- Post-concordance BL Entries -->
-        <xsl:apply-templates
-            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections']"
-            mode="metadata"/>
-        
-        <!-- Translations -->
-        <xsl:apply-templates
-            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']"
-            mode="metadata"/>
-        
-        <!-- Language -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang"
-            mode="metadata"/>
-        
-        <!-- Commentary -->
-        <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']" mode="metadata"/>
-        
-        <!-- Notes (general|local|related) -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note"
-            mode="metadata"/>
-        
-        <!-- Associated Names -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']"
+
+        <!-- Physical Description -->
+        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc"
             mode="metadata"/>
         
         <!-- Images -->
@@ -189,6 +135,42 @@
                 <td><xsl:for-each select="$terms/t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
             </tr>
         </xsl:if>
+    </xsl:template>
+    
+    <xsl:template match="t:physDesc" mode="dclp-metadata-form">
+        <tr>
+            <th class="rowheader">Form and Layout</th>
+            <xsl:variable name="contenttext">
+                <xsl:value-of select="descendant::t:material"/>
+                <xsl:if test="descendant::t:material">
+                    <xsl:text> </xsl:text>
+                </xsl:if>
+                <xsl:value-of select="t:objectDesc[@form]/@form"/>
+                <xsl:if test="descendant::t:foliation/t:dim or descendant::t:layout">
+                    <xsl:text> (</xsl:text>
+                    <xsl:for-each select="descendant::t:foliation/t:dim">
+                        <xsl:value-of select="@type"/>: <xsl:value-of select="."/>
+                        <xsl:if test="ancestor::t:physDesc/descendant::t:layout">
+                            <xsl:text>; </xsl:text>
+                        </xsl:if>
+                    </xsl:for-each>
+                    <xsl:for-each select="descendant::t:layout">
+                        <xsl:if test="@columns">
+                            <xsl:value-of select="@columns"/> columns
+                            <xsl:if test="@writtenLines">
+                                <xsl:text>of </xsl:text>
+                                <xsl:value-of select="@writtenLines"/>
+                                <xsl:text> lines each</xsl:text>
+                            </xsl:if>
+                        </xsl:if>
+                    </xsl:for-each>
+                    <xsl:text>)</xsl:text>
+                </xsl:if>
+            </xsl:variable>
+            <td>
+                <xsl:value-of select="concat(upper-case(substring($contenttext, 1, 1)), substring($contenttext, 2))"/>
+            </td>
+        </tr>
     </xsl:template>
     
 </xsl:stylesheet>
