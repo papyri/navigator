@@ -15,6 +15,7 @@
   <xsl:template match="t:TEI" mode="metadata">
     <xsl:variable name="md-collection"><xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
+      <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
       <xsl:otherwise>hgv</xsl:otherwise>
     </xsl:choose>
     </xsl:variable>
