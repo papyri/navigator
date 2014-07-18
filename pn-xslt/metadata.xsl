@@ -858,6 +858,43 @@
     </tr>
   </xsl:template>
   
+  <!-- Place Stored (Ancient) -->
+  <xsl:template match="t:provenance[@type= 'stored']/t:p" mode="metadata">
+    <tr>
+      <th class="rowheader">Place Stored (Ancient)</th>
+      <td><xsl:for-each select="t:placeName">
+        <xsl:choose>
+          <xsl:when test='not(@subtype)'>
+            <xsl:choose>
+              <xsl:when test='not(@ref)'>	
+                <xsl:value-of select="."/>,&#xA0;
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="."/>,&#xA0;
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            
+          </xsl:otherwise>
+        </xsl:choose>	
+        
+      </xsl:for-each>
+        <xsl:for-each select="t:placeName">
+          <xsl:choose>
+            <xsl:when test='not(@subtype)'>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="."/>
+            </xsl:otherwise>
+          </xsl:choose>	
+        </xsl:for-each>
+        
+      </td> 
+    </tr>
+  </xsl:template>
+  
+  
   <!-- Associated Names -->
   <xsl:template match="t:origin" mode="metadata">
     <tr>
