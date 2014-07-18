@@ -23,34 +23,14 @@
             mode="metadata"/>
         
         <!-- Fragments / Inv. Id-->
-        <xsl:choose>
-            <xsl:when test="$md-collection = 'dclp'">
-
-                <tr>
-                    <th class="rowheader">Fragments</th>
-                    <td>
-                        <xsl:value-of
-                            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
-                        />
-                    </td>
-                </tr>
-
-            </xsl:when>
-
-            <xsl:when test="$md-collection = 'hgv'"> </xsl:when>
-            <xsl:otherwise>
-
-                <tr>
-                    <th class="rowheader">Inv. Id</th>
-                    <td>
-                        <xsl:value-of
-                            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
-                        />
-                    </td>
-                </tr>
-
-            </xsl:otherwise>
-        </xsl:choose>
+        <tr>
+            <th class="rowheader">Fragments</th>
+            <td>
+                <xsl:value-of
+                    select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
+                />
+            </td>
+        </tr>
 
         <!-- Support / Dimensions -->
         <xsl:apply-templates
@@ -168,30 +148,15 @@
         <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
         
         <!-- Copyright and license -->
-        <xsl:choose>
-            <xsl:when test="$md-collection = 'hgv'">
-                <tr>
-                    <th class="rowheader">License</th>
-                    <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img
-                                alt="Creative Commons License" style="border-width:0"
-                                src="http://i.creativecommons.org/l/by/3.0/80x15.png"/></a> ©
-                        Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.
-                        This work is licensed under a <a rel="license"
-                            href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
-                            Attribution 3.0 License</a>.</td>
-                </tr>
-            </xsl:when>
-            <xsl:otherwise>
-                <tr>
-                    <th class="rowheader">License</th>
-                    <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img
-                                alt="Creative Commons License" style="border-width:0"
-                                src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png"/></a> This
-                        work is licensed under a <a rel="license"
-                            href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons
-                            Attribution-NonCommercial 3.0 License</a>.</td>
-                </tr>
-            </xsl:otherwise>
-        </xsl:choose>
+        <tr>
+            <th class="rowheader">License</th>
+            <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img
+                        alt="Creative Commons License" style="border-width:0"
+                        src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png"/></a> This
+                work is licensed under a <a rel="license"
+                    href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons
+                    Attribution-NonCommercial 3.0 License</a>.</td>
+        </tr>
+        
     </xsl:template>
 </xsl:stylesheet>
