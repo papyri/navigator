@@ -9,9 +9,6 @@
     
     <xsl:template name="serialize-dclp-metadata">
         
-        <!-- Title -->
-        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/>
-        
         <!-- New Work -->
         <xsl:apply-templates
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
