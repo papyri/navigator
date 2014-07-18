@@ -54,9 +54,15 @@
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/> 
 			<!-- New Work -->
 			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl" mode="metadata"/>
-			<!-- Reference Edition -->
-			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'referenceEdition']" mode="metadata"/>
-			 <!-- Fragments / Inv. Id-->
+            <!-- Author -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
+            <!-- Summary -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary" mode="metadata"/>
+            <!-- Publications -->
+            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
+            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/>
+            
+              <!-- Fragments / Inv. Id-->
 			<xsl:choose>
 				<xsl:when test="$md-collection = 'dclp'">
 				
@@ -79,36 +85,10 @@
 				
 				</xsl:otherwise>
 			</xsl:choose>
-			
-			<!-- Support / Dimensions -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support" mode="metadata"/>
-			<!-- Date -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
-			<!-- Provenance -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
-			<!-- Place Stored (Ancient) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance[@type = 'stored']/t:p" mode="metadata"/>
-			<!-- Material -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
-			<!-- Genre -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords" mode="metadata"/>
-			<!-- Culture -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[@type = 'culture']" mode="metadata"/>
-			<!-- Religion -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[@type = 'religion']" mode="metadata"/>
-			<!-- Print Illustrations -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]" mode="metadata"/>
-            <!-- Custodial Events -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist" mode="metadata"/>
-            <!-- Author -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
-            <!-- Summary -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary" mode="metadata"/>
-            <!-- Publications -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/> 
             <!-- Physical Desc. -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p" mode="metadata"/>
+            <!-- Support / Dimensions -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support" mode="metadata"/>
             <!-- Condition (conservation|preservation)-->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab" mode="metadata"/>
             <!-- Layout (lines|recto/verso) -->
@@ -119,12 +99,26 @@
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections']" mode="metadata"/>
             <!-- Translations -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
+            <!-- Provenance -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
+            <!-- Material -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
             <!-- Language -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang" mode="metadata"/>
+            <!-- Date -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
+            <!-- Custodial Events -->
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist" mode="metadata"/>
+			<!-- Reference Edition -->
+			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'referenceEdition']" mode="metadata"/>
 			<!-- Commentary -->
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']" mode="metadata"/>
             <!-- Notes (general|local|related) -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note" mode="metadata"/>
+            <!-- Print Illustrations -->
+            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]" mode="metadata"/>
+            <!-- Subjects -->
+            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords" mode="metadata"/>
             <!-- Associated Names -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']" mode="metadata"/>
             <!-- Images -->
@@ -815,70 +809,11 @@
     </tr>
   </xsl:template>
   
-  <!-- Genre -->
+  <!-- Subjects -->
   <xsl:template match="t:keywords" mode="metadata">
     <tr>
-      <th class="rowheader">Genre</th>
-      <td><xsl:for-each select="t:term">
-	  <xsl:sort select="position()" data-type="number" order="descending"/>
-	   <xsl:choose>
-	  <xsl:when test = "not(@type)">
-	  <xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">, </xsl:if>
-	  </xsl:when>
-	  </xsl:choose>
-	  </xsl:for-each></td>
-    </tr>
-  </xsl:template>
-  
-  <!-- Place Stored (Ancient) -->
-  <xsl:template match="t:provenance[@type= 'stored']/t:p" mode="metadata">
-    <tr>
-      <th class="rowheader">Place Stored (Ancient)</th>
-       <td><xsl:for-each select="t:placeName">
-			<xsl:choose>
-			<xsl:when test='not(@subtype)'>
-				<xsl:choose>
-				<xsl:when test='not(@ref)'>	
-					<xsl:value-of select="."/>,&#xA0;
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="."/>,&#xA0;
-				</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
-			<xsl:otherwise>
-				
-			</xsl:otherwise>
-			</xsl:choose>	
-			
-		</xsl:for-each>
-		<xsl:for-each select="t:placeName">
-			<xsl:choose>
-			<xsl:when test='not(@subtype)'>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="."/>
-			</xsl:otherwise>
-			</xsl:choose>	
-		</xsl:for-each>
-		
-		</td> 
-    </tr>
-  </xsl:template>
-  
-  <!-- Culture -->
-  <xsl:template match="t:keywords/t:term[@type='culture']" mode="metadata">
-    <tr>
-      <th class="rowheader">Culture</th>
-      <td><xsl:for-each select="."><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
-    </tr>
-  </xsl:template>
-  
-  <!-- Religion -->
-  <xsl:template match="t:keywords/t:term[@type='religion']" mode="metadata">
-    <tr>
-      <th class="rowheader">Religion</th>
-      <td><xsl:for-each select="."><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
+      <th class="rowheader">Subjects</th>
+      <td><xsl:for-each select="t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
     </tr>
   </xsl:template>
   
