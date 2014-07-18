@@ -56,20 +56,21 @@
         <xsl:apply-templates
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material"
             mode="metadata"/>
-        
+
         <!-- Genre -->
-        <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords"
-            mode="metadata"/>
+        <xsl:call-template name="dclp-keywords">
+            <xsl:with-param name="label">Genre</xsl:with-param>
+        </xsl:call-template>
         
         <!-- Culture -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[@type = 'culture']"
-            mode="metadata"/>
+        <xsl:call-template name="dclp-keywords">
+            <xsl:with-param name="type">culture</xsl:with-param>
+        </xsl:call-template>
         
         <!-- Religion -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[@type = 'religion']"
-            mode="metadata"/>
+        <xsl:call-template name="dclp-keywords">
+            <xsl:with-param name="type">religion</xsl:with-param>
+        </xsl:call-template>
         
         <!-- Print Illustrations -->
         <xsl:apply-templates
@@ -159,4 +160,30 @@
         </tr>
         
     </xsl:template>
+    
+    <!-- DCLP-specific handling of keyword terms -->
+    <xsl:template name="dclp-keywords">
+        <xsl:param name="type"/>
+        <xsl:param name="label" select="concat(upper-case(substring($type, 1, 1)), substring($type, 2))"/>
+        <xsl:message>template dclp-keywords(type=<xsl:value-of select="$type"/>, label=<xsl:value-of select="$label"/>)</xsl:message>
+        <xsl:variable name="terms">
+            <xsl:choose>
+                <xsl:when test="$type=''">
+                    <xsl:sequence select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[not(@type)]"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[@type=$type]"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:message>$terms: <xsl:value-of select="$terms"/></xsl:message>
+        <xsl:message>count($terms/t:term): <xsl:value-of select="count($terms/t:term)"/></xsl:message>
+        <xsl:if test="count($terms/t:term) &gt; 0">
+            <tr>
+                <th class="rowheader"><xsl:value-of select="$label"/></th>
+                <td><xsl:for-each select="$terms/t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
+            </tr>
+        </xsl:if>
+    </xsl:template>
+    
 </xsl:stylesheet>
