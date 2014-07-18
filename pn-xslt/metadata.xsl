@@ -22,6 +22,11 @@
     <div class="metadata">
       <div class="{$md-collection} data">
         <xsl:choose>
+          <xsl:when test="$md-collection = 'dclp'">
+            <h2>DCLP/LDAB [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{number(substring(descendant::t:idno[@type='TM'],0,3))}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml"
+                target="_new">xml</a>]
+            </h2>
+          </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
               HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
