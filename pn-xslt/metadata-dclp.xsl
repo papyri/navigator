@@ -165,7 +165,6 @@
     <xsl:template name="dclp-keywords">
         <xsl:param name="type"/>
         <xsl:param name="label" select="concat(upper-case(substring($type, 1, 1)), substring($type, 2))"/>
-        <xsl:message>template dclp-keywords(type=<xsl:value-of select="$type"/>, label=<xsl:value-of select="$label"/>)</xsl:message>
         <xsl:variable name="terms">
             <xsl:choose>
                 <xsl:when test="$type=''">
@@ -176,8 +175,6 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:message>$terms: <xsl:value-of select="$terms"/></xsl:message>
-        <xsl:message>count($terms/t:term): <xsl:value-of select="count($terms/t:term)"/></xsl:message>
         <xsl:if test="count($terms/t:term) &gt; 0">
             <tr>
                 <th class="rowheader"><xsl:value-of select="$label"/></th>
