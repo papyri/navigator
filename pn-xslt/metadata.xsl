@@ -301,7 +301,16 @@
     mode="metadata">
       <tr>
         <th class="rowheader" rowspan="1">Work</th>
-        <td><xsl:value-of select="t:author"/>, <xsl:value-of select="t:title"/></td>
+        <td>
+          <xsl:choose>
+            <xsl:when test="t:author">
+              <xsl:value-of select="t:author"/>
+            </xsl:when>
+            <xsl:otherwise>Unknown</xsl:otherwise>
+          </xsl:choose>
+          <xsl:if test="t:title">, </xsl:if>
+          <xsl:value-of select="t:title"/>
+        </td>
       </tr>
   </xsl:template>
   
