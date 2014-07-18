@@ -716,8 +716,19 @@
                 <xsl:for-each select="$corrtokens">
                   <xsl:variable name="frag" select="."/>
                   <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-                  <xsl:if test="substring-after($corr, normalize-space(.)) != ''">; </xsl:if>
+                  <xsl:variable name="output-node" select="$context-node[@xml:id=$xml-id]"/>
+                  <xsl:value-of select="$output-node"/>
+                  <xsl:if test="substring-after($corr, normalize-space(.)) != ''">
+                    <xsl:choose>
+                      <xsl:when test="substring($output-node, string-length($output-node), 1) = ';'">
+                        <xsl:text> </xsl:text>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:text>; </xsl:text>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                    
+                  </xsl:if>
                 </xsl:for-each>
               </xsl:if>                
             </xsl:variable>
