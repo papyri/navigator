@@ -295,6 +295,16 @@
     </xsl:for-each>
   </xsl:template>
   
+  <!-- Ancient author and work -->
+  <xsl:template
+    match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
+    mode="metadata">
+      <tr>
+        <th class="rowheader" rowspan="1">Work</th>
+        <td><xsl:value-of select="t:author"/>, <xsl:value-of select="t:title"/></td>
+      </tr>
+  </xsl:template>
+  
   <!-- APIS Citations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
     <tr>
