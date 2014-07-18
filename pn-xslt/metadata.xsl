@@ -11,6 +11,7 @@
   version="2.0" exclude-result-prefixes="#all">
   
   <xsl:import href="metadata-dclp.xsl"/>
+  <xsl:import href="htm-teibibl.xsl"/>
   <xsl:output method="html"/>
   
   <xsl:template match="t:TEI" mode="metadata">
@@ -758,7 +759,7 @@
   <tr>
       <th>Reference Edition</th>
       <td><ul><xsl:for-each select="t:listBibl/t:bibl">
-        <li><xsl:value-of select="t:author"/><xsl:value-of select="t:editor"/>, <xsl:value-of select="t:title"/> , <xsl:value-of select="t:date"/></li>
+        <li><xsl:call-template name="buildCitation"/></li>
       </xsl:for-each></ul></td>
     </tr>
   </xsl:template>

@@ -53,7 +53,7 @@
       <xsl:otherwise><i><xsl:value-of select="t:title[@type='main']"/></i><xsl:if test="t:title[@type='short']"> (<i><xsl:value-of select="t:title[@type='short']"/></i>)</xsl:if></xsl:otherwise>
     </xsl:choose></xsl:variable>
     <xsl:variable name="pubInfo"><xsl:call-template name="pubInfo"><xsl:with-param name="main" select="$mainWork"/></xsl:call-template></xsl:variable>
-    <b><xsl:value-of select="t:idno[@type='pi']"/>. </b> <xsl:if test="string-length($author) > 0"><xsl:value-of select="$author"/>, </xsl:if>
+    <xsl:if test="t:idno[@type='pi']"><b><xsl:value-of select="t:idno[@type='pi']"/>. </b> </xsl:if><xsl:if test="string-length($author) > 0"><xsl:value-of select="$author"/>, </xsl:if>
       <xsl:if test="$edFirst"><xsl:value-of select="normalize-space($editor)"/>, </xsl:if>
     <xsl:if test="t:relatedItem[@type='appearsIn']"><xsl:if test="t:title">"</xsl:if><xsl:copy-of select="$articleTitle"/><xsl:if test="@subtype='journal'">,</xsl:if><xsl:if test="t:title">"</xsl:if><xsl:text> </xsl:text></xsl:if>
       <xsl:copy-of select="$mainTitle"/><xsl:if test="string-length($pubInfo) > 0">, </xsl:if><xsl:value-of select="$pubInfo"/>. </xsl:template>
