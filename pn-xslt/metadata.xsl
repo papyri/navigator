@@ -10,181 +10,239 @@
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="2.0" exclude-result-prefixes="#all">
   
+  <xsl:import href="metadata-dclp.xsl"/>
   <xsl:output method="html"/>
-  <xsl:variable name="md-collection">
-      <xsl:choose>
-        <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
-        <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
-        <xsl:otherwise>hgv</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
+  
   <xsl:template match="t:TEI" mode="metadata">
-    
-    
-    <xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,3)"/>
-	<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
-    <!-- debugging output with xsl:message 
-    <xsl:message xml:space="preserve">template match="t:TEI" mode="metadata"
-      
-      $file-uri=='<xsl:value-of select="$file-uri"/></xsl:message>'
-     end debugging output with xsl:message -->
-    
+    <xsl:variable name="md-collection"><xsl:choose>
+      <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
+      <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
+      <xsl:otherwise>hgv</xsl:otherwise>
+    </xsl:choose>
+    </xsl:variable>
     <div class="metadata">
       <div class="{$md-collection} data">
         <xsl:choose>
           <xsl:when test="$md-collection = 'dclp'">
-            <h2>
-              DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+            <h2>DCLP/LDAB [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{number(substring(descendant::t:idno[@type='TM'],0,3))}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml"
+                target="_new">xml</a>]
             </h2>
           </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
-              HGV Data for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
+              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
             </h2>
           </xsl:when>
           <xsl:otherwise>
             <h2>
-              APIS Catalog Record for <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
+              Catalog Record: <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
             </h2>
           </xsl:otherwise>
         </xsl:choose>
         <table class="metadata">
           <tbody>
-             <!-- Title -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/> 
-			<!-- New Work -->
-			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl" mode="metadata"/>
-			<!-- Reference Edition -->
-			<xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'referenceEdition']" mode="metadata"/>
-			 <!-- Fragments / Inv. Id-->
-			<xsl:choose>
-				<xsl:when test="$md-collection = 'dclp'">
-				
-				<tr>
-					<th class="rowheader">Fragments</th>
-					<td><xsl:value-of select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"/></td>
-				</tr>
-				
-				</xsl:when>
-          
-				<xsl:when test="$md-collection = 'hgv'">
-			
-				</xsl:when>		  
-				<xsl:otherwise>
-				
-				<tr>
-					<th class="rowheader">Inv. Id</th>
-					<td><xsl:value-of select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"/></td>
-				</tr>
-				
-				</xsl:otherwise>
-			</xsl:choose>
-			
-			<!-- Support / Dimensions -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support" mode="metadata"/>
-			<!-- Date -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
-			<!-- Provenance -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
-			<!-- Place Stored (Ancient) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance[@type = 'stored']/t:p" mode="metadata"/>
-			<!-- Material -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
-			<!-- Genre -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords" mode="metadata"/>
-			<!-- Culture -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[@type = 'culture']" mode="metadata"/>
-			<!-- Religion -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[@type = 'religion']" mode="metadata"/>
-			<!-- Print Illustrations -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]" mode="metadata"/>
-            <!-- Custodial Events -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist" mode="metadata"/>
-            <!-- Author -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
-            <!-- Summary -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary" mode="metadata"/>
-            <!-- Publications -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/> 
-            <!-- Physical Desc. -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p" mode="metadata"/>
-            <!-- Condition (conservation|preservation)-->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab" mode="metadata"/>
-            <!-- Layout (lines|recto/verso) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab" mode="metadata"/>
-            <!-- Hands -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc/t:p" mode="metadata"/>
-            <!-- Post-concordance BL Entries -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections']" mode="metadata"/>
-            <!-- Translations -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
-            <!-- Language -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang" mode="metadata"/>
-			<!-- Commentary -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']" mode="metadata"/>
-            <!-- Notes (general|local|related) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note" mode="metadata"/>
-            <!-- Associated Names -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']" mode="metadata"/>
-            <!-- Images -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
             <xsl:choose>
-              <xsl:when test="$md-collection = 'hgv'">
-                <tr>
-                  <th class="rowheader">License</th>
-                  <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
-                    © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
-                </tr>
+              <xsl:when test="$md-collection = 'dclp'">
+                <xsl:call-template name="serialize-dclp-metadata"/>
               </xsl:when>
               <xsl:otherwise>
-                <tr>
-                  <th class="rowheader">License</th>
-                  <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
-                </tr>                  
+                <!-- Title -->
+                <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title"
+                  mode="metadata"/>
+                <!-- Author -->
+                <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author"
+                  mode="metadata"/>
+                <!-- Summary -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary"
+                  mode="metadata"/>
+                <!-- Publications -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
+                  mode="metadata"/>
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']"
+                  mode="metadata"/>
+                <!-- Inv. Id -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
+                  mode="metadata"/>
+                <!-- Physical Desc. -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p"
+                  mode="metadata"/>
+                <!-- Support / Dimensions -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support"
+                  mode="metadata"/>
+                <!-- Condition (conservation|preservation)-->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab"
+                  mode="metadata"/>
+                <!-- Layout (lines|recto/verso) -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab"
+                  mode="metadata"/>
+                <!-- Hands -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc/t:p"
+                  mode="metadata"/>
+                <!-- Post-concordance BL Entries -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections']"
+                  mode="metadata"/>
+                <!-- Translations -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']"
+                  mode="metadata"/>
+                <!-- Provenance -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)"
+                  mode="metadata"/>
+                <!-- Material -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material"
+                  mode="metadata"/>
+                <!-- Language -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang"
+                  mode="metadata"/>
+                <!-- Date -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate"
+                  mode="metadata"/>
+                <!-- Commentary -->
+                <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']"
+                  mode="metadata"/>
+                <!-- Notes (general|local|related) -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note"
+                  mode="metadata"/>
+                <!-- Print Illustrations -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]"
+                  mode="metadata"/>
+                <!-- Subjects -->
+                <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords"
+                  mode="metadata"/>
+                <!-- Associated Names -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']"
+                  mode="metadata"/>
+                <!-- Images -->
+                <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
+                <xsl:choose>
+                  <xsl:when test="$md-collection = 'hgv'">
+                    <tr>
+                      <th class="rowheader">License</th>
+                      <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png"/></a> 
+                        © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This 
+                        work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
+                    </tr>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <tr>
+                      <th class="rowheader">License</th>
+                      <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png"/></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
+                    </tr>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:otherwise>
             </xsl:choose>
           </tbody>
         </table>
       </div>
-      
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="text" mode="metadata">
+    <div class="metadata">
+      <div class="tm data">
+        <h2>Trismegistos: <xsl:value-of select="field[@n='0']"/> [<a href="http://www.trismegistos.org/text/{field[@n='0']}">source</a>]</h2>
+        <table class="metadata">
+          <tbody>
+            <!-- Publications -->
+            <tr>
+              <th>Publications</th>
+              <td><xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
+                <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/></td>
+            </tr>
+            <!-- Inventory Number -->
+            <tr>
+              <th>Inv. no.</th>
+              <td><xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/>
+                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">;
+                  <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">other inv.: </xsl:if>
+                  <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
+                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
+                  </xsl:for-each>
+                  <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">formerly: </xsl:if>
+                  <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
+                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
+                  </xsl:for-each></xsl:if>
+              </td>
+            </tr>
+            <!-- Reuse -->
+            <xsl:if test="string-length(field[@n='13']) gt 0">
+              <tr>
+                <th>Reuse Type</th>
+                <td><xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
+                <xsl:for-each select="tokenize(field[@n='14'], ', ')">
+                  <a href="/trismegistos/{.}"><xsl:value-of select="."/></a><xsl:if test="position() != last()">, </xsl:if>
+                </xsl:for-each>
+                <xsl:value-of select="field[@n='57']"/></td>
+              </tr>
+            </xsl:if>
+            <!-- Date -->
+            <tr>
+              <th>Date</th>
+              <td><xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/></td>
+            </tr>
+            <!-- Language -->
+            <tr>
+              <th>Language</th>
+              <td><xsl:value-of select="field[@n='21']"/></td>
+            </tr>
+            <!-- Provenance -->
+            <tr>
+              <th>Provenance</th>
+              <td><xsl:for-each select="geotex">
+                <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of select="field[@n='28']"/></a><xsl:if test="following-sibling::geotex">; </xsl:if>
+              </xsl:for-each></td>
+            </tr>
+            <!-- Archive -->
+            <xsl:if test="archref">
+              <tr>
+                <th>Archive</th>
+                <td><a href="http://www.trismegistos.org/archive/{archref/field[@n='5']}"><xsl:value-of select="archref/field[@n='37']"/></a></td>
+              </tr>
+            </xsl:if>
+            <!-- People -->
+            <xsl:if test="personref">
+              <tr>
+                <th>People</th>
+                <td><a href="http://www.trismegistos.org/ref/ref_list.php?tex_id={field[@n='0']}">mentioned people</a></td>
+              </tr>
+            </xsl:if>
+            <!-- Places -->
+            <xsl:if test="georef">
+              <tr>
+                <th>Places</th>
+                <td><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">mentioned places</a></td>
+              </tr>
+            </xsl:if>
+          </tbody>
+        </table>
+      </div>
     </div>
   </xsl:template>
     
   <!-- Title -->
   <xsl:template match="t:title" mode="metadata">
-     <xsl:choose>
-				<xsl:when test="$md-collection = 'dclp'">
-			
-				</xsl:when>
-          
-				<xsl:otherwise>
-				<tr>
-					<th class="rowheader" rowspan="1">Title</th>
-					<td><xsl:if test="not(starts-with(., 'kein'))"><xsl:attribute name="class">mdtitle</xsl:attribute></xsl:if><xsl:value-of select="."/></td>
-				</tr>	
-				</xsl:otherwise>
-			</xsl:choose>
-	
-	
-  </xsl:template>
-  
-  <!-- New Work -->
-  <xsl:template match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl" mode="metadata">
-  <xsl:choose>
-				<xsl:when test="$md-collection = 'dclp'">
-				
-				<tr>
-					<th class="rowheader" rowspan="1">Work</th>
-					<td><xsl:value-of select="t:author"/>, <xsl:value-of select="t:title"/></td>
-				</tr>
-				</xsl:when>
-          
-				<xsl:otherwise>
-				
-				</xsl:otherwise>
-			</xsl:choose>
-    
+    <tr>
+      <th class="rowheader" rowspan="1">Title</th>
+      <td><xsl:if test="not(starts-with(., 'kein'))"><xsl:attribute name="class">mdtitle</xsl:attribute></xsl:if><xsl:value-of select="."/></td>
+    </tr>
   </xsl:template>
   
   <!-- Author -->
@@ -237,6 +295,25 @@
     </xsl:for-each>
   </xsl:template>
   
+  <!-- Ancient author and work -->
+  <xsl:template
+    match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
+    mode="metadata">
+      <tr>
+        <th class="rowheader" rowspan="1">Work</th>
+        <td>
+          <xsl:choose>
+            <xsl:when test="t:author">
+              <xsl:value-of select="t:author"/>
+            </xsl:when>
+            <xsl:otherwise>Unknown</xsl:otherwise>
+          </xsl:choose>
+          <xsl:if test="t:title">, </xsl:if>
+          <xsl:value-of select="t:title"/>
+        </td>
+      </tr>
+  </xsl:template>
+  
   <!-- APIS Citations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
     <tr>
@@ -281,10 +358,13 @@
     </tr>
   </xsl:template>
   
-  
-
-  
-  
+  <!-- Inv. Id -->
+  <xsl:template match="t:msIdentifier/t:idno" mode="metadata">
+    <tr>
+      <th class="rowheader">Inv. Id</th>
+      <td><xsl:value-of select="."/></td>
+    </tr>
+  </xsl:template>
   
   <!-- Physical Desc. -->
   <xsl:template match="t:physDesc/t:p" mode="metadata">
@@ -571,229 +651,203 @@
   <xsl:template match="t:custodialHist" mode="metadata">
     <tr>
       <th class="rowheader" rowspan="1">Custodial Events</th>
-	  <td><ul>
-	  
-	  <xsl:for-each select="t:custEvent">
-	  <xsl:variable name="context-node" select="../../../../t:msIdentifier/t:idno/t:idno"></xsl:variable>
-	  
-	  <xsl:choose>
-	  <xsl:when test="t:ptr[@target]">
-	 <xsl:variable name="link" select="t:ptr/@target"/>
-	    <a href="{$link}">
-		
-	  <xsl:choose>
-	  <xsl:when test="@corresp">
-	  <xsl:choose>
-	  <xsl:when test="@type">
-	    <li><xsl:value-of select="@type"/> by&#xA0;
-		<xsl:choose>
-    <xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>) :&#xA0;
-	  <xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-				
-	          </xsl:for-each>
-			  
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/> :&#xA0; 
-		<xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-				
-	          </xsl:for-each>
-			  
-    </xsl:otherwise>
-  </xsl:choose>
-  </li>
-	</xsl:when>
-	<xsl:otherwise>
-	<li>
-	<xsl:choose>
-	<xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>) :&#xA0;
-	  <xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-				
-	          </xsl:for-each>
-			  
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/> :&#xA0; 
-		<xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-				
-	          </xsl:for-each>
-			  
-    </xsl:otherwise>
-	</xsl:choose>
-  </li>
-  </xsl:otherwise>
-	 </xsl:choose> 
-	  </xsl:when>
-	  <xsl:otherwise>
-	  <xsl:choose>
-	  <xsl:when test="@type">
-	    <li><xsl:value-of select="@type"/> by&#xA0;
-		<xsl:choose>
-    <xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>)
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/> 
-    </xsl:otherwise>
-  </xsl:choose>
-  </li>
-	</xsl:when>
-	<xsl:otherwise>
-	<li>
-	<xsl:choose>
-    <xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>)
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>
-    </xsl:otherwise>
-  </xsl:choose>
-  </li>
-  </xsl:otherwise>
-	 </xsl:choose> 
-	   </xsl:otherwise>
-     </xsl:choose>   
-     </a>	 
-	 </xsl:when>
-	 <xsl:otherwise>
-	 <xsl:choose>
-	  <xsl:when test="@corresp">
-	  <xsl:choose>
-	  <xsl:when test="@type">
-	    <li><xsl:value-of select="@type"/> by&#xA0;
-		<xsl:choose>
-    <xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>) :&#xA0;
-	  <xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-				
-	          </xsl:for-each>
-			  
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/> :&#xA0; 
-		<xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-				
-	          </xsl:for-each>
-			  
-    </xsl:otherwise>
-  </xsl:choose>
-  </li>
-	</xsl:when>
-	<xsl:otherwise>
-	<li>
-	<xsl:choose>
-	<xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>) :&#xA0;
-	  <xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
-				
-	          </xsl:for-each>
-			  
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/> :&#xA0; 
-		<xsl:variable name="token" select="tokenize(@corresp,' ')"></xsl:variable>
-	          
-	          <xsl:for-each select="$token">
-	            
-				<xsl:variable name="frag" select="."/>
-				<xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
-				
-	            <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
-				
-	          </xsl:for-each>
-			  
-    </xsl:otherwise>
-	</xsl:choose>
-  </li>
-  </xsl:otherwise>
-	 </xsl:choose> 
-	  </xsl:when>
-	  <xsl:otherwise>
-	  <xsl:choose>
-	  <xsl:when test="@type">
-	    <li><xsl:value-of select="@type"/> by&#xA0;
-		<xsl:choose>
-    <xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>)
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/> 
-    </xsl:otherwise>
-  </xsl:choose>
-  </li>
-	</xsl:when>
-	<xsl:otherwise>
-	<li>
-	<xsl:choose>
-    <xsl:when test="@from">
-      <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>)
-    </xsl:when>
-    <xsl:otherwise>
-		<xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of select="t:surname"/>
-    </xsl:otherwise>
-  </xsl:choose>
-  </li>
-  </xsl:otherwise>
-	 </xsl:choose> 
-	   </xsl:otherwise>
-     </xsl:choose> 
-	 </xsl:otherwise>
-		</xsl:choose>
-      </xsl:for-each>
+      <td>
+        <ul>
 
-	  </ul></td>
-      
+          <xsl:for-each select="t:custEvent">
+            <xsl:variable name="context-node" select="../../../../t:msIdentifier/t:idno/t:idno"/>
+
+            <xsl:choose>
+              <xsl:when test="t:ptr[@target]">
+                <xsl:variable name="link" select="t:ptr/@target"/>
+                <a href="{$link}">
+
+                  <xsl:choose>
+                    <xsl:when test="@corresp">
+                      <xsl:choose>
+                        <xsl:when test="@type">
+                          <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
+                              <xsl:when test="@from">
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                  select="@to"/>) :&#xA0; <xsl:variable name="token"
+                                  select="tokenize(@corresp,' ')"/>
+                                <xsl:for-each select="$token">
+                                  <xsl:variable name="frag" select="."/>
+                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
+                                </xsl:for-each>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/> :&#xA0; <xsl:variable name="token"
+                                  select="tokenize(@corresp,' ')"/>
+                                <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
+                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                    <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
+                                </xsl:for-each>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </li>
+                        </xsl:when>
+                        <xsl:otherwise>
+                          <li>
+                            <xsl:choose>
+                              <xsl:when test="@from">
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                  select="@to"/>) :&#xA0; <xsl:variable name="token"
+                                  select="tokenize(@corresp,' ')"/>
+                                <xsl:for-each select="$token">
+                                  <xsl:variable name="frag" select="."/>
+                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
+                                </xsl:for-each>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/> :&#xA0; <xsl:variable name="token"
+                                  select="tokenize(@corresp,' ')"/>
+                                <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
+                                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                    <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
+                                </xsl:for-each>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </li>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:choose>
+                        <xsl:when test="@type">
+                          <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
+                              <xsl:when test="@from">
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                  select="@to"/>) </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </li>
+                        </xsl:when>
+                        <xsl:otherwise>
+                          <li>
+                            <xsl:choose>
+                              <xsl:when test="@from">
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                  select="@to"/>) </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                  select="t:surname"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </li>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </a>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:choose>
+                  <xsl:when test="@corresp">
+                    <xsl:choose>
+                      <xsl:when test="@type">
+                        <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
+                            <xsl:when test="@from">
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                select="@to"/>) :&#xA0; <xsl:variable name="token"
+                                select="tokenize(@corresp,' ')"/>
+                              <xsl:for-each select="$token">
+                                <xsl:variable name="frag" select="."/>
+                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
+                              </xsl:for-each>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/> :&#xA0; <xsl:variable name="token"
+                                select="tokenize(@corresp,' ')"/>
+                              <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
+                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
+                              </xsl:for-each>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </li>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <li>
+                          <xsl:choose>
+                            <xsl:when test="@from">
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                select="@to"/>) :&#xA0; <xsl:variable name="token"
+                                select="tokenize(@corresp,' ')"/>
+                              <xsl:for-each select="$token">
+                                <xsl:variable name="frag" select="."/>
+                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>&#xA0;
+                              </xsl:for-each>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/> :&#xA0; <xsl:variable name="token"
+                                select="tokenize(@corresp,' ')"/>
+                              <xsl:for-each select="$token"> <xsl:variable name="frag" select="."/>
+                                <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                                  <xsl:value-of select="$context-node[@xml:id=$xml-id]"/>
+                              </xsl:for-each>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </li>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:choose>
+                      <xsl:when test="@type">
+                        <li><xsl:value-of select="@type"/> by&#xA0; <xsl:choose>
+                            <xsl:when test="@from">
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                select="@to"/>) </xsl:when>
+                            <xsl:otherwise>
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </li>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <li>
+                          <xsl:choose>
+                            <xsl:when test="@from">
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/>(<xsl:value-of select="@from"/> - <xsl:value-of
+                                select="@to"/>) </xsl:when>
+                            <xsl:otherwise>
+                              <xsl:value-of select="t:forename"/>&#xA0;<xsl:value-of
+                                select="t:surname"/>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </li>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+
+        </ul>
+      </td>
+
     </tr>
   </xsl:template>
   
@@ -815,18 +869,11 @@
     </tr>
   </xsl:template>
   
-  <!-- Genre -->
+  <!-- Subjects -->
   <xsl:template match="t:keywords" mode="metadata">
     <tr>
-      <th class="rowheader">Genre</th>
-      <td><xsl:for-each select="t:term">
-	  <xsl:sort select="position()" data-type="number" order="descending"/>
-	   <xsl:choose>
-	  <xsl:when test = "not(@type)">
-	  <xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">, </xsl:if>
-	  </xsl:when>
-	  </xsl:choose>
-	  </xsl:for-each></td>
+      <th class="rowheader">Subjects</th>
+      <td><xsl:for-each select="t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
     </tr>
   </xsl:template>
   
@@ -834,53 +881,34 @@
   <xsl:template match="t:provenance[@type= 'stored']/t:p" mode="metadata">
     <tr>
       <th class="rowheader">Place Stored (Ancient)</th>
-       <td><xsl:for-each select="t:placeName">
-			<xsl:choose>
-			<xsl:when test='not(@subtype)'>
-				<xsl:choose>
-				<xsl:when test='not(@ref)'>	
-					<xsl:value-of select="."/>,&#xA0;
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="."/>,&#xA0;
-				</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
-			<xsl:otherwise>
-				
-			</xsl:otherwise>
-			</xsl:choose>	
-			
-		</xsl:for-each>
-		<xsl:for-each select="t:placeName">
-			<xsl:choose>
-			<xsl:when test='not(@subtype)'>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="."/>
-			</xsl:otherwise>
-			</xsl:choose>	
-		</xsl:for-each>
-		
-		</td> 
+      <td>
+        <xsl:for-each select="t:placeName">
+          <xsl:choose>
+            <xsl:when test="not(@subtype)">
+              <xsl:choose>
+                <xsl:when test="not(@ref)">
+                  <xsl:value-of select="."/>,&#xA0; </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="."/>,&#xA0; </xsl:otherwise>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise> </xsl:otherwise>
+          </xsl:choose>
+
+        </xsl:for-each>
+        <xsl:for-each select="t:placeName">
+          <xsl:choose>
+            <xsl:when test="not(@subtype)"> </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+
+      </td>
     </tr>
   </xsl:template>
   
-  <!-- Culture -->
-  <xsl:template match="t:keywords/t:term[@type='culture']" mode="metadata">
-    <tr>
-      <th class="rowheader">Culture</th>
-      <td><xsl:for-each select="."><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
-    </tr>
-  </xsl:template>
-  
-  <!-- Religion -->
-  <xsl:template match="t:keywords/t:term[@type='religion']" mode="metadata">
-    <tr>
-      <th class="rowheader">Religion</th>
-      <td><xsl:for-each select="."><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
-    </tr>
-  </xsl:template>
   
   <!-- Associated Names -->
   <xsl:template match="t:origin" mode="metadata">
