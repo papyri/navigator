@@ -131,22 +131,26 @@
                   mode="metadata"/>
                 <!-- Images -->
                 <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
+                
+                <!-- Intellectual Property and License -->
+                <!-- What follows is a dirty hack. XML files should instead declare licenses and copyright and the stylesheets should 
+                  report those declarations. See how this is done in metadata-dclp.xsl -->
                 <xsl:choose>
                   <xsl:when test="$md-collection = 'hgv'">
                     <tr>
                       <th class="rowheader">License</th>
-                      <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png"/></a> 
-                        © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This 
-                        work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
+                      <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
+                        © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
                     </tr>
                   </xsl:when>
                   <xsl:otherwise>
                     <tr>
                       <th class="rowheader">License</th>
-                      <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png"/></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
-                    </tr>
+                      <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
+                    </tr>                  
                   </xsl:otherwise>
                 </xsl:choose>
+                
               </xsl:otherwise>
             </xsl:choose>
           </tbody>
@@ -931,6 +935,88 @@
     </tr>
     </xsl:for-each>
     
+  </xsl:template>
+  
+  <!-- Intellectual Property: Licensing and Copyright -->
+  <xsl:template match="t:availability" mode="metadata">
+    <tr>
+      <th class="rowheader">Availability</th>
+      <td>
+        <xsl:choose>
+          <xsl:when test="@status='free'">This information is freely available.</xsl:when>
+          <xsl:when test="@status='restricted'">This information is not freely available.</xsl:when>
+          <xsl:when test="@status='unknown'">The status of this information is unknown.</xsl:when>
+        </xsl:choose>
+        <xsl:apply-templates mode="metadata"/>
+      </td>
+    </tr>
+  </xsl:template>
+  <xsl:template match="t:license">
+    <xsl:choose>
+      <xsl:when test="@target">This work is licensed under a <a rel="license" href="@target">
+          <xsl:choose>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/MIT')">MIT
+              License </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/BSD')">BSD
+              2-Clause License </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/GPL/2.0')">GNU
+              General Public License, version 2 </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/LGPL/2.1')">
+              GNU Lesser General Public License, version 2.1 </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/')">Creative
+              Commons <xsl:choose>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/publicdomain')">
+                  Copyright-Only Dedication (based on United States law) or Public Domain
+                  Certification</xsl:when>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/sampling/1.0')">Sampling 1.0</xsl:when>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/sampling+/1.0')">Sampling Plus 1.0</xsl:when>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/nc-sampling+/1.0')"
+                  >NonCommercial Sampling Plus 1.0</xsl:when>
+                <xsl:otherwise>
+                  <xsl:if test="contains(@target, '/by')">Attribution</xsl:if>
+                  <xsl:if test="contains(@target, '/nc')">Non-Commercial</xsl:if>
+                  <xsl:if test="contains(@target, '/nd')">No Derivatives</xsl:if>
+                  <xsl:if test="contains(@target, '/sa')">Share-Alike</xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="matches(@target, '4\.\d')">
+                      <xsl:analyze-string select="@target" regex="4\.\d">
+                        <xsl:matching-substring>
+                          <xsl:value-of select="regex-group(1)"/>International</xsl:matching-substring>
+                      </xsl:analyze-string>
+                    </xsl:when>
+                    <xsl:when test="matches(@target, '\d\.\d+')">
+                      <xsl:analyze-string select="@target" regex="\d\.\d+">
+                        <xsl:matching-substring>
+                          <xsl:variable name="numeric" select="regex-group(1)"/>
+                          <xsl:value-of select="$numeric"/>
+                          <!--<xsl:variable name="jcode">
+                            <xsl:value-of select="substring-after(@target, concat($numeric, '/'))"/>
+                          </xsl:variable>
+                          <xsl:value-of select="$jcode"/>
+                          <xsl:if test="$jcode != ''">
+                            <xsl:variable name="countries" select="document('countries.xml')//t:keywords"/>
+                            <xsl:value-of
+                              select="$countries/descendant-or-self::t:term[@xml:id=lower-case($jurisdiction-code)]"/>
+                          </xsl:if>-->
+                        </xsl:matching-substring>
+                      </xsl:analyze-string>
+                    </xsl:when></xsl:choose>License.</xsl:otherwise>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </a>
+      </xsl:when>
+      <xsl:otherwise>
+        License: <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
 
