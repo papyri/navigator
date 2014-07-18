@@ -148,17 +148,18 @@
         <!-- Images -->
         <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
         
-        <!-- Copyright and license -->
-        <tr>
-            <th class="rowheader">License</th>
-            <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img
-                        alt="Creative Commons License" style="border-width:0"
-                        src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png"/></a> This
-                work is licensed under a <a rel="license"
-                    href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons
-                    Attribution-NonCommercial 3.0 License</a>.</td>
-        </tr>
-        
+        <!-- Intellectual Property and License -->
+        <xsl:choose>
+            <xsl:when test="//t:publicationStmt/t:availability">
+                <xsl:apply-templates select="//t:publicationStmt/t:availability" mode="metadata"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <tr>
+                    <th class="rowheader">Availability</th>
+                    <td>The source data for this page does not contain any information concerning its copyright, license, or availability. It should be considered "all rights reserved" until proven otherwise.</td>
+                </tr>
+            </xsl:otherwise>
+        </xsl:choose>        
     </xsl:template>
     
     <!-- DCLP-specific handling of keyword terms -->
