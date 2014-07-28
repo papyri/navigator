@@ -803,7 +803,16 @@
                 <xsl:when test="not(@ref)">
                   <xsl:value-of select="."/>,&#xA0; </xsl:when>
                 <xsl:otherwise>
-                  <xsl:value-of select="."/>,&#xA0; </xsl:otherwise>
+				<xsl:variable name='reference' select="@ref"/>
+				<xsl:choose>
+					<xsl:when test="starts-with($reference,'http')">
+						<a href='{$reference}'><xsl:value-of select="."/></a>,&#xA0; 
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="."/>,&#xA0; 
+					</xsl:otherwise>
+				</xsl:choose>
+				</xsl:otherwise>
               </xsl:choose>
             </xsl:when>
             <xsl:otherwise> </xsl:otherwise>
