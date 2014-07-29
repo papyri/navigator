@@ -140,35 +140,12 @@
     <xsl:template match="t:physDesc" mode="dclp-metadata-form">
         <tr>
             <th class="rowheader">Form and Layout</th>
-            <xsl:variable name="contenttext">
-                <xsl:value-of select="descendant::t:material"/>
-                <xsl:if test="descendant::t:material">
-                    <xsl:text> </xsl:text>
-                </xsl:if>
-                <xsl:value-of select="t:objectDesc[@form]/@form"/>
-                <xsl:if test="descendant::t:foliation/t:dim or descendant::t:layout">
-                    <xsl:text> (</xsl:text>
-                    <xsl:for-each select="descendant::t:foliation/t:dim">
-                        <xsl:value-of select="@type"/>: <xsl:value-of select="."/>
-                        <xsl:if test="ancestor::t:physDesc/descendant::t:layout">
-                            <xsl:text>; </xsl:text>
-                        </xsl:if>
-                    </xsl:for-each>
-                    <xsl:for-each select="descendant::t:layout">
-                        <xsl:if test="@columns">
-                            <xsl:value-of select="@columns"/> columns
-                            <xsl:if test="@writtenLines">
-                                <xsl:text>of </xsl:text>
-                                <xsl:value-of select="@writtenLines"/>
-                                <xsl:text> lines each</xsl:text>
-                            </xsl:if>
-                        </xsl:if>
-                    </xsl:for-each>
-                    <xsl:text>)</xsl:text>
-                </xsl:if>
-            </xsl:variable>
             <td>
-                <xsl:value-of select="concat(upper-case(substring($contenttext, 1, 1)), substring($contenttext, 2))"/>
+				<xsl:choose>
+					<xsl:when test="t:objectDesc/t:p[@type='bookForm']">
+						<xsl:value-of select="t:objectDesc/t:p"/>
+					</xsl:when>	
+				</xsl:choose>		
             </td>
         </tr>
     </xsl:template>
