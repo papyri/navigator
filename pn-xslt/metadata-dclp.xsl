@@ -58,11 +58,6 @@
         <xsl:apply-templates
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance[@type = 'stored']/t:p"
             mode="metadata"/>
-        
-        <!-- Material -->
-        <xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material"
-            mode="metadata"/>
 
         <!-- Form and Layout -->
         <xsl:apply-templates
