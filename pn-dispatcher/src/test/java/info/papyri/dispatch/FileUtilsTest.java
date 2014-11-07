@@ -30,8 +30,8 @@ public class FileUtilsTest extends TestCase {
     super.tearDown();
   }
   
-  private static String BASEDATA = "/srv/data/papyri.info/idp.data/";
-  private static String BASEHTML = "/srv/data/papyri.info/pn/idp.html/";
+  private static String BASEDATA = FileUtilsTest.class.getResource("/").toString().substring(5);
+  private static String BASEHTML = FileUtilsTest.class.getResource("/").toString().substring(5);
 
   /**
    * Test of getHtmlFile method, of class FileUtils.
@@ -43,6 +43,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEHTML + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.html");
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
   
   public void testGetHtmlBiblioFile() {
@@ -52,6 +54,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEHTML + "biblio/2/1234.html");
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
 
   /**
@@ -64,6 +68,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEHTML + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.txt");
     File result = instance.getTextFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
 
   /**
@@ -76,6 +82,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEDATA + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
     File result = instance.getXmlFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
 
   /**
