@@ -461,7 +461,7 @@
   <!-- Provenance -->
   <xsl:template match="t:origPlace|t:p" mode="metadata">
     <tr>
-      <th class="rowheader" rowspan="1">Provenance</th>
+      <th class="rowheader" rowspan="1">Origin</th>
       <td class="mdprov">
         <xsl:choose>
           <xsl:when test="local-name(.) = 'origPlace'"><xsl:apply-templates select="."/></xsl:when>
@@ -477,6 +477,13 @@
             <div class="more-like-this"><a href="{concat($facet-root, $provenance-param, '=', $provenance-value)}" title="More from {$provenance-value}" target="_blank" rel="nofollow">More from <xsl:value-of select="$provenance-value"></xsl:value-of></a></div>
           </xsl:if>
       </td>
+    </tr>
+  </xsl:template>
+  
+  <xsl:template match="t:provenance" mode="metadata">
+    <tr>
+      <th class="rowheader">Provenance</th>
+      <td><xsl:value-of select="t:p"/></td>
     </tr>
   </xsl:template>
   
