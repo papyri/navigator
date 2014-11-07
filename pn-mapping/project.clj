@@ -16,4 +16,5 @@
                  [org.apache.jena/jena-fuseki "0.2.2"]
                  [commons-logging/commons-logging "1.1.1"]
                  [commons-codec/commons-codec "1.7"]]
-  :main info.papyri.map)
+  :main info.papyri.map
+  :aot [info.papyri.map])

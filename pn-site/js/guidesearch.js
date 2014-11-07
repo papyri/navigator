@@ -7,12 +7,6 @@ $(document).ready(
 
 	function(){
 
-		// activate tm search
-		$("li.dialog").each(function(i) {
-          $(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
-          $(this).hide();
-        }); 
-
 		// a little namespacing
 
 		if(typeof info == 'undefined') info = {};

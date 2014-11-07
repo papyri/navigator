@@ -57,6 +57,7 @@
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:param name="line-inc">1</xsl:param>
   <xsl:variable name="resolve-uris" select="false()"/>
 
@@ -70,6 +71,7 @@
     <xsl:choose>
       <xsl:when test="$collection = 'ddbdp'">
         <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
+        <xsl:apply-templates select="$docs//text" mode="metadata"/>
         <xsl:variable name="text">
           <xsl:apply-templates>
             <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
@@ -118,6 +120,7 @@
     <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
     <!-- Provenance -->
     <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
+    <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance" mode="metadata"/>
     <!-- Material -->
     <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
     <!-- Language -->
@@ -134,6 +137,38 @@
     <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']" mode="metadata"/>
     <!-- Images -->
     <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
+  </xsl:template>
+  
+  <xsl:template match="text" mode="metadata">
+    <xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
+    <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/>
+    <!-- Inventory Number -->
+    Inv. no.: <xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/>
+        <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">;
+          <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">other inv.: </xsl:if>
+          <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
+            <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
+          </xsl:for-each>
+          <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">formerly: </xsl:if>
+          <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
+            <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
+          </xsl:for-each></xsl:if>
+    <!-- Reuse -->
+    <xsl:if test="string-length(field[@n='13']) gt 0">
+      Reuse Type: <xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
+          <xsl:for-each select="tokenize(field[@n='14'], ', ')"><xsl:value-of select="."/><xsl:if test="position() != last()">, </xsl:if></xsl:for-each>
+          <xsl:value-of select="field[@n='57']"/>
+    </xsl:if>
+    <!-- Date -->
+    Date: <xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/>
+    <!-- Language -->
+    Language: <xsl:value-of select="field[@n='21']"/>
+    <!-- Provenance -->
+    Provenance: <xsl:for-each select="geotex"><xsl:value-of select="field[@n='28']"/><xsl:if test="following-sibling::geotex">; </xsl:if></xsl:for-each>
+    <!-- Archive -->
+    <xsl:if test="archref">
+      Archive: <xsl:value-of select="archref/field[@n='37']"/>
+    </xsl:if>
   </xsl:template>
   
   <!-- Title -->
@@ -198,6 +233,10 @@
     </xsl:choose>
     <xsl:text>
 </xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="t:provenance" mode="metadata">
+    <xsl:value-of select="t:p"/>
   </xsl:template>
   
   <!-- Material -->

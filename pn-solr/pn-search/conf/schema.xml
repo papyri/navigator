@@ -123,6 +123,7 @@
     <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
     <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="title" type="text" indexed="false" stored="true" multiValued="false"/>
+    <field name="tm_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="transcription" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="transcription_ia" type="text" indexed="true" stored="false" multiValued="true"/>
     <field name="transcription_ic" type="text" indexed="true" stored="false" multiValued="true"/>
@@ -135,7 +136,7 @@
     <field name="translation_language" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
     <field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
-   <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="untokenized_ic" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field> 
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
@@ -170,8 +171,10 @@
   <copyField source="transcription_ia" dest="all"/>
   <copyField source="translation" dest="all"/>
   <copyField source="hgv_metadata" dest="all"/>
+  <copyField source="tm_metadata" dest="all"/>
   <copyField source="apis_metadata" dest="all"/>
   <copyField source="hgv_metadata" dest="metadata"/>
+  <copyField source="tm_metadata" dest="metadata"/>
   <copyField source="apis_metadata" dest="metadata"/>
   <copyField source="transcription" dest="untokenized"/>
   <copyField source="transcription_ia" dest="untokenized_ia"/>

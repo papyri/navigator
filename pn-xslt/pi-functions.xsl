@@ -82,6 +82,10 @@
           <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', substring-after($url, 'http://papyri.info/apis/'), 'index.html')"/></xsl:otherwise>
         </xsl:choose>
       </xsl:when>
+      <!-- Like http://www.trismegistos.org/text/11999 -->
+      <xsl:when test="contains($url, 'trismegistos.org')">
+        <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'http://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'http://www.trismegistos.org/text/'), '.xml')"/>
+      </xsl:when>
       <!-- Like http://papyri.info/biblio/54953/source -->
       <xsl:when test="contains($url, 'biblio/')">
         <xsl:choose>

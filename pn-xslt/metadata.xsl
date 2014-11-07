@@ -23,12 +23,12 @@
         <xsl:choose>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
-              HGV Data for <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
+              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
             </h2>
           </xsl:when>
           <xsl:otherwise>
             <h2>
-              APIS Catalog Record for <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
+              Catalog Record: <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
             </h2>
           </xsl:otherwise>
         </xsl:choose>
@@ -61,6 +61,7 @@
             <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
             <!-- Provenance -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
+            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance" mode="metadata"/>
             <!-- Material -->
             <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
             <!-- Language -->
@@ -97,7 +98,88 @@
           </tbody>
         </table>
       </div>
-      
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="text" mode="metadata">
+    <div class="metadata">
+      <div class="tm data">
+        <h2>Trismegistos: <xsl:value-of select="field[@n='0']"/> [<a href="http://www.trismegistos.org/text/{field[@n='0']}">source</a>]</h2>
+        <table class="metadata">
+          <tbody>
+            <!-- Publications -->
+            <tr>
+              <th>Publications</th>
+              <td><xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
+                <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/></td>
+            </tr>
+            <!-- Inventory Number -->
+            <tr>
+              <th>Inv. no.</th>
+              <td><xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/>
+                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">;
+                  <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">other inv.: </xsl:if>
+                  <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
+                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
+                  </xsl:for-each>
+                  <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">formerly: </xsl:if>
+                  <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
+                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
+                  </xsl:for-each></xsl:if>
+              </td>
+            </tr>
+            <!-- Reuse -->
+            <xsl:if test="string-length(field[@n='13']) gt 0">
+              <tr>
+                <th>Reuse Type</th>
+                <td><xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
+                <xsl:for-each select="tokenize(field[@n='14'], ', ')">
+                  <a href="/trismegistos/{.}"><xsl:value-of select="."/></a><xsl:if test="position() != last()">, </xsl:if>
+                </xsl:for-each>
+                <xsl:value-of select="field[@n='57']"/></td>
+              </tr>
+            </xsl:if>
+            <!-- Date -->
+            <tr>
+              <th>Date</th>
+              <td><xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/></td>
+            </tr>
+            <!-- Language -->
+            <tr>
+              <th>Language</th>
+              <td><xsl:value-of select="field[@n='21']"/></td>
+            </tr>
+            <!-- Provenance -->
+            <tr>
+              <th>Provenance</th>
+              <td><xsl:for-each select="geotex">
+                <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of select="field[@n='28']"/></a><xsl:if test="following-sibling::geotex">; </xsl:if>
+              </xsl:for-each></td>
+            </tr>
+            <!-- Archive -->
+            <xsl:if test="archref">
+              <tr>
+                <th>Archive</th>
+                <td><a href="http://www.trismegistos.org/archive/{archref/field[@n='5']}"><xsl:value-of select="archref/field[@n='37']"/></a></td>
+              </tr>
+            </xsl:if>
+            <!-- People -->
+            <xsl:if test="personref">
+              <tr>
+                <th>People</th>
+                <td><a href="http://www.trismegistos.org/ref/ref_list.php?tex_id={field[@n='0']}">mentioned people</a></td>
+              </tr>
+            </xsl:if>
+            <!-- Places -->
+            <xsl:if test="georef">
+              <tr>
+                <th>Places</th>
+                <td><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">mentioned places</a></td>
+              </tr>
+            </xsl:if>
+          </tbody>
+        </table>
+      </div>
     </div>
   </xsl:template>
     
@@ -290,7 +372,7 @@
   <!-- Provenance -->
   <xsl:template match="t:origPlace|t:p" mode="metadata">
     <tr>
-      <th class="rowheader" rowspan="1">Provenance</th>
+      <th class="rowheader" rowspan="1">Origin</th>
       <td class="mdprov">
         <xsl:choose>
           <xsl:when test="local-name(.) = 'origPlace'"><xsl:apply-templates select="."/></xsl:when>
@@ -306,6 +388,13 @@
             <div class="more-like-this"><a href="{concat($facet-root, $provenance-param, '=', $provenance-value)}" title="More from {$provenance-value}" target="_blank" rel="nofollow">More from <xsl:value-of select="$provenance-value"></xsl:value-of></a></div>
           </xsl:if>
       </td>
+    </tr>
+  </xsl:template>
+  
+  <xsl:template match="t:provenance" mode="metadata">
+    <tr>
+      <th class="rowheader">Provenance</th>
+      <td><xsl:value-of select="t:p"/></td>
     </tr>
   </xsl:template>
   
