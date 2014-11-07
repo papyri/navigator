@@ -120,6 +120,7 @@
     <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
     <!-- Provenance -->
     <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
+    <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance" mode="metadata"/>
     <!-- Material -->
     <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
     <!-- Language -->
@@ -232,6 +233,10 @@
     </xsl:choose>
     <xsl:text>
 </xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="t:provenance" mode="metadata">
+    <xsl:value-of select="t:p"/>
   </xsl:template>
   
   <!-- Material -->

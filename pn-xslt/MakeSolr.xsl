@@ -797,6 +797,8 @@
       <xsl:value-of
         select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"/>
       <xsl:text> </xsl:text>
+      <xsl:value-of select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance/t:p, ' '))"/>
+      <xsl:text> </xsl:text>
       <!-- Material -->
       <xsl:value-of
         select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material, ' '))"/>
@@ -862,6 +864,7 @@
       </xsl:for-each>
     </field>
     
+    <!-- Place -->
     <xsl:choose>
       <xsl:when
         test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:p">
