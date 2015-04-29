@@ -789,7 +789,7 @@
     <tr>
       <th>Reference Edition</th>
   
-  <td><li>
+  <td>
     <xsl:choose>
       <xsl:when test="t:ptr">
         <xsl:for-each select="pi:get-docs(concat(t:ptr/@target, '/source'), 'xml')/t:bibl">
@@ -800,7 +800,7 @@
         <xsl:call-template name="buildCitation"/>
       </xsl:otherwise>
     </xsl:choose>
-  </li></td>
+  </td>
     </tr>
   </xsl:template>
   <!-- Older version :
