@@ -82,6 +82,7 @@
   <xsl:param name="selfUrl"/>
   <xsl:param name="biblio"/>
   <xsl:param name="server">papyri.info</xsl:param>
+  <xsl:param name="path">/srv/data/papyri.info/idp.data</xsl:param>
   <!-- variables to assist in offline testing by controlling paths and behaviors in the output html -->
   <xsl:param name="cssbase">/css</xsl:param>
   <xsl:param name="jsbase">/js</xsl:param>
@@ -89,7 +90,6 @@
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
   <xsl:variable name="imgs" select="tokenize($images, '\s+')"/>
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
-  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="doc-id">
