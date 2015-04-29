@@ -12,6 +12,7 @@
   
   <xsl:import href="metadata-dclp.xsl"/>
   <xsl:import href="htm-teibibl.xsl"/>
+  <xsl:import href="pi-functions.xsl"/>
   <xsl:output method="html"/>
   
   <xsl:template match="t:TEI" mode="metadata">
@@ -772,7 +773,38 @@
     </tr>
   </xsl:template>
   
-  <!-- Reference Edition-->
+  <!-- Principal Edition -->
+
+  <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']/t:listBibl/t:bibl[@type='publication' and @subtype = 'principal']" mode="metadata">
+      <tr>
+        <th>Principal Edition</th>
+        <!--<td><xsl:value-of select="."></xsl:value-of></td>-->
+        <td><li><xsl:call-template name="buildCitation"/></li></td>
+      </tr>
+    </xsl:template>
+  
+  <!-- Reference Edition -->
+  
+  <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']/t:listBibl/t:bibl[@type='reference' and @subtype = 'principal']" mode="metadata">
+    <tr>
+      <th>Reference Edition</th>
+  
+  <td><li>
+    <xsl:choose>
+      <xsl:when test="t:ptr">
+        <xsl:for-each select="pi:get-docs(concat(t:ptr/@target, '/source'), 'xml')/t:bibl">
+          <xsl:call-template name="buildCitation"/>
+        </xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="buildCitation"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </li></td>
+    </tr>
+  </xsl:template>
+  <!-- Older version :
+    Reference Edition
   <xsl:template match="t:div[@type = 'bibliography' and @subtype = 'referenceEdition']" mode="metadata">
   <tr>
       <th>Reference Edition</th>
@@ -781,6 +813,7 @@
       </xsl:for-each></ul></td>
     </tr>
   </xsl:template>
+  -->
   
   <!-- Notes -->
   <xsl:template match="t:msItemStruct/t:note" mode="metadata">

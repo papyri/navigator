@@ -14,10 +14,22 @@
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
             mode="metadata"/>
         
+        <!-- Principal Edition -->
+        <xsl:apply-templates
+            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']/t:listBibl/t:bibl[@type='publication' and @subtype = 'principal']"
+        mode="metadata"/>
+        
         <!-- Reference Edition -->
+        <xsl:apply-templates
+            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']/t:listBibl/t:bibl[@type='reference' and @subtype = 'principal']"
+            mode="metadata"/>
+        
+        <!--  Older Version : 
+            Reference Edition 
         <xsl:apply-templates
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'referenceEdition']"
             mode="metadata"/>
+            -->
         
         <!-- Fragments / Inv. Id-->
         <tr>
