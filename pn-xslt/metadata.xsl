@@ -12,7 +12,6 @@
   
   <xsl:import href="metadata-dclp.xsl"/>
   <xsl:import href="htm-teibibl.xsl"/>
-  <xsl:import href="pi-functions.xsl"/>
   <xsl:output method="html"/>
   
   <xsl:template match="t:TEI" mode="metadata">
@@ -776,16 +775,17 @@
   <!-- Principal Edition -->
 
   <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']/t:listBibl/t:bibl[@type='publication' and @subtype = 'principal']" mode="metadata">
+    <xsl:message>principal edition</xsl:message>
       <tr>
         <th>Principal Edition</th>
-        <!--<td><xsl:value-of select="."></xsl:value-of></td>-->
-        <td><li><xsl:call-template name="buildCitation"/></li></td>
+        <td><xsl:value-of select="."></xsl:value-of></td>
       </tr>
     </xsl:template>
   
   <!-- Reference Edition -->
   
   <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']/t:listBibl/t:bibl[@type='reference' and @subtype = 'principal']" mode="metadata">
+    <xsl:message>reference edition</xsl:message>
     <tr>
       <th>Reference Edition</th>
   
