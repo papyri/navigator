@@ -50,8 +50,19 @@
     <xsl:variable name="articleTitle"><xsl:call-template name="articleTitle"/></xsl:variable>
     <xsl:variable name="mainTitle"><xsl:choose>
       <xsl:when test="(@type='article' or @type='review') and $mainWork//*"><xsl:apply-templates select="$mainWork/t:bibl" mode="mainTitle"/></xsl:when>
-      <xsl:otherwise><i><xsl:value-of select="t:title[@type='main']"/></i><xsl:if test="t:title[@type='short']"> (<i><xsl:value-of select="t:title[@type='short']"/></i>)</xsl:if></xsl:otherwise>
+      <xsl:otherwise>
+          <xsl:choose>
+            <xsl:when test="t:title[@type='main']">
+              <i><xsl:value-of select="t:title[@type='main']"/></i><xsl:if test="t:title[@type='short']"> (<i><xsl:value-of select="t:title[@type='short']"/></i>)</xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+              <i><xsl:value-of select="t:title[1]"/></i>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:otherwise>
     </xsl:choose></xsl:variable>
+    <xsl:message>mainTitle: <xsl:value-of select="$mainTitle"/></xsl:message>
+    <xsl:message>count(title): <xsl:value-of select="count(t:title)"/></xsl:message>
     <xsl:variable name="pubInfo"><xsl:call-template name="pubInfo"><xsl:with-param name="main" select="$mainWork"/></xsl:call-template></xsl:variable>
     <xsl:if test="t:idno[@type='pi']"><b><xsl:value-of select="t:idno[@type='pi']"/>. </b> </xsl:if><xsl:if test="string-length($author) > 0"><xsl:value-of select="$author"/>, </xsl:if>
       <xsl:if test="$edFirst"><xsl:value-of select="normalize-space($editor)"/>, </xsl:if>
