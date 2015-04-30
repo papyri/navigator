@@ -803,17 +803,7 @@
   </td>
     </tr>
   </xsl:template>
-  <!-- Older version :
-    Reference Edition
-  <xsl:template match="t:div[@type = 'bibliography' and @subtype = 'referenceEdition']" mode="metadata">
-  <tr>
-      <th>Reference Edition</th>
-      <td><ul><xsl:for-each select="t:listBibl/t:bibl">
-        <li><xsl:call-template name="buildCitation"/></li>
-      </xsl:for-each></ul></td>
-    </tr>
-  </xsl:template>
-  -->
+  
   
   <!-- Notes -->
   <xsl:template match="t:msItemStruct/t:note" mode="metadata">
