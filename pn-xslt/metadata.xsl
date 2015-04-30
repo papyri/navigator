@@ -772,38 +772,7 @@
     </tr>
   </xsl:template>
   
-  <!-- Principal Edition -->
-
-  <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']/t:listBibl/t:bibl[@type='publication' and @subtype = 'principal']" mode="metadata">
-    <xsl:message>principal edition</xsl:message>
-      <tr>
-        <th>Principal Edition</th>
-        <td><xsl:value-of select="."></xsl:value-of></td>
-      </tr>
-    </xsl:template>
-  
-  <!-- Reference Edition -->
-  
-  <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']/t:listBibl/t:bibl[@type='reference' and @subtype = 'principal']" mode="metadata">
-    <xsl:message>reference edition</xsl:message>
-    <tr>
-      <th>Reference Edition</th>
-  
-  <td>
-    <xsl:choose>
-      <xsl:when test="t:ptr">
-        <xsl:for-each select="pi:get-docs(concat(t:ptr/@target, '/source'), 'xml')/t:bibl">
-          <xsl:call-template name="buildCitation"/>
-        </xsl:for-each>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:call-template name="buildCitation"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </td>
-    </tr>
-  </xsl:template>
-  
+ 
   
   <!-- Notes -->
   <xsl:template match="t:msItemStruct/t:note" mode="metadata">
