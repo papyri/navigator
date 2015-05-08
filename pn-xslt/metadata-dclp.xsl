@@ -149,6 +149,39 @@
     
     <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']" mode="metadata-dclp">
         <xsl:message>matched principalEdition div</xsl:message>
+        <xsl:for-each select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']">
+            <xsl:call-template name="dclp-bibliography">
+                <xsl:with-param name="heading">Principal Edition</xsl:with-param>
+                <xsl:with-param name="references" select="."/>
+                <xsl:with-param name="treat-as-structured">no</xsl:with-param>
+            </xsl:call-template>
+        </xsl:for-each>
+        <xsl:for-each-group select="t:listBibl/t:bibl[@type='reference']"  group-by="@subtype">
+            <xsl:call-template name="dclp-bibliography">
+                <xsl:with-param name="heading">
+                    <xsl:choose>
+                        <xsl:when test="@subtype='principal'">
+                            <xsl:text>Reference Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='partial'">
+                            <xsl:text>Partial Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='previous'">
+                            <xsl:text>Previous Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='readings'">
+                            <xsl:text>Readings</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@subtype"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:with-param>
+                <xsl:with-param name="references" select="current-group()"/>
+                <xsl:with-param name="treat-as-structured">yes</xsl:with-param>
+            </xsl:call-template>
+        </xsl:for-each-group>
+        <!--
         <xsl:for-each select="t:listBibl/t:bibl">
             <xsl:message>bibl!</xsl:message>
                 <xsl:variable name="biblio-header">
@@ -203,7 +236,7 @@
                             </xsl:call-template>
                         </xsl:otherwise>
                     </xsl:choose>
-        </xsl:for-each>
+        </xsl:for-each> -->
     </xsl:template>
     
     <xsl:template name="dclp-bibliography">
