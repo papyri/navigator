@@ -109,7 +109,7 @@
       <!-- article in journal -->
       <xsl:when test="$main//t:title[@level='j']">
         <!-- TODO: get additional biblScope values -->
-        <xsl:value-of select="t:biblScope[@type='issue']"/><xsl:text> </xsl:text><xsl:if test="t:date">(<xsl:value-of select="t:date"/>)</xsl:if>
+        <xsl:value-of select="t:biblScope[@type='issue']"/><xsl:text> </xsl:text><xsl:if test="t:date">(<xsl:value-of select="t:date"/>)</xsl:if>, pp. <xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
       </xsl:when>
       <!-- article in book -->
       <xsl:when test="$main//t:title[@level='m']">
