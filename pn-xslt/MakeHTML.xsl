@@ -87,6 +87,7 @@
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="doc-id">
     <xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']"><xsl:value-of select="//t:idno[@type='apisid']"/></xsl:when>
@@ -128,6 +129,7 @@
   <xsl:template match="/">
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
+    <xsl:variable name="tm" select="contains($related, 'trismegistos.org/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
     <xsl:variable name="image" select="count($imgs) gt 0"/>
@@ -211,6 +213,9 @@
                       <xsl:if test="$hgv">
                         <label for="hgvm">HGV data</label><input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
                       </xsl:if>
+                      <xsl:if test="$tm">
+                        <label for="tmm">TM data</label><input type="checkbox" name="tm" id="tmm" checked="checked"/>
+                      </xsl:if>
                       <xsl:if test="$apis">
                         <label for="apism">APIS catalog record</label><input type="checkbox" name="apis" id="apism" checked="checked"/>
                       </xsl:if>
@@ -261,6 +266,12 @@
                           </xsl:when>
                           <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                          <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+                        </xsl:if>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
                         <xsl:sort select="." order="ascending"/>
@@ -319,6 +330,12 @@
                 <xsl:if test="$collection = 'hgv'">
                   <div class="metadata">
                     <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+                    <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                      <xsl:sort select="." order="ascending"/>
+                      <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                        <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+                      </xsl:if>
+                    </xsl:for-each>
                     <xsl:if test="$apis">
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
                         <xsl:choose>
@@ -345,6 +362,12 @@
                   </xsl:if>
                 </xsl:if>
                 <xsl:if test="$collection = 'apis'">
+                  <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                    <xsl:sort select="." order="ascending"/>
+                    <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                      <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+                    </xsl:if>
+                  </xsl:for-each>
                   <div class="metadata">
                     <xsl:apply-templates select="/t:TEI" mode="metadata"/>
                     <xsl:call-template name="biblio"/>

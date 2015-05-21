@@ -313,9 +313,18 @@ div.metadata th {
 vertical-align: top;
 font-weight: bold;
 width: 20%;
+min-width: 150px;
 }
 div#edition {
 margin-left: 3em;
+}
+div#bibliography, div#related {
+  clear:both;
+  float:left;
+}
+div#related {
+  clear:both;
+  float:left;
 }
 div.biblio {
 margin:1em;
@@ -863,3 +872,6 @@ div.markdown ul.about li {
 div.markdown em {
   font-style: italic;
 }
+
+
+/* End Markdown section */

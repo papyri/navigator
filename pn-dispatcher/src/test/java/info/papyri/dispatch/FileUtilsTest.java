@@ -7,6 +7,7 @@ package info.papyri.dispatch;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import junit.framework.TestCase;
 
 /**
@@ -29,8 +30,8 @@ public class FileUtilsTest extends TestCase {
     super.tearDown();
   }
   
-  private static String BASEDATA = "/srv/data/papyri.info/idp.data/";
-  private static String BASEHTML = "/srv/data/papyri.info/pn/idp.html/";
+  private static String BASEDATA = FileUtilsTest.class.getResource("/").toString().substring(5);
+  private static String BASEHTML = FileUtilsTest.class.getResource("/").toString().substring(5);
 
   /**
    * Test of getHtmlFile method, of class FileUtils.
@@ -42,6 +43,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEHTML + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.html");
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
   
   public void testGetHtmlBiblioFile() {
@@ -51,6 +54,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEHTML + "biblio/2/1234.html");
     File result = instance.getHtmlFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
 
   /**
@@ -63,6 +68,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEHTML + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.txt");
     File result = instance.getTextFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
 
   /**
@@ -75,6 +82,8 @@ public class FileUtilsTest extends TestCase {
     File expResult = new File(BASEDATA + "DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
     File result = instance.getXmlFile(collection, item);
     assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
   }
 
   /**
@@ -334,6 +343,58 @@ public class FileUtilsTest extends TestCase {
       }
     }
     assertEquals(expResult.size(), matches);
+  }
+  
+  public void testFindMatchesIdiwLogw() {
+    String query = "\"ιδιω λογω\"";
+    String id = "http://papyri.info/ddbdp/p.ryl;2;215";
+    FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
+    List<String> expResult = new ArrayList<String>();
+    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    assertTrue(result.size() > 0);
+  }
+  
+  public void testFindMatchesFromPatterns() {
+      StringBuilder pattern = new StringBuilder();
+      pattern.append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*(σ|ς)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*τ")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*(ρ|ῥ)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*τ")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*γ")
+              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
+              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*");
+      Pattern[] patterns = new Pattern[]{Pattern.compile(pattern.toString())};
+      String id = "http://papyri.info/ddbdp/bgu;1;2";
+      FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
+      String expResult = "<span class=\"highlight\">στρ(ατηγ</span>";
+      List<String> result = instance.highlightMatches(
+              instance.loadTextFromId(id), patterns);
+      assertTrue(result.get(0).contains(expResult));
   }
 
   public void testFindNgram() {

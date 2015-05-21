@@ -125,6 +125,11 @@
       <artifactId>org.eclipse.jgit</artifactId>
       <version>3.3.0.201403021825-r</version>
     </dependency>
+    <dependency>
+      <groupId>org.pegdown</groupId>
+      <artifactId>pegdown</artifactId>
+      <version>1.4.1</version>
+    </dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -229,7 +234,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
   </properties>
 </project>
 
