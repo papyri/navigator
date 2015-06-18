@@ -44,6 +44,7 @@
       "HGV_meta_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
       "HGV_trans_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl",
+      "DCLP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/dclp-rdf.xsl",
       "Biblio" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
 (def idproot "/srv/data/papyri.info/idp.data")
 (def ddbroot "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML")
@@ -143,6 +144,7 @@
     (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "DCLP") (str "dclp.atlantides.org/dclp/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")))
 
 (defn url-from-file
