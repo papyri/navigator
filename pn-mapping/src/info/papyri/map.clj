@@ -434,6 +434,8 @@
       (load-map (str idproot "/APIS"))
       (println "Processing HGV_trans_EpiDoc")
       (load-map (str idproot "/HGV_trans_EpiDoc"))
+      (println "Processing DCLP")
+      (load-map (str idproot "/DCLP"))
       (println "Processing Bibliography")
       (load-map (str idproot "/Biblio"))
       (-loadFile "/srv/data/papyri.info/idp.data/RDF/collection.rdf")
