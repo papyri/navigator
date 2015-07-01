@@ -122,6 +122,7 @@
     (.contains (str file) "HGV_meta_EpiDoc") (xslts "HGV_meta_EpiDoc")
     (.contains (str file) "APIS") (xslts "APIS")
     (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")
+    (.contains (str file) "DCLP") (xslts "DCLP")
     (.contains (str file) "Biblio") (xslts "Biblio")))
 
 (defn format-url-query
