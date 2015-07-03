@@ -48,12 +48,13 @@
       "Biblio" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
 (def idproot "/srv/data/papyri.info/idp.data")
 (def ddbroot "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML")
+(def domain "dclp.atlantides.org")
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
 
 (defn substring-before
-  [string1 string2]
+  [string1 string2
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
@@ -106,6 +107,9 @@
     (if (.contains xslt "ddbdp-rdf")
       (dosync (ref-set param (list "root" idproot)))
       (dosync (ref-set param (list "DDB-root" ddbroot))))
+    (if (.contains xslt "dclp-rdf")
+      (dosync (ref-set param (list "root" idproot)))
+      (dosync (ref-set param (list "domain" domain))))
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
         configuration (Configuration.)
         compiler-info (CompilerInfo.)]
