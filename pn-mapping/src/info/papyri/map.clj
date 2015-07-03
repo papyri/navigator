@@ -54,7 +54,7 @@
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
 
 (defn substring-before
-  [string1 string2
+  [string1 string2]
   (.substring string1 0 (if (.contains string1 string2) (.indexOf string1 string2) 0)))
 
 (defn flush-buffer [n]
