@@ -16,7 +16,7 @@
 
     <xsl:variable name="ldab" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='ldab'])"/>
 
-    <xsl:variable name="ddb" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='dclp-hybrid'])"/>
+    <xsl:variable name="ddb" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='dclp-hybrid'][0])"/>
 
     <xsl:variable name="ddb-seq" select="tokenize(normalize-space($ddb), ';')"/> <!-- bgu;7;1510 => ['bgu','7','1510'] -->
 
