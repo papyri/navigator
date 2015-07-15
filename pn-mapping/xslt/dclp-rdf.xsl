@@ -5,6 +5,7 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:dct="http://purl.org/dc/terms/"
   xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:papy="papyrillio"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
 
   <xsl:output omit-xml-declaration="yes" indent="yes" />
@@ -13,12 +14,8 @@
 
   <xsl:template match="/tei:TEI">
     <xsl:variable name="tm" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='tm'])"/>
-
     <xsl:variable name="ldab" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='ldab'])"/>
-
-    <xsl:variable name="ddb" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='dclp-hybrid'][0])"/>
-
-    <xsl:variable name="ddb-seq" select="tokenize(normalize-space($ddb), ';')"/> <!-- bgu;7;1510 => ['bgu','7','1510'] -->
+    <xsl:variable name="ddb" select="//tei:publicationStmt/tei:idno[lower-case(@type)='dclp-hybrid']"/>
 
     <xsl:variable name="id">
       <xsl:text>http://</xsl:text>
@@ -41,22 +38,24 @@
           <xsl:value-of select="$ldab"/>
         </dct:identifier>
       </xsl:if>
-      <xsl:if test="string($ddb)">
+     
+      <xsl:for-each select="$ddb">
+        <xsl:variable name="ddbId" select="papy:makeUnicodeSafeUri(.)"/>
         <dct:identifier>
           <xsl:value-of select="$domain"/>
           <xsl:text>/dclp/</xsl:text>
-          <xsl:value-of select="$ddb"/>
+          <xsl:value-of select="$ddbId"/>
         </dct:identifier>
         <dct:source>
-          <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb}/work">
-            <dct:source rdf:resource="http://{$domain}/dclp/{$ddb}/original" />
+          <rdf:Description rdf:about="http://{$domain}/dclp/{$ddbId}/work">
+            <dct:source rdf:resource="http://{$domain}/dclp/{$ddbId}/original" />
           </rdf:Description>
         </dct:source>
-      </xsl:if>
+      </xsl:for-each>
       <dct:identifier>
         <xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']/text()"/>
       </dct:identifier>
-      
+
       <xsl:for-each select="distinct-values(//tei:text/tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-in']/@n)">
         <xsl:for-each select="tokenize(., '\|')">
           <xsl:if test="matches(., '^\d+$')">
@@ -73,7 +72,9 @@
         </xsl:for-each>
       </xsl:for-each>
 
-      <xsl:if test="string($ddb)">
+      <xsl:for-each select="$ddb">
+        <xsl:variable name="ddbId" select="papy:makeUnicodeSafeUri(.)"/>
+        <xsl:variable name="ddb-seq" select="tokenize(normalize-space($ddbId), ';')"/> <!-- bgu;7;1510 => ['bgu','7','1510'] -->
         <dct:isPartOf>
           <xsl:choose>
             <xsl:when test="$ddb-seq[2] = ''">
@@ -95,7 +96,7 @@
             </xsl:otherwise>
           </xsl:choose>
         </dct:isPartOf>
-      </xsl:if>
+      </xsl:for-each>
 
       <xsl:for-each select="//tei:idno[lower-case(@type)='tm']">
         <xsl:for-each select="tokenize(., '\s')">
@@ -109,7 +110,9 @@
         </xsl:for-each>
       </xsl:for-each>
       
-      <xsl:if test="string($ddb)">
+      <xsl:for-each select="$ddb">
+        <xsl:variable name="ddbId" select="papy:makeUnicodeSafeUri(.)"/>
+        <xsl:variable name="ddb-seq" select="tokenize(normalize-space($ddbId), ';')"/> <!-- bgu;7;1510 => ['bgu','7','1510'] -->
         <xsl:variable name="page">
             <xsl:text>http://</xsl:text>
             <xsl:value-of select="$domain"/>
@@ -123,8 +126,13 @@
             <foaf:topic rdf:resource="{$id}"/>
           </rdf:Description>
         </foaf:page>
-      </xsl:if>
+      </xsl:for-each>
 
     </rdf:Description>
   </xsl:template>
+  
+  <xsl:function name="papy:makeUnicodeSafeUri">
+    <xsl:param name="in"/>
+    <xsl:value-of select="replace(normalize-unicode($in, 'NFD'), '[^;.a-z0-9]', '')"/>
+  </xsl:function>
 </xsl:stylesheet>
