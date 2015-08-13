@@ -359,7 +359,7 @@ public class DispatcherServlet extends HttpServlet {
       return out.toString();
     }
 
-    protected static String dclp(String in) {
+    protected String dclp(String in) {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
       if ("".equals(in) || in == null) {
