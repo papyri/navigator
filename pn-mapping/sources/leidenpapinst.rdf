@@ -1,0 +1,638 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.0="http://purl.org/dc/terms/"
+    xmlns:j.1="http://purl.org/ontology/olo/core#"
+    xmlns:j.2="http://purl.org/ontology/bibo/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:j.3="http://xmlns.com/foaf/0.1/" > 
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren08/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/08/leidenpapinst.apis.pwarren08.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/cd/leidenpapinst.apis.pwarren08.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren08/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren09/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/d1/leidenpapinst.apis.pwarren09.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren13/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren13/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren13/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren13/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/6a/leidenpapinst.apis.pwarren21.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren21/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren10/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren10/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren17/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren17/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren17/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren17/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren16/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/7b/leidenpapinst.apis.pwarren16.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/69/leidenpapinst.apis.pwarren06.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren06/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bf/leidenpapinst.apis.pwarren07.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren07/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren01/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren01/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/45/leidenpapinst.apis.pwarren14.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren14/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e3/leidenpapinst.apis.pwarren21.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren21/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren10/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/b6/leidenpapinst.apis.pwarren10.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren02/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/82/leidenpapinst.apis.pwarren02.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren01/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/a8/leidenpapinst.apis.pwarren01.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren14/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren14/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren20/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren20/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren05/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren05/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/9c/leidenpapinst.apis.pwarren03.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren03/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/29/leidenpapinst.apis.pwarren09.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren09/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren08/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren08/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren08/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren08/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/95/leidenpapinst.apis.pwarren15.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren15/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren09/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren09/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d1/leidenpapinst.apis.pwarren09.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren09/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c4/leidenpapinst.apis.pwarren15.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren15/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren04/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren04/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren04/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren04/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren16/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/ec/leidenpapinst.apis.pwarren16.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren10/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/96/leidenpapinst.apis.pwarren10.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren03/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/9c/leidenpapinst.apis.pwarren03.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/7b/leidenpapinst.apis.pwarren16.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren16/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e4/leidenpapinst.apis.pwarren04.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren04/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren07/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/00/leidenpapinst.apis.pwarren07.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/82/leidenpapinst.apis.pwarren02.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren02/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/b6/leidenpapinst.apis.pwarren10.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren10/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/7f/leidenpapinst.apis.pwarren02.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren02/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren13/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren13/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/20/leidenpapinst.apis.pwarren14.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren14/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren18/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren18/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren18/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren18/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren17/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren17/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c1/leidenpapinst.apis.pwarren05.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren05/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren18/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/60/leidenpapinst.apis.pwarren18.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren15/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/95/leidenpapinst.apis.pwarren15.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren01/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren01/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren01/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren01/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren14/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren14/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren14/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren14/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e1/leidenpapinst.apis.pwarren17.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren17/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren08/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/cd/leidenpapinst.apis.pwarren08.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren21/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren21/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren04/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren04/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a8/leidenpapinst.apis.pwarren01.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren01/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren08/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren08/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2c/leidenpapinst.apis.pwarren11.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren11/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren09/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren09/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren09/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren09/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/5d/leidenpapinst.apis.pwarren01.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren01/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren05/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren05/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren05/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren05/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren05/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/c1/leidenpapinst.apis.pwarren05.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren10/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren10/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren10/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren10/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren18/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/0f/leidenpapinst.apis.pwarren18.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ad/leidenpapinst.apis.pwarren20.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren20/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren20/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/e5/leidenpapinst.apis.pwarren20.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren15/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/c4/leidenpapinst.apis.pwarren15.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ec/leidenpapinst.apis.pwarren11.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren11/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren02/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/7f/leidenpapinst.apis.pwarren02.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren13/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/f8/leidenpapinst.apis.pwarren13.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren15/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren15/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren15/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren15/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren12/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren12/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f8/leidenpapinst.apis.pwarren13.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren13/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren12/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/39/leidenpapinst.apis.pwarren12.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren05/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/da/leidenpapinst.apis.pwarren05.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ec/leidenpapinst.apis.pwarren16.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren16/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren04/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/c9/leidenpapinst.apis.pwarren04.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/0f/leidenpapinst.apis.pwarren18.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren18/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren16/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren16/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren02/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren02/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren02/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren02/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/26/leidenpapinst.apis.pwarren19.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren19/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/89/leidenpapinst.apis.pwarren19.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren19/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren20/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/ad/leidenpapinst.apis.pwarren20.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren19/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/89/leidenpapinst.apis.pwarren19.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren21/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/6a/leidenpapinst.apis.pwarren21.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/08/leidenpapinst.apis.pwarren08.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren08/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren13/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/d6/leidenpapinst.apis.pwarren13.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e5/leidenpapinst.apis.pwarren20.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren20/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren12/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/d6/leidenpapinst.apis.pwarren12.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren07/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren07/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren03/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren03/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren21/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren21/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren21/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren21/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren11/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren11/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren11/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren11/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren06/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren06/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren06/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren06/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren06/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/3c/leidenpapinst.apis.pwarren06.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren19/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren19/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren19/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/26/leidenpapinst.apis.pwarren19.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/3c/leidenpapinst.apis.pwarren06.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren06/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren16/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren16/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren16/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren16/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/96/leidenpapinst.apis.pwarren10.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren10/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren11/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/2c/leidenpapinst.apis.pwarren11.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren12/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren12/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren12/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren12/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren03/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren03/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren03/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren03/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren11/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren11/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren17/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/e1/leidenpapinst.apis.pwarren17.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren03/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/fb/leidenpapinst.apis.pwarren03.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren15/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren15/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren06/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/69/leidenpapinst.apis.pwarren06.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/60/leidenpapinst.apis.pwarren18.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren18/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d6/leidenpapinst.apis.pwarren13.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren13/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren07/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/bf/leidenpapinst.apis.pwarren07.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren14/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/45/leidenpapinst.apis.pwarren14.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren06/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren06/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren09/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/29/leidenpapinst.apis.pwarren09.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren20/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren20/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren20/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren20/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren11/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/ec/leidenpapinst.apis.pwarren11.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/da/leidenpapinst.apis.pwarren05.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren05/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren02/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren02/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren04/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/e4/leidenpapinst.apis.pwarren04.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/fb/leidenpapinst.apis.pwarren03.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren03/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren17/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/ed/leidenpapinst.apis.pwarren17.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/d6/leidenpapinst.apis.pwarren12.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren12/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ed/leidenpapinst.apis.pwarren17.v">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren17/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren19/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren19/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren19/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren19/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren18/source">
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren18/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/39/leidenpapinst.apis.pwarren12.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren12/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren01/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/5d/leidenpapinst.apis.pwarren01.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren07/images">
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren07/images/2"/>
+    <j.1:slot rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren07/images/1"/>
+    <j.1:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:length>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.0:relation rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren07/source"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/00/leidenpapinst.apis.pwarren07.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren07/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren14/images/2">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/20/leidenpapinst.apis.pwarren14.v"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c9/leidenpapinst.apis.pwarren04.r">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+    <j.3:depicts rdf:resource="http://papyri.info/apis/leidenpapinst.apis.pwarren04/original"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/apis/leidenpapinst.apis.pwarren21/images/1">
+    <j.1:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.1:index>
+    <j.1:item rdf:resource="http://papyri.info/images/e3/leidenpapinst.apis.pwarren21.r"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+</rdf:RDF>
