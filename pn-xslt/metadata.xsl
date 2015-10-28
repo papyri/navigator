@@ -685,7 +685,16 @@
                 
               <!-- type of event -->
               <xsl:if test="@type">
-                <xsl:value-of select="concat(upper-case(substring(@type, 1, 1)), substring(@type, 2))"/><xsl:text> by </xsl:text>
+                <xsl:variable name="type-display" select="concat(upper-case(substring(@type, 1, 1)), substring(@type, 2))"/>
+                <xsl:choose>
+                  <xsl:when test="t:graphic[@url]">
+                    <a href="{t:graphic/@url}"><xsl:value-of select="$type-display"/></a>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="$type-display"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text> by </xsl:text>
               </xsl:if>
               
               <!-- responsible individual -->
