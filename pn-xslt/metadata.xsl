@@ -116,15 +116,15 @@
             <!-- Inventory Number -->
             <tr>
               <th>Inv. no.</th>
-              <td><xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/>
+              <td><a href="http://www.trismegistos.org/collection/{collref[starts-with(field[@n='15'],'1.')]/field[@n='1']}"><xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/></a>
                 <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">;
                   <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">other inv.: </xsl:if>
                   <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
-                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
+                    <a href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of select="field[@n='14']"/></a><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]">; </xsl:if>
                   </xsl:for-each>
                   <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">formerly: </xsl:if>
                   <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
-                    <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
+                    <a href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of select="field[@n='14']"/></a><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
                   </xsl:for-each></xsl:if>
               </td>
             </tr>
