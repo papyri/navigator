@@ -23,7 +23,7 @@
         <xsl:choose>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
-              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.papy.uni-heidelberg.de/Hauptregister/FMPro?-db=hauptregister_&amp;TM_Nr.={//t:idno[@type = 'filename']}&amp;-format=DTableVw.htm&amp;-lay=Liste&amp;-find">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
+              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
             </h2>
           </xsl:when>
           <xsl:otherwise>
