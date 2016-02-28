@@ -671,7 +671,8 @@
   </xsl:function>
   
   <!-- Custodial Events --> 
-  <xsl:template match="t:custodialHist" mode="metadata">
+  <!-- Now display at the top of each column - see htm-teidivedition.xsl -->
+  <!--<xsl:template match="t:custodialHist" mode="metadata">
     <tr>
       <th class="rowheader" rowspan="1">Custodial Events</th>
       <td>
@@ -680,10 +681,10 @@
           <xsl:for-each select="t:custEvent">
             <xsl:variable name="context-node" select="../../../../t:msIdentifier/t:idno/t:idno"/>
             
-            <!-- capture the HTML serialization of the details we want to emit into a variable --> 
+            <!-\- capture the HTML serialization of the details we want to emit into a variable -\-> 
             <xsl:variable name="interior">
                 
-              <!-- type of event -->
+              <!-\- type of event -\->
               <xsl:if test="@type">
                 <xsl:variable name="type-display" select="concat(upper-case(substring(@type, 1, 1)), substring(@type, 2))"/>
                 <xsl:choose>
@@ -697,7 +698,7 @@
                 <xsl:text> by </xsl:text>
               </xsl:if>
               
-              <!-- responsible individual -->
+              <!-\- responsible individual -\->
               <xsl:choose>
                 <xsl:when test="t:forename or t:surname">
                   <xsl:value-of select="t:forename"/>
@@ -711,7 +712,7 @@
                 </xsl:otherwise>
               </xsl:choose>
               
-              <!-- dates -->
+              <!-\- dates -\->
               <xsl:text> (</xsl:text>
               <xsl:choose>
                 <xsl:when test="@from and @to and @from=@to">
@@ -736,7 +737,7 @@
               </xsl:choose>
               <xsl:text>)</xsl:text>
               
-              <!-- corresponding fragments -->
+              <!-\- corresponding fragments -\->
               <xsl:if test="@corresp">
                 <xsl:text>: </xsl:text>
                 <xsl:variable name="corr" select="@corresp"/>
@@ -761,7 +762,7 @@
               </xsl:if>                
             </xsl:variable>
             
-            <!-- now emit the content we stored in the variable, wrapping it in a link if appropriate -->
+            <!-\- now emit the content we stored in the variable, wrapping it in a link if appropriate -\->
             <li>
               <xsl:choose>
                 <xsl:when test="t:ptr[@target]">
@@ -779,7 +780,7 @@
       </td>
 
     </tr>
-  </xsl:template>
+  </xsl:template>-->
   
  
   
