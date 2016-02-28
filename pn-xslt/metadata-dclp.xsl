@@ -87,9 +87,10 @@
             mode="metadata"/>
         
         <!-- Custodial Events -->
-        <xsl:apply-templates
+        <!-- Now display at the top of each column - see htm-teidivedition.xsl -->
+        <!--<xsl:apply-templates
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist"
-            mode="metadata"/>
+            mode="metadata"/>-->
 
         <!-- Physical Description -->
         <!--<xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc"
