@@ -801,7 +801,7 @@
       <xsl:text> </xsl:text>
       <!-- Material -->
       <xsl:value-of
-        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material, ' '))"/>
+        select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support, ' '))"/>
       <xsl:text> </xsl:text>
       <!-- Language -->
       <xsl:value-of
