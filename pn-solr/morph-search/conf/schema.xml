@@ -1,24 +1,184 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema name="epidoc" version="1.2">
+<schema name="epidoc" version="1.6">
   <types>
-    <fieldType name="lctext" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="date" class="solr.TrieDateField" omitNorms="true" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true"
+      positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" omitNorms="true"
+      positionIncrementGap="0"/>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+
+    <fieldType name="ntext" class="solr.TextField">
       <analyzer type="index">
-        <tokenizer class="solr.LowerCaseTokenizerFactory"/>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ShingleFilterFactory" maxShingleSize="2" minShingleSize="2"
+          outputUnigrams="false"/>
+        <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20"/>
       </analyzer>
       <analyzer type="query">
-        <tokenizer class="solr.LowerCaseTokenizerFactory"/>
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
-    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+    
+    <fieldType name="nuppertext" class="solr.TextField">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.ShingleFilterFactory" maxShingleSize="2" minShingleSize="2"
+          outputUnigrams="false"/>
+        <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
+          generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0"
+          splitOnCaseChange="1"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
+          generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0"
+          splitOnCaseChange="1"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="lctext" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
+          generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0"
+          splitOnCaseChange="1"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
+          generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0"
+          splitOnCaseChange="1"/>
+      </analyzer>
+    </fieldType>
+    <fieldType name="untokenized" class="solr.TextField" positionIncrementGap="100">
+      <analyzer>
+        <tokenizer class="solr.KeywordTokenizerFactory"></tokenizer>
+      </analyzer>
+    </fieldType>
   </types>
 
+
   <fields>
-    <field name="id" type="int" indexed="true" stored="true" required="true"/>
-    <dynamicField name="*" type="lctext" indexed="true" stored="true"/>
+    <!-- fields used by the Papyrological Navigator -->
+    <field name="all" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="apis_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="apis_inventory" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="apis_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="apis_item_letter" type="string" stored="true" indexed="true" multiValued="false" required="false"/>
+    <field name="apis_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="apis_publication_id" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="apis_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="apis_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
+    <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="ddbdp_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="ddbdp_item_letter" type="string" stored="true" indexed="true" multiValued="false" required="false"/>
+    <field name="ddbdp_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="ddbdp_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="display_date" type="string" indexed="false" stored="true"/>
+    <field name="display_place" type="string" indexed="true" stored="true"/>
+    <field name="facet_language" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="earliest_date" type="int" indexed="true" stored="true"/>
+    <field name="has_transcription" type="boolean" indexed="true" stored="false"/>
+    <field name="has_translation" type="boolean" indexed="true" stored="true"/>
+    <field name="hgv_identifier" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="hgv_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="hgv_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="hgv_item_letter" type="string" stored="true" indexed="true" multiValued="false" required="false"/>
+    <field name="hgv_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="hgv_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="hgv_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="id" type="string" indexed="true" stored="true" required="true"/>
+    <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="idno_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="illustrations" type="boolean" indexed="true" stored="true"/> 
+    <field name="images" type="boolean" indexed="true" stored="false"/>
+    <field name="images-int" type="boolean" indexed="true" stored="true"/>
+    <field name="images-ext" type="boolean" indexed="true" stored="true"/>
+    <field name="image_path" type="string" indexed="false" stored="true" multiValued="true"/>
+    <field name="invnum" type="text" indexed="true" stored="true"/>
+    <field name="item" type="long" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
+    <field name="language" type="text" indexed="true" stored="true" multiValued="true"/>
+    <field name="latest_date" type="int" indexed="true" stored="true"/>
+    <field name="metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="nome" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="place" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="project" type="string" indexed="true" stored="false" default="papyri.info" multiValued="false"/>
+    <field name="series" type="string" indexed="true" stored="false" multiValued="false" required="true"/>
+    <field name="series_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="title" type="text" indexed="false" stored="true" multiValued="false"/>
+    <field name="tm_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ia" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ic" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_id" type="text" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram" type="nuppertext" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram_ia" type="ntext" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram_ic" type="ntext" indexed="true" stored="false" multiValued="true"/>
+    <field name="transcription_ngram_id" type="nuppertext" indexed="true" stored="false" multiValued="true"/>
+    <field name="translation" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="translation_language" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
+    <field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_ic" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="_version_" type="long" indexed="true" stored="true"/>
+    <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
+    <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
+    
+  <!-- end PN fields -->
+  <!-- fields used by the change feed -->
+    
+    <field name="edit_date" type="date" indexed="true" stored="true" multiValued="false"></field> 
+    <field name="app_edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
+    <field name="date_edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
+    <field name="place_edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
+    <field name="published" type="date" indexed="true" stored="true" multiValued="false"></field>
+    <field name="last_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+    <field name="app_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+    <field name="date_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+    <field name="place_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
+
+ <!-- end fields used by the change feed -->
+   
   </fields>
-  
+
+
   <uniqueKey>id</uniqueKey>
+
+  <!-- field for the QueryParser to use when an explicit fieldname is absent -->
+  <defaultSearchField>all</defaultSearchField>
+
   <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
-  <solrQueryParser defaultOperator="OR"/>
-  
+  <solrQueryParser defaultOperator="AND"/>
+
+  <copyField source="transcription_ia" dest="all"/>
+  <copyField source="translation" dest="all"/>
+  <copyField source="hgv_metadata" dest="all"/>
+  <copyField source="tm_metadata" dest="all"/>
+  <copyField source="apis_metadata" dest="all"/>
+  <copyField source="hgv_metadata" dest="metadata"/>
+  <copyField source="tm_metadata" dest="metadata"/>
+  <copyField source="apis_metadata" dest="metadata"/>
+  <!--<copyField source="transcription" dest="untokenized"/>
+  <copyField source="transcription_ia" dest="untokenized_ia"/>
+  <copyField source="transcription_ic" dest="untokenized_ic"/>
+  <copyField source="transcription_id" dest="untokenized_id"/> -->
 </schema>

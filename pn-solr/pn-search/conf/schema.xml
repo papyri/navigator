@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema name="epidoc" version="1.2">
+<schema name="epidoc" version="1.6">
   <types>
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true"/>
     <fieldType name="date" class="solr.TrieDateField" omitNorms="true" precisionStep="0" positionIncrementGap="0"/>
@@ -107,7 +107,7 @@
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="idno_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
-    <field name="illustrations" type="boolean" indexed="true" stored="true"/>
+    <field name="illustrations" type="boolean" indexed="true" stored="true"/> 
     <field name="images" type="boolean" indexed="true" stored="false"/>
     <field name="images-int" type="boolean" indexed="true" stored="true"/>
     <field name="images-ext" type="boolean" indexed="true" stored="true"/>
@@ -138,7 +138,8 @@
     <field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="untokenized_ic" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
-    <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field> 
+    <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
+    <field name="_version_" type="long" indexed="true" stored="true"/>
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
     <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
     
@@ -176,8 +177,8 @@
   <copyField source="hgv_metadata" dest="metadata"/>
   <copyField source="tm_metadata" dest="metadata"/>
   <copyField source="apis_metadata" dest="metadata"/>
-  <copyField source="transcription" dest="untokenized"/>
+  <!--<copyField source="transcription" dest="untokenized"/>
   <copyField source="transcription_ia" dest="untokenized_ia"/>
   <copyField source="transcription_ic" dest="untokenized_ic"/>
-  <copyField source="transcription_id" dest="untokenized_id"/> 
+  <copyField source="transcription_id" dest="untokenized_id"/> -->
 </schema>
