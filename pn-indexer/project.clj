@@ -6,9 +6,7 @@
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [ant/ant-launcher "1.6.2"]
                  [org.apache.maven/maven-ant-tasks "2.0.10"]
-                 [org.apache.solr/solr-core "3.5.0"]
-                 [org.apache.solr/solr-solrj "3.5.0"]
-                 [org.apache.solr/solr-commons-csv "3.5.0"]
+                 [org.apache.solr/solr-solrj "5.5.0"]
                  [org.apache.jena/jena-core "2.7.1"]
                  [org.apache.jena/jena-iri "0.9.1"]
                  [org.apache.jena/jena-arq "2.9.1"]
@@ -22,7 +20,7 @@
                  [commons-httpclient/commons-httpclient "3.1"]
                  [commons-logging/commons-logging "1.1.1"]
                  [commons-codec/commons-codec "1.5"]]
-  :dev-dependencies [[lein-marginalia "0.7.0-SNAPSHOT" :exclusions 
+  :dev-dependencies [[lein-marginalia "0.7.0-SNAPSHOT" :exclusions
                        [org.clojure/clojure]]]
   :main info.papyri.indexer
   :aot [info.papyri.indexer])
