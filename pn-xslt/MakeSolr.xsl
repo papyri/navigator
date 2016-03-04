@@ -146,13 +146,14 @@
                <xsl:with-param name="temp-node" select="$temp-orig-edition"></xsl:with-param>
              </xsl:call-template>
             </xsl:variable>
+            <!-- text, padded with a single space before and after, with puctuation & newlines removed -->
             <xsl:variable name="textnfc"
-              select="normalize-space(replace(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ'))"/>
+              select="concat(' ',normalize-space(replace(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ')),' ')"/>
             <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
-            <xsl:variable name="orignfc" select="normalize-space(replace(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ'))"></xsl:variable>
+            <xsl:variable name="orignfc" select="concat(' ',normalize-space(replace(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ')), ' ')"></xsl:variable>
             <xsl:variable name="orignfd" select="normalize-unicode($orignfc, 'NFD')"></xsl:variable>
             <field name="transcription">
-              <xsl:value-of select="replace($textnfc, $abbreviation-marker, '')"/>
+              <xsl:value-of select="translate($textnfc, $abbreviation-marker, '')"/>
             </field>
             <field name="transcription">
               <xsl:value-of select="$orignfc"></xsl:value-of>
@@ -179,6 +180,46 @@
             <field name="transcription_ia">
               <xsl:value-of select="lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''))"></xsl:value-of>
             </field>
+            <xsl:for-each select="pi:split(($textnfc))">
+              <field name="untokenized">
+                <xsl:value-of select="translate(., $abbreviation-marker, '')"/>
+              </field>
+            </xsl:for-each>
+            <xsl:for-each select="pi:split(($orignfc))">
+              <field name="untokenized">
+                <xsl:value-of select="translate(., $abbreviation-marker, '')"/>
+              </field>
+            </xsl:for-each>
+            <xsl:for-each select="pi:split((translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, '')))">
+              <field name="untokenized_id">
+                <xsl:value-of select="."/>
+              </field>
+            </xsl:for-each>
+            <xsl:for-each select="pi:split((replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')))">
+              <field name="untokenized_id">
+                <xsl:value-of select="."/>
+              </field>
+            </xsl:for-each>
+            <xsl:for-each select="pi:split(($textnfc))">
+              <field name="untokenized_ic">
+                <xsl:value-of select="translate(lower-case(.), $abbreviation-marker, '')"/>
+              </field>
+            </xsl:for-each>
+            <xsl:for-each select="pi:split(($orignfd))">
+              <field name="untokenized_ic">
+                <xsl:value-of select="lower-case(.)"/>
+              </field>
+            </xsl:for-each>
+            <xsl:for-each select="pi:split((lower-case(translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, ''))))">
+              <field name="untokenized_ia">
+                <xsl:value-of select="."/>
+              </field>
+            </xsl:for-each>
+            <xsl:for-each select="pi:split((lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''))))">
+              <field name="untokenized_ia">
+                <xsl:value-of select="."/>
+              </field>
+            </xsl:for-each>
             <field name="transcription_ngram">
               <xsl:for-each select="tokenize($textnfc, '\s+')">
                 <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
@@ -1129,5 +1170,21 @@
 
     </xsl:choose>
   </xsl:template>
+  
+  <!-- Solr limits text chunks to 32766 bytes, so split into overlapping
+       fields using 1/3 that size (most Greek will be 2 bytes, with a 
+       small number of 3-byte chars; very seldom 4)-->
+  <xsl:function name="pi:split">
+    <xsl:param name="sequence"/>
+    <xsl:variable name="last" select="$sequence[last()]"/>
+    <xsl:choose>
+      <xsl:when test="string-length($last) gt 10922">
+        <xsl:sequence select="pi:split((subsequence($sequence, 1, count($sequence) - 1), substring($last, 1, 10922), substring($last, 10000)))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="$sequence"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
 
 </xsl:stylesheet>
