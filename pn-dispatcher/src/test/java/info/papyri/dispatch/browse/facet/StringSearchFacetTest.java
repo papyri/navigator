@@ -602,7 +602,7 @@ public class StringSearchFacetTest extends TestCase {
             assertEquals("", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.DEFAULT, null));
 
             // REGEXP search handler returns appropriately formatted prefix
-            assertEquals("{!regexp cache=false qf=\"untokenized_ia\"}", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.REGEXP, SolrField.untokenized_ia));
+            assertEquals("untokenized_ia:", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.REGEXP, SolrField.untokenized_ia));
 
             // SURROUND search handler returns appropriately formatted  prefix
             assertEquals("{!surround cache=false}transcription_ic:", testClause.getQueryPrefix(StringSearchFacet.SearchHandler.SURROUND, SolrField.transcription_ic));
@@ -633,26 +633,26 @@ public class StringSearchFacetTest extends TestCase {
             
             // multi-character and anchors bracket unanchored expressions
             String test1 = "και";
-            assertEquals("^.*και.*$", testTerm.anchorRegex(test1));
+            assertEquals("/@και@/", testTerm.anchorRegex(test1));
             
             // if already anchored, returned unchanged
             String test2 = "^και$";
-            assertEquals(test2, testTerm.anchorRegex(test2));
+            assertEquals("/@ και @/", testTerm.anchorRegex(test2));
             
             // if anchored on only one side, the other side is anchored with multi-character and anchor
             String test3 = "^και";
-            assertEquals("^και.*$", testTerm.anchorRegex(test3));
+            assertEquals("/@ και@/", testTerm.anchorRegex(test3));
             
             String test4 = "και.*$";
-            assertEquals("^.*και.*$", testTerm.anchorRegex(test4));
+            assertEquals("/@και.* @/", testTerm.anchorRegex(test4));
             
             // if already multi-charactered, add anchors
             String test5 = ".*και.*";
-            assertEquals("^.*και.*$", testTerm.anchorRegex(test5));
+            assertEquals("/@.*και.*@/", testTerm.anchorRegex(test5));
             
             // .+ is considered equivalent to .* for the purposes of anchoring
             String test6 = ".+και";
-            assertEquals("^.+και.*$", testTerm.anchorRegex(test6));
+            assertEquals("/@.+και@/", testTerm.anchorRegex(test6));
         
         }
         catch(Exception e){

@@ -20,7 +20,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
@@ -48,7 +48,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -72,7 +72,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
@@ -80,7 +80,7 @@
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
-            <param-value>/pn-search</param-value>
+            <param-value>pn_search</param-value>
         </init-param>
         <init-param>
             <param-name>facetBrowserPath</param-name>
@@ -120,7 +120,7 @@
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
-            <param-value>/pn-search</param-value>
+            <param-value>pn_search</param-value>
         </init-param>
         <init-param>
             <param-name>facetBrowserPath</param-name>
@@ -136,7 +136,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
         </init-param>
         <init-param>
             <param-name>xmlPath</param-name>
@@ -152,11 +152,11 @@
         <servlet-class>info.papyri.dispatch.atom.AtomFeedServlet</servlet-class>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
-            <param-value>/pn-search</param-value>
+            <param-value>pn_search</param-value>
         </init-param>
     </servlet>
     <servlet>

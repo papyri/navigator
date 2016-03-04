@@ -1657,6 +1657,7 @@ public class StringSearchFacet extends Facet{
            
            if(field == null) return "";
            StringBuilder prefix = new StringBuilder();
+           /*
            if(sh == SearchHandler.REGEXP){
                
                prefix.append("{!");
@@ -1666,8 +1667,8 @@ public class StringSearchFacet extends Facet{
                prefix.append("\"}");
                return prefix.toString();
                
-           }
-           else if(sh == SearchHandler.SURROUND){
+           } 
+           else*/ if(sh == SearchHandler.SURROUND){
                
                prefix.append("{!");
                prefix.append(sh.name().toLowerCase());
@@ -2005,14 +2006,13 @@ public class StringSearchFacet extends Facet{
             
             transformedString = transformed.toString().trim();
             // regex searches require regex-syntax OR operator
-            if(transformedString.matches("^.*\\sOR\\s.*$") && getAllClauseRoles().contains(ClauseRole.REGEX)){
+            if(transformedString.matches("^.* OR .*$") && getAllClauseRoles().contains(ClauseRole.REGEX)){
 
-                transformedString = transformedString.replaceAll("\\sOR\\s", "|");
-                // optimise by anchoring whole expression, not individual operands
-                transformedString = transformedString.replaceAll("\\^\\.\\*", "");
-                transformedString = transformedString.replaceAll("\\.\\*\\$", "");
+                transformedString = transformedString.replaceAll(" OR ", "|");
+                // anchor whole expression, not individual operands
+                transformedString = transformedString.replaceAll("/?@/?", "");
                 // now we need to reanchor
-                transformedString = "^.*(" + transformedString + ").*$";          
+                transformedString = "/@(" + transformedString + ")@/";          
                 
             }
             return transformedString;
@@ -2042,57 +2042,6 @@ public class StringSearchFacet extends Facet{
             if(wdIndex != -1 && containsLeadingWildcard()) return doWordsProxTransform(clauses, wdIndex);
             return clauses;
     
-        }
-        
-        final ArrayList<SearchClause> doNegativeAssertionTransform(ArrayList<SearchClause> clauses) throws InternalQueryException, InsufficientSpecificityException, IncompleteClauseException, RegexCompilationException{
-
-            ArrayList<SearchClause> negClauses = new ArrayList<SearchClause>();
-            StringBuilder regex = new StringBuilder();
-            
-            Iterator<SearchClause> scit = clauses.iterator();
-            while(scit.hasNext()){
-
-                SearchClause nowClause = scit.next();
-
-                if(nowClause.getClauseRoles().contains(ClauseRole.OPERATOR)) continue;
-                if(nowClause.getClauseRoles().contains(ClauseRole.LEMMA)){
-                    
-                    
-                    String lemmata = nowClause.buildTransformedString();
-                    lemmata = lemmata.replaceAll("\\s?OR\\s?", "|");
-                    regex.append(lemmata);
-                    
-                }
-                else{
-                    
-                    String searchTerm = nowClause.getOriginalString();
-                    searchTerm = searchTerm.replaceAll("#", "\\b");
-                    searchTerm = searchTerm.replaceAll(" ", "\\s+");
-                    searchTerm = searchTerm.replaceAll("\\*", ".*");
-                    searchTerm = searchTerm.replaceAll("\\?", ".");
-                    regex.append(searchTerm);
-                    
-                }
-                
-                if(scit.hasNext()) regex.append("\\s+");
-            
-            }
-
-            try{
-
-                  SearchTerm regexSearchTerm = new SearchTerm(regex.toString(), target, ignoreCaps, ignoreMarks, false);
-                  regexSearchTerm.addClauseRole(ClauseRole.REGEX);
-                  negClauses.add(regexSearchTerm);
-
-            } 
-            catch(StringSearchParsingException sspe){
-                
-                  throw new RegexCompilationException();
-                
-            }
-
-            return negClauses;
-            
         }
                
         /**
@@ -2303,7 +2252,7 @@ public class StringSearchFacet extends Facet{
          * Converts wildcard syntax into regular expression syntax for leading-wildcard 
          * word-proximity searches.
          * 
-         * The complexity of ths method compared to the <code>convertCharsProxWildcards</code> method
+         * The complexity of this method compared to the <code>convertCharsProxWildcards</code> method
          * arises because word-proximity searches, unlike character-proximity searches, involve the notions
          * both of words and word boundaries, both of which need to be reflected in the regex
          * expression produced. 
@@ -2327,13 +2276,14 @@ public class StringSearchFacet extends Facet{
 
                     if(!nowChar.equals("?") && !nowChar.equals("*")){
                         
-                        if(iteration == 0) asRegex.append("\\b");
+                        if(iteration == 0) asRegex.append(" ");
                         asRegex.append(nowChar);
                         continue;
                         
                     }
-                    asRegex.append("\\b\\p{L}");
-                    if(nowChar.equals("*")) asRegex.append("+");
+                    asRegex.append(" ");
+                    if(nowChar.equals("*")) asRegex.append("@");
+                    if(nowChar.equals("?")) asRegex.append(".");
                     continue;
                             
                 }
@@ -2342,13 +2292,13 @@ public class StringSearchFacet extends Facet{
                     if(!nowChar.equals("?") && !nowChar.equals("*")){
                         
                         asRegex.append(nowChar);
-                        if(iteration == totalLength - 1) asRegex.append("\\b");
+                        if(iteration == totalLength - 1) asRegex.append(" ");
                         continue;
                         
                     }
-                    asRegex.append("\\p{L}");
-                    if(nowChar.equals("*")) asRegex.append("+");
-                    asRegex.append("\\b");
+                    if(nowChar.equals("*")) asRegex.append("@");
+                    if(nowChar.equals("?")) asRegex.append(".");
+                    asRegex.append(" ");
                     
                 }
                 else{
@@ -2359,8 +2309,8 @@ public class StringSearchFacet extends Facet{
                         continue;
                         
                     }
-                    asRegex.append("\\p{L}");
-                    if(nowChar.equals("*")) asRegex.append("+");
+                    if(nowChar.equals("*")) asRegex.append("@");
+                    if(nowChar.equals("?")) asRegex.append(".");
                     
                     
                 }
@@ -2396,8 +2346,8 @@ public class StringSearchFacet extends Facet{
             String operator = charProxMatcher.group(2);
             String distRegex = ".{1," + numChars + "}";
             // # is conventionally used to indicate word-boundaries on the user-end
-            prevTerm = prevTerm.replaceAll("#", "\\\\b");
-            nextTerm = nextTerm.replaceAll("#", "\\\\b");
+            prevTerm = prevTerm.replaceAll("#", " ").replace("\\s+", " ");
+            nextTerm = nextTerm.replaceAll("#", " ").replace("\\s+", " ");
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
             if(operator.equals("w")) return regex;
             // if we are doing an unordered proximity search we also need to invert the terms
@@ -2428,13 +2378,13 @@ public class StringSearchFacet extends Facet{
             if(!wordProxMatcher.matches()) throw new RegexCompilationException();          
             Integer numWords = Integer.valueOf(wordProx.substring(0, wordProx.length() - 1));
             String operator = wordProx.substring(wordProx.length() - 1).equals("n") ? "n" : "w";
-            // \p{L}+\s is the backend representation used for 'a unicode word'
-            String distRegex = "(\\p{L}+\\s){0," + numWords + "}";
-            prevTerm = prevTerm.replaceAll("#", "\\\\b");
-            nextTerm = nextTerm.replaceAll("#", "\\\\b");
-            String regex = prevTerm.trim() + "\\s" + distRegex + nextTerm.trim();
+            // "@ " is the backend representation used for a string followed by a space
+            String distRegex = "(@ ){0," + numWords + "}";
+            prevTerm = prevTerm.replaceAll("#", " ").replace("\\s+", " ");
+            nextTerm = nextTerm.replaceAll("#", " ").replace("\\s+", " ");
+            String regex = prevTerm.trim() + " " + distRegex + nextTerm.trim();
             if(operator.equals("w")) return regex;
-            String revRegex = nextTerm.trim() + "\\s" + distRegex + prevTerm.trim();
+            String revRegex = nextTerm.trim() + " " + distRegex + prevTerm.trim();
             String nearRegex = "(" + regex + "|" + revRegex + ")";
             return nearRegex;
             
@@ -2663,6 +2613,27 @@ public class StringSearchFacet extends Facet{
             
         }
         
+        private String permuteNegativeAssertion(String assertion) {
+            StringBuilder bins = new StringBuilder();
+            bins.append("(");
+            for (int size = (1 << assertion.length()) - 1; size > 0; size--) {
+                StringBuilder bin = new StringBuilder();
+                for (int j = 0; j < assertion.length(); j++) {
+                    if ((size & (1 << j)) > 0) {
+                        bin.append("[^");
+                        bin.append(assertion.charAt(j));
+                        bin.append("]");
+                    } else {
+                        bin.append(assertion.charAt(j));
+                    }
+                }
+                bins.append(bin);
+                if (size > 1) bins.append("|");
+            }
+            bins.append(")");
+            return bins.toString();
+        }
+        
         private String expandNegativeAssertion(String rawAssertion){
 
             String[] assertBits = rawAssertion.split("]");
@@ -2670,15 +2641,16 @@ public class StringSearchFacet extends Facet{
             Pattern pattern = Pattern.compile(".*\\[\\-.*");
             for(int i = 0; i < assertBits.length; i++){
                 String nowBit = assertBits[i];  
-                String openExpression = i == 0 && nowBit.matches("^[(]?\\[\\-.*") ? "(?<!" : "(?!";
                 Matcher matcher = pattern.matcher(nowBit);
                 if(matcher.matches()){
-
-                    nowBit = nowBit.replace("[-", openExpression);
-                    nowBit = excludeAbbreviationMarks(openExpression, nowBit);
-                    assertionAsRegex.append(nowBit);
-                    assertionAsRegex.append(")");
-                
+                    if (!nowBit.startsWith("[-")) {
+                        assertionAsRegex.append(nowBit.substring(0, nowBit.indexOf("[-")));
+                        assertionAsRegex.append(permuteNegativeAssertion(nowBit.substring(nowBit.indexOf("[-") + 2)));
+                    } else {
+                        assertionAsRegex.append(permuteNegativeAssertion(nowBit.substring(2)));
+                    }
+                    
+                    //nowBit = excludeAbbreviationMarks("", nowBit);                
                 }
                 else{
                     
@@ -2687,7 +2659,7 @@ public class StringSearchFacet extends Facet{
                 }
                 
             }
-            String finalAssertion = assertionAsRegex.toString().replaceAll("#", "\\\\b");
+            String finalAssertion = assertionAsRegex.toString().replaceAll("#", " ").replaceAll("\\s+", " ");
             return finalAssertion;
             
         }
@@ -2902,18 +2874,24 @@ public class StringSearchFacet extends Facet{
         String anchorRegex(String rawRegex){
             
             StringBuilder anchoredRegex = new StringBuilder();
+            anchoredRegex.append("/@");
             int l = rawRegex.length();
             if(l < 1) return rawRegex;
             String firstChar = Character.toString(rawRegex.charAt(0));
             String lastChar  = Character.toString(rawRegex.charAt(l - 1));
-            String startExp = l > 1 ? rawRegex.substring(0, 2) : firstChar;
-            String lastExp = l > 1 ? rawRegex.substring(l - 2, l) : lastChar;
-            if(!firstChar.equals("^")) anchoredRegex.append("^");
-            if(!startExp.equals(".*") && !startExp.equals(".+") && !firstChar.equals("^")) anchoredRegex.append(".*");
-            anchoredRegex.append(rawRegex);
-            if(!lastExp.equals(".*") && !lastExp.equals(".+") && !lastChar.equals("$")) anchoredRegex.append(".*");
-            if(!lastChar.equals("$")) anchoredRegex.append("$");            
-            return anchoredRegex.toString();
+            if(firstChar.equals("^")) {
+                anchoredRegex.append(" ");
+                anchoredRegex.append(rawRegex.substring(1, l-1));
+            } else {
+                anchoredRegex.append(rawRegex.substring(0, l-1));
+            }
+            if(lastChar.equals("$")) {
+                anchoredRegex.append(" ");
+            } else {
+                anchoredRegex.append(lastChar);
+            }
+            anchoredRegex.append("@/");
+            return anchoredRegex.toString().replace("\\s", " ").replaceAll("@+", "@");
             
         }
         
