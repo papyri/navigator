@@ -36,7 +36,7 @@ public class Publisher implements Runnable {
   public static String MAPPING = "Mapping files.";
   public static String INFERENCING = "Generating inferences.";
   public static String PUBLISHING = "Publishing new files.";
-  private static String SOLR = "http://localhost:8083/";
+  private static String SOLR = "http://localhost:8983/";
   private String status = IDLE;
   private Date started;
   private Date lastrun;
