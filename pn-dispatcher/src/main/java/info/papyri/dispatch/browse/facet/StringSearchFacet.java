@@ -2612,26 +2612,25 @@ public class StringSearchFacet extends Facet{
             return transformed;
             
         }
-        
+        /*
+         *  Expand a negative lookaround group into its permuted DFA
+         *  possibilites. E.g. [-ab] -> ([^a]b|a[^b]|[^a][^b])
+         */
         private String permuteNegativeAssertion(String assertion) {
-            StringBuilder bins = new StringBuilder();
-            bins.append("(");
-            for (int size = (1 << assertion.length()) - 1; size > 0; size--) {
-                StringBuilder bin = new StringBuilder();
+            StringBuilder result = new StringBuilder();
+            result.append("(");
+            for (int i = (1 << assertion.length()) - 1; i > 0; i--) {
                 for (int j = 0; j < assertion.length(); j++) {
-                    if ((size & (1 << j)) > 0) {
-                        bin.append("[^");
-                        bin.append(assertion.charAt(j));
-                        bin.append("]");
+                    if ((i & (1 << j)) > 0) {
+                        result.append("[^").append(assertion.charAt(j)).append("]");
                     } else {
-                        bin.append(assertion.charAt(j));
+                        result.append(assertion.charAt(j));
                     }
                 }
-                bins.append(bin);
-                if (size > 1) bins.append("|");
+                if (i > 1) result.append("|");
             }
-            bins.append(")");
-            return bins.toString();
+            result.append(")");
+            return result.toString();
         }
         
         private String expandNegativeAssertion(String rawAssertion){
