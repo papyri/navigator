@@ -894,11 +894,11 @@
   (binding [*current* nil
       *doc* nil
 	    *index* 0]
-    (dosync (ref-set solr (ConcurrentUpdateSolrClient. (str solrurl "morph-search/") 5000 nthreads))
+    (dosync (ref-set solr (ConcurrentUpdateSolrClient. (str solrurl "morph_search/") 5000 nthreads))
 	    (.setRequestWriter @solr (BinaryRequestWriter.)))
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
-    (let [solr (ConcurrentUpdateSolrClient. (str solrurl "morph-search/") 5000 nthreads)]
+    (let [solr (ConcurrentUpdateSolrClient. (str solrurl "morph_search/") 5000 nthreads)]
       (doto solr
 	(.commit)
 	(.optimize)))))
@@ -908,7 +908,7 @@
   []
   (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
   (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")
-  (dosync (ref-set solrbiblio (ConcurrentUpdateSolrClient. (str solrurl "biblio-search/") 1000 2))
+  (dosync (ref-set solrbiblio (ConcurrentUpdateSolrClient. (str solrurl "biblio_search/") 1000 2))
           (.setRequestWriter @solrbiblio (BinaryRequestWriter.)))
 
   ;; Generate and Index bibliography
