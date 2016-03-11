@@ -304,7 +304,7 @@ public class StringSearchFacet extends Facet{
     /**
      * Path to the Solr index for lemmatised searches 
      */
-    private static String morphSearch = "morph-search/";
+    private static String morphSearch = "morph_search/";
     
     /**
      * Stores exceptions thrown during search-clause parsing for feedback to the user.
@@ -2755,7 +2755,7 @@ public class StringSearchFacet extends Facet{
         
         /**
          * Expands a passed declined word into all of its possible forms by querying
-         * the morph-search solr core.
+         * the morph_search solr core.
          * 
          * 
          * @param declinedForm
