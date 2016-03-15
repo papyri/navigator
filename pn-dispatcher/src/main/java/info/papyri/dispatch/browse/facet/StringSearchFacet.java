@@ -2622,7 +2622,7 @@ public class StringSearchFacet extends Facet{
             for (int i = (1 << assertion.length()) - 1; i > 0; i--) {
                 for (int j = 0; j < assertion.length(); j++) {
                     if ((i & (1 << j)) > 0) {
-                        result.append("[^").append(assertion.charAt(j)).append("]");
+                        result.append("[^").append(assertion.charAt(j)).append("°]");
                     } else {
                         result.append(assertion.charAt(j));
                     }
