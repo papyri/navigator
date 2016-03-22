@@ -2648,8 +2648,6 @@ public class StringSearchFacet extends Facet{
                     } else {
                         assertionAsRegex.append(permuteNegativeAssertion(nowBit.substring(2)));
                     }
-                    
-                    //nowBit = excludeAbbreviationMarks("", nowBit);                
                 }
                 else{
                     
