@@ -416,11 +416,52 @@ function getCookie(name) {
 }
 
 function alignRTL() {
-  var width = jQuery(".ab").width();
   jQuery("span[lang=ara]").each(function(i, elt) {
     var e = jQuery(elt);
-    var offset = (width - e.width()) / width;
-    e.before('<span style="display:inline-block;width:' + offset +'%;"> </span>');
-    e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
+    //var offset = ((width - e.width()) / e.parents("div.textpart").width()) * 100;
+    var breaks = e.find("br");
+    var r = document.createRange();
+    var line = document.createElement("span");
+    var frg;
+    if (breaks.length > 0) {
+      elt.removeAttribute("lang");
+      // deal with text before first line break
+      if (breaks[0].previousSibling.textContent.trim() != "") {
+        r.setStartBefore(elt.firstChild);
+        r.setEndBefore(breaks[0]);
+        line.appendChild(r.extractContents());
+        line.setAttribute("lang", "ara");
+        elt.insertBefore(line, breaks[0]);
+        if (elt.previousSibling.localName == "br" || elt.previousSibling.textContent.trim() == "") {
+          var l = jQuery(line);
+          var offset = width - l.width();
+          l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+        }
+      }
+      //deal with text after line breaks
+      for (var i=0; i < breaks.length; i++) {
+        r = document.createRange();
+        line = document.createElement("span");
+        r.setStartAfter(breaks[i]);
+        if (i < breaks.length - 1) {
+          r.setEndBefore(breaks[i + 1]);
+        } else {
+          r.setEndAfter(elt.lastChild);
+        }
+        line.appendChild(r.extractContents());
+        line.setAttribute("lang", "ara");
+        jQuery(line).insertAfter(breaks[i]);
+        var l = jQuery(line);
+        var offset = width - l.width();
+        l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+        l.find(".linenumber").css("margin-left", "-" + (32 + (width - l.width())) + "px");
+      }
+    } else {
+      var offset = width - e.width();
+      if (e[0].previousSibling.textContent.trim() == "") {
+        e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+      }
+      e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
+    }
   });
 }
