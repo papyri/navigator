@@ -21,6 +21,7 @@ function init() {
     if (jQuery("#image").length > 0) {
         initImage();
     }
+    alignRTL();
     jQuery("#tmgo").button();
     jQuery("span.term").each( function (i, elt) {
         jQuery(elt).CreateBubblePopup({
@@ -34,7 +35,7 @@ function init() {
     });
     jQuery.ajax({
       type: "GET",
-      url: "/editor/user/info", 
+      url: "/editor/user/info",
       dataType: "json",
       success: function(data, status, xhr) {
         if (data.user) {
@@ -80,10 +81,10 @@ function init() {
         });
       });
     }
-    
+
     var bibl = jQuery("div#bibliography li>a");
-    
-    
+
+
     addLinearBrowseControls();
 }
 
@@ -99,7 +100,7 @@ function getPath() {
 }
 
 /* The following functions are all concerned with linear browse - that is to say,
-   allowing users to traverse to the next or previous record in the result set 
+   allowing users to traverse to the next or previous record in the result set
    without first returning to the initial search page listing results */
 
 /**
@@ -108,8 +109,8 @@ function getPath() {
  *
  * Of the parameters passed in the query string, "p" refers to the records position
  * in the entire result set; "t" is the total number of records in the result set;
- * 'q' is the searched-for string used in highlighting (and thus must be filtered out 
- * for search purposes); and the remainder are all parameters for direct use by the 
+ * 'q' is the searched-for string used in highlighting (and thus must be filtered out
+ * for search purposes); and the remainder are all parameters for direct use by the
  * Solr server
  *
  */
@@ -121,7 +122,7 @@ function addLinearBrowseControls(){
 	var qs = buildSolrQueryString();
 	if(qs == "") return false;
 	querySolrServer(qs, position, total, rows, qs);
-	
+
 }
 
 /**
@@ -143,14 +144,14 @@ function buildSolrQueryString(){
 	var highlightstring = jQuery(document).getUrlParam("q");
 	// but *some* value for q is required, so the 'select all' wildcard (*:*) is given
 	if(highlightstring == null || highlightstring == ""){
-	
+
 		querystring = querystring += "&q=*:*";
-	
+
 	}
 	else{
-	
+
 		querystring = querystring.replace(highlightstring, "*:*");
-	
+
 	}
 	if(querystring.charAt(0) == "?") querystring = querystring.substring(1);
 	return querystring;
@@ -165,14 +166,14 @@ function querySolrServer(query, position, total, rows, querystring){
 	var that = this;
 	var serverUrl = "http://" + location.host + "/solr/select/";
 	jQuery.get(	serverUrl,
-			query, 
-			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); }, 
+			query,
+			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); },
 			"xml");
 
 }
 
 /**
- * Manager function for generating the 'Previous', 'Next', and 'Back to search results' 
+ * Manager function for generating the 'Previous', 'Next', and 'Back to search results'
  * HTML controls.
  */
 
@@ -181,7 +182,7 @@ function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 
 	var xml = jQuery(xmldoc);
 	var prevRecord = (position == 0 && rows == 2) ? null : xml.find("doc")[0];
-	var nextRecord = (position == total && rows == 2) ? null : xml.find("doc")[xml.find("doc").length - 1];	
+	var nextRecord = (position == total && rows == 2) ? null : xml.find("doc")[xml.find("doc").length - 1];
 	var htmlWrapper = jQuery("<div id=\"linear-browse-wrapper\"></div>");
 	addPrevRecordHTML(htmlWrapper, prevRecord, position, total, rows, querystring);
 	addBackToFacetBrowse(htmlWrapper)
@@ -196,14 +197,14 @@ function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 	var arrowWrapper = jQuery("<div id=\"linear-previous-record\"></div>");
 	var msg = "<< Previous record";
 	if(record == null){
-	
+
 		var deadlink = jQuery("<span class='deadlink'></span>");
 		deadlink.text(msg);
 		arrowWrapper.append(deadlink);
-		
-	} 
+
+	}
 	else{
-	
+
 		var link = jQuery("<a></a>");
 		link.text(msg);
 		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
@@ -215,20 +216,20 @@ function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
 	}
 	wrapper.append(arrowWrapper);
-	
+
 }
 
 function addBackToFacetBrowse(wrapper){
 
 	// note that unlike the 'previous' and 'next' HTML controls, persistence here is
-	// achieved not by passing a query string around, but through 
+	// achieved not by passing a query string around, but through
 	// a cookie ("lbpersist")
 
 	var searchstring = getCookie("lbpersist");
 	if(searchstring == null) return;
 	var prevpageURL = window.location.protocol + "//" + window.location.host + "/search" + searchstring;
 	var linkwrapper = jQuery("<div id='linear-back'></div>");
-	var link = jQuery("<a href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");	
+	var link = jQuery("<a href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");
 	linkwrapper.append(link);
 	wrapper.append(linkwrapper);
 }
@@ -238,14 +239,14 @@ function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 	var arrowWrapper = jQuery("<div id=\"linear-next-record\"></div>");
 	var msg = "Next record >>"
 	if(record == null){
-	
+
 		var deadlink = jQuery("<span class='deadlink'></span>");
 		deadlink.text(msg);
 		arrowWrapper.append(deadlink);
-	
+
 	}
 	else{
-	
+
 		var link = jQuery("<a></a>");
 		link.text(msg);
 		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
@@ -254,16 +255,16 @@ function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 		link.attr("title", title);
 		link.attr("href", href);
 		arrowWrapper.append(link);
-		
+
 	}
 	wrapper.append(arrowWrapper);
-	
+
 }
 /**
  * Alters the query string used by the presently-displayed page so that it is suitable for use
- * by the next or previous record in the result set. 
- * 
- * This will typically be by advancing or reducing the start value of the query, though 
+ * by the next or previous record in the result set.
+ *
+ * This will typically be by advancing or reducing the start value of the query, though
  * special considerations apply when the first or last record is reached.
  *
  */
@@ -278,36 +279,36 @@ function buildSolrQueryLinkString(direction, querystring, position, total, rows)
 	var new_position = position;
 
 	if(direction == "next"){
-	
+
 		if(position + 1 == total){
-			
+
 			new_rows = 2;
-			
+
 		}
 		else{
-		
+
 			new_rows = 3;
-		
+
 		}
 		new_position += 1;
 		if(position != 0) new_offset += 1;
-	
+
 	}
 	else{					// i.e., if direction = "prev"
-	
+
 		if(position - 1 == 0){
-		
+
 			new_rows = 2;
 			new_offset = 0;
-		
+
 		}
-		else{ 
-		
-			new_offset -= 1; 
-			new_rows = 3;	
+		else{
+
+			new_offset -= 1;
+			new_rows = 3;
 		}
 		new_position -= 1;
-	
+
 	}
 
 	var reOffset = new RegExp("start=" + offset);
@@ -318,27 +319,27 @@ function buildSolrQueryLinkString(direction, querystring, position, total, rows)
 	querystring = querystring + "&t=" + jQuery(document).getUrlParam("t");
 	querystring = querystring.replace(/[&]?q=\*:\*/, "");
 	if(jQuery(document).getUrlParam("q") != null && jQuery(document).getUrlParam("q") != ""){
-	
+
 		querystring = querystring + "&q=" + jQuery(document).getUrlParam("q");
-	
+
 	}
 	return querystring;
-	
+
 }
 
 
 // TODO: Should probably hive this off into a separate file at some point
 
 /* Copyright (c) 2006-2007 Mathias Bank (http://www.mathias-bank.de)
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) 
+ * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
- * 
+ *
  * Version 2.1
- * 
- * Thanks to 
+ *
+ * Thanks to
  * Hinnerk Ruemenapf - http://hinnerk.ruemenapf.de/ for bug reporting and fixing.
  * Tom Leonard for some improvements
- * 
+ *
  */
 jQuery.fn.extend({
 /**
@@ -348,33 +349,33 @@ jQuery.fn.extend({
 *
 * To get the document params:
 * @example value = jQuery(document).getUrlParam("paramName");
-* 
+*
 * To get the params of a html-attribut (uses src attribute)
 * @example value = jQuery('#imgLink').getUrlParam("paramName");
-*/ 
+*/
  getUrlParam: function(strParamName){
 	  strParamName = escape(unescape(strParamName));
-	  
+
 	  var returnVal = new Array();
 	  var qString = null;
-	  
+
 	  if (jQuery(this).attr("nodeName")=="#document") {
 	  	//document-handler
-		
+
 		if (window.location.search.search(strParamName) > -1 ){
-			
+
 			qString = window.location.search.substr(1,window.location.search.length).split("&");
 		}
-			
+
 	  } else if (jQuery(this).attr("src")!="undefined") {
-	  	
+
 	  	var strHref = jQuery(this).attr("src")
 	  	if ( strHref.indexOf("?") > -1 ){
 	    	var strQueryString = strHref.substr(strHref.indexOf("?")+1);
 	  		qString = strQueryString.split("&");
 	  	}
 	  } else if (jQuery(this).attr("href")!="undefined") {
-	  	
+
 	  	var strHref = jQuery(this).attr("href")
 	  	if ( strHref.indexOf("?") > -1 ){
 	    	var strQueryString = strHref.substr(strHref.indexOf("?")+1);
@@ -383,19 +384,19 @@ jQuery.fn.extend({
 	  } else {
 	  	return null;
 	  }
-	  	
-	  
+
+
 	  if (qString==null) return null;
-	  
-	  
+
+
 	  for (var i=0;i<qString.length; i++){
 			if (escape(unescape(qString[i].split("=")[0])) == strParamName){
 				returnVal.push(qString[i].split("=")[1]);
 			}
-			
+
 	  }
-	  
-	  
+
+
 	  if (returnVal.length==0) return null;
 	  else if (returnVal.length==1) return returnVal[0];
 	  else return returnVal;
@@ -412,4 +413,14 @@ function getCookie(name) {
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
     }
     return null;
+}
+
+function alignRTL() {
+  var width = jQuery(".ab").width();
+  jQuery("span[lang=ara]").each(function(i, elt) {
+    var e = jQuery(elt);
+    var offset = (width - e.width()) / width;
+    e.before('<span style="display:inline-block;width:' + offset +'%;"> </span>');
+    e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
+  });
 }
