@@ -68,6 +68,12 @@
   <xsl:variable name="dclp" select="$collection = 'dclp'"/>
   <xsl:include href="pi-functions.xsl"/>
 
+  <xsl:template name="TEST">
+    <xsl:for-each select="collection('/Users/elemmire/data/idp.data/dclp/DCLP/220/?select=[0-9]+.xml;recurse=yes')">
+      <xsl:apply-templates select="."/>
+    </xsl:for-each>
+  </xsl:template>
+
   <xsl:template match="/">
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
@@ -418,8 +424,9 @@
     <xsl:param name="docs"/>
     <xsl:param name="alterity"/>
     <xsl:choose>
+      <!-- cl: mehrere dclp-hybrids bzw. principal editions -->
       <xsl:when
-        test="$docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']">
+        test="$docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl[@type = 'publication'][@subtype = 'principal']">
         <!-- IFF HGV document -->
         <xsl:variable name="hgv_identifiers">
           <xsl:perform-sort
@@ -438,84 +445,82 @@
             </xsl:otherwise>
           </xsl:choose>
         </field>
-        <xsl:variable name="hgv_series">
-          <xsl:value-of
-            select="replace(normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:title[@level = 's']), ' ', '_')"
-          />
-        </xsl:variable>
-        <xsl:variable name="hgv_volume">
-          <xsl:variable name="hgv_volprep"
-            select="replace(normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'volume']), ' ', '_')"/>
-          <xsl:choose>
-            <xsl:when test="string-length($hgv_volprep) = 0">0</xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="$hgv_volprep"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="hgv_numbers"
-          select="replace(normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'numbers']), ' ', '_')"/>
-        <xsl:variable name="hgv_lines"
-          select="normalize-space($docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl/t:biblScope[@type = 'lines'])"/>
-        <xsl:variable name="hgv_item"
-          select="normalize-space(concat($hgv_numbers, ' ', $hgv_lines))"/>
-        <xsl:variable name="hgv_item_letter">
-          <xsl:value-of select="replace($hgv_item, '\d', '')"/>
-        </xsl:variable>
-        <field name="hgv_series">
-          <xsl:value-of select="$hgv_series"/>
-        </field>
-        <field name="hgv_volume">
-          <xsl:value-of select="$hgv_volume"/>
-        </field>
-        <field name="hgv_full_identifier">
-          <xsl:value-of select="$hgv_item"/>
-        </field>
-        <field name="series_led_path">
-          <xsl:value-of select="string-join(($hgv_series, $hgv_volume, $hgv_item, 'hgv'), ';')"/>
-        </field>
-        <field name="volume_led_path">
-          <xsl:value-of select="string-join(($hgv_volume, $hgv_item, $hgv_series, 'hgv'), ';')"/>
-        </field>
-        <field name="idno_led_path">
-          <xsl:value-of select="string-join(($hgv_item, $hgv_series, $hgv_volume, 'hgv'), ';')"/>
-        </field>
-        <field name="hgv_item">
-          <xsl:choose>
-            <xsl:when test="string-length(replace($hgv_numbers, '\D', '')) > 0">
-              <xsl:value-of select="replace($hgv_numbers, '\D', '')"/>
-            </xsl:when>
-            <xsl:otherwise>0</xsl:otherwise>
-          </xsl:choose>
-        </field>
-        <xsl:if test="string-length($hgv_item_letter) > 0">
-          <field name="hgv_item_letter">
-            <xsl:value-of select="$hgv_item_letter"/>
-          </field>
-        </xsl:if>
-        <xsl:if test="$alterity = 'self'">
-          <field name="series">
-            <xsl:value-of select="lower-case($hgv_series)"/>
-          </field>
-          <xsl:variable name="volume" select="replace($hgv_volume, '\D', '')"/>
-          <field name="volume">
-            <xsl:choose>
-              <xsl:when test="string-length($volume) &gt; 0">
-                <xsl:value-of select="$volume"/>
-              </xsl:when>
-              <xsl:otherwise>0</xsl:otherwise>
-            </xsl:choose>
-          </field>
-          <xsl:variable name="item" select="replace($hgv_item, '\D', '')"/>
-          <field name="item">
-            <xsl:choose>
-              <xsl:when test="string-length($item) &gt; 0">
-                <xsl:value-of select="$item"/>
-              </xsl:when>
-              <xsl:otherwise>0</xsl:otherwise>
-            </xsl:choose>
-          </field>
-        </xsl:if>
+        <xsl:for-each select="$docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl[@type = 'publication'][@subtype = 'principal']">
+         <xsl:variable name="hgv_series">
+           <xsl:value-of select="replace(normalize-space(t:title[@level = 's']), ' ', '_')" />
+         </xsl:variable>
+         <xsl:variable name="hgv_volume">
+           <xsl:variable name="hgv_volprep" select="replace(normalize-space(t:biblScope[@type = 'volume']), ' ', '_')"/>
+           <xsl:choose>
+             <xsl:when test="string-length($hgv_volprep) = 0">0</xsl:when>
+             <xsl:otherwise>
+               <xsl:value-of select="$hgv_volprep"/>
+             </xsl:otherwise>
+           </xsl:choose>
+         </xsl:variable>
+         <xsl:variable name="hgv_numbers" select="replace(normalize-space(t:biblScope[@type = 'numbers']), ' ', '_')"/>
+         <xsl:variable name="hgv_lines"
+           select="normalize-space(t:biblScope[@type = 'lines'])"/>
+         <xsl:variable name="hgv_item"
+           select="normalize-space(concat($hgv_numbers, ' ', $hgv_lines))"/>
+         <xsl:variable name="hgv_item_letter">
+           <xsl:value-of select="replace($hgv_item, '\d', '')"/>
+         </xsl:variable>
+         <field name="hgv_series">
+           <xsl:value-of select="$hgv_series"/>
+         </field>
+         <field name="hgv_volume">
+           <xsl:value-of select="$hgv_volume"/>
+         </field>
+         <field name="hgv_full_identifier">
+           <xsl:value-of select="$hgv_item"/>
+         </field>
+         <field name="series_led_path">
+           <xsl:value-of select="string-join(($hgv_series, $hgv_volume, $hgv_item, 'hgv'), ';')"/>
+         </field>
+         <field name="volume_led_path">
+           <xsl:value-of select="string-join(($hgv_volume, $hgv_item, $hgv_series, 'hgv'), ';')"/>
+         </field>
+         <field name="idno_led_path">
+           <xsl:value-of select="string-join(($hgv_item, $hgv_series, $hgv_volume, 'hgv'), ';')"/>
+         </field>
+         <field name="hgv_item">
+           <xsl:choose>
+             <xsl:when test="string-length(replace($hgv_numbers, '\D', '')) > 0">
+               <xsl:value-of select="replace($hgv_numbers, '\D', '')"/>
+             </xsl:when>
+             <xsl:otherwise>0</xsl:otherwise>
+           </xsl:choose>
+         </field>
+         <xsl:if test="string-length($hgv_item_letter) > 0">
+           <field name="hgv_item_letter">
+             <xsl:value-of select="$hgv_item_letter"/>
+           </field>
+         </xsl:if>
+         <xsl:if test="$alterity = 'self'">
+           <field name="series">
+             <xsl:value-of select="lower-case($hgv_series)"/>
+           </field>
+           <xsl:variable name="volume" select="replace($hgv_volume, '\D', '')"/>
+           <field name="volume">
+             <xsl:choose>
+               <xsl:when test="string-length($volume) &gt; 0">
+                 <xsl:value-of select="$volume"/>
+               </xsl:when>
+               <xsl:otherwise>0</xsl:otherwise>
+             </xsl:choose>
+           </field>
+           <xsl:variable name="item" select="replace($hgv_item, '\D', '')"/>
+           <field name="item">
+             <xsl:choose>
+               <xsl:when test="string-length($item) &gt; 0">
+                 <xsl:value-of select="$item"/>
+               </xsl:when>
+               <xsl:otherwise>0</xsl:otherwise>
+             </xsl:choose>
+           </field>
+         </xsl:if>
+        </xsl:for-each>
       </xsl:when>
       <xsl:when
         test="$docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'] and $alterity = 'self'">
