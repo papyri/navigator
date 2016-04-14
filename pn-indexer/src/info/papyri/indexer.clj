@@ -221,9 +221,13 @@
       (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
             id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
         (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
-      (when (.contains url "apis/")
-        (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-          (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml")))))
+      (if (.contains url "dclp/")
+        (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
+            id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+            (str filepath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".xml"))
+        (when (.contains url "apis/")
+          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
+            (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
     (catch Exception e
       (when-not (nil? e)
         (println (str (.getMessage e) " processing " url "."))))))
@@ -248,10 +252,15 @@
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
             (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".txt")))
+        (if (.contains url "/dclp/")
+          (when (.endsWith url "/source")
+            (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
+                id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+              (str htpath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".txt")))
         (when (.contains url "/apis")
           (if (.endsWith url "/source")
             (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-              (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt")))))))
+              (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt"))))))))
        (catch Exception e
          (when-not (nil? e)
            (println (str (.getMessage e) " processing " url "."))))))
@@ -286,13 +295,21 @@
         (if (= url "http://papyri.info/hgv")
           (str htpath "/HGV_meta_EpiDoc/index.html")
           (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
+      (if (.contains url "/dclp/")
+        (if (.endsWith url "/source")
+          (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
+              id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+            (str htpath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".html"))
+          (if (= url "http://papyri.info/dclp")
+            (str htpath "/DCLP/index.html")
+            (str htpath "/DCLP/" (substring-after url "http://papyri.info/dclp/") "/index.html")))
       (when (.contains url "/apis")
         (if (.endsWith url "/source")
           (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
             (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".html"))
             (if (= url "http://papyri.info/apis")
               (str htpath "/APIS/index.html")
-              (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html")))))))
+              (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html"))))))))
     (catch Exception e
        (when-not (nil? e)
          (println (str (.getMessage e) " processing " url "."))))))
@@ -948,6 +965,9 @@
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
       (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv") ())
+      (println (str "Queued " (count @html) " documents."))
+      (println "Queueing DCLP...")
+      (queue-collections "http://papyri.info/dclp" '("ddbdp", "hgv", "apis") ())
       (println (str "Queued " (count @html) " documents.")))
     (doseq [arg args] (queue-item arg))))
     
