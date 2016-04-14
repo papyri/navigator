@@ -363,42 +363,42 @@ public class DispatcherServlet extends HttpServlet {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
       if ("".equals(in) || in == null) {
-        out.append("construct{<http://dclp.atlantides.org/dclp> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://dclp.atlantides.org/dclp> } ")
+        out.append("construct{<http://papyri.info/dclp> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <http://papyri.info/dclp> } ")
            .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://dclp.atlantides.org/dclp> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://dclp.atlantides.org/dclp> }} ")
+           .append("where {{ <http://papyri.info/dclp> ?Predicate ?Object } ")
+           .append("union { ?s2 ?p2 <http://papyri.info/dclp> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (in.matches("^\\d+$")) { // TM-No.
-        out.append("construct{<http://dclp.atlantides.org/dclp/").append(in).append("> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://dclp.atlantides.org/dclp/").append(in).append("> } ")
+        out.append("construct{<http://papyri.info/dclp/").append(in).append("> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(in).append("> } ")
            .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://dclp.atlantides.org/dclp/").append(in).append("/source> ?Predicate ?Object} ") // cl: extra /source
-           .append("union { ?s2 ?p2 <http://dclp.atlantides.org/dclp/").append(in).append("/source> }} ") // cl: extra /source
+           .append("where {{ <http://papyri.info/dclp/").append(in).append("/source> ?Predicate ?Object} ") // cl: extra /source
+           .append("union { ?s2 ?p2 <http://papyri.info/dclp/").append(in).append("/source> }} ") // cl: extra /source
            .append("order by ?Object");
         return out.toString();
       }
       String[] parts = in.split(";");
       if (parts.length == 1) { // Series
-        out.append("construct{<http://dclp.atlantides.org/dclp/").append(parts[0]).append("> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://dclp.atlantides.org/dclp/").append(parts[0]).append("> } ")
+        out.append("construct{<http://papyri.info/dclp/").append(parts[0]).append("> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0]).append("> } ")
            .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://dclp.atlantides.org/dclp/").append(parts[0]).append("> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://dclp.atlantides.org/dclp/").append(parts[0]).append("> }} ")
+           .append("where {{ <http://papyri.info/dclp/").append(parts[0]).append("> ?Predicate ?Object } ")
+           .append("union { ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0]).append("> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (parts.length == 2) { // Volume
-        out.append("construct{<http://dclp.atlantides.org/dclp/").append(parts[0])
+        out.append("construct{<http://papyri.info/dclp/").append(parts[0])
            .append(";").append(parts[1]).append("> ?Predicate ?Object . ")
-           .append("?s2 ?p2 <http://dclp.atlantides.org/dclp/").append(parts[0])
+           .append("?s2 ?p2 <http://papyri.info/dclp/").append(parts[0])
            .append(";").append(parts[1]).append("> } ")
            .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://dclp.atlantides.org/dclp/")
+           .append("where {{ <http://papyri.info/dclp/")
            .append(parts[0]).append(";").append(parts[1]).append("> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://dclp.atlantides.org/dclp/")
+           .append("union { ?s2 ?p2 <http://papyri.info/dclp/")
            .append(parts[0]).append(";").append(parts[1]).append("> }} ")
            .append("order by ?Object");
         return out.toString();
@@ -415,27 +415,27 @@ public class DispatcherServlet extends HttpServlet {
               part.append("/");
             }
           }
-          out.append("construct{<http://dclp.atlantides.org/dclp/").append(parts[0])
+          out.append("construct{<http://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(part).append("> ?Predicate ?Object . ")
-             .append("          ?s2 ?p2 <http://dclp.atlantides.org/dclp/").append(parts[0])
+             .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(part).append("> } ")
              .append("from <http://papyri.info/graph> ")
-             .append("where {{ <http://dclp.atlantides.org/dclp/")
+             .append("where {{ <http://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(part).append("> ?Predicate ?Object } ")
-             .append("union { ?s2 ?p2 <http://dclp.atlantides.org/dclp/")
+             .append("union { ?s2 ?p2 <http://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(part).append("> }} ")
              .append("order by ?Object");
           return out.toString();
         } else { // Document
           parts[2] = encode(parts[2]);
-          out.append("construct{<http://dclp.atlantides.org/dclp/").append(parts[0])
+          out.append("construct{<http://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object . ")
-             .append("          ?s2 ?p2 <http://dclp.atlantides.org/dclp/").append(parts[0])
+             .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(parts[2]).append("> } ")
              .append("from <http://papyri.info/graph> ")
-             .append("where {{ <http://dclp.atlantides.org/dclp/")
+             .append("where {{ <http://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object } ")
-             .append("union { ?s2 ?p2 <http://dclp.atlantides.org/dclp/")
+             .append("union { ?s2 ?p2 <http://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> }} ")
              .append("order by ?Object");
           return out.toString();
