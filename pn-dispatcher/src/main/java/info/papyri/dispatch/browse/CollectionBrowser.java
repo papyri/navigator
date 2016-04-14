@@ -64,7 +64,7 @@ public class CollectionBrowser extends HttpServlet {
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
     static ArrayList<SolrField> ORG_HIERARCHY = new ArrayList<SolrField>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume));
-    static ArrayList<String> COLLECTIONS = new ArrayList<String>(Arrays.asList("ddbdp", "hgv", "apis"));
+    static ArrayList<String> COLLECTIONS = new ArrayList<String>(Arrays.asList("ddbdp", "hgv", "apis", "dclp"));
     
     @Override
     public void init(ServletConfig config) throws ServletException{
@@ -327,7 +327,7 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         // we're in HGV-land
-        if (parentLabel == null || "".equals(parentLabel)) {
+        if ("dclp".equals(collection) || parentLabel == null || "".equals(parentLabel)) {
           return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
         } else {
           return new DocumentCollectionBrowseRecord(collection, parentLabel, FileUtils.substringAfter(label, parentLabel).trim());
