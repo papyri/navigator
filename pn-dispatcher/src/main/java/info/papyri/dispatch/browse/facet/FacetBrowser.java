@@ -1019,6 +1019,10 @@ public class FacetBrowser extends HttpServlet {
     if (hgvIds.size() > 0) {
       ids.addAll(hgvIds);
     }
+    ArrayList<String> dclpIds = getCollectionIds("dclp", doc);
+    if (dclpIds.size() > 0) {
+      ids.addAll(dclpIds);
+    }
 
     ArrayList<String> apisPublicationNumbers = doc.getFieldValue(SolrField.apis_publication_id.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_publication_id.name()).toString().replaceAll("\\[\\]", "").split(",")));
     ArrayList<String> apisInventoryNumbers = doc.getFieldValue(SolrField.apis_inventory.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_inventory.name()).toString().replaceAll("\\[\\]", "").split(",")));

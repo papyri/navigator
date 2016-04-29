@@ -306,6 +306,11 @@ public class GitWrapper {
         result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
         result.append("/source");
       }
+      if (file.contains("DCLP")) {
+        result.append("http://papyri.info/dclp/");
+        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append("/source");
+      }
       if (file.contains("APIS")) {
         result.append("http://papyri.info/apis/");
         result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
