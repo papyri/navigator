@@ -48,7 +48,7 @@
       "Biblio" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
 (def idproot "/srv/data/papyri.info/idp.data")
 (def ddbroot "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML")
-(def domain "dclp.atlantides.org")
+(def domain "papyri.info")
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
