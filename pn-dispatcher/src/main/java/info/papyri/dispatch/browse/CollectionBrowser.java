@@ -327,7 +327,7 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         // we're in HGV-land
-        if ("dclp".equals(collection) || parentLabel == null || "".equals(parentLabel)) {
+        if (parentLabel == null || "".equals(parentLabel)) {
           return new DocumentCollectionBrowseRecord(collection, label, "http://purl.org/ontology/bibo/Book".equals(type));
         } else {
           return new DocumentCollectionBrowseRecord(collection, parentLabel, FileUtils.substringAfter(label, parentLabel).trim());
