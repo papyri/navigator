@@ -318,7 +318,7 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         String otherInfo = uriBits[sIndex + 2];
-        if("ddbdp".equals(collection)){
+        if("ddbdp".equals(collection) || "dclp".equals(collection)){
             
             String delimiter = ";";
             if(otherInfo.indexOf(delimiter) == -1) return new DocumentCollectionBrowseRecord(collection, otherInfo, "http://purl.org/ontology/bibo/Book".equals(type));
