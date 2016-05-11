@@ -607,7 +607,7 @@
   
   <!-- Images -->
   <xsl:template match="t:div[@type = 'figure']" mode="metadata">
-    <xsl:for-each select=".//t:figure">
+    <xsl:for-each select=".//t:figure[not(contains(@url, 'wwwapp.cc.columbia.edu'))]">
       <tr>
         <th class="rowheader">Images</th>
       <td><a href="{t:graphic/@url}"><xsl:choose>
