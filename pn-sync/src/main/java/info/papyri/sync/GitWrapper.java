@@ -170,6 +170,7 @@ public class GitWrapper {
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, "master");
       pb.directory(git.gitDir);
+      pb.redirectError(new File("/dev/null"));
       pb.start().waitFor();
       git.head = getHead();
       if (!git.head.equals(getLastSync())) {
@@ -188,6 +189,7 @@ public class GitWrapper {
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "push", repo);
       pb.directory(git.gitDir);
+      pb.redirectError(new File("/dev/null"));
       pb.start().waitFor();
     } catch (Exception e) {
       git.success = false;
