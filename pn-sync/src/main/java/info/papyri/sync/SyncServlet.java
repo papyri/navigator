@@ -46,6 +46,8 @@ public class SyncServlet extends HttpServlet {
     } else {
       try {
         PropertyConfigurator.configure(config.getServletContext().getRealPath("/") + log4j);
+        System.out.println("LOG4J INFO:");
+        System.out.println(config.getServletContext().getRealPath("/") + log4j);
       } catch (Exception e) {
         System.out.println("Unable to load log4j properties from " + log4j);
         BasicConfigurator.configure();
