@@ -376,6 +376,15 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
 }
 
+*[lang="ara"] {
+    direction: rtl;
+    display: block;
+    text-align: right;
+    width: 50%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 div.textpart {
 font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
     "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
