@@ -5,7 +5,7 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:dct="http://purl.org/dc/terms/"
   xmlns:foaf="http://xmlns.com/foaf/0.1/"
-  xmlns:papy="papyrillio"
+  xmlns:papy="http://papyrillio"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
 
   <xsl:output omit-xml-declaration="yes" indent="yes" />
@@ -72,31 +72,42 @@
         </xsl:for-each>
       </xsl:for-each>
 
-      <xsl:for-each select="$ddb">
-        <xsl:variable name="ddbId" select="papy:makeUnicodeSafeUri(.)"/>
-        <xsl:variable name="ddb-seq" select="tokenize(normalize-space($ddbId), ';')"/> <!-- bgu;7;1510 => ['bgu','7','1510'] -->
-        <dct:isPartOf>
-          <xsl:choose>
-            <xsl:when test="$ddb-seq[2] = ''">
-              <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]}">
-                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
-                <dct:isPartOf rdf:resource="http://{$domain}/dclp"/>
-              </rdf:Description>
-            </xsl:when>
-            <xsl:otherwise>
-              <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]};{$ddb-seq[2]}">
-                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
-                <dct:isPartOf>
+      <xsl:choose>
+        <xsl:when test="$ddb">
+          <xsl:for-each select="$ddb">
+            <xsl:variable name="ddbId" select="papy:makeUnicodeSafeUri(.)"/>
+            <xsl:variable name="ddb-seq" select="tokenize(normalize-space($ddbId), ';')"/> <!-- bgu;7;1510 => ['bgu','7','1510'] -->
+            <dct:isPartOf>
+              <xsl:choose>
+                <xsl:when test="$ddb-seq[2] = ''">
                   <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]}">
-                    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Series"/>
+                    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
                     <dct:isPartOf rdf:resource="http://{$domain}/dclp"/>
                   </rdf:Description>
-                </dct:isPartOf>
-              </rdf:Description>
-            </xsl:otherwise>
-          </xsl:choose>
-        </dct:isPartOf>
-      </xsl:for-each>
+                </xsl:when>
+                <xsl:otherwise>
+                  <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]};{$ddb-seq[2]}">
+                    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
+                    <dct:isPartOf>
+                      <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]}">
+                        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Series"/>
+                        <dct:isPartOf rdf:resource="http://{$domain}/dclp"/>
+                      </rdf:Description>
+                    </dct:isPartOf>
+                  </rdf:Description>
+                </xsl:otherwise>
+              </xsl:choose>
+            </dct:isPartOf>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <dct:isPartOf>
+            <rdf:Description rdf:about="http://{$domain}/dclp/na">
+              <dct:isPartOf rdf:resource="http://{$domain}/dclp"/>
+            </rdf:Description>
+          </dct:isPartOf>
+        </xsl:otherwise>
+      </xsl:choose>
 
       <xsl:for-each select="//tei:idno[lower-case(@type)='tm']">
         <xsl:for-each select="tokenize(., '\s')">
