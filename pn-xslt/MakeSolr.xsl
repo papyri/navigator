@@ -421,6 +421,12 @@
       <!-- cl: mehrere dclp-hybrids bzw. principal editions -->
       <xsl:when test="$collection = 'dclp'">
         <xsl:variable name="triforce" select="tokenize(if($docs//t:idno[@type='dclp-hybrid'])then($docs//t:idno[@type='dclp-hybrid'][1])else(concat('na;;', $docs//t:idno[@type='TM'])), ';')"/>
+        <field name="hgv_identifier">
+          <xsl:value-of select="string($docs//t:idno[@type='TM'])"/>
+        </field>
+        <field name="hgv_metadata">
+          <xsl:value-of select="normalize-space(replace($docs, '&#xa;', ' '))"/>
+        </field>
         <field name="hgv_series">
           <xsl:value-of select="$triforce[1]"/>
         </field>
@@ -429,6 +435,12 @@
         </field>
         <field name="hgv_full_identifier">
           <xsl:value-of select="$triforce[3]"/>
+        </field>
+        <field name="dclp_identifier">
+          <xsl:value-of select="string($docs//t:idno[@type='TM'])"/>
+        </field>
+        <field name="dclp_metadata">
+          <xsl:value-of select="normalize-space(replace($docs, '\n', ' '))"/>
         </field>
         <field name="dclp_series">
           <xsl:value-of select="$triforce[1]"/>
