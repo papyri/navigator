@@ -68,12 +68,6 @@
   <xsl:variable name="dclp" select="$collection = 'dclp'"/>
   <xsl:include href="pi-functions.xsl"/>
 
-  <xsl:template name="TEST">
-    <xsl:for-each select="collection('/Users/elemmire/data/idp.data/dclp/DCLP/220/?select=[0-9]+.xml;recurse=yes')">
-      <xsl:apply-templates select="."/>
-    </xsl:for-each>
-  </xsl:template>
-
   <xsl:template match="/">
     <xsl:variable name="translation"
       select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
@@ -395,7 +389,7 @@
           <field name="identifier">http://www.trismegistos.org/ldab/text.php?quick=<xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:when test="@type='dclp-hybrid'">
-          <field name="identifier">http://litpap.info/dclp/<xsl:value-of select="." /></field>
+          <field name="identifier">http://papyri.info/dclp/<xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:when test="@type='apisid'">
           <field name="identifier">http://papyri.info/apis/<xsl:value-of select="." /></field>
@@ -425,6 +419,27 @@
     <xsl:param name="alterity"/>
     <xsl:choose>
       <!-- cl: mehrere dclp-hybrids bzw. principal editions -->
+      <xsl:when test="$collection = 'dclp'">
+        <xsl:variable name="triforce" select="tokenize(if($docs//t:idno[@type='dclp-hybrid'])then($docs//t:idno[@type='dclp-hybrid'][1])else(concat('na;;', $docs//t:idno[@type='TM'])), ';')"/>
+        <field name="hgv_series">
+          <xsl:value-of select="$triforce[1]"/>
+        </field>
+        <field name="hgv_volume">
+          <xsl:value-of select="$triforce[2]"/>
+        </field>
+        <field name="hgv_full_identifier">
+          <xsl:value-of select="$triforce[3]"/>
+        </field>
+        <field name="dclp_series">
+          <xsl:value-of select="$triforce[1]"/>
+        </field>
+        <field name="dclp_volume">
+          <xsl:value-of select="$triforce[2]"/>
+        </field>
+        <field name="dclp_full_identifier">
+          <xsl:value-of select="$triforce[3]"/>
+        </field>
+      </xsl:when>
       <xsl:when
         test="$docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl[@type = 'publication'][@subtype = 'principal']">
         <!-- IFF HGV document -->
