@@ -34,7 +34,7 @@ public class SyncServlet extends HttpServlet {
   private Publisher publisher;
   private static final ScheduledExecutorService scheduler =
           Executors.newScheduledThreadPool(1);
-  private static Logger logger = Logger.getLogger("pn-sync");
+  private static Logger logger = Logger.getLogger("pnsync");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
