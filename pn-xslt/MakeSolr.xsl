@@ -451,6 +451,15 @@
         <field name="dclp_full_identifier">
           <xsl:value-of select="$triforce[3]"/>
         </field>
+        <field name="series">
+          <xsl:value-of select="$triforce[1]"/>
+        </field>
+        <field name="volume">
+          <xsl:value-of select="$triforce[2]"/>
+        </field>
+        <field name="item">
+          <xsl:value-of select="$triforce[3]"/>
+        </field>
       </xsl:when>
       <xsl:when
         test="$docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl[@type = 'publication'][@subtype = 'principal']">
@@ -730,7 +739,7 @@
       <xsl:with-param name="hgv-docs" select="."/>
       <xsl:with-param name="docs" select="."/>
     </xsl:call-template>
-    <field name="dlcp_metadata">
+    <field name="dclp_metadata">
       <xsl:value-of select="normalize-space(/)"/>
     </field>
     <xsl:call-template name="place">
