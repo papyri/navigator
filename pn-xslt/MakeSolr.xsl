@@ -455,7 +455,7 @@
           <xsl:value-of select="$triforce[1]"/>
         </field>
         <field name="volume">
-          <xsl:value-of select="$triforce[2]"/>
+          <xsl:value-of select="if(string($triforce[2]))then($triforce[2])else(0)"/>
         </field>
         <field name="item">
           <xsl:value-of select="$triforce[3]"/>
