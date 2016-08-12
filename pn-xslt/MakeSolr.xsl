@@ -1168,7 +1168,7 @@
 <xsl:template name="revision-history">
       <xsl:param name="docs"></xsl:param>
       
-      <xsl:variable name="all-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change"></xsl:variable>
+      <xsl:variable name="all-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[@when]"></xsl:variable> <!-- cl: only edits that have a date -->
       <xsl:variable name="app-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'appchange', 'i')]"></xsl:variable>
       <xsl:variable name="date-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'datechange', 'i')]"></xsl:variable>
       <xsl:variable name="place-edits" select="$docs/t:TEI/t:teiHeader/t:revisionDesc/t:change[matches(text(), 'placechange', 'i')]"></xsl:variable>
