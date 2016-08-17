@@ -380,7 +380,7 @@
         <xsl:sequence select="concat('http://papyri.info/hgv/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
       </xsl:when>
       <xsl:when test="$collection='dclp'">
-        <xsl:sequence select="concat('http://litpap.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
+        <xsl:sequence select="concat('http://papyri.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="concat('http://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>
