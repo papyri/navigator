@@ -167,10 +167,13 @@ public class GitWrapper {
 
   private void pull(String repo) throws Exception {
     logger.info("Starting pull on " + repo + ".");
+    Process p;
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, "master");
       pb.directory(git.gitDir);
-      pb.start().waitFor();
+      pb.redirectError(new File("/dev/null"));
+      p = pb.start();
+      p.waitFor();
       git.head = getHead();
       if (!git.head.equals(getLastSync())) {
         storeHead();
@@ -181,19 +184,36 @@ public class GitWrapper {
       logger.error("Pull failed", e);
       throw e;
     }
+    if (p.exitValue() != 0) {
+        git.success = false;
+        git.reset(git.head);
+        throw new Exception("Pull on " + repo + " failed.");
+    }
   }
   
   private void push(String repo) throws Exception {
     logger.info("Starting push to " + repo + ".");
+    Process p;
     try {
       ProcessBuilder pb = new ProcessBuilder("git", "push", repo);
       pb.directory(git.gitDir);
-      pb.start().waitFor();
+      pb.redirectError(new File("/dev/null"));
+      p = pb.start();
+      p.waitFor();
+      git.head = getHead();
+      if (!git.head.equals(getLastSync())) {
+        storeHead();
+      }
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
       logger.error("Push failed", e);
       throw e;
+    }
+    if (p.exitValue() != 0) {
+        git.success = false;
+        git.reset(git.head);
+        throw new Exception("Push to " + repo + " failed.");
     }
   }
 
