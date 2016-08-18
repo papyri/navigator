@@ -291,6 +291,10 @@ public class IdentifierFacet extends Facet{
         seriesConstraint.append(SolrField.hgv_series.name());
         seriesConstraint.append(":");
         seriesConstraint.append(seriesConfig.getConstraint());
+        seriesConstraint.append(" OR ");
+        seriesConstraint.append(SolrField.dclp_series.name());
+        seriesConstraint.append(":");
+        seriesConstraint.append(seriesConfig.getConstraint());
         seriesConstraint.append(")");
         solrQuery.addFilterQuery(seriesConstraint.toString());
         
@@ -304,13 +308,17 @@ public class IdentifierFacet extends Facet{
             volumeConstraint.append(SolrField.hgv_volume.name());
             volumeConstraint.append(":");
             volumeConstraint.append(volumeConfig.getConstraint());
+            volumeConstraint.append(" OR ");
+            volumeConstraint.append(SolrField.dclp_volume.name());
+            volumeConstraint.append(":");
+            volumeConstraint.append(volumeConfig.getConstraint());
             volumeConstraint.append(")");
             solrQuery.addFilterQuery(volumeConstraint.toString());
         }
         
         if(idnoConfig.hasConstraint()){
             
-            ArrayList<SolrField> idFields = new ArrayList<SolrField>(Arrays.asList(SolrField.apis_full_identifier, SolrField.apis_inventory, SolrField.apis_publication_id, SolrField.ddbdp_full_identifier, SolrField.hgv_full_identifier));
+            ArrayList<SolrField> idFields = new ArrayList<SolrField>(Arrays.asList(SolrField.apis_full_identifier, SolrField.apis_inventory, SolrField.apis_publication_id, SolrField.ddbdp_full_identifier, SolrField.hgv_full_identifier, SolrField.dclp_full_identifier));
             StringBuilder idnoConstraint = new StringBuilder("(");
             Iterator<SolrField> iit = idFields.iterator();
             while(iit.hasNext()){
@@ -922,6 +930,7 @@ public class IdentifierFacet extends Facet{
             
             if(!anyConstraintSet()){
             
+                facetFields.add(SolrField.dclp_series);
                 facetFields.add(SolrField.hgv_series);
                 facetFields.add(SolrField.ddbdp_series);
                 return facetFields;
@@ -1442,6 +1451,7 @@ public class IdentifierFacet extends Facet{
                 
                 ff.add(SolrField.ddbdp_full_identifier);
                 ff.add(SolrField.hgv_full_identifier);
+                ff.add(SolrField.dclp_full_identifier);
                 
             }
             ff.add(getLeadingField());
