@@ -104,6 +104,13 @@
     <field name="hgv_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="hgv_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
     <field name="hgv_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="dclp_identifier" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="dclp_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="dclp_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="dclp_item_letter" type="string" stored="true" indexed="true" multiValued="false" required="false"/>
+    <field name="dclp_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="dclp_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="dclp_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="identifier" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="idno_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
@@ -156,7 +163,7 @@
     <field name="place_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
 
  <!-- end fields used by the change feed -->
-   
+
   </fields>
 
 
@@ -171,9 +178,11 @@
   <copyField source="transcription_ia" dest="all"/>
   <copyField source="translation" dest="all"/>
   <copyField source="hgv_metadata" dest="all"/>
+  <copyField source="dclp_metadata" dest="all"/>
   <copyField source="tm_metadata" dest="all"/>
   <copyField source="apis_metadata" dest="all"/>
   <copyField source="hgv_metadata" dest="metadata"/>
+  <copyField source="dclp_metadata" dest="metadata"/>
   <copyField source="tm_metadata" dest="metadata"/>
   <copyField source="apis_metadata" dest="metadata"/>
   <copyField source="transcription" dest="untokenized"/>
