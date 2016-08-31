@@ -121,7 +121,10 @@
               <olo:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="position()"></xsl:value-of></olo:index>
               <olo:item>
                 <rdf:Description rdf:about="{@url}">
-                  <rdfs:label><xsl:value-of select="substring(@url, 30)"/><xsl:if test="../@type"><xsl:text> </xsl:text><xsl:value-of select="../@type"/></xsl:if></rdfs:label>
+                  <rdfs:label><xsl:choose>
+                    <xsl:when test="//tei:msIdentifier/tei:idno[@type='invNo']"><xsl:value-of select="//tei:msIdentifier/tei:idno[@type='invNo']"/></xsl:when>
+                    <xsl:otherwise><xsl:value-of select="//tei:idno[@type='apisid']"/></xsl:otherwise>
+                  </xsl:choose><xsl:if test="ancestor::tei:surfaceGrp/@n"><xsl:text>, </xsl:text><xsl:value-of select="ancestor::tei:surfaceGrp/@n"/></xsl:if><xsl:if test="../@type"><xsl:text> </xsl:text><xsl:value-of select="../@type"/></xsl:if></rdfs:label>
                   <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
                   <foaf:depicts rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"/>
                 </rdf:Description>
