@@ -965,8 +965,8 @@ public class IdentifierFacet extends Facet{
                 
                 if(ff != null){
                     
-                    String collectionPrefix = facetField.equals(SolrField.ddbdp_series) ? "ddbdp" : "hgv";
-                    
+                    String collectionPrefix = facetField.equals(SolrField.dclp_series) ? "dclp" : (facetField.equals(SolrField.ddbdp_series) ? "ddbdp" : "hgv");
+
                     List<Count> facetCounts = ff.getValues();
             
                     for(Count count : facetCounts){
