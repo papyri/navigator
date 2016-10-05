@@ -28,7 +28,7 @@ public class DispatcherServlet extends HttpServlet {
   private static String graph = "http://papyri.info/graph";
   private static String path = "/pi/query";
   private String sparqlServer;
-  private static Logger logger = Logger.getLogger("pn-dispatch");
+  private static Logger logger = Logger.getLogger("pndispatch");
   private enum Method {
     RDF ("rdfxml"),
     N3,
