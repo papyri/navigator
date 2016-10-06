@@ -421,21 +421,6 @@
       <!-- cl: mehrere dclp-hybrids bzw. principal editions -->
       <xsl:when test="$collection = 'dclp'">
         <xsl:variable name="triforce" select="tokenize(if($docs//t:idno[@type='dclp-hybrid'])then($docs//t:idno[@type='dclp-hybrid'][1])else(concat('na;;', $docs//t:idno[@type='TM'])), ';')"/>
-        <field name="hgv_identifier">
-          <xsl:value-of select="string($docs//t:idno[@type='TM'])"/>
-        </field>
-        <field name="hgv_metadata">
-          <xsl:value-of select="normalize-space(replace($docs, '&#xa;', ' '))"/>
-        </field>
-        <field name="hgv_series">
-          <xsl:value-of select="$triforce[1]"/>
-        </field>
-        <field name="hgv_volume">
-          <xsl:value-of select="$triforce[2]"/>
-        </field>
-        <field name="hgv_full_identifier">
-          <xsl:value-of select="$triforce[3]"/>
-        </field>
         <field name="dclp_identifier">
           <xsl:value-of select="string($docs//t:idno[@type='TM'])"/>
         </field>
@@ -459,6 +444,15 @@
         </field>
         <field name="item">
           <xsl:value-of select="replace($triforce[3], '\D', '')"/>
+        </field>
+        <field name="series_led_path">
+          <xsl:value-of select="string-join(($triforce[1], $triforce[2], replace($triforce[3], '\D', ''), 'dclp'), ';')"/>
+        </field>
+        <field name="volume_led_path">
+          <xsl:value-of select="string-join(($triforce[2], replace($triforce[3], '\D', ''), $triforce[1], 'dclp'), ';')"/>
+        </field>
+        <field name="idno_led_path">
+          <xsl:value-of select="string-join((replace($triforce[3], '\D', ''), $triforce[1], $triforce[2], 'dclp'), ';')"/>
         </field>
       </xsl:when>
       <xsl:when
