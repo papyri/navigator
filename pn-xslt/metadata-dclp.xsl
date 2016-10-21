@@ -150,8 +150,41 @@
     
     <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']" mode="metadata-dclp">
         <xsl:message>matched principalEdition div</xsl:message>
+        <xsl:for-each select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']">
+            <xsl:call-template name="dclp-bibliography">
+                <xsl:with-param name="heading">Principal Edition</xsl:with-param>
+                <xsl:with-param name="references" select="."/>
+                <xsl:with-param name="treat-as-structured">no</xsl:with-param>
+            </xsl:call-template>
+        </xsl:for-each>
+        <xsl:for-each-group select="t:listBibl/t:bibl[@type='reference']"  group-by="@subtype">
+            <xsl:call-template name="dclp-bibliography">
+                <xsl:with-param name="heading">
+                    <xsl:choose>
+                        <xsl:when test="@subtype='principal'">
+                            <xsl:text>Reference Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='partial'">
+                            <xsl:text>Partial Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='previous'">
+                            <xsl:text>Previous Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='readings'">
+                            <xsl:text>Readings</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@subtype"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:with-param>
+                <xsl:with-param name="references" select="current-group()"/>
+                <xsl:with-param name="treat-as-structured">yes</xsl:with-param>
+            </xsl:call-template>
+        </xsl:for-each-group>
+        <!--
         <xsl:for-each select="t:listBibl/t:bibl">
-            <tr>
+            <xsl:message>bibl!</xsl:message>
                 <xsl:variable name="biblio-header">
                     <xsl:choose>
                         <xsl:when test="@type='publication' and @subtype='principal'">
@@ -189,22 +222,41 @@
                         </xsl:otherwise>            
                     </xsl:choose>
                 </xsl:variable>
-                <xsl:message>biblio-header is "<xsl:value-of select="$biblio-header"/>"</xsl:message>
-                <th>
-                    <xsl:value-of select="normalize-space($biblio-header)"/>
-                </th>
-                <td>
                     <xsl:choose>
                         <xsl:when test="@type='publication' and @subtype = 'principal'">
-                            <!-- <xsl:message>matched principal publication</xsl:message> -->
-                            <xsl:variable name="biblio-ppub">
-                                <xsl:value-of select="."/>
-                            </xsl:variable>
-                            <!-- <xsl:message>serialized principal publication as "<xsl:value-of select="normalize-space($biblio-ppub)"/>"</xsl:message> -->
-                            <xsl:value-of select="normalize-space($biblio-ppub)"/>
+                            <xsl:call-template name="dclp-bibliography">
+                                <xsl:with-param name="heading" select="$biblio-header"/>
+                                <xsl:with-param name="references" select="."/>
+                                <xsl:with-param name="treat-as-structured">no</xsl:with-param>
+                            </xsl:call-template>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:message>matched a publication subtype other than "principal publication"</xsl:message>
+                            <xsl:call-template name="dclp-bibliography">
+                                <xsl:with-param name="heading" select="$biblio-header"/>
+                                <xsl:with-param name="references" select="."/>
+                            </xsl:call-template>
+                        </xsl:otherwise>
+                    </xsl:choose>
+        </xsl:for-each> -->
+    </xsl:template>
+    
+    <xsl:template name="dclp-bibliography">
+        <xsl:param name="heading"/>
+        <xsl:param name="references"/>
+        <xsl:param name="treat-as-structured">yes</xsl:param>
+        <xsl:message>in named template dclp-bibliography</xsl:message>
+        <xsl:for-each select="$references">
+            <tr>
+                <th><xsl:value-of select="$heading"/></th>
+                <td>
+                    <xsl:choose>
+                        <xsl:when test="$treat-as-structured='no'">
+                            <xsl:variable name="bibl-plain">
+                                <xsl:value-of select="."/>
+                            </xsl:variable>
+                            <xsl:value-of select="normalize-space($bibl-plain)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
                             <xsl:choose>
                                 <xsl:when test="t:ptr">
                                     <xsl:message>found ptr inside bibl with @target="<xsl:value-of select="t:ptr/@target"/>"</xsl:message>
