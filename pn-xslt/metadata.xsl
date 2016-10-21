@@ -326,6 +326,13 @@
           </xsl:choose>
           <xsl:if test="t:title">, </xsl:if>
           <xsl:value-of select="t:title"/>
+          <xsl:if test="t:biblScope">
+            <xsl:text> </xsl:text>
+          </xsl:if>
+          <xsl:for-each select="t:biblScope">
+            <xsl:value-of select="."/>
+            <xsl:if test="./following-sibling::t:biblScope">.</xsl:if>
+          </xsl:for-each>
         </td>
       </tr>
   </xsl:template>
