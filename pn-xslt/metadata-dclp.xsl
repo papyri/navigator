@@ -239,4 +239,12 @@
         </xsl:for-each>
     </xsl:template>
     
+    <!-- Bibliography within dclp div@type=commentary -->
+    <xsl:template match="t:listBibl[$collection='dclp' and ancestor::t:div[@type='commentary']]">
+        <xsl:for-each select="t:bibl">
+            <xsl:apply-templates select="." mode="metadata"/>
+            <xsl:if test="./following-sibling::t:bibl">; </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+    
 </xsl:stylesheet>
