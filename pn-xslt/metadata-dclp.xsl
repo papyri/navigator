@@ -16,7 +16,6 @@
             mode="metadata"/>
         
         <!-- Principal Edition bibliographic division (addresses all subtypes) -->
-        <xsl:message>selecting principalEdition div</xsl:message>
         <xsl:apply-templates
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
             mode="metadata-dclp"/>
@@ -139,17 +138,27 @@
         <tr>
             <th class="rowheader">Form and Layout</th>
             <td>
-				<xsl:choose>
-					<xsl:when test="t:objectDesc/t:p[@type='bookForm']">
-						<xsl:value-of select="t:objectDesc/t:p"/>
-					</xsl:when>	
-				</xsl:choose>		
+                <xsl:for-each select="t:objectDesc">
+                    <xsl:variable name="form" select="@form"/>
+                    <xsl:variable name="material" select="t:supportDesc/t:support/t:material" />
+                    <xsl:variable name="layout" select="t:layoutDesc/t:layout/t:p" />
+                    <xsl:if test="$material != '' and not(contains($layout, $material))">
+                        <xsl:value-of select="$material"/>
+                        <xsl:text> </xsl:text>
+                    </xsl:if>
+                    <xsl:if test="$form != '' and not(contains($layout, $form))">
+                        <xsl:value-of select="$form"/>
+                        <xsl:text>: </xsl:text>
+                    </xsl:if>
+                    <xsl:for-each select="$layout">
+                        <xsl:apply-templates/>
+                    </xsl:for-each>
+                </xsl:for-each>
             </td>
         </tr>
     </xsl:template>
     
     <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']" mode="metadata-dclp">
-        <xsl:message>matched principalEdition div</xsl:message>
         <xsl:for-each select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']">
             <xsl:call-template name="dclp-bibliography">
                 <xsl:with-param name="heading">Principal Edition</xsl:with-param>
@@ -244,7 +253,6 @@
         <xsl:param name="heading"/>
         <xsl:param name="references"/>
         <xsl:param name="treat-as-structured">yes</xsl:param>
-        <xsl:message>in named template dclp-bibliography</xsl:message>
         <xsl:for-each select="$references">
             <tr>
                 <th><xsl:value-of select="$heading"/></th>
@@ -259,8 +267,6 @@
                         <xsl:otherwise>
                             <xsl:choose>
                                 <xsl:when test="t:ptr | t:ref">
-                                    <xsl:message>found ptr or ref inside bibl"</xsl:message>
-                                    <xsl:message>trying bibliographic file lookup...</xsl:message>
                                     <xsl:variable name="biblio-target" >
                                         <xsl:choose>
                                             <xsl:when test="t:ptr">
@@ -271,9 +277,7 @@
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:variable>
-                                    <xsl:message>biblio-target is: "<xsl:value-of select="$biblio-target"/></xsl:message>
                                     <xsl:variable name="biblio-filename" select="pi:get-filename($biblio-target, 'xml')"/>
-                                    <xsl:message>local filesystem biblio-filename should be "<xsl:value-of select="$biblio-filename"/>"</xsl:message>
                                     <xsl:choose>
                                         <xsl:when test="doc-available($biblio-filename)">
                                             <xsl:message>local file is available!</xsl:message>
@@ -283,13 +287,10 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
                                     <xsl:for-each select="pi:get-docs(concat(t:ptr/@target, '/source'), 'xml')/t:bibl">
-                                        <xsl:message>... success with bibliographic lookup!</xsl:message>
-                                        <xsl:message>building citation</xsl:message>
                                         <xsl:call-template name="buildCitation"/>
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:message>building citation with what we have in the source file</xsl:message>
                                     <xsl:call-template name="buildCitation"/>
                                 </xsl:otherwise>
                             </xsl:choose>
