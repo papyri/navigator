@@ -14,7 +14,6 @@
     <xsl:for-each select="$urls">
       <xsl:choose>
         <xsl:when test="doc-available(pi:get-filename(., $format))">
-          <xsl:message>pi:get-docs is retrieving <xsl:value-of select="pi:get-filename(., $format)"/></xsl:message>
           <xsl:copy-of select="doc(pi:get-filename(., $format))"/>
         </xsl:when>
         <xsl:when test="$resolve-uris and doc-available(.)">
