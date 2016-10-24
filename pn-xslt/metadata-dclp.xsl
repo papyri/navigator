@@ -261,11 +261,11 @@
                                 <xsl:text>/...</xsl:text>
                             </a>
                         </xsl:when>
-                        <xsl:when test="@type='printed'">
+                        <xsl:when test="@type='printed' or @type='illustration'">
                             <xsl:value-of select="."/>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:message>unexpected illustration bibl type or structure</xsl:message>
+                            <xsl:message>unexpected illustration bibl type or structure: <xsl:value-of select="//t:idno[@type='dclp']"/>; illustration bibl number <xsl:value-of select="count(preceding::t:bibl) + 1"/></xsl:message>
                         </xsl:otherwise>
                     </xsl:choose>
                     <xsl:if test="./following-sibling::t:bibl">; </xsl:if>
