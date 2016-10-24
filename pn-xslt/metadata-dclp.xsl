@@ -261,6 +261,10 @@
                                 <xsl:text>/...</xsl:text>
                             </a>
                         </xsl:when>
+                        <xsl:when test="@type='online' and t:ptr and not(starts-with(t:ptr/@target, 'http'))">
+                            <xsl:message>ERROR invalid ptr target: URL has no protocol prefix: <xsl:value-of select="t:ptr/@target"/></xsl:message>
+                            <xsl:value-of select="t:ptr/@target"/>
+                        </xsl:when>
                         <xsl:when test="@type='printed' or @type='illustration'">
                             <xsl:value-of select="."/>
                         </xsl:when>
