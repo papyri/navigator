@@ -258,10 +258,19 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="t:ptr">
-                                    <xsl:message>found ptr inside bibl with @target="<xsl:value-of select="t:ptr/@target"/>"</xsl:message>
+                                <xsl:when test="t:ptr | t:ref">
+                                    <xsl:message>found ptr or ref inside bibl"</xsl:message>
                                     <xsl:message>trying bibliographic file lookup...</xsl:message>
-                                    <xsl:variable name="biblio-target" select="concat(t:ptr/@target, '/source')"/>
+                                    <xsl:variable name="biblio-target" >
+                                        <xsl:choose>
+                                            <xsl:when test="t:ptr">
+                                                <xsl:value-of select="concat(t:ptr[0]/@target, '/source')"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="concat(t:ref[0]/@target, '/source')"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
                                     <xsl:message>biblio-target is: "<xsl:value-of select="$biblio-target"/></xsl:message>
                                     <xsl:variable name="biblio-filename" select="pi:get-filename($biblio-target, 'xml')"/>
                                     <xsl:message>local filesystem biblio-filename should be "<xsl:value-of select="$biblio-filename"/>"</xsl:message>
@@ -294,9 +303,17 @@
     <!-- Bibliography within dclp div@type=commentary -->
     <xsl:template match="t:listBibl[$collection='dclp' and ancestor::t:div[@type='commentary']]">
         <xsl:for-each select="t:bibl">
-            <xsl:apply-templates select="." mode="metadata"/>
+            <xsl:choose>
+                <xsl:when test="t:ref">
+                    <xsl:apply-templates />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="buildCitation"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:if test="./following-sibling::t:bibl">; </xsl:if>
         </xsl:for-each>
     </xsl:template>
-    
+   
+        
 </xsl:stylesheet>
