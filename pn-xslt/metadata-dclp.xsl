@@ -16,7 +16,6 @@
             mode="metadata"/>
         
         <!-- Principal Edition bibliographic division (addresses all subtypes) -->
-        <xsl:message>selecting principalEdition div</xsl:message>
         <xsl:apply-templates
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
             mode="metadata-dclp"/>
@@ -81,15 +80,16 @@
             <xsl:with-param name="type">religion</xsl:with-param>
         </xsl:call-template>
         
-        <!-- Print Illustrations -->
+        <!-- Externally Published Illustrations -->
         <xsl:apply-templates
-            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]"
-            mode="metadata"/>
+            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations']"
+            mode="metadata-dclp"/>
         
         <!-- Custodial Events -->
-        <xsl:apply-templates
+        <!-- Now display at the top of each column - see htm-teidivedition.xsl -->
+        <!--<xsl:apply-templates
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist"
-            mode="metadata"/>
+            mode="metadata"/>-->
 
         <!-- Physical Description -->
         <!--<xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc"
@@ -138,80 +138,90 @@
         <tr>
             <th class="rowheader">Form and Layout</th>
             <td>
-				<xsl:choose>
-					<xsl:when test="t:objectDesc/t:p[@type='bookForm']">
-						<xsl:value-of select="t:objectDesc/t:p"/>
-					</xsl:when>	
-				</xsl:choose>		
+                <xsl:for-each select="t:objectDesc">
+                    <xsl:variable name="form" select="@form"/>
+                    <xsl:variable name="material" select="t:supportDesc/t:support/t:material" />
+                    <xsl:variable name="layout" select="t:layoutDesc/t:layout/t:p" />
+                    <xsl:if test="$material != '' and not(contains($layout, $material))">
+                        <xsl:value-of select="$material"/>
+                        <xsl:text> </xsl:text>
+                    </xsl:if>
+                    <xsl:if test="$form != '' and not(contains($layout, $form))">
+                        <xsl:value-of select="$form"/>
+                        <xsl:text>: </xsl:text>
+                    </xsl:if>
+                    <xsl:for-each select="$layout">
+                        <xsl:apply-templates/>
+                    </xsl:for-each>
+                </xsl:for-each>
             </td>
         </tr>
     </xsl:template>
     
+    <!-- handle principal edition bibliography -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']" mode="metadata-dclp">
-        <xsl:message>matched principalEdition div</xsl:message>
-        <xsl:for-each select="t:listBibl/t:bibl">
-            <tr>
-                <xsl:variable name="biblio-header">
+        <xsl:for-each select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']">
+            <xsl:call-template name="dclp-bibliography">
+                <xsl:with-param name="heading">Principal Edition</xsl:with-param>
+                <xsl:with-param name="references" select="."/>
+                <xsl:with-param name="treat-as-structured">no</xsl:with-param>
+            </xsl:call-template>
+        </xsl:for-each>
+        <xsl:for-each-group select="t:listBibl/t:bibl[@type='reference']"  group-by="@subtype">
+            <xsl:call-template name="dclp-bibliography">
+                <xsl:with-param name="heading">
                     <xsl:choose>
-                        <xsl:when test="@type='publication' and @subtype='principal'">
-                            <xsl:text>Principal Edition</xsl:text>
+                        <xsl:when test="@subtype='principal'">
+                            <xsl:text>Reference Edition</xsl:text>
                         </xsl:when>
-                        <xsl:when test="@type='reference'">
-                            <xsl:choose>
-                                <xsl:when test="@subtype='principal'">
-                                    <xsl:text>Reference Edition</xsl:text>
-                                </xsl:when>
-                                <xsl:when test="@subtype='partial'">
-                                    <xsl:text>Partial Edition</xsl:text>
-                                </xsl:when>
-                                <xsl:when test="@subtype='previous'">
-                                    <xsl:text>Previous Edition</xsl:text>
-                                </xsl:when>
-                                <xsl:when test="@subtype='readings'">
-                                    <xsl:text>Readings</xsl:text>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:message>WARNING: untrapped bibliographic subtype="<xsl:value-of select="@subtype"/>"</xsl:message>
-                                    <xsl:text>WARNING: untrapped bibliographic subtype="</xsl:text>
-                                    <xsl:value-of select="@subtype"/>
-                                    <xsl:text>"</xsl:text>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                        <xsl:when test="@subtype='partial'">
+                            <xsl:text>Partial Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='previous'">
+                            <xsl:text>Previous Edition</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@subtype='readings'">
+                            <xsl:text>Readings</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:message>WARNING: untrapped bibliographic type+subtype combination: type="<xsl:value-of select="@type"/>" subtype="<xsl:value-of select="@subtype"/>"</xsl:message>
-                            <xsl:text>WARNING: untrapped bibliographic type+subtype combination: type="</xsl:text>
-                            <xsl:value-of select="@type"/>
-                            <xsl:text>" subtype="</xsl:text>
                             <xsl:value-of select="@subtype"/>
-                            <xsl:text>"</xsl:text>
-                        </xsl:otherwise>            
+                        </xsl:otherwise>
                     </xsl:choose>
-                </xsl:variable>
-                <xsl:message>biblio-header is "<xsl:value-of select="$biblio-header"/>"</xsl:message>
-                <th>
-                    <xsl:value-of select="normalize-space($biblio-header)"/>
-                </th>
+                </xsl:with-param>
+                <xsl:with-param name="references" select="current-group()"/>
+                <xsl:with-param name="treat-as-structured">yes</xsl:with-param>
+            </xsl:call-template>
+        </xsl:for-each-group>
+    </xsl:template>    
+    <xsl:template name="dclp-bibliography">
+        <xsl:param name="heading"/>
+        <xsl:param name="references"/>
+        <xsl:param name="treat-as-structured">yes</xsl:param>
+        <xsl:for-each select="$references">
+            <tr>
+                <th><xsl:value-of select="$heading"/></th>
                 <td>
                     <xsl:choose>
-                        <xsl:when test="@type='publication' and @subtype = 'principal'">
-                            <!-- <xsl:message>matched principal publication</xsl:message> -->
-                            <xsl:variable name="biblio-ppub">
+                        <xsl:when test="$treat-as-structured='no'">
+                            <xsl:variable name="bibl-plain">
                                 <xsl:value-of select="."/>
                             </xsl:variable>
-                            <!-- <xsl:message>serialized principal publication as "<xsl:value-of select="normalize-space($biblio-ppub)"/>"</xsl:message> -->
-                            <xsl:value-of select="normalize-space($biblio-ppub)"/>
+                            <xsl:value-of select="normalize-space($bibl-plain)"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:message>matched a publication subtype other than "principal publication"</xsl:message>
                             <xsl:choose>
-                                <xsl:when test="t:ptr">
-                                    <xsl:message>found ptr inside bibl with @target="<xsl:value-of select="t:ptr/@target"/>"</xsl:message>
-                                    <xsl:message>trying bibliographic file lookup...</xsl:message>
-                                    <xsl:variable name="biblio-target" select="concat(t:ptr/@target, '/source')"/>
-                                    <xsl:message>biblio-target is: "<xsl:value-of select="$biblio-target"/></xsl:message>
+                                <xsl:when test="t:ptr | t:ref">
+                                    <xsl:variable name="biblio-target" >
+                                        <xsl:choose>
+                                            <xsl:when test="t:ptr">
+                                                <xsl:value-of select="concat(t:ptr[0]/@target, '/source')"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="concat(t:ref[0]/@target, '/source')"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
                                     <xsl:variable name="biblio-filename" select="pi:get-filename($biblio-target, 'xml')"/>
-                                    <xsl:message>local filesystem biblio-filename should be "<xsl:value-of select="$biblio-filename"/>"</xsl:message>
                                     <xsl:choose>
                                         <xsl:when test="doc-available($biblio-filename)">
                                             <xsl:message>local file is available!</xsl:message>
@@ -221,13 +231,10 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
                                     <xsl:for-each select="pi:get-docs(concat(t:ptr/@target, '/source'), 'xml')/t:bibl">
-                                        <xsl:message>... success with bibliographic lookup!</xsl:message>
-                                        <xsl:message>building citation</xsl:message>
                                         <xsl:call-template name="buildCitation"/>
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:message>building citation with what we have in the source file</xsl:message>
                                     <xsl:call-template name="buildCitation"/>
                                 </xsl:otherwise>
                             </xsl:choose>
@@ -237,5 +244,55 @@
             </tr>
         </xsl:for-each>
     </xsl:template>
+
+    <!-- handle external illustrations bibliography and web links -->
+    <xsl:template match="t:div[@type = 'bibliography' and @subtype='illustrations']" mode="metadata-dclp">
+        <tr>
+            <th class="rowheader">Print Illustrations</th>
+            <td>
+                <xsl:for-each select=".//t:bibl">
+                    <xsl:choose>
+                        <xsl:when test="@type='online' and t:ptr and starts-with(t:ptr/@target, 'http')">
+                            <xsl:variable name="url-chunks" select="tokenize(substring-after(t:ptr/@target, '://'), '/')"/>
+                            <a href="{t:ptr/@target}">
+                                <xsl:value-of select="$url-chunks[1]"/>
+                                <xsl:text>:</xsl:text>
+                                <xsl:value-of select="$url-chunks[2]"/>
+                                <xsl:text>/...</xsl:text>
+                            </a>
+                        </xsl:when>
+                        <xsl:when test="@type='online' and t:ptr and not(starts-with(t:ptr/@target, 'http'))">
+                            <xsl:message>ERROR invalid ptr target: URL has no protocol prefix: <xsl:value-of select="t:ptr/@target"/></xsl:message>
+                            <xsl:value-of select="t:ptr/@target"/>
+                        </xsl:when>
+                        <xsl:when test="@type='printed' or @type='illustration'">
+                            <xsl:value-of select="."/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:message>unexpected illustration bibl type or structure: <xsl:value-of select="//t:idno[@type='dclp']"/>; illustration bibl number <xsl:value-of select="count(preceding::t:bibl) + 1"/></xsl:message>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:if test="./following-sibling::t:bibl">; </xsl:if>
+                </xsl:for-each>
+            </td>
+        </tr>
+    </xsl:template>
     
+    
+    <!-- Bibliography within dclp div@type=commentary -->
+    <xsl:template match="t:listBibl[$collection='dclp' and ancestor::t:div[@type='commentary']]">
+        <xsl:for-each select="t:bibl">
+            <xsl:choose>
+                <xsl:when test="t:ref">
+                    <xsl:apply-templates />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="buildCitation"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:if test="./following-sibling::t:bibl">; </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+   
+        
 </xsl:stylesheet>
