@@ -248,7 +248,7 @@
     <!-- handle external illustrations bibliography and web links -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype='illustrations']" mode="metadata-dclp">
         <tr>
-            <th class="rowheader">Print Illustrations</th>
+            <th class="rowheader">Published Illustrations</th>
             <td>
                 <xsl:for-each select=".//t:bibl">
                     <xsl:choose>
