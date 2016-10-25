@@ -214,25 +214,25 @@
                                     <xsl:variable name="biblio-target" >
                                         <xsl:choose>
                                             <xsl:when test="t:ptr">
-                                                <xsl:value-of select="concat(t:ptr[0]/@target, '/source')"/>
+                                                <xsl:value-of select="concat(t:ptr[1]/@target, '/source')"/>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <xsl:value-of select="concat(t:ref[0]/@target, '/source')"/>
+                                                <xsl:value-of select="concat(t:ref[1]/@target, '/source')"/>
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:variable>
                                     <xsl:variable name="biblio-filename" select="pi:get-filename($biblio-target, 'xml')"/>
                                     <xsl:choose>
                                         <xsl:when test="doc-available($biblio-filename)">
-                                            <xsl:message>local file is available!</xsl:message>
+                                            <xsl:variable name="biblio-doc" select="pi:get-docs($biblio-target, 'xml')"/>
+                                            <xsl:for-each select="$biblio-doc//t:bibl">
+                                                <xsl:call-template name="buildCitation"/>
+                                            </xsl:for-each>
                                         </xsl:when>
                                         <xsl:otherwise>
-                                            <xsl:message>ERROR: local file "<xsl:value-of select="$biblio-filename"/>" is not available.</xsl:message>
+                                            <xsl:message>ERROR (<xsl:value-of select="//t:idno[@type='filename']"/>): local file "<xsl:value-of select="$biblio-filename"/>" is not available.</xsl:message>
                                         </xsl:otherwise>
                                     </xsl:choose>
-                                    <xsl:for-each select="pi:get-docs(concat(t:ptr/@target, '/source'), 'xml')/t:bibl">
-                                        <xsl:call-template name="buildCitation"/>
-                                    </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:call-template name="buildCitation"/>
