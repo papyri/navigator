@@ -253,19 +253,27 @@
                                 </xsl:variable>
                                 <xsl:variable name="link-text">
                                     <xsl:choose>
+                                        
+                                        <!-- if bibl has a title (apparently not common in this context) -->
                                         <xsl:when test="t:title">
                                             <xsl:value-of select="normalize-space(t:title[1])"/>
                                         </xsl:when>
+                                        
+                                        <!-- if there's free text inside the bibl (also apparently not common in this context) -->
                                         <xsl:when test="normalize-space($text-from-nodes) != ''">
                                             <xsl:value-of select="normalize-space($text-from-nodes)"/>
                                         </xsl:when>
+                                        
+                                        <!-- otherwise try to make the URL into something that doesn't eat up too much space as a text node for the link -->
                                         <xsl:otherwise>
+                                            
+                                            <!-- try to isolate domain from url for first part of link -->
                                             <xsl:choose>
-                                                <xsl:when test="contains($url-chunks[1], '?') and starts-with($url-chunks[1], 'www.')">
-                                                    <xsl:value-of select="substring-after(substring-before($url-chunks[1], '?'), 'www.')"/>
+                                                <xsl:when test="contains($url-chunks[1], ':') and starts-with($url-chunks[1], 'www.')">
+                                                    <xsl:value-of select="substring-after(substring-before($url-chunks[1], ':'), 'www.')"/>
                                                 </xsl:when>
-                                                <xsl:when test="contains($url-chunks[1], '?')">
-                                                    <xsl:value-of select="substring-before($url-chunks[1], '?')"/>
+                                                <xsl:when test="contains($url-chunks[1], ':')">
+                                                    <xsl:value-of select="substring-before($url-chunks[1], ':')"/>
                                                 </xsl:when>
                                                 <xsl:when test="starts-with($url-chunks[1], 'www.')">
                                                     <xsl:value-of select="substring-after($url-chunks[1], 'www.')"/>
@@ -274,11 +282,97 @@
                                                     <xsl:value-of select="$url-chunks[1]"/>
                                                 </xsl:otherwise>
                                             </xsl:choose>
-                                            <xsl:text>: </xsl:text>
-                                            <xsl:value-of select="$url-chunks[2]"/>
-                                            <xsl:if test="count($url-chunks) &gt; 2">
-                                                    <xsl:text>/ ... </xsl:text>
-                                            </xsl:if>
+                                            
+                                            <!-- delimiter, using ellipsis if necessary -->
+                                            <xsl:choose>
+                                                <xsl:when test="count($url-chunks) &gt; 2">
+                                                    <xsl:text>/.../</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise>/</xsl:otherwise>
+                                            </xsl:choose>
+                                            
+                                            <!-- try to clean up whatever the last bit is -->
+                                            <xsl:variable name="last-chunk">
+                                                <xsl:choose>
+                                                    <xsl:when test="$url-chunks[last()] = ''">
+                                                        <xsl:value-of select="$url-chunks[last()-1]"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:value-of select="$url-chunks[last()]"/>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:variable>
+                                            <xsl:variable name="last-chunk-identity">
+                                                <xsl:choose>
+                                                    <xsl:when test="contains($last-chunk, '#')">
+                                                        <xsl:value-of select="substring-after($last-chunk, '#')"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk, 'id=')">
+                                                        <xsl:variable name="id-raw" select="substring-after($last-chunk, 'id=')"/>
+                                                        <xsl:choose>
+                                                            <xsl:when test="contains($id-raw, '&amp;')">
+                                                                <xsl:value-of select="substring-after($id-raw, '&amp;')"/>
+                                                            </xsl:when>
+                                                            <xsl:otherwise>
+                                                                <xsl:value-of select="$id-raw"/>
+                                                            </xsl:otherwise>
+                                                        </xsl:choose>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk, 'Inv.%20Nr.=')">
+                                                        <xsl:variable name="id-raw" select="substring-after($last-chunk, 'Inv.%20Nr.=')"/>
+                                                        <xsl:choose>
+                                                            <xsl:when test="contains($id-raw, '&amp;')">
+                                                                <xsl:value-of select="substring-after($id-raw, '&amp;')"/>
+                                                            </xsl:when>
+                                                            <xsl:otherwise>
+                                                                <xsl:value-of select="$id-raw"/>
+                                                            </xsl:otherwise>
+                                                        </xsl:choose>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk, '=')">
+                                                        <xsl:value-of select="tokenize($last-chunk, '=')[last()]"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:choose>
+                                                            <xsl:when test="contains($last-chunk, '&amp;')">
+                                                                <xsl:value-of select="substring-before($last-chunk, '&amp;')"/>
+                                                            </xsl:when>
+                                                            <xsl:otherwise>
+                                                                <xsl:value-of select="$last-chunk"/>
+                                                            </xsl:otherwise>
+                                                        </xsl:choose>                                                        
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:variable>
+                                            <xsl:variable name="last-chunk-complete">
+                                                <xsl:choose>
+                                                    <xsl:when test="contains($last-chunk-identity, '?')">
+                                                        <xsl:value-of select="substring-after($last-chunk-identity, '?')"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk-identity, ';')">
+                                                        <xsl:value-of select="substring-before($last-chunk-identity, ';')"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk-identity, '.htm')">
+                                                        <xsl:value-of select="substring-before($last-chunk-identity, '.htm')"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk-identity, '.tif')">
+                                                        <xsl:value-of select="substring-before($last-chunk-identity, '.tif')"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk-identity, '.TIF')">
+                                                        <xsl:value-of select="substring-before($last-chunk-identity, '.TIF')"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk-identity, '.jpg')">
+                                                        <xsl:value-of select="substring-before($last-chunk-identity, '.jpg')"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="contains($last-chunk-identity, '.JPG')">
+                                                        <xsl:value-of select="substring-before($last-chunk-identity, '.JPG')"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:value-of select="$last-chunk-identity"/>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:variable>
+                                            <xsl:value-of select="$last-chunk-complete"/>
                                         </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:variable>
