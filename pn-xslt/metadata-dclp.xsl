@@ -84,17 +84,7 @@
         <xsl:apply-templates
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations']"
             mode="metadata-dclp"/>
-        
-        <!-- Custodial Events -->
-        <!-- Now display at the top of each column - see htm-teidivedition.xsl -->
-        <!--<xsl:apply-templates
-            select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:additional/t:adminInfo/t:custodialHist"
-            mode="metadata"/>-->
-
-        <!-- Physical Description -->
-        <!--<xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc"
-            mode="metadata"/> -->
-        
+                
         <!-- Images -->
         <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
         
