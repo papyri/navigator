@@ -237,35 +237,78 @@
 
     <!-- handle external illustrations bibliography and web links -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype='illustrations']" mode="metadata-dclp">
-        <tr>
-            <th class="rowheader">Published Illustrations</th>
-            <td>
-                <xsl:for-each select=".//t:bibl">
-                    <xsl:choose>
-                        <xsl:when test="@type='online' and t:ptr and starts-with(t:ptr/@target, 'http')">
-                            <xsl:variable name="url-chunks" select="tokenize(substring-after(t:ptr/@target, '://'), '/')"/>
-                            <a href="{t:ptr/@target}">
-                                <xsl:value-of select="$url-chunks[1]"/>
-                                <xsl:text>:</xsl:text>
-                                <xsl:value-of select="$url-chunks[2]"/>
-                                <xsl:text>/...</xsl:text>
-                            </a>
-                        </xsl:when>
-                        <xsl:when test="@type='online' and t:ptr and not(starts-with(t:ptr/@target, 'http'))">
-                            <xsl:message>ERROR  (<xsl:value-of select="//t:idno[@type='filename']"/>): invalid ptr target: URL has no protocol prefix: <xsl:value-of select="t:ptr/@target"/></xsl:message>
-                            <xsl:value-of select="t:ptr/@target"/>
-                        </xsl:when>
-                        <xsl:when test="@type='printed' or @type='illustration'">
-                            <xsl:value-of select="."/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:message>unexpected illustration bibl type or structure: <xsl:value-of select="//t:idno[@type='dclp']"/>; illustration bibl number <xsl:value-of select="count(preceding::t:bibl) + 1"/></xsl:message>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    <xsl:if test="./following-sibling::t:bibl">; </xsl:if>
-                </xsl:for-each>
-            </td>
-        </tr>
+        <!-- images -->
+        <xsl:if test=".//t:bibl[@type='online']">
+            <tr>
+                <th class="rowheader">Images</th>
+                <td>
+                    <xsl:for-each select=".//t:bibl[@type = 'online']">
+                        <xsl:choose>
+                            <xsl:when test="@type='online' and t:ptr and starts-with(t:ptr/@target, 'http')">
+                                <xsl:variable name="url-chunks" select="tokenize(substring-after(t:ptr/@target, '://'), '/')"/>
+                                <xsl:variable name="text-from-nodes">
+                                    <xsl:for-each select="./text()">
+                                        <xsl:value-of select="."/>
+                                    </xsl:for-each>
+                                </xsl:variable>
+                                <xsl:variable name="link-text">
+                                    <xsl:choose>
+                                        <xsl:when test="t:title">
+                                            <xsl:value-of select="normalize-space(t:title[1])"/>
+                                        </xsl:when>
+                                        <xsl:when test="normalize-space($text-from-nodes) != ''">
+                                            <xsl:value-of select="normalize-space($text-from-nodes)"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:choose>
+                                                <xsl:when test="contains($url-chunks[1], '?') and starts-with($url-chunks[1], 'www.')">
+                                                    <xsl:value-of select="substring-after(substring-before($url-chunks[1], '?'), 'www.')"/>
+                                                </xsl:when>
+                                                <xsl:when test="contains($url-chunks[1], '?')">
+                                                    <xsl:value-of select="substring-before($url-chunks[1], '?')"/>
+                                                </xsl:when>
+                                                <xsl:when test="starts-with($url-chunks[1], 'www.')">
+                                                    <xsl:value-of select="substring-after($url-chunks[1], 'www.')"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="$url-chunks[1]"/>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                            <xsl:text>: </xsl:text>
+                                            <xsl:value-of select="$url-chunks[2]"/>
+                                            <xsl:if test="count($url-chunks) &gt; 2">
+                                                    <xsl:text>/ ... </xsl:text>
+                                            </xsl:if>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
+                                <a href="{t:ptr/@target}">
+                                    <xsl:value-of select="$link-text"/>
+                                </a>
+                            </xsl:when>
+                            <xsl:when test="@type='online' and t:ptr and not(starts-with(t:ptr/@target, 'http'))">
+                                <xsl:message>ERROR  (<xsl:value-of select="//t:idno[@type='filename']"/>): invalid ptr target: URL has no protocol prefix: <xsl:value-of select="t:ptr/@target"/></xsl:message>
+                                <xsl:value-of select="t:ptr/@target"/>
+                            </xsl:when>
+                        </xsl:choose>
+                        <xsl:if test="./following-sibling::t:bibl[@type = 'online']">; </xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>            
+        </xsl:if>
+
+        <!-- print illustrations -->
+        <xsl:if test=".//t:bibl[@type != 'online']">
+            <tr>
+                <th class="rowheader">Print Illustrations</th>
+                <td>
+                    <xsl:for-each select=".//t:bibl[@type != 'online']">
+                        <xsl:value-of select="."/>
+                        <xsl:if test="./following-sibling::t:bibl[@type != 'online']">; </xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>
+        </xsl:if>
     </xsl:template>
     
     
