@@ -106,7 +106,7 @@
               <xsl:with-param name="docs" select="."/>
             </xsl:call-template>
             <xsl:call-template name="metadata-dclp"/>
-            <xsl:call-template name="images"/>
+            <xsl:call-template name="images-dclp"/>
           </xsl:when>
 
           <xsl:when test="$collection = 'ddbdp'">
@@ -970,6 +970,28 @@
     </xsl:if>
     <xsl:if
       test="$docs/t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]">
+      <field name="illustrations">true</field>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="images-dclp">
+    <!-- online images (external links and internal links) -->
+    <xsl:if test="//t:div[@type='bibliography'][@subtype='illustrations']/t:listBibl/t:bibl[@type='online']">
+      <field name="images">true</field>
+      <xsl:if test="//t:div[@type='bibliography'][@subtype='illustrations']/t:listBibl/t:bibl[@type='online'][not(contains(., 'papyri.info'))]">
+        <field name="images-ext">true</field>
+      </xsl:if>
+      <xsl:if test="//t:div[@type='bibliography'][@subtype='illustrations']/t:listBibl/t:bibl[@type='online'][contains(., 'papyri.info')]">
+        <field name="images-int">true</field>
+      </xsl:if>
+      <xsl:for-each select="//t:div[@type='bibliography'][@subtype='illustrations']/t:listBibl/t:bibl[@type='online']">
+        <field name="image_path">
+          <xsl:value-of select="t:ptr/@target"/>
+        </field>
+      </xsl:for-each>
+    </xsl:if>
+    <!-- printed images -->
+    <xsl:if test="//t:div[@type='bibliography'][@subtype='illustrations']/t:listBibl/t:bibl[@type='printed']">
       <field name="illustrations">true</field>
     </xsl:if>
   </xsl:template>
