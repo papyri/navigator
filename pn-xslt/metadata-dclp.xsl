@@ -15,6 +15,11 @@
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
             mode="metadata"/>
         
+        <!-- Content overview -->
+        <xsl:apply-templates
+            select="//t:profileDesc/t:textClass/t:keywords/t:term[@type='overview']" 
+            mode="metadata"/>
+        
         <!-- Principal Edition bibliographic division (addresses all subtypes) -->
         <xsl:apply-templates
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
@@ -108,6 +113,7 @@
         <xsl:param name="label" select="concat(upper-case(substring($type, 1, 1)), substring($type, 2))"/>
         <xsl:variable name="terms">
             <xsl:choose>
+                <xsl:when test="$type='overview'"/> <!-- suppress overview because we handle in "content" row -->
                 <xsl:when test="$type=''">
                     <xsl:sequence select="t:teiHeader/t:profileDesc/t:textClass/t:keywords/t:term[not(@type)]"/>
                 </xsl:when>
@@ -420,6 +426,7 @@
             <xsl:if test="./following-sibling::t:bibl">; </xsl:if>
         </xsl:for-each>
     </xsl:template>
+    
    
         
 </xsl:stylesheet>

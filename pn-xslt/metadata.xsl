@@ -337,6 +337,17 @@
       </tr>
   </xsl:template>
   
+  <!-- overview keyword handling -->
+  <xsl:template match="t:term[@type='overview']" mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="1">Content</th>
+      <td>
+        <xsl:apply-templates />
+      </td>
+    </tr>
+  </xsl:template>
+  
+  
   <!-- APIS Citations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
     <tr>
