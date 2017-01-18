@@ -1,0 +1,555 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.0="http://purl.org/ontology/bibo/"
+    xmlns:j.1="http://purl.org/dc/terms/"
+    xmlns:j.2="http://purl.org/ontology/olo/core#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/53">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">53</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/91/nyu.apis.5259.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/29/nyu.apis.4845.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/7b/nyu.apis.4817.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/29">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">29</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/8f/nyu.apis.4783.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/20">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/07/nyu.apis.4772.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/5">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/22/nyu.apis.4724.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/20/nyu.apis.4841.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/48">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">48</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/f9/nyu.apis.4852.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/da/nyu.apis.4792.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/14">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/ed/nyu.apis.4754.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/8f/nyu.apis.4770.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/34">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">34</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/da/nyu.apis.4792.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/8c/nyu.apis.4736.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/19/nyu.apis.4791.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/54">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">54</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/98/nyu.apis.5260.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/28">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">28</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/2c/nyu.apis.4782.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/47/nyu.apis.4727.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/40">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/7b/nyu.apis.4817.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/35/nyu.apis.4761.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/47">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">47</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/ae/nyu.apis.4852.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/4">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/c9/nyu.apis.4724.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/13">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">13</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/0a/nyu.apis.4741.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/05/nyu.apis.5240.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/27">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">27</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/b0/nyu.apis.4781.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e1/nyu.apis.4735.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/9a/nyu.apis.4773.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/33">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">33</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/19/nyu.apis.4791.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c8/nyu.apis.4841.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/06/nyu.apis.4767.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f6/nyu.apis.4730.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/84/nyu.apis.4797.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/17">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">17</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/06/nyu.apis.4767.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a0/nyu.apis.4797.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/91/nyu.apis.5259.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/16">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">16</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/35/nyu.apis.4761.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bb/nyu.apis.4784.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/88/nyu.apis.5250.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/46">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">46</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/29/nyu.apis.4845.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/22/nyu.apis.4724.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/bf/nyu.apis.4735.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/3">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/ae/nyu.apis.4721.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2e/nyu.apis.4776.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/36">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">36</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/a0/nyu.apis.4797.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/26">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">26</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/8b/nyu.apis.4780.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/a4/nyu.apis.4777.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/37/nyu.apis.4815.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/54/nyu.apis.4840.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/9a/nyu.apis.4718.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/15">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/05/nyu.apis.4760.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/45">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">45</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/46/nyu.apis.4844.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/35">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">35</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/84/nyu.apis.4797.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/2">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/39/nyu.apis.4719.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/25">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/ad/nyu.apis.4779.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/24">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">24</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/a4/nyu.apis.4777.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/19">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">19</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/99/nyu.apis.4771.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2f/nyu.apis.4785.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/38">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">38</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/93/nyu.apis.4801.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/f9/nyu.apis.4852.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/10">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/e1/nyu.apis.4735.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/39/nyu.apis.4719.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/93/nyu.apis.4801.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ae/nyu.apis.4721.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/9">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/ac/nyu.apis.4731.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/50">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">50</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/05/nyu.apis.5240.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/79/nyu.apis.4726.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/1">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/9a/nyu.apis.4718.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/39">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">39</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/37/nyu.apis.4815.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/30">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/bb/nyu.apis.4784.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/44">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">44</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/20/nyu.apis.4841.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/18">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">18</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/8f/nyu.apis.4770.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/37">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">37</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/cf/nyu.apis.4800.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/source">
+    <j.1:relation rdf:resource="http://papyri.info/nyu.apis/images"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/46/nyu.apis.4844.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/23">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">23</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/2e/nyu.apis.4776.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/8">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/f6/nyu.apis.4730.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/b0/nyu.apis.4781.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/07/nyu.apis.4772.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/8f/nyu.apis.4783.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c8/nyu.apis.4785.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/2c/nyu.apis.4782.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/43">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">43</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/c8/nyu.apis.4841.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/99/nyu.apis.4771.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/22">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">22</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/07/nyu.apis.4775.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/36/nyu.apis.5139.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/7">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/47/nyu.apis.4727.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/12">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/8c/nyu.apis.4736.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/c9/nyu.apis.4724.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/05/nyu.apis.4760.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/cf/nyu.apis.4800.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/52">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">52</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/7d/nyu.apis.5251.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/32">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">32</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/c8/nyu.apis.4785.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/8b/nyu.apis.4780.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/7d/nyu.apis.5251.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/42">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">42</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/54/nyu.apis.4840.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/e8/nyu.apis.4822.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/21">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">21</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/9a/nyu.apis.4773.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ac/nyu.apis.4731.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/07/nyu.apis.4775.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/98/nyu.apis.5260.b.0.600">
+    <rdfs:label>Verso</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/49">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">49</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/36/nyu.apis.5139.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/11">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/bf/nyu.apis.4735.b.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/6">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/79/nyu.apis.4726.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ae/nyu.apis.4852.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ed/nyu.apis.4754.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/0a/nyu.apis.4741.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/images/ad/nyu.apis.4779.f.0.600">
+    <rdfs:label>Recto</rdfs:label>
+    <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/31">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">31</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/2f/nyu.apis.4785.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/51">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">51</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/88/nyu.apis.5250.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images/41">
+    <j.2:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">41</j.2:index>
+    <j.2:item rdf:resource="http://papyri.info/images/e8/nyu.apis.4822.f.0.600"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#Slot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://papyri.info/nyu.apis/images">
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/10"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/23"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/43"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/11"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/31"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/7"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/52"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/49"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/40"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/37"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/9"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/34"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/54"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/3"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/22"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/42"/>
+    <j.1:relation rdf:resource="http://papyri.info/nyu.apis/source"/>
+    <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/16"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/36"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/21"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/24"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/29"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/30"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/50"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/17"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/6"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/51"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/8"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/45"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/48"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/33"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/53"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/5"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/14"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/27"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/2"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/47"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/15"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/35"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/41"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/12"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/28"/>
+    <j.2:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">54</j.2:length>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/32"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/1"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/20"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/38"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/26"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/46"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/25"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/19"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/39"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/4"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/13"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/18"/>
+    <j.2:slot rdf:resource="http://papyri.info/nyu.apis/images/44"/>
+  </rdf:Description>
+</rdf:RDF>
