@@ -200,7 +200,7 @@
                     <xsl:choose>
                         <xsl:when test="$treat-as-structured='no'">
                             <xsl:variable name="bibl-plain">
-                                <xsl:value-of select="."/>
+                                <xsl:value-of select="t:title"/><xsl:text> </xsl:text><xsl:value-of select="t:biblStruct[@unit='volume']"/><xsl:text> </xsl:text><xsl:value-of select="t:biblStruct[@unit='numbers']"/>
                             </xsl:variable>
                             <xsl:value-of select="normalize-space($bibl-plain)"/>
                         </xsl:when>
