@@ -423,7 +423,7 @@
                     <xsl:comment>text information will go here: div[@type=commentary][@subtype='frontmatter]</xsl:comment>
                     <div class="transcription data">
                       <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
-                      <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
+                      <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
                       <xsl:variable name="text-dclp">
                         <xsl:apply-templates select="//t:div[@type='edition']"> 
