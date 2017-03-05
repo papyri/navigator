@@ -221,7 +221,7 @@
                                     <xsl:choose>
                                         <xsl:when test="doc-available($biblio-filename)">
                                             <xsl:variable name="biblio-doc" select="pi:get-docs($biblio-target, 'xml')"/>
-                                            <xsl:for-each select="$biblio-doc//t:bibl">
+                                            <xsl:for-each select="$biblio-doc/t:bibl">
                                                 <xsl:call-template name="buildCitation"/>
                                             </xsl:for-each>
                                         </xsl:when>
