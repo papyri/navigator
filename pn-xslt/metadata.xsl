@@ -30,12 +30,12 @@
         <xsl:when test="string-length(descendant::t:idno[@type='TM'])!=6">
 		<xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,3)"/>
 		<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
-		 DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+		 DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
 		</xsl:when>
         <xsl:otherwise>
 		<xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,4)"/>
 		<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
-		 DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+		 DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
 		</xsl:otherwise>
       </xsl:choose>
             </h2>
