@@ -3,7 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:t="http://www.tei-c.org/ns/1.0"
     xmlns:pi="http://papyri.info/ns"
-    exclude-result-prefixes="xs"
+    exclude-result-prefixes="#all"
     version="2.0">
     
     <xsl:output method="html"/>
