@@ -45,10 +45,10 @@
             </td>
         </tr>
 
-        <!-- Support / Dimensions -->
+        <!-- Support:  Dimensions -->
         <xsl:apply-templates
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support"
-            mode="metadata"/>
+            mode="dclp-metadata-form"/>
         
         <!-- Date -->
         <xsl:apply-templates
@@ -427,6 +427,57 @@
         </xsl:for-each>
     </xsl:template>
     
-   
+    <!-- DCLP handling of support material and dimensions -->
+    <xsl:template match="t:support" mode="dclp-metadata-form">
+        <xsl:apply-templates mode="dclp-metadata-form"/>
+    </xsl:template>
+    
+    <xsl:template match="t:material" mode="dclp-metadata-form">
+        <tr>
+            <th class="rowheader">Support Material</th>
+            <td><xsl:value-of select="."/></td>
+        </tr>            
+    </xsl:template>
+    
+    <xsl:template match="t:dimensions[parent::t:support]" mode="dclp-metadata-form">
+        <tr>
+            <th class="rowheader">Support Dimensions</th>
+            <td>
+                <xsl:for-each select="t:*">
+                    <xsl:variable name="extent">
+                        <xsl:choose>
+                            <xsl:when test="@extent">
+                                <xsl:value-of select="@extent"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:value-of select="$extent"/>
+                    <xsl:if test="@unit">
+                        <xsl:if test="not(contains($extent, @unit))">
+                            <xsl:value-of select="@unit"/>
+                        </xsl:if>
+                    </xsl:if>
+                    <xsl:variable name="dim" select="local-name()"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="$dim = 'width'">wide</xsl:when>
+                        <xsl:when test="$dim = 'height'">high</xsl:when>
+                        <xsl:when test="$dim = 'depth'">deep</xsl:when>
+                        <xsl:when test="$dim = 'dim'">
+                            <xsl:value-of select="@type"/>
+                        </xsl:when>
+                    </xsl:choose>
+                    <xsl:if test="following-sibling::t:*">
+                        <xsl:text> x </xsl:text>
+                    </xsl:if>
+                </xsl:for-each>
+            </td>
+        </tr>
+    </xsl:template>
+    
+    
         
 </xsl:stylesheet>
