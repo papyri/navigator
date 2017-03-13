@@ -200,7 +200,13 @@
                     <xsl:choose>
                         <xsl:when test="$treat-as-structured='no'">
                             <xsl:variable name="bibl-plain">
-                                <xsl:value-of select="t:title"/><xsl:text> </xsl:text><xsl:value-of select="t:biblScope[@unit='volume']"/><xsl:text> </xsl:text><xsl:value-of select="t:biblScope[@unit='numbers']"/>
+                                <xsl:value-of select="t:title"/><xsl:text> </xsl:text>
+                                <xsl:for-each select="t:biblScope">
+                                    <xsl:apply-templates/>
+                                    <xsl:if test="position() != last()">
+                                        <xsl:text> </xsl:text>
+                                    </xsl:if>
+                                </xsl:for-each>
                             </xsl:variable>
                             <xsl:value-of select="normalize-space($bibl-plain)"/>
                         </xsl:when>
