@@ -160,7 +160,7 @@
             <xsl:call-template name="dclp-bibliography">
                 <xsl:with-param name="heading">Principal Edition</xsl:with-param>
                 <xsl:with-param name="references" select="."/>
-                <xsl:with-param name="treat-as-structured">no</xsl:with-param>
+                <!--<xsl:with-param name="treat-as-structured">yes</xsl:with-param>-->
             </xsl:call-template>
         </xsl:for-each>
         <xsl:for-each-group select="t:listBibl/t:bibl[@type='reference']"  group-by="@subtype">
@@ -185,32 +185,20 @@
                     </xsl:choose>
                 </xsl:with-param>
                 <xsl:with-param name="references" select="current-group()"/>
-                <xsl:with-param name="treat-as-structured">yes</xsl:with-param>
+                <!--<xsl:with-param name="treat-as-structured">yes</xsl:with-param>-->
             </xsl:call-template>
         </xsl:for-each-group>
     </xsl:template>    
     <xsl:template name="dclp-bibliography">
         <xsl:param name="heading"/>
         <xsl:param name="references"/>
-        <xsl:param name="treat-as-structured">yes</xsl:param>
+        <!--<xsl:param name="treat-as-structured">yes</xsl:param>-->
         <xsl:for-each select="$references">
             <tr>
                 <th><xsl:value-of select="$heading"/></th>
                 <td>
                     <xsl:choose>
-                        <xsl:when test="$treat-as-structured='no'">
-                            <xsl:variable name="bibl-plain">
-                                <xsl:value-of select="t:title"/><xsl:text> </xsl:text>
-                                <xsl:for-each select="t:biblScope">
-                                    <xsl:apply-templates/>
-                                    <xsl:if test="position() != last()">
-                                        <xsl:text> </xsl:text>
-                                    </xsl:if>
-                                </xsl:for-each>
-                            </xsl:variable>
-                            <xsl:value-of select="normalize-space($bibl-plain)"/>
-                        </xsl:when>
-                        <xsl:otherwise>
+                        <xsl:when test=".[@subtype='principal'] and ancestor::t:div[@type='bibliography'][@subtype='principalEdition']">
                             <xsl:choose>
                                 <xsl:when test="t:ptr | t:ref">
                                     <xsl:variable name="biblio-target" >
@@ -228,7 +216,13 @@
                                         <xsl:when test="doc-available($biblio-filename)">
                                             <xsl:variable name="biblio-doc" select="pi:get-docs($biblio-target, 'xml')"/>
                                             <xsl:for-each select="$biblio-doc/t:bibl">
-                                                <xsl:call-template name="buildCitation"/>
+                                                <xsl:call-template name="buildCitation"><xsl:with-param name="biblType">principalEdition</xsl:with-param></xsl:call-template>
+                                            </xsl:for-each>
+                                            <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)]">
+                                                <xsl:apply-templates/>
+                                                <xsl:if test="position() != last()">
+                                                    <xsl:text> </xsl:text>
+                                                </xsl:if>
                                             </xsl:for-each>
                                         </xsl:when>
                                         <xsl:otherwise>
@@ -237,9 +231,24 @@
                                     </xsl:choose>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:call-template name="buildCitation"/>
+                                    <xsl:call-template name="buildCitation"><xsl:with-param name="biblType">principalEdition</xsl:with-param></xsl:call-template>
+                                    <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)]">
+                                        <xsl:apply-templates/>
+                                        <xsl:if test="position() != last()">
+                                            <xsl:text> </xsl:text>
+                                        </xsl:if>
+                                    </xsl:for-each>
                                 </xsl:otherwise>
                             </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:call-template name="buildCitation"><xsl:with-param name="biblType">principalEdition</xsl:with-param></xsl:call-template>
+                            <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)]">
+                                <xsl:apply-templates/>
+                                <xsl:if test="position() != last()">
+                                    <xsl:text> </xsl:text>
+                                </xsl:if>
+                            </xsl:for-each>
                         </xsl:otherwise>
                     </xsl:choose>
                 </td>
