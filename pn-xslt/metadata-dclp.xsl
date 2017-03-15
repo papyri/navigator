@@ -197,6 +197,26 @@
                     <xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
+            <xsl:variable name="passThrough">
+                <xsl:choose>
+                    <xsl:when test="child::comment()[contains(.,'ignore')]">
+                        <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')]]">
+                            <xsl:apply-templates/>
+                            <xsl:if test="position() != last()">
+                                <xsl:text> </xsl:text>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:for-each select="$references/child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)]">
+                            <xsl:apply-templates/>
+                            <xsl:if test="position() != last()">
+                                <xsl:text> </xsl:text>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
             <tr>
                 <th><xsl:value-of select="$heading"/></th>
                 <td>
@@ -221,12 +241,7 @@
                                             <xsl:for-each select="$biblio-doc/t:bibl">
                                                 <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
                                             </xsl:for-each>
-                                            <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')]]">
-                                                <xsl:apply-templates/>
-                                                <xsl:if test="position() != last()">
-                                                    <xsl:text> </xsl:text>
-                                                </xsl:if>
-                                            </xsl:for-each>
+                                            <xsl:value-of select="$passThrough"/>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:message>ERROR (<xsl:value-of select="//t:idno[@type='filename']"/>): local file "<xsl:value-of select="$biblio-filename"/>" is not available.</xsl:message>
@@ -235,23 +250,13 @@
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
-                                    <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')]]">
-                                        <xsl:apply-templates/>
-                                        <xsl:if test="position() != last()">
-                                            <xsl:text> </xsl:text>
-                                        </xsl:if>
-                                    </xsl:for-each>
+                                    <xsl:value-of select="$passThrough"/>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
-                            <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')]]">
-                                <xsl:apply-templates/>
-                                <xsl:if test="position() != last()">
-                                    <xsl:text> </xsl:text>
-                                </xsl:if>
-                            </xsl:for-each>
+                            <xsl:value-of select="$passThrough"/>
                         </xsl:otherwise>
                     </xsl:choose>
                 </td>
