@@ -58,7 +58,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
-      <xsl:when test="contains($url, 'hgv/')">
+      <xsl:when test="contains($url, 'hgv/') or contains($url, 'dclp/')">
         <xsl:variable name="dir">
           <xsl:choose>
             <xsl:when test="ends-with($url, '/source')"><xsl:value-of select="ceiling(number(replace(substring-before(substring-after($url, 'http://papyri.info/hgv/'), '/'), '[a-z]', '')) div 1000)"></xsl:value-of></xsl:when>
@@ -120,7 +120,7 @@
     <xsl:param name="url"/>
     
     <xsl:choose>
-      <xsl:when test="matches($url, '^http://papyri\.info/(ddbdp|hgv|apis)$')">
+      <xsl:when test="matches($url, '^http://papyri\.info/(ddbdp|hgv|dclp|apis)$')">
         <xsl:sequence select="pi:decode-uri(upper-case(replace($url, 'http://papyri\.info/', '')))"/>
       </xsl:when>
       <xsl:otherwise>
@@ -377,6 +377,9 @@
       </xsl:when>
       <xsl:when test="$collection='hgv'">
         <xsl:sequence select="concat('http://papyri.info/hgv/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
+      </xsl:when>
+      <xsl:when test="$collection='dclp'">
+        <xsl:sequence select="concat('http://papyri.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="concat('http://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>

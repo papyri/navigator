@@ -44,9 +44,11 @@
       "HGV_meta_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
       "HGV_trans_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl",
+      "DCLP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/dclp-rdf.xsl",
       "Biblio" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
 (def idproot "/srv/data/papyri.info/idp.data")
 (def ddbroot "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML")
+(def domain "papyri.info")
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
@@ -105,6 +107,9 @@
     (if (.contains xslt "ddbdp-rdf")
       (dosync (ref-set param (list "root" idproot)))
       (dosync (ref-set param (list "DDB-root" ddbroot))))
+    (if (.contains xslt "dclp-rdf")
+      (dosync (ref-set param (list "root" idproot)))
+      (dosync (ref-set param (list "domain" domain))))
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
         configuration (Configuration.)
         compiler-info (CompilerInfo.)]
@@ -121,6 +126,7 @@
     (.contains (str file) "HGV_meta_EpiDoc") (xslts "HGV_meta_EpiDoc")
     (.contains (str file) "APIS") (xslts "APIS")
     (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")
+    (.contains (str file) "DCLP") (xslts "DCLP")
     (.contains (str file) "Biblio") (xslts "Biblio")))
 
 (defn format-url-query
@@ -143,6 +149,7 @@
     (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "DCLP") (str "dclp.atlantides.org/dclp/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")))
 
 (defn url-from-file
@@ -206,12 +213,11 @@
           (.add adapter graph model)
           (catch Exception ex
             (println "Failed to load file.")))))))
-    
 
 (defn -insertPelagiosAnnotations
   [url]
   (if-not (nil? url)
-    (let [dga (DatasetGraphAccessorHTTP. (str server "/srv/data"))
+    (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
           adapter (DatasetAdapter. dga)
           model (ModelFactory/createDefaultModel)
           pi-uri (str/replace url "/source" "/original")
@@ -422,9 +428,12 @@
       (-deleteRelation "http://purl.org/dc/terms/relation")
       (-deleteRelation "http://purl.org/dc/terms/replaces")
       (-deleteRelation "http://purl.org/dc/terms/isReplacedBy")
+      (-deleteRelation "http://purl.org/dc/terms/isPartOf")
+      (-deleteRelation "http://purl.org/dc/terms/source")
       (-deleteRelation "http://purl.org/dc/terms/identifier")
       (-deleteRelation "http://purl.org/dc/terms/bibliographicCitation")
       (-deleteRelation "http://www.w3.org/2000/01/rdf-schema#label")
+      (-deleteRelation "http://xmlns.com/foaf/0.1/page")
       (println "Processing DDB_EpiDoc_XML")
       (load-map (str idproot "/DDB_EpiDoc_XML"))
       (println "Processing HGV_meta_EpiDoc")
@@ -433,6 +442,8 @@
       (load-map (str idproot "/APIS"))
       (println "Processing HGV_trans_EpiDoc")
       (load-map (str idproot "/HGV_trans_EpiDoc"))
+      (println "Processing DCLP")
+      (load-map (str idproot "/DCLP"))
       (println "Processing Bibliography")
       (load-map (str idproot "/Biblio"))
       (-loadFile "/srv/data/papyri.info/idp.data/RDF/collection.rdf")

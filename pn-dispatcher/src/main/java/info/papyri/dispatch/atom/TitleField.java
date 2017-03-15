@@ -9,11 +9,14 @@ public enum TitleField{
     ddbdp_series,
     hgv_series,
     apis_series,
+	dclp_series,
     ddbdp_volume,
     hgv_volume,
+	dclp_volume,
     ddbdp_full_identifier,
     hgv_full_identifier,
-    apis_full_identifier
+    apis_full_identifier,
+    dclp_full_identifier
 
 
 }

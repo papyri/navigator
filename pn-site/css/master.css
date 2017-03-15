@@ -179,6 +179,35 @@ div.nav a {
 color: #5C0303;
 text-decoration: none;
 }
+
+/* nav dclp */
+
+div.nav li.dclp{
+  position: relative;
+
+}
+
+div.nav li.dclp ul{
+  position: absolute;
+  top: 1.6em;
+  left: 0;
+  width: auto;
+  background: #ccc;
+  overflow: visible;
+  width: auto;
+  display: none;
+}
+
+div.nav li.dclp:hover ul{
+  display: block;
+}
+
+div.nav li.dclp ul li{
+  display: block;
+  width: 16em;
+  overflow: visible;
+}
+
 /* Images */
 div#olimage {
 width: 512px;
