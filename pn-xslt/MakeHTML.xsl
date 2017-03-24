@@ -133,7 +133,7 @@
   <xsl:template match="/">
     <!-- set variables to control dispatch of transformation based on context -->
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
-    <xsl:variable name="dclp" select="$collection = 'dclp'"/>
+    <xsl:variable name="dclp" select="$collection = 'dclp' or contains($related, 'dclp/')"/>
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="tm" select="contains($related, 'trismegistos.org/')"/>
@@ -224,7 +224,7 @@
       <body onload="init()">
         <div id="d">
           <div id="hd">
-            <h1>Papyri.info</h1>
+            <h1>DCLP</h1>
             <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>   
           </div>
           <div id="bd">
@@ -283,13 +283,18 @@
                       <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
                     </div>
                   </xsl:if>
+                  <xsl:if test="$dclp and not($ddbdp or $hgv or $apis)">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/dclp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI: </span>
                     <span id="canonical-uri-value"><a href="{$selfUrl}"><xsl:value-of select="$selfUrl"/></a></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
-                  <xsl:if test="$hgv or $apis">
+                  <xsl:if test="$hgv or $apis or $dclp">
                     <div class="metadata">
                       <xsl:for-each select="$relations[contains(., 'hgv/')]">
                         <xsl:sort select="." order="ascending"/>
@@ -307,6 +312,15 @@
                         </xsl:if>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(., 'dclp/')]">
                         <xsl:sort select="." order="ascending"/>
                         <xsl:choose>
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
@@ -680,4 +694,3 @@
     <xsl:value-of select="@rdf:about"/>
   </xsl:template>
 </xsl:stylesheet>
-
