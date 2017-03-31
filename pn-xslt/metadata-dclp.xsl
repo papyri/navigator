@@ -12,7 +12,7 @@
         
         <!-- New Work -->
         <xsl:apply-templates
-            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
+            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl"
             mode="metadata"/>
         
         <!-- Content overview -->
