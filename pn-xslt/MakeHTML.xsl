@@ -142,12 +142,13 @@
     <!-- start writing the output file -->
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
+    <xsl:variable name="selfUrlByCorpus" select="if(contains($selfUrl, '/dclp/'))then(replace($selfUrl, 'papyri.info', 'litpap.info'))else($selfUrl)"/><!-- cl: cromulent dclp canonical URL -->
    
     <html lang="en" version="HTML+RDFa 1.1"
       prefix="dc: http://purl.org/dc/terms/">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta property="dc:identifier" content="{$selfUrl}"/>
+        <meta property="dc:identifier" content="{$selfUrlByCorpus}"/>
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
@@ -169,7 +170,7 @@
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="{$cssbase}/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
+        <link rel="bookmark" href="{$selfUrlByCorpus}" title="Canonical URI"/>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
@@ -290,7 +291,7 @@
                   </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI: </span>
-                    <span id="canonical-uri-value"><a href="{$selfUrl}"><xsl:value-of select="$selfUrl"/></a></span>
+                    <span id="canonical-uri-value"><a href="{$selfUrlByCorpus}"><xsl:value-of select="$selfUrlByCorpus"/></a></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
@@ -458,11 +459,11 @@
                 </xsl:if> 
                 <div id="ld" class="data">
                   <h2>Linked Data</h2>
-                  <p><a href="{replace($selfUrl,'http://papyri.info','')}/rdf">RDF/XML</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/turtle">Turtle</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/n3">N-Triples</a> |
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/json">JSON</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/graph">Graph Visualization</a></p>
+                  <p><a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/rdf">RDF/XML</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/turtle">Turtle</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/n3">N-Triples</a> |
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/json">JSON</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/graph">Graph Visualization</a></p>
                 </div>
               </div>
             </div>
