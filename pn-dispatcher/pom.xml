@@ -130,6 +130,11 @@
       <artifactId>pegdown</artifactId>
       <version>1.4.1</version>
     </dependency>
+    <dependency>
+        <groupId>com.github.jsonld-java</groupId>
+        <artifactId>jsonld-java</artifactId>
+        <version>0.10.0</version>
+    </dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>
