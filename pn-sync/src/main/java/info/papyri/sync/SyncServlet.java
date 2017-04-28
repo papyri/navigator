@@ -99,7 +99,7 @@ public class SyncServlet extends HttpServlet {
       if ("status".equals(action)) {
         response.setContentType("application/json;charset=UTF-8");
         out.println("{");
-        out.println("  \"success\": " + publisher.getSuccess() + "\",");
+        out.println("  \"success\": " + publisher.getSuccess() + ",");
         out.println("  \"status\": \"" + publisher.status() + "\",");
         out.println("  \"started\": \"" + publisher.getTimestamp() + "\",");
         out.println("  \"last\": \"" + publisher.getLastRun() + "\"");
