@@ -121,7 +121,7 @@ public class FacetBrowser extends HttpServlet {
     response.setContentType("text/html;charset=UTF-8");
     request.setCharacterEncoding("UTF-8");
     
-    if (request.getQueryString().toLowerCase().contains("%3cscript%3e")) {
+    if (request.getQueryString() != null && request.getQueryString().toLowerCase().contains("%3cscript%3e")) {
         response.sendError(400, "Not today, Satan.");
         return;
     }
