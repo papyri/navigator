@@ -100,8 +100,8 @@ public class SyncServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         out.println("{");
         out.println("  \"success\": " + publisher.getSuccess() + ",");
-        out.println("  \"status\": \"" + publisher.status() + "\"");
-        out.println("  \"started\": \"" + publisher.getTimestamp() + "\"");
+        out.println("  \"status\": \"" + publisher.status() + "\",");
+        out.println("  \"started\": \"" + publisher.getTimestamp() + "\",");
         out.println("  \"last\": \"" + publisher.getLastRun() + "\"");
         out.println("}");
       }
