@@ -25,6 +25,18 @@
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
             mode="metadata-dclp"/>
         
+        <!-- Catalog(s)/MP3 number -->
+        <xsl:if test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='MP3']">
+            <tr>
+                <th class="rowheader">Catalog(s)</th>
+                <td>
+                    <xsl:for-each select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='MP3']">
+                        <xsl:value-of select="concat('MP3 ',.)"/>
+                        <xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>
+        </xsl:if>
         <!-- Fragments / Inv. Id-->
         <tr>
             <th class="rowheader">Fragments</th>
