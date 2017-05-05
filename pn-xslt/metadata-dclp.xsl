@@ -70,6 +70,19 @@
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc"
             mode="dclp-metadata-form"/>
         
+        <!-- Script Type -->
+        <xsl:if test="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc">
+            <tr>
+                <th class="rowheader">Script Type</th>
+                <td>
+                    <xsl:for-each select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc">
+                        <xsl:apply-templates select="t:p/node()"/>
+                        <xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>
+        </xsl:if>
+        
         <!-- Genre -->
         <xsl:call-template name="dclp-keywords">
             <xsl:with-param name="label">Genre</xsl:with-param>
