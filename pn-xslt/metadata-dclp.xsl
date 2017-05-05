@@ -85,6 +85,11 @@
             <xsl:with-param name="type">religion</xsl:with-param>
         </xsl:call-template>
         
+        <!-- General Notes -->
+        <xsl:apply-templates
+            select="t:text/t:body/t:div[@type = 'commentary' and @subtype = 'general']"
+            mode="metadata-dclp"/>
+        
         <!-- Externally Published Illustrations -->
         <xsl:apply-templates
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations']"
@@ -264,6 +269,14 @@
         </xsl:for-each>
     </xsl:template>
 
+    <!-- Handle General notes   -->
+    <xsl:template match="t:div[@type = 'commentary' and @subtype='general']" mode="metadata-dclp">
+        <tr>
+            <th class="rowheader">General Notes</th>
+            <td><xsl:apply-templates select="t:p/node()"/></td>
+        </tr>
+    </xsl:template>
+    
     <!-- handle external illustrations bibliography and web links -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype='illustrations']" mode="metadata-dclp">
         <!-- images -->
