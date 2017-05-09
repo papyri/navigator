@@ -37,6 +37,36 @@
                 </td>
             </tr>
         </xsl:if>
+
+        <!-- Archive <collection type="ancient"> -->
+        <xsl:if test="//t:msIdentifier/t:collection[@type='ancient']">
+            <tr>
+                <th class="rowheader">Archive</th>
+                <td>
+                    <xsl:for-each select="//t:msIdentifier/t:collection[@type='ancient']">
+                        <xsl:choose>
+                            <xsl:when test="@ref">
+                                <a href="{@ref}"><xsl:value-of select="."/></a>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:if test="position() != last()">
+                            <xsl:choose>
+                                <xsl:when test="substring(., string-length(.), 1) = ';'">
+                                    <xsl:text> </xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text>; </xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>
+        </xsl:if>
+
         <!-- Fragments / Inv. Id-->
         <tr>
             <th class="rowheader">Fragments</th>
