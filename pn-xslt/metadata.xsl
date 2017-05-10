@@ -313,28 +313,46 @@
   
   <!-- Ancient author and work -->
   <xsl:template
-    match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
+    match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl"
     mode="metadata">
-      <tr>
-        <th class="rowheader" rowspan="1">Work</th>
-        <td>
-          <xsl:choose>
-            <xsl:when test="t:author">
-              <xsl:value-of select="t:author"/>
-            </xsl:when>
-            <xsl:otherwise>Unknown</xsl:otherwise>
-          </xsl:choose>
-          <xsl:if test="t:title">, </xsl:if>
-          <xsl:value-of select="t:title"/>
-          <xsl:if test="t:biblScope">
-            <xsl:text> </xsl:text>
-          </xsl:if>
-          <xsl:for-each select="t:biblScope">
-            <xsl:value-of select="."/>
-            <xsl:if test="./following-sibling::t:biblScope">.</xsl:if>
-          </xsl:for-each>
-        </td>
-      </tr>
+    <tr>
+      <th class="rowheader" rowspan="1">Work<xsl:if test="count(t:bibl) &gt; 1">s</xsl:if></th>
+      <td>
+        <xsl:choose>
+          <xsl:when test="count(t:bibl) &gt; 1">
+            <ul>
+              <xsl:for-each select="t:bibl">
+                <li><xsl:apply-templates select="." mode="metadata"/></li>
+              </xsl:for-each>
+            </ul>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:for-each select="t:bibl">
+              <xsl:apply-templates select="." mode="metadata"/>
+            </xsl:for-each>
+          </xsl:otherwise>
+        </xsl:choose>
+      </td>
+    </tr>
+  </xsl:template>
+  
+  <!-- Ancient author and work text -->
+  <xsl:template match="t:bibl" mode="metadata">
+    <xsl:choose>
+      <xsl:when test="t:author">
+        <xsl:value-of select="t:author"/>
+      </xsl:when>
+      <xsl:otherwise>Unknown</xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="t:title">, </xsl:if>
+    <xsl:value-of select="t:title"/>
+    <xsl:if test="t:biblScope">
+      <xsl:text> </xsl:text>
+    </xsl:if>
+    <xsl:for-each select="t:biblScope">
+      <xsl:value-of select="."/>
+      <xsl:if test="./following-sibling::t:biblScope">.</xsl:if>
+    </xsl:for-each>
   </xsl:template>
   
   <!-- overview keyword handling -->
