@@ -103,7 +103,7 @@
                             </xsl:if>
                         </xsl:for-each>    
                     </span>
-                    <span class="fragmentsMetadata elips">...</span>
+                    <span class="fragmentsMetadata">...</span>
                     <input type="button" class="toggleFragments" 
                         style="margin-left:.5em; 
                         background-color: transparent; 
