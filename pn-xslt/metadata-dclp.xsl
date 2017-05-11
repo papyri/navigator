@@ -87,7 +87,7 @@
                 </xsl:for-each>
                 <!-- If greater then 10 fragments use jquery toggle function to show/hide fragments above 10 -->
                 <xsl:if test="count(//t:msIdentifier/descendant::t:idno[@type='invNo']) &gt; 10">
-                    <span id="fragmentsMetadata" style="display:none;">
+                    <span class="fragmentsMetadata" style="display:none;">
                         <xsl:for-each select="//t:msIdentifier/descendant::t:idno[@type='invNo'][position() &gt; 9]">
                             <xsl:if test="position() = 1"><xsl:text>; </xsl:text></xsl:if>
                             <xsl:value-of select="."/>
@@ -103,11 +103,18 @@
                             </xsl:if>
                         </xsl:for-each>    
                     </span>
-                    <input type="button" class="toggleFragments" style="margin-left:.5em; background-color: transparent; text-decoration: underline; border: none; font-size: small; color: #162A5C; cursor: pointer;" value="[Show All Fragments]"/>
+                    <span class="fragmentsMetadata elips">...</span>
+                    <input type="button" class="toggleFragments" 
+                        style="margin-left:.5em; 
+                        background-color: transparent; 
+                        text-decoration: underline; 
+                        border: none; font-size: 
+                        small; color: #162A5C; 
+                        cursor: pointer;" value="[Show All Fragments]"/>
                     <!-- Javascript to toggle fragment view -->
                     <script type="text/javascript">
                         $('.toggleFragments').click(function(){
-                            $("#fragmentsMetadata").slideToggle();
+                            $(this).siblings('span.fragmentsMetadata').toggle();
                             $(this).val( $(this).val() == '[Fewer Fragments]' ? '[Show All Fragments]' : '[Fewer Fragments]' );    
                          });   
                     </script>  
