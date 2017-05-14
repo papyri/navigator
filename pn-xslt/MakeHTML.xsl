@@ -294,7 +294,7 @@
                     <span id="canonical-uri-value"><a href="{$selfUrlByCorpus}"><xsl:value-of select="$selfUrlByCorpus"/></a></span>
                   </div>
                 </div>
-                <xsl:if test="$collection = 'ddbdp'">
+                <xsl:if test="$collection = ('ddbdp', 'dclp')">
                   <xsl:if test="$hgv or $apis or $dclp">
                     <div class="metadata">
                       <xsl:for-each select="$relations[contains(., 'hgv/')]">
@@ -343,7 +343,7 @@
                       <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
                       <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
                     </xsl:apply-templates>
-                    <xsl:for-each select="pi:get-docs($relations[contains(., '/ddbdp/') and not(contains($replaces,.))], 'xml')/t:TEI">
+                    <xsl:for-each select="pi:get-docs($relations[matches(., '/(ddbdp|dclp)/') and not(contains($replaces,.))], 'xml')/t:TEI">
                       <xsl:apply-templates select="." mode="text">
                         <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
