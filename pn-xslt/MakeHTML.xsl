@@ -620,6 +620,10 @@
   
   <!-- Generate parallel reference string -->
   <xsl:template name="get-references">
+    <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]">
+      <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]"/>
+      <xsl:text> = </xsl:text>
+    </xsl:if>
     <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
     <xsl:if test="$collection = 'dclp'">Trismegistos </xsl:if>
     <xsl:choose>
