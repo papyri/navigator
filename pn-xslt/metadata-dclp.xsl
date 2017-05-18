@@ -9,6 +9,8 @@
     <xsl:output method="html"/>
     
     <xsl:template name="serialize-dclp-metadata">
+        <!-- Title  -->
+        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt" mode="metadata"/>
         
         <!-- New Work -->
         <xsl:apply-templates
@@ -223,6 +225,15 @@
                 <td><xsl:for-each select="$terms/t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
             </tr>
         </xsl:if>
+    </xsl:template>
+    
+    <!-- Template for title -->
+    <!-- t:teiHeader/t:fileDesc/t:titleStmt/t:title -->
+    <xsl:template match="t:titleStmt" mode="metadata-dclp">
+        <tr>
+            <th class="rowheader">Title</th>
+            <td><xsl:apply-templates select="t:title"/></td>
+        </tr>
     </xsl:template>
     
     <xsl:template match="t:physDesc" mode="dclp-metadata-form">
