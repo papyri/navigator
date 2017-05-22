@@ -430,6 +430,7 @@
                   </div>
                 </xsl:if>
                 <xsl:if test="$collection = 'dclp'">
+                  <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
                   <div class="metadata">
                     <xsl:apply-templates select="/t:TEI" mode="metadata"/>
                     <xsl:call-template name="biblio"/>
@@ -437,26 +438,68 @@
                   <div class="text">
                     <xsl:comment>text information will go here: div[@type=commentary][@subtype='frontmatter]</xsl:comment>
                     <div class="transcription data">
-                      <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
                       <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
                       <xsl:variable name="text-dclp">
                         <xsl:apply-templates select="//t:div[@type='edition']"> 
-						<xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                      <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                      <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                      <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                      <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                      <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                      <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-					  </xsl:apply-templates>
+                          <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                          <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                          <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                          <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                          <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                          <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                          <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                        </xsl:apply-templates>
                       </xsl:variable>
                       <!-- Moded templates found in htm-tpl-sqbrackets.xsl (this fixes/collapses abutting square brackets) -->
                       <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
+                    </div>
+                    <!-- Add in Editorial history for DCLP data -->
+                    <div id="history">
+                      <div id="history-headers">
+                        <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{concat('https://github.com/DCLP/idp.data/blame/master/DCLP/',$file-uri,'/',t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'],'.xml')}" target="_blank">detailed</a>)</h3>
+                      </div>
+                      <!--
+                      <ul>
+                        <xsl:for-each select="/t:TEI/descendant::t:revisionDesc/t:change">
+                          <li>Change: <xsl:value-of select="."/></li>
+                        </xsl:for-each>
+                      </ul>
+                      -->
+                      <!-- closing #history-headers -->
+                      <div id="history-lists">
+                        <ul id="edit-history-list" style="display:none;">
+                          <xsl:choose>
+                            <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+                            <xsl:when test="count(//t:revisionDesc/t:change[contains(@when, 'T')]) &gt; 0">
+                              <xsl:for-each select="//t:revisionDesc/t:change[contains(@when, 'T')]">
+                                <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:choose><xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when><xsl:otherwise><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/></xsl:otherwise></xsl:choose></a>]: <xsl:apply-templates/></li>
+                              </xsl:for-each>                                     
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <li>No editorial history recorded.</li>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </ul>
+                        <ul id="all-history-list" style="display:none">
+                          <xsl:choose>
+                            <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+                            <xsl:when test="count(//t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')])">
+                              <xsl:for-each select="//t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')]">
+                                <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:choose><xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when><xsl:otherwise><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/></xsl:otherwise></xsl:choose></a>]: <xsl:value-of select="."/></li>
+                              </xsl:for-each>                                                    
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <li>No further history recorded.</li>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </ul>
+                      </div>
+                      <!-- closing #history-lists -->
+                    </div>
                   </div>
-				  </div>
-                </xsl:if> 
+                </xsl:if>  
                 <div id="ld" class="data">
                   <h2>Linked Data</h2>
                   <p><a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/rdf">RDF/XML</a> | 
