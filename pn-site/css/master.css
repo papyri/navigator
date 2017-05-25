@@ -377,6 +377,9 @@ margin:0.3em;
 font-family: Verdana, Helvetica, sans-serif;
 font-size: 80%;
 }
+.br.indent, .br.eisthesis {display:inline-block; width:2em;}
+.br.outdent, .br.ekthesis {display:inline-block; width:2em; margin-left:-4em;}
+.br {display:none;}
 
 /* Copied from http://papyri.info/global.css */
 .latinnum {
