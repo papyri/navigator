@@ -142,12 +142,13 @@
     <!-- start writing the output file -->
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
+    <xsl:variable name="selfUrlByCorpus" select="if(contains($selfUrl, '/dclp/'))then(replace($selfUrl, 'papyri.info', 'litpap.info'))else($selfUrl)"/><!-- cl: cromulent dclp canonical URL -->
    
     <html lang="en" version="HTML+RDFa 1.1"
       prefix="dc: http://purl.org/dc/terms/">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta property="dc:identifier" content="{$selfUrl}"/>
+        <meta property="dc:identifier" content="{$selfUrlByCorpus}"/>
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
@@ -169,7 +170,7 @@
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="{$cssbase}/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
+        <link rel="bookmark" href="{$selfUrlByCorpus}" title="Canonical URI"/>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
@@ -290,7 +291,7 @@
                   </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI: </span>
-                    <span id="canonical-uri-value"><a href="{$selfUrl}"><xsl:value-of select="$selfUrl"/></a></span>
+                    <span id="canonical-uri-value"><a href="{$selfUrlByCorpus}"><xsl:value-of select="$selfUrlByCorpus"/></a></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
@@ -441,28 +442,29 @@
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
                       <xsl:variable name="text-dclp">
                         <xsl:apply-templates select="//t:div[@type='edition']"> 
-						<xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                      <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                      <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                      <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                      <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                      <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                      <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-					  </xsl:apply-templates>
+						            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+					             </xsl:apply-templates>
                       </xsl:variable>
                       <!-- Moded templates found in htm-tpl-sqbrackets.xsl (this fixes/collapses abutting square brackets) -->
                       <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
                   </div>
-				  </div>
+				          </div>
+                  <xsl:apply-templates select="//t:revisionDesc" mode="history"/>
                 </xsl:if> 
                 <div id="ld" class="data">
                   <h2>Linked Data</h2>
-                  <p><a href="{replace($selfUrl,'http://papyri.info','')}/rdf">RDF/XML</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/turtle">Turtle</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/n3">N-Triples</a> |
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/json">JSON</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/graph">Graph Visualization</a></p>
+                  <p><a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/rdf">RDF/XML</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/turtle">Turtle</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/n3">N-Triples</a> |
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/json">JSON</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/graph">Graph Visualization</a></p>
                 </div>
               </div>
             </div>
@@ -553,6 +555,45 @@
       <p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a> © Duke Databank of Documentary Papyri.  
         This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
     </div> 
+  </xsl:template>
+  
+  <xsl:template match="t:revisionDesc" mode="history">
+    <xsl:variable name="file-uri" select="number(substring(//t:idno[@type='TM'],0,3))+1"/>
+    <div id="history" class="text">
+        <div id="history-headers">
+          <h3><span id="edit-history">Editorial History</span>; 
+            <span id="all-history">All History</span>; 
+            (<a href="{concat('https://github.com/DCLP/idp.data/blame/master/DCLP/',$file-uri,'/',/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'],'.xml')}" target="_blank">detailed</a>)</h3>
+        </div>
+        <div id="history-lists">
+          <ul id="edit-history-list" style="display:none;">
+            <xsl:choose>
+              <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+              <xsl:when test="count(t:change[contains(@when, 'T')]) &gt; 0">
+                <xsl:for-each select="t:change[contains(@when, 'T')]">
+                  <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:choose><xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when><xsl:otherwise><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/></xsl:otherwise></xsl:choose></a>]: <xsl:apply-templates/></li>
+                </xsl:for-each>                                     
+              </xsl:when>
+              <xsl:otherwise>
+                <li>No editorial history recorded.</li>
+              </xsl:otherwise>
+            </xsl:choose>
+          </ul>
+          <ul id="all-history-list" style="display:none">
+            <xsl:choose>
+              <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+              <xsl:when test="count(t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')])">
+                <xsl:for-each select="t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')]">
+                  <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:choose><xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when><xsl:otherwise><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/></xsl:otherwise></xsl:choose></a>]: <xsl:value-of select="."/></li>
+                </xsl:for-each>                                                    
+              </xsl:when>
+              <xsl:otherwise>
+                <li>No further history recorded.</li>
+              </xsl:otherwise>
+            </xsl:choose>
+          </ul>
+        </div>
+    </div>
   </xsl:template>
   
   <xsl:template match="t:TEI" mode="apistrans">
