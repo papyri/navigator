@@ -133,7 +133,7 @@
   <xsl:template match="/">
     <!-- set variables to control dispatch of transformation based on context -->
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
-    <xsl:variable name="dclp" select="$collection = 'dclp'"/>
+    <xsl:variable name="dclp" select="$collection = 'dclp' or contains($related, 'dclp/')"/>
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="tm" select="contains($related, 'trismegistos.org/')"/>
@@ -142,12 +142,13 @@
     <!-- start writing the output file -->
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
+    <xsl:variable name="selfUrlByCorpus" select="if(contains($selfUrl, '/dclp/'))then(replace($selfUrl, 'papyri.info', 'litpap.info'))else($selfUrl)"/><!-- cl: cromulent dclp canonical URL -->
    
     <html lang="en" version="HTML+RDFa 1.1"
       prefix="dc: http://purl.org/dc/terms/">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta property="dc:identifier" content="{$selfUrl}"/>
+        <meta property="dc:identifier" content="{$selfUrlByCorpus}"/>
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
@@ -169,7 +170,7 @@
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="{$cssbase}/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
+        <link rel="bookmark" href="{$selfUrlByCorpus}" title="Canonical URI"/>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
@@ -224,7 +225,7 @@
       <body onload="init()">
         <div id="d">
           <div id="hd">
-            <h1>Papyri.info</h1>
+            <h1>DCLP</h1>
             <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>   
           </div>
           <div id="bd">
@@ -283,13 +284,18 @@
                       <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
                     </div>
                   </xsl:if>
+                  <xsl:if test="$dclp and not($ddbdp or $hgv or $apis)">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/dclp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI: </span>
-                    <span id="canonical-uri-value"><a href="{$selfUrl}"><xsl:value-of select="$selfUrl"/></a></span>
+                    <span id="canonical-uri-value"><a href="{$selfUrlByCorpus}"><xsl:value-of select="$selfUrlByCorpus"/></a></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
-                  <xsl:if test="$hgv or $apis">
+                  <xsl:if test="$hgv or $apis or $dclp">
                     <div class="metadata">
                       <xsl:for-each select="$relations[contains(., 'hgv/')]">
                         <xsl:sort select="." order="ascending"/>
@@ -307,6 +313,15 @@
                         </xsl:if>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(., 'dclp/')]">
                         <xsl:sort select="." order="ascending"/>
                         <xsl:choose>
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
@@ -423,7 +438,7 @@
                     <xsl:comment>text information will go here: div[@type=commentary][@subtype='frontmatter]</xsl:comment>
                     <div class="transcription data">
                       <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
-                      <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/dclp/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
+                      <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
                       <xsl:variable name="text-dclp">
                         <xsl:apply-templates select="//t:div[@type='edition']"> 
@@ -444,11 +459,11 @@
                 </xsl:if> 
                 <div id="ld" class="data">
                   <h2>Linked Data</h2>
-                  <p><a href="{replace($selfUrl,'http://papyri.info','')}/rdf">RDF/XML</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/turtle">Turtle</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/n3">N-Triples</a> |
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/json">JSON</a> | 
-                    <a href="{replace($selfUrl,'http://papyri.info','')}/graph">Graph Visualization</a></p>
+                  <p><a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/rdf">RDF/XML</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/turtle">Turtle</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/n3">N-Triples</a> |
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/json">JSON</a> | 
+                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/graph">Graph Visualization</a></p>
                 </div>
               </div>
             </div>
@@ -680,4 +695,3 @@
     <xsl:value-of select="@rdf:about"/>
   </xsl:template>
 </xsl:stylesheet>
-

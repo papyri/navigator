@@ -58,7 +58,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
-      <xsl:when test="contains($url, 'hgv/') or contains($url, 'dclp/')">
+      <xsl:when test="contains($url, 'hgv/')">
         <xsl:variable name="dir">
           <xsl:choose>
             <xsl:when test="ends-with($url, '/source')"><xsl:value-of select="ceiling(number(replace(substring-before(substring-after($url, 'http://papyri.info/hgv/'), '/'), '[a-z]', '')) div 1000)"></xsl:value-of></xsl:when>
@@ -81,6 +81,11 @@
           </xsl:when>
           <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', substring-after($url, 'http://papyri.info/apis/'), 'index.html')"/></xsl:otherwise>
         </xsl:choose>
+      </xsl:when>
+      <xsl:when test="contains($url, 'dclp/')">
+        <xsl:variable name="tm" select="replace($url, '^.+dclp/(\d+)(/source)?$', '$1')"/>
+        <xsl:variable name="dir" select="ceiling(number($tm) div 1000)"/>
+        <xsl:sequence select="concat($base, '/DCLP/', $dir, '/', $tm, '.', $format)"/>
       </xsl:when>
       <!-- Like http://www.trismegistos.org/text/11999 -->
       <xsl:when test="contains($url, 'trismegistos.org')">

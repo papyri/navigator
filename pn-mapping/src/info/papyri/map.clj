@@ -107,9 +107,6 @@
     (if (.contains xslt "ddbdp-rdf")
       (dosync (ref-set param (list "root" idproot)))
       (dosync (ref-set param (list "DDB-root" ddbroot))))
-    (if (.contains xslt "dclp-rdf")
-      (dosync (ref-set param (list "root" idproot)))
-      (dosync (ref-set param (list "domain" domain))))
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
         configuration (Configuration.)
         compiler-info (CompilerInfo.)]
@@ -149,7 +146,7 @@
     (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
-    (.contains file "DCLP") (str "dclp.atlantides.org/dclp/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "DCLP") (str "papyri.info/dclp/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")))
 
 (defn url-from-file
