@@ -306,7 +306,7 @@
             <xsl:variable name="passThrough">
                 <xsl:choose>
                     <xsl:when test="child::comment()[contains(.,'ignore')]">
-                        <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')]]">
+                        <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')] or preceding-sibling::comment()[contains(.,'ignore - stop')]]">
                             <xsl:apply-templates/>
                             <xsl:if test="position() != last()">
                                 <xsl:text> </xsl:text>
