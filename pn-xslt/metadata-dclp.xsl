@@ -9,10 +9,12 @@
     <xsl:output method="html"/>
     
     <xsl:template name="serialize-dclp-metadata">
+        <!-- Title  -->
+        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt" mode="metadata"/>
         
         <!-- New Work -->
         <xsl:apply-templates
-            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl/t:bibl"
+            select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl"
             mode="metadata"/>
         
         <!-- Content overview -->
@@ -25,11 +27,54 @@
             select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
             mode="metadata-dclp"/>
         
+        <!-- Catalog(s)/MP3 number -->
+        <xsl:if test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='MP3']">
+            <tr>
+                <th class="rowheader">Catalog(s)</th>
+                <td>
+                    <xsl:for-each select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='MP3']">
+                        <xsl:value-of select="concat('MP3 ',.)"/>
+                        <xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>
+        </xsl:if>
+
+        <!-- Archive <collection type="ancient"> -->
+        <xsl:if test="//t:msIdentifier/t:collection[@type='ancient']">
+            <tr>
+                <th class="rowheader">Archive</th>
+                <td>
+                    <xsl:for-each select="//t:msIdentifier/t:collection[@type='ancient']">
+                        <xsl:choose>
+                            <xsl:when test="@ref">
+                                <a href="{@ref}"><xsl:value-of select="."/></a>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:if test="position() != last()">
+                            <xsl:choose>
+                                <xsl:when test="substring(., string-length(.), 1) = ';'">
+                                    <xsl:text> </xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text>; </xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>
+        </xsl:if>
+
         <!-- Fragments / Inv. Id-->
         <tr>
             <th class="rowheader">Fragments</th>
             <td>
-                <xsl:for-each select="//t:msIdentifier/descendant::t:idno[@type='invNo']">
+                <!-- Show first 10 fragments -->
+                <xsl:for-each select="//t:msIdentifier/descendant::t:idno[@type='invNo'][position() &lt; 10]">
                     <xsl:value-of select="."/>
                     <xsl:if test="position() != last()">
                         <xsl:choose>
@@ -42,6 +87,40 @@
                         </xsl:choose>
                     </xsl:if>
                 </xsl:for-each>
+                <!-- If greater then 10 fragments use jquery toggle function to show/hide fragments above 10 -->
+                <xsl:if test="count(//t:msIdentifier/descendant::t:idno[@type='invNo']) &gt; 10">
+                    <span class="fragmentsMetadata" style="display:none;">
+                        <xsl:for-each select="//t:msIdentifier/descendant::t:idno[@type='invNo'][position() &gt; 9]">
+                            <xsl:if test="position() = 1"><xsl:text>; </xsl:text></xsl:if>
+                            <xsl:value-of select="."/>
+                            <xsl:if test="position() != last()">
+                                <xsl:choose>
+                                    <xsl:when test="substring(., string-length(.), 1) = ';'">
+                                        <xsl:text> </xsl:text>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>; </xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:if>
+                        </xsl:for-each>    
+                    </span>
+                    <span class="fragmentsMetadata">...</span>
+                    <input type="button" class="toggleFragments" 
+                        style="margin-left:.5em; 
+                        background-color: transparent; 
+                        text-decoration: underline; 
+                        border: none; font-size: 
+                        small; color: #162A5C; 
+                        cursor: pointer;" value="[Show All Fragments]"/>
+                    <!-- Javascript to toggle fragment view -->
+                    <script type="text/javascript">
+                        $('.toggleFragments').click(function(){
+                            $(this).siblings('span.fragmentsMetadata').toggle();
+                            $(this).val( $(this).val() == '[Fewer Fragments]' ? '[Show All Fragments]' : '[Fewer Fragments]' );    
+                         });   
+                    </script>  
+              </xsl:if> 
             </td>
         </tr>
 
@@ -70,6 +149,19 @@
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc"
             mode="dclp-metadata-form"/>
         
+        <!-- Script Type -->
+        <xsl:if test="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc">
+            <tr>
+                <th class="rowheader">Script Type</th>
+                <td>
+                    <xsl:for-each select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc">
+                        <xsl:apply-templates select="t:p/node()"/>
+                        <xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
+                    </xsl:for-each>
+                </td>
+            </tr>
+        </xsl:if>
+        
         <!-- Genre -->
         <xsl:call-template name="dclp-keywords">
             <xsl:with-param name="label">Genre</xsl:with-param>
@@ -84,6 +176,11 @@
         <xsl:call-template name="dclp-keywords">
             <xsl:with-param name="type">religion</xsl:with-param>
         </xsl:call-template>
+        
+        <!-- General Notes -->
+        <xsl:apply-templates
+            select="t:text/t:body/t:div[@type = 'commentary' and @subtype = 'general']"
+            mode="metadata-dclp"/>
         
         <!-- Externally Published Illustrations -->
         <xsl:apply-templates
@@ -128,6 +225,15 @@
                 <td><xsl:for-each select="$terms/t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
             </tr>
         </xsl:if>
+    </xsl:template>
+    
+    <!-- Template for title -->
+    <!-- t:teiHeader/t:fileDesc/t:titleStmt/t:title -->
+    <xsl:template match="t:titleStmt" mode="metadata-dclp">
+        <tr>
+            <th class="rowheader">Title</th>
+            <td><xsl:apply-templates select="t:title"/></td>
+        </tr>
     </xsl:template>
     
     <xsl:template match="t:physDesc" mode="dclp-metadata-form">
@@ -264,6 +370,14 @@
         </xsl:for-each>
     </xsl:template>
 
+    <!-- Handle General notes   -->
+    <xsl:template match="t:div[@type = 'commentary' and @subtype='general']" mode="metadata-dclp">
+        <tr>
+            <th class="rowheader">General Notes</th>
+            <td><xsl:apply-templates select="t:p/node()"/></td>
+        </tr>
+    </xsl:template>
+    
     <!-- handle external illustrations bibliography and web links -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype='illustrations']" mode="metadata-dclp">
         <!-- images -->
