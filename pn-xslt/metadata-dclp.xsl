@@ -293,6 +293,61 @@
             </xsl:call-template>
         </xsl:for-each-group>
     </xsl:template>    
+    <xsl:template name="dclp-get-biblio-passthrough">
+        <xsl:param name="references"/>
+        <xsl:choose>
+            <xsl:when test="child::comment()[contains(.,'ignore')]">
+                <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')] or preceding-sibling::comment()[contains(.,'ignore - stop')]]">
+                    <xsl:apply-templates/>
+                    <xsl:if test="position() != last()">
+                        <xsl:text> </xsl:text>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:for-each select="$references/child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)]">
+                    <xsl:apply-templates/>
+                    <xsl:if test="position() != last()">
+                        <xsl:text> </xsl:text>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="dclp-biblio-principal-dereference">
+        <xsl:param name="passThrough"/>
+        <xsl:param name="type"/>
+        <xsl:choose>
+            <xsl:when test="t:ptr | t:ref">
+                <xsl:variable name="biblio-target" >
+                    <xsl:choose>
+                        <xsl:when test="t:ptr">
+                            <xsl:value-of select="concat(t:ptr[1]/@target, '/source')"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat(t:ref[1]/@target, '/source')"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="biblio-filename" select="pi:get-filename($biblio-target, 'xml')"/>
+                <xsl:choose>
+                    <xsl:when test="doc-available($biblio-filename)">
+                        <xsl:variable name="biblio-doc" select="pi:get-docs($biblio-target, 'xml')"/>
+                        <xsl:for-each select="$biblio-doc/t:bibl">
+                            <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
+                        </xsl:for-each>
+                        <xsl:value-of select="$passThrough"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:message>ERROR (<xsl:value-of select="//t:idno[@type='filename']"/>): local file "<xsl:value-of select="$biblio-filename"/>" is not available.</xsl:message>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
+                <xsl:value-of select="$passThrough"/>
+            </xsl:otherwise>
+        </xsl:choose>    </xsl:template>
     <xsl:template name="dclp-bibliography">
         <xsl:param name="heading"/>
         <xsl:param name="references"/>
@@ -304,61 +359,19 @@
                 </xsl:choose>
             </xsl:variable>
             <xsl:variable name="passThrough">
-                <xsl:choose>
-                    <xsl:when test="child::comment()[contains(.,'ignore')]">
-                        <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')] or preceding-sibling::comment()[contains(.,'ignore - stop')]]">
-                            <xsl:apply-templates/>
-                            <xsl:if test="position() != last()">
-                                <xsl:text> </xsl:text>
-                            </xsl:if>
-                        </xsl:for-each>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:for-each select="$references/child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)]">
-                            <xsl:apply-templates/>
-                            <xsl:if test="position() != last()">
-                                <xsl:text> </xsl:text>
-                            </xsl:if>
-                        </xsl:for-each>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:call-template name="dclp-get-biblio-passthrough">
+                    <xsl:with-param name="references" select="$references"/>
+                </xsl:call-template>
             </xsl:variable>
             <tr>
                 <th><xsl:value-of select="$heading"/></th>
                 <td>
                     <xsl:choose>
                         <xsl:when test=".[@subtype='principal'] and ancestor::t:div[@type='bibliography'][@subtype='principalEdition']">
-                            <xsl:choose>
-                                <xsl:when test="t:ptr | t:ref">
-                                    <xsl:variable name="biblio-target" >
-                                        <xsl:choose>
-                                            <xsl:when test="t:ptr">
-                                                <xsl:value-of select="concat(t:ptr[1]/@target, '/source')"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="concat(t:ref[1]/@target, '/source')"/>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:variable>
-                                    <xsl:variable name="biblio-filename" select="pi:get-filename($biblio-target, 'xml')"/>
-                                    <xsl:choose>
-                                        <xsl:when test="doc-available($biblio-filename)">
-                                            <xsl:variable name="biblio-doc" select="pi:get-docs($biblio-target, 'xml')"/>
-                                            <xsl:for-each select="$biblio-doc/t:bibl">
-                                                <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
-                                            </xsl:for-each>
-                                            <xsl:value-of select="$passThrough"/>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:message>ERROR (<xsl:value-of select="//t:idno[@type='filename']"/>): local file "<xsl:value-of select="$biblio-filename"/>" is not available.</xsl:message>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
-                                    <xsl:value-of select="$passThrough"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                            <xsl:call-template name="dclp-biblio-principal-dereference">
+                                <xsl:with-param name="passThrough" select="$passThrough"/>
+                                <xsl:with-param name="type" select="$type"/>
+                            </xsl:call-template>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
