@@ -9,6 +9,8 @@
     <xsl:output method="html"/>
     
     <xsl:template name="serialize-dclp-metadata">
+        <!-- Title  -->
+        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt" mode="metadata"/>
         
         <!-- New Work -->
         <xsl:apply-templates
@@ -225,6 +227,15 @@
         </xsl:if>
     </xsl:template>
     
+    <!-- Template for title -->
+    <!-- t:teiHeader/t:fileDesc/t:titleStmt/t:title -->
+    <xsl:template match="t:titleStmt" mode="metadata-dclp">
+        <tr>
+            <th class="rowheader">Title</th>
+            <td><xsl:apply-templates select="t:title"/></td>
+        </tr>
+    </xsl:template>
+    
     <xsl:template match="t:physDesc" mode="dclp-metadata-form">
         <tr>
             <th class="rowheader">Form and Layout</th>
@@ -295,7 +306,7 @@
             <xsl:variable name="passThrough">
                 <xsl:choose>
                     <xsl:when test="child::comment()[contains(.,'ignore')]">
-                        <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')]]">
+                        <xsl:for-each select="child::*[not(self::t:title) and not(self::t:ptr) and not(self::t:ref)][following-sibling::comment()[contains(.,'ignore - start')] or preceding-sibling::comment()[contains(.,'ignore - stop')]]">
                             <xsl:apply-templates/>
                             <xsl:if test="position() != last()">
                                 <xsl:text> </xsl:text>
