@@ -1,6 +1,5 @@
-<!-- script for updating dclp dropdown overview (author, tm, series). needs saxon in classpath -->
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!-- script for updating dclp dropdown overview (author, tm, series). needs saxon in classpath -->
 <xsl:stylesheet exclude-result-prefixes="#all" version="2.0"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:papy="Papyrillio"
@@ -230,9 +229,9 @@
          <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
             <title>DCLP</title>
-            <link rel="stylesheet" href="css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"></link>
-            <link rel="stylesheet" href="css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"></link>
-            <link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8"></link><script src="js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script><script src="js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script><script src="js/init.js" type="text/javascript" charset="utf-8"></script><script type="text/javascript">
+            <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"></link>
+            <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"></link>
+            <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8"></link><script src="js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script><script src="js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script><script src="js/init.js" type="text/javascript" charset="utf-8"></script><script type="text/javascript">
                
                var _gaq = _gaq || [];
                _gaq.push(['_setAccount', 'UA-19774706-1']);
