@@ -262,15 +262,40 @@
     
     <!-- handle principal edition bibliography -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']" mode="metadata-dclp">
-        <xsl:for-each select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']">
-            <xsl:call-template name="dclp-bibliography">
-                <xsl:with-param name="heading">Principal Edition</xsl:with-param>
-                <xsl:with-param name="references" select="."/>
-            </xsl:call-template>
-        </xsl:for-each>
+        <xsl:for-each-group select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']" group-by="@subtype">
+            <tr>
+                <th>Principal Edition</th>
+                <td>
+                    <xsl:choose>
+                        <xsl:when test="count(current-group()) &gt; 1">
+                            <ul>
+                                <xsl:for-each select="current-group()">
+                                    <xsl:sort select="t:date"/>
+                                    <li>
+                                        <xsl:call-template name="dclp-bibliography">
+                                            <xsl:with-param name="references" select="."/>    
+                                        </xsl:call-template>    
+                                    </li>
+                                </xsl:for-each>                            
+                            </ul>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="current-group()">
+                                <xsl:sort select="t:date"/>
+                                <xsl:call-template name="dclp-bibliography">
+                                    <xsl:with-param name="references" select="."/>    
+                                </xsl:call-template>        
+                            </xsl:for-each>                            
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </td>
+            </tr>
+        </xsl:for-each-group>
+        <!-- Sort and group t:bibl/@type reference. use pi:bibl-type-order() function to force correct sort order. See pi-functions.xsl for order. -->
         <xsl:for-each-group select="t:listBibl/t:bibl[@type='reference']"  group-by="@subtype">
-            <xsl:call-template name="dclp-bibliography">
-                <xsl:with-param name="heading">
+            <xsl:sort select="pi:bibl-type-order(current-grouping-key())" order="ascending"/>
+            <tr>
+                <th>
                     <xsl:choose>
                         <xsl:when test="@subtype='principal'">
                             <xsl:text>Reference Edition</xsl:text>
@@ -288,9 +313,32 @@
                             <xsl:value-of select="@subtype"/>
                         </xsl:otherwise>
                     </xsl:choose>
-                </xsl:with-param>
-                <xsl:with-param name="references" select="current-group()"/>
-            </xsl:call-template>
+                </th>
+                <td>
+                    <xsl:choose>
+                        <xsl:when test="count(current-group()) &gt; 1">
+                            <ul>
+                                <xsl:for-each select="current-group()">
+                                    <xsl:sort select="t:date"/>
+                                    <li>
+                                        <xsl:call-template name="dclp-bibliography">
+                                            <xsl:with-param name="references" select="."/>    
+                                        </xsl:call-template>    
+                                    </li>
+                                </xsl:for-each>                            
+                            </ul>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="current-group()">
+                                <xsl:sort select="t:date"/>
+                                <xsl:call-template name="dclp-bibliography">
+                                    <xsl:with-param name="references" select="."/>    
+                                </xsl:call-template>        
+                            </xsl:for-each>                            
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </td>
+            </tr>
         </xsl:for-each-group>
     </xsl:template>    
     <xsl:template name="dclp-get-biblio-passthrough">
@@ -363,23 +411,18 @@
                     <xsl:with-param name="references" select="$references"/>
                 </xsl:call-template>
             </xsl:variable>
-            <tr>
-                <th><xsl:value-of select="$heading"/></th>
-                <td>
-                    <xsl:choose>
-                        <xsl:when test=".[@subtype='principal'] and ancestor::t:div[@type='bibliography'][@subtype='principalEdition']">
-                            <xsl:call-template name="dclp-biblio-principal-dereference">
-                                <xsl:with-param name="passThrough" select="$passThrough"/>
-                                <xsl:with-param name="type" select="$type"/>
-                            </xsl:call-template>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
-                            <xsl:value-of select="$passThrough"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </td>
-            </tr>
+            <xsl:choose>
+                <xsl:when test=".[@subtype='principal'] and ancestor::t:div[@type='bibliography'][@subtype='principalEdition']">
+                    <xsl:call-template name="dclp-biblio-principal-dereference">
+                        <xsl:with-param name="passThrough" select="$passThrough"/>
+                        <xsl:with-param name="type" select="$type"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
+                    <xsl:value-of select="$passThrough"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:for-each>
     </xsl:template>
 
