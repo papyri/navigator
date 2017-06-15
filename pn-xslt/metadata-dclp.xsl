@@ -268,7 +268,7 @@
                 <td>
                     <xsl:choose>
                         <xsl:when test="count(current-group()) &gt; 1">
-                            <ul>
+                            <ul class="biblList">
                                 <xsl:for-each select="current-group()">
                                     <xsl:sort select="t:date"/>
                                     <li>
@@ -317,7 +317,7 @@
                 <td>
                     <xsl:choose>
                         <xsl:when test="count(current-group()) &gt; 1">
-                            <ul>
+                            <ul class="biblList">
                                 <xsl:for-each select="current-group()">
                                     <xsl:sort select="t:date"/>
                                     <li>
