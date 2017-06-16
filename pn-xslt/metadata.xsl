@@ -110,8 +110,8 @@
             <!-- Publications -->
             <tr>
               <th>Publications</th>
-              <td><xsl:for-each select="texref">
-                <xsl:variable name="eds" select="tokenize(fields[@n='19'], ' / ')"/>
+              <td><xsl:for-each select="texref[starts-with(field[@n='15'], '1.')]">
+                <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
                 <xsl:value-of select="field[@n='14']"/> (<xsl:for-each
                   select="editref"><a
                     href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
@@ -119,8 +119,15 @@
                         <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; <xsl:value-of
                           select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
               </xsl:for-each>
-                <xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
-                <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/></td>
+                <xsl:for-each select="texref">
+                <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
+                <xsl:value-of select="field[@n='14']"/> (<xsl:for-each
+                  select="editref"><a
+                    href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
+                      select="$eds[position()]"/></a><xsl:if test="position() != last()">
+                        <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; <xsl:value-of
+                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
+              </xsl:for-each></td>
             </tr>
             <!-- Inventory Number -->
             <tr>
@@ -165,7 +172,8 @@
             <tr>
               <th>Provenance</th>
               <td><xsl:for-each select="geotex">
-                <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of select="field[@n='28']"/></a><xsl:if test="following-sibling::geotex">; </xsl:if>
+                <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of
+                  select="field[@n='22']"/><xsl:if test="field[@n='20'] != ''"> <xsl:value-of select="field[@n='20']"/></xsl:if></a><xsl:if test="following-sibling::geotex">; </xsl:if>
               </xsl:for-each></td>
             </tr>
             <!-- Archive -->
