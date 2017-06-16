@@ -460,7 +460,7 @@ function alignRTL() {
         }
       } else {
         var offset = width - e.width();
-        if (e[0].previousSibling.textContent.trim() == "") {
+        if (e[0].previousSibling.textContent.trim() == "" && (e[0].previousElementSibling.localName == "br" || e[0].previousElementSibling.localName == "a")) {
           e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
         }
         e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
