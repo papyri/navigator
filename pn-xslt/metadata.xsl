@@ -115,7 +115,7 @@
                 <xsl:value-of select="field[@n='14']"/> (<xsl:for-each
                   select="editref"><a
                     href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
-                      select="$eds[position()]"/></a><xsl:if test="position() != last()">
+                      select="$eds[current()/position()]"/></a><xsl:if test="position() != last()">
                         <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; <xsl:value-of
                           select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> +
  </xsl:text></xsl:if>
