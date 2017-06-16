@@ -387,8 +387,12 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
 span[lang="ara"] {
     direction: rtl;
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
+    font-size: 1.5em;
     display: inline-block;
     text-align: right;
+}
+span[lang="ara"] * {
+    font-size: .67em;
 }
 span[lang="en"] {
 display: inline-block;
