@@ -803,7 +803,7 @@
                       (map-tm-functions out "date" [2 3 4 9 14] dates)
                       (map-tm-functions out "texref" [1 2 3 4 5 14 15 19 21] texrefs
                         (map-tm-functions out "editref" [0 1] editrefs))
-                      (map-tm-functions out "geotex" [2 28] geotex)
+                      (map-tm-functions out "geotex" [2 20 22] geotex)
                       (map-tm-functions out "georef" [0 7 25 35 36 37 38] georefs)
                       (map-tm-functions out "personref" [0 132 53 54 55 56 151] personrefs)
                       (map-tm-functions out "archref" [5 37] archrefs)
