@@ -117,16 +117,19 @@
                     href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
                       select="$eds[position()]"/></a><xsl:if test="position() != last()">
                         <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; <xsl:value-of
-                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
+                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> +
+ </xsl:text></xsl:if>
               </xsl:for-each>
-                <xsl:for-each select="texref">
+                <xsl:for-each select="texref[not(starts-with(field[@n='15'], '1.'))]">
+                  <xsl:if test="position() = 1"><xsl:text> = </xsl:text></xsl:if>
                 <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
                 <xsl:value-of select="field[@n='14']"/> (<xsl:for-each
                   select="editref"><a
                     href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
                       select="$eds[position()]"/></a><xsl:if test="position() != last()">
                         <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; <xsl:value-of
-                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
+                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> =
+ </xsl:text></xsl:if>
               </xsl:for-each></td>
             </tr>
             <!-- Inventory Number -->
