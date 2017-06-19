@@ -271,7 +271,7 @@
                             <ul class="biblList">
                                 <xsl:for-each select="current-group()">
                                     <xsl:sort select="t:date"/>
-                                    <li>
+                                    <li> - 
                                         <xsl:call-template name="dclp-bibliography">
                                             <xsl:with-param name="references" select="."/>    
                                         </xsl:call-template>    
@@ -320,7 +320,7 @@
                             <ul class="biblList">
                                 <xsl:for-each select="current-group()">
                                     <xsl:sort select="t:date"/>
-                                    <li>
+                                    <li> - 
                                         <xsl:call-template name="dclp-bibliography">
                                             <xsl:with-param name="references" select="."/>    
                                         </xsl:call-template>    
