@@ -111,6 +111,7 @@
                 <xsl:apply-templates
                   select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)"
                   mode="metadata"/>
+                <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance" mode="metadata"/>
                 <!-- Material -->
                 <xsl:apply-templates
                   select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material"
