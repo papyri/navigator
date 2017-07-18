@@ -138,6 +138,7 @@
         <xsl:apply-templates
             select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)"
             mode="metadata"/>
+        <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance[not(@type = 'stored')]" mode="metadata"/>
         
         <!-- Place Stored (Ancient) -->
         <xsl:apply-templates
