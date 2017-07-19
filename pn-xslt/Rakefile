@@ -1,6 +1,6 @@
 task setup: [] do 
 	if File.exists? "../epidoc-xslt"
-		sh "cd ../epidoc-xslt; git fetch"
+		sh "cd ../epidoc-xslt; git pull"
 	else
 		sh "git clone https://github.com/DCLP/epidoc-xslt.git ../epidoc-xslt"
 	end
