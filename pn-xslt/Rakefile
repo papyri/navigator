@@ -1,8 +1,8 @@
 task setup: [] do 
 	if File.exists? "../epidoc-xslt"
-		sh "cd ../epidoc-xslt; svn up"
+		sh "cd ../epidoc-xslt; git fetch"
 	else
-		sh "svn checkout http://svn.code.sf.net/p/epidoc/code/trunk/example-p5-xslt ../epidoc-xslt"
+		sh "git clone https://github.com/DCLP/epidoc-xslt.git ../epidoc-xslt"
 	end
 end
 
