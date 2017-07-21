@@ -62,6 +62,11 @@ public enum SolrField {
         untokenized_ic,
         untokenized_id,
         volume,
-        volume_led_path  
+        volume_led_path,
+        dclp_full_identifier,
+        dclp_identifier,
+        dclp_metadata,
+        dclp_series,
+        dclp_volume
         
 }

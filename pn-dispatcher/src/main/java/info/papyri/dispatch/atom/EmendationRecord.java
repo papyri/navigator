@@ -73,6 +73,11 @@ public class EmendationRecord {
             item = doc.getFieldValue(TitleField.hgv_full_identifier.name()) == null ? "" : (String) doc.getFieldValue(TitleField.hgv_full_identifier.name());            
             
         }
+        else if(id.contains("/dclp/")){
+            series = doc.getFieldValue(TitleField.dclp_series.name()) == null ? "" : (String) doc.getFieldValue(TitleField.dclp_series.name());
+            volume = doc.getFieldValue(TitleField.dclp_volume.name()) == null ? "" : (String) doc.getFieldValue(TitleField.dclp_volume.name());
+            item = doc.getFieldValue(TitleField.dclp_full_identifier.name()) == null ? "" : (String) doc.getFieldValue(TitleField.dclp_full_identifier.name());
+        }
         else{
             
             series = doc.getFieldValue(TitleField.apis_series.name()) == null ? "" : (String) doc.getFieldValue(TitleField.apis_series.name());

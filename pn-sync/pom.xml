@@ -17,7 +17,7 @@
       <repository>
         <name>papyri.info</name>
         <id>papyri.info</id>
-        <url>http://dev.papyri.info/maven/</url>
+        <url>http://litpap.info/maven/</url><!-- to be compatible with papyri.info this has to be changed back to http://dev.papyri.info/maven/ -->
       </repository>
     </repositories>
     

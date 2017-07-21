@@ -1020,7 +1020,7 @@
   <body onload="init()">
     <div id="d">
       <div id="hd">
-        <h1>Papyri.info</h1>
+        <h1>DCLP</h1>
         <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>
       </div>
       <div id="bd">
@@ -1037,6 +1037,20 @@
               </li>
               <li>
                 <a href="/browse/apis/">APIS</a>
+              </li>
+              <li class="dclp">
+                <a href="/browse/dclp/">DCLP</a>
+                <ul>
+                  <li>
+                    <a href="/browse/dclp/series">browse by series</a>
+                  </li>
+                  <li>
+                    <a href="/browse/dclp/tm">browse by TM number</a>
+                  </li>
+                  <li>
+                    <a href="/browse/dclp/authors">browse by authors and works</a>
+                  </li>
+                </ul>
               </li>
               <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="findTM(jQuery('#tmid').attr('value'))" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
