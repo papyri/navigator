@@ -295,7 +295,7 @@
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
-                  <xsl:if test="$hgv or $apis $tm or $dclp">
+                  <xsl:if test="$hgv or $apis or $tm or $dclp">
                     <div class="metadata">
                       <xsl:for-each select="$relations[contains(., 'hgv/')]">
                         <xsl:sort select="." order="ascending"/>
