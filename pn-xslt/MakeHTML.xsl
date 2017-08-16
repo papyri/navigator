@@ -375,6 +375,63 @@
                     </xsl:if>
                   </div>
                 </xsl:if>
+                <xsl:if test="$collection = 'dclp'">
+                  <div class="metadata">
+                    <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+                    <xsl:if test="$hgv or $apis or $tm">
+                      <xsl:for-each select="$relations[contains(., 'hgv/')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                          <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+                        </xsl:if>
+                      </xsl:for-each>
+                      <xsl:for-each select="$relations[contains(., '/apis/')]">
+                        <xsl:sort select="." order="ascending"/>
+                        <xsl:choose>
+                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                          </xsl:when>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:for-each>
+                    </xsl:if>
+                    <xsl:call-template name="biblio"/>
+                  </div>
+                  <xsl:if test="//t:div[@type='edition']//*">
+                    <div class="text">
+                      <xsl:comment>text information will go here: div[@type=commentary][@subtype='frontmatter]</xsl:comment>
+                      <div class="transcription data">
+                        <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
+                        <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
+                        <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
+                        <xsl:variable name="text-dclp">
+                          <xsl:apply-templates select="//t:div[@type='edition']"> 
+                            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                            <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                            <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                            <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                            <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                            <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                            <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                          </xsl:apply-templates>
+                        </xsl:variable>
+                        <!-- Moded templates found in htm-tpl-sqbrackets.xsl (this fixes/collapses abutting square brackets) -->
+                        <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
+                        <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
+                      </div>
+                    </div>
+                  </xsl:if>
+                  <xsl:apply-templates select="//t:revisionDesc" mode="history"/>
+                </xsl:if>
                 <xsl:if test="$collection = 'hgv'">
                   <div class="metadata">
                     <xsl:apply-templates select="/t:TEI" mode="metadata"/>
@@ -429,35 +486,6 @@
                     </xsl:if>
                   </div>
                 </xsl:if>
-                <xsl:if test="$collection = 'dclp'">
-                  <div class="metadata">
-                    <xsl:apply-templates select="/t:TEI" mode="metadata"/>
-                    <xsl:call-template name="biblio"/>
-                  </div>
-                  <div class="text">
-                    <xsl:comment>text information will go here: div[@type=commentary][@subtype='frontmatter]</xsl:comment>
-                    <div class="transcription data">
-                      <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
-                      <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
-                      <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
-                      <xsl:variable name="text-dclp">
-                        <xsl:apply-templates select="//t:div[@type='edition']"> 
-						            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-					             </xsl:apply-templates>
-                      </xsl:variable>
-                      <!-- Moded templates found in htm-tpl-sqbrackets.xsl (this fixes/collapses abutting square brackets) -->
-                      <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
-                      <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
-                  </div>
-				          </div>
-                  <xsl:apply-templates select="//t:revisionDesc" mode="history"/>
-                </xsl:if> 
                 <div id="ld" class="data">
                   <h2>Linked Data</h2>
                   <p><a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/rdf">RDF/XML</a> | 

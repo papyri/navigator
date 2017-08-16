@@ -9,8 +9,6 @@
   exclude-result-prefixes="#all"
   version="2.0">
   
-  <xsl:include href="pi-functions.xsl"/>
-  
   <xsl:output method="html"/>
   
   <xsl:template match="t:bibl">

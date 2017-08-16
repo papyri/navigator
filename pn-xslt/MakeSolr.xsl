@@ -57,7 +57,7 @@
   <xsl:param name="related"/>
   <xsl:param name="images"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
-  <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
+  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
@@ -101,6 +101,44 @@
             <xsl:call-template name="facetfields">
               <xsl:with-param name="docs" select="."/>
               <xsl:with-param name="alterity">self</xsl:with-param>
+            </xsl:call-template>
+            <xsl:choose>
+              <xsl:when test="$hgv or $apis">
+                <xsl:call-template name="facetfields">
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
+                  <xsl:with-param name="alterity">other</xsl:with-param>
+                </xsl:call-template>
+                <xsl:call-template name="facetfields">
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., '/apis/')][1], 'xml')"/>
+                  <xsl:with-param name="alterity">other</xsl:with-param>
+                </xsl:call-template>
+                <xsl:call-template name="metadata">
+                  <xsl:with-param name="hgv-docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/')], 'xml')"/>
+                  <xsl:with-param name="apis-docs"
+                    select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
+                  <xsl:with-param name="tm-docs" 
+                    select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
+                  />
+                </xsl:call-template>
+                <xsl:call-template name="translation">
+                  <xsl:with-param name="docs"
+                    select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
+                  />
+                </xsl:call-template>
+              </xsl:when>
+              <xsl:otherwise>
+                <field name="unknown_date_flag">true</field>
+              </xsl:otherwise>
+            </xsl:choose>
+            <xsl:call-template name="images">
+              <xsl:with-param name="docs"
+                select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml')"
+              />
             </xsl:call-template>
             <xsl:call-template name="revision-history">
               <xsl:with-param name="docs" select="."/>
