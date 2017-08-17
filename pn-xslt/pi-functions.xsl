@@ -327,8 +327,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-  
-   
+    
   <xsl:function name="pi:get-earliest-date-element">
     <xsl:param name="change-seq"></xsl:param>
     <xsl:param name="current-seq"></xsl:param>
@@ -422,4 +421,14 @@
     </xsl:choose>
   </xsl:function>
 
+  <!-- Sort order for bibliographic elements used by metadata-dclp to order t:listBibl/t:bibl[@type='reference']/@subtype -->
+  <xsl:function name="pi:bibl-type-order">
+    <xsl:param name="subtype"/>
+    <xsl:choose>
+      <xsl:when test="$subtype='principal'">a</xsl:when>
+      <xsl:when test="$subtype='partial'">b</xsl:when>
+      <xsl:when test="$subtype='readings'">c</xsl:when>
+      <xsl:when test="$subtype='previous'">d</xsl:when>
+    </xsl:choose>
+  </xsl:function>
 </xsl:stylesheet>

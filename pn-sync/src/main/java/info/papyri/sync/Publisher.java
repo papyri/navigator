@@ -107,7 +107,7 @@ public class Publisher implements Runnable {
             indexer.generatePages(urls);
             logger.info("Indexing files starting at " + new Date());
             indexer.index();
-            Runtime.getRuntime().exec("/usr/local/bin/exist-update.sh -n " + GitWrapper.getHead() + " -o " + head);
+            Runtime.getRuntime().exec("/srv/data/papyri.info/git/navigator/pn-scripts/exist-update.sh -n " + GitWrapper.getHead() + " -o " + head);
             logger.info("Updating eXist-db starting at " + new Date());
           } else {
             logger.info("No files to map.");
