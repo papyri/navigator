@@ -20,7 +20,8 @@
               </dcterms:relation>
             </xsl:if>
             <dcterms:relation>
-                <rdf:Description rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}/source">
+                <rdf:Description
+                  rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='HGV']}/source">
                     <dcterms:relation rdf:resource="{$id}"/>
                 </rdf:Description>
             </dcterms:relation>
