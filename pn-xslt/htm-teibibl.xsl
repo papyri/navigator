@@ -95,8 +95,11 @@
       <xsl:when test="t:title[@level='m']"><xsl:value-of select="t:title[@level='m']"/></xsl:when>
       <xsl:when test="t:title[@level='j']">
         <xsl:choose>
+          <xsl:when test="t:title[@level='j'][@type='short-BP']"><i><xsl:value-of select="t:title[@level='j'][@type='short-BP'][1]"/></i></xsl:when>
+          <xsl:when test="t:title[@level='j'][@type='short']"><i><xsl:value-of select="t:title[@level='j'][@type='short'][1]"/></i></xsl:when>
+          <xsl:when test="t:title[@level='j'][@type='main']"><i><xsl:value-of select="t:title[@level='j'][@type='main'][1]"/></i></xsl:when>
           <xsl:when test="t:title[@level='j' and @type='short']"><xsl:value-of select="t:title[@level='j' and @type='short']"/></xsl:when>
-          <xsl:otherwise><xsl:value-of select="t:title[@level='j' and @type='main']"/></xsl:otherwise>
+          <xsl:otherwise><i><xsl:value-of select="t:title[@level='j'][1]"/></i></xsl:otherwise>
         </xsl:choose>
       </xsl:when>
     </xsl:choose></a></i>
