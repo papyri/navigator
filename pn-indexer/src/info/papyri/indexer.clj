@@ -47,9 +47,7 @@
     (javax.xml.transform Result )
     (javax.xml.transform.sax SAXResult)
     (javax.xml.transform.stream StreamSource StreamResult)
-    (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
-    (net.sf.saxon.lib StandardErrorListener StandardURIResolver)
-    (net.sf.saxon.trans CompilerInfo XPathException)
+    (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
     (org.apache.solr.client.solrj SolrServer SolrQuery)
     (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
     (org.apache.solr.client.solrj.request RequestWriter)
@@ -83,6 +81,7 @@
 (def ^:dynamic *current*)
 (def ^:dynamic *doc*)
 (def ^:dynamic *index*)
+(def processor (Processor. false))
 
 (defn add-words
   "Adds the list of words provided to the set in the ref `words`."
@@ -97,7 +96,7 @@
   the document has been read to its end, adds that document to the
   `StreamingUpdateSolrServer` stored in the @solr ref."
   []
-  (SAXResult.
+  (SAXDestination.
     (let [current (StringBuilder.)
           chars  (StringBuilder.)
           solrdoc (SolrInputDocument.)]
@@ -122,7 +121,7 @@
   "A document handler that behaves much like `dochandler` above, but
   works for bibliographic records."
   []
-     (SAXResult.
+     (SAXDestination.
       (let [current (StringBuilder.)
 	    chars  (StringBuilder.)
 	    solrdoc (SolrInputDocument.)]
@@ -167,16 +166,11 @@
   (dosync (ref-set (load-string pool) (ConcurrentLinkedQueue.) ))
   (dotimes [n nthreads]
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
-            configuration (Configuration.)
-            compiler-info (CompilerInfo.)]
+          processor (Processor. false)
+          compiler (.newXsltCompiler processor)]
           (doto xsl-src
             (.setSystemId xslt))
-    (doto configuration
-      (.setXIncludeAware true))
-          (doto compiler-info
-            (.setErrorListener (StandardErrorListener.))
-            (.setURIResolver (StandardURIResolver. configuration)))
-          (dosync (.add (load-string (str "@" pool)) (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
+          (dosync (.add (load-string (str "@" pool)) (.compile compiler xsl-src))))))
 
 ;; ## Utility functions
 
@@ -230,7 +224,8 @@
             (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
     (catch Exception e
       (when-not (nil? e)
-        (println (str (.getMessage e) " processing " url "."))))))
+        (println (str (.getMessage e) " processing " url ".")
+        (.printStackTrace e))))))
 
 (defn get-txt-filename
   "Resolves the filename of the local text file associated with the given URL."
@@ -263,7 +258,8 @@
               (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt"))))))))
        (catch Exception e
          (when-not (nil? e)
-           (println (str (.getMessage e) " processing " url "."))))))
+           (println (str (.getMessage e) " processing " url ".")
+           (.printStackTrace e))))))
 
 
 (defn get-html-filename
@@ -312,20 +308,24 @@
               (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html"))))))))
     (catch Exception e
        (when-not (nil? e)
-         (println (str (.getMessage e) " processing " url "."))))))
+         (println (str (.getMessage e) " processing " url ".")
+         (.printStackTrace e))))))
 
 (defn transform
   "Runs an XSLT transform on the `java.io.File` in the first parameter,
   using a list of key/value parameter pairs, and feeds the result of the transform into
   a `javax.xml.transform.Result`."
-  [url, params, #^Result out, pool]
+  [url, params, #^Destination out, pool]
     (let [xslt (.poll pool)
-    transformer (.newTransformer xslt)]
+    transformer (.load xslt)]
       (try
         (when (not (== 0 (count params)))
           (doseq [param params] (doto transformer
-            (.setParameter (first param) (second param)))))
-        (.transform transformer (StreamSource. (.openStream (URL. url))) out)
+            (.setParameter (QName. (first param)) (XdmAtomicValue. (second param))))))
+        (doto transformer
+          (.setSource (StreamSource. (.openStream (URL. url))))
+          (.setDestination out))
+        (.transform transformer)
         (catch Exception e
           (println (str (.getMessage e) " transforming " url "."))
           (.printStackTrace e))
@@ -837,15 +837,17 @@
     tasks (map (fn [x]
          (fn []
            (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
-            (println "Transforming " (first x) " to " (get-html-filename (first x)))
-            (println x)
+            ;;(println "Transforming " (first x) " to " (get-html-filename (first x)))
+            ;;(println x)
               (delete-html (last (nth x 2)))
               (delete-html (last (nth x 3)))
+              (let [processor (Processor. false)
+                    out (.newSerializer processor)])
               (transform (if (.startsWith (first x) "http")
                 (str (.replace (first x) "papyri.info" nserver) "/rdf")
                 (first x))
                 (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9))
-                (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
+                (.newSerializer processor (FileOutputStream. (File. (get-html-filename (first x))))) @htmltemplates)
              (catch Exception e
                (.printStackTrace e)
                (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
@@ -872,7 +874,7 @@
                                        (str (.replace (first x) "papyri.info" nserver) "/rdf"))
                                        (first x))
         (list (second x) (nth x 2) (nth x 3) (nth x 4))
-        (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)
+        (.newSerializer processor (FileOutputStream. (File. (get-txt-filename (first x))))) @texttemplates)
         (catch Exception e
           (.printStackTrace e)
           (println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
@@ -949,7 +951,7 @@
                      (fn []
                        (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
                        (transform (str "file://" (.getAbsolutePath x)) ()
-                                  (StreamResult. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html"))))
+                                  (.newSerializer processor (FileOutputStream. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html")))))
                                   @bibhtmltemplates)))
                    (filter #(.endsWith (.getName %) ".xml") files))]
     (doseq [future (.invokeAll pool tasks)]
