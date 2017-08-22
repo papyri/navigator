@@ -17,7 +17,7 @@
     <xsl:variable name="tm" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='tm'])"/>
     <xsl:variable name="ldab" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='ldab'])"/>
     <xsl:variable name="dclp-hybrid"
-      select="//tei:publicationStmt/tei:idno[lower-case(@type)='dclp-hybrid']"/>
+      select="//tei:publicationStmt/tei:idno[lower-case(@type)='dclp-hybrid'][1]"/>
     <xsl:variable name="dclp">
       <xsl:choose>
         <xsl:when test="contains($dclp-hybrid, ';')"><xsl:value-of select="pi:makeUnicodeSafeUri($dclp-hybrid)"/></xsl:when>
