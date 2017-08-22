@@ -10,6 +10,7 @@
   <xsl:output omit-xml-declaration="yes" indent="no"/>
   
   <xsl:include href="/srv/data/papyri.info/git/navigator/pn-xslt/htm-teibibl.xsl"/>
+  <xsl:include href="/srv/data/papyri.info/git/navigator/pn-xslt/pi-functions.xsl"/>
 
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>

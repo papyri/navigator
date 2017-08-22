@@ -19,9 +19,7 @@
            (javax.activation MimeType)
            (javax.xml.transform Templates Transformer)
            (javax.xml.transform.stream StreamSource StreamResult)
-           (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
-           (net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
-           (net.sf.saxon.trans CompilerInfo XPathException)
+           (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
            (org.apache.jena.fuseki.http DatasetAdapter DatasetGraphAccessorHTTP UpdateRemote)
            (com.hp.hpl.jena.graph Node)
            (com.hp.hpl.jena.query QueryExecutionFactory)
@@ -33,6 +31,7 @@
 
 (def xsl (ref nil))
 (def pxslt (ref nil))
+(def processor (Processor. false))
 (def buffer (ref nil))
 (def flushing (ref false))
 (def output (ref nil))
@@ -87,14 +86,17 @@
 
 (defn transform
   [file]
-  (let [transformer (.newTransformer @pxslt)
+  (let [transformer (.load @pxslt)
         out (StringWriter.)
-        outstr (StreamResult. out)]
+        dest (.newSerializer processor out)]
     (try
       (if (not (nil? @param))
         (doto transformer
-          (.setParameter (first @param) (second @param))))
-      (.transform transformer (StreamSource. (FileInputStream. file)) outstr)
+          (.setParameter (QName. (first @param)) (XdmAtomicValue. (second @param)))))
+      (doto transformer
+        (.setSource (StreamSource. (FileInputStream. file)))
+        (.setDestination dest))
+      (.transform transformer)
       ;; (println (.toString out))
       (.add @buffer (.toString out))
       (catch Exception e
@@ -108,14 +110,11 @@
       (dosync (ref-set param (list "root" idproot)))
       (dosync (ref-set param (list "DDB-root" ddbroot))))
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
-        configuration (Configuration.)
-        compiler-info (CompilerInfo.)]
+          processor (Processor. false)
+          compiler (.newXsltCompiler processor)]
         (doto xsl-src
           (.setSystemId xslt))
-        (doto compiler-info
-          (.setErrorListener (StandardErrorListener.))
-          (.setURIResolver (StandardURIResolver. configuration)))
-        (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
+        (dosync (ref-set pxslt (.compile compiler xsl-src))))))
 
 (defn choose-xslt
   [file]
@@ -206,7 +205,7 @@
         (println (str "Error loading file: " f " ...trying again."))
         (.printStackTrace *err*)
         (Thread/sleep 1000)
-        (try 
+        (try
           (.add adapter graph model)
           (catch Exception ex
             (println "Failed to load file.")))))))

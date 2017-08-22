@@ -19,11 +19,14 @@
                 </rdf:Description>
               </dcterms:relation>
             </xsl:if>
+          <xsl:if test="//tei:publicationStmt/tei:idno[@type='HGV']">
             <dcterms:relation>
-                <rdf:Description rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}/source">
-                    <dcterms:relation rdf:resource="{$id}"/>
-                </rdf:Description>
+              <rdf:Description
+                rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='HGV']}/source">
+                <dcterms:relation rdf:resource="{$id}"/>
+              </rdf:Description>
             </dcterms:relation>
+          </xsl:if>
         </rdf:Description>
     </xsl:template>
 </xsl:stylesheet>
