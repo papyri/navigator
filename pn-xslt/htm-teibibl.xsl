@@ -132,7 +132,8 @@
         <xsl:if test="t:date and t:date[. != $issue]">
           <xsl:text> (</xsl:text><xsl:value-of select="t:date"/><xsl:text>)</xsl:text>
         </xsl:if>
-        <xsl:if test="t:biblScope[@type='pp']">
+        <!-- article in journal: pages -->
+        <xsl:if test="t:biblScope[@type=$values-pages or @unit=$values-pages]">
             <xsl:text>, pp. </xsl:text><xsl:call-template name="pages"/>
         </xsl:if>
       </xsl:when>
@@ -150,7 +151,7 @@
   </xsl:template>
   
   <xsl:template name="pages">
-    <xsl:value-of select="t:biblScope[@type='pp']"/>
+    <xsl:value-of select="t:biblScope[@type=$values-pages or @unit=$values-pages]"/>
   </xsl:template>
   
   <xsl:template match="t:seg[@type='original']">
