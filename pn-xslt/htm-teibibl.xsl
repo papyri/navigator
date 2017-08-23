@@ -119,7 +119,13 @@
       <xsl:when test="$main//t:title[@level='j']">
         <!-- TODO: get additional biblScope values -->
         <!-- Repress date values when they match t:biblScope/@type='issue' -->
-        <xsl:value-of select="t:biblScope[@type='issue']"/><xsl:if test="t:date and t:date[. != ../t:biblScope[@type='issue']/text()]"><xsl:text> </xsl:text>(<xsl:value-of select="t:date"/>)</xsl:if>, pp. <xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
+        <xsl:value-of select="t:biblScope[@type='issue']"/>
+          <xsl:if test="t:date and t:date[. != ../t:biblScope[@type='issue']/text()]">
+              <xsl:text> </xsl:text>(<xsl:value-of select="t:date"/>)<xsl:text></xsl:text>
+          </xsl:if>
+          <xsl:if test="t:biblScope[@type='pp']">
+              <xsl:text>, pp. </xsl:text><xsl:call-template name="pages"/>
+          </xsl:if>
       </xsl:when>
       <!-- article in book -->
       <xsl:when test="$main//t:title[@level='m']">
