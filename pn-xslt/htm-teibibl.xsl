@@ -215,7 +215,7 @@
               <li>
                 <xsl:call-template name="relatedArticleRecord">
                   <xsl:with-param name="series" select="./t:title[@level='s'][@type='short']" />
-                  <xsl:with-param name="volume" select="./t:biblScope[@type='vol']" />
+                  <xsl:with-param name="volume" select="./t:biblScope[@type=$values-issues or @unit=$values-issues]" />
                   <xsl:with-param name="number" select="./t:biblScope[@type='num']" />
                   <xsl:with-param name="ddbId" select="./t:idno[@type='ddb']" />
                   <xsl:with-param name="inventory" select="./t:idno[@type='invNo']" />
@@ -228,7 +228,7 @@
           <p>
             <xsl:call-template name="relatedArticleRecord">
               <xsl:with-param name="series" select="normalize-space($relatedArticle/t:title[@level='s'][@type='short'])" />
-              <xsl:with-param name="volume" select="normalize-space($relatedArticle/t:biblScope[@type='vol'])" />
+              <xsl:with-param name="volume" select="normalize-space($relatedArticle/t:biblScope[@type=$values-issues or @unit=$values-issues])" />
               <xsl:with-param name="number" select="normalize-space($relatedArticle/t:biblScope[@type='num'])" />
               <xsl:with-param name="ddbId" select="normalize-space($relatedArticle/t:idno[@type='ddb'])" />
               <xsl:with-param name="inventory" select="normalize-space($relatedArticle/t:idno[@type='invNo'])" />
