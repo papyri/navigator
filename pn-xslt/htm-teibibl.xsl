@@ -11,7 +11,7 @@
   
   <xsl:output method="html"/>
   
-  <xsl:variable name="values-issues" select="('issues', 'issue', 'volume', 'v')"/>
+  <xsl:variable name="values-issues" select="('issues', 'issue', 'volume', 'v', 'vols', 'vol', 'vv')"/>
   <xsl:variable name="values-pages" select="('pp', 'pages', 'page')"/>
   
   
