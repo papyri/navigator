@@ -354,6 +354,17 @@
                         <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
                       </xsl:apply-templates>
                     </xsl:for-each>
+                    <xsl:for-each select="pi:get-docs($relations[contains(., '/dclp/') and not(contains($replaces,.))], 'xml')/t:TEI">
+                      <xsl:apply-templates select="." mode="text">
+                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                      </xsl:apply-templates>
+                    </xsl:for-each>
                     <xsl:if test="$image">
                       <xsl:call-template name="images"/>
                     </xsl:if>
@@ -538,7 +549,8 @@
   
   <xsl:template match="t:TEI" mode="text">
     <div class="transcription data">
-      <h2>DDbDP transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
+      <h2><xsl:choose><xsl:when
+        test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid']">DCLP</xsl:when><xsl:otherwise>DDbDP</xsl:otherwise></xsl:choose> transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
       <xsl:variable name="text">
         <xsl:apply-templates select="."/>
       </xsl:variable>
@@ -775,6 +787,8 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="t:bibl"><xsl:apply-templates/></xsl:template>
   
   <xsl:template match="rdf:Description">
     <xsl:value-of select="@rdf:about"/>
