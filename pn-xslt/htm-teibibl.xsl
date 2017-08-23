@@ -117,7 +117,6 @@
     <xsl:choose>
       <!-- article in journal -->
       <xsl:when test="$main//t:title[@level='j']">
-        <!-- Repress date values when they match t:biblScope/@type='issue' -->
         <xsl:value-of select="t:biblScope[@type='issue']"/>
         <xsl:if test="t:date and t:date[. != ../t:biblScope[@type='issue']/text()]">
             <xsl:text> </xsl:text>(<xsl:value-of select="t:date"/>)<xsl:text></xsl:text>
