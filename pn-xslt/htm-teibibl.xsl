@@ -141,9 +141,9 @@
       <xsl:when test="$main//t:title[@level='m']">
         <xsl:if test="t:series">
           <xsl:value-of select="t:series/t:title[@level='s']"/>
-          <xsl:if test="t:series/t:biblScope[@type='volume']">
+          <xsl:if test="t:series/t:biblScope[@type=$values-issues or @unit=$values-issues]">
             <xsl:text> vol. </xsl:text>
-            <xsl:value-of select="t:series/t:biblScope[@type='volume']"/>
+            <xsl:value-of select="t:series/t:biblScope[@type=$values-issues or @unit=$values-issues]"/>
           </xsl:if>
         </xsl:if>
         <xsl:if test="t:pubPlace or t:date">
