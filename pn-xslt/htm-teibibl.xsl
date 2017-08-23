@@ -156,7 +156,7 @@
           <xsl:text>)</xsl:text>
         </xsl:if>
         <xsl:text> </xsl:text>
-        <xsl:if test="t:biblScope[@type='pp']">
+        <xsl:if test="t:biblScope[@type=$values-pages or @unit=$values-pages]">
           <xsl:call-template name="pages"/>
         </xsl:if>
       </xsl:when>
