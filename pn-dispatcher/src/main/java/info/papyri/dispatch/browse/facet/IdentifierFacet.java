@@ -172,6 +172,12 @@ public class IdentifierFacet extends Facet{
             
             
         }
+        
+        if (collectionSet && seriesSet) {
+            solrQuery = buildStandardFieldQuery(solrQuery);
+            return solrQuery;
+        }
+        
         if(seriesSet){
             
             String seriesSpecifierClause = getSeriesSpecifierClause();
@@ -273,14 +279,18 @@ public class IdentifierFacet extends Facet{
         SearchConfiguration volumeConfig = searchConfigurations.get(IdParam.VOLUME);
         SearchConfiguration idnoConfig = searchConfigurations.get(IdParam.IDNO);
         
-        if(collectionConfig.getConstraint().equals(apisOnlyHTMLValue)){
-            
-            solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
-            
-        } else{
-            
-            solrQuery.addFilterQuery(SolrField.apis_series.name() + ":" + collectionConfig.getConstraint());
-            
+        switch(collectionConfig.getConstraint()) {
+            case("apisonly"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
+                break;
+            case("dclp"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":dclp");
+                break;
+            case("ddbdp"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":ddbdp");
+                break;
+            default:
+                solrQuery.addFilterQuery(SolrField.apis_series.name() + ":" + collectionConfig.getConstraint());
         }
         
         StringBuilder seriesConstraint = new StringBuilder("(");
@@ -1136,7 +1146,7 @@ public class IdentifierFacet extends Facet{
             else{
            
                 String specifier = this.hasConstraint() ? this.getConstraint() : "*";
-                queryString = rawClause.replace(IdParam.SERIES.name(), specifier); 
+                queryString = rawClause.replace(IdParam.SERIES.name(), specifier);
                 queryString = queryString.replace(IdParam.COLLECTION.name(), "apis");
                 
             }

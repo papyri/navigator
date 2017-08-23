@@ -317,7 +317,8 @@ public class FacetBrowser extends HttpServlet {
 
       CommonsHttpSolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
       solrServer.setSoTimeout(SOCKET_TIMEOUT);
-      QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.POST);
+      //logger.info(sq.toString());
+      QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.GET);
       return qr;
     } catch (MalformedURLException murle) {
       logger.error("MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
@@ -1079,13 +1080,13 @@ public class FacetBrowser extends HttpServlet {
    */
   ArrayList<String> getCollectionIds(String collection, SolrDocument doc) {
 
-    ArrayList<String> collectionMembers = new ArrayList<String>();
+    ArrayList<String> collectionMembers = new ArrayList<>();
 
     String cpref = collection + "_";
 
-    ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]", ",").split(",")));
-    ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-    ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+    ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]", ",").split(",")));
+    ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+    ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
 
     if (series != null && volumes != null && itemIds != null) {
 

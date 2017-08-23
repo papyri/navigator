@@ -119,9 +119,11 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         }
         
         private String assembleLinkToFacetedBrowse(){
-            
             String href = CollectionBrowser.FACET_SERVLET;
             href += "?";
+            if (collection.equals("ddbdp") || collection.equals("dclp")) {
+                href += "&" + IdentifierFacet.IdParam.COLLECTION.name() + "=" + collection + "&";
+            }
             String collParam = IdentifierFacet.IdParam.SERIES.name();
             if(collection.equals("apis")) collParam = IdentifierFacet.IdParam.COLLECTION.name();
             String seriesRepresentation = (unicodeLabel != null && !unicodeLabel.equals("")) ? unicodeLabel : series;
