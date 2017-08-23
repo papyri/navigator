@@ -11,6 +11,10 @@
   
   <xsl:output method="html"/>
   
+  <xsl:variable name="values-issues" select="('issues', 'issue', 'volume', 'v')"/>
+  <xsl:variable name="values-pages" select="('pp', 'pages', 'page')"/>
+  
+  
   <xsl:template match="t:bibl">
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="biblio"> <!-- class="bp-cite" -->
@@ -117,9 +121,16 @@
     <xsl:choose>
       <!-- article in journal -->
       <xsl:when test="$main//t:title[@level='j']">
-        <xsl:value-of select="t:biblScope[@type='issue']"/>
-        <xsl:if test="t:date and t:date[. != ../t:biblScope[@type='issue']/text()]">
-            <xsl:text> </xsl:text>(<xsl:value-of select="t:date"/>)<xsl:text></xsl:text>
+        <!-- article in journal: issue number -->
+        <xsl:variable name="issue">
+          <xsl:value-of select="normalize-space(t:biblScope[@type=$values-issues or @unit=$values-issues])"/>
+        </xsl:variable>
+        <xsl:if test="$issue != ''">
+          <xsl:value-of select="$issue"/>
+        </xsl:if>
+        <!-- article in journal: date -->
+        <xsl:if test="t:date and t:date[. != $issue]">
+          <xsl:text> (</xsl:text><xsl:value-of select="t:date"/><xsl:text>)</xsl:text>
         </xsl:if>
         <xsl:if test="t:biblScope[@type='pp']">
             <xsl:text>, pp. </xsl:text><xsl:call-template name="pages"/>
