@@ -11,6 +11,11 @@
   
   <xsl:output method="html"/>
   
+  <xsl:variable name="values-issues" select="('issues', 'issue', 'volume', 'v', 'vols', 'vol', 'vv')"/>
+  <xsl:variable name="values-pages" select="('pp', 'pages', 'page')"/>
+  <xsl:variable name="values-numbers" select="('no', 'nos', 'num', 'number', 'numbers', 'n', 'nn')"/>
+  
+  
   <xsl:template match="t:bibl">
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="biblio"> <!-- class="bp-cite" -->
@@ -117,14 +122,44 @@
     <xsl:choose>
       <!-- article in journal -->
       <xsl:when test="$main//t:title[@level='j']">
-        <!-- TODO: get additional biblScope values -->
-        <!-- Repress date values when they match t:biblScope/@type='issue' -->
-        <xsl:value-of select="t:biblScope[@type='issue']"/><xsl:if test="t:date and t:date[. != ../t:biblScope[@type='issue']/text()]"><xsl:text> </xsl:text>(<xsl:value-of select="t:date"/>)</xsl:if>, pp. <xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
+        <!-- article in journal: issue number -->
+        <xsl:variable name="issue">
+          <xsl:value-of select="normalize-space(t:biblScope[@type=$values-issues or @unit=$values-issues])"/>
+        </xsl:variable>
+        <xsl:if test="$issue != ''">
+          <xsl:value-of select="$issue"/>
+        </xsl:if>
+        <!-- article in journal: date -->
+        <xsl:if test="t:date and t:date[. != $issue]">
+          <xsl:text> (</xsl:text><xsl:value-of select="t:date"/><xsl:text>)</xsl:text>
+        </xsl:if>
+        <!-- article in journal: pages -->
+        <xsl:if test="t:biblScope[@type=$values-pages or @unit=$values-pages]">
+            <xsl:text>, pp. </xsl:text><xsl:call-template name="pages"/>
+        </xsl:if>
       </xsl:when>
       <!-- article in book -->
       <xsl:when test="$main//t:title[@level='m']">
-        <xsl:if test="t:series"><xsl:value-of select="t:series/t:title[@level='s']"/><xsl:if test="t:series/t:biblScope[@type='volume']"> vol. <xsl:value-of select="t:series/t:biblScope[@type='volume']"/></xsl:if></xsl:if>
-        <xsl:if test="t:pubPlace or t:date">(<xsl:if test="$main//t:pubPlace"><xsl:value-of select="$main//t:pubPlace"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="$main//t:date"/>)</xsl:if><xsl:text> </xsl:text><xsl:if test="t:biblScope[@type='pp']"><xsl:call-template name="pages"/></xsl:if>
+        <xsl:if test="t:series">
+          <xsl:value-of select="t:series/t:title[@level='s']"/>
+          <xsl:if test="t:series/t:biblScope[@type=$values-issues or @unit=$values-issues]">
+            <xsl:text> vol. </xsl:text>
+            <xsl:value-of select="t:series/t:biblScope[@type=$values-issues or @unit=$values-issues]"/>
+          </xsl:if>
+        </xsl:if>
+        <xsl:if test="t:pubPlace or t:date">
+          <xsl:text>(</xsl:text>
+          <xsl:if test="$main//t:pubPlace">
+            <xsl:value-of select="$main//t:pubPlace"/>
+            <xsl:text> </xsl:text>
+          </xsl:if>
+          <xsl:value-of select="$main//t:date"/>
+          <xsl:text>)</xsl:text>
+        </xsl:if>
+        <xsl:text> </xsl:text>
+        <xsl:if test="t:biblScope[@type=$values-pages or @unit=$values-pages]">
+          <xsl:call-template name="pages"/>
+        </xsl:if>
       </xsl:when>
       <!-- journal -->
       <xsl:when test="t:title[@level='j']"><xsl:if test="t:publisher or t:date">(<xsl:if test="t:publisher"><xsl:value-of select="t:publisher"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:if></xsl:when>
@@ -135,7 +170,7 @@
   </xsl:template>
   
   <xsl:template name="pages">
-    <xsl:value-of select="t:biblScope[@type='pp']"/>
+    <xsl:value-of select="t:biblScope[@type=$values-pages or @unit=$values-pages]"/>
   </xsl:template>
   
   <xsl:template match="t:seg[@type='original']">
@@ -181,8 +216,8 @@
               <li>
                 <xsl:call-template name="relatedArticleRecord">
                   <xsl:with-param name="series" select="./t:title[@level='s'][@type='short']" />
-                  <xsl:with-param name="volume" select="./t:biblScope[@type='vol']" />
-                  <xsl:with-param name="number" select="./t:biblScope[@type='num']" />
+                  <xsl:with-param name="volume" select="./t:biblScope[@type=$values-issues or @unit=$values-issues]" />
+                  <xsl:with-param name="number" select="./t:biblScope[@type=$values-numbers or @unit=$values-numbers]" />
                   <xsl:with-param name="ddbId" select="./t:idno[@type='ddb']" />
                   <xsl:with-param name="inventory" select="./t:idno[@type='invNo']" />
                 </xsl:call-template>
@@ -194,8 +229,8 @@
           <p>
             <xsl:call-template name="relatedArticleRecord">
               <xsl:with-param name="series" select="normalize-space($relatedArticle/t:title[@level='s'][@type='short'])" />
-              <xsl:with-param name="volume" select="normalize-space($relatedArticle/t:biblScope[@type='vol'])" />
-              <xsl:with-param name="number" select="normalize-space($relatedArticle/t:biblScope[@type='num'])" />
+              <xsl:with-param name="volume" select="normalize-space($relatedArticle/t:biblScope[@type=$values-issues or @unit=$values-issues])" />
+              <xsl:with-param name="number" select="normalize-space($relatedArticle/t:biblScope[@type=$values-numbers or @unit=$values-numbers])" />
               <xsl:with-param name="ddbId" select="normalize-space($relatedArticle/t:idno[@type='ddb'])" />
               <xsl:with-param name="inventory" select="normalize-space($relatedArticle/t:idno[@type='invNo'])" />
             </xsl:call-template>
