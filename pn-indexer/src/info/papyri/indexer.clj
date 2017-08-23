@@ -48,6 +48,7 @@
     (javax.xml.transform.sax SAXResult)
     (javax.xml.transform.stream StreamSource StreamResult)
     (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
+    (net.sf.saxon.lib AugmentedSource ParseOptions)
     (org.apache.solr.client.solrj SolrServer SolrQuery)
     (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
     (org.apache.solr.client.solrj.request RequestWriter)
@@ -170,7 +171,10 @@
           compiler (.newXsltCompiler processor)]
           (doto xsl-src
             (.setSystemId xslt))
-          (dosync (.add (load-string (str "@" pool)) (.compile compiler xsl-src))))))
+          (let [axsl (AugmentedSource. xsl-src (ParseOptions.))]
+            (doto axsl
+              (.setXIncludeAware true))
+            (dosync (.add (load-string (str "@" pool)) (.compile compiler axsl)))))))
 
 ;; ## Utility functions
 
