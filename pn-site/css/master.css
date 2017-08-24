@@ -140,7 +140,7 @@ div#help {
 /* Top Navigation */
 div.nav {
 background:#ccc;
-position: absolute; 
+position: absolute;
 left: 0px;
 top: 67px;
 padding:0;
@@ -178,34 +178,6 @@ background:#F8F6F4;
 div.nav a {
 color: #5C0303;
 text-decoration: none;
-}
-
-/* nav dclp */
-
-div.nav li.dclp{
-  position: relative;
-
-}
-
-div.nav li.dclp ul{
-  position: absolute;
-  top: 1.6em;
-  left: 0;
-  width: auto;
-  background: #ccc;
-  overflow: visible;
-  width: auto;
-  display: none;
-}
-
-div.nav li.dclp:hover ul{
-  display: block;
-}
-
-div.nav li.dclp ul li{
-  display: block;
-  width: 16em;
-  overflow: visible;
 }
 
 /* Images */
@@ -387,25 +359,25 @@ font-size: 80%;
 .latinnum {
 border-top: thin black solid;
 }
-     
+
 .previouslyread {
 text-decoration: underline;
 }
 
 .supraline { border-top: thin black solid; }
-     
+
 *[lang="la"] {
 font-family: "GentiumAlt", "Gentium","Palatino Linotype", "Palatino", "Times New Roman", "Times", "Arial Unicode MS", serif;
 }
 
 *[lang="grc"] {
-font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
 }
-   
+
 *[lang="cop"] {
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
 }
@@ -420,10 +392,10 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
 }
 
 div.textpart {
-font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
 line-height: 1.4;
 vertical-align: -20%;
@@ -432,10 +404,10 @@ padding: 0px;
 }
 
 div#apparatus {
-font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
 }
 
@@ -450,7 +422,7 @@ line-height: 1;
 margin-left: -3em;
 margin-bottom: 0;
 }
-    
+
 .linenumber {
 float: left;
 margin-left: -2em;
@@ -462,7 +434,7 @@ float: left;
 margin-left: -2em;
 }
 
-    
+
 .underline {
 text-decoration: underline;
 }
@@ -574,7 +546,7 @@ border:1px solid black;
   margin-left:auto;
   margin-right:auto;
   width:95%;
-  clear: left;  
+  clear: left;
 }
 .tablehead{
 
@@ -582,7 +554,7 @@ border:1px solid black;
 
 }
 .tablehead td{
-  
+
   text-align: center;
   padding-bottom: 10px;
 
@@ -599,10 +571,10 @@ tr.result-record {
 }
 
 td.kwic {
-  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
   padding-left: 1em;
   padding-top: .5em;
@@ -634,7 +606,7 @@ td.kwic {
 /* footer general layout */
 
  #footer{
-     
+
      background-color: #888;
      font-family: Verdana, Helvetica, sans-serif;
      font-size: 80%;
@@ -649,7 +621,7 @@ td.kwic {
 
 
 #footer-left-col{
-    
+
     width: 57%;
     position: relative;
     float: left;
@@ -658,7 +630,7 @@ td.kwic {
 }
 
 #footer-right-col{
-    
+
     position: relative;
     float: right;
     width: 33%;
@@ -670,23 +642,23 @@ td.kwic {
 }
 
 .spacer{
-    
+
    width: 100%;
-   clear: both; 
+   clear: both;
    height: 1px;
-    
+
 }
 
 #footer p{
-    
+
     margin-bottom: 0.5em;
-    
+
 }
 
 /* styles for all footer navigation */
 
 #footer ul.nav{
-    
+
     list-style-type: none;
     position: relative;
     width: 80%;
@@ -697,87 +669,87 @@ td.kwic {
 }
 
 #footer ul.nav li{
-    
+
    display: block;
-    
+
 }
 
-#footer a:link, #footer a:visited, #footer a:hover, #footer a:active{ 
+#footer a:link, #footer a:visited, #footer a:hover, #footer a:active{
 
     color: white;
-    
+
 }
 
 #footer a:link, #footer a:visited{
-    
+
     text-decoration: none;
-    
+
 }
 
 #footer a:hover, #footer a:active{
-    
+
     text-decoration: underline;
-    
+
 }
 
 #footer ul.nav li:before{
-    
+
     content: "| ";
-    
+
 }
 
 /* styles for left-hand column and navigation */
 
 #footer-left-col #secondary-nav{
-    
+
     width: 100%;
     position: absolute;
     /* this value should be lowered if it is likely
      * that the navigation menu will wrap to a second line */
     top: 1.6em;
-    
+
 }
 
 #secondary-nav ul.nav li:first-child:before{
-    
+
     content: "";
-    
+
 }
 
 #footer-left-col #secondary-nav ul.nav{
-    
+
     margin-left: 30px;
-    
+
 }
 
 
 #footer-left-col #secondary-nav ul.nav li{
-    
-    float: left;  
+
+    float: left;
     margin-bottom: 5px;
     margin-right: 6px;
-    
+
 }
 
 /* styles for right-hand column and navigation */
 
 #footer-right-col p:first-child{
-    
-    font-weight: bold; 
-    
+
+    font-weight: bold;
+
 }
 
 
 #footer-right-col #about-nav li, #footer #about-nav #about-hdr{
-    
+
     float: right;
 }
 
 
 #about-nav ul.nav li.last-child:before{
-    
+
     content: "";
-    
+
 }
 
 #about-hdr{
@@ -786,11 +758,11 @@ td.kwic {
     line-height: 22px;
     font-size: inherit;
     font-family: inherit;
-    
+
 }
 
 #about-nav ul.nav li{
-    
+
     margin-left: 3px;
 }
 
@@ -802,7 +774,7 @@ td.kwic {
 /*  MORE-LIKE-THIS ADDITIONS THILL 2011.11.04 */
 
 div.metadata div.more-like-this{
-    
+
     display: inline;
     font-size: 80%;
     font-family: inherit;
@@ -812,21 +784,21 @@ div.metadata div.more-like-this{
 }
 
 div.more-like-this a{
-    
+
     margin-right: 10px;
-    
+
 }
 
 div.more-like-this a:before{
-    
+
     content:"[";
-    
+
 }
 
 div.more-like-this a:after{
-    
+
     content:"]";
-    
+
 }
 
 /* END MORE-LIKE-THIS ADDITIONS */
@@ -834,7 +806,7 @@ div.more-like-this a:after{
 /* LINEAR BROWSING ADDITIONS THILL 2011.12.16 */
 
 #linear-browse-wrapper{
-    
+
     width: 30%;
     margin-left: auto;
     margin-right: auto;
@@ -844,50 +816,50 @@ div.more-like-this a:after{
     font-size: 90%;
     height: 25px;
     position: relative;
-    
+
 }
 
 #linear-previous-record{
-    
+
     float: left;
-    
+
     }
 
 #linear-next-record{
-    
+
     float: right;
 }
 
 #linear-back{
-    
+
     position: absolute;
     left: 42%;
-    
+
 }
 
 #linear-back a{
-    
+
     color: #162A5C;
-    
+
 }
 
 #linear-browse-wrapper a{
-    
+
     text-decoration: none;
-    
+
 }
 
 #linear-browse-wrapper a:hover{
-    
+
     text-decoration: underline;
-    
+
 }
 
 .deadlink{
-    
+
     color: #777;
     font-style: italic;
-    
+
 }
 
 /* END LINEAR BROWSING ADDITIONS */

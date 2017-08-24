@@ -46,21 +46,10 @@
               <li>
                 <a href="/browse/apis/">APIS</a>
               </li>
-              <li class="dclp">
+              <li>
                 <a href="/browse/dclp/">DCLP</a>
-                <ul>
-                  <li>
-                    <a href="/browse/dclp/series">browse by series</a>
-                  </li>
-                  <li>
-                    <a href="/browse/dclp/tm">browse by TM number</a>
-                  </li>
-                  <li>
-                    <a href="/browse/dclp/authors">browse by authors and works</a>
-                  </li>
-                </ul>
               </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
               <li>or Search:</li>
               <li>
@@ -100,10 +89,10 @@
       </div>
       <div id="footer-right-col">
         <p>Produced by</p>
-        <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a> 
+        <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a>
           <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
           Ancient World</a></p>
-        <div id="about-nav"> 
+        <div id="about-nav">
           <ul class="nav">
             <li><a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a></li>
             <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
@@ -111,7 +100,7 @@
               der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
             <li><a href="/docs/ddbdp" title="Duke Databank of Documentary Papyri - Home">DDbDP</a></li>
             <li><a href="/docs/apis">APIS</a></li>
-            <li class="last-child"><a href="/docs/about" title="Papyri.info">Papyri.info</a></li>    
+            <li class="last-child"><a href="/docs/about" title="Papyri.info">Papyri.info</a></li>
           </ul>
           <h3 id="about-hdr">About:</h3>
         </div>

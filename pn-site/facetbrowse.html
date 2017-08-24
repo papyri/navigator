@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script src="/js/jquery-1.7.min.js" type="text/javascript" charset="utf-8"></script>
-   <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script> 
+   <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <!-- typegreek code written by Randy Hoyt, http://www.typegreek.com/overview/. Used with gratitude and permission -->
@@ -22,121 +22,121 @@
    <style type="text/css">
 
       body, html{
-      
+
       	height: 100%;
-		
-      } 
+
+      }
 
       select, input, label, button, textarea, button, .option-label, #img-selector-lbl{
-      
+
         font-size:90%;
         font-family: Georgia, serif;
-      
+
       }
-	  
-	  
+
+
 	  #sparql-wrap{
-	  
+
 	  	width: 1400px;
 	  	margin-left: auto;
 	  	margin-right: auto;
 	  	word-wrap: break-word;
-	  
+
 	  }
 
 	  div.content{
-	  
+
 	  	padding-bottom: 0px;
 	  	min-height: 100%;
-	  
+
 	  }
 
       #facet-wrapper{
-      
+
         width: 100%;
         min-height: 100%;
         float: left;
         clear: both;
-      	
+
       }
-      
+
       #facet-widgets-wrapper{
-      
+
         position: relative;
         float: left;
         margin-right: 25px;
         padding-bottom: 50px;
         min-height: 100%;
-        width: 450px; 
+        width: 450px;
         min-width: 450px;
         padding-top: 0.5em;
       }
-      
-      
+
+
       div.stringsearch-top-controls:first-child p.facet-stringsearch-wrapper{
-      
+
         margin-top: 3.5em;
-      
+
       }
-      
+
 	div.stringsearch-top-controls p.facet-stringsearch-wrapper{
-      
+
         margin-top: 1em;
-      
+
       }
-      
+
       .stringsearch-top-controls p.facet-stringsearch-wrapper{
-      
+
         width: 400px;
         margin-bottom: 0.5em;
     	background:white;
     	border:thin solid silver;
     	padding:1em;
-      
+
       }
-      
+
       #facet-widgets-wrapper.search-closed{
-      
+
       	position: absolute;
       	left: -23px;
       	min-width: 0px;
       	width: 0px;
-      
+
       }
-      
+
 	 .search-closed #facet-widgets-wrapper h2, .search-closed .facet-widget, .search-closed#search-reset-wrapper {
-	 
+
 	 	display: none;
-	 
+
 	 }
-      
+
       form[name="facets"]{
-      
+
         width: 100%;
       	position: relative;
 
       }
-      
+
       div.nav{
-      	
+
       	z-index: 500;
-      
-      }
-      
-     /* search pane toggle */
-      .search table{
-      
-      	width: 100%;
-      
+
       }
 
-      
+     /* search pane toggle */
+      .search table{
+
+      	width: 100%;
+
+      }
+
+
       #search-toggle{
-      
+
       	display: block;
       	cursor: pointer;
       	width: 20px;
-      	height: 100%;	
+      	height: 100%;
 		position: absolute;
 		border: 1px solid lightGrey;
 		background: url(/images/greenfade.png) 100% 100% repeat-y;
@@ -146,80 +146,80 @@
 
       }
 
-      
+
       #search-toggle-pointer{
-      
+
       	position: relative;
       	color: #000;
       	font-size: 10px;
       	font-weight: bold;
       	width: 100%;
       	text-align: center;
-      
+
       }
-      
+
       .facet-widget{
-      
+
         position: relative;
         width: 100%;
-        margin-bottom: 20px; 
+        margin-bottom: 20px;
         clear: left;
-      
+
       }
-      
+
       .facet-widget .combobox{
-      
+
       	position: relative;
       	right: 25px;
-      
+
       }
-      
+
       .facet-widget select, .facet-widget input{
-      
+
         float: right;
         padding-top: 0;
         margin-top: 0;
-        
+
       }
-      
+
       #text-search-widget select, #text-search-widget input, #img-select input{
-        
+
         float: none;
-      
+
       }
-      
+
       #place-selector input{
-      
+
       	width: 63%;
 
       }
-      
+
       #nome-selector input{
-      
+
       	width: 63%;
-      
+
       }
-      
+
       #date-start-selector input, #date-end-selector input{
-      
+
       	min-width: 10.5em;
-      
+
       }
-      
+
       #text-search-widget label, #img-select label,#text-search-widget #search{
-      
+
         margin-left: 7.5px;
-      
+
       }
-      
+
       div.search h2{
-      
+
         font-size: 133%;
-      
+
       }
 
       #vals-and-records-wrapper{
-      
+
         float: left;
         margin-left: 23px;
         padding-left: 1%;
@@ -227,36 +227,36 @@
         min-height: 1100px;
 
       }
-      
+
       td.doc-title{
-      
+
       	margin-top: 0px;
-      
-      
+
+
       }
-      
+
       .title-long{
-      
+
       	white-space: nowrap;
-      	overflow: hidden;	
+      	overflow: hidden;
       	top:0px;
       	left:0px;
       	display: none;
-      
+
       }
-      
+
       #previous-values{
-      
+
         position: relative;
         width: 99%;
         border: 3px solid gray;
-        padding: 10px 0.5%; 
+        padding: 10px 0.5%;
         margin-top: 15px;
 
       }
 
       .facet-constraint{
-      
+
         color: #fff;
         background-color: #333;
         position: relative;
@@ -267,139 +267,139 @@
         margin-left: 10px;
         width: 100%;
       }
-      
+
       .constraint-label{
-      
+
         float: left;
         margin-right: 3em;
-      
+
       }
       .facet-constraint a, .facet-constraint a:link, .facet-constraint a:hover, .facet-constraint a:active, .facet-constraint a:visited{
-      
+
         color: #fff;
 
       }
-      
+
       .constraint-closer{
 
         float: right;
         padding-right: 4px;
         font-weight: bold;
-        
+
       }
-      
+
       /* selectors for img-facet previous constraints */
-      
+
       .prev-constraint-wrapper{
-      
+
       	float: left;
       	width: 31%;
       	margin-right: 2%;
       	position: relative;
-      
+
       }
-      
+
       .prev-constraint-wrapper:after{
-      
+
       	content:".";
       	display: block;
       	height: 0;
       	clear: both;
       	visibility: hidden;
-      	
-      
+
+
       }
-      
+
       #prev-constraint-img{
-      
+
       	position: relative;
       	margin-top: 5px;
-		
+
       }
-      
+
       #prev-constraint-img .semicolon{
-      
+
       	display: none;
-      
+
       }
-      
+
       #prev-constraint-img .constraint-label{
-      
+
       	margin-right: 1.53em;
-      
+
       }
-      
+
       #prev-constraint-img .facet-constraint{
-      	
+
       	margin-top: 0px;
       	margin-bottom: 0px;
-      	
+
       }
-     
+
      #img-go{
 	margin-left:1em;
      	bottom: 0px;
      }
-     
+
      /* pagination selectors */
-     
+
       #pagination{
-          
+
           position: relative;
           clear: both;
           margin-left: auto;
           margin-right: auto;
 
       }
-      
+
       #pagination .page{
-      
+
         width: 30px;
-        min-width: 30px; 
+        min-width: 30px;
         height: 25px;
         color: #fff;
         float: left;
         margin-right: 15px;
         margin-left: 15px;
-        text-align: center; 
-      
+        text-align: center;
+
       }
-      
+
 	  #pagination .currentpage{
-	  
+
 	  	border: 2px solid #999;
 	  	margin: 1px 14px 1px 14px;
-	  
+
 	  }
-      
+
       /* identifier facet selectors */
-      
+
 	  #series-coll-wrapper, #vol-idno-wrapper{
-	  
+
 	  	float: left;
 
 	  }
-	  
+
 	  #series-coll-wrapper{
-	  
+
 	  	width: 65%;
-	  
+
 	  }
-	  
+
 	  #series-coll-wrapper p{
-	  
+
 	  	margin-right: 0px;
-	  
+
 	  }
-	  
+
 	  #vol-idno-wrapper{
-	  
+
 	  	width: 35%;
-	  
+
 	  }
-	  
+
 	 div.content p.coll-or{
-	  
+
 	  	  position: absolute;
 	  	  top: 2.7em;
 	  	  font-size: 12px;
@@ -407,426 +407,426 @@
 	  	  margin-left: 1.5em;
 	  	  margin-top: 0px;
 	  	  margin-bottom: 0px;
-	  
+
 	  }
-      
+
       table{
-      
+
         margin-top: 2em;
         margin-bottom: 2em;
         width: 100%;
       }
-      
+
       .tablehead{
-      
+
         font-weight: bold;
-      
+
       }
-      
+
       .tablehead td{
-        
+
         text-align: center;
         padding-bottom: 10px;
 
       }
-      
+
       td{
-      
+
         padding-left: 10px;
         padding-right: 10px;
-      
+
       }
-      
+
       .ddbdp-ids, .hgv-ids, .apis-ids, .has-translation, .display-date, .display-place, .language{
-      
+
         text-align: center;
-      
+
       }
-      
+
       div.content{
-      
+
         margin-left: auto;
-      
+
       }
-      
+
       .identifier{
-      
+
         min-width: 6em;
-      
+
       }
       .keyword{
-      
+
       	margin-right: 5px;
-      
+
       }
-      
+
       .prx{
-      
+
       	display: inline-block;
-      
+
       }
-      
+
       .str-operator{
-      
+
       	display: inline-block;
       	width: 40px;
       	padding-right: 5px;
 
-      
+
       }
-      
+
       .spacer{
-      
+
         height: 1px;
         clear: both;
         width: 100%;
         overflow: hidden;
-      
+
       }
-      
+
       div.stringsearch-section p{
-      
+
       	padding-bottom: 20px;
       	border-bottom: thin solid gray;
-      
+
       }
-      
+
       #str-search-controls{
-      
+
       	position: relative;
         padding-left: 1em;
         clear: both;
-      
+
       }
 
 	  #str-search-controls input{
-	  
+
 	  	float: left;
 	  	margin-right: 0;
 	  	/*margin-left: 5px;*/
 	  	margin-bottom: 4px;
 	  	font-size: 80%;
-	  	
+
 	  }
-	  
+
 
 	  .syntax-regex{
-	  
+
 	  	clear: left;
 	  	margin-left: 0px;
-	  
-	  }
-	  
-	  #str-search-controls .syntax-and, #str-search-controls .syntax-not,  #str-search-controls .syntax-or,  #str-search-controls .syntax-then,  #str-search-controls .syntax-near,  #str-search-controls .syntax-lex{
-	  
-	  	width: 42px;
-	  	margin-right: 3px;
-	  
+
 	  }
 
-	  
+	  #str-search-controls .syntax-and, #str-search-controls .syntax-not,  #str-search-controls .syntax-or,  #str-search-controls .syntax-then,  #str-search-controls .syntax-near,  #str-search-controls .syntax-lex{
+
+	  	width: 42px;
+	  	margin-right: 3px;
+
+	  }
+
+
 	   #str-search-controls .syntax-regex, #str-search-controls .syntax-abbr,  #str-search-controls .syntax-startnot,  #str-search-controls .syntax-endnot{
-	   
+
 	   	 width: 63px;
 	   	 margin-right: 5px;
-	   
+
 	   }
-	  
+
 	  #str-search-controls input.syntax-remove{
-	  
+
 	  	position: absolute;
 	  	top: 0px;
 	  	right: 0.5em;
-	  
+
 	  }
-	  
+
 	  #str-search-controls input.syntax-clear{
-	  
+
 	  	position: absolute;
 	  	top: 0px;
 	  	right: 30px;
-	  
+
 	  }
-	  
+
 	  #str-search-controls:after{
-	  
+
 	  	content:".";
 	  	display: block;
 	  	height: 0px;
 	  	font-size: 0;
 	  	clear: both;
 	  	visibility: hidden;
-	  
+
 	  }
-      
+
       #marks, #caps, #beta-on{
-      
+
       	margin-left: 1em;
-      
+
       }
-      
+
       #place-search-widget{
-      
+
       	margin-bottom: 0px;
-      
+
       }
-      
+
       #place-search-widget p{
-      
+
       	margin-bottom: 0.3em;
-      
+
       }
-      
+
       div.unknown-date input#DATE_START_TEXT, div.unknown-date input#DATE_END_TEXT{
-      
+
       	width: 4em;
       	z-index: 1000;
-      
+
       }
-      
+
       .vol-disabled, div.unknown-date input#DATE_START_TEXT, div.unknown-date input#DATE_END_TEXT{
-      	
+
       	color: #444;
       	font-style: italic;
-      
+
       }
-      
+
       #id-idno:disabled, #id-volume:disabled{
-      
+
        	color: #444;
-      	font-style: italic;     	
-      
+      	font-style: italic;
+
       }
-      
+
       .autocomplete-values{
-      
+
 		display: none;
-	
+
       }
-      
+
       .ui-autocomplete{
-      
+
       	text-align: left;
-      
+
       }
-      
+
       .ui-menu-item{
-      
+
       	font-size: 72%;
-      
+
       }
-      
+
       #search-reset-wrapper{
 
       	float: right;
       	margin-top: 15px;
-      
+
       }
-      
+
       a#reset-all{
-      	
+
       	padding: 0.2em 0.5em;
       	margin-right: 15px;
       color: #555;
       }
-      
+
       .unknown-date{
-      
+
       	color: #444;
       	font-style: italic;
-      
+
       }
-      
+
       /*date widget styles */
-      
+
       .date-facet-widget{
-      
+
       	margin: 1em;
       	margin-bottom: 0.25em;
       	padding-left: 4px;
       	position: relative;
       	float: left;
-      	
+
       }
-      
+
       .date-facet-widget select, .date-facet-widget input{
-      
+
       	float: left;
-      
+
       }
-      
+
       .date-facet-widget .option-label{
-      
+
       	display: block;
       	width: 10em;
       	float: left;
-      
+
       }
-      
+
       .date-facet-widget .date-input-box{
-      
+
       	position: relative;
       	float: right;
       	margin-right: 35px;
       	display: inline-block;
-		top: 0;      
+		top: 0;
       }
-      
+
       .date-input-box input{
-      
+
       	float: left;
-      
+
       }
-      
+
       .date-input-box select{
-      
+
       	float: right;
-      
+
       }
-      
+
       #date-mode-facet-widget input{
-      
+
       	float: none;
       	margin-right: 0.5em;
-      
+
       }
-      
+
       #date-mode-facet-widget{
-      
+
       	padding-bottom: 0;
       	margin-top: 0.35em;
       	margin-bottom: 1.5em;
-      
+
       }
-      
+
      input#STRICT{
-      	
+
       	margin-left: 3em;
       }
-      
+
       #after-era-selector, #before-era-selector{
-      
+
       		float: left;
       		position: relative;
       		margin-left: 2em;
       		padding-top: 2px;
-      
+
       }
-      
+
 	#after-era-selector input, #before-era-selector input{
-      
+
       	float: none;
       	margin-right: 10px;
       	min-width: 10px;
-      	
+
       }
-           
+
       #after-era-selector label, #before-era-selector label{
-      
+
       	margin-right: 0.5em;
       	float: none;
-      	
+
       }
-      
+
       #opening-info h2{
-      
+
       	margin-top: 30px;
-        
+
       }
-      
+
       #results-prefix-wrapper{
-      
+
       	position: relative;
 
       }
-      
+
       #results-prefix{
       	float: left;
       	width: 100%;
       }
-      
+
       #results-prefix p{
       	clear: both;
       	margin-top: 0px;
       }
-      
+
       #docs-per-page{
       	position: absolute;
       	right: 20px;
       	width: 200px;
       }
-      
+
       #docs-per-page input#DOCS_PER_PAGE{
-      
+
       	width: 35px;
-      
+
       }
-      
+
       #docs-per-page label{
-      
+
       	font-size: 85%;
-	padding-right: 10px;  
+	padding-right: 10px;
       }
-      
+
       .ui-widget{
-      
+
         font-size: 92%;
-      
+
       }
-      
+
       #parse-errors{
-      
+
       	font-size: 110%;
       	margin-top: 25px;
-      
+
       }
-      
+
       #parse-errors p{
-      
+
     	font-weight: bold;
-    
+
       }
-      
+
       #parse-errors ul{
-      
+
       	margin-left: 3em;
       	list-style-type: disc;
-      
+
       }
-      
+
       #parse-errors ul li{
-      	
+
       	list-style-type: disc;
-      
+
       }
-      
+
       .within{
-      
+
       	display: inline-block;
       	color: #aaa;
       	font-size: 85%;
       	margin-left: 3px;
       	margin-right: 7px;
-      
+
       }
-      
+
       .combobox{
-      
+
         	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 			font-size: 90%;
       		padding-left: 4px;
       		padding-bottom: 1px;
       		height: 1.3em;
 
-      
+
       }
-      
+
       ul.ui-autocomplete, .combobox{
-      
+
       	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
 
       }
-      
+
       .facet-widget button.ui-corner-all, .facet-widget button.ui-corner-bottom, .facet-widget button.ui-corner-right, .facet-widget button.ui-corner-br {
 
 		-moz-border-radius-bottomright: 0px;
@@ -839,124 +839,124 @@
 		border-top-right-radius: 0px;
 
 		}
-      
+
      .facet-widget .ui-state-default, .facet-widget .ui-widget-content, .facet-widget .ui-state-default, .facet-widget .ui-widget-header, .facet-widget .ui-state-default{
-     
+
      	border: none;
-     
+
      }
-      
+
 	  ul.ui-autocomplete li a strong{
-	  
-	  	font-weight: bold;	
-	  
+
+	  	font-weight: bold;
+
 	  }
       #transcription-selectors{
-      
+
       		float: right;
       		display: inline-block;
       }
       #transcription-selectors input{
-      
+
       		float: none;
-      
+
       }
-      
+
       #transcription-selectors label{
-      
+
       	margin-right: 1em;
-      
+
       }
       #check-true{
-      
+
       	margin-right: 2em;
-      
+
       }
       #timeout{
-      
+
       	clear: both;
       	width: 6em;
       	margin-left: 1em;
-      
+
       }
       .deactivated{
-      	
+
       	color: #888;
-      
+
       }
       #js-warning{
-      	
+
       	font-size: 110%;
       	color: red;
       	width: 35em;
       	padding: 2em;
       	border: thin dashed black;
       	margin-top: 5em;
-      	      
+
       }
       #opening-info h2, #info{
-      
+
       	display: none;
-      
+
       }
-      
+
       .info-section .info-content{
-      
+
       	display: none;
-      
+
       }
 
 	  .info-section{
-	  
+
 	  	margin-left: 2em;
-	  
+
 	  }
-	  
+
 	  .info-content{
-	  
+
 	  	margin-bottom: 10px;
-	  
+
 	  }
 
 	  .info-section h4{
-	  
+
 	  	cursor: pointer;
 	  	margin-bottom: 10px;
-	  
-	  }    
-	  
+
+	  }
+
 	  .info-content h5{
-	  
+
 	  	font-weight: bold;
 	  	margin-top: 0.75em;
 	  	margin-bottom: 0.75em;
-	  
-	  }  
-	  
+
+	  }
+
 	  .info-content ol{
-	  
+
 	  	margin: 1em;
-	  
+
 	  }
-	  
+
 	  .info-content ol li{
-	  
+
 	  	margin: 0.75em;
-	  
+
 	  }
-	  
+
 	  .topic-intro{
-	  
+
 	  	font-weight: bold;
-	  
+
 	  }
-	  
+
 	  .topic-intro:after{
-	  	
+
 	  	content:": ";
-	  
+
 	  }
-	  
+
 
     </style>
           <!--[if IE 6]>
@@ -970,30 +970,30 @@
     <![endif]-->
       <!--[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]-->
     <script type="text/javascript">
-    
+
      $(document).ready(function(){
-     
+
      	$("#opening-info h2, #info").css("display", "block");
         $(".info-section h4").click(function(){
-        	
+
         	var startHeight = $("#facet-wrapper").height();
         	$(this).next(".info-content").slideToggle(200, 'linear', function(){
-        	
+
         		var newHeight = $("#facet-wrapper").height();
         	    if(newHeight != startHeight){
-                
-                	$("#search-toggle").height(newHeight);	
-        	
+
+                	$("#search-toggle").height(newHeight);
+
         		}
         	});
 
-        
+
         });
-     	
-     
-     
-     
-     
+
+
+
+
+
      });
 
       var _gaq = _gaq || [];
@@ -1007,7 +1007,7 @@
       })();
 
 	function findTM(href){
-	
+
 		var loc = window.location.toString();
 		if(loc.charAt(loc.length - 1) == "#") loc = loc.substring(0, loc.length - 1);
 		loc = loc + "?target=user_defined&STRING=(identifier:" + href + ")";
@@ -1038,21 +1038,10 @@
               <li>
                 <a href="/browse/apis/">APIS</a>
               </li>
-              <li class="dclp">
+              <li>
                 <a href="/browse/dclp/">DCLP</a>
-                <ul>
-                  <li>
-                    <a href="/browse/dclp/series">browse by series</a>
-                  </li>
-                  <li>
-                    <a href="/browse/dclp/tm">browse by TM number</a>
-                  </li>
-                  <li>
-                    <a href="/browse/dclp/authors">browse by authors and works</a>
-                  </li>
-                </ul>
               </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="findTM(jQuery('#tmid').attr('value'))" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="findTM(jQuery('#tmid').attr('value'))" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
               <li>or Search:</li>
               <li class="current">
@@ -1092,10 +1081,10 @@
             </div>
             <div id="footer-right-col">
               <p>Produced by</p>
-              <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a> 
+              <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a>
                 <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
                 Ancient World</a></p>
-              <div id="about-nav"> 
+              <div id="about-nav">
                 <ul class="nav">
                   <li><a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a></li>
                   <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
@@ -1103,7 +1092,7 @@
                     der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
                   <li><a href="/docs/ddbdp" title="Duke Databank of Documentary Papyri - Home">DDbDP</a></li>
                   <li><a href="/docs/apis">APIS</a></li>
-                  <li class="last-child"><a href="/docs/about" title="Papyri.info">Papyri.info</a></li>    
+                  <li class="last-child"><a href="/docs/about" title="Papyri.info">Papyri.info</a></li>
                 </ul>
                 <h3 id="about-hdr">About:</h3>
               </div>
