@@ -495,7 +495,12 @@
             <xsl:value-of select="if(string($dclp_id[2]))then(replace($dclp_id[2], '\D', ''))else(0)"/>
           </field>
           <field name="item">
-            <xsl:value-of select="replace($dclp_id[3], '\D', '')"/>
+            <xsl:choose>
+              <xsl:when test="matches($dclp_id[3], '[,+/]')">
+                <xsl:value-of select="replace($dclp_id[3], '^(\d+)\D.*$', '$1')"/>
+              </xsl:when>
+              <xsl:otherwise><xsl:value-of select="replace($dclp_id[3], '\D', '')"/></xsl:otherwise>
+            </xsl:choose>
           </field>
         </xsl:if>
         <field name="series_led_path">
