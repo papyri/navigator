@@ -262,7 +262,7 @@
     
     <!-- handle principal edition bibliography -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']" mode="metadata-dclp">
-        <xsl:for-each-group select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']" group-by="@subtype">
+        <xsl:for-each-group select="t:listBibl/t:bibl[@type='publication' and @subtype='principal' and *]" group-by="@subtype">
             <tr>
                 <th>Principal Edition</th>
                 <td>
@@ -382,7 +382,13 @@
                     <xsl:when test="doc-available($biblio-filename)">
                         <xsl:variable name="biblio-doc" select="pi:get-docs($biblio-target, 'xml')"/>
                         <xsl:for-each select="$biblio-doc/t:bibl">
-                            <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
+                            <xsl:variable name="biblType">
+                                <xsl:choose>
+                                    <xsl:when test="$type='principalEdition' and .//t:title[@type='short-Checklist']">title</xsl:when>
+                                    <xsl:otherwise><xsl:value-of select="$type"/></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$biblType"/></xsl:call-template>
                         </xsl:for-each>
                         <xsl:value-of select="$passThrough"/>
                     </xsl:when>
@@ -396,11 +402,10 @@
                 <xsl:value-of select="$passThrough"/>
             </xsl:otherwise>
         </xsl:choose>    </xsl:template>
-    
     <xsl:template name="dclp-bibliography">
         <xsl:param name="heading"/>
         <xsl:param name="references"/>
-        <xsl:for-each select="$references">
+        <xsl:for-each select="$references">            
             <xsl:variable name="type">
                 <xsl:choose>
                     <xsl:when test="@type='publication' and @subtype='principal'">principalEdition</xsl:when>
