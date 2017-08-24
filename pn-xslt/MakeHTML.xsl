@@ -711,7 +711,7 @@
                   </xsl:variable>
                   <xsl:call-template name="dclp-biblio-principal-dereference">
                       <xsl:with-param name="passThrough" select="$passThrough"/>
-                      <xsl:with-param name="type">principalEdition</xsl:with-param>                      
+                      <xsl:with-param name="type">title</xsl:with-param>                      
                   </xsl:call-template>
               </xsl:for-each>
               <xsl:text> = </xsl:text>
