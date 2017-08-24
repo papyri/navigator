@@ -702,27 +702,27 @@
   <xsl:template name="get-references">
     <xsl:choose>
       <xsl:when test="$collection = 'dclp'">
-          <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'na'))]">
-              <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition'][1]/t:listBibl/t:bibl[@type='publication' and @subtype='principal'][1]">
-                  <xsl:variable name="passThrough">
-                      <xsl:call-template name="dclp-get-biblio-passthrough">
-                          <xsl:with-param name="references" select="."/>
-                      </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:call-template name="dclp-biblio-principal-dereference">
-                      <xsl:with-param name="passThrough" select="$passThrough"/>
-                      <xsl:with-param name="type">title</xsl:with-param>                      
-                  </xsl:call-template>
-              </xsl:for-each>
-              <xsl:text> = </xsl:text>
-          </xsl:if>
-          <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]">
-              <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]"/>
-              <xsl:text> = </xsl:text>
-          </xsl:if>
-          <xsl:text>Trismegistos </xsl:text>
-          <a href="http://www.trismegistos.org/text/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></a>
-          <xsl:text> = </xsl:text><a href="http://www.trismegistos.org/ldab/text.php?quick={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']}">LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of></a>
+        <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'na'))]">
+            <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition'][1]/t:listBibl/t:bibl[@type='publication' and @subtype='principal'][1]">
+                <xsl:variable name="passThrough">
+                    <xsl:call-template name="dclp-get-biblio-passthrough">
+                        <xsl:with-param name="references" select="."/>
+                    </xsl:call-template>
+                </xsl:variable>
+                <xsl:call-template name="dclp-biblio-principal-dereference">
+                    <xsl:with-param name="passThrough" select="$passThrough"/>
+                    <xsl:with-param name="type">title</xsl:with-param>                      
+                </xsl:call-template>
+            </xsl:for-each>
+            <xsl:text> = </xsl:text>
+        </xsl:if>
+        <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]">
+            <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]"/>
+            <xsl:text> = </xsl:text>
+        </xsl:if>
+        <xsl:text>Trismegistos </xsl:text>
+        <a href="http://www.trismegistos.org/text/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></a>
+        <xsl:text> = </xsl:text><a href="http://www.trismegistos.org/ldab/text.php?quick={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']}">LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of></a>
       </xsl:when>
       <xsl:otherwise>
           <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
