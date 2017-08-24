@@ -262,7 +262,7 @@
     
     <!-- handle principal edition bibliography -->
     <xsl:template match="t:div[@type = 'bibliography' and @subtype =  'principalEdition']" mode="metadata-dclp">
-        <xsl:for-each-group select="t:listBibl/t:bibl[@type='publication' and @subtype='principal']" group-by="@subtype">
+        <xsl:for-each-group select="t:listBibl/t:bibl[@type='publication' and @subtype='principal' and *]" group-by="@subtype">
             <tr>
                 <th>Principal Edition</th>
                 <td>
@@ -382,6 +382,7 @@
                     <xsl:when test="doc-available($biblio-filename)">
                         <xsl:variable name="biblio-doc" select="pi:get-docs($biblio-target, 'xml')"/>
                         <xsl:for-each select="$biblio-doc/t:bibl">
+                            <xsl:message>processing <xsl:value-of select="./@xml:id"/></xsl:message>
                             <xsl:call-template name="buildCitation"><xsl:with-param name="biblType" select="$type"/></xsl:call-template>
                         </xsl:for-each>
                         <xsl:value-of select="$passThrough"/>
@@ -401,6 +402,7 @@
         <xsl:param name="heading"/>
         <xsl:param name="references"/>
         <xsl:for-each select="$references">
+            <xsl:message>reference: <xsl:value-of select="."/></xsl:message>
             <xsl:variable name="type">
                 <xsl:choose>
                     <xsl:when test="@type='publication' and @subtype='principal'">principalEdition</xsl:when>
@@ -414,6 +416,7 @@
             </xsl:variable>
             <xsl:choose>
                 <xsl:when test=".[@subtype='principal'] and ancestor::t:div[@type='bibliography'][@subtype='principalEdition']">
+                    <xsl:message>calling dereference with type=<xsl:value-of select="$type"/></xsl:message>
                     <xsl:call-template name="dclp-biblio-principal-dereference">
                         <xsl:with-param name="passThrough" select="$passThrough"/>
                         <xsl:with-param name="type" select="$type"/>
