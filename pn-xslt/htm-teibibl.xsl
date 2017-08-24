@@ -57,14 +57,12 @@
       <xsl:when test="(@type='article' or @type='review') and $mainWork//*"><xsl:apply-templates select="$mainWork/t:bibl" mode="mainTitle"/></xsl:when>
       <xsl:otherwise>
         <xsl:choose>
-          <!-- Uncomment to use 'short-Checklist' title in Principal edition display. See: https://github.com/DCLP/dclpxsltbox/issues/279
           <xsl:when test="$biblType = 'principalEdition'">
             <xsl:choose>
               <xsl:when test="descendant::t:title[@type='short-Checklist']"><xsl:apply-templates select="descendant::t:title[@type='short-Checklist'][1]"/><xsl:text> </xsl:text></xsl:when>
               <xsl:otherwise><xsl:apply-templates select="t:title[1]"/><xsl:text> </xsl:text></xsl:otherwise>
             </xsl:choose>
           </xsl:when>
-          -->
           <xsl:when test="t:title[@type='main']">
             <i><xsl:value-of select="t:title[@type='main']"/></i><xsl:if test="t:title[@type='short']"> (<i><xsl:value-of select="t:title[@type='short']"/></i>)</xsl:if>
           </xsl:when>
