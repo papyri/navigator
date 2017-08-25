@@ -85,7 +85,7 @@
     <field name="apis_publication_id" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="apis_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
     <field name="apis_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
-    <field name="author" type="string" indexed="true" stored="true" default="unknown" multiValued="true"/>
+    <field name="author" type="lctext" indexed="true" stored="true" default="unknown" multiValued="true"/>
     <field name="author_uri" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
     <field name="dclp_identifier" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
@@ -150,7 +150,7 @@
     <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
     <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
-    <field name="work" type="string" indexed="true" stored="true" default="unknown" multiValued="true"/>
+    <field name="work" type="lctext" indexed="true" stored="true" default="unknown" multiValued="true"/>
     <field name="work_uri" type="string" indexed="true" stored="true" multiValued="true"/>
 
   <!-- end PN fields -->
