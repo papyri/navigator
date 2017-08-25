@@ -232,7 +232,7 @@
             <xi:include href="nav.xml"/>
             <div id="main">
               <div class="content ui-corner-all">
-                <h3 style="text-align:center"><xsl:call-template name="get-references"></xsl:call-template></h3>
+                <h3 style="text-align:center"><xsl:call-template name="get-references"/></h3>
                 <xsl:if test="$hgv or $apis or $dclp">
                   <h4 style="text-align:center" id="titledate"></h4>
                 </xsl:if>
@@ -703,7 +703,7 @@
     <xsl:choose>
       <xsl:when test="$collection = 'dclp'">
           <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'na'))]">
-              <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition'][1]/t:listBibl/t:bibl[@type='publication' and @subtype='principal'][1]">
+              <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition']/t:listBibl/t:bibl[@type='publication' and @subtype='principal']">
                   <xsl:variable name="passThrough">
                       <xsl:call-template name="dclp-get-biblio-passthrough">
                           <xsl:with-param name="references" select="."/>
@@ -713,8 +713,8 @@
                       <xsl:with-param name="passThrough" select="$passThrough"/>
                       <xsl:with-param name="type">principalEdition</xsl:with-param>                      
                   </xsl:call-template>
+                <xsl:text> = </xsl:text>
               </xsl:for-each>
-              <xsl:text> = </xsl:text>
           </xsl:if>
           <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]">
               <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]"/>
@@ -743,6 +743,7 @@
       <xsl:if test="contains(., 'hgv')">
         = Trismegistos <a href="http://www.trismegistos.org/text/{replace(pi:get-id(.), '[a-z]', '')}"><xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/></a>
     </xsl:if></xsl:for-each-group>
+    <xsl:for-each select="pi:get-docs($relations[contains(., 'dclp/')], 'xml')"> = <a href="http://www.trismegistos.org/ldab/text.php?quick={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']}">LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of></a></xsl:for-each>
     <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
     <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
     <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
