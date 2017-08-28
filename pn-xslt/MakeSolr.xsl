@@ -204,7 +204,7 @@
                 select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or
-                contains(., 'dclp/')], 'xml')"
+                contains(., 'dclp/')], 'xml') union /"
               />
             </xsl:call-template>
             <xsl:call-template name="translation">
