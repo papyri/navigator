@@ -874,16 +874,23 @@
       <xsl:for-each select="$dclp-docs//t:bibl[@type='publication' and @subtype='ancient']">
         <xsl:if test="t:author">
           <field name="author"><xsl:value-of select="t:author"/></field>
-          <field name="author_uri">
+          <field name="author_str"><xsl:value-of select="t:author"/></field>
+          <xsl:for-each select="tokenize(t:author/@ref, ' +')">
+            <field name="author_uri">
             <xsl:choose>
-              <xsl:when test="contains(t:author/@ref,'urn:')"><xsl:value-of
-                select="replace(t:author/@ref, '^.*urn:', 'urn:')"/></xsl:when>
-              <xsl:otherwise><xsl:value-of select="t:author/@ref"/></xsl:otherwise>
+              <xsl:when test="contains(.,'urn:')"><xsl:value-of
+                select="replace(., '^.*urn:', 'urn:')"/></xsl:when>
+              <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
             </xsl:choose>
-          </field>
+          </field></xsl:for-each>
+          <xsl:choose>
+            <xsl:when test="t:title"><field name="author_work"><xsl:value-of select="t:author"/> // <xsl:value-of select="t:title"/></field></xsl:when>
+            <xsl:otherwise><field name="author_work"><xsl:value-of select="t:author"/></field></xsl:otherwise>
+          </xsl:choose>
         </xsl:if>
         <xsl:if test="t:title">
           <field name="work"><xsl:value-of select="t:title"/></field>
+          <field name="work_str"><xsl:value-of select="t:title"/></field>
           <field name="work_uri"><xsl:value-of select="t:title/@ref"/></field>
         </xsl:if>
       </xsl:for-each>
@@ -1193,16 +1200,16 @@
     <xsl:if test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
       <field name="title">
         <xsl:choose>
-          <xsl:when test="$dclp-docs">
-            <xsl:if test="$dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
-              <xsl:value-of
-                select="normalize-space(string-join($dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"/>
-            </xsl:if>
-          </xsl:when>
           <xsl:when test="$hgv-docs">
             <xsl:if test="$hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
               <xsl:value-of
                 select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"/>
+            </xsl:if>
+          </xsl:when>
+          <xsl:when test="$dclp-docs">
+            <xsl:if test="$dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
+              <xsl:value-of
+                select="normalize-space(string-join($dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"/>
             </xsl:if>
           </xsl:when>
           <xsl:otherwise>

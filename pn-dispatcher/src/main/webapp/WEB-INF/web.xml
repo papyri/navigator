@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" 
-         xmlns="http://java.sun.com/xml/ns/javaee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
@@ -50,18 +47,6 @@
             <param-name>solrUrl</param-name>
             <param-value>http://localhost:8083/solr/</param-value>
         </init-param>
-    </servlet>
-    <servlet>
-      <servlet-name>MDReader</servlet-name>
-      <servlet-class>info.papyri.dispatch.MDReader</servlet-class>
-      <init-param>
-        <param-name>docs</param-name>
-        <param-value>/srv/data/papyri.info/pn/docs</param-value>
-      </init-param>
-      <init-param>
-        <param-name>template</param-name>
-        <param-value>/srv/data/papyri.info/pn/home/template.html</param-value>
-      </init-param>
     </servlet>
     <servlet>
         <servlet-name>FacetBrowser</servlet-name>
@@ -165,7 +150,7 @@
         <init-param>
             <param-name>xmlPath</param-name>
             <param-value>/srv/data/papyri.info/idp.data/</param-value>
-        </init-param> 
+        </init-param>
         <init-param>
             <param-name>epidoc</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
@@ -215,12 +200,12 @@
             <param-value>text/html</param-value>
         </init-param>
         <init-param>
-          <param-name>standoff-apparatus</param-name>
-          <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/standoff-apparatus.xsl</param-value>
+            <param-name>standoff-apparatus</param-name>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/standoff-apparatus.xsl</param-value>
         </init-param>
         <init-param>
-          <param-name>standoff-apparatus-type</param-name>
-          <param-value>application/xml</param-value>
+            <param-name>standoff-apparatus-type</param-name>
+            <param-value>application/xml</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -236,12 +221,12 @@
         </init-param>
     </servlet>
     <servlet>
-      <servlet-name>GitAPI</servlet-name>
-      <servlet-class>info.papyri.dispatch.GitAPI</servlet-class>
-      <init-param>
-        <param-name>repository</param-name>
-        <param-value>/srv/data/papyri.info/idp.data/.git</param-value>
-      </init-param>
+        <servlet-name>GitAPI</servlet-name>
+        <servlet-class>info.papyri.dispatch.GitAPI</servlet-class>
+        <init-param>
+            <param-name>repository</param-name>
+            <param-value>/srv/data/papyri.info/idp.data/.git</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
@@ -250,10 +235,6 @@
     <servlet-mapping>
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>MDReader</servlet-name>
-      <url-pattern>/docs</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
