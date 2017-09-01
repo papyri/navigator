@@ -171,12 +171,6 @@
                 <xsl:value-of select="."/>
               </field>
             </xsl:for-each>
-            <xsl:for-each
-              select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'TM']">
-              <field name="identifier">
-                <xsl:value-of select="."/>
-              </field>
-            </xsl:for-each>
             <xsl:call-template name="text"><xsl:with-param name="docs" select="/"/></xsl:call-template>
             <xsl:call-template name="languages"/>
             <xsl:call-template name="facetfields">
@@ -437,6 +431,7 @@
         </xsl:when>
         <xsl:when test="@type='TM'">
           <field name="identifier">http://www.trismegistos.org/tm/detail.php?quick=<xsl:value-of select="." /></field>
+          <field name="identifier"><xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:when test="@type='LDAB'">
           <field name="identifier">http://www.trismegistos.org/ldab/text.php?quick=<xsl:value-of select="." /></field>

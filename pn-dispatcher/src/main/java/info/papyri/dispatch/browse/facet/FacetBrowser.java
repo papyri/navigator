@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
@@ -66,6 +67,10 @@ public class FacetBrowser extends HttpServlet {
    */
   static private String FACET_PATH;
   /**
+   * Server home URL
+   */
+  static private String SERVER_HOME;
+  /**
    * Default number of records to show per page
    */
   static private int defaultDocumentsPerPage = 15;
@@ -92,6 +97,7 @@ public class FacetBrowser extends HttpServlet {
     PN_SEARCH = config.getInitParameter("pnSearchPath");
     FACET_PATH = config.getInitParameter("facetBrowserPath");
     INSTRUCTIONS_PATH = config.getInitParameter("instructionsPath");
+    SERVER_HOME = config.getInitParameter("serverHome");
     try {
       FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
     } catch (MalformedURLException e) {
@@ -173,10 +179,13 @@ public class FacetBrowser extends HttpServlet {
 
     // I'm feeling lucky
     if ("yes".equals(request.getParameter("lucky")) && resultSize == 1) {
+      String redirect = FileUtils.substringAfter(
+              (String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()), "://");
+      redirect = redirect.substring(redirect.indexOf("/"));
       if ("ddb-text".equals(request.getParameter("source"))) {
-        response.sendRedirect((String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()) + "/source");
+        response.sendRedirect(redirect + "/source");
       } else {
-        response.sendRedirect((String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()));
+        response.sendRedirect(redirect);
       }
     } else {
       /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each

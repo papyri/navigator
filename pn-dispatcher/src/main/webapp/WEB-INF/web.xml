@@ -87,6 +87,10 @@
             <param-name>instructionsPath</param-name>
             <param-value>/srv/data/papyri.info/pn/home/instructions.html</param-value>
         </init-param>
+        <init-param>
+            <param-name>serverHome</param-name>
+            <param-value>http://papyri.info</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>ImageMetadata</servlet-name>
