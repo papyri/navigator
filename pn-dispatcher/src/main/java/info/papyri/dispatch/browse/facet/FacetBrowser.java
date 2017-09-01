@@ -183,9 +183,9 @@ public class FacetBrowser extends HttpServlet {
               (String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()), "://");
       redirect = redirect.substring(redirect.indexOf("/"));
       if ("ddb-text".equals(request.getParameter("source"))) {
-        response.sendRedirect(redirect + "/source");
+        response.sendRedirect(SERVER_HOME + redirect + "/source");
       } else {
-        response.sendRedirect(redirect);
+        response.sendRedirect(SERVER_HOME + redirect);
       }
     } else {
       /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
