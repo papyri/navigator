@@ -242,6 +242,42 @@ ul.prose {
   padding:0.5em;
 }
 
+/* Author Browse */
+div.browse {
+  margin-left: 1em;
+}
+h2#authorbrowse {
+  border-top: 0;
+  font-size: 200%;
+  margin-top: 1em;
+  margin-left: .5em;
+}
+div.browse>ul>li {
+  font-size: 150%;
+  font-weight: bold;
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+div.browse ul.authors>li {
+  font-size: 75%;
+  font-weight: normal;
+  margin-left: 1em;
+}
+div.browse ul.works>li {
+  margin-left: 1em;
+}
+div.initials {
+  font-size: 120%;
+  margin-top: 1em;
+}
+a.top {
+  text-decoration: none;
+  color: black;
+}
+a.top:hover {
+  color: maroon;
+}
+
 /* View Page */
 div#controls {
 font-size: 70%;

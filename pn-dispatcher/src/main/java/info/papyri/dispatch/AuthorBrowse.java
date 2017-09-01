@@ -4,29 +4,32 @@
  */
 package info.papyri.dispatch;
 
-import info.papyri.dispatch.pegdown.PNCustomLinkPlugin;
-import info.papyri.dispatch.pegdown.PNPegDownProcessor;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.apache.log4j.Logger;
-import org.pegdown.Extensions;
-import org.pegdown.PegDownProcessor;
-import org.pegdown.plugins.PegDownPlugins;
+import org.apache.solr.client.solrj.response.FacetField.Count;
+
 
 /**
  *
@@ -35,31 +38,21 @@ import org.pegdown.plugins.PegDownPlugins;
 @WebServlet(name = "MDReader", urlPatterns = {"/docs"})
 public class AuthorBrowse extends HttpServlet {
 
-  private static String DOCSHOME;
   private static String TEMPLATE;
-  private PegDownProcessor peg;
+  private static String solrUrl;
   private static Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) {
-    DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
-    PegDownPlugins.Builder plugins = PegDownPlugins.builder();
-    plugins.withPlugin(PNCustomLinkPlugin.class);
-    peg = new PNPegDownProcessor(
-            Extensions.NONE, 
-            PegDownProcessor.DEFAULT_MAX_PARSING_TIME,
-            plugins.build(),
-            new PNCustomLinkPlugin());
+    solrUrl = config.getInitParameter("solrUrl");
     ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
+    logger.info("Template: " + TEMPLATE);
+    logger.info("Solr URL: " + solrUrl);
   }
 
   /**
-   * Reads a MarkDown file from the directory specified in the "docs" web.xml
-   * param, and converts it into HTML, interpolating it into the HTML file
-   * specified in the "template" param. The HTML output is cached and the
-   * cached file is used for subsequent requests until the MarkDown file is
-   * updated.
+
    * 
    * Processes requests for both HTTP
    * <code>GET</code> and
@@ -72,54 +65,123 @@ public class AuthorBrowse extends HttpServlet {
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
+      
+      //Top-level browse to query everything, get back author_str facets
+      //selecting one is a search on author_str:"<selected author>" gets back author_work facets
+      //filter those for the current author and display, selecting one gives you
     response.setContentType("text/html;charset=UTF-8");
-    StringBuilder requestPath = new StringBuilder(DOCSHOME);
-    requestPath.append("/").append(request.getParameter("f")).append(".md");
-    File f = new File(requestPath.toString());
-    File cf = new File(requestPath.toString().replaceAll("\\.md$", ".html"));
-    File cfTmp = null;
-    PrintWriter cacheOut = null;
-    if (f.exists()) {
-      if (f.lastModified() > cf.lastModified()) {
-        PrintWriter out = response.getWriter();
-        try {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
-          cfTmp = File.createTempFile(cf.getName(), null, f.getParentFile());
-          cacheOut = new PrintWriter(new OutputStreamWriter (new FileOutputStream(cfTmp), Charset.forName("UTF-8")));
-          StringBuilder mdf = new StringBuilder();
-          char[] ch = new char[1024];
-          int c;
-          while ((c = reader.read(ch)) > 0) {
-            mdf.append(ch, 0, c);
+    logger.info("Author Browsing!");
+    SolrServer solr = new CommonsHttpSolrServer(solrUrl);
+    SolrQuery sq = new SolrQuery();
+    sq.add("q", "*:*");
+    sq.addFacetField("author_work");
+    sq.setFacetLimit(-1);
+    List<Count> authors;
+    try {
+        QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
+        authors = qr.getFacetField("author_work").getValues();
+    } catch (SolrServerException sse) {
+        logger.error("Unable to execute query.", sse);
+        authors = new ArrayList<>();
+    }
+
+    PrintWriter out = response.getWriter();
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        out.println(line);
+        if (line.contains("<div class=\"browse\">")) {
+          out.println("<ul>");
+          String initial = "";
+          String auth = "";
+          boolean closeInitial = false;
+          boolean closeAuthor = false;
+          boolean worksOpen = false;
+          Collections.sort(authors, new Comparator() {
+              @Override
+              public int compare(Object o1, Object o2) {
+                  return ((Count)o1).getName().trim().compareTo(((Count)o2).getName().trim());
+              }
+              
+          });
+          for (Count author : authors) {
+              String name = author.getName();
+              
+              //Initial Link
+              if (!initial.equals(name.substring(0,1))) {
+                initial = name.substring(0,1);
+                if (worksOpen) {
+                    out.print("</ul>");
+                    worksOpen = false;
+                }
+                if (closeAuthor) {
+                    out.print("</li></ul>");
+                    closeAuthor = false;
+                }
+                if (closeInitial) {
+                    out.println("</li>");
+                    closeInitial = false;
+                }
+                out.print("<li><a name=\"");
+                out.print(initial);
+                out.print("\" class=\"initial\">");
+                out.print(initial);
+                out.println("</a> <a class=\"top\" href=\"#\">^</a><ul class=\"authors\">");
+                closeInitial = true;
+              }
+              //Author link
+              if (!auth.equals(FileUtils.substringBefore(name, " // "))) {
+                if (worksOpen) {
+                    out.println("</ul>");
+                    worksOpen = false;
+                }
+                if (closeAuthor) {
+                    out.println("</li>");
+                    closeAuthor = false;
+                }
+                auth = FileUtils.substringBefore(name, " // ");
+                out.print("<li><a href=\"/author/");
+                out.print(URLEncoder.encode(FileUtils.substringBefore(name, " // "), "UTF-8"));
+                out.print("\">");
+                out.print(FileUtils.substringBefore(name, " // "));
+                out.print("</a>");
+                if (name.contains(" // ")) {
+                    out.println("<ul class=\"works\">");
+                    worksOpen = true;
+                }
+                closeAuthor = true;
+              }
+              //Work Link
+              if (name.contains(" // ")) {
+                if (!worksOpen) {
+                    out.print("<ul class=\"works\">");
+                    worksOpen = true;
+                }
+                out.print("<li><a href=\"/author/");
+                out.print(URLEncoder.encode(FileUtils.substringBefore(name, " // "), "UTF-8"));
+                out.print("/");
+                out.print(URLEncoder.encode(FileUtils.substringAfter(name, " // "), "UTF-8"));
+                out.print("\">");
+                out.print(FileUtils.substringAfter(name, " // "));
+                out.print("</a></li>");
+              }
+              
           }
-          reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
-          String line;
-          while ((line = reader.readLine()) != null) {
-            out.println(line);
-            cacheOut.println(line);
-            if (line.contains("<div class=\"browse\">")) {
-              String md = peg.markdownToHtml(mdf.toString());
-              out.write(md);
-              cacheOut.write(md);
-              reader.readLine(); // assume template has a throwaway line inside the content div
-            }
+          if (worksOpen) {
+              out.println("</ul>");
           }
-        } catch (IOException e) {
-          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } finally {
-          out.close();
-          if (cacheOut != null) {
-            cacheOut.close();
+          if (closeAuthor) {
+             out.println("</li></ul>");
           }
-          if (cfTmp != null) {
-            cfTmp.renameTo(cf);
-          }
+          out.println("</li></ul>");
+          reader.readLine(); // assume template has a throwaway line inside the content div
         }
-      } else {
-        ServletUtils.send(response, cf);
       }
-    } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    } catch (IOException e) {
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    } finally {
+      out.close();
     }
   }
 

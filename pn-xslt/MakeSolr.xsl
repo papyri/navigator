@@ -872,9 +872,9 @@
     
     <xsl:if test="$dclp-docs">
       <xsl:for-each select="$dclp-docs//t:bibl[@type='publication' and @subtype='ancient']">
-        <xsl:if test="t:author">
-          <field name="author"><xsl:value-of select="t:author"/></field>
-          <field name="author_str"><xsl:value-of select="t:author"/></field>
+        <xsl:if test="t:author[node()]">
+          <field name="author"><xsl:value-of select="normalize-space(t:author)"/></field>
+          <field name="author_str"><xsl:value-of select="normalize-space(t:author)"/></field>
           <xsl:for-each select="tokenize(t:author/@ref, ' +')">
             <field name="author_uri">
             <xsl:choose>
@@ -884,13 +884,14 @@
             </xsl:choose>
           </field></xsl:for-each>
           <xsl:choose>
-            <xsl:when test="t:title"><field name="author_work"><xsl:value-of select="t:author"/> // <xsl:value-of select="t:title"/></field></xsl:when>
-            <xsl:otherwise><field name="author_work"><xsl:value-of select="t:author"/></field></xsl:otherwise>
+            <xsl:when test="t:title[node()]"><field name="author_work"><xsl:value-of
+              select="normalize-space(t:author)"/> // <xsl:value-of select="normalize-space(t:title)"/></field></xsl:when>
+            <xsl:otherwise><field name="author_work"><xsl:value-of select="normalize-space(t:author)"/></field></xsl:otherwise>
           </xsl:choose>
         </xsl:if>
-        <xsl:if test="t:title">
-          <field name="work"><xsl:value-of select="t:title"/></field>
-          <field name="work_str"><xsl:value-of select="t:title"/></field>
+        <xsl:if test="t:title[node()]">
+          <field name="work"><xsl:value-of select="normalize-space(t:title)"/></field>
+          <field name="work_str"><xsl:value-of select="normalize-space(t:title)"/></field>
           <field name="work_uri"><xsl:value-of select="t:title/@ref"/></field>
         </xsl:if>
       </xsl:for-each>

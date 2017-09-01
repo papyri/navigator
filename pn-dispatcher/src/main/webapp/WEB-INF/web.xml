@@ -49,6 +49,18 @@
         </init-param>
     </servlet>
     <servlet>
+        <servlet-name>MDReader</servlet-name>
+        <servlet-class>info.papyri.dispatch.MDReader</servlet-class>
+        <init-param>
+            <param-name>docs</param-name>
+            <param-value>/srv/data/papyri.info/pn/docs</param-value>
+        </init-param>
+        <init-param>
+            <param-name>template</param-name>
+            <param-value>/srv/data/papyri.info/pn/home/template.html</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
         <servlet-name>FacetBrowser</servlet-name>
         <servlet-class>info.papyri.dispatch.browse.facet.FacetBrowser</servlet-class>
         <init-param>
@@ -57,7 +69,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/</param-value>
+            <param-value>http://localhost:8083/solr</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
@@ -142,6 +154,18 @@
         <init-param>
             <param-name>pnSearchPath</param-name>
             <param-value>/pn-search</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>AuthorBrowse</servlet-name>
+        <servlet-class>info.papyri.dispatch.AuthorBrowse</servlet-class>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8083/solr/pn-search</param-value>
+        </init-param>
+        <init-param>
+            <param-name>template</param-name>
+            <param-value>/srv/data/papyri.info/pn/home/authorbrowse.html</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -233,6 +257,10 @@
         <url-pattern>/browse/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>MDReader</servlet-name>
+        <url-pattern>/docs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>Reader</servlet-name>
         <url-pattern>/reader</url-pattern>
     </servlet-mapping>
@@ -255,6 +283,10 @@
     <servlet-mapping>
         <servlet-name>AtomFeed</servlet-name>
         <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AuthorBrowse</servlet-name>
+        <url-pattern>/author</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CTSServlet</servlet-name>

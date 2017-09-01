@@ -211,6 +211,8 @@ public class FacetBrowser extends HttpServlet {
     facets.add(new TranslationFacet());
     facets.add(new HasImagesFacet());
     facets.add(new HasTranscriptionFacet());
+    facets.add(new AuthorFacet());
+    facets.add(new WorkFacet());
     return facets;
 
   }
