@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -127,8 +128,8 @@ public class FacetBrowser extends HttpServlet {
     response.setContentType("text/html;charset=UTF-8");
     request.setCharacterEncoding("UTF-8");
     
-    if (request.getQueryString() != null && request.getQueryString().toLowerCase().contains("%3cscript%3e")) {
-        response.sendError(400, "Not today, Satan.");
+    if (request.getQueryString() != null && URLDecoder.decode(request.getQueryString(), "UTF-8").toLowerCase().contains("<script>")) {
+        response.sendError(400, "No XSS today, thank you.");
         return;
     }
 
