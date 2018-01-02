@@ -122,7 +122,7 @@ public class FacetBrowser extends HttpServlet {
     response.setContentType("text/html;charset=UTF-8");
     request.setCharacterEncoding("UTF-8");
     
-    if (request.getQueryString() != null && URLDecoder.decode(request.getQueryString(), "UTF-8").toLowerCase().contains("<script>")) {
+    if (request.getQueryString() != null && URLDecoder.decode(request.getQueryString(), "UTF-8").toLowerCase().contains("<script")) {
         response.sendError(400, "No XSS today, thank you.");
         return;
     }
