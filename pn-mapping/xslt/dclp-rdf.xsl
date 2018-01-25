@@ -10,7 +10,7 @@
   exclude-result-prefixes="xs tei" version="2.0">
 
   <xsl:output omit-xml-declaration="yes" indent="yes" />
-  <xsl:param name="root"/> <!-- use idp.data root directory (the one in which you will find DDB_EpiDoc_XML, HGV_meta_EpiDoc etc.) -->
+  <xsl:param name="root">/data/papyri.info/idp.data</xsl:param> <!-- use idp.data root directory (the one in which you will find DDB_EpiDoc_XML, HGV_meta_EpiDoc etc.) -->
   <xsl:param name="domain" select="'papyri.info'"/> <!-- for the DCLP project overwrite with 'dclp.atlantides.org' -->
 
   <xsl:template match="/tei:TEI">
@@ -120,6 +120,18 @@
       <xsl:for-each select="//tei:idno[lower-case(@type)='tm']">
         <xsl:for-each select="tokenize(., '\s')">
           <dct:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+          <!-- not all HGV trans files have TM no., e.g. HGV_trans_EpiDoc/9363a.xml -->
+          <!-- some HGV trans files have more than one TM no., e.g. HGV_trans_EpiDoc/5285\ 44179.xml -->
+          <!-- relation DCLP to HGV trans 1:n (because of the HGV number [TM no. + letter code]) -->
+          <!-- but the system can handle only 1:1 -->
+          <!-- so we take into cosideration only translations that have a distinct TM no. -->
+          <xsl:if test="doc-available(concat($root, '/HGV_trans_EpiDoc/', ., '.xml'))">
+            <dct:relation>
+              <rdf:Description rdf:about="http://papyri.info/hgvtrans/{.}/source">
+                <dct:relation rdf:resource="{$id}"/>
+              </rdf:Description>
+            </dct:relation>
+          </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
       
