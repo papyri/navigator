@@ -42,6 +42,7 @@ do	if [ -n "${complete}" ]
 				done
 
 				if [ "${corpus}" == "DCLP"]
+					then	java -Xms512m -Xmx1536m net.sf.saxon.Transform -it:OVERVIEW -xsl:/srv/data/papyri.info/git/navigator/pn-scripts/generateCorpusOverview.xsl pathTarget=/srv/data/papyri.info/pn/home/ > /dev/null
 				fi
 	fi
 done
