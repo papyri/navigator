@@ -720,6 +720,7 @@
   [n, name]
   (File. (str tmpath "/dump/files/" (int (Math/floor (/ (Integer. n) 1000))) "/" n "-" name ".clj")))
 
+
 (defn process-tm-file
   [f, n]
   (with-open [rdr (io/reader (str tmpath "/dump/" f ".csv"))]
@@ -742,7 +743,8 @@
                   (with-open [out (io/writer of)]
                     (binding [*out* out
                               *print-dup* true]
-                      (prn (vector fields)))))
+                      (if-not (nil? fields)
+                        (prn (vector fields))))))
                 (do ;; if the file exists, we might already have it loaded from the last row, so don't re-read it
                   (if-not (= @outfile of)
                     (dosync
@@ -751,22 +753,26 @@
                                                 (into [] (concat r (vector fields))))))
                     (dosync
                       (ref-set record (into [] (concat @record (vector fields))))))))))))
-      (when-not (nil? @outfile)
+      (when-not (or (nil? @outfile) (nil? @record))
         (with-open [out (io/writer @outfile)]
           (binding [*out* out
                     *print-dup* true]
             (prn @record)))))))
 
 (defn map-tm-functions
-  [out name, fieldnums, rels]
-  (for [values rels]
+  ([out name, fieldnums, rels]
+    (for [values rels]
       (partial write-tm-xml out name values fieldnums [])))
+  ([out, name, fieldnums, rels, fns]
+    (for [values rels]
+      (partial write-tm-xml out name values fieldnums fns))))
 
 (defn preprocess-tm
   "Converts TM data into XML for inclusion in the PN."
   []
   (process-tm-file "dates" 1)
   (process-tm-file "texref" 1)
+  (process-tm-file "editref" 0)
   (process-tm-file "geotex" 1)
   (process-tm-file "georef" 5)
   (process-tm-file "ref" 7)
@@ -783,6 +789,8 @@
                 dates (when (.exists datefile) (with-open [f (PushbackReader. (FileReader. datefile))] (read f)))
                 texreffile (tm-file (nth fields 0) "texref")
                 texrefs (when (.exists texreffile) (with-open [f (PushbackReader. (FileReader. texreffile))] (read f)))
+                editreffile (tm-file (nth (nth texrefs 0) 0) "editref") ;; needs to be changed to texref
+                editrefs (when (.exists editreffile) (with-open [f (PushbackReader. (FileReader. editreffile))] (read f)))
                 geotexfile (tm-file (nth fields 0) "geotex")
                 geotex (when (.exists geotexfile) (with-open [f (PushbackReader. (FileReader. geotexfile))] (read f)))
                 georeffile (tm-file (nth fields 0) "georef")
@@ -795,8 +803,9 @@
                 collrefs (when (.exists collreffile) (with-open [f (PushbackReader. (FileReader. collreffile))] (read f)))
                 fns (concat
                       (map-tm-functions out "date" [2 3 4 9 14] dates)
-                      (map-tm-functions out "texref" [1 2 3 4 5 14 15] texrefs)
-                      (map-tm-functions out "geotex" [2 28] geotex)
+                      (map-tm-functions out "texref" [1 2 3 4 5 14 15 19 21] texrefs
+                        (map-tm-functions out "editref" [0 1] editrefs))
+                      (map-tm-functions out "geotex" [2 20 22] geotex)
                       (map-tm-functions out "georef" [0 7 25 35 36 37 38] georefs)
                       (map-tm-functions out "personref" [0 132 53 54 55 56 151] personrefs)
                       (map-tm-functions out "archref" [5 37] archrefs)
