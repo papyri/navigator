@@ -56,7 +56,7 @@
         handler (.newTransformerHandler (TransformerFactoryImpl.) xslt)]
     (try
       (doto handler
-        (.setResult (StreamResult. (File. (.replace (.replace (str file-var) "intake_files" "xml") ".if" ".xml"))))
+        (.setResult (StreamResult. (File. (.replace (.replace (str file-var) "intake_files" "newxml") ".if" ".xml"))))
         (.startDocument)
         (.startElement "" "apis" "apis" (AttributesImpl.)))
       (process-file (read-file file-var) "" handler)
@@ -83,7 +83,7 @@
   
 (defn -main
   ([dir-name, xsl]
-    (-main dir-name xsl 2))
+    (-main dir-name xsl (.availableProcessors (java.lang.Runtime/getRuntime))))
   ([dir-name, xsl, nthreads]
   (def xslt xsl)
   (def dirs (file-seq (File. dir-name)))

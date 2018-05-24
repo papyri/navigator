@@ -3,16 +3,22 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:t="http://www.tei-c.org/ns/1.0" 
     xmlns:ms="urn:schemas-microsoft-com:office:spreadsheet"
-    exclude-result-prefixes="xs t" version="2.0">
+    exclude-result-prefixes="xs t ms" version="2.0">
     <xsl:output indent="yes"/>
   
   <xsl:variable name="base">/Users/hcayless/Development/APIS/apis_translations/</xsl:variable>
   <!-- Expects an XML-form Excel Spreadsheet with the columns filename (w/ recto/verso and .jp2 suffix stripped), inv. no., apis id, image url -->
-  <xsl:variable name="image-doc" select="doc('file:/Users/hcayless/Development/APIS/P-Lund.xml')"/>
+  <!--<xsl:variable name="image-doc" select="doc('file:/Users/hcayless/Development/APIS/P-Lund.xml')"/>-->
   <xsl:variable name="id">http://papyri.info/apis/<xsl:value-of select="normalize-space(//cu001)"/>/source</xsl:variable>
+  <xsl:variable name="olddoc"><xsl:choose>
+    <xsl:when test="doc-available(concat('file:///Users/hac13/Development/APIS/idp.data/APIS/berkeley/xml/',
+      //cu001, '.xml'))"><xsl:copy-of select="doc(concat('file:///Users/hac13/Development/APIS/idp.data/APIS/berkeley/xml/',
+        //cu001, '.xml'))"></xsl:copy-of></xsl:when>
+    <xsl:otherwise><xsl:sequence select="/"/></xsl:otherwise>
+  </xsl:choose></xsl:variable>
     
     <xsl:template match="/">
-      <xsl:processing-instruction name="xml-model">href="http://www.stoa.org/epidoc/schema/8.10/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
+      <xsl:processing-instruction name="xml-model">href="http://www.stoa.org/epidoc/schema/8.13/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
 </xsl:text>
         <TEI
             xmlns="http://www.tei-c.org/ns/1.0">
@@ -30,6 +36,14 @@
                         <xsl:if test="//cu035"><idno type="controlNo"><xsl:value-of select="normalize-space(//cu035)"/></idno></xsl:if>
                         <!-- makes an attempt to create a match on the ddb-readable field in the mapping doc -->
                         <xsl:for-each select="//cu510_dd"><idno type="ddbdp"><xsl:value-of select="replace(normalize-space(replace(lower-case(.),':','.')),'\.\.','.')"/></idno></xsl:for-each>
+                      <xsl:for-each select="$olddoc//t:idno[@type='ddb-perseus-style']"><xsl:copy-of
+                        select="."/></xsl:for-each>
+                      <xsl:for-each select="$olddoc//t:idno[@type='ddb-hybrid']"><xsl:copy-of
+                        select="."/></xsl:for-each>
+                      <xsl:for-each select="$olddoc//t:idno[@type='HGV']"><xsl:copy-of
+                        select="."/></xsl:for-each>
+                      <xsl:for-each select="$olddoc//t:idno[@type='TM']"><xsl:copy-of
+                        select="."/></xsl:for-each>
                     </publicationStmt>
                     <sourceDesc>
                         <msDesc>
@@ -204,7 +218,7 @@
                     </xsl:if>
                 </profileDesc>
             </teiHeader>
-          <xsl:variable name="images" select="$image-doc//ms:Row[contains(ms:Cell[3]/ms:Data,$id)]"/>
+          <!--<xsl:variable name="images" select="$image-doc//ms:Row[contains(ms:Cell[3]/ms:Data,$id)]"/>
           <xsl:if test="count($images) gt 0">
             <facsimile>
               <xsl:for-each-group select="$images" group-by="ms:Cell[1]/ms:Data">
@@ -221,7 +235,7 @@
                 </surfaceGrp>
               </xsl:for-each-group>
             </facsimile>
-          </xsl:if>
+          </xsl:if>-->
             <text>
                 <body>
                     <xsl:for-each select="//cu500_t">

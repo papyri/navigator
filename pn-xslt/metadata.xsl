@@ -452,6 +452,12 @@
   
   <!-- Support/Dimensions -->
   <xsl:template match="t:support" mode="metadata">
+    <xsl:if test="parent::t:supportDesc/@material">
+      <tr>
+        <th class="rowheader">Material</th>
+        <td><xsl:value-of select="parent::t:supportDesc/@material"/></td>
+      </tr>
+    </xsl:if>
     <tr>
       <th class="rowheader">Support/Dimensions</th>
       <td><xsl:value-of select="."/></td>

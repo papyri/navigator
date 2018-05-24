@@ -93,6 +93,8 @@
   [file]
   (.substring (.getName file) 0 (.lastIndexOf (.getName file )".")))
 
+;; Run with a command like lein run /Volumes/G-DRIVE/APIS-images/Leiden/jp2 
+;; "leidenpapinst.apis.\\w\\d+" "http://papyri.info/apis" leiden.rdf
 (defn -main 
   "Takes a directory path, a pattern to match file prefixes against, and a URI prefix."
   [& args]
