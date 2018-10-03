@@ -34,7 +34,7 @@ public class SyncServlet extends HttpServlet {
   private Publisher publisher;
   private static final ScheduledExecutorService scheduler =
           Executors.newScheduledThreadPool(1);
-  private static Logger logger = Logger.getLogger("pn-sync");
+  private static Logger logger = Logger.getLogger("pnsync");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -46,7 +46,7 @@ public class SyncServlet extends HttpServlet {
     } else {
       try {
         PropertyConfigurator.configure(config.getServletContext().getRealPath("/") + log4j);
-        System.out.println("LOG4J INFO:");
+        System.out.print("LOG4J INFO: ");
         System.out.println(config.getServletContext().getRealPath("/") + log4j);
       } catch (Exception e) {
         System.out.println("Unable to load log4j properties from " + log4j);
@@ -100,8 +100,8 @@ public class SyncServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         out.println("{");
         out.println("  \"success\": " + publisher.getSuccess() + ",");
-        out.println("  \"status\": \"" + publisher.status() + "\"");
-        out.println("  \"started\": \"" + publisher.getTimestamp() + "\"");
+        out.println("  \"status\": \"" + publisher.status() + "\",");
+        out.println("  \"started\": \"" + publisher.getTimestamp() + "\",");
         out.println("  \"last\": \"" + publisher.getLastRun() + "\"");
         out.println("}");
       }

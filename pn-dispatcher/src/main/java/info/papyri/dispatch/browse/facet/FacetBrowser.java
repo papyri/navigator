@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -120,6 +121,11 @@ public class FacetBrowser extends HttpServlet {
     /* Make sure both the request and the response are properly encoded */
     response.setContentType("text/html;charset=UTF-8");
     request.setCharacterEncoding("UTF-8");
+    
+    if (request.getQueryString() != null && URLDecoder.decode(request.getQueryString(), "UTF-8").toLowerCase().contains("<script>")) {
+        response.sendError(400, "No XSS today, thank you.");
+        return;
+    }
 
     /* Get the <code>List</code> of facets to be displayed */
     ArrayList<Facet> facets = getFacets();
