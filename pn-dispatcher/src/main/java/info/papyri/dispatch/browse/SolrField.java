@@ -13,7 +13,13 @@ public enum SolrField {
         apis_metadata,
         apis_publication_id,
         apis_series,
+        author_str,
         collection,
+        dclp_full_identifier,
+        dclp_identifier,
+        dclp_metadata,
+        dclp_series,
+        dclp_volume,
         ddbdp_full_identifier,
         ddbdp_series,
         ddbdp_volume,
@@ -62,6 +68,7 @@ public enum SolrField {
         untokenized_ic,
         untokenized_id,
         volume,
-        volume_led_path  
+        volume_led_path,
+        work_str
         
 }

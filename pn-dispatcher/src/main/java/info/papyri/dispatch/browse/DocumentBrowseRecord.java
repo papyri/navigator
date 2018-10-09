@@ -488,6 +488,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private String tidyPreferredId(String prefId) {
 
     String newId = prefId.replace(" 0 ", " ");
+    newId = newId.replace("dclp ", "");
     newId = newId.replace("hgv ", "");
     newId = newId.replace("ddbdp ", "");
     newId = newId.replace("apis ", "");

@@ -47,10 +47,11 @@
     (javax.xml.transform Result )
     (javax.xml.transform.sax SAXResult)
     (javax.xml.transform.stream StreamSource StreamResult)
-    (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
-    (net.sf.saxon.lib StandardErrorListener StandardURIResolver)
-    (net.sf.saxon.trans CompilerInfo XPathException)
-    (org.apache.solr.client.solrj.impl ConcurrentUpdateSolrClient BinaryRequestWriter)
+    (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
+    (net.sf.saxon.lib AugmentedSource ParseOptions)
+    (org.apache.solr.client.solrj SolrServer SolrQuery)
+    (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
+    (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
     (com.hp.hpl.jena.query QueryExecutionFactory)
     (org.xml.sax InputSource)
@@ -81,6 +82,7 @@
 (def ^:dynamic *current*)
 (def ^:dynamic *doc*)
 (def ^:dynamic *index*)
+(def processor (Processor. false))
 
 (defn add-words
   "Adds the list of words provided to the set in the ref `words`."
@@ -95,7 +97,7 @@
   the document has been read to its end, adds that document to the
   `StreamingUpdateSolrServer` stored in the @solr ref."
   []
-  (SAXResult.
+  (SAXDestination.
     (let [current (StringBuilder.)
           chars  (StringBuilder.)
           solrdoc (SolrInputDocument.)]
@@ -120,7 +122,7 @@
   "A document handler that behaves much like `dochandler` above, but
   works for bibliographic records."
   []
-     (SAXResult.
+     (SAXDestination.
       (let [current (StringBuilder.)
 	    chars  (StringBuilder.)
 	    solrdoc (SolrInputDocument.)]
@@ -165,16 +167,14 @@
   (dosync (ref-set (load-string pool) (ConcurrentLinkedQueue.) ))
   (dotimes [n nthreads]
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
-            configuration (Configuration.)
-            compiler-info (CompilerInfo.)]
+          processor (Processor. false)
+          compiler (.newXsltCompiler processor)]
           (doto xsl-src
             (.setSystemId xslt))
-    (doto configuration
-      (.setXIncludeAware true))
-          (doto compiler-info
-            (.setErrorListener (StandardErrorListener.))
-            (.setURIResolver (StandardURIResolver. configuration)))
-          (dosync (.add (load-string (str "@" pool)) (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
+          (let [axsl (AugmentedSource. xsl-src (ParseOptions.))]
+            (doto axsl
+              (.setXIncludeAware true))
+            (dosync (.add (load-string (str "@" pool)) (.compile compiler axsl)))))))
 
 ;; ## Utility functions
 
@@ -219,12 +219,17 @@
       (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
             id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
         (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
-      (when (.contains url "apis/")
-        (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-          (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml")))))
+      (if (.contains url "dclp/")
+        (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
+            id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+            (str filepath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".xml"))
+        (when (.contains url "apis/")
+          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
+            (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
     (catch Exception e
       (when-not (nil? e)
-        (println (str (.getMessage e) " processing " url "."))))))
+        (println (str (.getMessage e) " processing " url ".")
+        (.printStackTrace e))))))
 
 (defn get-txt-filename
   "Resolves the filename of the local text file associated with the given URL."
@@ -246,13 +251,19 @@
           (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
                 id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
             (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".txt")))
+        (if (.contains url "/dclp/")
+          (when (.endsWith url "/source")
+            (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
+                id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+              (str htpath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".txt")))
         (when (.contains url "/apis")
           (if (.endsWith url "/source")
             (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-              (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt")))))))
+              (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt"))))))))
        (catch Exception e
          (when-not (nil? e)
-           (println (str (.getMessage e) " processing " url "."))))))
+           (println (str (.getMessage e) " processing " url ".")
+           (.printStackTrace e))))))
 
 
 (defn get-html-filename
@@ -284,29 +295,41 @@
         (if (= url "http://papyri.info/hgv")
           (str htpath "/HGV_meta_EpiDoc/index.html")
           (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
+      (if (.contains url "/dclp/")
+        (if (.endsWith url "/source")
+          (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
+              id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+            (str htpath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".html"))
+          (if (= url "http://papyri.info/dclp")
+            (str htpath "/DCLP/index.html")
+            (str htpath "/DCLP/" (substring-after url "http://papyri.info/dclp/") "/index.html")))
       (when (.contains url "/apis")
         (if (.endsWith url "/source")
           (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
             (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".html"))
             (if (= url "http://papyri.info/apis")
               (str htpath "/APIS/index.html")
-              (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html")))))))
+              (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html"))))))))
     (catch Exception e
        (when-not (nil? e)
-         (println (str (.getMessage e) " processing " url "."))))))
+         (println (str (.getMessage e) " processing " url ".")
+         (.printStackTrace e))))))
 
 (defn transform
   "Runs an XSLT transform on the `java.io.File` in the first parameter,
   using a list of key/value parameter pairs, and feeds the result of the transform into
   a `javax.xml.transform.Result`."
-  [url, params, #^Result out, pool]
+  [url, params, #^Destination out, pool]
     (let [xslt (.poll pool)
-    transformer (.newTransformer xslt)]
+    transformer (.load xslt)]
       (try
         (when (not (== 0 (count params)))
           (doseq [param params] (doto transformer
-            (.setParameter (first param) (second param)))))
-        (.transform transformer (StreamSource. (.openStream (URL. url))) out)
+            (.setParameter (QName. (first param)) (XdmAtomicValue. (second param))))))
+        (doto transformer
+          (.setSource (StreamSource. (.openStream (URL. url))))
+          (.setDestination out))
+        (.transform transformer)
         (catch Exception e
           (println (str (.getMessage e) " transforming " url "."))
           (.printStackTrace e))
@@ -818,14 +841,17 @@
     tasks (map (fn [x]
          (fn []
            (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
-            ;(println "Transforming " (first x) " to " (get-html-filename (first x)))
+            ;;(println "Transforming " (first x) " to " (get-html-filename (first x)))
+            ;;(println x)
               (delete-html (last (nth x 2)))
               (delete-html (last (nth x 3)))
+              (let [processor (Processor. false)
+                    out (.newSerializer processor)])
               (transform (if (.startsWith (first x) "http")
                 (str (.replace (first x) "papyri.info" nserver) "/rdf")
                 (first x))
                 (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9))
-                (StreamResult. (File. (get-html-filename (first x)))) @htmltemplates)
+                (.newSerializer processor (FileOutputStream. (File. (get-html-filename (first x))))) @htmltemplates)
              (catch Exception e
                (.printStackTrace e)
                (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
@@ -852,7 +878,7 @@
                                        (str (.replace (first x) "papyri.info" nserver) "/rdf"))
                                        (first x))
         (list (second x) (nth x 2) (nth x 3) (nth x 4))
-        (StreamResult. (File. (get-txt-filename (first x)))) @texttemplates)
+        (.newSerializer processor (FileOutputStream. (File. (get-txt-filename (first x))))) @texttemplates)
         (catch Exception e
           (.printStackTrace e)
           (println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
@@ -929,7 +955,7 @@
                      (fn []
                        (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
                        (transform (str "file://" (.getAbsolutePath x)) ()
-                                  (StreamResult. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html"))))
+                                  (.newSerializer processor (FileOutputStream. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html")))))
                                   @bibhtmltemplates)))
                    (filter #(.endsWith (.getName %) ".xml") files))]
     (doseq [future (.invokeAll pool tasks)]
@@ -950,11 +976,14 @@
       (println "Queueing DDbDP...")
       (queue-collections "http://papyri.info/ddbdp" () ())
       (println (str "Queued " (count @html) " documents."))
+      (println "Queueing DCLP...")
+      (queue-collections "http://papyri.info/dclp" '("ddbdp") ())
+      (println (str "Queued " (count @html) " documents."))
       (println "Queueing HGV...")
-      (queue-collections "http://papyri.info/hgv" '("ddbdp") ())
+      (queue-collections "http://papyri.info/hgv" '("ddbdp", "dclp") ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
-      (queue-collections "http://papyri.info/apis" '("ddbdp", "hgv") ())
+      (queue-collections "http://papyri.info/apis" '("ddbdp", "dclp", "hgv") ())
       (println (str "Queued " (count @html) " documents.")))
     (doseq [arg args] (queue-item arg))))
 

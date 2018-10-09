@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.browse.IdComparator;
 import info.papyri.dispatch.browse.SolrField;
@@ -172,6 +173,12 @@ public class IdentifierFacet extends Facet{
             
             
         }
+        
+        if (collectionSet && seriesSet) {
+            solrQuery = buildStandardFieldQuery(solrQuery);
+            return solrQuery;
+        }
+        
         if(seriesSet){
             
             String seriesSpecifierClause = getSeriesSpecifierClause();
@@ -186,6 +193,12 @@ public class IdentifierFacet extends Facet{
                 
             }
             else{
+                // If this is a DDbDP or DCLP collection, short-circuit the query building process
+                if (searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("dclp")
+                        || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("ddbdp")) {
+                    solrQuery.addFilterQuery(SolrField.collection.name() + ":" + searchConfigurations.get(IdParam.COLLECTION).getConstraint());
+                    return solrQuery;
+                }
 
                 String collSpecifierClause = getCollectionSpecifierClause();
                 solrQuery.addFilterQuery(qpref + collSpecifierClause);
@@ -272,26 +285,42 @@ public class IdentifierFacet extends Facet{
         SearchConfiguration seriesConfig = searchConfigurations.get(IdParam.SERIES);
         SearchConfiguration volumeConfig = searchConfigurations.get(IdParam.VOLUME);
         SearchConfiguration idnoConfig = searchConfigurations.get(IdParam.IDNO);
-        
-        if(collectionConfig.getConstraint().equals(apisOnlyHTMLValue)){
-            
-            solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
-            
-        } else{
-            
-            solrQuery.addFilterQuery(SolrField.apis_series.name() + ":" + collectionConfig.getConstraint());
-            
+                
+        switch(collectionConfig.getConstraint()) {
+            case("apisonly"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
+                break;
+            case("dclp"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":dclp");
+                break;
+            case("ddbdp"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":ddbdp");
+                break;
+            default:
+                solrQuery.addFilterQuery(SolrField.apis_series.name() + ":" + collectionConfig.getConstraint());
         }
         
-        StringBuilder seriesConstraint = new StringBuilder("(");
-        seriesConstraint.append(SolrField.ddbdp_series.name());
-        seriesConstraint.append(":");
-        seriesConstraint.append(seriesConfig.getConstraint());
-        seriesConstraint.append(" OR ");
-        seriesConstraint.append(SolrField.hgv_series.name());
-        seriesConstraint.append(":");
-        seriesConstraint.append(seriesConfig.getConstraint());
-        seriesConstraint.append(")");
+        String series = null;
+        if (seriesConfig.getConstraint().contains(":")) {
+            series = FileUtils.substringAfter(seriesConfig.getConstraint(), ":");
+        } else {
+            series = seriesConfig.getConstraint();
+        }
+        
+        
+        StringBuilder seriesConstraint = new StringBuilder("(")
+            .append(SolrField.ddbdp_series.name())
+            .append(":")
+            .append(series)
+            .append(" OR ")
+            .append(SolrField.hgv_series.name())
+            .append(":")
+            .append(series)
+            .append(" OR ")
+            .append(SolrField.dclp_series.name())
+            .append(":")
+            .append(series)
+            .append(")");
         solrQuery.addFilterQuery(seriesConstraint.toString());
         
         if(volumeConfig.hasConstraint()){
@@ -304,13 +333,17 @@ public class IdentifierFacet extends Facet{
             volumeConstraint.append(SolrField.hgv_volume.name());
             volumeConstraint.append(":");
             volumeConstraint.append(volumeConfig.getConstraint());
+            volumeConstraint.append(" OR ");
+            volumeConstraint.append(SolrField.dclp_volume.name());
+            volumeConstraint.append(":");
+            volumeConstraint.append(volumeConfig.getConstraint());
             volumeConstraint.append(")");
             solrQuery.addFilterQuery(volumeConstraint.toString());
         }
         
         if(idnoConfig.hasConstraint()){
             
-            ArrayList<SolrField> idFields = new ArrayList<SolrField>(Arrays.asList(SolrField.apis_full_identifier, SolrField.apis_inventory, SolrField.apis_publication_id, SolrField.ddbdp_full_identifier, SolrField.hgv_full_identifier));
+            ArrayList<SolrField> idFields = new ArrayList<SolrField>(Arrays.asList(SolrField.apis_full_identifier, SolrField.apis_inventory, SolrField.apis_publication_id, SolrField.ddbdp_full_identifier, SolrField.hgv_full_identifier, SolrField.dclp_full_identifier));
             StringBuilder idnoConstraint = new StringBuilder("(");
             Iterator<SolrField> iit = idFields.iterator();
             while(iit.hasNext()){
@@ -922,6 +955,7 @@ public class IdentifierFacet extends Facet{
             
             if(!anyConstraintSet()){
             
+                facetFields.add(SolrField.dclp_series);
                 facetFields.add(SolrField.hgv_series);
                 facetFields.add(SolrField.ddbdp_series);
                 return facetFields;
@@ -937,9 +971,15 @@ public class IdentifierFacet extends Facet{
             
             String queryString = "";
             if("".equals(rawClause)) return queryString;
+            String collection = null;
             String specifier = this.hasConstraint() ? this.getConstraint() : "*";
+            if (specifier.contains(":")) {
+                collection = specifier.substring(0, specifier.indexOf(":"));
+                specifier = specifier.substring(specifier.indexOf(":") + 1);
+            }
             queryString = rawClause.replace(IdParam.SERIES.name(), specifier);
-            queryString = queryString.replace(IdParam.COLLECTION.name(), "*");
+            queryString = queryString.replace(IdParam.COLLECTION.name(), 
+                    collection==null?"*":collection);
             return queryString;
             
         }
@@ -956,8 +996,8 @@ public class IdentifierFacet extends Facet{
                 
                 if(ff != null){
                     
-                    String collectionPrefix = facetField.equals(SolrField.ddbdp_series) ? "ddbdp" : "hgv";
-                    
+                    String collectionPrefix = facetField.equals(SolrField.dclp_series) ? "dclp" : (facetField.equals(SolrField.ddbdp_series) ? "ddbdp" : "hgv");
+
                     List<Count> facetCounts = ff.getValues();
             
                     for(Count count : facetCounts){
@@ -1013,42 +1053,51 @@ public class IdentifierFacet extends Facet{
         @Override
         public ArrayList<String> getIdValuesAsHTML(){ 
             
-            ArrayList<String> stringifiedValues = new ArrayList<String>();
-            
-            for(Map.Entry<String, Long> entry : idValues.entrySet()){
-                
-                String extendedName = entry.getKey();
-                String number = String.valueOf(entry.getValue());
-                String[] nameBits = extendedName.split(";");
-                String collection = nameBits[0].toUpperCase() + ": ";
-                String name = nameBits[1];
-                String displayName = name.replace("_", " ");
-                displayName = collection + displayName + " (" + number + ")";
-                String openTag = "<option value=\"";
-                openTag += name;
-                openTag += "\">";
-                String stringValue = openTag + displayName + "</option>";
-                
-                if(!this.hasConstraint() || name.equals(this.getConstraint())){
-                
-                    stringifiedValues.add(stringValue); 
-                    
-                }
-                
-            }
+            ArrayList<String> stringifiedValues = new ArrayList<>(idValues.keySet());
             
             Collections.sort(stringifiedValues, new Comparator(){
 
                 @Override
                 public int compare(Object t, Object t1) {
                     
-                    String rawFirst = (String) t;
+                    String rawFirst = (String)t;
                     String rawSecond = (String) t1;
-                    return rawFirst.compareToIgnoreCase(rawSecond);
+                    int pass1 = rawFirst.substring(rawFirst.indexOf(';') + 1)
+                            .compareToIgnoreCase(rawSecond.substring(rawSecond.indexOf(';') + 1));
+                    if (pass1 == 0) {
+                        return rawFirst.compareToIgnoreCase(rawSecond);
+                    } else {
+                        return pass1;
+                    }
                     
                 }
                 
             }); 
+            
+            for(Iterator<String> itr = stringifiedValues.iterator(); itr.hasNext();){
+                
+                String extendedName = itr.next();
+                String number = String.valueOf(idValues.get(extendedName));
+                String[] nameBits = extendedName.split(";");
+                String collection = nameBits[0].toUpperCase() + ": ";
+                String name = nameBits[1];
+                String displayName = name.replace("_", " ");
+                displayName = collection + displayName + " (" + number + ")";
+                StringBuilder openTag = new StringBuilder();
+                openTag.append("<option value=\"")
+                    .append(nameBits[0]).append(":").append(name)
+                    .append("\">");
+                String stringValue = openTag.toString() + displayName + "</option>";
+                
+                if(!this.hasConstraint() || name.equals(this.getConstraint())){
+                    stringifiedValues.set(stringifiedValues.indexOf(extendedName), stringValue); 
+                } else {
+                    itr.remove();
+                }
+                
+            }
+            
+
             
             if(stringifiedValues.size() != 1){
             
@@ -1127,9 +1176,9 @@ public class IdentifierFacet extends Facet{
             else{
            
                 String specifier = this.hasConstraint() ? this.getConstraint() : "*";
-                queryString = rawClause.replace(IdParam.SERIES.name(), specifier); 
+                queryString = rawClause.replace(IdParam.SERIES.name(), specifier);
                 queryString = queryString.replace(IdParam.COLLECTION.name(), "apis");
-                
+
             }
             return queryString;
             
@@ -1151,7 +1200,8 @@ public class IdentifierFacet extends Facet{
                         String name = count.getName();
                         Long number = count.getCount();
 
-                        if(name != null && !"".equals(name) && !"0".equals(name) && !"null".equals(name)  && number != 0 && !name.equals("hgv") && !name.equals("ddbdp")){
+                        if(name != null && !"".equals(name) && !"0".equals(name) 
+                                && !"null".equals(name)  && number != 0){
       
                                idValues.put(name, number);
                  
@@ -1168,32 +1218,7 @@ public class IdentifierFacet extends Facet{
         @Override
         public ArrayList<String> getIdValuesAsHTML(){ 
             
-            ArrayList<String> stringifiedValues = new ArrayList<String>();
-            
-            for(Map.Entry<String, Long> entry : idValues.entrySet()){
-                
-                String name = entry.getKey();
-                String number = String.valueOf(entry.getValue());
-                String displayName = name.replace("_", " ");
-                if(displayName.equals("apis")){
-                    
-                    name = apisOnlyHTMLValue;
-                    displayName = apisOnlyHTMLLabel;
-                    
-                }
-                displayName = displayName + " (" + number + ")";
-                String openTag = "<option value=\"";
-                openTag += name;
-                openTag += "\">";
-                String stringValue = openTag + displayName + "</option>";
-                
-                if((!this.hasConstraint() || entry.getKey().equals(this.getConstraint())) || this.getConstraint().equals(apisOnlyHTMLValue)){
-                
-                    stringifiedValues.add(stringValue); 
-                    
-                }
-                
-            }
+            ArrayList<String> stringifiedValues = new ArrayList<>(idValues.keySet());
             
             Collections.sort(stringifiedValues, new Comparator(){
 
@@ -1202,11 +1227,54 @@ public class IdentifierFacet extends Facet{
                     
                     String rawFirst = (String) t;
                     String rawSecond = (String) t1;
+                    if ("ddbdp".equals(rawFirst)) return -1;
+                    if ("ddbdp".equals(rawSecond)) return 1;
+                    if ("dclp".equals(rawFirst)) return -1;
+                    if ("dclp".equals(rawSecond)) return 1;
+                    if ("hgv".equals(rawFirst)) return -1;
+                    if ("hgv".equals(rawSecond)) return 1;
                     return rawFirst.compareToIgnoreCase(rawSecond);
                     
                 }
                 
-            }); 
+            });
+            
+            for(Iterator<String> itr = stringifiedValues.iterator(); itr.hasNext();){
+                String key = itr.next();
+                String name = key;
+                String number = String.valueOf(idValues.get(key));
+                String displayName = name.replace("_", " ");
+                switch (displayName) {
+                    case ("apis"):
+                        name = apisOnlyHTMLValue;
+                        displayName = apisOnlyHTMLLabel;
+                        break;
+                    case ("ddbdp"): 
+                        displayName = "All DDbDP records";
+                        break;
+                    case ("dclp"):
+                        displayName = "All DCLP records";
+                        break;
+                    case ("hgv"):
+                        displayName = "All HGV records";
+                }
+                
+                displayName = displayName + " (" + number + ")";
+                String openTag = "<option value=\"";
+                openTag += name;
+                openTag += "\">";
+                String stringValue = openTag + displayName + "</option>";
+                
+                if((!this.hasConstraint() || key.equals(this.getConstraint())) 
+                        || this.getConstraint().equals(apisOnlyHTMLValue)){
+                
+                    stringifiedValues.set(stringifiedValues.indexOf(key), stringValue);
+                    
+                } else {
+                    itr.remove();
+                }
+                
+            }
             
             if(stringifiedValues.size() != 1 && !apisOnly){
             
@@ -1442,6 +1510,7 @@ public class IdentifierFacet extends Facet{
                 
                 ff.add(SolrField.ddbdp_full_identifier);
                 ff.add(SolrField.hgv_full_identifier);
+                ff.add(SolrField.dclp_full_identifier);
                 
             }
             ff.add(getLeadingField());

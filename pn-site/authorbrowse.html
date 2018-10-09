@@ -66,7 +66,8 @@
         </div>
       <div id="main">
         <div class="content">
-          <div class="markdown">
+          <h2 id="authorbrowse">Authors and Works</h2>
+          <div class="browse">
 	  Content goes here.
           </div>
         </div>
@@ -115,6 +116,9 @@
   <script type="text/javascript" charset="utf-8">
     jQuery("#searchbutton").button();
     jQuery("#editorbutton").button();
+    jQuery("div.browse").prepend("<div class=\"initials\">" + jQuery("a.initial").map(function(i, elt){
+      return "<a href=\"#" + elt.name + "\">" + elt.innerText + "</a>";
+    }).toArray().join(" ") + "</div>");
   </script>
 </body>
 </html>

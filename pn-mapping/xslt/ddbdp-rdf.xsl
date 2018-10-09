@@ -87,6 +87,10 @@
       <xsl:for-each select="//tei:idno[@type = 'TM']">
         <xsl:for-each select="tokenize(., '\s')">
           <dct:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+          <xsl:variable name="dir" select="ceiling(number(.) div 1000)"/>
+          <xsl:if test="doc-available(concat('file://', $root, '/DCLP/', $dir, '/', ., '.xml'))">
+            <dct:relation rdf:resource="http://papyri.info/dclp/{.}/source"/>
+          </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
       <foaf:page>
