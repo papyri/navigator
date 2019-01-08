@@ -104,161 +104,6 @@
                 <field name="identifier">http://papyri.info/hgv/<xsl:value-of select="."/></field>
               </xsl:for-each>
             </xsl:for-each>
-            <xsl:variable name="text">
-              <xsl:variable name="temp-reg-edition">
-                <xsl:element name="reg-edition-wrapper">
-                  <xsl:copy-of select="//t:div[@type='edition']"></xsl:copy-of>
-                </xsl:element>
-              </xsl:variable>
-              <xsl:call-template name="reg-text-processing">
-                <xsl:with-param name="temp-node" select="$temp-reg-edition"></xsl:with-param>
-              </xsl:call-template>
-            </xsl:variable>
-            <xsl:variable name="temp-orig-edition">
-              <xsl:element name="orig-edition-wrapper">
-                <xsl:copy-of select="//t:div[@type = 'edition']"></xsl:copy-of>
-              </xsl:element>
-            </xsl:variable>
-            <xsl:variable name="orig-text">
-             <xsl:call-template name="orig-text-processing">
-               <xsl:with-param name="temp-node" select="$temp-orig-edition"></xsl:with-param>
-             </xsl:call-template>
-            </xsl:variable>
-            <!-- text, padded with a single space before and after, with puctuation & newlines removed -->
-            <xsl:variable name="textnfc"
-              select="concat(' ',normalize-space(replace(replace(translate($text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ')),' ')"/>
-            <xsl:variable name="textnfd" select="normalize-unicode($textnfc, 'NFD')"/>
-            <xsl:variable name="orignfc" select="concat(' ',normalize-space(replace(replace(translate($orig-text, '·[]{},.-()+^?̣&lt;&gt;*&#xD;\\/〚〛ʼ', ''),'&#xA0;', ''), 'ς', 'σ')), ' ')"></xsl:variable>
-            <xsl:variable name="orignfd" select="normalize-unicode($orignfc, 'NFD')"></xsl:variable>
-            <field name="transcription">
-              <xsl:value-of select="translate($textnfc, $abbreviation-marker, '')"/>
-            </field>
-            <field name="transcription">
-              <xsl:value-of select="$orignfc"></xsl:value-of>
-            </field>
-            <field name="transcription_id">
-             <xsl:value-of
-                select="replace(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, '')"
-                />
-            </field>
-            <field name="transcription_id">
-        <!--      <xsl:value-of select="translate($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')"></xsl:value-of> -->
-              <xsl:value-of select="replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')"></xsl:value-of>
-            </field>
-            <field name="transcription_ic">
-              <xsl:value-of select="replace(lower-case($textnfc), $abbreviation-marker, '')"/>
-            </field>
-            <field name="transcription_ic">
-              <xsl:value-of select="lower-case($orignfc)"></xsl:value-of>
-            </field>
-            <xsl:variable name="transcription_ia" select="replace(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), $abbreviation-marker, '')"></xsl:variable>
-            <field name="transcription_ia">
-              <xsl:value-of select="$transcription_ia"/>
-            </field>
-            <field name="transcription_ia">
-              <xsl:value-of select="lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''))"></xsl:value-of>
-            </field>
-            <xsl:for-each select="pi:split(($textnfc))">
-              <field name="untokenized">
-                <xsl:value-of select="translate(., $abbreviation-marker, '')"/>
-              </field>
-            </xsl:for-each>
-            <xsl:for-each select="pi:split(($orignfc))">
-              <field name="untokenized">
-                <xsl:value-of select="translate(., $abbreviation-marker, '')"/>
-              </field>
-            </xsl:for-each>
-            <xsl:for-each select="pi:split((translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, '')))">
-              <field name="untokenized_id">
-                <xsl:value-of select="."/>
-              </field>
-            </xsl:for-each>
-            <xsl:for-each select="pi:split((replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')))">
-              <field name="untokenized_id">
-                <xsl:value-of select="."/>
-              </field>
-            </xsl:for-each>
-            <xsl:for-each select="pi:split(($textnfc))">
-              <field name="untokenized_ic">
-                <xsl:value-of select="translate(lower-case(.), $abbreviation-marker, '')"/>
-              </field>
-            </xsl:for-each>
-            <xsl:for-each select="pi:split(($orignfd))">
-              <field name="untokenized_ic">
-                <xsl:value-of select="lower-case(.)"/>
-              </field>
-            </xsl:for-each>
-            <xsl:for-each select="pi:split((lower-case(translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, ''))))">
-              <field name="untokenized_ia">
-                <xsl:value-of select="."/>
-              </field>
-            </xsl:for-each>
-            <xsl:for-each select="pi:split((lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''))))">
-              <field name="untokenized_ia">
-                <xsl:value-of select="."/>
-              </field>
-            </xsl:for-each>
-            <field name="transcription_ngram">
-              <xsl:for-each select="tokenize($textnfc, '\s+')">
-                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
-                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
-                <xsl:if test=". != ''"><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
-              </xsl:for-each>
-            </field>
-            <field name="transcription_ngram">
-              <xsl:for-each select="tokenize($orignfc, '\s+')">
-                <xsl:if test=". != ''"><xsl:text>#</xsl:text><xsl:value-of select="."/><xsl:text># </xsl:text></xsl:if>
-              </xsl:for-each>
-            </field>
-            <field name="transcription_ngram_id">
-              <xsl:for-each select="tokenize(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), '\s+')">
-                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
-                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
-                <xsl:if test=". != ''"><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
-              </xsl:for-each>
-            </field>
-            <field name="transcription_ngram_id">
-              <xsl:for-each select="tokenize(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''), '\s+')">
-                <xsl:if test=". != ''"><xsl:text>#</xsl:text><xsl:value-of select="."/><xsl:text># </xsl:text></xsl:if>
-              </xsl:for-each>
-            </field>
-            <field name="transcription_ngram_ic">
-              <xsl:for-each select="tokenize(lower-case($textnfc), '\s+')">
-                <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
-                <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
-                <xsl:if test=". != ''"><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
-              </xsl:for-each>
-            </field>   
-            <field name="transcription_ngram_ic">
-              <xsl:for-each select="tokenize(lower-case($orignfc), '\s+')">
-                <xsl:if test=". != ''"><xsl:text>#</xsl:text><xsl:value-of select="."/><xsl:text># </xsl:text></xsl:if>
-              </xsl:for-each>
-            </field>  
-            <field name="transcription_ngram_ia">
-              <xsl:for-each
-                select="tokenize(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), '\s+')">
-                <xsl:if test="string-length(normalize-space(.)) &gt; 0">
-                  <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
-                  <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
-                  <xsl:value-of select="$word-start-boundary"></xsl:value-of>
-                  <xsl:value-of select="replace(., $abbreviation-marker, '')"/>
-                  <xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text>
-                </xsl:if>
-              </xsl:for-each>
-            </field>
-            <field name="transcription_ngram_ia">
-              <xsl:for-each
-                select="tokenize(lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')), '\s+')">
-                <xsl:if test="string-length(normalize-space(.)) &gt; 0">
-                  <xsl:text>#</xsl:text>
-                  <xsl:value-of select="normalize-space(.)"/>
-                  <xsl:text># </xsl:text>
-                </xsl:if>
-              </xsl:for-each>
-            </field>
-            <xsl:if test="string-length($textnfd) > 0">
-              <field name="has_transcription">true</field>
-            </xsl:if>
             <xsl:variable name="languages"
               select="distinct-values(//t:div[@type='edition']/descendant-or-self::*/@xml:lang)"/>
             <xsl:for-each select="//t:langUsage/t:language">
@@ -523,6 +368,46 @@
         <field name="transcription_ia">
           <xsl:value-of select="lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''))"></xsl:value-of>
         </field>
+        <xsl:for-each select="pi:split(($textnfc))">
+          <field name="untokenized">
+            <xsl:value-of select="translate(., $abbreviation-marker, '')"/>
+          </field>
+        </xsl:for-each>
+        <xsl:for-each select="pi:split(($orignfc))">
+          <field name="untokenized">
+            <xsl:value-of select="translate(., $abbreviation-marker, '')"/>
+          </field>
+        </xsl:for-each>
+        <xsl:for-each select="pi:split((translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, '')))">
+          <field name="untokenized_id">
+            <xsl:value-of select="."/>
+          </field>
+        </xsl:for-each>
+        <xsl:for-each select="pi:split((replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')))">
+          <field name="untokenized_id">
+            <xsl:value-of select="."/>
+          </field>
+        </xsl:for-each>
+        <xsl:for-each select="pi:split(($textnfc))">
+          <field name="untokenized_ic">
+            <xsl:value-of select="translate(lower-case(.), $abbreviation-marker, '')"/>
+          </field>
+        </xsl:for-each>
+        <xsl:for-each select="pi:split(($orignfd))">
+          <field name="untokenized_ic">
+            <xsl:value-of select="lower-case(.)"/>
+          </field>
+        </xsl:for-each>
+        <xsl:for-each select="pi:split((lower-case(translate(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), $abbreviation-marker, ''))))">
+          <field name="untokenized_ia">
+            <xsl:value-of select="."/>
+          </field>
+        </xsl:for-each>
+        <xsl:for-each select="pi:split((lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''))))">
+          <field name="untokenized_ia">
+            <xsl:value-of select="."/>
+          </field>
+        </xsl:for-each>
         <field name="transcription_ngram">
           <xsl:for-each select="tokenize($textnfc, '\s+')">
             <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>

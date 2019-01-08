@@ -477,6 +477,7 @@ public class FileUtils {
    * context
    */
   public List<String> highlightMatches(String t, Pattern[] patterns) {
+    logger.info(t);
     List<String> result = new ArrayList<String>();
     String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$4ⓞ")
             .replaceAll(hyphenatedLineNum, "Ⓝ$4ⓜ")

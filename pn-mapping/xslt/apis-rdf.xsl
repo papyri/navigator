@@ -5,7 +5,7 @@
   xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:olo="http://purl.org/ontology/olo/core#"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
-  <xsl:param name="root">/data/papyri.info/idp.data</xsl:param>
+  <xsl:param name="root">/srv/data/papyri.info/idp.data</xsl:param>
   <xsl:param name="DDB-root">/data/papyri.info/idp.data/DDB_EpiDoc_XML</xsl:param>
 
   <xsl:template match="/tei:TEI">

@@ -225,7 +225,7 @@
       <body onload="init()">
         <div id="d">
           <div id="hd">
-            <h1>DCLP</h1>
+            <h1>Papyri.info</h1>
             <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>   
           </div>
           <div id="bd">
@@ -795,6 +795,21 @@
   </xsl:template>
   
   <xsl:template match="t:bibl"><xsl:apply-templates/></xsl:template>
+  
+  <!-- Override template in teicertainty.xsl, which is shouty-->
+  <xsl:template match="t:certainty">
+    <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
+    <xsl:choose>
+      <xsl:when test="$parm-leiden-style=('ddbdp','sammelbuch','iospe')">
+        <xsl:if test="@match='..'">
+          <xsl:text>(?)</xsl:text>
+        </xsl:if>
+      </xsl:when>
+      <xsl:when test="@match='..'">
+        <xsl:text>?</xsl:text>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
   
   <xsl:template match="rdf:Description">
     <xsl:value-of select="@rdf:about"/>

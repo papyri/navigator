@@ -36,7 +36,7 @@
     [clojure.string :as st])
   (:import
     (clojure.lang ISeq)
-    (com.hp.hpl.jena.rdf.model Model ModelFactory Resource ResourceFactory)
+    (org.apache.jena.rdf.model Model ModelFactory Resource ResourceFactory)
     (java.io File FileInputStream FileOutputStream FileReader ObjectInputStream ObjectOutputStream PushbackReader StringWriter FileWriter)
     (java.net URI URL URLEncoder URLDecoder)
     (java.nio.charset Charset)
@@ -49,11 +49,11 @@
     (javax.xml.transform.stream StreamSource StreamResult)
     (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
     (net.sf.saxon.lib AugmentedSource ParseOptions)
-    (org.apache.solr.client.solrj SolrServer SolrQuery)
-    (org.apache.solr.client.solrj.impl CommonsHttpSolrServer StreamingUpdateSolrServer BinaryRequestWriter)
+    (org.apache.solr.client.solrj SolrClient SolrQuery)
+    (org.apache.solr.client.solrj.impl ConcurrentUpdateSolrClient ConcurrentUpdateSolrClient$Builder BinaryRequestWriter HttpSolrClient HttpSolrClient$Builder)
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
-    (com.hp.hpl.jena.query QueryExecutionFactory)
+    (org.apache.jena.query QueryExecutionFactory)
     (org.xml.sax InputSource)
     (org.xml.sax.helpers DefaultHandler)))
 
@@ -65,7 +65,7 @@
 (def solrurl "http://localhost:8983/solr/")
 (def numbersurl "http://localhost:3030/pi/query?query=")
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
-(def server "http://localhost:3030/pi")
+(def server "http://localhost:8090/pi")
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
@@ -95,12 +95,12 @@
   "A document handler for Solr that handles the conversion of a SOLR XML
   document into a Java object representing an add document and then when
   the document has been read to its end, adds that document to the
-  `StreamingUpdateSolrServer` stored in the @solr ref."
+  `ConcurrentUpdateSolrClient` stored in the @solr ref."
   []
   (SAXDestination.
     (let [current (StringBuilder.)
           chars  (StringBuilder.)
-          solrdoc (SolrInputDocument.)]
+          solrdoc (SolrInputDocument. (make-array String 0))]
       (proxy [DefaultHandler] []
         (startElement [uri local qname atts]
           (when (= local "field")
@@ -125,7 +125,7 @@
      (SAXDestination.
       (let [current (StringBuilder.)
 	    chars  (StringBuilder.)
-	    solrdoc (SolrInputDocument.)]
+	    solrdoc (SolrInputDocument. (make-array String 0))]
 	(proxy [DefaultHandler] []
 	  (startElement [uri local qname atts]
 			(when (= local "field")
@@ -896,6 +896,14 @@
        (for [word @words]
    (.write out (str word "\n")))))
 
+(defn commit-and-optimize
+  "Runs an asynchronous commit and then optimize on the named Solr index."
+  [index]
+  (let [solr (.build (HttpSolrClient$Builder. (str solrurl index "/")))]
+    (.commit solr false false)
+    (.optimize solr false false)
+    (.close solr)))
+
 (defn load-morphs
   "Loads morphological data from the given file into the morph-search Solr index."
  [file]
@@ -904,7 +912,7 @@
 		 (startElement [uri local qname atts]
 			       (set! *current* qname)
 			       (when (= qname "analysis")
-				 (set! *doc* (SolrInputDocument.))
+				 (set! *doc* (SolrInputDocument. (make-array String 0)))
 				 (set! *index* (+ *index* 1))
 				 (.addField *doc* "id" *index*)))
 		 (characters [ch start length]
@@ -929,22 +937,27 @@
   (binding [*current* nil
       *doc* nil
 	    *index* 0]
-    (dosync (ref-set solr (ConcurrentUpdateSolrClient. (str solrurl "morph_search/") 5000 nthreads))
+    (dosync (ref-set solr 
+      (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "morph-search/"))]
+        (-> cb (.withQueueSize 5000) 
+          (.withThreadCount nthreads)
+          (.build))))
 	    (.setRequestWriter @solr (BinaryRequestWriter.)))
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
-    (let [solr (ConcurrentUpdateSolrClient. (str solrurl "morph_search/") 5000 nthreads)]
-      (doto solr
-	(.commit)
-	(.optimize)))))
+    (commit-and-optimize "morph-search")))
 
 (defn -loadBiblio
   "Loads bibliographic data into the biblio-search Solr index."
   []
   (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
   (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")
-  (dosync (ref-set solrbiblio (ConcurrentUpdateSolrClient. (str solrurl "biblio_search/") 1000 2))
-          (.setRequestWriter @solrbiblio (BinaryRequestWriter.)))
+  (dosync (ref-set solrbiblio 
+    (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "biblio-search/"))]
+      (-> cb (.withQueueSize 1000) 
+        (.withThreadCount nthreads)
+        (.build))))
+    (.setRequestWriter @solrbiblio (BinaryRequestWriter.)))
 
   ;; Generate and Index bibliography
   (println "Generating and indexing bibliography...")
@@ -964,9 +977,7 @@
       (.shutdown)))
 
   (println "Optimizing index...")
-  (doto @solrbiblio
-    (.commit)
-    (.optimize)))
+  (commit-and-optimize "biblio-search"))
 
 (defn queue-docs
   [args]
@@ -1028,7 +1039,11 @@
 (defn -index
   "Runs the main PN indexing process."
   []
-  (dosync (ref-set solr (StreamingUpdateSolrServer. (str solrurl "pn-search/") 500 2))
+  (dosync (ref-set solr
+    (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "pn-search/"))]
+      (-> cb (.withQueueSize 500) 
+        (.withThreadCount nthreads)
+        (.build))))
 	  (.setRequestWriter @solr (BinaryRequestWriter.)))
 
   ;; Index docs queued in @text
@@ -1047,9 +1062,7 @@
       (.shutdown)))
 
   (println "Optimizing index...")
-  (doto @solr
-    (.commit)
-    (.optimize))
+  (commit-and-optimize)
 
   (dosync (ref-set html nil)
     (ref-set text nil)

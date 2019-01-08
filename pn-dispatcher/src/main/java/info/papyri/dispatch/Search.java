@@ -40,8 +40,8 @@ public class Search extends HttpServlet {
   private String home = "";
   private FileUtils util;
   private SolrUtils solrutil;
-  private static String PNSearch = "pn_search/";
-  private static String morphSearch = "morph_search/";
+  private static String PNSearch = "pn-search/";
+  private static String morphSearch = "morph-search/";
 
   @Override
   public void init(ServletConfig config) throws ServletException {

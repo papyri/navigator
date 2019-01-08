@@ -77,7 +77,7 @@
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
-            <param-value>pn_search</param-value>
+            <param-value>pn-search</param-value>
         </init-param>
         <init-param>
             <param-name>facetBrowserPath</param-name>
@@ -121,7 +121,7 @@
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
-            <param-value>pn_search</param-value>
+            <param-value>pn-search</param-value>
         </init-param>
         <init-param>
             <param-name>facetBrowserPath</param-name>
@@ -157,7 +157,7 @@
         </init-param>
         <init-param>
             <param-name>pnSearchPath</param-name>
-            <param-value>pn_search</param-value>
+            <param-value>pn-search</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -165,7 +165,7 @@
         <servlet-class>info.papyri.dispatch.AuthorBrowse</servlet-class>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8083/solr/pn-search</param-value>
+            <param-value>http://localhost:8983/solr/pn-search</param-value>
         </init-param>
         <init-param>
             <param-name>template</param-name>

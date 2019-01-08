@@ -20,13 +20,13 @@
            (javax.xml.transform Templates Transformer)
            (javax.xml.transform.stream StreamSource StreamResult)
            (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
-           (org.apache.jena.fuseki.http DatasetAdapter DatasetGraphAccessorHTTP UpdateRemote)
-           (com.hp.hpl.jena.graph Node)
-           (com.hp.hpl.jena.query QueryExecutionFactory)
-           (com.hp.hpl.jena.rdf.model Model ModelFactory)
-           (com.hp.hpl.jena.sparql.modify.request UpdateCreate UpdateLoad)
-           (com.hp.hpl.jena.update Update UpdateFactory UpdateRequest)
-           (com.hp.hpl.jena.sparql.lang UpdateParser)
+           (org.apache.jena.graph Node)
+           (org.apache.jena.query QueryExecutionFactory)
+           (org.apache.jena.rdf.model Model ModelFactory)
+           (org.apache.jena.sparql.modify.request UpdateCreate UpdateLoad)
+           (org.apache.jena.sparql.lang UpdateParser)
+           (org.apache.jena.web DatasetAdapter DatasetGraphAccessorHTTP)
+           (org.apache.jena.update Update UpdateExecutionFactory UpdateFactory UpdateRequest)
            (org.apache.commons.codec.digest DigestUtils)))
 
 (def xsl (ref nil))
@@ -155,12 +155,17 @@
       (.toString (.getResource (.next answer) "uri")))
     (str "http://papyri.info/biblio/" (get-identifier file) "/ref")))
 
+(defn execute-update
+  [request]
+  (let [proc (UpdateExecutionFactory/createRemote request (str server "/update"))]
+    (.execute proc)))
+
 (defn -deleteGraph
   []
   (let [request (UpdateFactory/create)]
     (.add request "DROP ALL")
     (.add request (UpdateCreate. "http://papyri.info/graph"))
-    (UpdateRemote/execute request (str server "/update") )))
+    (execute-update request)))
 
 (defn -deleteUri
   [uri]
@@ -173,7 +178,7 @@
         req (UpdateFactory/create)]
     (.add req deletesub)
     (.add req deleteobj)
-    (UpdateRemote/execute req (str server "/update") )))
+    (execute-update req)))
 
 (defn -deleteRelation
   [uri]
@@ -182,7 +187,7 @@
                         WHERE { ?s <" uri "> ?r }")
         req (UpdateFactory/create)]
     (.add req deleterel)
-    (UpdateRemote/execute req (str server "/update") )))
+    (execute-update req)))
 
 (defn -deleteTriple
   [s p o]
@@ -191,7 +196,7 @@
                         WHERE { <" s "> <" p "> <" o "> }")
         req (UpdateFactory/create)]
     (.add req deleterel)
-    (UpdateRemote/execute req (str server "/update") )))
+    (execute-update req)))
 
 (defn -loadFile
   [f]
@@ -320,7 +325,7 @@
       (.add request converse-relation)
       (.add request replaces-rels)
       (.add request replaces-relations)
-      (UpdateRemote/execute request (str server "/update") ))
+      (execute-update request))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
                        "WITH <http://papyri.info/graph> "
@@ -375,7 +380,7 @@
       (.add request replaces-rels)
       (.add request replaces-relations)
       (.add request relation) ;; repeat in order to pick up new dc:relations
-      (UpdateRemote/execute request (str server "/update") ))))
+      (execute-update request))))
 
 (defn load-map
   [file]
@@ -385,7 +390,7 @@
     (init-xslt xsl))
   (let [request (UpdateFactory/create)]
     (.add request "CREATE SILENT GRAPH <http://papyri.info/graph>")
-    (UpdateRemote/execute request (str server "/update") ))
+    (execute-update request))
   (let [pool (Executors/newFixedThreadPool nthreads)
       files (file-seq (File. file))
       tasks (map (fn [x]
