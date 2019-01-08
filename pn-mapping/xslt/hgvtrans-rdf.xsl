@@ -12,18 +12,25 @@
         <xsl:variable name="id">http://papyri.info/hgvtrans/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']"/>/source</xsl:variable>
         <rdf:Description rdf:about="{$id}">
             <dcterms:identifier>papyri.info/hgvtrans/<xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']"/></dcterms:identifier>
-            <xsl:if test="//tei:publicationStmt/tei:idno[@type='ddb-hybrid']/text()">
+            <xsl:for-each select="//tei:publicationStmt/tei:idno[@type='ddb-hybrid']">
+              <xsl:for-each select="tokenize(., ' ')">
+                <dcterms:relation>
+                  <rdf:Description rdf:about="http://papyri.info/ddbdp/{.}/source">
+                    <dcterms:relation rdf:resource="{$id}"/>
+                  </rdf:Description>
+                </dcterms:relation>
+              </xsl:for-each>
+            </xsl:for-each>
+          <xsl:for-each select="//tei:publicationStmt/tei:idno[@type='HGV']">
+            <xsl:for-each select="tokenize(., ' ')">
               <dcterms:relation>
-                <rdf:Description rdf:about="http://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type='ddb-hybrid']}/source">
+                <rdf:Description
+                  rdf:about="http://papyri.info/hgv/{.}/source">
                   <dcterms:relation rdf:resource="{$id}"/>
                 </rdf:Description>
               </dcterms:relation>
-            </xsl:if>
-            <dcterms:relation>
-                <rdf:Description rdf:about="http://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}/source">
-                    <dcterms:relation rdf:resource="{$id}"/>
-                </rdf:Description>
-            </dcterms:relation>
+            </xsl:for-each>
+          </xsl:for-each>
         </rdf:Description>
     </xsl:template>
 </xsl:stylesheet>

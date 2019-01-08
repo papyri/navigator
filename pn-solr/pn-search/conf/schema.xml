@@ -22,7 +22,7 @@
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
-    
+
     <fieldType name="nuppertext" class="solr.TextField">
       <analyzer type="index">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -85,7 +85,18 @@
     <field name="apis_publication_id" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="apis_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
     <field name="apis_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="author" type="lctext" indexed="true" stored="false" default="unknown" multiValued="true"/>
+    <field name="author_str" type="string" indexed="true" stored="true" default="unknown" multiValued="true"/>
+    <field name="author_uri" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="author_work" type="string" indexed="true" stored="true" default="unknown" multiValued="true"/>
     <field name="collection" type="string" indexed="true" stored="true" required="true" multiValued="true"/>
+    <field name="dclp_identifier" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="dclp_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    <field name="dclp_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="dclp_item_letter" type="string" stored="true" indexed="true" multiValued="false" required="false"/>
+    <field name="dclp_metadata" type="lctext" indexed="true" stored="false" multiValued="true"/>
+    <field name="dclp_series" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
+    <field name="dclp_volume" type="string" indexed="true" stored="true" default="0" multiValued="false"/>
     <field name="ddbdp_full_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="ddbdp_item" type="long" indexed="true" stored="true" default="0" multiValued="false"/>
     <field name="ddbdp_item_letter" type="string" stored="true" indexed="true" multiValued="false" required="false"/>
@@ -140,13 +151,17 @@
     <field name="untokenized_ic" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="untokenized_id" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="_version_" type="long" indexed="true" stored="true"/>
+
     <field name="volume" type="int" indexed="true" stored="false" multiValued="false" required="true" default="0"/>
     <field name="volume_led_path" type="string" indexed="true" stored="true" multiValued="true"/>
-    
+    <field name="work" type="lctext" indexed="true" stored="false" default="unknown" multiValued="true"/>
+    <field name="work_str" type="string" indexed="true" stored="true" default="unknown" multiValued="true"/>
+    <field name="work_uri" type="string" indexed="true" stored="true" multiValued="true"/>
+
   <!-- end PN fields -->
   <!-- fields used by the change feed -->
-    
-    <field name="edit_date" type="date" indexed="true" stored="true" multiValued="false"></field> 
+
+    <field name="edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
     <field name="app_edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
     <field name="date_edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
     <field name="place_edit_date" type="date" indexed="true" stored="true" multiValued="false"></field>
@@ -157,7 +172,7 @@
     <field name="place_editor" type="string" indexed="true" stored="true" multiValued="false"></field>
 
  <!-- end fields used by the change feed -->
-   
+
   </fields>
 
 
@@ -172,13 +187,15 @@
   <copyField source="transcription_ia" dest="all"/>
   <copyField source="translation" dest="all"/>
   <copyField source="hgv_metadata" dest="all"/>
-  <copyField source="tm_metadata" dest="all"/>
   <copyField source="apis_metadata" dest="all"/>
+  <copyField source="dclp_metadata" dest="all"/>
+  <copyField source="tm_metadata" dest="all"/>
   <copyField source="hgv_metadata" dest="metadata"/>
-  <copyField source="tm_metadata" dest="metadata"/>
   <copyField source="apis_metadata" dest="metadata"/>
-  <!--<copyField source="transcription" dest="untokenized"/>
+  <copyField source="dclp_metadata" dest="metadata"/>
+  <copyField source="tm_metadata" dest="metadata"/>
+  <copyField source="transcription" dest="untokenized"/>
   <copyField source="transcription_ia" dest="untokenized_ia"/>
   <copyField source="transcription_ic" dest="untokenized_ic"/>
-  <copyField source="transcription_id" dest="untokenized_id"/> -->
+  <copyField source="transcription_id" dest="untokenized_id"/>
 </schema>

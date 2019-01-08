@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
@@ -15,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,6 +68,10 @@ public class FacetBrowser extends HttpServlet {
    */
   static private String FACET_PATH;
   /**
+   * Server home URL
+   */
+  static private String SERVER_HOME;
+  /**
    * Default number of records to show per page
    */
   static private int defaultDocumentsPerPage = 15;
@@ -92,6 +98,7 @@ public class FacetBrowser extends HttpServlet {
     PN_SEARCH = config.getInitParameter("pnSearchPath");
     FACET_PATH = config.getInitParameter("facetBrowserPath");
     INSTRUCTIONS_PATH = config.getInitParameter("instructionsPath");
+    SERVER_HOME = config.getInitParameter("serverHome");
     try {
       FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
     } catch (MalformedURLException e) {
@@ -121,8 +128,8 @@ public class FacetBrowser extends HttpServlet {
     response.setContentType("text/html;charset=UTF-8");
     request.setCharacterEncoding("UTF-8");
     
-    if (request.getQueryString() != null && request.getQueryString().toLowerCase().contains("%3cscript%3e")) {
-        response.sendError(400, "Not today, Satan.");
+    if (request.getQueryString() != null && URLDecoder.decode(request.getQueryString(), "UTF-8").toLowerCase().contains("<script>")) {
+        response.sendError(400, "No XSS today, thank you.");
         return;
     }
 
@@ -173,10 +180,13 @@ public class FacetBrowser extends HttpServlet {
 
     // I'm feeling lucky
     if ("yes".equals(request.getParameter("lucky")) && resultSize == 1) {
+      String redirect = FileUtils.substringAfter(
+              (String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()), "://");
+      redirect = redirect.substring(redirect.indexOf("/"));
       if ("ddb-text".equals(request.getParameter("source"))) {
-        response.sendRedirect((String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()) + "/source");
+        response.sendRedirect(SERVER_HOME + redirect + "/source");
       } else {
-        response.sendRedirect((String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()));
+        response.sendRedirect(SERVER_HOME + redirect);
       }
     } else {
       /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
@@ -211,6 +221,8 @@ public class FacetBrowser extends HttpServlet {
     facets.add(new TranslationFacet());
     facets.add(new HasImagesFacet());
     facets.add(new HasTranscriptionFacet());
+    facets.add(new AuthorFacet());
+    facets.add(new WorkFacet());
     return facets;
 
   }
@@ -317,7 +329,8 @@ public class FacetBrowser extends HttpServlet {
 
       CommonsHttpSolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
       solrServer.setSoTimeout(SOCKET_TIMEOUT);
-      QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.POST);
+      //logger.info(sq.toString());
+      QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.GET);
       return qr;
     } catch (MalformedURLException murle) {
       logger.error("MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
@@ -1024,6 +1037,10 @@ public class FacetBrowser extends HttpServlet {
     if (hgvIds.size() > 0) {
       ids.addAll(hgvIds);
     }
+    ArrayList<String> dclpIds = getCollectionIds("dclp", doc);
+    if (dclpIds.size() > 0) {
+      ids.addAll(dclpIds);
+    }
 
     ArrayList<String> apisPublicationNumbers = doc.getFieldValue(SolrField.apis_publication_id.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_publication_id.name()).toString().replaceAll("\\[\\]", "").split(",")));
     ArrayList<String> apisInventoryNumbers = doc.getFieldValue(SolrField.apis_inventory.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_inventory.name()).toString().replaceAll("\\[\\]", "").split(",")));
@@ -1075,13 +1092,13 @@ public class FacetBrowser extends HttpServlet {
    */
   ArrayList<String> getCollectionIds(String collection, SolrDocument doc) {
 
-    ArrayList<String> collectionMembers = new ArrayList<String>();
+    ArrayList<String> collectionMembers = new ArrayList<>();
 
     String cpref = collection + "_";
 
-    ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]", ",").split(",")));
-    ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-    ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+    ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]", ",").split(",")));
+    ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+    ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
 
     if (series != null && volumes != null && itemIds != null) {
 

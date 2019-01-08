@@ -48,7 +48,13 @@
               <li>
                 <a href="/browse/apis/">APIS</a>
               </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              <li>
+                <a href="/browse/dclp/">DCLP</a>
+              </li>
+              <li>
+                <a href="/authors">Authors</a>
+              </li>
+              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
               </li>
               <li>or</li>
               <li class="current">
@@ -91,12 +97,12 @@
                 </div>
                 <div id="search-options">
                   <h3>Options</h3>
-                  <p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text in Beta Code</label> 
-                    <br/><input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label> 
-                    <br/><input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label> 
+                  <p><input type="checkbox" name="beta" id="betaYes" value="on"> <label for="betaYes" id="betaYes-label">search text in Beta Code</label>
+                    <br/><input type="checkbox" name="caps" id="caps" value="on" checked> <label for="caps" id="caps-label">ignore capitalization</label>
+                    <br/><input type="checkbox" name="marks" id="marks" value="on" checked> <label for="marks" id="marks-label">ignore diacritics/accents</label>
                     <br/><input type="checkbox" name="lemmas" id="lemmas" onchange="if(this.checked){this.form.caps.disabled=true;this.form.marks.disabled=true;this.form.target.selectedIndex=1;jQuery('#phrase,#phrase-label').trigger('click');}"> <label for="lemmas" id="lemmas-label">lemmatized search</label></p>
-                    <p><b>Sort results by:</b> 
-                      <br/><input type="checkbox" name="imagesfirst" value="yes" id="imagesfirst"> <label for="imagesfirst" id="imagesfirst-label">images first</label> 
+                    <p><b>Sort results by:</b>
+                      <br/><input type="checkbox" name="imagesfirst" value="yes" id="imagesfirst"> <label for="imagesfirst" id="imagesfirst-label">images first</label>
                       <br/><input type="checkbox" name="translationsfirst" value="" id="translationsfirst"> <label for="translationsfirst" id="translationsfirst-label">translations first</label> </p></div>
               </div>
               <div>
@@ -122,9 +128,9 @@
                   </select> --><label for="volume">Volume:</label> <input type="text" name="volume" id="volume" size="3"></p>
                 <p><label for="apiscol">Collection:</label> <select name="apiscol" id="apiscol" onchange="" size="1"><option value="">All</option>
                 </select> <label for="invnum"><strong>Inventory Number <span class="pn-note">(where available)</span></strong></label> <input id="invnum" name="invnum" size="5" maxlength="25" value="" type="text"> <span class="comment" style="font-weight: normal;">e.g."186a"</span></p>
-                
+
               </div>
-              
+
                 </div><!-- close #search-form-wrapper -->
             </form><!-- Search form end -->
           </div>
@@ -199,17 +205,17 @@
       </div>
       <div id="footer-right-col">
         <p>Produced by</p>
-        <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a> 
+        <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a>
           <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
           Ancient World</a></p>
-        <div id="about-nav"> 
+        <div id="about-nav">
           <ul class="nav">
             <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
             <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
               der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
             <li><a href="/docs/ddbdp" title="Duke Databank of Documentary Papyri - Home">DDbDP</a></li>
             <li><a href="/docs/apis">APIS</a></li>
-            <li class="last-child"><a href="/docs/about" title="Papyri.info">Papyri.info</a></li>    
+            <li class="last-child"><a href="/docs/about" title="Papyri.info">Papyri.info</a></li>
           </ul>
           <h3 id="about-hdr">About:</h3>
         </div>
@@ -278,7 +284,7 @@
       }, function(){
         jQuery(this).css({'background-color': '#f9f9f9', 'cursor': 'default'});
       });
-            
+
       /**
       * The following are functions to store search settings in cookies.
       *
@@ -287,61 +293,61 @@
       * simply the betacode setting. However, the ideal behaviour and interactions amongst
       * these settings are not yet decided upon.
       *
-      * Expansion of functionality would involve: 
-      * (1) defining a new search_setting object corresponding to the relevant search setting 
+      * Expansion of functionality would involve:
+      * (1) defining a new search_setting object corresponding to the relevant search setting
       * in initSearchCookies
       * (2) Ensuring that a cookie for this search setting is set in cookifySearchSettings
       * retrieveSearchSettings should then be able to take care of everything else automatically -
       * though note it will only work for form elements with a "checked" attribute
-      * 
+      *
       *
       * @author thill
       * @version 2011.06.02
       *
       */
-      
-      
+
+
       function initSearchCookies(){
-      	
+
       		search_settings = {};
       		search_settings.betacode = {};
       		search_settings.betacode.name = "beta_on";
-      		search_settings.betacode.element = "#betaYes";      
+      		search_settings.betacode.element = "#betaYes";
 
       }
-      
-      
+
+
       function cookifySearchSettings(){
 
       	jQuery.cookie(search_settings.betacode.name, jQuery("input[name='beta']").attr("checked").toString());
-      
+
       }
-      
+
       function retrieveSearchSettings(){
-      
+
       	jQuery.each(search_settings, function(setting, setting_values){
-      	
+
       		var cookie_name = setting_values["name"];
       		var element = setting_values["element"];
       		if(jQuery.cookie(cookie_name) && jQuery.cookie(cookie_name) != jQuery(element).attr("checked").toString()){
-      		
+
       			jQuery(element).trigger("click");
       			jQuery(element + "-label").trigger("click");
-      			
+
       		}
 
       	});
-         
+
       }
-      
+
       /* end search-setting cookie funcs */
-      
+
       var help = false;
       function init() {
-      
+
         initSearchCookies();
       	retrieveSearchSettings();
-      
+
         jQuery("li.dialog").each(function(i) {
           jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#"+this.id+"').dialog()\">"+this.title+"<\/a><\/li>");
           jQuery(this).hide();
@@ -358,7 +364,7 @@
         });
         jQuery("#search").click(cookifySearchSettings);
       }
-      
+
       function toggleHelp() {
         if(!help) {
           help = true;
@@ -368,7 +374,7 @@
             var label = jQuery("#" + this.id.substring(0, this.id.indexOf("-")) + "-label");
             label.CreateBubblePopup(
                   {
-                     innerHtml: helptext, 
+                     innerHtml: helptext,
                      innerHtmlStyle: {
                        'text-align':'left'
                        },

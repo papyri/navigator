@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import org.pegdown.PegDownProcessor;
 import org.pegdown.plugins.PegDownPlugins;
 import org.pegdown.Extensions;
+import info.papyri.dispatch.pegdown.PNCustomLinkPlugin;
 
 /**
  *

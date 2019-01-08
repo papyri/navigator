@@ -181,7 +181,7 @@ public class StringSearchFacetIT extends TestCase {
               return "/srv/data/papyri.info/pn/home";
             }
             if ("solrUrl".equals(string)) {
-              return "http://localhost:8083/solr/";
+              return "http://localhost:8983/solr/";
             }
             return null;
           }

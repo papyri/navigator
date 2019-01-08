@@ -10,17 +10,36 @@
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="2.0" exclude-result-prefixes="#all">
   
+  <xsl:import href="metadata-dclp.xsl"/>
+  <xsl:import href="htm-teibibl.xsl"/>
   <xsl:output method="html"/>
   
   <xsl:template match="t:TEI" mode="metadata">
     <xsl:variable name="md-collection"><xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
+      <xsl:when test="//t:idno[@type='dclp']">dclp</xsl:when>
       <xsl:otherwise>hgv</xsl:otherwise>
     </xsl:choose>
     </xsl:variable>
     <div class="metadata">
       <div class="{$md-collection} data">
         <xsl:choose>
+          <xsl:when test="$md-collection = 'dclp'">
+            <h2>
+			<xsl:choose>
+        <xsl:when test="string-length(descendant::t:idno[@type='TM'])!=6">
+		<xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,3)"/>
+		<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
+		 DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+		</xsl:when>
+        <xsl:otherwise>
+		<xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,4)"/>
+		<xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
+		 DCLP/LDAB Data [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+		</xsl:otherwise>
+      </xsl:choose>
+            </h2>
+          </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
               HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
@@ -34,65 +53,116 @@
         </xsl:choose>
         <table class="metadata">
           <tbody>
-            <!-- Title -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title" mode="metadata"/>
-            <!-- Author -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author" mode="metadata"/>
-            <!-- Summary -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary" mode="metadata"/>
-            <!-- Publications -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']" mode="metadata"/>
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']" mode="metadata"/>
-            <!-- Inv. Id -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno" mode="metadata"/>
-            <!-- Physical Desc. -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p" mode="metadata"/>
-            <!-- Support / Dimensions -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support" mode="metadata"/>
-            <!-- Condition (conservation|preservation)-->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab" mode="metadata"/>
-            <!-- Layout (lines|recto/verso) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab" mode="metadata"/>
-            <!-- Hands -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc/t:p" mode="metadata"/>
-            <!-- Post-concordance BL Entries -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections']" mode="metadata"/>
-            <!-- Translations -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']" mode="metadata"/>
-            <!-- Provenance -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)" mode="metadata"/>
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance" mode="metadata"/>
-            <!-- Material -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material" mode="metadata"/>
-            <!-- Language -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang" mode="metadata"/>
-            <!-- Date -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate" mode="metadata"/>
-            <!-- Commentary -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']" mode="metadata"/>
-            <!-- Notes (general|local|related) -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note" mode="metadata"/>
-            <!-- Print Illustrations -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]" mode="metadata"/>
-            <!-- Subjects -->
-            <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords" mode="metadata"/>
-            <!-- Associated Names -->
-            <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']" mode="metadata"/>
-            <!-- Images -->
-            <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
             <xsl:choose>
-              <xsl:when test="$md-collection = 'hgv'">
-                <tr>
-                  <th class="rowheader">License</th>
-                  <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
-                    © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
-                </tr>
+              <xsl:when test="$md-collection = 'dclp'">
+                <xsl:call-template name="serialize-dclp-metadata"/>
               </xsl:when>
               <xsl:otherwise>
-                <tr>
-                  <th class="rowheader">License</th>
-                  <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
-                </tr>                  
+                <!-- Title -->
+                <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:title"
+                  mode="metadata"/>
+                <!-- Author -->
+                <xsl:apply-templates select="t:teiHeader/t:fileDesc/t:titleStmt/t:author"
+                  mode="metadata"/>
+                <!-- Summary -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary"
+                  mode="metadata"/>
+                <!-- Publications -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']"
+                  mode="metadata"/>
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'citations']"
+                  mode="metadata"/>
+                <!-- Inv. Id -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno"
+                  mode="metadata"/>
+                <!-- Physical Desc. -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:p"
+                  mode="metadata"/>
+                <!-- Support / Dimensions -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support"
+                  mode="metadata"/>
+                <!-- Condition (conservation|preservation)-->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab"
+                  mode="metadata"/>
+                <!-- Layout (lines|recto/verso) -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab"
+                  mode="metadata"/>
+                <!-- Hands -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc/t:p"
+                  mode="metadata"/>
+                <!-- Post-concordance BL Entries -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'corrections']"
+                  mode="metadata"/>
+                <!-- Translations -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'translations']"
+                  mode="metadata"/>
+                <!-- Provenance -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p)"
+                  mode="metadata"/>
+                <!-- Material -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support/t:material"
+                  mode="metadata"/>
+                <!-- Language -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang"
+                  mode="metadata"/>
+                <!-- Date -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate"
+                  mode="metadata"/>
+                <!-- Commentary -->
+                <xsl:apply-templates select="t:text/t:body/t:div[@type = 'commentary']"
+                  mode="metadata"/>
+                <!-- Notes (general|local|related) -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note"
+                  mode="metadata"/>
+                <!-- Print Illustrations -->
+                <xsl:apply-templates
+                  select="t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'illustrations'][.//t:bibl]"
+                  mode="metadata"/>
+                <!-- Subjects -->
+                <xsl:apply-templates select="t:teiHeader/t:profileDesc/t:textClass/t:keywords"
+                  mode="metadata"/>
+                <!-- Associated Names -->
+                <xsl:apply-templates
+                  select="t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn']"
+                  mode="metadata"/>
+                <!-- Images -->
+                <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
+                
+                <!-- Intellectual Property and License -->
+                <!-- What follows is a dirty hack. XML files should instead declare licenses and copyright and the stylesheets should 
+                  report those declarations. See how this is done in metadata-dclp.xsl -->
+                <xsl:choose>
+                  <xsl:when test="$md-collection = 'hgv'">
+                    <tr>
+                      <th class="rowheader">License</th>
+                      <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
+                        © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
+                    </tr>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <tr>
+                      <th class="rowheader">License</th>
+                      <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
+                    </tr>                  
+                  </xsl:otherwise>
+                </xsl:choose>
+                
               </xsl:otherwise>
             </xsl:choose>
           </tbody>
@@ -265,6 +335,61 @@
     </xsl:for-each>
   </xsl:template>
   
+  <!-- Ancient author and work -->
+  <xsl:template
+    match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl"
+    mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="1">Work<xsl:if test="count(t:bibl) &gt; 1">s</xsl:if></th>
+      <td>
+        <xsl:choose>
+          <xsl:when test="count(t:bibl) &gt; 1">
+            <ul>
+              <xsl:for-each select="t:bibl">
+                <li><xsl:apply-templates select="." mode="metadata"/></li>
+              </xsl:for-each>
+            </ul>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:for-each select="t:bibl">
+              <xsl:apply-templates select="." mode="metadata"/>
+            </xsl:for-each>
+          </xsl:otherwise>
+        </xsl:choose>
+      </td>
+    </tr>
+  </xsl:template>
+  
+  <!-- Ancient author and work text -->
+  <xsl:template match="t:bibl" mode="metadata">
+    <xsl:choose>
+      <xsl:when test="t:author">
+        <xsl:value-of select="t:author"/>
+      </xsl:when>
+      <xsl:otherwise>Unknown</xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="t:title">, </xsl:if>
+    <xsl:value-of select="t:title"/>
+    <xsl:if test="t:biblScope">
+      <xsl:text> </xsl:text>
+    </xsl:if>
+    <xsl:for-each select="t:biblScope">
+      <xsl:value-of select="."/>
+      <xsl:if test="./following-sibling::t:biblScope">.</xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+  
+  <!-- overview keyword handling -->
+  <xsl:template match="t:term[@type='overview']" mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="1">Content</th>
+      <td>
+        <xsl:apply-templates />
+      </td>
+    </tr>
+  </xsl:template>
+  
+  
   <!-- APIS Citations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
     <tr>
@@ -327,6 +452,12 @@
   
   <!-- Support/Dimensions -->
   <xsl:template match="t:support" mode="metadata">
+    <xsl:if test="parent::t:supportDesc/@material">
+      <tr>
+        <th class="rowheader">Material</th>
+        <td><xsl:value-of select="parent::t:supportDesc/@material"/></td>
+      </tr>
+    </xsl:if>
     <tr>
       <th class="rowheader">Support/Dimensions</th>
       <td><xsl:value-of select="."/></td>
@@ -605,6 +736,120 @@
     <xsl:sequence select="$era"/>
   </xsl:function>
   
+  <!-- Custodial Events --> 
+  <!-- Now display at the top of each column - see htm-teidivedition.xsl -->
+  <!--<xsl:template match="t:custodialHist" mode="metadata">
+    <tr>
+      <th class="rowheader" rowspan="1">Custodial Events</th>
+      <td>
+        <ul>
+
+          <xsl:for-each select="t:custEvent">
+            <xsl:variable name="context-node" select="../../../../t:msIdentifier/t:idno/t:idno"/>
+            
+            <!-\- capture the HTML serialization of the details we want to emit into a variable -\-> 
+            <xsl:variable name="interior">
+                
+              <!-\- type of event -\->
+              <xsl:if test="@type">
+                <xsl:variable name="type-display" select="concat(upper-case(substring(@type, 1, 1)), substring(@type, 2))"/>
+                <xsl:choose>
+                  <xsl:when test="t:graphic[@url]">
+                    <a href="{t:graphic/@url}"><xsl:value-of select="$type-display"/></a>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="$type-display"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text> by </xsl:text>
+              </xsl:if>
+              
+              <!-\- responsible individual -\->
+              <xsl:choose>
+                <xsl:when test="t:forename or t:surname">
+                  <xsl:value-of select="t:forename"/>
+                  <xsl:if test="t:forename and t:surname">
+                    <xsl:text> </xsl:text>
+                  </xsl:if>
+                  <xsl:value-of select="t:surname"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  [unidentified responsible individual]
+                </xsl:otherwise>
+              </xsl:choose>
+              
+              <!-\- dates -\->
+              <xsl:text> (</xsl:text>
+              <xsl:choose>
+                <xsl:when test="@from and @to and @from=@to">
+                  <xsl:value-of select="@from"/>
+                </xsl:when>
+                <xsl:when test="@from and @to">
+                  <xsl:value-of select="@from"/>
+                  <xsl:text>-</xsl:text>
+                  <xsl:value-of select="@to"/>
+                </xsl:when>
+                <xsl:when test="@from">
+                  <xsl:value-of select="@from"/>
+                  <xsl:text>-</xsl:text>
+                </xsl:when>
+                <xsl:when test="@to">
+                  <xsl:text>-</xsl:text>
+                  <xsl:value-of select="@to"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:text>date not indicated</xsl:text>
+                </xsl:otherwise>
+              </xsl:choose>
+              <xsl:text>)</xsl:text>
+              
+              <!-\- corresponding fragments -\->
+              <xsl:if test="@corresp">
+                <xsl:text>: </xsl:text>
+                <xsl:variable name="corr" select="@corresp"/>
+                <xsl:variable name="corrtokens" select="tokenize($corr,' ')"/>
+                <xsl:for-each select="$corrtokens">
+                  <xsl:variable name="frag" select="."/>
+                  <xsl:variable name="xml-id" select="substring-after($frag, '#')"/>
+                  <xsl:variable name="output-node" select="$context-node[@xml:id=$xml-id]"/>
+                  <xsl:value-of select="$output-node"/>
+                  <xsl:if test="substring-after($corr, normalize-space(.)) != ''">
+                    <xsl:choose>
+                      <xsl:when test="substring($output-node, string-length($output-node), 1) = ';'">
+                        <xsl:text> </xsl:text>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:text>; </xsl:text>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                    
+                  </xsl:if>
+                </xsl:for-each>
+              </xsl:if>                
+            </xsl:variable>
+            
+            <!-\- now emit the content we stored in the variable, wrapping it in a link if appropriate -\->
+            <li>
+              <xsl:choose>
+                <xsl:when test="t:ptr[@target]">
+                  <a href="{t:ptr[@target]/@target}"><xsl:copy-of select="$interior"/></a>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:copy-of select="$interior"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </li>
+            
+          </xsl:for-each>
+
+        </ul>
+      </td>
+
+    </tr>
+  </xsl:template>-->
+  
+ 
+  
   <!-- Notes -->
   <xsl:template match="t:msItemStruct/t:note" mode="metadata">
     <tr>
@@ -620,6 +865,48 @@
       <td><xsl:for-each select="t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
     </tr>
   </xsl:template>
+  
+  <!-- Place Stored (Ancient) -->
+  <xsl:template match="t:provenance[@type= 'stored']/t:p" mode="metadata">
+    <tr>
+      <th class="rowheader">Place Stored (Ancient)</th>
+      <td>
+        <xsl:for-each select="t:placeName">
+          <xsl:choose>
+            <xsl:when test="not(@subtype)">
+              <xsl:choose>
+                <xsl:when test="not(@ref)">
+                  <xsl:value-of select="."/>,&#xA0; </xsl:when>
+                <xsl:otherwise>
+				<xsl:variable name='reference' select="@ref"/>
+				<xsl:choose>
+					<xsl:when test="starts-with($reference,'http')">
+						<a href='{$reference}'><xsl:value-of select="."/></a>,&#xA0; 
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="."/>,&#xA0; 
+					</xsl:otherwise>
+				</xsl:choose>
+				</xsl:otherwise>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise> </xsl:otherwise>
+          </xsl:choose>
+
+        </xsl:for-each>
+        <xsl:for-each select="t:placeName">
+          <xsl:choose>
+            <xsl:when test="not(@subtype)"> </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+
+      </td>
+    </tr>
+  </xsl:template>
+  
   
   <!-- Associated Names -->
   <xsl:template match="t:origin" mode="metadata">
@@ -642,6 +929,88 @@
     </tr>
     </xsl:for-each>
     
+  </xsl:template>
+  
+  <!-- Intellectual Property: Licensing and Copyright -->
+  <xsl:template match="t:availability" mode="metadata">
+    <tr>
+      <th class="rowheader">Availability</th>
+      <td>
+        <xsl:choose>
+          <xsl:when test="@status='free'">This information is freely available.</xsl:when>
+          <xsl:when test="@status='restricted'">This information is not freely available.</xsl:when>
+          <xsl:when test="@status='unknown'">The status of this information is unknown.</xsl:when>
+        </xsl:choose>
+        <xsl:apply-templates mode="metadata"/>
+      </td>
+    </tr>
+  </xsl:template>
+  <xsl:template match="t:license">
+    <xsl:choose>
+      <xsl:when test="@target">This work is licensed under a <a rel="license" href="@target">
+          <xsl:choose>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/MIT')">MIT
+              License </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/BSD')">BSD
+              2-Clause License </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/GPL/2.0')">GNU
+              General Public License, version 2 </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/LGPL/2.1')">
+              GNU Lesser General Public License, version 2.1 </xsl:when>
+            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/')">Creative
+              Commons <xsl:choose>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/publicdomain')">
+                  Copyright-Only Dedication (based on United States law) or Public Domain
+                  Certification</xsl:when>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/sampling/1.0')">Sampling 1.0</xsl:when>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/sampling+/1.0')">Sampling Plus 1.0</xsl:when>
+                <xsl:when
+                  test="starts-with(@target, 'http://creativecommons.org/licenses/nc-sampling+/1.0')"
+                  >NonCommercial Sampling Plus 1.0</xsl:when>
+                <xsl:otherwise>
+                  <xsl:if test="contains(@target, '/by')">Attribution</xsl:if>
+                  <xsl:if test="contains(@target, '/nc')">Non-Commercial</xsl:if>
+                  <xsl:if test="contains(@target, '/nd')">No Derivatives</xsl:if>
+                  <xsl:if test="contains(@target, '/sa')">Share-Alike</xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="matches(@target, '4\.\d')">
+                      <xsl:analyze-string select="@target" regex="4\.\d">
+                        <xsl:matching-substring>
+                          <xsl:value-of select="regex-group(1)"/>International</xsl:matching-substring>
+                      </xsl:analyze-string>
+                    </xsl:when>
+                    <xsl:when test="matches(@target, '\d\.\d+')">
+                      <xsl:analyze-string select="@target" regex="\d\.\d+">
+                        <xsl:matching-substring>
+                          <xsl:variable name="numeric" select="regex-group(1)"/>
+                          <xsl:value-of select="$numeric"/>
+                          <!--<xsl:variable name="jcode">
+                            <xsl:value-of select="substring-after(@target, concat($numeric, '/'))"/>
+                          </xsl:variable>
+                          <xsl:value-of select="$jcode"/>
+                          <xsl:if test="$jcode != ''">
+                            <xsl:variable name="countries" select="document('countries.xml')//t:keywords"/>
+                            <xsl:value-of
+                              select="$countries/descendant-or-self::t:term[@xml:id=lower-case($jurisdiction-code)]"/>
+                          </xsl:if>-->
+                        </xsl:matching-substring>
+                      </xsl:analyze-string>
+                    </xsl:when></xsl:choose>License.</xsl:otherwise>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </a>
+      </xsl:when>
+      <xsl:otherwise>
+        License: <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
 

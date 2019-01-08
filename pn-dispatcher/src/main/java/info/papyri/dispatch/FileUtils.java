@@ -112,6 +112,22 @@ public class FileUtils {
                   .append("/index.html").toString());
         }
       }
+    } else if ("dclp".equals(collection)) {
+      if (item.matches("\\d+[a-z]*")) {
+        return new File(pathname.append("DCLP/")
+                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append("/")
+                .append(item)
+                .append(".html").toString());
+      } else {
+        if ("".equals(item)) {
+          return new File(pathname.append("DCLP/index.html").toString());
+        } else {
+          return new File(pathname.append("DCLP/")
+                  .append(item)
+                  .append("/index.html").toString());
+        }
+      }
     } else if ("apis".equals(collection)) {
       if ("".equals(item)) {
         return new File(pathname.append("APIS/index.html").toString());
@@ -179,6 +195,14 @@ public class FileUtils {
     } else if ("hgv".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
         return new File(pathname.append("HGV_meta_EpiDoc/HGV")
+                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append("/")
+                .append(item)
+                .append(".txt").toString());
+      }
+    } else if ("dclp".equals(collection)) {
+      if (item.matches("\\d+[a-z]*")) {
+        return new File(pathname.append("DCLP/")
                 .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
@@ -260,6 +284,15 @@ public class FileUtils {
       pathname.append("HGV_trans_EpiDoc/")
               .append(item)
               .append(".xml").toString();
+      return pathname.toString();
+    } else if ("dclp".equals(collection)) {
+      if (item.matches("\\d+[a-z]*")) {
+        pathname.append("DCLP/")
+                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append("/")
+                .append(item)
+                .append(".xml").toString();
+      }
       return pathname.toString();
     } else if ("apis".equals(collection)) {
       if (item.contains(".")) {
@@ -444,6 +477,7 @@ public class FileUtils {
    * context
    */
   public List<String> highlightMatches(String t, Pattern[] patterns) {
+    logger.info(t);
     List<String> result = new ArrayList<String>();
     String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$4ⓞ")
             .replaceAll(hyphenatedLineNum, "Ⓝ$4ⓜ")
