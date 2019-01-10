@@ -23,6 +23,8 @@
            (org.apache.jena.graph Node)
            (org.apache.jena.query QueryExecutionFactory)
            (org.apache.jena.rdf.model Model ModelFactory)
+           (org.apache.jena.riot RDFLanguages RDFParser)
+           (org.apache.jena.riot.system ErrorHandlerFactory)
            (org.apache.jena.sparql.modify.request UpdateCreate UpdateLoad)
            (org.apache.jena.sparql.lang UpdateParser)
            (org.apache.jena.web DatasetAdapter DatasetGraphAccessorHTTP)
@@ -202,8 +204,17 @@
   [f]
   (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
         adapter (DatasetAdapter. dga)
+        lang (cond 
+          (.endsWith f ".rdf") RDFLanguages/RDFXML 
+          (.endsWith f ".ttl") RDFLanguages/TURTLE
+          :else RDFLanguages/NTRIPLES)
         model (ModelFactory/createDefaultModel)]
-    (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
+    (prn (str "Reading " f))
+    (.. (RDFParser/create)
+      (source (FileInputStream. f))
+      (lang lang)
+      (errorHandler (ErrorHandlerFactory/errorHandlerWarn))
+      (parse model))
     (try
       (.add adapter graph model)
       (catch Exception e

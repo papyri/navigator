@@ -10,9 +10,9 @@
                  [xerces/xercesImpl "2.9.1"]
                  [xml-apis/xml-apis "1.3.04"]
                  [xml-resolver/xml-resolver "1.2"]
-                 [org.apache.jena/jena-core "3.9.0"]
-                 [org.apache.jena/jena-iri "3.9.0"]
-                 [org.apache.jena/jena-arq "3.9.0"]
+                 [org.apache.jena/jena-core "3.10.0"]
+                 [org.apache.jena/jena-iri "3.10.0"]
+                 [org.apache.jena/jena-arq "3.10.0"]
                  [commons-logging/commons-logging "1.1.1"]
                  [commons-codec/commons-codec "1.7"]]
   :main info.papyri.map
