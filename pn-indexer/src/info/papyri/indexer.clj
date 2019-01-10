@@ -63,7 +63,7 @@
 (def xsltpath "/srv/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/srv/data/papyri.info/pn/idp.html")
 (def solrurl "http://localhost:8983/solr/")
-(def numbersurl "http://localhost:3030/pi/query?query=")
+(def numbersurl "http://localhost:8090/pi/query?query=")
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
 (def server "http://localhost:8090/pi")
 (def nserver "localhost")
