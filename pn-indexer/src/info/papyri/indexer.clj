@@ -1078,6 +1078,7 @@
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
       "generate-pages" (-generatePages (rest args))
+      "process-tm" (preprocess-tm)
       (do (-generatePages args)
         (-index)))
     (do (-generatePages args)
