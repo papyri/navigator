@@ -752,6 +752,8 @@ $(document).ready(
 
 		$("select[name='SERIES']").combobox();
 		$("select[name='COLLECTION']").combobox();
+		$("select[name='AUTHOR']").combobox();
+		$("select[name='WORK']").combobox();
 		$("select[name='PLACE']").combobox();
 		$("select[name='NOME']").combobox();
 		$("select[name='DATE_START']").combobox();

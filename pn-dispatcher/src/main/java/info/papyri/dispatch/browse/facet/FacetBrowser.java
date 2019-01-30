@@ -547,6 +547,10 @@ public class FacetBrowser extends HttpServlet {
 
       Facet idFacet = findFacet(facets, IdentifierFacet.class);
       html.append(idFacet.generateWidget());
+      Facet authorFacet = findFacet(facets, AuthorFacet.class);
+      html.append(authorFacet.generateWidget());
+      Facet workFacet = findFacet(facets, WorkFacet.class);
+      html.append(workFacet.generateWidget());
       Facet placeFacet = findFacet(facets, PlaceFacet.class);
       html.append(placeFacet.generateWidget());
       Facet nomeFacet = findFacet(facets, NomeFacet.class);
