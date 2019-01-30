@@ -1061,7 +1061,7 @@
       (.shutdown)))
 
   (println "Optimizing index...")
-  (commit-and-optimize)
+  (commit-and-optimize "pn-search")
 
   (dosync (ref-set html nil)
     (ref-set text nil)
