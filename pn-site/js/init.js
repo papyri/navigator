@@ -154,7 +154,7 @@ function buildSolrQueryString(){
 
 	}
 	if(querystring.charAt(0) == "?") querystring = querystring.substring(1);
-	return querystring;
+	return querystring + "&wt=xml";
 
 }
 /**
