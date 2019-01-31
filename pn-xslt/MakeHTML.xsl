@@ -754,6 +754,68 @@
     <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"> = APD <a href="http://www.apd.gwi.uni-muenchen.de:8080/apd/show2.jsp?papname={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"/></a></xsl:if>
   </xsl:template>
   
+  <!-- Override template in htm-tpl-apparatus.xsl -->
+  <xsl:template name="tpl-apparatus">
+    <!-- An apparatus is only created if one of the following is true -->
+    <xsl:if test=".//t:choice | .//t:subst | .//t:app | .//t:g[@type='apostrophe'] |
+      .//t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |
+      .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
+      
+      <div id="apparatus" lang="en">
+        <h2>Apparatus</h2>
+        <xsl:variable name="apparatus">
+          <!-- An entry is created for-each of the following instances
+                  * choice, subst or app not nested in another;
+                  * hi not nested in the app part of an app;
+                  * del or milestone.
+        -->
+          <xsl:for-each select="(.//t:choice | .//t:subst | .//t:app)[not(ancestor::t:*[local-name()=('choice','subst','app')])] | .//t:g[@type='apostrophe'] |
+            .//t:hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')][not(ancestor::t:*[local-name()=('orig','reg','sic','corr','lem','rdg') 
+            or self::t:del[@rend='corrected'] 
+            or self::t:add[@place='inline']][1][local-name()=('reg','corr','rdg') 
+            or self::t:del[@rend='corrected']]
+            or ancestor::t:hi)] |
+            .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
+            <app>
+              <!-- Found in tpl-apparatus.xsl -->
+              <xsl:call-template name="ddbdp-app">
+                <xsl:with-param name="apptype">
+                  <xsl:choose>
+                    <xsl:when test="self::t:choice[child::t:orig and child::t:reg]">
+                      <xsl:text>origreg</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:choice[child::t:sic and child::t:corr]">
+                      <xsl:text>siccorr</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:subst">
+                      <xsl:text>subst</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='alternative']">
+                      <xsl:text>appalt</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='editorial'][starts-with(t:lem/@resp,'BL ')]">
+                      <xsl:text>appbl</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='editorial'][starts-with(t:lem/@resp,'PN ')]">
+                      <xsl:text>apppn</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='editorial']">
+                      <xsl:text>apped</xsl:text>
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:with-param>
+              </xsl:call-template>
+            </app>
+          </xsl:for-each>
+        </xsl:variable>
+        <!-- XSL for-each-group effectively suppresses any duplicate apparati generated due to sibling triggers.   -->
+        <xsl:for-each-group select="$apparatus/*:app" group-by=".">
+          <xsl:copy-of select="node()"/>
+        </xsl:for-each-group>
+      </div>
+    </xsl:if>
+  </xsl:template>
+  
   <!-- Override EpiDoc template in htm-teihead.xsl -->
   <xsl:template match="t:div/t:head">
     <h2>
