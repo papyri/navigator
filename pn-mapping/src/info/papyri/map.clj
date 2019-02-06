@@ -294,7 +294,7 @@
                         "WITH <http://papyri.info/graph> "
                         "INSERT {?s dc:relation <" url ">} "
                         "WHERE { <" url "> dc:relation ?s "
-                        "FILTER regex(\"" url "\", \"^http://papyri.info\") "
+                        "FILTER regex(\"" url "\", \"^http://(papyri.info\") "
                         "FILTER regex(str(?s), \"^http://papyri.info\")}")
           converse-relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                  "WITH <http://papyri.info/graph> "
@@ -307,13 +307,16 @@
                                "INSERT {<" url "> dc:relation ?o2} "
                                "WHERE { <" url "> dc:relation ?o1 . "
                                "?o1 dc:relation ?o2 "
-                               "FILTER (!sameTerm(<" url ">, ?o2))}")
+                               "FILTER (!sameTerm(<" url ">, ?o2))"
+                               "FILTER (!regex(str(?o1), \"^(http://www.trismegistos.org|http://papyri.info/trismegistos)\"))}")
           converse-rels (str "PREFIX dc: <http://purl.org/terms/> "
                                "WITH <http://papyri.info/graph> "
                                "INSERT {?o2 dc:relation <" url ">} "
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
-                               "FILTER (!sameTerm(<" url ">, ?o2))}")
+                               "FILTER (!sameTerm(<" url ">, ?o2))}"
+                               "FILTER (!regex(str(?o1), \"^(http://www.trismegistos.org|http://papyri.info/trismegistos)\"))}")
+          ;; Add APIS -> TM -> DDb, etc.
           replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {<" url "> dc:replaces ?o} "
@@ -366,7 +369,8 @@
                                 "INSERT {?s dc:relation ?o2} "
                                 "WHERE { ?s dc:relation ?o1 . "
                                          "?o1 dc:relation ?o2 "
-                                "FILTER (!sameTerm(?s, ?o2))}")
+                                "FILTER (!sameTerm(?s, ?o2)) "
+                                "FILTER (!regex(str(?o1), \"^(http://www.trismegistos.org|http://papyri.info/trismegistos)\"))}")
           replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {?s dc:replaces ?o} "
