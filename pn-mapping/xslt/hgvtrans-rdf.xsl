@@ -31,6 +31,15 @@
               </dcterms:relation>
             </xsl:for-each>
           </xsl:for-each>
+          <xsl:for-each select="//tei:publicationStmt/tei:idno[@type='TM']">
+            <xsl:for-each select="tokenize(., ' ')">
+              <dcterms:relation>
+                <rdf:Description rdf:about="http://www.trismegistos.org/text/{.}">
+                  <dcterms:relation rdf:resource="{$id}"/>
+                </rdf:Description>
+              </dcterms:relation>
+            </xsl:for-each>
+          </xsl:for-each>
         </rdf:Description>
     </xsl:template>
 </xsl:stylesheet>
