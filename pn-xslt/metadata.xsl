@@ -182,23 +182,24 @@
               <th>Publications</th>
               <td><xsl:for-each select="texref[starts-with(field[@n='15'], '1.')]">
                 <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
-                <xsl:value-of select="field[@n='14']"/> (<xsl:for-each
+                <xsl:value-of select="field[@n='14']"/> (<xsl:if test="editref"><xsl:for-each
                   select="editref"><xsl:variable name="pos"
                     select="count(preceding-sibling::editref) + 1"/><a
                     href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
                       select="$eds[$pos]"/></a><xsl:if test="position() != last()">
-                        <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; <xsl:value-of
+                        <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; </xsl:if><xsl:value-of
                           select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> +
  </xsl:text></xsl:if>
               </xsl:for-each>
                 <xsl:for-each select="texref[not(starts-with(field[@n='15'], '1.'))]">
                   <xsl:if test="position() = 1"><xsl:text> = </xsl:text></xsl:if>
                 <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
-                <xsl:value-of select="field[@n='14']"/> (<xsl:for-each
-                  select="editref"><a
-                    href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
-                      select="$eds[position()]"/></a><xsl:if test="position() != last()">
-                        <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; <xsl:value-of
+                  <xsl:value-of select="field[@n='14']"/> (<xsl:if test="editref"><xsl:for-each
+                    select="editref"><xsl:variable name="pos"
+                      select="count(preceding-sibling::editref) + 1"/><a
+                        href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
+                          select="$eds[$pos]"/></a><xsl:if test="position() != last()">
+                            <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; </xsl:if><xsl:value-of
                           select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> =
  </xsl:text></xsl:if>
               </xsl:for-each></td>
@@ -208,7 +209,7 @@
               <th>Inv. no.</th>
               <td><xsl:for-each select="collref[starts-with(field[@n='15'],'1.')]"><a
                 href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of select="field[@n='14']"/></a><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'1.')]">; </xsl:if></xsl:for-each>
-                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]">;
+                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]"><xsl:if test="collref[starts-with(field[@n='15'],'1.')]">; </xsl:if>
                   <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">. other inv.: </xsl:if>
                   <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
                     <a href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of
@@ -944,6 +945,9 @@
         <xsl:apply-templates mode="metadata"/>
       </td>
     </tr>
+  </xsl:template>
+  <xsl:template match="t:availability/t:p" mode="metadata">
+    <xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="t:license">
     <xsl:choose>

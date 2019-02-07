@@ -81,7 +81,6 @@ div.content p {
 div.content h2 {
 font-size: 108%;
 font-weight: bold;
-border-top: thin solid silver;
 margin-bottom: 0.25em;
 margin-left:-.5em;
 margin-right:.5em;
@@ -352,6 +351,14 @@ min-width: 150px;
 div#edition {
 margin-left: 3em;
 }
+div#edition[lang=ar] {
+  float: left;
+  margin-left: 1em;
+}
+div#history {
+  clear: both;
+  padding-top: .3em;
+}
 div#bibliography, div#related {
   clear:both;
   float:left;
@@ -401,6 +408,7 @@ text-decoration: underline;
 
 *[lang="en"] {
 direction: ltr;
+text-align: left;
 font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
     "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
     "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
@@ -423,12 +431,8 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
 *[lang="cop"] {
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
 }
-span[lang="ara"] {
-    direction: rtl;
-    font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
-    font-size: 1.5em;
+span[lang="ar"] {
     display: inline-block;
-    text-align: right;
 }
 span[lang="ara"] * {
     font-size: .67em;
@@ -437,13 +441,10 @@ span[lang="en"] {
 display: inline-block;
 }
 
-*[lang="ara"] {
+*[lang="ar"] {
     direction: rtl;
-    display: block;
     text-align: right;
-    width: 50%;
-    margin-top: 0;
-    margin-bottom: 0;
+    font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
 }
 
 div.textpart {
@@ -486,6 +487,10 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
     "Verdana", "Tahoma";
 float: left;
 margin-left: -2em;
+}
+div[lang="ar"] .linenumber {
+  float:right;
+  margin-right: -2em;
 }
 
 .linenumberbroken {

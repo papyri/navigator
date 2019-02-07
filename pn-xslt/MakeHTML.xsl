@@ -355,15 +355,17 @@
                       </xsl:apply-templates>
                     </xsl:for-each>
                     <xsl:for-each select="pi:get-docs($relations[contains(., '/dclp/') and not(contains($replaces,.))], 'xml')/t:TEI">
-                      <xsl:apply-templates select="." mode="text">
-                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-                      </xsl:apply-templates>
+                      <xsl:if test="//t:div[@type='edition']//*">
+                        <xsl:apply-templates select="." mode="text">
+                          <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                          <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                          <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                          <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                          <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                          <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                          <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                        </xsl:apply-templates>
+                      </xsl:if>
                     </xsl:for-each>
                     <xsl:if test="$image">
                       <xsl:call-template name="images"/>
@@ -423,29 +425,17 @@
                   </div>
                   <xsl:if test="//t:div[@type='edition']//*">
                     <div class="text">
-                      <xsl:comment>text information will go here: div[@type=commentary][@subtype='frontmatter]</xsl:comment>
-                      <div class="transcription data">
-                        <xsl:variable name="file-uri" select="number(substring(descendant::t:idno[@type='TM'],0,3))+1"/>
-                        <h2>DCLP Transcription [<a class="xml" href="https://github.com/DCLP/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]</h2>
-                        <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
-                        <xsl:variable name="text-dclp">
-                          <xsl:apply-templates select="//t:div[@type='edition']"> 
-                            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                            <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                            <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                            <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                            <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                            <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                            <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-                          </xsl:apply-templates>
-                        </xsl:variable>
-                        <!-- Moded templates found in htm-tpl-sqbrackets.xsl (this fixes/collapses abutting square brackets) -->
-                        <xsl:apply-templates select="$text-dclp" mode="sqbrackets"/>
-                        <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
-                      </div>
+                      <xsl:apply-templates select="/t:TEI" mode="text">
+                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                      </xsl:apply-templates>
                     </div>
                   </xsl:if>
-                  <xsl:apply-templates select="//t:revisionDesc" mode="history"/>
                 </xsl:if>
                 <xsl:if test="$collection = 'hgv'">
                   <div class="metadata">
@@ -552,17 +542,33 @@
   </xsl:function>
   
   <xsl:template match="t:TEI" mode="text">
+    <xsl:variable name="type">
+      <xsl:choose>
+        <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
+        <xsl:otherwise>DDbDP</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <div class="transcription data">
-      <h2><xsl:choose><xsl:when
-        test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid']">DCLP</xsl:when><xsl:otherwise>DDbDP</xsl:otherwise></xsl:choose> transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
+      <xsl:choose>
+        <xsl:when test="$type = 'DCLP'">
+          <h2>DCLP transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source">xml</a>]</h2>
+        </xsl:when>
+        <xsl:otherwise>
+          <h2>DDbDP transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2></xsl:otherwise></xsl:choose>
       <xsl:variable name="text">
-        <xsl:apply-templates select="."/>
+        <xsl:choose>
+          <xsl:when test="$type = 'DCLP'"><xsl:apply-templates select=".//t:div[@type='edition']"/></xsl:when>
+          <xsl:otherwise><xsl:apply-templates select=".//t:body"/></xsl:otherwise>
+        </xsl:choose>
       </xsl:variable>
       <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
       <xsl:apply-templates select="$text" mode="sqbrackets"/>
       <div id="history">
         <div id="history-headers">
-          <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
+          <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; 
+            (<xsl:choose>
+              <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']"><a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp'])}" target="_blank">detailed</a></xsl:when>
+              <xsl:otherwise><a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a></xsl:otherwise></xsl:choose>)</h3>
         </div>
         <!-- closing #history-headers -->
         <div id="history-lists">
@@ -602,7 +608,7 @@
   </xsl:template>
   
   <xsl:template match="t:revisionDesc" mode="history">
-    <xsl:variable name="file-uri" select="number(substring(//t:idno[@type='TM'],0,3))+1"/>
+    <xsl:variable name="file-uri" select="ceiling(number(//t:idno[@type='TM'] div 1000))"/>
     <div id="history" class="text">
         <div id="history-headers">
           <h3><span id="edit-history">Editorial History</span>; 
@@ -752,6 +758,68 @@
     <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
     <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
     <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"> = APD <a href="http://www.apd.gwi.uni-muenchen.de:8080/apd/show2.jsp?papname={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"/></a></xsl:if>
+  </xsl:template>
+  
+  <!-- Override template in htm-tpl-apparatus.xsl -->
+  <xsl:template name="tpl-apparatus">
+    <!-- An apparatus is only created if one of the following is true -->
+    <xsl:if test=".//t:choice | .//t:subst | .//t:app | .//t:g[@type='apostrophe'] |
+      .//t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |
+      .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
+      
+      <div id="apparatus" lang="en">
+        <h2>Apparatus</h2>
+        <xsl:variable name="apparatus">
+          <!-- An entry is created for-each of the following instances
+                  * choice, subst or app not nested in another;
+                  * hi not nested in the app part of an app;
+                  * del or milestone.
+        -->
+          <xsl:for-each select="(.//t:choice | .//t:subst | .//t:app)[not(ancestor::t:*[local-name()=('choice','subst','app')])] | .//t:g[@type='apostrophe'] |
+            .//t:hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')][not(ancestor::t:*[local-name()=('orig','reg','sic','corr','lem','rdg') 
+            or self::t:del[@rend='corrected'] 
+            or self::t:add[@place='inline']][1][local-name()=('reg','corr','rdg') 
+            or self::t:del[@rend='corrected']]
+            or ancestor::t:hi)] |
+            .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
+            <app>
+              <!-- Found in tpl-apparatus.xsl -->
+              <xsl:call-template name="ddbdp-app">
+                <xsl:with-param name="apptype">
+                  <xsl:choose>
+                    <xsl:when test="self::t:choice[child::t:orig and child::t:reg]">
+                      <xsl:text>origreg</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:choice[child::t:sic and child::t:corr]">
+                      <xsl:text>siccorr</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:subst">
+                      <xsl:text>subst</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='alternative']">
+                      <xsl:text>appalt</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='editorial'][starts-with(t:lem/@resp,'BL ')]">
+                      <xsl:text>appbl</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='editorial'][starts-with(t:lem/@resp,'PN ')]">
+                      <xsl:text>apppn</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="self::t:app[@type='editorial']">
+                      <xsl:text>apped</xsl:text>
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:with-param>
+              </xsl:call-template>
+            </app>
+          </xsl:for-each>
+        </xsl:variable>
+        <!-- XSL for-each-group effectively suppresses any duplicate apparati generated due to sibling triggers.   -->
+        <xsl:for-each-group select="$apparatus/*:app" group-by=".">
+          <xsl:copy-of select="node()"/>
+        </xsl:for-each-group>
+      </div>
+    </xsl:if>
   </xsl:template>
   
   <!-- Override EpiDoc template in htm-teihead.xsl -->
