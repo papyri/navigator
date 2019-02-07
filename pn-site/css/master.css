@@ -351,6 +351,14 @@ min-width: 150px;
 div#edition {
 margin-left: 3em;
 }
+div#edition[lang=ar] {
+  float: left;
+  margin-left: 1em;
+}
+div#history {
+  clear: both;
+  padding-top: .3em;
+}
 div#bibliography, div#related {
   clear:both;
   float:left;
@@ -422,9 +430,6 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
 
 *[lang="cop"] {
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
-}
-div.transcription div[lang="ar"] {
-  max-width: 600px;
 }
 span[lang="ar"] {
     display: inline-block;

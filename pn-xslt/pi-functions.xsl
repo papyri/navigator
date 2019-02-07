@@ -113,10 +113,11 @@
     <xsl:variable name="base">https://github.com/papyri/idp.data/blame/master/</xsl:variable>
     <xsl:variable name="id" select="tokenize($identifier, ';')"/>
     <xsl:choose>
+      <xsl:when test="$identifier/@type='dclp'"><xsl:sequence select="concat($base, 'DCLP/', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/></xsl:when>
       <!-- like http://papyri.info/ddbdp/c.etiq.mom;;165/source -->
-      <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:when>
+      <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, 'DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:when>
       <!-- like http://papyri.info/ddbdp/bgu;1;1/source -->
-      <xsl:otherwise><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/', $id[1], '.', $id[2], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:otherwise>
+      <xsl:otherwise><xsl:sequence select="concat($base, 'DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/', $id[1], '.', $id[2], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:otherwise>
     </xsl:choose>
   </xsl:function>
   
