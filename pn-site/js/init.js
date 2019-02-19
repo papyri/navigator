@@ -418,7 +418,7 @@ function getCookie(name) {
 function alignRTL() {
   jQuery("span.ab").each(function(i, ab) {
     var width = jQuery(ab).width();
-    jQuery(ab).find("span[lang=ara]").each(function(i, elt) {
+    jQuery(ab).find("span[lang=ar]").each(function(i, elt) {
       var e = jQuery(elt);
       //var offset = ((width - e.width()) / e.parents("div.textpart").width()) * 100;
       var breaks = e.find("br");
@@ -432,7 +432,7 @@ function alignRTL() {
           r.setStartBefore(elt.firstChild);
           r.setEndBefore(breaks[0]);
           line.appendChild(r.extractContents());
-          line.setAttribute("lang", "ara");
+          line.setAttribute("lang", "ar");
           elt.insertBefore(line, breaks[0]);
           if (elt.previousSibling.localName == "br" || elt.previousSibling.textContent.trim() == "") {
             var l = jQuery(line);
@@ -451,7 +451,7 @@ function alignRTL() {
             r.setEndAfter(elt.lastChild);
           }
           line.appendChild(r.extractContents());
-          line.setAttribute("lang", "ara");
+          line.setAttribute("lang", "ar");
           jQuery(line).insertAfter(breaks[i]);
           var l = jQuery(line);
           var offset = width - l.width();
