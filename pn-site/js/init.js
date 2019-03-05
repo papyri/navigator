@@ -416,29 +416,41 @@ function getCookie(name) {
 }
 
 function alignRTL() {
+  //return true;
   jQuery("span.ab").each(function(i, ab) {
     var width = jQuery(ab).width();
     jQuery(ab).find("span[lang=ar]").each(function(i, elt) {
+      jQuery(ab).css("width", (width + 20) + "px");
+      //return true;
       var e = jQuery(elt);
       //var offset = ((width - e.width()) / e.parents("div.textpart").width()) * 100;
       var breaks = e.find("br");
       var r = document.createRange();
       var line = document.createElement("span");
       var frg;
-      if (breaks.length > 0) {
+      if (breaks.length > 0) { // we have a multiline span
         elt.removeAttribute("lang");
+        elt.removeAttribute("dir");
         // deal with text before first line break
         if (breaks[0].previousSibling.textContent.trim() != "") {
           r.setStartBefore(elt.firstChild);
           r.setEndBefore(breaks[0]);
           line.appendChild(r.extractContents());
           line.setAttribute("lang", "ar");
-          elt.insertBefore(line, breaks[0]);
+          line.setAttribute("dir","rtl");
+          var l = jQuery(elt.insertBefore(line, breaks[0]));
           if (elt.previousSibling.localName == "br" || elt.previousSibling.textContent.trim() == "") {
-            var l = jQuery(line);
             var offset = width - l.width();
             l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+          } else {
+            if (l[0].parentElement.getBoundingClientRect()["right"] < width) {
+              var offset = width - l.width();
+            } else {
+              var offset = l[0].parentElement.getBoundingClientRect()["left"] - 5;
+            }
+            l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
           }
+          console.log("before; offset: " + offset + "; width: " + width );
         }
         //deal with text after line breaks
         for (var i=0; i < breaks.length; i++) {
@@ -452,11 +464,13 @@ function alignRTL() {
           }
           line.appendChild(r.extractContents());
           line.setAttribute("lang", "ar");
+          line.setAttribute("dir","rtl");
           jQuery(line).insertAfter(breaks[i]);
           var l = jQuery(line);
           var offset = width - l.width();
           l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
-          l.find(".linenumber").css("margin-left", "-" + (32 + (width - l.width())) + "px");
+          //l.find(".linenumber").css("margin-left", "-" + (32 + (width - l.width())) + "px");
+          console.log("after; offset: " + offset + "; width: " + width );
         }
       } else {
         var offset = width - e.width();
@@ -464,6 +478,7 @@ function alignRTL() {
           e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
         }
         e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
+        console.log("no lines; offset: " + offset + "; width: " + width );
       }
     });
   });

@@ -333,6 +333,7 @@ width: 48%;
 div.translation {
 margin-left:1em;
 width: 48%;
+line-height: 1.2em;
 }
 div.metadata {
 clear: both;
@@ -349,7 +350,8 @@ width: 20%;
 min-width: 150px;
 }
 div#edition {
-margin-left: 3em;
+  margin-left: 3em;
+  max-width: 1200px;
 }
 div#edition[lang=ar] {
   float: left;
@@ -431,32 +433,27 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
 *[lang="cop"] {
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
 }
-span[lang="ar"] {
-    display: inline-block;
+span.lang {
+}
+span.lang>span[lang=ar] {
+
+}
+span[lang=ar] {
+    text-align: right;
 }
 span[lang="ara"] * {
     font-size: .67em;
 }
 span[lang="en"] {
+direction: ltr;
 display: inline-block;
 }
 
-*[lang="ar"] {
+*[lang=ar] {
     direction: rtl;
     text-align: right;
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
-}
-
-div.textpart {
-font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
-    "Verdana", "Tahoma";
-line-height: 1.4;
-vertical-align: -20%;
-margin-bottom: 8px;
-padding: 0px;
+    font-size: 125%;
 }
 
 div#apparatus {
@@ -466,6 +463,13 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
     "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
 }
+
+span.ab {
+  line-height: 1.4;
+  margin-bottom: 8px;
+  padding: 0px;
+  display: inline-block;
+  }
 
 span#all-history:hover, span#edit-history:hover {
 background:#f9e4a0;
@@ -479,6 +483,15 @@ margin-left: -3em;
 margin-bottom: 0;
 }
 
+sup {
+  position: relative;
+  top: -.4em;
+}
+
+strong {
+  font-weight: bold;
+}
+
 .linenumber {
 font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
     "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
@@ -488,9 +501,14 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
 float: left;
 margin-left: -2em;
 }
+
 div[lang="ar"] .linenumber {
   float:right;
   margin-right: -2em;
+}
+
+*[lang=ar] .linenumber {
+  font-size: 80%;
 }
 
 .linenumberbroken {

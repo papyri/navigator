@@ -9,8 +9,8 @@
   
   <parameter>
     <name>leiden-style</name>
-    <value>ddbdp</value>
-    <value on="yes">dclp</value>
+    <value on="yes">ddbdp</value>
+    <value>dclp</value>
     <value>dohnicht</value>
     <value>edh-itx</value>
     <value>edh-names</value>
