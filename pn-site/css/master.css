@@ -508,6 +508,17 @@ div[lang="ar"] .linenumber {
   font-size: 80%;
 }
 
+*[lang=ar] *[lang=en] {
+  font-size: 80%;
+}
+
+div.translation div[lang=ar] {
+  line-height: 1.2em;
+}
+div.translation div[lang=ar] sup {
+  font-size: 70%;
+}
+
 .linenumberbroken {
 font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
     "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
