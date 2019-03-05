@@ -142,13 +142,12 @@
     <!-- start writing the output file -->
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
  </xsl:text>
-    <xsl:variable name="selfUrlByCorpus" select="if(contains($selfUrl, '/dclp/'))then(replace($selfUrl, 'papyri.info', 'litpap.info'))else($selfUrl)"/><!-- cl: cromulent dclp canonical URL -->
    
     <html lang="en" version="HTML+RDFa 1.1"
       prefix="dc: http://purl.org/dc/terms/">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta property="dc:identifier" content="{$selfUrlByCorpus}"/>
+        <meta property="dc:identifier" content="{$selfUrl}"/>
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
@@ -170,7 +169,7 @@
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="{$cssbase}/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-        <link rel="bookmark" href="{$selfUrlByCorpus}" title="Canonical URI"/>
+        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE]><link rel="stylesheet" href="]]></xsl:text>
           <xsl:value-of select="$cssbase"/>
@@ -291,7 +290,7 @@
                   </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI: </span>
-                    <span id="canonical-uri-value"><a href="{$selfUrlByCorpus}"><xsl:value-of select="$selfUrlByCorpus"/></a></span>
+                    <span id="canonical-uri-value"><a href="{$selfUrl}"><xsl:value-of select="$selfUrl"/></a></span>
                   </div>
                 </div>
                 <xsl:if test="$collection = 'ddbdp'">
@@ -335,7 +334,7 @@
                   </xsl:if>
                   <div class="text">
                     <xsl:apply-templates select="/t:TEI" mode="text">
-                      <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                      <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                       <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                       <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
                       <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
@@ -345,7 +344,7 @@
                     </xsl:apply-templates>
                     <xsl:for-each select="pi:get-docs($relations[contains(., '/ddbdp/') and not(contains($replaces,.))], 'xml')/t:TEI">
                       <xsl:apply-templates select="." mode="text">
-                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                         <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
                         <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
@@ -357,7 +356,7 @@
                     <xsl:for-each select="pi:get-docs($relations[contains(., '/dclp/') and not(contains($replaces,.))], 'xml')/t:TEI">
                       <xsl:if test="//t:div[@type='edition']//*">
                         <xsl:apply-templates select="." mode="text">
-                          <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                          <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                           <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                           <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
                           <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
@@ -426,7 +425,7 @@
                   <xsl:if test="//t:div[@type='edition']//*">
                     <div class="text">
                       <xsl:apply-templates select="/t:TEI" mode="text">
-                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                        <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                         <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
                         <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
@@ -493,11 +492,11 @@
                 </xsl:if>
                 <div id="ld" class="data">
                   <h2>Linked Data</h2>
-                  <p><a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/rdf">RDF/XML</a> | 
-                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/turtle">Turtle</a> | 
-                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/n3">N-Triples</a> |
-                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/json">JSON</a> | 
-                    <a href="{replace($selfUrl,'http://(papyri|litpap).info','')}/graph">Graph Visualization</a></p>
+                  <p><a href="{replace($selfUrl,'http://papyri.info','')}/rdf">RDF/XML</a> | 
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/turtle">Turtle</a> | 
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/n3">N-Triples</a> |
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/json">JSON</a> | 
+                    <a href="{replace($selfUrl,'http://papyri.info','')}/graph">Graph Visualization</a></p>
                 </div>
               </div>
             </div>
@@ -827,6 +826,43 @@
     <h2>
       <xsl:apply-templates/>
     </h2>
+  </xsl:template>
+  
+  <!-- Override EpiDoc template in htm-teiab.xsl -->
+  <xsl:template match="t:ab">
+    <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
+    <xsl:param name="parm-edition-type" tunnel="yes" required="no"></xsl:param>
+    <span class="ab">
+      <xsl:if test="$parm-leiden-style='iospe'">
+        <xsl:variable name="div-loc">
+          <xsl:for-each select="ancestor::t:div[@type='textpart']">
+            <xsl:value-of select="@n"/>
+            <xsl:text>-</xsl:text>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:attribute name="id">
+          <xsl:value-of select="concat('div',$div-loc)"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates/>
+      <!-- if next div or ab begins with lb[break=no], then add hyphen -->
+      <xsl:if test="following::t:lb[1][@break='no' or @type='inWord'] and not($parm-edition-type='diplomatic')">
+        <xsl:text>-</xsl:text>
+      </xsl:if>
+      <!-- if final lb in ab is L2R or R2L, then print arrow here -->
+      <xsl:if test="not($parm-leiden-style=('ddbdp','dclp','sammelbuch')) 
+        and descendant::t:lb[last()][@rend='left-to-right']">
+        <xsl:text>&#xa0;&#xa0;→</xsl:text>
+      </xsl:if>
+      <xsl:if test="not($parm-leiden-style=('ddbdp','dclp','sammelbuch')) 
+        and descendant::t:lb[last()][@rend='right-to-left']">
+        <xsl:text>&#xa0;&#xa0;←</xsl:text>
+      </xsl:if>
+      <!-- in IOSPE, if followed by lg, include it here (and suppress in htm-teilgandl.xsl) -->
+      <xsl:if test="$parm-leiden-style='iospe' and following-sibling::t:*[1][self::t:lg]">
+        <xsl:apply-templates select="following-sibling::t:lg/*"/>
+      </xsl:if>
+    </span>
   </xsl:template>
   
   <!-- Override template in htm-teiref.xsl -->
