@@ -120,6 +120,11 @@
       <xsl:for-each select="//tei:idno[lower-case(@type)='tm']">
         <xsl:for-each select="tokenize(., '\s')">
           <dct:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
+          <dct:relation>
+            <rdf:Description rdf:about="http://papyri.info/trismegistos/{.}">
+              <dct:relation rdf:resource="{$id}"/>
+            </rdf:Description>
+          </dct:relation>
           <!-- not all HGV trans files have TM no., e.g. HGV_trans_EpiDoc/9363a.xml -->
           <!-- some HGV trans files have more than one TM no., e.g. HGV_trans_EpiDoc/5285\ 44179.xml -->
           <!-- relation DCLP to HGV trans 1:n (because of the HGV number [TM no. + letter code]) -->

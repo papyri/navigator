@@ -307,15 +307,13 @@
                                "INSERT {<" url "> dc:relation ?o2} "
                                "WHERE { <" url "> dc:relation ?o1 . "
                                "?o1 dc:relation ?o2 "
-                               "FILTER (!sameTerm(<" url ">, ?o2))"
-                               "FILTER (!regex(str(?o1), \"^(http://www.trismegistos.org|http://papyri.info/trismegistos)\"))}")
+                               "FILTER (!sameTerm(<" url ">, ?o2))}")
           converse-rels (str "PREFIX dc: <http://purl.org/terms/> "
                                "WITH <http://papyri.info/graph> "
                                "INSERT {?o2 dc:relation <" url ">} "
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
-                               "FILTER (!sameTerm(<" url ">, ?o2))}"
-                               "FILTER (!regex(str(?o1), \"^(http://www.trismegistos.org|http://papyri.info/trismegistos)\"))}")
+                               "FILTER (!sameTerm(<" url ">, ?o2))}")
           ;; Add APIS -> TM -> DDb, etc.
           replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
                              "WITH <http://papyri.info/graph> "
@@ -369,8 +367,7 @@
                                 "INSERT {?s dc:relation ?o2} "
                                 "WHERE { ?s dc:relation ?o1 . "
                                          "?o1 dc:relation ?o2 "
-                                "FILTER (!sameTerm(?s, ?o2)) "
-                                "FILTER (!regex(str(?o1), \"^(http://www.trismegistos.org|http://papyri.info/trismegistos)\"))}")
+                                "FILTER (!sameTerm(?s, ?o2)) }")
           replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {?s dc:replaces ?o} "
