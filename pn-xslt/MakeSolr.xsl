@@ -521,7 +521,7 @@
       <!-- cl: mehrere dclp-hybrids bzw. principal editions -->
       <xsl:when test="$docs//t:idno[@type='dclp']">
         <xsl:variable name="dclp_id" select="tokenize(if($docs//t:idno[@type='dclp-hybrid'] and
-          contains($docs//t:idno[@type='dclp-hybrid'][1],';'))then($docs//t:idno[@type='dclp-hybrid'][1])else(concat('na;;', $docs//t:idno[@type='TM'])), ';')"/>
+          contains($docs//t:idno[@type='dclp-hybrid'][1],';'))then($docs//t:idno[@type='dclp-hybrid'][1])else(concat('tm;;', $docs//t:idno[@type='TM'])), ';')"/>
         <field name="dclp_identifier">
           <xsl:value-of select="string(($docs//t:idno[@type='TM'])[1])"/>
         </field>

@@ -334,6 +334,7 @@
                   </xsl:if>
                   <div class="text">
                     <xsl:apply-templates select="/t:TEI" mode="text">
+                      <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                       <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                       <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                       <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
@@ -344,6 +345,7 @@
                     </xsl:apply-templates>
                     <xsl:for-each select="pi:get-docs($relations[contains(., '/ddbdp/') and not(contains($replaces,.))], 'xml')/t:TEI">
                       <xsl:apply-templates select="." mode="text">
+                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                         <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
@@ -356,6 +358,7 @@
                     <xsl:for-each select="pi:get-docs($relations[contains(., '/dclp/') and not(contains($replaces,.))], 'xml')/t:TEI">
                       <xsl:if test="//t:div[@type='edition']//*">
                         <xsl:apply-templates select="." mode="text">
+                          <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                           <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                           <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                           <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
@@ -425,6 +428,7 @@
                   <xsl:if test="//t:div[@type='edition']//*">
                     <div class="text">
                       <xsl:apply-templates select="/t:TEI" mode="text">
+                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                         <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
@@ -711,17 +715,12 @@
   <xsl:template name="get-references">
     <xsl:choose>
       <xsl:when test="$collection = 'dclp'">
-          <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'na'))]">
-              <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition']/t:listBibl/t:bibl[@type='publication' and @subtype='principal']">
-                  <xsl:variable name="passThrough">
-                      <xsl:call-template name="dclp-get-biblio-passthrough">
-                          <xsl:with-param name="references" select="."/>
-                      </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:call-template name="dclp-biblio-principal-dereference">
-                      <xsl:with-param name="passThrough" select="$passThrough"/>
-                      <xsl:with-param name="type">principalEdition</xsl:with-param>                      
-                  </xsl:call-template>
+          <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'tm'))]">
+              <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition']">
+                <xsl:for-each select="normalize-space(.//t:bibl[@type = 'publication' and @subtype='principal'])"> 
+                  <xsl:text> </xsl:text>
+                  <xsl:value-of select="."/>       
+                </xsl:for-each>
                 <xsl:text> = </xsl:text>
               </xsl:for-each>
           </xsl:if>
@@ -749,7 +748,7 @@
       </xsl:if>
     </xsl:for-each>
     <xsl:for-each-group select="$relations[contains(., 'hgv/')]" group-by="replace(., '[a-z]', '')">
-      <xsl:if test="contains(., 'hgv')">
+      <xsl:if test="contains(., 'hgv') and not($collection = 'dclp')">
         = Trismegistos <a href="http://www.trismegistos.org/text/{replace(pi:get-id(.), '[a-z]', '')}"><xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/></a>
     </xsl:if></xsl:for-each-group>
     <xsl:for-each select="pi:get-docs($relations[contains(., 'dclp/')], 'xml')"> = LDAB <a href="http://www.trismegistos.org/ldab/text.php?quick={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of></a></xsl:for-each>

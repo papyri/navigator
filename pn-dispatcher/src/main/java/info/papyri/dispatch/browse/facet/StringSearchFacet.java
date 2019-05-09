@@ -25,9 +25,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 
@@ -2770,7 +2770,7 @@ public class StringSearchFacet extends Facet{
                    declinedForm = startForm + "ς";
                    
                }
-               SolrServer solr = new CommonsHttpSolrServer(FacetBrowser.SOLR_URL + morphSearch);
+               SolrClient solr = new HttpSolrClient.Builder(FacetBrowser.SOLR_URL + morphSearch).build();
                String searchTerm = "lemma:" + declinedForm;
                SolrQuery sq = new SolrQuery();
                sq.setQuery(searchTerm);

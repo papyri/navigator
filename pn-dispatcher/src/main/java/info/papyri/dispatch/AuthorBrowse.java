@@ -16,12 +16,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +71,7 @@ public class AuthorBrowse extends HttpServlet {
       //filter those for the current author and display, selecting one gives you
     response.setContentType("text/html;charset=UTF-8");
     logger.info("Author Browsing!");
-    SolrServer solr = new CommonsHttpSolrServer(solrUrl);
+    SolrClient solr = new HttpSolrClient.Builder(solrUrl).build();
     SolrQuery sq = new SolrQuery();
     sq.add("q", "*:*");
     sq.addFacetField("author_work");
