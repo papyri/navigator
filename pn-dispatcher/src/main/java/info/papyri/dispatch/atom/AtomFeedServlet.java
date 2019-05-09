@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -23,9 +25,9 @@ import org.apache.abdera.model.Link;
 import org.apache.abdera.model.Person;
 import org.apache.abdera.writer.Writer;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -221,7 +223,7 @@ public class AtomFeedServlet extends HttpServlet{
         
         SolrQuery sq = new SolrQuery();
         String q = "";
-        sq.addSortField(searchType.getDateField().name(), SolrQuery.ORDER.desc);
+        sq.addSort(searchType.getDateField().name(), SolrQuery.ORDER.desc);
         sq.setRows(entriesPerPage);
         sq.setStart((page - 1) * entriesPerPage);       
  
@@ -306,7 +308,7 @@ public class AtomFeedServlet extends HttpServlet{
         
         try{
             
-            SolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
+            SolrClient solrServer = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH).build();
             QueryResponse qr = solrServer.query(sq);
             SolrDocumentList sdl = qr.getResults();
             return sdl;
@@ -320,6 +322,9 @@ public class AtomFeedServlet extends HttpServlet{
             
             return buildErrorDocumentList("SolrServerException: " + sse.getMessage());
             
+        } catch (IOException ex) {
+            Logger.getLogger(AtomFeedServlet.class.getName()).log(Level.SEVERE, null, ex);
+            return buildErrorDocumentList("IOException: " + ex.getMessage());
         }
           
     }

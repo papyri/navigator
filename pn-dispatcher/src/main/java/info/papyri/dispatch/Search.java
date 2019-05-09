@@ -15,9 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.unc.epidoc.transcoder.TransCoder;
 
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.request.QueryRequest;
@@ -25,6 +25,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 import info.papyri.dispatch.browse.SolrField;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
 
 /**
@@ -114,19 +116,17 @@ public class Search extends HttpServlet {
        * out.println("<h1>Servlet Search at " + request.getContextPath ()
        * + "</h1>"); out.println("</body>"); out.println("</html>");
        */
-    } catch (SolrServerException e) {
+    } catch (IOException e) {
       // TODO Auto-generated catch block
       throw new IOException(e);
-    } catch (MalformedURLException mue) {
-      throw new ServletException(mue);
     } finally {
       out.close();
       if (reader != null) reader.close();
     }
   }
 
-  private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, SolrServerException, ServletException {
-    SolrServer solr = new CommonsHttpSolrServer(solrUrl + PNSearch);
+  private void runQuery(PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, IOException, ServletException {
+    SolrClient solr = new HttpSolrClient.Builder(solrUrl + PNSearch).build();
     String q = request.getParameter("q");
     if (q == null) {
       String query = request.getParameter("keyword");
@@ -283,23 +283,28 @@ public class Search extends HttpServlet {
     String sort = request.getParameter("sort");
     if (sort == null || "".equals(sort)) {
       if ("yes".equals(request.getParameter("imagesfirst"))) {
-        sq.addSortField("images", SolrQuery.ORDER.desc);
+        sq.addSort("images", SolrQuery.ORDER.desc);
       }
       if ("yes".equals(request.getParameter("translationssfirst"))) {
-        sq.addSortField("has_translation", SolrQuery.ORDER.desc);
+        sq.addSort("has_translation", SolrQuery.ORDER.desc);
       }
-      sq.addSortField("series", SolrQuery.ORDER.asc);
-      sq.addSortField("volume", SolrQuery.ORDER.asc);
-      sq.addSortField("item", SolrQuery.ORDER.asc);
+      sq.addSort("series", SolrQuery.ORDER.asc);
+      sq.addSort("volume", SolrQuery.ORDER.asc);
+      sq.addSort("item", SolrQuery.ORDER.asc);
     } else {
-      sq.setSortField(sort, SolrQuery.ORDER.desc);
+      sq.setSort(sort, SolrQuery.ORDER.desc);
     }
     sq.setRows(rows);
     if (q != null && q.contains("transcription_l")) {
       StringBuilder query = new StringBuilder();
       query.append(FileUtils.substringBefore(q, "transcription_l", false));
       query.append("transcription_ia:(");
-      query.append(solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
+        try {
+            query.append(solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
+        } catch (SolrServerException ex) {
+            Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IOException(ex);
+        }
       query.append(")");
       query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
       sq.setQuery(query.toString().replace("ς", "σ"));
@@ -383,10 +388,13 @@ public class Search extends HttpServlet {
         }
         out.println("</div>");
       }
-    } catch (SolrServerException e) {
+    } catch (IOException e) {
       out.println("<p>Unable to execute query.  Please try again.</p>");
       throw e;
-    }
+    } catch (SolrServerException ex) {
+          Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+          throw new IOException(ex);
+      }
   }
 
 

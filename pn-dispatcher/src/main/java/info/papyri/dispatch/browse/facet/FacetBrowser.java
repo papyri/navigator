@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,10 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import info.papyri.dispatch.ServletUtils;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 @WebServlet(name = "FacetBrowser", urlPatterns = {"/search"})
@@ -305,9 +307,9 @@ public class FacetBrowser extends HttpServlet {
       sq = facet.buildQueryContribution(sq);
 
     }
-    sq.addSortField(SolrField.series.name(), SolrQuery.ORDER.asc);
-    sq.addSortField(SolrField.volume.name(), SolrQuery.ORDER.asc);
-    sq.addSortField(SolrField.item.name(), SolrQuery.ORDER.asc);
+    sq.addSort(SolrField.series.name(), SolrQuery.ORDER.asc);
+    sq.addSort(SolrField.volume.name(), SolrQuery.ORDER.asc);
+    sq.addSort(SolrField.item.name(), SolrQuery.ORDER.asc);
     // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
     // all documents that pass these filters - hence '*:*' as the actual query
     String queryString = sq.toString().contains("cache") ? "{!cache=false}*:*" : "*:*";
@@ -327,10 +329,10 @@ public class FacetBrowser extends HttpServlet {
 
     try {
 
-      CommonsHttpSolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
-      solrServer.setSoTimeout(SOCKET_TIMEOUT);
+      HttpSolrClient solr = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH)
+              .withSocketTimeout(SOCKET_TIMEOUT).build();
       //logger.info(sq.toString());
-      QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.GET);
+      QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
       return qr;
     } catch (MalformedURLException murle) {
       logger.error("MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
@@ -338,7 +340,10 @@ public class FacetBrowser extends HttpServlet {
     } catch (SolrServerException sse) {
       logger.error("SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
       return null;
-    }
+    } catch (IOException ex) {
+          java.util.logging.Logger.getLogger(FacetBrowser.class.getName()).log(Level.SEVERE, null, ex);
+          return null;
+      }
 
 
   }
@@ -1176,7 +1181,7 @@ public class FacetBrowser extends HttpServlet {
     SolrQuery newQuery = new SolrQuery();
 
     String[] filterQueries = bigQuery.getFilterQueries();
-    String[] sortFields = bigQuery.getSortFields();
+    List<SolrQuery.SortClause> sortFields = bigQuery.getSorts();
 
     try {
 
@@ -1197,11 +1202,11 @@ public class FacetBrowser extends HttpServlet {
 
       }
 
-      for (int j = 0; j < sortFields.length; j++) {
+      for (SolrQuery.SortClause field : sortFields) {
 
-        String[] sortBits = sortFields[j].split(" ");
+        String[] sortBits = field.getItem().split(" ");
         if (sortBits.length == 2) {
-          newQuery.addSortField(sortBits[0], SolrQuery.ORDER.valueOf(sortBits[1]));
+          newQuery.addSort(sortBits[0], SolrQuery.ORDER.valueOf(sortBits[1]));
         }
 
       }
