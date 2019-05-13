@@ -19,20 +19,21 @@
            (javax.activation MimeType)
            (javax.xml.transform Templates Transformer)
            (javax.xml.transform.stream StreamSource StreamResult)
-           (net.sf.saxon Configuration PreparedStylesheet TransformerFactoryImpl)
-           (net.sf.saxon.lib FeatureKeys StandardErrorListener StandardURIResolver)
-           (net.sf.saxon.trans CompilerInfo XPathException)
-           (org.apache.jena.fuseki.http DatasetAdapter DatasetGraphAccessorHTTP UpdateRemote)
-           (com.hp.hpl.jena.graph Node)
-           (com.hp.hpl.jena.query QueryExecutionFactory)
-           (com.hp.hpl.jena.rdf.model Model ModelFactory)
-           (com.hp.hpl.jena.sparql.modify.request UpdateCreate UpdateLoad)
-           (com.hp.hpl.jena.update Update UpdateFactory UpdateRequest)
-           (com.hp.hpl.jena.sparql.lang UpdateParser)
+           (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
+           (org.apache.jena.graph Node)
+           (org.apache.jena.query QueryExecutionFactory)
+           (org.apache.jena.rdf.model Model ModelFactory)
+           (org.apache.jena.riot RDFLanguages RDFParser)
+           (org.apache.jena.riot.system ErrorHandlerFactory)
+           (org.apache.jena.sparql.modify.request UpdateCreate UpdateLoad)
+           (org.apache.jena.sparql.lang UpdateParser)
+           (org.apache.jena.web DatasetAdapter DatasetGraphAccessorHTTP)
+           (org.apache.jena.update Update UpdateExecutionFactory UpdateFactory UpdateRequest)
            (org.apache.commons.codec.digest DigestUtils)))
 
 (def xsl (ref nil))
 (def pxslt (ref nil))
+(def processor (Processor. false))
 (def buffer (ref nil))
 (def flushing (ref false))
 (def output (ref nil))
@@ -44,9 +45,11 @@
       "HGV_meta_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
       "HGV_trans_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl",
+      "DCLP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/dclp-rdf.xsl",
       "Biblio" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
 (def idproot "/srv/data/papyri.info/idp.data")
 (def ddbroot "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML")
+(def domain "papyri.info")
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
      "delete-graph, delete-uri <uri>, insert-inferences <uri>."))
@@ -85,14 +88,17 @@
 
 (defn transform
   [file]
-  (let [transformer (.newTransformer @pxslt)
+  (let [transformer (.load @pxslt)
         out (StringWriter.)
-        outstr (StreamResult. out)]
+        dest (.newSerializer processor out)]
     (try
       (if (not (nil? @param))
         (doto transformer
-          (.setParameter (first @param) (second @param))))
-      (.transform transformer (StreamSource. (FileInputStream. file)) outstr)
+          (.setParameter (QName. (first @param)) (XdmAtomicValue. (second @param)))))
+      (doto transformer
+        (.setSource (StreamSource. (FileInputStream. file)))
+        (.setDestination dest))
+      (.transform transformer)
       ;; (println (.toString out))
       (.add @buffer (.toString out))
       (catch Exception e
@@ -106,14 +112,11 @@
       (dosync (ref-set param (list "root" idproot)))
       (dosync (ref-set param (list "DDB-root" ddbroot))))
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
-        configuration (Configuration.)
-        compiler-info (CompilerInfo.)]
+          processor (Processor. false)
+          compiler (.newXsltCompiler processor)]
         (doto xsl-src
           (.setSystemId xslt))
-        (doto compiler-info
-          (.setErrorListener (StandardErrorListener.))
-          (.setURIResolver (StandardURIResolver. configuration)))
-        (dosync (ref-set pxslt (PreparedStylesheet/compile xsl-src configuration compiler-info))))))
+        (dosync (ref-set pxslt (.compile compiler xsl-src))))))
 
 (defn choose-xslt
   [file]
@@ -121,6 +124,7 @@
     (.contains (str file) "HGV_meta_EpiDoc") (xslts "HGV_meta_EpiDoc")
     (.contains (str file) "APIS") (xslts "APIS")
     (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")
+    (.contains (str file) "DCLP") (xslts "DCLP")
     (.contains (str file) "Biblio") (xslts "Biblio")))
 
 (defn format-url-query
@@ -143,6 +147,7 @@
     (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "DCLP") (str "papyri.info/dclp/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")))
 
 (defn url-from-file
@@ -152,12 +157,17 @@
       (.toString (.getResource (.next answer) "uri")))
     (str "http://papyri.info/biblio/" (get-identifier file) "/ref")))
 
+(defn execute-update
+  [request]
+  (let [proc (UpdateExecutionFactory/createRemote request (str server "/update"))]
+    (.execute proc)))
+
 (defn -deleteGraph
   []
   (let [request (UpdateFactory/create)]
     (.add request "DROP ALL")
     (.add request (UpdateCreate. "http://papyri.info/graph"))
-    (UpdateRemote/execute request (str server "/update") )))
+    (execute-update request)))
 
 (defn -deleteUri
   [uri]
@@ -170,7 +180,7 @@
         req (UpdateFactory/create)]
     (.add req deletesub)
     (.add req deleteobj)
-    (UpdateRemote/execute req (str server "/update") )))
+    (execute-update req)))
 
 (defn -deleteRelation
   [uri]
@@ -179,7 +189,7 @@
                         WHERE { ?s <" uri "> ?r }")
         req (UpdateFactory/create)]
     (.add req deleterel)
-    (UpdateRemote/execute req (str server "/update") )))
+    (execute-update req)))
 
 (defn -deleteTriple
   [s p o]
@@ -188,30 +198,33 @@
                         WHERE { <" s "> <" p "> <" o "> }")
         req (UpdateFactory/create)]
     (.add req deleterel)
-    (UpdateRemote/execute req (str server "/update") )))
+    (execute-update req)))
 
 (defn -loadFile
   [f]
   (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
         adapter (DatasetAdapter. dga)
+        lang (cond 
+          (.endsWith f ".rdf") RDFLanguages/RDFXML 
+          (.endsWith f ".ttl") RDFLanguages/TURTLE
+          :else RDFLanguages/NTRIPLES)
         model (ModelFactory/createDefaultModel)]
-    (.read model (FileInputStream. f) nil (if (.endsWith f ".rdf") "RDF/XML" "N3"))
+    (prn (str "Reading " f))
+    (.. (RDFParser/create)
+      (source (FileInputStream. f))
+      (lang lang)
+      (errorHandler (ErrorHandlerFactory/errorHandlerWarn))
+      (parse model))
     (try
       (.add adapter graph model)
       (catch Exception e
-        (println (str "Error loading file: " f " ...trying again."))
-        (.printStackTrace *err*)
-        (Thread/sleep 1000)
-        (try 
-          (.add adapter graph model)
-          (catch Exception ex
-            (println "Failed to load file.")))))))
-    
+        (prn (str "Error loading file: " f ": " (.getMessage e)))
+        (.printStackTrace e *err*)))))
 
 (defn -insertPelagiosAnnotations
   [url]
   (if-not (nil? url)
-    (let [dga (DatasetGraphAccessorHTTP. (str server "/srv/data"))
+    (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
           adapter (DatasetAdapter. dga)
           model (ModelFactory/createDefaultModel)
           pi-uri (str/replace url "/source" "/original")
@@ -281,7 +294,7 @@
                         "WITH <http://papyri.info/graph> "
                         "INSERT {?s dc:relation <" url ">} "
                         "WHERE { <" url "> dc:relation ?s "
-                        "FILTER regex(\"" url "\", \"^http://papyri.info\") "
+                        "FILTER regex(\"" url "\", \"^http://(papyri.info\") "
                         "FILTER regex(str(?s), \"^http://papyri.info\")}")
           converse-relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                  "WITH <http://papyri.info/graph> "
@@ -301,6 +314,7 @@
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
+          ;; Add APIS -> TM -> DDb, etc.
           replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {<" url "> dc:replaces ?o} "
@@ -318,7 +332,7 @@
       (.add request converse-relation)
       (.add request replaces-rels)
       (.add request replaces-relations)
-      (UpdateRemote/execute request (str server "/update") ))
+      (execute-update request))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
                        "WITH <http://papyri.info/graph> "
@@ -353,7 +367,7 @@
                                 "INSERT {?s dc:relation ?o2} "
                                 "WHERE { ?s dc:relation ?o1 . "
                                          "?o1 dc:relation ?o2 "
-                                "FILTER (!sameTerm(?s, ?o2))}")
+                                "FILTER (!sameTerm(?s, ?o2)) }")
           replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {?s dc:replaces ?o} "
@@ -373,7 +387,7 @@
       (.add request replaces-rels)
       (.add request replaces-relations)
       (.add request relation) ;; repeat in order to pick up new dc:relations
-      (UpdateRemote/execute request (str server "/update") ))))
+      (execute-update request))))
 
 (defn load-map
   [file]
@@ -383,7 +397,7 @@
     (init-xslt xsl))
   (let [request (UpdateFactory/create)]
     (.add request "CREATE SILENT GRAPH <http://papyri.info/graph>")
-    (UpdateRemote/execute request (str server "/update") ))
+    (execute-update request))
   (let [pool (Executors/newFixedThreadPool nthreads)
       files (file-seq (File. file))
       tasks (map (fn [x]
@@ -422,9 +436,12 @@
       (-deleteRelation "http://purl.org/dc/terms/relation")
       (-deleteRelation "http://purl.org/dc/terms/replaces")
       (-deleteRelation "http://purl.org/dc/terms/isReplacedBy")
+      (-deleteRelation "http://purl.org/dc/terms/isPartOf")
+      (-deleteRelation "http://purl.org/dc/terms/source")
       (-deleteRelation "http://purl.org/dc/terms/identifier")
       (-deleteRelation "http://purl.org/dc/terms/bibliographicCitation")
       (-deleteRelation "http://www.w3.org/2000/01/rdf-schema#label")
+      (-deleteRelation "http://xmlns.com/foaf/0.1/page")
       (println "Processing DDB_EpiDoc_XML")
       (load-map (str idproot "/DDB_EpiDoc_XML"))
       (println "Processing HGV_meta_EpiDoc")
@@ -433,6 +450,8 @@
       (load-map (str idproot "/APIS"))
       (println "Processing HGV_trans_EpiDoc")
       (load-map (str idproot "/HGV_trans_EpiDoc"))
+      (println "Processing DCLP")
+      (load-map (str idproot "/DCLP"))
       (println "Processing Bibliography")
       (load-map (str idproot "/Biblio"))
       (-loadFile "/srv/data/papyri.info/idp.data/RDF/collection.rdf")

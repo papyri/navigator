@@ -12,6 +12,7 @@
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
   <xsl:include href="htm-teibibl.xsl"/>
+  <xsl:include href="pi-functions.xsl"/>
   
   <xsl:output method="html"/>
   

@@ -20,6 +20,8 @@ public enum FacetParam {
     TRANSL,
     TRANSC,
     IDENTIFIER,
-    DOCS_PER_PAGE
+    DOCS_PER_PAGE,
+    AUTHOR,
+    WORK
     
 }

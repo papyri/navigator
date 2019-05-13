@@ -18,9 +18,9 @@ import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import javax.servlet.ServletConfig;
 
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.request.QueryRequest;
@@ -41,7 +41,7 @@ public class BiblioSearch extends HttpServlet {
   private String home = "";
   private FileUtils util;
   private SolrUtils solrutil;
-  private static String BiblioSearch = "biblio-search/";
+  private static String BiblioSearch = "biblio_search/";
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -78,7 +78,7 @@ public class BiblioSearch extends HttpServlet {
       String line = "";
       while ((line = reader.readLine()) != null) {
         if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
-          SolrServer solr = new CommonsHttpSolrServer(solrUrl + BiblioSearch);
+          SolrClient solr = new HttpSolrClient.Builder(solrUrl + BiblioSearch).build();
           int rows = 30;
           try {
             rows = Integer.parseInt(request.getParameter("rows"));
@@ -93,8 +93,8 @@ public class BiblioSearch extends HttpServlet {
             sq.setQuery(q.toLowerCase());
             sq.setStart(start);
             sq.setRows(rows);
-            sq.addSortField("date", SolrQuery.ORDER.asc);
-            sq.addSortField("sort", SolrQuery.ORDER.asc);
+            sq.addSort("date", SolrQuery.ORDER.asc);
+            sq.addSort("sort", SolrQuery.ORDER.asc);
             QueryRequest req = new QueryRequest(sq);
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);

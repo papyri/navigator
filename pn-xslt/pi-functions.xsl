@@ -82,6 +82,11 @@
           <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', substring-after($url, 'http://papyri.info/apis/'), 'index.html')"/></xsl:otherwise>
         </xsl:choose>
       </xsl:when>
+      <xsl:when test="contains($url, 'dclp/')">
+        <xsl:variable name="tm" select="replace($url, '^.+dclp/(\d+)(/source)?$', '$1')"/>
+        <xsl:variable name="dir" select="ceiling(number($tm) div 1000)"/>
+        <xsl:sequence select="concat($base, '/DCLP/', $dir, '/', $tm, '.', $format)"/>
+      </xsl:when>
       <!-- Like http://www.trismegistos.org/text/11999 -->
       <xsl:when test="contains($url, 'trismegistos.org')">
         <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'http://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'http://www.trismegistos.org/text/'), '.xml')"/>
@@ -108,10 +113,11 @@
     <xsl:variable name="base">https://github.com/papyri/idp.data/blame/master/</xsl:variable>
     <xsl:variable name="id" select="tokenize($identifier, ';')"/>
     <xsl:choose>
+      <xsl:when test="$identifier/@type='dclp'"><xsl:sequence select="concat($base, 'DCLP/', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/></xsl:when>
       <!-- like http://papyri.info/ddbdp/c.etiq.mom;;165/source -->
-      <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:when>
+      <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, 'DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:when>
       <!-- like http://papyri.info/ddbdp/bgu;1;1/source -->
-      <xsl:otherwise><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/', $id[1], '.', $id[2], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:otherwise>
+      <xsl:otherwise><xsl:sequence select="concat($base, 'DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/', $id[1], '.', $id[2], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:otherwise>
     </xsl:choose>
   </xsl:function>
   
@@ -120,7 +126,7 @@
     <xsl:param name="url"/>
     
     <xsl:choose>
-      <xsl:when test="matches($url, '^http://papyri\.info/(ddbdp|hgv|apis)$')">
+      <xsl:when test="matches($url, '^http://papyri\.info/(ddbdp|hgv|dclp|apis)$')">
         <xsl:sequence select="pi:decode-uri(upper-case(replace($url, 'http://papyri\.info/', '')))"/>
       </xsl:when>
       <xsl:otherwise>
@@ -322,8 +328,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-  
-   
+    
   <xsl:function name="pi:get-earliest-date-element">
     <xsl:param name="change-seq"></xsl:param>
     <xsl:param name="current-seq"></xsl:param>
@@ -378,6 +383,9 @@
       <xsl:when test="$collection='hgv'">
         <xsl:sequence select="concat('http://papyri.info/hgv/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
       </xsl:when>
+      <xsl:when test="$collection='dclp'">
+        <xsl:sequence select="concat('http://papyri.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
+      </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="concat('http://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>
       </xsl:otherwise>
@@ -414,4 +422,14 @@
     </xsl:choose>
   </xsl:function>
 
+  <!-- Sort order for bibliographic elements used by metadata-dclp to order t:listBibl/t:bibl[@type='reference']/@subtype -->
+  <xsl:function name="pi:bibl-type-order">
+    <xsl:param name="subtype"/>
+    <xsl:choose>
+      <xsl:when test="$subtype='principal'">a</xsl:when>
+      <xsl:when test="$subtype='partial'">b</xsl:when>
+      <xsl:when test="$subtype='readings'">c</xsl:when>
+      <xsl:when test="$subtype='previous'">d</xsl:when>
+    </xsl:choose>
+  </xsl:function>
 </xsl:stylesheet>

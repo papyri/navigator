@@ -4,16 +4,17 @@
  */
 package info.papyri.dispatch;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
 
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 
@@ -24,14 +25,14 @@ import org.apache.solr.common.SolrDocumentList;
 public class SolrUtils {
   
   private String solrUrl;
-  private static String morphSearch = "morph-search/";
+  private static String morphSearch = "morph_search/";
   
   public SolrUtils(ServletConfig config) {
     solrUrl = config.getInitParameter("solrUrl");
   }
   
-  public String expandLemmas(String query) throws MalformedURLException, SolrServerException {
-    SolrServer solr = new CommonsHttpSolrServer(solrUrl + morphSearch);
+  public String expandLemmas(String query) throws MalformedURLException, IOException, SolrServerException {
+    SolrClient solr = new HttpSolrClient.Builder(solrUrl + morphSearch).build();
     StringBuilder exp = new StringBuilder();
     SolrQuery sq = new SolrQuery();
     String[] lemmas = query.split("\\s+");

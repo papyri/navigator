@@ -25,7 +25,6 @@ cursor:pointer;
 float:left;
 margin-left: 0.5em;
 margin-bottom: 0;
-padding:0.1em;
 }
 #hd h2 {
 float:left;
@@ -82,7 +81,6 @@ div.content p {
 div.content h2 {
 font-size: 108%;
 font-weight: bold;
-border-top: thin solid silver;
 margin-bottom: 0.25em;
 margin-left:-.5em;
 margin-right:.5em;
@@ -140,7 +138,7 @@ div#help {
 /* Top Navigation */
 div.nav {
 background:#ccc;
-position: absolute; 
+position: absolute;
 left: 0px;
 top: 67px;
 padding:0;
@@ -168,8 +166,6 @@ padding-left: 0.4em;
 padding-right: 0.4em;
 padding-top:0.2em;
 padding-bottom:0.5em;
-margin-bottom:0;
-margin-top:0;
 }
 ul.nav li.current {
 background:#F8F6F4;
@@ -179,6 +175,7 @@ div.nav a {
 color: #5C0303;
 text-decoration: none;
 }
+
 /* Images */
 div#olimage {
 width: 512px;
@@ -241,6 +238,42 @@ ul.prose {
   padding:0.5em;
 }
 
+/* Author Browse */
+div.browse {
+  margin-left: 1em;
+}
+h2#authorbrowse {
+  border-top: 0;
+  font-size: 200%;
+  margin-top: 1em;
+  margin-left: .5em;
+}
+div.browse>ul>li {
+  font-size: 150%;
+  font-weight: bold;
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+div.browse ul.authors>li {
+  font-size: 75%;
+  font-weight: normal;
+  margin-left: 1em;
+}
+div.browse ul.works>li {
+  margin-left: 1em;
+}
+div.initials {
+  font-size: 120%;
+  margin-top: 1em;
+}
+a.top {
+  text-decoration: none;
+  color: black;
+}
+a.top:hover {
+  color: maroon;
+}
+
 /* View Page */
 div#controls {
 font-size: 70%;
@@ -300,6 +333,7 @@ width: 48%;
 div.translation {
 margin-left:1em;
 width: 48%;
+line-height: 1.2em;
 }
 div.metadata {
 clear: both;
@@ -316,7 +350,16 @@ width: 20%;
 min-width: 150px;
 }
 div#edition {
-margin-left: 3em;
+  margin-left: 3em;
+  max-width: 1200px;
+}
+div#edition[lang=ar] {
+  float: left;
+  margin-left: 1em;
+}
+div#history {
+  clear: both;
+  padding-top: .3em;
 }
 div#bibliography, div#related {
   clear:both;
@@ -348,62 +391,85 @@ margin:0.3em;
 font-family: Verdana, Helvetica, sans-serif;
 font-size: 80%;
 }
+/* Adds styles for tei:lb with rend attributes. */
+.lb.indent, .lb.eisthesis {display:inline-block; width:1.5em;}
+.lb.outdent, .lb.ekthesis {display:inline-block; width:1.5em; margin-left:-3em;}
+.lb.inverse, .lb.perpendicular {display:inline;}
+.lb {display:none;}
 
 /* Copied from http://papyri.info/global.css */
 .latinnum {
 border-top: thin black solid;
 }
-     
+
 .previouslyread {
 text-decoration: underline;
 }
 
 .supraline { border-top: thin black solid; }
-     
+
+*[lang="en"] {
+direction: ltr;
+text-align: left;
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
+}
+
 *[lang="la"] {
 font-family: "GentiumAlt", "Gentium","Palatino Linotype", "Palatino", "Times New Roman", "Times", "Arial Unicode MS", serif;
 }
 
 *[lang="grc"] {
-font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
 }
-   
+
 *[lang="cop"] {
     font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
 }
+span.lang {
+}
+span.lang>span[lang=ar] {
 
-*[lang="ara"] {
-    direction: rtl;
-    display: block;
+}
+span[lang=ar] {
     text-align: right;
-    width: 50%;
-    margin-top: 0;
-    margin-bottom: 0;
+}
+span[lang="ara"] * {
+    font-size: .67em;
+}
+span[lang="en"] {
+direction: ltr;
+display: inline-block;
 }
 
-div.textpart {
-font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
-    "Verdana", "Tahoma";
-line-height: 1.4;
-vertical-align: -20%;
-margin-bottom: 8px;
-padding: 0px;
+*[lang=ar] {
+    direction: rtl;
+    text-align: right;
+    font-family: "Antinoou", "IFAO-Grec Unicode", "Gentium Plus", "Gentium", "New Athena Unicode", "Times New Roman";
+    font-size: 125%;
 }
 
 div#apparatus {
-font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
 }
+
+span.ab {
+  line-height: 1.4;
+  margin-bottom: 8px;
+  padding: 0px;
+  display: inline-block;
+  }
 
 span#all-history:hover, span#edit-history:hover {
 background:#f9e4a0;
@@ -416,19 +482,58 @@ line-height: 1;
 margin-left: -3em;
 margin-bottom: 0;
 }
-    
+
+sup {
+  position: relative;
+  top: -.4em;
+}
+
+strong {
+  font-weight: bold;
+}
+
 .linenumber {
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
 float: left;
 margin-left: -2em;
 }
 
+div[lang="ar"] .linenumber {
+  float:right;
+  margin-right: -2em;
+}
+
+*[lang=ar] .linenumber {
+  font-size: 80%;
+}
+
+*[lang=ar] *[lang=en] {
+  font-size: 80%;
+}
+
+div.translation div[lang=ar] {
+  line-height: 1.2em;
+}
+div.translation div[lang=ar] sup {
+  font-size: 70%;
+}
+
 .linenumberbroken {
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+    "Verdana", "Tahoma";
 color: red;
 float: left;
 margin-left: -2em;
 }
 
-    
+
 .underline {
 text-decoration: underline;
 }
@@ -540,7 +645,7 @@ border:1px solid black;
   margin-left:auto;
   margin-right:auto;
   width:95%;
-  clear: left;  
+  clear: left;
 }
 .tablehead{
 
@@ -548,7 +653,7 @@ border:1px solid black;
 
 }
 .tablehead td{
-  
+
   text-align: center;
   padding-bottom: 10px;
 
@@ -565,10 +670,10 @@ tr.result-record {
 }
 
 td.kwic {
-  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
-    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL", 
-    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
-    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
+  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode",
+    "Palatino Linotype", "Titus Cyberbit Basic", "Vusillus Old Face", "Alphabetum", "Galatia SIL",
+    "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic",
+    "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
   padding-left: 1em;
   padding-top: .5em;
@@ -600,7 +705,7 @@ td.kwic {
 /* footer general layout */
 
  #footer{
-     
+
      background-color: #888;
      font-family: Verdana, Helvetica, sans-serif;
      font-size: 80%;
@@ -615,7 +720,7 @@ td.kwic {
 
 
 #footer-left-col{
-    
+
     width: 57%;
     position: relative;
     float: left;
@@ -624,7 +729,7 @@ td.kwic {
 }
 
 #footer-right-col{
-    
+
     position: relative;
     float: right;
     width: 33%;
@@ -636,23 +741,23 @@ td.kwic {
 }
 
 .spacer{
-    
+
    width: 100%;
-   clear: both; 
+   clear: both;
    height: 1px;
-    
+
 }
 
 #footer p{
-    
+
     margin-bottom: 0.5em;
-    
+
 }
 
 /* styles for all footer navigation */
 
 #footer ul.nav{
-    
+
     list-style-type: none;
     position: relative;
     width: 80%;
@@ -663,87 +768,87 @@ td.kwic {
 }
 
 #footer ul.nav li{
-    
+
    display: block;
-    
+
 }
 
-#footer a:link, #footer a:visited, #footer a:hover, #footer a:active{ 
+#footer a:link, #footer a:visited, #footer a:hover, #footer a:active{
 
     color: white;
-    
+
 }
 
 #footer a:link, #footer a:visited{
-    
+
     text-decoration: none;
-    
+
 }
 
 #footer a:hover, #footer a:active{
-    
+
     text-decoration: underline;
-    
+
 }
 
 #footer ul.nav li:before{
-    
+
     content: "| ";
-    
+
 }
 
 /* styles for left-hand column and navigation */
 
 #footer-left-col #secondary-nav{
-    
+
     width: 100%;
     position: absolute;
     /* this value should be lowered if it is likely
      * that the navigation menu will wrap to a second line */
     top: 1.6em;
-    
+
 }
 
 #secondary-nav ul.nav li:first-child:before{
-    
+
     content: "";
-    
+
 }
 
 #footer-left-col #secondary-nav ul.nav{
-    
+
     margin-left: 30px;
-    
+
 }
 
 
 #footer-left-col #secondary-nav ul.nav li{
-    
-    float: left;  
+
+    float: left;
     margin-bottom: 5px;
     margin-right: 6px;
-    
+
 }
 
 /* styles for right-hand column and navigation */
 
 #footer-right-col p:first-child{
-    
-    font-weight: bold; 
-    
+
+    font-weight: bold;
+
 }
 
 
 #footer-right-col #about-nav li, #footer #about-nav #about-hdr{
-    
+
     float: right;
 }
 
 
 #about-nav ul.nav li.last-child:before{
-    
+
     content: "";
-    
+
 }
 
 #about-hdr{
@@ -752,11 +857,11 @@ td.kwic {
     line-height: 22px;
     font-size: inherit;
     font-family: inherit;
-    
+
 }
 
 #about-nav ul.nav li{
-    
+
     margin-left: 3px;
 }
 
@@ -768,31 +873,30 @@ td.kwic {
 /*  MORE-LIKE-THIS ADDITIONS THILL 2011.11.04 */
 
 div.metadata div.more-like-this{
-    
+
     display: inline;
     font-size: 80%;
     font-family: inherit;
-    margin-top: 0px;
     margin-left: 15px;
 
 }
 
 div.more-like-this a{
-    
+
     margin-right: 10px;
-    
+
 }
 
 div.more-like-this a:before{
-    
+
     content:"[";
-    
+
 }
 
 div.more-like-this a:after{
-    
+
     content:"]";
-    
+
 }
 
 /* END MORE-LIKE-THIS ADDITIONS */
@@ -800,7 +904,7 @@ div.more-like-this a:after{
 /* LINEAR BROWSING ADDITIONS THILL 2011.12.16 */
 
 #linear-browse-wrapper{
-    
+
     width: 30%;
     margin-left: auto;
     margin-right: auto;
@@ -810,50 +914,50 @@ div.more-like-this a:after{
     font-size: 90%;
     height: 25px;
     position: relative;
-    
+
 }
 
 #linear-previous-record{
-    
+
     float: left;
-    
+
     }
 
 #linear-next-record{
-    
+
     float: right;
 }
 
 #linear-back{
-    
+
     position: absolute;
     left: 42%;
-    
+
 }
 
 #linear-back a{
-    
+
     color: #162A5C;
-    
+
 }
 
 #linear-browse-wrapper a{
-    
+
     text-decoration: none;
-    
+
 }
 
 #linear-browse-wrapper a:hover{
-    
+
     text-decoration: underline;
-    
+
 }
 
 .deadlink{
-    
+
     color: #777;
     font-style: italic;
-    
+
 }
 
 /* END LINEAR BROWSING ADDITIONS */

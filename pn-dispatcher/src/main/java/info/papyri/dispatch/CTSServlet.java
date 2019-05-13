@@ -45,7 +45,7 @@ public class CTSServlet extends HttpServlet {
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     System.out.println("XML Path: " + xmlPath);
-    util = new FileUtils("/data/papyri.info/idp.data", htmlPath);
+    util = new FileUtils("/data/papyri.info/idp.data/", htmlPath);
   }
 
   /**

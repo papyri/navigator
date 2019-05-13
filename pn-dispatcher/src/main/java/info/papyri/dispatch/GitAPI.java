@@ -20,6 +20,9 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.errors.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
+import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
 
 /**
  *
@@ -91,8 +94,22 @@ public class GitAPI extends HttpServlet {
       return getLastCommit(file).name();
     }
     
+    public String getObjectSHA(String path) {
+      try (TreeWalk walk = new TreeWalk(repo)) {
+          walk.reset();
+          walk.setFilter(PathFilterGroup.createFromStrings(path));
+          walk.addTree(tree);
+          walk.next();
+          return walk.getObjectId(0).name();
+      } catch (Exception e) {
+          logger.error(e);
+          return "";
+      }
+    }
+    
     private Repository repo;
     private org.eclipse.jgit.api.Git git;
+    private AbstractTreeIterator tree;
     
   }
 

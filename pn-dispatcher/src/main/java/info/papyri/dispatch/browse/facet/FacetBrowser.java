@@ -1,5 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
+import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,10 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import info.papyri.dispatch.ServletUtils;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 @WebServlet(name = "FacetBrowser", urlPatterns = {"/search"})
@@ -67,6 +70,10 @@ public class FacetBrowser extends HttpServlet {
    */
   static private String FACET_PATH;
   /**
+   * Server home URL
+   */
+  static private String SERVER_HOME;
+  /**
    * Default number of records to show per page
    */
   static private int defaultDocumentsPerPage = 15;
@@ -93,6 +100,7 @@ public class FacetBrowser extends HttpServlet {
     PN_SEARCH = config.getInitParameter("pnSearchPath");
     FACET_PATH = config.getInitParameter("facetBrowserPath");
     INSTRUCTIONS_PATH = config.getInitParameter("instructionsPath");
+    SERVER_HOME = config.getInitParameter("serverHome");
     try {
       FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
     } catch (MalformedURLException e) {
@@ -174,10 +182,13 @@ public class FacetBrowser extends HttpServlet {
 
     // I'm feeling lucky
     if ("yes".equals(request.getParameter("lucky")) && resultSize == 1) {
+      String redirect = FileUtils.substringAfter(
+              (String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()), "://");
+      redirect = redirect.substring(redirect.indexOf("/"));
       if ("ddb-text".equals(request.getParameter("source"))) {
-        response.sendRedirect((String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()) + "/source");
+        response.sendRedirect(SERVER_HOME + redirect + "/source");
       } else {
-        response.sendRedirect((String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()));
+        response.sendRedirect(SERVER_HOME + redirect);
       }
     } else {
       /* Convert the results returned as a whole to <code>DocumentBrowseRecord</code> objects, each
@@ -212,6 +223,8 @@ public class FacetBrowser extends HttpServlet {
     facets.add(new TranslationFacet());
     facets.add(new HasImagesFacet());
     facets.add(new HasTranscriptionFacet());
+    facets.add(new AuthorFacet());
+    facets.add(new WorkFacet());
     return facets;
 
   }
@@ -294,9 +307,9 @@ public class FacetBrowser extends HttpServlet {
       sq = facet.buildQueryContribution(sq);
 
     }
-    sq.addSortField(SolrField.series.name(), SolrQuery.ORDER.asc);
-    sq.addSortField(SolrField.volume.name(), SolrQuery.ORDER.asc);
-    sq.addSortField(SolrField.item.name(), SolrQuery.ORDER.asc);
+    sq.addSort(SolrField.series.name(), SolrQuery.ORDER.asc);
+    sq.addSort(SolrField.volume.name(), SolrQuery.ORDER.asc);
+    sq.addSort(SolrField.item.name(), SolrQuery.ORDER.asc);
     // each Facet, if constrained, will add a FilterQuery to the SolrQuery. For our results, we want
     // all documents that pass these filters - hence '*:*' as the actual query
     String queryString = sq.toString().contains("cache") ? "{!cache=false}*:*" : "*:*";
@@ -316,9 +329,10 @@ public class FacetBrowser extends HttpServlet {
 
     try {
 
-      CommonsHttpSolrServer solrServer = new CommonsHttpSolrServer(SOLR_URL + PN_SEARCH);
-      solrServer.setSoTimeout(SOCKET_TIMEOUT);
-      QueryResponse qr = solrServer.query(sq, SolrRequest.METHOD.POST);
+      HttpSolrClient solr = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH)
+              .withSocketTimeout(SOCKET_TIMEOUT).build();
+      //logger.info(sq.toString());
+      QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
       return qr;
     } catch (MalformedURLException murle) {
       logger.error("MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
@@ -326,7 +340,10 @@ public class FacetBrowser extends HttpServlet {
     } catch (SolrServerException sse) {
       logger.error("SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
       return null;
-    }
+    } catch (IOException ex) {
+          java.util.logging.Logger.getLogger(FacetBrowser.class.getName()).log(Level.SEVERE, null, ex);
+          return null;
+      }
 
 
   }
@@ -535,6 +552,10 @@ public class FacetBrowser extends HttpServlet {
 
       Facet idFacet = findFacet(facets, IdentifierFacet.class);
       html.append(idFacet.generateWidget());
+      Facet authorFacet = findFacet(facets, AuthorFacet.class);
+      html.append(authorFacet.generateWidget());
+      Facet workFacet = findFacet(facets, WorkFacet.class);
+      html.append(workFacet.generateWidget());
       Facet placeFacet = findFacet(facets, PlaceFacet.class);
       html.append(placeFacet.generateWidget());
       Facet nomeFacet = findFacet(facets, NomeFacet.class);
@@ -1025,6 +1046,10 @@ public class FacetBrowser extends HttpServlet {
     if (hgvIds.size() > 0) {
       ids.addAll(hgvIds);
     }
+    ArrayList<String> dclpIds = getCollectionIds("dclp", doc);
+    if (dclpIds.size() > 0) {
+      ids.addAll(dclpIds);
+    }
 
     ArrayList<String> apisPublicationNumbers = doc.getFieldValue(SolrField.apis_publication_id.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_publication_id.name()).toString().replaceAll("\\[\\]", "").split(",")));
     ArrayList<String> apisInventoryNumbers = doc.getFieldValue(SolrField.apis_inventory.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.apis_inventory.name()).toString().replaceAll("\\[\\]", "").split(",")));
@@ -1076,13 +1101,13 @@ public class FacetBrowser extends HttpServlet {
    */
   ArrayList<String> getCollectionIds(String collection, SolrDocument doc) {
 
-    ArrayList<String> collectionMembers = new ArrayList<String>();
+    ArrayList<String> collectionMembers = new ArrayList<>();
 
     String cpref = collection + "_";
 
-    ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]", ",").split(",")));
-    ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
-    ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<String>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+    ArrayList<String> series = doc.getFieldValue(cpref + SolrField.series.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.series.name()).toString().replaceAll("[\\[\\]]", ",").split(",")));
+    ArrayList<String> volumes = doc.getFieldValue(cpref + SolrField.volume.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.volume.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
+    ArrayList<String> itemIds = doc.getFieldValue(cpref + SolrField.full_identifier.name()) == null ? null : new ArrayList<>(Arrays.asList(doc.getFieldValue(cpref + SolrField.full_identifier.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
 
     if (series != null && volumes != null && itemIds != null) {
 
@@ -1156,7 +1181,7 @@ public class FacetBrowser extends HttpServlet {
     SolrQuery newQuery = new SolrQuery();
 
     String[] filterQueries = bigQuery.getFilterQueries();
-    String[] sortFields = bigQuery.getSortFields();
+    List<SolrQuery.SortClause> sortFields = bigQuery.getSorts();
 
     try {
 
@@ -1177,11 +1202,11 @@ public class FacetBrowser extends HttpServlet {
 
       }
 
-      for (int j = 0; j < sortFields.length; j++) {
+      for (SolrQuery.SortClause field : sortFields) {
 
-        String[] sortBits = sortFields[j].split(" ");
+        String[] sortBits = field.getItem().split(" ");
         if (sortBits.length == 2) {
-          newQuery.addSortField(sortBits[0], SolrQuery.ORDER.valueOf(sortBits[1]));
+          newQuery.addSort(sortBits[0], SolrQuery.ORDER.valueOf(sortBits[1]));
         }
 
       }
