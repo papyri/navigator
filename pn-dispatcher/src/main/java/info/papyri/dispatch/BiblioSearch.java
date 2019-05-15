@@ -41,7 +41,7 @@ public class BiblioSearch extends HttpServlet {
   private String home = "";
   private FileUtils util;
   private SolrUtils solrutil;
-  private static String BiblioSearch = "biblio_search/";
+  private static String BiblioSearch = "biblio-search/";
 
   @Override
   public void init(ServletConfig config) throws ServletException {
