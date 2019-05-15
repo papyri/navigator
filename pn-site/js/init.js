@@ -47,23 +47,6 @@ function init() {
       },
       timeout: 10000
     });
-    if (window.location.pathname.indexOf("/editor") < 0) {
-    jQuery.getJSON("/sparql?query="
-        + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
-        + "select ?subject "
-        + "from <http://papyri.info/graph> "
-        + "where { ?subject dc:references <http://papyri.info" + getPath().replace(/\/jQuery/, "") + "/source>}")
-        + "&format=json", function(data) {
-          if (data.results.bindings.length > 0) {
-            var loc = jQuery("div#bibliography").length > 0 ? jQuery("div#bibliography") : jQuery("div.metadata:last");
-            loc.after('<div id="related"><h3>related resources</h3></div>')
-            jQuery.each(data.results.bindings, function(i, row) {
-              var val = row.subject.value;
-              jQuery("#related").append('<a href="'+ val + '" style="margin-left:1em" target="_blank">GLRT</a>');
-            })
-          }
-    });
-    }
     var biblio = jQuery("div#bibliography li>a");
     if (biblio.length > 0) {
       var sparql = "/sparql?query="
