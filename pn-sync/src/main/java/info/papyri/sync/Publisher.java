@@ -3,44 +3,29 @@ package info.papyri.sync;
 import info.papyri.indexer;
 import info.papyri.map;
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 /**
  *
  * @author hcayless
  */
 public class Publisher implements Runnable {
   
-  private String base;
-  private static String urlBase = "http://papyri.info/";
+  private final String base;
+  private static final String urlBase = "http://papyri.info/";
   private boolean success = true;
   public static String IDLE = "Currently idle.";
   public static String SYNCING = "Syncing files.";
   public static String MAPPING = "Mapping files.";
   public static String INFERENCING = "Generating inferences.";
   public static String PUBLISHING = "Publishing new files.";
-  private static String SOLR = "http://localhost:8983/";
+  private static final String SOLR = "http://localhost:8983/";
   private String status = IDLE;
   private Date started;
   private Date lastrun;
-  private static Logger logger = Logger.getLogger("pn-sync");
+  private static final Logger logger = Logger.getLogger("pn-sync");
   
   public Publisher (String base) {
     this.base = base;
@@ -107,8 +92,8 @@ public class Publisher implements Runnable {
             indexer.generatePages(urls);
             logger.info("Indexing files starting at " + new Date());
             indexer.index();
-            Runtime.getRuntime().exec("/srv/data/papyri.info/git/navigator/pn-scripts/exist-update.sh -n " + GitWrapper.getHead() + " -o " + head);
-            logger.info("Updating eXist-db starting at " + new Date());
+            logger.info("Loading bibliography starting at " + new Date());
+            indexer.loadBiblio();
           } else {
             logger.info("No files to map.");
           }
@@ -121,42 +106,4 @@ public class Publisher implements Runnable {
       }
     }
   }
-  
-  private boolean callSolrMethod(String action) {
-    boolean result = false;
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    try {
-      DocumentBuilder db = dbf.newDocumentBuilder();
-      StringBuilder uri = new StringBuilder();
-      uri.append(SOLR);
-      if ("commit".equals(action) || "optimize".equals(action)) {
-        uri.append("solr/pn-search/update");
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost post = new HttpPost(uri.toString());
-        StringEntity entity = new StringEntity("<" + action + " />");
-        post.setEntity(entity);
-        ResponseHandler<String> rh = new BasicResponseHandler();
-        String response = httpclient.execute(post, rh);
-        Document doc = db.parse(new InputSource(new StringReader(response)));
-        NodeList nl = doc.getElementsByTagName("int");
-        for (int i = 0 ; i < nl.getLength(); i++) {
-          Element elt = (Element)nl.item(i);
-          if ("status".equals(elt.getAttribute("name"))) {
-            if ("0".equals(elt.getTextContent())) {
-              result = true;
-              break;
-            }
-          }
-        }
-      }
-    } catch (ParserConfigurationException pce) {
-      logger.error("Your parser setup is wrong.", pce);
-    } catch (org.xml.sax.SAXException saxe) {
-      logger.error("Got back a non-XML response from Solr.", saxe);
-    } catch (IOException ioe) {
-      logger.error(ioe.getMessage(), ioe);
-    }
-    return result;
-  }
-  
 }
