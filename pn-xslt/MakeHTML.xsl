@@ -616,7 +616,7 @@
         <div id="history-headers">
           <h3><span id="edit-history">Editorial History</span>; 
             <span id="all-history">All History</span>; 
-            (<a href="{concat('https://github.com/DCLP/idp.data/blame/master/DCLP/',$file-uri,'/',/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'],'.xml')}" target="_blank">detailed</a>)</h3>
+            (<a href="{concat('https://github.com/papyri/idp.data/blame/master/DCLP/',$file-uri,'/',/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'],'.xml')}" target="_blank">detailed</a>)</h3>
         </div>
         <div id="history-lists">
           <ul id="edit-history-list" style="display:none;">
