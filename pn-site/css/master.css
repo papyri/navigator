@@ -441,6 +441,9 @@ span.lang>span[lang=ar] {
 span[lang=ar] {
     text-align: right;
 }
+span[lang="ara"] * {
+    font-size: .67em;
+}
 span[lang="en"] {
 direction: ltr;
 display: inline-block;

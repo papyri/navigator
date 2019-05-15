@@ -401,9 +401,9 @@ function getCookie(name) {
 function alignRTL() {
   //return true;
   jQuery("span.ab").each(function(i, ab) {
-    var width = jQuery(ab).width();
+    var width = jQuery(ab).width() + 50;
     jQuery(ab).find("span[lang=ar]").each(function(i, elt) {
-      jQuery(ab).css("width", (width + 20) + "px");
+      jQuery(ab).css("width", (width + 50) + "px");
       //return true;
       var e = jQuery(elt);
       //var offset = ((width - e.width()) / e.parents("div.textpart").width()) * 100;
@@ -429,7 +429,7 @@ function alignRTL() {
             if (l[0].parentElement.getBoundingClientRect()["right"] < width) {
               var offset = width - l.width();
             } else {
-              var offset = l[0].parentElement.getBoundingClientRect()["left"] - 5;
+              var offset = l[0].parentElement.getBoundingClientRect()["left"] - 15;
             }
             l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
           }
@@ -457,7 +457,7 @@ function alignRTL() {
         }
       } else {
         var offset = width - e.width();
-        if (e[0].previousSibling.textContent.trim() == "") {
+        if (e[0].previousSibling.textContent.trim() == "" && (e[0].previousElementSibling.localName == "br" || e[0].previousElementSibling.localName == "a")) {
           e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
         }
         e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
