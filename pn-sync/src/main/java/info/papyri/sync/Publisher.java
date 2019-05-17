@@ -77,6 +77,7 @@ public class Publisher implements Runnable {
             status = INFERENCING;
             logger.info("Running inferencing on " + files.size() + " files starting at " + new Date());
             for (String url : urls) {
+              logger.debug("Run inferencing on '" + url +"'");
               map.insertInferences(url);
             }
             urls.clear();
