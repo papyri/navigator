@@ -822,7 +822,11 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     }
     String sq = ("".equals(highlightString) ? "?" : "&") + solrQueryString;
     sq += "&p=" + String.valueOf(position) + "&t=" + String.valueOf(total);
-    return sq.replace("{", "%7B").replace("}", "%7D");
+    try {
+        return URLEncoder.encode(sq, "UTF-8");
+    } catch (Exception e) {
+        return "";
+    }
 
   }
 
