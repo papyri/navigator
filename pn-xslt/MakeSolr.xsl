@@ -1422,7 +1422,7 @@
  <xsl:template name="reg-text-processing">
    <xsl:param name="temp-node"></xsl:param>
    <xsl:apply-templates select="$temp-node//t:div[@type='edition']">
-     <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+     <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
      <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
    </xsl:apply-templates>
  </xsl:template>
@@ -1430,7 +1430,7 @@
   <xsl:template name="orig-text-processing">
     <xsl:param name="temp-node"></xsl:param>
     <xsl:apply-templates select="$temp-node//t:div[@type='edition']">
-      <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+      <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
       <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
     </xsl:apply-templates>
   </xsl:template>
