@@ -294,7 +294,7 @@
                         "WITH <http://papyri.info/graph> "
                         "INSERT {?s dc:relation <" url ">} "
                         "WHERE { <" url "> dc:relation ?s "
-                        "FILTER regex(\"" url "\", \"^http://(papyri.info\") "
+                        "FILTER regex(\"" url "\", \"^http://papyri.info\") "
                         "FILTER regex(str(?s), \"^http://papyri.info\")}")
           converse-relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                  "WITH <http://papyri.info/graph> "
