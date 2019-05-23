@@ -75,7 +75,7 @@
         <xsl:apply-templates select="$docs//text" mode="metadata"/>
         <xsl:variable name="text">
           <xsl:apply-templates>
-            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+            <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
             <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
             <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
             <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
