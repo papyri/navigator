@@ -102,7 +102,7 @@ public class Publisher implements Runnable {
         }
         status = IDLE;
         started = null;
-      } catch (Exception e) {
+      } catch (Throwable e) {
         logger.error(e.getLocalizedMessage(), e);
         success = false;
       }
