@@ -466,7 +466,6 @@
       (-loadFile "/srv/data/papyri.info/git/navigator/pn-mapping/sources/8.rdf")
       (-loadFile "/srv/data/papyri.info/git/navigator/pn-mapping/sources/9.rdf")
       (-loadFile "/srv/data/papyri.info/git/navigator/pn-mapping/sources/gothenburg.rdf")
-      (-loadFile "/srv/data/papyri.info/git/navigator/pn-mapping/sources/glrt.n3")
       (doseq [f (filter #(.startsWith (.getName %) "places-") (file-seq (File. "/srv/data/papyri.info/pleiades")))]
         (-loadFile (.getAbsolutePath f)))
       (-insertInferences nil)
