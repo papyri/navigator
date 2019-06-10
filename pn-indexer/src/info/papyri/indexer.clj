@@ -899,8 +899,8 @@
   "Runs an asynchronous commit and then optimize on the named Solr index."
   [index]
   (let [solr (.build (.withSocketTimeout (HttpSolrClient$Builder. (str solrurl index "/")) 3600000))]
-    (.commit solr false false true)
-    (.optimize solr false false)
+    (.commit solr false false )
+    ;;(.optimize solr false false)
     (.close solr)))
 
 (defn load-morphs
