@@ -30,8 +30,7 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -48,7 +47,7 @@ public class XSLTService extends HttpServlet {
 
   @Override
   public void init(ServletConfig config) {
-    log = LoggerFactory.getLogger(this.getClass());
+    log = Logger.getLogger(this.getClass());
     util = new FileUtils(config.getInitParameter("xmlPath"));
     Enumeration<String> names = config.getInitParameterNames();
     xslts = new HashMap<String, XsltExecutable>();
