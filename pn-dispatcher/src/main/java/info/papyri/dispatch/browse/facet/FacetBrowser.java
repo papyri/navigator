@@ -1203,10 +1203,11 @@ public class FacetBrowser extends HttpServlet {
       }
 
       for (SolrQuery.SortClause field : sortFields) {
-
         String[] sortBits = field.getItem().split(" ");
         if (sortBits.length == 2) {
           newQuery.addSort(sortBits[0], SolrQuery.ORDER.valueOf(sortBits[1]));
+        } else {
+          newQuery.addSort(field.getItem(), SolrQuery.ORDER.asc);
         }
 
       }
