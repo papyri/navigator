@@ -34,6 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     N3,
     TURTLE,
     JSON,
+    JSONLD ("json-ld"),
     SOURCE,
     ATOM;
 
@@ -79,7 +80,9 @@ public class DispatcherServlet extends HttpServlet {
           format = method.toString();
         }
       }
-      if ("rdfxml".equals(format) || "turtle".equals(format) || "n3".equals(format) || "json".equals(format)) {
+      if ("rdfxml".equals(format) || "turtle".equals(format) 
+              || "n3".equals(format) || "json".equals(format)
+              || "json-ld".equals(format)) {
         query.delete(query.lastIndexOf("/"), query.length());
         if (query.toString().contains("/annotation/")) {
           params.put("query", annotation(query.toString()));
@@ -127,6 +130,9 @@ public class DispatcherServlet extends HttpServlet {
           }
           if ("json".equals(format)) {
             http.addRequestProperty("Accept", "application/rdf+json");
+          }
+          if ("json-ld".equals(format)) {
+              http.addRequestProperty("Accept", "application/ld+json");
           }
           http.setConnectTimeout(2000);
           if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
