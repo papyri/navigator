@@ -77,7 +77,7 @@ public class Publisher implements Runnable {
             status = INFERENCING;
             logger.info("Running inferencing on " + files.size() + " files starting at " + new Date());
             for (String url : urls) {
-              logger.debug("Run inferencing on '" + url +"'");
+              logger.info("Run inferencing on '" + url +"'");
               map.insertInferences(url);
             }
             urls.clear();
@@ -85,6 +85,7 @@ public class Publisher implements Runnable {
             for (String diff : diffs) {
               String url = GitWrapper.filenameToUri(base + File.separator + diff, true);
               if (!"".equals(url)) {
+                logger.info("Queued " + url);
                 urls.add(url);
               }
             }
