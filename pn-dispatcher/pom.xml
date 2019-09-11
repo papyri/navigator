@@ -15,22 +15,6 @@
       <url>http://dev.papyri.info/maven/</url>
     </repository>
     <repository>
-      <releases>
-        <enabled>false</enabled>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </snapshots>
-      <id>codehausSnapshots</id>
-      <name>Codehaus Snapshots</name>
-      <url>http://snapshots.maven.codehaus.org/maven2</url>
-      <layout>default</layout>
-    </repository>
-    <repository>
       <id>eclipse</id>
       <name>jgit-repository</name>
       <url>https://repo.eclipse.org/content/groups/releases/</url>
@@ -50,15 +34,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.hp.hpl.jena</groupId>
-      <artifactId>jena</artifactId>
-      <version>2.6.2</version>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>apache-jena-libs</artifactId>
+      <version>3.11.0</version>
+      <type>pom</type>
     </dependency>
-  <!--  <dependency>
-    <groupId>org.apache.lucene</groupId>
-<artifactId>lucene-queryparser</artifactId>
-<version>3.4.0</version>
-</dependency>-->
     <dependency>
       <groupId>org.pegdown</groupId>
       <artifactId>pegdown</artifactId>
