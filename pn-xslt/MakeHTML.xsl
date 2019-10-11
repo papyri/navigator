@@ -357,6 +357,7 @@
                     </xsl:for-each>
                     <xsl:for-each select="pi:get-docs($relations[contains(., '/dclp/') and not(contains($replaces,.))], 'xml')/t:TEI">
                       <xsl:if test="//t:div[@type='edition']//*">
+                        <xsl:apply-templates select=".//t:div[@type='commentary'][@subtype='frontmatter']"/>
                         <xsl:apply-templates select="." mode="text">
                           <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                           <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
@@ -367,6 +368,7 @@
                           <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
                           <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
                         </xsl:apply-templates>
+                        <xsl:apply-templates select=".//t:div[@type='commentary'][@subtype='linebyline']"/>
                       </xsl:if>
                     </xsl:for-each>
                     <xsl:if test="$image">
@@ -427,6 +429,7 @@
                   </div>
                   <xsl:if test="//t:div[@type='edition']//*">
                     <div class="text">
+                      <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
                       <xsl:apply-templates select="/t:TEI" mode="text">
                         <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                         <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
@@ -437,6 +440,7 @@
                         <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
                         <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
                       </xsl:apply-templates>
+                      <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
                     </div>
                   </xsl:if>
                 </xsl:if>
