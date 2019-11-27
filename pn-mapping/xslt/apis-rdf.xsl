@@ -6,7 +6,7 @@
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
   <xsl:param name="root">/srv/data/papyri.info/idp.data</xsl:param>
-  <xsl:param name="DDB-root">/data/papyri.info/idp.data/DDB_EpiDoc_XML</xsl:param>
+  <xsl:param name="DDB-root">/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML</xsl:param>
 
   <xsl:template match="/tei:TEI">
     <xsl:if test="string-length(//tei:publicationStmt/tei:idno[@type = 'apisid']) gt 0">
