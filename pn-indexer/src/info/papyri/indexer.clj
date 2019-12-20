@@ -966,6 +966,7 @@
         tasks (map (fn [x]
                      (fn []
                        (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
+                       (.mkdirs (.getParentFile x))
                        (transform (str "file://" (.getAbsolutePath x)) ()
                                   (.newSerializer processor (FileOutputStream. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html")))))
                                   @bibhtmltemplates)))
