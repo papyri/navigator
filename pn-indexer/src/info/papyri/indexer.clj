@@ -966,10 +966,10 @@
         tasks (map (fn [x]
                     (fn []
                       (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
-                      (let [out (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html"))]
+                      (let [out (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html")))]
                         (.mkdirs (.getParentFile out))  
                         (transform (str "file://" (.getAbsolutePath x)) ()
-                                  (.newSerializer processor (FileOutputStream. out)))
+                                  (.newSerializer processor (FileOutputStream. out))
                                   @bibhtmltemplates))))
                     (filter #(.endsWith (.getName %) ".xml") files))]
     (doseq [future (.invokeAll pool tasks)]
