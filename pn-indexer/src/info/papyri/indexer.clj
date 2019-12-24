@@ -964,13 +964,14 @@
         htmlpath (str htpath "/biblio/")
         files (file-seq (File. (str filepath "/Biblio")))
         tasks (map (fn [x]
-                     (fn []
-                       (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
-                       (.mkdirs (.getParentFile x))
-                       (transform (str "file://" (.getAbsolutePath x)) ()
-                                  (.newSerializer processor (FileOutputStream. (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html")))))
-                                  @bibhtmltemplates)))
-                   (filter #(.endsWith (.getName %) ".xml") files))]
+                    (fn []
+                      (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
+                      (let [out (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html"))]
+                        (.mkdirs (.getParentFile out))  
+                        (transform (str "file://" (.getAbsolutePath x)) ()
+                                  (.newSerializer processor (FileOutputStream. out)))
+                                  @bibhtmltemplates))))
+                    (filter #(.endsWith (.getName %) ".xml") files))]
     (doseq [future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
