@@ -830,7 +830,8 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       return url.replace("{", "%7B")
               .replace("}", "%7D")
               .replace("[", "%5B")
-              .replace("]", "%5D");
+              .replace("]", "%5D")
+              .replace("|", "%7C");
   }
 
   private void setPosition(long p) {
