@@ -25,7 +25,7 @@ import org.apache.solr.common.SolrDocumentList;
 public class SolrUtils {
   
   private String solrUrl;
-  private static String morphSearch = "morph_search/";
+  private static String morphSearch = "morph-search/";
   
   public SolrUtils(ServletConfig config) {
     solrUrl = config.getInitParameter("solrUrl");
