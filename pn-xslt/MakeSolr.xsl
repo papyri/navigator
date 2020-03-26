@@ -409,42 +409,55 @@
           </field>
         </xsl:for-each>
         <field name="transcription_ngram">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each select="tokenize($textnfc, '\s+')">
             <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
             <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
             <xsl:if test=". != ''"><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
         <field name="transcription_ngram">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each select="tokenize($orignfc, '\s+')">
             <xsl:if test=". != ''"><xsl:text>#</xsl:text><xsl:value-of select="."/><xsl:text># </xsl:text></xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
         <field name="transcription_ngram_id">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each select="tokenize(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', ''), '\s+')">
             <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
             <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
             <xsl:if test=". != ''"><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
         <field name="transcription_ngram_id">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each select="tokenize(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', ''), '\s+')">
             <xsl:if test=". != ''"><xsl:text>#</xsl:text><xsl:value-of select="."/><xsl:text># </xsl:text></xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
         <field name="transcription_ngram_ic">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each select="tokenize(lower-case($textnfc), '\s+')">
             <xsl:variable name="word-start-boundary" select="pi:get-word-start-boundary-char(.)"></xsl:variable>
             <xsl:variable name="word-end-boundary"   select="pi:get-word-end-boundary-char(.)"></xsl:variable>
             <xsl:if test=". != ''"><xsl:value-of select="$word-start-boundary"></xsl:value-of><xsl:value-of select="replace(., $abbreviation-marker, '')"/><xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text></xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
         <field name="transcription_ngram_ic">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each select="tokenize(lower-case($orignfc), '\s+')">
             <xsl:if test=". != ''"><xsl:text>#</xsl:text><xsl:value-of select="."/><xsl:text># </xsl:text></xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
         <field name="transcription_ngram_ia">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each
             select="tokenize(lower-case(replace($textnfd, '[\p{IsCombiningDiacriticalMarks}]', '')), '\s+')">
             <xsl:if test="string-length(normalize-space(.)) &gt; 0">
@@ -455,8 +468,10 @@
               <xsl:value-of select="$word-end-boundary"></xsl:value-of><xsl:text> </xsl:text>
             </xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
         <field name="transcription_ngram_ia">
+          <xsl:text>☃ </xsl:text>
           <xsl:for-each
             select="tokenize(lower-case(replace($orignfd, '[\p{IsCombiningDiacriticalMarks}]', '')), '\s+')">
             <xsl:if test="string-length(normalize-space(.)) &gt; 0">
@@ -465,6 +480,7 @@
               <xsl:text># </xsl:text>
             </xsl:if>
           </xsl:for-each>
+          <xsl:text>☃</xsl:text>
         </field>
       </xsl:for-each>
     </xsl:variable>
