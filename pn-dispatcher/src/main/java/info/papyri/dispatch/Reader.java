@@ -10,7 +10,6 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,15 +25,15 @@ import org.apache.log4j.Logger;
  */
 @WebServlet(name = "Reader", urlPatterns = {"/reader"})
 public class Reader extends HttpServlet {
-  private static String graph = "http://papyri.info/graph";
-  private static String path = "/pi/query";
+  private static final String GRAPH = "http://papyri.info/graph";
+  private static final String PATH = "/pi/query";
   private String sparqlServer;
   private String xmlPath = "";
   private String htmlPath = "";
   private FileUtils util;
   private SolrUtils solrutil;
-  private byte[] buffer = new byte[8192];
-  private static Logger logger = Logger.getLogger("pn-dispatch");
+  private final byte[] buffer = new byte[8192];
+  private static final Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -146,13 +145,13 @@ public class Reader extends HttpServlet {
     sparql.append("prefix dcterms: <http://purl.org/dc/terms/> ");
     sparql.append("select ?related ");
     sparql.append("from <");
-    sparql.append(graph);
+    sparql.append(GRAPH);
     sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
     sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
-    sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv)\") }");
+    sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv|dclp)\") }");
     try {
-      URL m = new URL(sparqlServer + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&format=json");
+      URL m = new URL(sparqlServer + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&format=json");
       HttpURLConnection http = (HttpURLConnection)m.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();
@@ -160,11 +159,8 @@ public class Reader extends HttpServlet {
       Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
       String uri;
       while (i.hasNext()) {
-        uri = FileUtils.substringBefore(i.next().path("related").path("value").getValueAsText(), "/source");
-        if (uri.contains("ddbdp/")) {
-          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
-        }
-        if (uri.contains("hgv/")) {
+        uri = FileUtils.substringBefore(i.next().path("related").path("value").getTextValue(), "/source");
+        if (uri.contains("ddbdp/") || uri.contains("hgv/") || uri.contains("dclp/")) {
           result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
         }
         if (result.exists()) {
