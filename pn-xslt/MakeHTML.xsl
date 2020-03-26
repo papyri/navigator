@@ -721,9 +721,9 @@
       <xsl:when test="$collection = 'dclp'">
           <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'tm'))]">
               <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition']">
-                <xsl:for-each select="normalize-space(.//t:bibl[@type = 'publication' and @subtype='principal'])"> 
+                <xsl:for-each select=".//t:bibl[@type = 'publication' and @subtype='principal']"> 
                   <xsl:text> </xsl:text>
-                  <xsl:value-of select="."/>       
+                  <xsl:value-of select="normalize-space(.)"/>       
                 </xsl:for-each>
                 <xsl:text> = </xsl:text>
               </xsl:for-each>
