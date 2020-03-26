@@ -99,6 +99,19 @@
             </xsl:if>
           </xsl:for-each>
         </xsl:for-each>
+        <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'dclp']">
+          <xsl:for-each select="tokenize(., '\s')">
+            <xsl:variable name="dir" select="ceiling(number(.) div 1000)"/>
+            <xsl:if
+              test="doc-available(concat('file://', $root, '/DCLP/', $dir, '/', ., '.xml'))">
+              <dct:relation>
+                <rdf:Description rdf:about="http://papyri.info/dclp/{.}/source">
+                  <dct:relation rdf:resource="{$id}"/>
+                </rdf:Description>
+              </dct:relation>
+            </xsl:if>
+          </xsl:for-each>
+        </xsl:for-each>
         <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'TM']">
           <xsl:for-each select="tokenize(., '\s')">
             <dct:relation>
