@@ -498,7 +498,7 @@
           <field name="identifier">http://papyri.info/ddbdp/<xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:when test="@type='TM'">
-          <xsl:for-each select="tokenize(.)">
+          <xsl:for-each select="tokenize(., ' ')">
             <field name="identifier">http://www.trismegistos.org/tm/detail.php?quick=<xsl:value-of select="." /></field>
             <field name="identifier"><xsl:value-of select="." /></field>
           </xsl:for-each>
