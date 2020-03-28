@@ -195,7 +195,8 @@ public class IdentifierFacet extends Facet{
             else{
                 // If this is a DDbDP or DCLP collection, short-circuit the query building process
                 if (searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("dclp")
-                        || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("ddbdp")) {
+                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("ddbdp")
+                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("hgv")  ) {
                     solrQuery.addFilterQuery(SolrField.collection.name() + ":" + searchConfigurations.get(IdParam.COLLECTION).getConstraint());
                     return solrQuery;
                 }
