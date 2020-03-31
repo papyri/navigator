@@ -6,6 +6,7 @@
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="2.0" exclude-result-prefixes="">
   <xsl:import href="pi-global-varsandparams.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teisupplied.xsl"/>
   <xsl:output method="text" encoding="UTF-8" indent="no" omit-xml-declaration="yes"/>
   <xsl:include href="../epidoc-xslt/txt-teiab.xsl"/>
   <xsl:include href="../epidoc-xslt/txt-teiapp.xsl"/>
@@ -22,7 +23,6 @@
   <xsl:include href="../epidoc-xslt/txt-teinote.xsl"/>
   <xsl:include href="../epidoc-xslt/txt-teip.xsl"/>
   <xsl:include href="../epidoc-xslt/txt-teispace.xsl"/>
-  <xsl:import href="../epidoc-xslt/txt-teisupplied.xsl"/>
   <xsl:include href="../epidoc-xslt/txt-teiref.xsl"/>
   <xsl:include href="../epidoc-xslt/teiabbrandexpan.xsl"/>
   <xsl:include href="../epidoc-xslt/teiaddanddel.xsl"/>
