@@ -1486,6 +1486,11 @@
     </xsl:choose>
   </xsl:template>
   
+  <!-- Override template in txt-teisupplied.xsl, which adds combining underlines -->
+  <xsl:template name="supplied-parallel">
+    <xsl:apply-templates></xsl:apply-templates>
+  </xsl:template>
+  
   <!-- Solr limits text chunks to 32766 bytes, so split into overlapping
        fields using 1/3 that size (most Greek will be 2 bytes, with a 
        small number of 3-byte chars; very seldom 4)-->
