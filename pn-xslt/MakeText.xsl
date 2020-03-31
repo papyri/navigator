@@ -292,4 +292,9 @@
 </xsl:text>
   </xsl:template>
   
+  <!-- Override template in txt-teisupplied.xsl, which adds combining underlines -->
+  <xsl:template name="supplied-parallel">
+    <xsl:apply-templates></xsl:apply-templates>
+  </xsl:template>
+  
 </xsl:stylesheet>
