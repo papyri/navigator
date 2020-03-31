@@ -22,7 +22,7 @@
   <xsl:include href="../epidoc-xslt/txt-teinote.xsl"/>
   <xsl:include href="../epidoc-xslt/txt-teip.xsl"/>
   <xsl:include href="../epidoc-xslt/txt-teispace.xsl"/>
-  <xsl:include href="../epidoc-xslt/txt-teisupplied.xsl"/>
+  <xsl:import href="../epidoc-xslt/txt-teisupplied.xsl"/>
   <xsl:include href="../epidoc-xslt/txt-teiref.xsl"/>
   <xsl:include href="../epidoc-xslt/teiabbrandexpan.xsl"/>
   <xsl:include href="../epidoc-xslt/teiaddanddel.xsl"/>
