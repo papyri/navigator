@@ -484,7 +484,7 @@
         </field>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:if test="$result//field[@name='transcription_ngram_id'][string-length(.) gt 0]">
+    <xsl:if test="$result//field[@name='transcription_ngram_id'][string-length(translate(.,'☃ ','')) gt 0]">
       <field name="has_transcription">true</field>
       <xsl:copy-of select="$result"/>
     </xsl:if>
