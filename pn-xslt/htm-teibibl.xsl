@@ -8,9 +8,7 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   exclude-result-prefixes="#all"
   version="2.0">
-  
-  <xsl:output method="html"/>
-  
+    
   <xsl:variable name="values-issues" select="('issues', 'issue', 'volume', 'v', 'vols', 'vol', 'vv')"/>
   <xsl:variable name="values-pages" select="('pp', 'pages', 'page')"/>
   <xsl:variable name="values-numbers" select="('no', 'nos', 'num', 'number', 'numbers', 'n', 'nn')"/>
