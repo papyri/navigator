@@ -206,7 +206,7 @@
 (defn get-filename
   "Resolves the filename of the local XML file associated with the given URL."
   [url]
-  (try (if (.contains url "ddbdp/")
+  (let [result (try (if (.contains url "ddbdp/")
     (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
       (if (= (second identifier) "")
         (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
@@ -228,7 +228,10 @@
     (catch Exception e
       (when-not (nil? e)
         (println (str (.getMessage e) " processing " url ".")
-        (.printStackTrace e))))))
+        (.printStackTrace e)))))]
+    (if (.exists (File. result))
+      result
+      (println (str result " does not exist.")))))
 
 (defn get-txt-filename
   "Resolves the filename of the local text file associated with the given URL."
