@@ -214,7 +214,6 @@ $(document).ready(
 					val = fel.getAttribute("value");
 
 				}
-				val = val.replace(/\s*(HGV|DDBDP):\s*/, "");
 				val = val.replace(/\s*\(\d+\)\s*$/, "");
 				if(name == "IDNO") val = val.replace(/:/g, "*");
 				if(!params[name] || params[name] == val){
@@ -248,16 +247,10 @@ $(document).ready(
 				params["target"] = "user_defined";
 
 			}
-
-			$.get("http://localhost/search", params);
-
-            var current = window.location;
-
-            if(current.toString().match(/\?/)) {
-
+				var current = window.location;
+				if(current.toString().match(/\?/)) {
 				var currentbits = current.toString().split("?");
 				current = currentbits[0];
-
 			}
 			hic.concatenateSearchToCookie(textval);
 			var qs = $.param(params);
