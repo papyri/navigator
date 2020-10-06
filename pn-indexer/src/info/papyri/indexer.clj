@@ -229,7 +229,7 @@
       (when-not (nil? e)
         (println (str (.getMessage e) " processing " url ".")
         (.printStackTrace e)))))]
-    (if (.exists (File. result))
+    (if (and result (.exists (File. result)))
       result
       (println (str result " does not exist.")))))
 
