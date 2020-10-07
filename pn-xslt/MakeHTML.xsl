@@ -169,6 +169,9 @@
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="{$cssbase}/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <xsl:if test="$image">
+          <link rel="stylesheet" href="{$cssbase}/imageviewer.css" type="text/css" />
+        </xsl:if>
         <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
         <xsl:comment>
           <xsl:text><![CDATA[[if IE]><link rel="stylesheet" href="]]></xsl:text>
@@ -200,7 +203,6 @@
         <script src="{$jsbase}/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="{$jsbase}/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$image">
-          <script src="{$jsbase}/OpenLayers.js" type="text/javascript" charset="utf-8"></script>
           <script src="{$jsbase}/imageviewer.js" type="text/javascript" charset="utf-8"></script>
         </xsl:if>            
         <script src="{$jsbase}/init.js" type="text/javascript" charset="utf-8"></script>
