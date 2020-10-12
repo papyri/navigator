@@ -147,7 +147,7 @@ function buildSolrQueryString(){
 function querySolrServer(query, position, total, rows, querystring){
 
 	var that = this;
-	var serverUrl = "http://" + location.host + "/solr/select/";
+	var serverUrl = "https://" + location.host + "/solr/select/";
 	jQuery.get(	serverUrl,
 			query,
 			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); },

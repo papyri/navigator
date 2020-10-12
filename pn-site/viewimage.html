@@ -30,18 +30,17 @@
       color: white;
     }
   </style>
-  <link rel="stylesheet" href="css/imageviewer.css">
+  <link rel="stylesheet" href="/css/imageviewer.css">
   </head>
   <body>
     <div id="bd">
-      <div id="image" style="height:90%"></div>
+      <div id="olimage" style="height:90%"></div>
       <div id="select">
       <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value);setDownloadLink(this.options[this.selectedIndex].value);" size="1">
       </select>
       <span id="download"></span>
-      <div id="iiif-notification"></div>
     </div>
-    <script src="js/imageviewer.js"></script>
+    <script src="/js/imageviewer.js"></script>
     <script>
       let query = "https://papyri.info/sparql?query="
           + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
