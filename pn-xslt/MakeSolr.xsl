@@ -57,7 +57,7 @@
   <xsl:param name="related"/>
   <xsl:param name="images"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
-  <xsl:variable name="path">/Users/hac13/Development/APIS/idp.data</xsl:variable>
+  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
