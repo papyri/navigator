@@ -584,10 +584,10 @@
         test="not($docs[1]//t:idno[@type='dclp']) 
         and $docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl[@type = 'publication'][@subtype = 'principal']">
         <!-- IFF HGV document -->
-        <xsl:if test="$docs//t:TEI[starts-with(@xml:id,'hgv')]">
+        <xsl:if test="$docs//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'][matches(.,'^\d+[a-z]*')]">
           <xsl:variable name="hgv_identifiers">
             <xsl:perform-sort
-              select="$docs//t:TEI[starts-with(@xml:id, 'hgv')]/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
+              select="$docs//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
               <xsl:sort select="."/>
             </xsl:perform-sort>
           </xsl:variable>
