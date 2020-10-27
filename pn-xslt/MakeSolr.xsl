@@ -57,7 +57,7 @@
   <xsl:param name="related"/>
   <xsl:param name="images"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
-  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
+  <xsl:variable name="path">/Users/hac13/Development/APIS/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
@@ -582,26 +582,25 @@
         DCLP has principal editions too, so checking that we're not looking at a DCLP document. -->
       <xsl:when
         test="not($docs[1]//t:idno[@type='dclp']) 
-        and $docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl[@type = 'publication'][@subtype = 'principal']">
+        and $docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'][matches(.,'^\d+[a-z]*')]">
         <!-- IFF HGV document -->
-        <xsl:if test="$docs//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'][matches(.,'^\d+[a-z]*')]">
-          <xsl:variable name="hgv_identifiers">
-            <xsl:perform-sort
-              select="$docs//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
-              <xsl:sort select="."/>
-            </xsl:perform-sort>
-          </xsl:variable>
-          <field name="hgv_identifier">
-            <xsl:choose>
-              <xsl:when test="count($hgv_identifiers//*) gt 1">
-                <xsl:value-of select="$hgv_identifiers//*[1]"/> - <xsl:value-of
-                  select="$hgv_identifiers//*[position() = last()]"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="$hgv_identifiers[1]"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </field>
+        <xsl:variable name="hgv_identifiers">
+          <xsl:perform-sort
+            select="$docs//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']">
+            <xsl:sort select="."/>
+          </xsl:perform-sort>
+        </xsl:variable>
+        <field name="hgv_identifier">
+          <xsl:choose>
+            <xsl:when test="count($hgv_identifiers//*) gt 1">
+              <xsl:value-of select="$hgv_identifiers//*[1]"/> - <xsl:value-of
+                select="$hgv_identifiers//*[position() = last()]"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$hgv_identifiers[1]"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </field>
         <xsl:for-each select="$docs[1]//t:TEI/t:text/t:body/t:div[@type = 'bibliography' and @subtype = 'principalEdition']//t:bibl[@type = 'publication'][@subtype = 'principal']">
          <xsl:variable name="hgv_series">
            <xsl:value-of select="replace(normalize-space(t:title[@level = 's']), ' ', '_')" />
@@ -678,7 +677,7 @@
            </field>
          </xsl:if>
         </xsl:for-each>
-        </xsl:if>
+        
       </xsl:when>
       <xsl:when
         test="$docs[1]/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'ddb-hybrid'] and $alterity = 'self'">
