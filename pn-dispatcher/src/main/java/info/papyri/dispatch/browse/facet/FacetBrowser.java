@@ -180,7 +180,7 @@ public class FacetBrowser extends HttpServlet {
      */
     long resultSize = queryResponse.getResults() == null ? 0 : queryResponse.getResults().getNumFound();
 
-    // I'm feeling lucky
+    // "I'm feeling lucky" used to be a Google search option that would take you to the first hit
     if ("yes".equals(request.getParameter("lucky")) && resultSize == 1) {
       String redirect = FileUtils.substringAfter(
               (String) queryResponse.getResults().get(0).getFieldValue(SolrField.id.name()), "://");

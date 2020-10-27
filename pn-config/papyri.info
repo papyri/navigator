@@ -4,160 +4,150 @@
 #------------------------------------------------------------------------------
 # $Id$
 #
-# tomcat control script
-#
-# 2007-02-28 -- jgp -- need to use "su tomcat -c" (for each command)
-# 2007-02-27 -- jgp -- originated script
+# papyri.info control script
 #
 #------------------------------------------------------------------------------
-export JAVA_HOME=/usr/lib/jvm/jre-1.6.0-openjdk.x86_64
-#export JAVA_OPTS="-Xms1500 -Xmx1500m -XX:MaxPermSize=256m -XX:+CMSClassUnloadingEnabled -verbose:gc -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Djruby.objectspace.enabled=false -Djruby.thread.pooling=true"
+export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk.x86_64
 export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
 CATALINA_SH=/usr/local/tomcat-sosol/bin/catalina.sh
-SOLR_SH=/usr/local/tomcat-solr/bin/catalina.sh
-export SOLR_PID=/usr/local/tomcat-solr/bin/tomcat.pid
-#export CATALINA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8765 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=fred"
-#-Dsolr.solr.home=/data/papyri.info/solr
+PN_SH=/usr/local/tomcat-pn/bin/catalina.sh
+export PN_PID=/usr/local/tomcat-pn/bin/tomcat.pid
 
 starttc () {
-        cd /usr/local/tomcat-sosol/logs
-	export CATALINA_PID=/usr/local/tomcat-sosol/bin/tomcat.pid
-        export JAVA_OPTS="-server -Xms1500m -Xmx1500m -XX:MaxPermSize=150m -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:+CMSClassUnloadingEnabled -verbose:gc -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Djruby.objectspace.enabled=false -Djruby.thread.pooling=true"
-	#export JAVA_OPTS="-Xms1g -Xmx1200m -XX:MaxPermSize=128m -verbose:gc -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Djruby.objectspace.enabled=false -Djruby.thread.pooling=true"
-        su -s /bin/sh tomcat -c "$CATALINA_SH start"
+  mv /usr/local/tomcat-sosol/logs/catalina.out /usr/local/tomcat-sosol/logs/catalina.$(date +"%Y-%m-%d.%H.%M.%S").log
+  export CATALINA_PID=/usr/local/tomcat-sosol/bin/tomcat.pid
+  export JAVA_OPTS="-server -Xms1500m -Xmx4G -XX:MaxPermSize=256m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/srv/data/papyri.info/heap-dumps -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:+CMSClassUnloadingEnabled -verbose:gc -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Djruby.objectspace.enabled=false -Djruby.thread.pool.enabled=true -Djruby.compat.version=2.0"
+  su -s /bin/sh tomcat -c "$CATALINA_SH start"
 }
 
 stoptc () {
-	export CATALINA_PID=/usr/local/tomcat-sosol/bin/tomcat.pid
-        su -s /bin/sh tomcat -c "$CATALINA_SH stop"
-        sleep 10
-        if [ -e "$CATALINA_PID" ]
-        then
-                kill -TERM `cat $CATALINA_PID`
-                sleep 10
-                if [ -e "$CATALINA_PID" ]
-                then
-                        kill -9 `cat $CATALINA_PID`
-                fi
-        fi
+  export CATALINA_PID=/usr/local/tomcat-sosol/bin/tomcat.pid
+  su -s /bin/sh tomcat -c "$CATALINA_SH stop"
+  sleep 10
+  if [ -e "$CATALINA_PID" ]
+  then
+          kill -TERM `cat $CATALINA_PID`
+          sleep 10
+          if [ -e "$CATALINA_PID" ]
+          then
+                  kill -9 `cat $CATALINA_PID`
+          fi
+  fi
 }
 
-startsolr () {
-        cd /usr/local/tomcat-solr/logs
-	export CATALINA_PID=/usr/local/tomcat-solr/bin/tomcat.pid
-	export JAVA_OPTS="-server -Xms1500m -Xmx2G -Xmn450m -XX:MaxPermSize=128m -verbose:gc -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -XX:+UseConcMarkSweepGC -Dsolr.solr.home=/srv/data/papyri.info/solr"
-        #export JAVA_OPTS="-XX:MaxPermSize=256m -verbose:gc -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Dsolr.solr.home=/data/papyri.info/solr"
-	#export JAVA_OPTS="-Xms1500m -Xmx1500m -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=1000 -XX:GCPauseIntervalMillis=2000 -verbose:gc -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Dsolr.solr.home=/data/papyri.info/solr"
-        su -s /bin/sh tomcat -c "$SOLR_SH start"
+startpn() {
+  cd /usr/local/tomcat-pn/logs
+  export JAVA_OPTS="-server -Xms500m -Xmx1G"
+  export CATALINA_PID=/usr/local/tomcat-pn/bin/tomcat.pid
+  su -s /bin/sh tomcat -c "$PN_SH start"
 }
 
-stopsolr () {
-	export CATALINA_PID=/usr/local/tomcat-solr/bin/tomcat.pid
-        su -s /bin/sh tomcat -c "$SOLR_SH stop"
-        sleep 10
-        if [ -e "$SOLR_PID" ]
-        then
-                kill -TERM `cat $SOLR_PID`
-                sleep 10
-                if [ -e "SOLR_PID" ]
-                then
-                        kill -9 `cat $SOLR_PID`
-                fi
-        fi
+stoppn () {
+  export CATALINA_PID=/usr/local/tomcat-pn/bin/tomcat.pid
+  su -s /bin/sh tomcat -c "$PN_SH stop"
+  sleep 10
+  if [ -e "$PN_PID" ]
+  then
+          kill -TERM `cat $PN_PID`
+          sleep 10
+          if [ -e "PN_PID" ]
+          then
+                  kill -9 `cat $PN_PID`
+          fi
+  fi
+}
+
+startsolr() {
+  export PATH=$PATH:/usr/sbin
+  su -s /bin/sh tomcat -c "/usr/local/solr/bin/solr start -m 2G -s /srv/data/papyri.info/solr"
+}
+
+stopsolr() {
+  su -s /bin/sh tomcat -c "/usr/local/solr/bin/solr stop -all"
 }
 
 startjena () {
-        cd /usr/local/jena/jena-fuseki
-        su -s /bin/sh tomcat -c "./fuseki-server --update --port 8090 --loc=/srv/data/papyri.info/jena /pi &> /usr/local/jena/jena.log" &
+  cd /usr/local/jena/jena-fuseki
+  su -s /bin/sh tomcat -c "./fuseki-server --update --port 8090 --loc=/srv/data/papyri.info/jena /pi &> /usr/local/jena/jena.log" &
 }
 
 stopjena () {
-        kill -15 `pgrep -nf fuseki`     
-}
-
-startxsugar () {
-	cd /srv/data/papyri.info/sosol/xsugar/src/standalone
-	su -s /bin/sh tomcat -c "JAVA_TOOL_OPTIONS=\"-Xms1500m -Xmx1500m -Xmn1g -verbose:gc -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -XX:+PrintHeapAtGC -Dorg.eclipse.jetty.server.Request.maxFormContentSize=-1 -Dfile.encoding=UTF8\" /usr/local/apache-maven-3.0.3/bin/mvn jetty:run &> /data/papyri.info/sosol/xsugar.log" &
-}
-
-stopxsugar () {
-	cd /srv/data/papyri.info/sosol/xsugar/src/standalone
-	su -s /bin/sh tomcat -c "/usr/local/apache-maven-3.0.3/bin/mvn jetty:stop"
+  kill -15 `pgrep -nf fuseki`
 }
 
 case "$1" in
 'start')
-	startxsugar
-	startjena
-	echo "waiting 5 seconds for fuseki to start..."
-        sleep 6
-	startsolr
-	starttc
-	;;
+  startjena
+  echo "waiting 5 seconds for fuseki to start..."
+  sleep 6
+  startsolr
+  startpn
+  starttc
+  ;;
 
 'stop')
-	stoptc
-	stopsolr
-	stopjena
-	stopxsugar
-	;;
+  stoppn
+  stoptc
+  stopsolr
+  stopjena
+  ;;
 
 'restart')
-	stoptc
-	stopsolr
-        stopjena
-        stopxsugar
-	sleep 20
-	startxsugar
-        startjena
-        echo "waiting 5 seconds for fuseki to start..."
-        sleep 6
-	startsolr
-	starttc
-        ;;
+  stoppn
+  stoptc
+  stopsolr
+  stopjena
+  sleep 20
+  startjena
+  echo "waiting 5 seconds for fuseki to start..."
+  sleep 6
+  startsolr
+  startpn
+  starttc
+  ;;
 
 'start-tc')
-	starttc
-        ;;
+  starttc
+  ;;
 
 'stop-tc')
-	stoptc
-	;;
+  stoptc
+  ;;
+
+'start-pn')
+  startpn
+  ;;
+
+'stop-pn')
+  stoppn
+  ;;
 
 'start-solr')
-	startsolr
-	;;
+  startsolr
+  ;;
 
 'stop-solr')
-	stopsolr
-	;;
+  stopsolr
+  ;;
 
 'restart-solr')
-	stopsolr
-	sleep 10
-	startsolr
-	;;
+  stopsolr
+  sleep 10
+  startsolr
+  ;;
 
 'start-jena')
-        startjena
-        ;;
+  startjena
+  ;;
 
 'stop-jena')
-        stopjena
-        ;;
-
-'start-xs')
-	startxsugar
-	;;
-
-'stop-xs')
-	stopxsugar
-	;;
+  stopjena
+  ;;
 
 *)
-        echo "Usage: $0 { start | stop | restart | start-tc | stop-tc | start-solr | stop-solr | restart-solr | start-jena | stop-jena | start-xs | stop-xs }"
-        exit 1
-        ;;
+  echo "Usage: $0 { start | stop | restart | start-tc | stop-tc | start-pn | stop-pn | start-solr | stop-solr | restart-solr | start-jena | stop-jena }"
+  exit 1
+  ;;
 esac
 
 

@@ -14,7 +14,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
     
     public class DocumentCollectionBrowseRecord extends BrowseRecord{
         
-        /* (ddbdp | hgv | apis) */
+        /* (ddbdp | hgv | apis | dclp) */
         private String collection;
         private String series;
         private String volume;

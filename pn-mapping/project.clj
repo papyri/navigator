@@ -4,7 +4,7 @@
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
   :jvm-opts ["-Xmx1g" "-Djava.awt.headless=true"]
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [net.sf.saxon/Saxon-HE "9.7.0-20"]
                  [xerces/xercesImpl "2.9.1"]

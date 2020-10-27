@@ -16,7 +16,6 @@
            (java.net URI)
            (java.nio.charset Charset)
            (java.util.concurrent Executors ConcurrentLinkedQueue)
-           (javax.activation MimeType)
            (javax.xml.transform Templates Transformer)
            (javax.xml.transform.stream StreamSource StreamResult)
            (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)

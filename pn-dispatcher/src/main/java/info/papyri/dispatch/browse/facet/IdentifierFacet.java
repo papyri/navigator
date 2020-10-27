@@ -1467,8 +1467,7 @@ public class IdentifierFacet extends Facet{
             
             if(this.hasConstraint()) return true;
             if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint() && !searchConfigurations.get(IdParam.SERIES).hasConstraint()) return true;
-            if(idValues.size() == 0 && anyConstraintSet()) return true;
-            return false;
+            return idValues.isEmpty() && anyConstraintSet();
             
         }
 
