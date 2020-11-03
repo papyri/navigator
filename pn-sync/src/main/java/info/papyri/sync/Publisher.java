@@ -72,6 +72,10 @@ public class Publisher implements Runnable {
           }
           if (files.size() > 0) {
             status = MAPPING;
+            for (String url : urls) {
+              logger.info("Deleting '" + url + "'");
+              map.deleteUri(url);
+            }
             logger.info("Mapping " + files.size() +" files starting at " + new Date());
             map.mapFiles(files);
             status = INFERENCING;
