@@ -777,6 +777,7 @@
     <lst name="defaults">
       <str name="echoParams">explicit</str>
       <int name="rows">10</int>
+      <str name="q.op">OR</str>
       <!-- <str name="df">text</str> -->
     </lst>
     <!-- In addition to defaults, "appends" params can be specified
@@ -852,15 +853,15 @@
 
   <initParams path="/update/**,/query,/select,/tvrh,/elevate,/spell,/browse">
     <lst name="defaults">
-      <str name="df">_text_</str>
+      <str name="df">all</str>
     </lst>
   </initParams>
 
-  <!--<initParams path="/update/**">
+  <initParams path="/update/**">
     <lst name="defaults">
-      <str name="update.chain">add-unknown-fields-to-the-schema</str>
+      <str name="update.chain">truncate-untokenized</str>
     </lst>
-  </initParams>-->
+  </initParams>
 
   <!-- Solr Cell Update Request Handler
 
@@ -1168,22 +1169,7 @@
        results for a given query regardless of the normal lucene
        scoring.
     -->
-  <searchComponent name="elevator" class="solr.QueryElevationComponent" >
-    <!-- pick a fieldType to analyze queries -->
-    <str name="queryFieldType">string</str>
-    <str name="config-file">elevate.xml</str>
-  </searchComponent>
-
-  <!-- A request handler for demonstrating the elevator component -->
-  <requestHandler name="/elevate" class="solr.SearchHandler" startup="lazy">
-    <lst name="defaults">
-      <str name="echoParams">explicit</str>
-    </lst>
-    <arr name="last-components">
-      <str>elevator</str>
-    </arr>
-  </requestHandler>
-
+  <!-- REMOVED -->
   <!-- Highlighting Component
 
        http://wiki.apache.org/solr/HighlightingParameters
@@ -1299,6 +1285,16 @@
        http://wiki.apache.org/solr/UpdateRequestProcessor
 
     -->
+  
+  <updateRequestProcessorChain name="truncate-untokenized">
+    <processor class="solr.TruncateFieldUpdateProcessorFactory">
+      <str name="fieldName">untokenized</str>
+      <str name="fieldRegex">untokenized_.*</str>
+      <int name="maxLength">37000</int>
+    </processor>
+    <processor class="solr.LogUpdateProcessorFactory" />
+    <processor class="solr.RunUpdateProcessorFactory" />
+  </updateRequestProcessorChain>
   
   <!-- Add unknown fields to the schema 
   

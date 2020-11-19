@@ -14,7 +14,9 @@
       </analyzer>
     </fieldType>
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true"
+    <fieldType name="int" class="solr.IntPointField" omitNorms="true"
+      positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.LongPointField" omitNorms="true"
       positionIncrementGap="0"/>
   </types>
 
@@ -24,16 +26,12 @@
     <field name="date" type="int" indexed="true" stored="false" required="true"/>
     <field name="sort" type="string" indexed="true" stored="false" required="true"/>
     <field name="display" type="string" indexed="false" stored="true" required="true"/>
+    <field name="_version_" type="long" indexed="true" stored="true"/>
     <dynamicField name="*" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="all" type="lctext" indexed="true" stored="false" multiValued="true"/>
   </fields>
   
   <uniqueKey>id</uniqueKey>
-  
-  <defaultSearchField>all</defaultSearchField>
-  
-  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
-  <solrQueryParser defaultOperator="AND"/>
   
   <copyField source="*" dest="all"/>
   

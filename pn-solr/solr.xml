@@ -1,7 +1,3 @@
-<?xml version='1.0' encoding='UTF-8'?><solr persistent="true">
-<cores adminPath="/admin/cores">
-  <core name="pn-search" instanceDir="pn-search/"/>
-  <core name="morph-search" instanceDir="morph-search/"/>
-  <core name="biblio-search" instanceDir="biblio-search/"/>
-</cores>
+<?xml version="1.0" encoding="UTF-8" ?>
+<solr>
 </solr>
