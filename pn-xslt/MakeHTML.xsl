@@ -280,12 +280,12 @@
                       <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
                     </div>
                   </xsl:if>
-                  <xsl:if test="$apis and not($ddbdp or $hgv)">
+                  <xsl:if test="$apis and not($dclp or $ddbdp or $hgv)">
                     <div id="editthis" class="ui-widget-content ui-corner-all">
                       <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
                     </div>
                   </xsl:if>
-                  <xsl:if test="$dclp and not($ddbdp or $hgv or $apis)">
+                  <xsl:if test="$dclp and not($ddbdp or $hgv)">
                     <div id="editthis" class="ui-widget-content ui-corner-all">
                       <a href="/editor/publications/create_from_identifier/papyri.info/dclp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']}" rel="nofollow">open in editor</a>
                     </div>
