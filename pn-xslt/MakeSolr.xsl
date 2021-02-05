@@ -1231,6 +1231,8 @@
   <xsl:template match="t:lb[not(@break='no')]">
     <xsl:text> </xsl:text>
   </xsl:template>
+  
+  <xsl:template match="t:space[preceding-sibling::node()[1]/self::t:lb[@break='no']]"/>
 
   <xsl:template match="t:gap">
     <xsl:text> </xsl:text>
