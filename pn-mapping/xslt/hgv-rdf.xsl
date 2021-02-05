@@ -18,7 +18,7 @@
         <xsl:variable name="title" select="replace(normalize-unicode(replace($bibl/tei:title[@level='s'],'\s','_'), 'NFD'), '[^._a-zA-Z]', '')"/>
         <xsl:variable name="unicode-title" select="replace(replace($bibl/tei:title[@level='s'],'\s','_'), '[^._\p{L}]', '')"></xsl:variable>
         <xsl:variable name="cite_uri">http://papyri.info/hgv/<xsl:value-of select="$title"/><xsl:if test="$bibl//tei:biblScope[@type='volume']">_<xsl:value-of select="replace(normalize-space($bibl//tei:biblScope[@type='volume']), ' ', '_')"/></xsl:if><xsl:for-each select="$bibl//tei:biblScope[not(@type='volume')]">_<xsl:value-of select="encode-for-uri(normalize-space(.))"/></xsl:for-each></xsl:variable>
-        <xsl:variable name="ddb" select="tokenize(normalize-space(//tei:publicationStmt/tei:idno[@type='ddb-hybrid']), ';')"></xsl:variable>
+        <xsl:variable name="ddb" select="tokenize(normalize-space(//tei:publicationStmt/tei:idno[@type='ddb-hybrid'][1]), ';')"></xsl:variable>
         <xsl:variable name="ddb-doc-uri">
             <xsl:choose>
                 <xsl:when test="string-length($ddb[2]) = 0"><xsl:value-of select="concat('file://', $DDB-root, '/', $ddb[1], '/', $ddb[1], '.', encode-for-uri($ddb[3]), '.xml')"/></xsl:when>
