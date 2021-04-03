@@ -767,7 +767,7 @@
   <!-- Override template in htm-tpl-apparatus.xsl -->
   <xsl:template name="tpl-apparatus">
     <!-- An apparatus is only created if one of the following is true -->
-    <xsl:if test=".//t:choice | .//t:subst | .//t:app | .//t:g[@type='apostrophe'] |
+    <xsl:if test=".//t:choice | .//t:subst | .//t:app | .//t:g[@type='apostrophe' or @type='high-punctus' or @type='middot' or @type='low-punctus' or @type='diastole' or @type='hypodiastole'] |
       .//t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |
       .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
       
@@ -779,7 +779,7 @@
                   * hi not nested in the app part of an app;
                   * del or milestone.
         -->
-          <xsl:for-each select="(.//t:choice | .//t:subst | .//t:app)[not(ancestor::t:*[local-name()=('choice','subst','app')])] | .//t:g[@type='apostrophe'] |
+          <xsl:for-each select="(.//t:choice | .//t:subst | .//t:app)[not(ancestor::t:*[local-name()=('choice','subst','app')])] | .//t:g[@type=('apostrophe','high-punctus','middot','low-punctus','diastole','hypodiastole')] |
             .//t:hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')][not(ancestor::t:*[local-name()=('orig','reg','sic','corr','lem','rdg') 
             or self::t:del[@rend='corrected'] 
             or self::t:add[@place='inline']][1][local-name()=('reg','corr','rdg') 
