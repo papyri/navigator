@@ -151,14 +151,14 @@
                   <xsl:when test="$md-collection = 'hgv'">
                     <tr>
                       <th class="rowheader">License</th>
-                      <td><a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a>
-                        © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
+                      <td><a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://licensebuttons.net/l/by/3.0/80x15.png" /></a>
+                        © Heidelberger Gesamtverzeichnis der griechischen Papyrusurkunden Ägyptens.  This work is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</td>
                     </tr>
                   </xsl:when>
                   <xsl:otherwise>
                     <tr>
                       <th class="rowheader">License</th>
-                      <td><a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
+                      <td><a rel="license" href="https://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://licensebuttons.net/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
                     </tr>                  
                   </xsl:otherwise>
                 </xsl:choose>
@@ -953,26 +953,26 @@
     <xsl:choose>
       <xsl:when test="@target">This work is licensed under a <a rel="license" href="@target">
           <xsl:choose>
-            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/MIT')">MIT
+            <xsl:when test="starts-with(@target, 'https://creativecommons.org/licenses/MIT')">MIT
               License </xsl:when>
-            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/BSD')">BSD
+            <xsl:when test="starts-with(@target, 'https://creativecommons.org/licenses/BSD')">BSD
               2-Clause License </xsl:when>
-            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/GPL/2.0')">GNU
+            <xsl:when test="starts-with(@target, 'https://creativecommons.org/licenses/GPL/2.0')">GNU
               General Public License, version 2 </xsl:when>
-            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/LGPL/2.1')">
+            <xsl:when test="starts-with(@target, 'https://creativecommons.org/licenses/LGPL/2.1')">
               GNU Lesser General Public License, version 2.1 </xsl:when>
-            <xsl:when test="starts-with(@target, 'http://creativecommons.org/licenses/')">Creative
+            <xsl:when test="starts-with(@target, 'https://creativecommons.org/licenses/')">Creative
               Commons <xsl:choose>
                 <xsl:when
-                  test="starts-with(@target, 'http://creativecommons.org/licenses/publicdomain')">
+                  test="starts-with(@target, 'https://creativecommons.org/licenses/publicdomain')">
                   Copyright-Only Dedication (based on United States law) or Public Domain
                   Certification</xsl:when>
                 <xsl:when
-                  test="starts-with(@target, 'http://creativecommons.org/licenses/sampling/1.0')">Sampling 1.0</xsl:when>
+                  test="starts-with(@target, 'https://creativecommons.org/licenses/sampling/1.0')">Sampling 1.0</xsl:when>
                 <xsl:when
-                  test="starts-with(@target, 'http://creativecommons.org/licenses/sampling+/1.0')">Sampling Plus 1.0</xsl:when>
+                  test="starts-with(@target, 'https://creativecommons.org/licenses/sampling+/1.0')">Sampling Plus 1.0</xsl:when>
                 <xsl:when
-                  test="starts-with(@target, 'http://creativecommons.org/licenses/nc-sampling+/1.0')"
+                  test="starts-with(@target, 'https://creativecommons.org/licenses/nc-sampling+/1.0')"
                   >NonCommercial Sampling Plus 1.0</xsl:when>
                 <xsl:otherwise>
                   <xsl:if test="contains(@target, '/by')">Attribution</xsl:if>
