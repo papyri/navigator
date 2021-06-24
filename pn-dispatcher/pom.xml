@@ -7,8 +7,12 @@
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>pn-dispatcher</name>
-  <url>http://maven.apache.org</url>
   <repositories>
+    <repository>
+      <name>maven</name>
+      <id>maven</id>
+      <url>https://mvnrepository.com</url>
+    </repository>
     <repository>
      <id>github</id>
      <name>GitHub papyri Apache Maven Packages</name>
@@ -110,8 +114,8 @@
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-he</artifactId>
-      <version>9.4.0.3</version>
+      <artifactId>Saxon-HE</artifactId>
+      <version>9.4.0-9</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
