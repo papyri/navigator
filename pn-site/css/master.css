@@ -986,5 +986,90 @@ div.markdown em {
   font-style: italic;
 }
 
-
 /* End Markdown section */
+
+/* Begin campaign section */
+
+div#campaign {
+  background-color: rgba(255, 255, 255, .5);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+div#campaign div.campaignheader {
+  margin-top: 10vw;
+  margin-left: auto;
+  margin-right: auto;
+  height: 0;
+  width: 50vw;
+}
+
+div#campaign div.campaignheader a.closer {
+  display: block;
+  color: black;
+  font-size: 2em;
+  position: relative;
+  top: 0;
+  right: 0;
+  text-align: right;
+  text-decoration: none;
+}
+
+div#campaign div.markdown {
+  background-color: white;
+  border: 2px solid red;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin-top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1em;
+  padding-top: 2.5em;
+  text-align: justify;
+  width: 50vw;
+}
+
+div#campaign div.markdown h1 {
+  font-size: 48px;
+  text-align: center;
+}
+
+div#campaign div.markdown p {
+  font-size: 1.2em;
+  margin: 1em;
+}
+
+div#campaign div.markdown a {
+  color: black;
+}
+
+/* Begin Alert Section */
+
+div#alert {
+  background-color: rgba(255, 255, 255, .8);
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+div#alert a.closer {
+  color: black;
+  font-size: 2em;
+  position: absolute;
+  top: 0;
+  right: 1vw;
+  text-decoration: none;
+}
+
+div#alert div.markdown {
+  margin-bottom: .7em;
+  margin-top: .7em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75vw;
+}

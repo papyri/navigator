@@ -467,3 +467,82 @@ function alignRTL() {
   });
 
 }
+
+function getCampaign() {
+	if (canShowCampaign()) {
+		getMessage("/docs/campaign")
+			.then(message => {
+				if (message) {
+					let popup = document.createElement("div");
+					popup.setAttribute("id", "campaign");
+					popup.innerHTML = '<div class="campaignheader"><a title="close" class="closer" href="#" onclick="return hideCampaign(1)">×</a></div>';
+					message.querySelectorAll("a").forEach(a => a.setAttribute("onclick", "return hideCampaign(14)"));
+					popup.appendChild(document.adoptNode(message));
+					document.body.appendChild(popup);
+				}
+			});
+	}
+}
+	
+function hideCampaign(duration) {
+	const day = 86400000;
+	window.localStorage.setItem("Hide-papyriCampaign", (Date.now() + (duration * day)).toString());
+	let campaign = document.querySelector("#campaign");
+	campaign.parentElement.removeChild(campaign);
+}
+
+function canShowCampaign() {
+	//return false; // comment out to launch; re-comment to suspend
+	let time = window.localStorage.getItem("Hide-papyriCampaign");
+	if (time) {
+		time = Number.parseInt(time);
+		if (Date.now() < time) {
+			return false;
+		}
+	}
+	return true;
+}
+		
+function getAlert() {
+	getMessage("/docs/alert")
+		.then(message => {
+			if (message) {
+				let alert = document.createElement("div");
+				alert.setAttribute("id", "alert");
+				alert.innerHTML = '<a title="close" class="closer" href="#" onclick="return hideAlert()">×</a>';
+				alert.appendChild(document.adoptNode(message));
+				if (canShowAlert(alert)) {
+					document.body.appendChild(alert);
+				}
+			}
+		});
+}
+
+function hideAlert() {
+	let alert = document.querySelector("#alert");
+	window.localStorage.setItem("papyri.info-lastAlert", alert.outerHTML);
+	alert.parentElement.removeChild(alert);
+	return false;
+}
+	
+function canShowAlert(alert) {
+	let oldAlert = window.localStorage.getItem("papyri.info-lastAlert");
+	if (oldAlert) {
+		return oldAlert != alert.outerHTML;
+	} else {
+		return true;
+	}
+}
+	
+async function getMessage(url) {
+	const parser = new DOMParser();
+	let response = await fetch(url);
+	let message = null;
+	if (!response.ok) {
+		return false;
+	}
+	let body = await response.text();
+	let doc = parser.parseFromString(body, "text/html");
+	return doc.querySelector("div.markdown");
+}
+	
