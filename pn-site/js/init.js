@@ -67,8 +67,9 @@ function init() {
 
     var bibl = jQuery("div#bibliography li>a");
 
-
     addLinearBrowseControls();
+		getAlert();
+		getCampaign();
 }
 
 function getPath() {
