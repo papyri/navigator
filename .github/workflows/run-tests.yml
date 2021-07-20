@@ -21,6 +21,8 @@ jobs:
       env:
         MAVEN_GITHUB_USERNAME: ${{ secrets.MAVEN_GITHUB_USERNAME }}
         MAVEN_GITHUB_TOKEN: ${{ secrets.MAVEN_GITHUB_TOKEN }}
+    - name: Symlink directory
+      run: mkdir -p /srv/data/papyri.info/git/ && ln -s "$(pwd)" /srv/data/papyri.info/git/navigator
     - name: Run pn-dispatcher tests
       run: cd pn-dispatcher && mvn test
     - name: Run pn-sync tests
