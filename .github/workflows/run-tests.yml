@@ -31,10 +31,12 @@ jobs:
       run: sudo mkdir -p /srv/data/papyri.info/git/ && sudo ln -s "$(pwd)" /srv/data/papyri.info/git/navigator
     - name: Cache idp.data
       uses: actions/cache@v2
+      id: cache-idp-data
       with:
         path: /srv/data/papyri.info/idp.data
-        key: ${{ runner.os }}-idp-data
+        key: ${{ runner.os }}-idp-data-clone
     - name: Clone idp.data
+      if: steps.cache-idp-data.outputs.cache-hit != 'true'
       run: cd /srv/data/papyri.info && sudo git clone https://github.com/papyri/idp.data.git
     - name: Run pn-dispatcher tests
       run: cd pn-dispatcher && mvn test
