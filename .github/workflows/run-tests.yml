@@ -24,7 +24,7 @@ jobs:
     - name: Install Fuseki
       run: sudo mkdir -p /opt/fuseki && wget --no-check-certificate https://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-3.17.0.tar.gz -O-|sudo tar -zx --strip-components 1 -C /opt/fuseki/ apache-jena-fuseki-3.17.0
     - name: Run Fuseki
-      run: cd /opt/fuseki && sudo nohup ./fuseki-server --port=8090 --tdb2 --loc=/data --update /pi
+      run: cd /opt/fuseki && sudo nohup ./fuseki-server --port=8090 --tdb2 --loc=/data --update /pi &
       env:
         FUSEKI_HOME: /opt/fuseki
     - name: Symlink directory
