@@ -23,6 +23,11 @@ jobs:
         MAVEN_GITHUB_TOKEN: ${{ secrets.MAVEN_GITHUB_TOKEN }}
     - name: Symlink directory
       run: sudo mkdir -p /srv/data/papyri.info/git/ && sudo ln -s "$(pwd)" /srv/data/papyri.info/git/navigator
+    - name: Cache idp.data
+      uses: actions/cache@v2
+      with:
+        path: /srv/data/papyri.info/idp.data
+        key: ${{ runner.os }}-idp-data
     - name: Clone idp.data
       run: cd /srv/data/papyri.info && sudo git clone https://github.com/papyri/idp.data.git
     - name: Run pn-dispatcher tests
