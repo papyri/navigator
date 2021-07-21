@@ -21,12 +21,6 @@ jobs:
       env:
         MAVEN_GITHUB_USERNAME: ${{ secrets.MAVEN_GITHUB_USERNAME }}
         MAVEN_GITHUB_TOKEN: ${{ secrets.MAVEN_GITHUB_TOKEN }}
-    - name: Install Fuseki
-      run: sudo mkdir -p /opt/fuseki && wget --no-check-certificate https://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-3.17.0.tar.gz -O-|sudo tar -zx --strip-components 1 -C /opt/fuseki/ apache-jena-fuseki-3.17.0
-    - name: Run Fuseki
-      run: cd /opt/fuseki && sudo nohup ./fuseki-server --port=8090 --tdb2 --loc=/data --update /pi &
-      env:
-        FUSEKI_HOME: /opt/fuseki
     - name: Symlink directory
       run: sudo mkdir -p /srv/data/papyri.info/git/ && sudo ln -s "$(pwd)" /srv/data/papyri.info/git/navigator
     - name: Cache idp.data
@@ -40,5 +34,11 @@ jobs:
       run: cd /srv/data/papyri.info && sudo git clone https://github.com/papyri/idp.data.git
     - name: Run pn-dispatcher tests
       run: cd pn-dispatcher && mvn test
-    - name: Run pn-sync tests
-      run: cd pn-sync && mvn test
+    # - name: Install Fuseki
+    #   run: sudo mkdir -p /opt/fuseki && wget --no-check-certificate https://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-3.17.0.tar.gz -O-|sudo tar -zx --strip-components 1 -C /opt/fuseki/ apache-jena-fuseki-3.17.0
+    # - name: Run Fuseki
+    #   run: cd /opt/fuseki && sudo nohup ./fuseki-server --port=8090 --tdb2 --loc=/data --update /pi &
+    #   env:
+    #     FUSEKI_HOME: /opt/fuseki
+    # - name: Run pn-sync tests
+    #   run: cd pn-sync && mvn test
