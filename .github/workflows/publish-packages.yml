@@ -20,10 +20,10 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2
       - name: Publish pn-dispatcher package
-        run: cd pn-dispatcher && mvn --batch-mode deploy
+        run: cd pn-dispatcher && mvn --batch-mode deploy -Dmaven.test.skip=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish pn-sync package
-        run: cd pn-sync && mvn --batch-mode deploy
+        run: cd pn-sync && mvn --batch-mode deploy -Dmaven.test.skip=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
