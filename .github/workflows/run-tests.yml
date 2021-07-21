@@ -19,8 +19,8 @@ jobs:
     - name: Configure Maven
       run: mkdir -p ~/.m2 && cat .github/m2settings.xml | sed -e "s/MAVEN_GITHUB_USERNAME/${MAVEN_GITHUB_USERNAME}/" -e "s/MAVEN_GITHUB_TOKEN/${MAVEN_GITHUB_TOKEN}/" > ~/.m2/settings.xml
       env:
-        MAVEN_GITHUB_USERNAME: ${{ secrets.MAVEN_GITHUB_USERNAME }}
-        MAVEN_GITHUB_TOKEN: ${{ secrets.MAVEN_GITHUB_TOKEN }}
+        MAVEN_GITHUB_USERNAME: papyri
+        MAVEN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Symlink directory
       run: sudo mkdir -p /srv/data/papyri.info/git/ && sudo ln -s "$(pwd)" /srv/data/papyri.info/git/navigator
     - name: Cache idp.data
