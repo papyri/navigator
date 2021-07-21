@@ -18,7 +18,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Publish pn-dispatcher package
         run: cd pn-dispatcher && mvn --batch-mode deploy -Dmaven.test.skip=true
         env:
