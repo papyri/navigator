@@ -14,6 +14,11 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+      - name: Cache Java Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2
       - name: Publish pn-dispatcher package
         run: cd pn-dispatcher && mvn --batch-mode deploy
         env:
