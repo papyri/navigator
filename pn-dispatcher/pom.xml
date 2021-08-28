@@ -10,6 +10,11 @@
   <url>http://maven.apache.org</url>
   <repositories>
     <repository>
+        <name>maven</name>
+        <id>maven</id>
+        <url>https://mvnrepository.com</url>
+      </repository>
+    <repository>
         <id>github</id>
         <name>GitHub papyri Apache Maven Packages</name>
         <url>https://maven.pkg.github.com/papyri/navigator</url>
