@@ -1,43 +1,39 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package info.papyri.dispatch.pegdown;
+package info.papyri.dispatch.markdown;
 
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import junit.framework.TestCase;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import org.pegdown.PegDownProcessor;
-import org.pegdown.plugins.PegDownPlugins;
-import org.pegdown.Extensions;
-import info.papyri.dispatch.pegdown.PNCustomLinkPlugin;
+import java.util.Collections;
 
 /**
  *
- * @author hcayless
+ * @author Hugh A. Cayless
  */
-public class PNCustomLinkPluginTest extends TestCase {
+public class PNLinkExtensionTest extends TestCase {
+  private static final DataHolder OPTIONS = new MutableDataSet().set(Parser.EXTENSIONS, 
+          Collections.singletonList(PNLinkExtension.create()));
+  private static final Parser PARSER = Parser.builder(OPTIONS).build();
+  private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
   
-  public PNCustomLinkPluginTest(String testName) {
-    super(testName);
-  }
-
   /**
    * Test of DDbLinks in PN custom parser. These have the form:
-   * {ddb:bgu;1;2}, which should produce: 
-   * <a href="/ddbdp/bgu;1;2" id="bgu;1;2">bgu;1;2</a>
+   * <ddb:bgu;1;2>, which should produce: 
+   * <a href="/ddbdp/bgu;1;2">bgu;1;2</a>
    */
   public void testDDbLink() {
     System.out.println("DDbLink");
-    PegDownPlugins.Builder plugins = PegDownPlugins.builder();
-    plugins.withPlugin(PNCustomLinkPlugin.class);
-    PNPegDownProcessor peg = new PNPegDownProcessor(
-            Extensions.NONE, 
-            PegDownProcessor.DEFAULT_MAX_PARSING_TIME,
-            plugins.build(),
-            new PNCustomLinkPlugin());
     StringBuilder testMd = new StringBuilder();
     StringBuilder testHtml = new StringBuilder();
     char[] buffer = new char[1024];
@@ -56,7 +52,9 @@ public class PNCustomLinkPluginTest extends TestCase {
     } catch (IOException e) {
       fail("File " + this.getClass().getResource("/DDbLink.md") + " not found.");
     }
-    String result = peg.markdownToHtml(testMd.toString());
+    Node doc = PARSER.parse(testMd.toString());
+    String result = RENDERER.render(doc);
+    System.out.println("Result: " + result);
     assertEquals(result, testHtml.toString());
   }
 
@@ -65,13 +63,7 @@ public class PNCustomLinkPluginTest extends TestCase {
    */
   public void testBibLink() {
     System.out.println("BibLink");
-    PegDownPlugins.Builder plugins = PegDownPlugins.builder();
-    plugins.withPlugin(PNCustomLinkPlugin.class);
-    PNPegDownProcessor peg = new PNPegDownProcessor(
-            Extensions.NONE, 
-            PegDownProcessor.DEFAULT_MAX_PARSING_TIME,
-            plugins.build(),
-            new PNCustomLinkPlugin());
+    
     StringBuilder testMd = new StringBuilder();
     StringBuilder testHtml = new StringBuilder();
     char[] buffer = new char[1024];
@@ -90,8 +82,8 @@ public class PNCustomLinkPluginTest extends TestCase {
     } catch (IOException e) {
       fail("File " + this.getClass().getResource("/BibLink.md") + " not found.");
     }
-    String result = peg.markdownToHtml(testMd.toString());
+    Node doc = PARSER.parse(testMd.toString());
+    String result = RENDERER.render(doc);
     assertEquals(result, testHtml.toString());
   }
-
 }

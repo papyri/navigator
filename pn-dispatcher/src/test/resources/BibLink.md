@@ -1,7 +1,7 @@
 ### Testing Bibliography auto-links
 
- * {bib:59050}
- * {bib:66176}
+ * <bib:59050>
+ * <bib:66176>
 
 These should be roughly equivalent to 
 

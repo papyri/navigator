@@ -1,7 +1,12 @@
 package info.papyri.dispatch;
 
-import info.papyri.dispatch.pegdown.PNCustomLinkPlugin;
-import info.papyri.dispatch.pegdown.PNPegDownProcessor;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
+import com.vladsch.flexmark.util.data.MutableDataSet;
+import info.papyri.dispatch.markdown.PNLinkExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +24,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import org.apache.log4j.Logger;
-import org.pegdown.Extensions;
-import org.pegdown.PegDownProcessor;
-import org.pegdown.plugins.PegDownPlugins;
+
 
 /**
  *
@@ -33,20 +37,17 @@ public class MDReader extends HttpServlet {
 
   private static String DOCSHOME;
   private static String TEMPLATE;
-  private PegDownProcessor peg;
-  private static Logger logger = Logger.getLogger("pn-dispatch");
+  private static final DataHolder OPTIONS = new MutableDataSet().set(Parser.EXTENSIONS, 
+          Collections.singletonList(PNLinkExtension.create()));
+  private static final Parser PARSER = Parser.builder(OPTIONS).build();
+  private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
+  private static final Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) {
     DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
-    PegDownPlugins.Builder plugins = PegDownPlugins.builder();
-    plugins.withPlugin(PNCustomLinkPlugin.class);
-    peg = new PNPegDownProcessor(
-            Extensions.NONE, 
-            PegDownProcessor.DEFAULT_MAX_PARSING_TIME,
-            plugins.build(),
-            new PNCustomLinkPlugin());
+    
     ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
   }
 
@@ -94,9 +95,10 @@ public class MDReader extends HttpServlet {
             out.println(line);
             cacheOut.println(line);
             if (line.contains("<div class=\"markdown\">")) {
-              String md = peg.markdownToHtml(mdf.toString());
-              out.write(md);
-              cacheOut.write(md);
+              Node md = PARSER.parse(mdf.toString());
+              String result = RENDERER.render(md);
+              out.write(result);
+              cacheOut.write(result);
               reader.readLine(); // assume template has a throwaway line inside the content div
             }
           }

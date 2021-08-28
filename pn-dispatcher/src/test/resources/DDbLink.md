@@ -1,7 +1,7 @@
 ### Testing Duke Databank auto-links
 
- * {ddb:bgu;1;2}
- * {ddb:p.alex.giss;;1}
+ * <ddb:bgu;1;2>
+ * <ddb:p.alex.giss;;1>
 
 These should be roughly equivalent to 
 
