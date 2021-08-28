@@ -45,6 +45,8 @@ public class PNLinkRenderer implements NodeRenderer {
         html.withAttr().tag("a");
         html.text(text.substring(4));
         html.tag("/a");
+      } else {
+        context.delegateRender();
       }
     }));
     return set;

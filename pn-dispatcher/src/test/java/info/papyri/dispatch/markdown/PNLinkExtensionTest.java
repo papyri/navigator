@@ -54,8 +54,7 @@ public class PNLinkExtensionTest extends TestCase {
     }
     Node doc = PARSER.parse(testMd.toString());
     String result = RENDERER.render(doc);
-    System.out.println("Result: " + result);
-    assertEquals(result, testHtml.toString());
+    assertEquals(testHtml.toString(), result);
   }
 
   /**
@@ -84,6 +83,6 @@ public class PNLinkExtensionTest extends TestCase {
     }
     Node doc = PARSER.parse(testMd.toString());
     String result = RENDERER.render(doc);
-    assertEquals(result, testHtml.toString());
+    assertEquals(testHtml.toString(), result);
   }
 }
