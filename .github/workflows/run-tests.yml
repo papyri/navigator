@@ -14,31 +14,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev openjdk-11-jdk-headless maven git perl tar wget curl
-    - name: Configure Maven
-      run: mkdir -p ~/.m2 && cat .github/m2settings.xml | sed -e "s/MAVEN_GITHUB_USERNAME/${MAVEN_GITHUB_USERNAME}/" -e "s/MAVEN_GITHUB_TOKEN/${MAVEN_GITHUB_TOKEN}/" > ~/.m2/settings.xml
-      env:
-        MAVEN_GITHUB_USERNAME: ${{ secrets.MAVEN_GITHUB_USERNAME }}
-        MAVEN_GITHUB_TOKEN: ${{ secrets.MAVEN_GITHUB_TOKEN }}
-    - name: Install Fuseki
-      run: sudo mkdir -p /opt/fuseki && wget --no-check-certificate https://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-3.17.0.tar.gz -O-|sudo tar -zx --strip-components 1 -C /opt/fuseki/ apache-jena-fuseki-3.17.0
-    - name: Run Fuseki
-      run: cd /opt/fuseki && sudo nohup ./fuseki-server --port=8090 --tdb2 --loc=/data --update /pi &
-      env:
-        FUSEKI_HOME: /opt/fuseki
-    - name: Symlink directory
-      run: sudo mkdir -p /srv/data/papyri.info/git/ && sudo ln -s "$(pwd)" /srv/data/papyri.info/git/navigator
-    - name: Cache idp.data
-      uses: actions/cache@v2
-      id: cache-idp-data
+    - uses: actions/setup-java@v2
       with:
-        path: /srv/data/papyri.info/idp.data
-        key: ${{ runner.os }}-idp-data-clone
-    - name: Clone idp.data
-      if: steps.cache-idp-data.outputs.cache-hit != 'true'
-      run: cd /srv/data/papyri.info && sudo git clone https://github.com/papyri/idp.data.git
+        java-version: '8'
+        distribution: 'adopt'
+    - name: Cache Java Packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Run pn-dispatcher tests
       run: cd pn-dispatcher && mvn test
-    - name: Run pn-sync tests
-      run: cd pn-sync && mvn test
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Install dependencies
+    # run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev openjdk-11-jdk-headless maven git perl tar wget curl
+    # - name: Symlink directory
+    #   run: sudo mkdir -p /srv/data/papyri.info/git/ && sudo ln -s "$(pwd)" /srv/data/papyri.info/git/navigator
+    # - name: Cache idp.data
+    #   uses: actions/cache@v2
+    #   id: cache-idp-data
+    #   with:
+    #     path: /srv/data/papyri.info/idp.data
+    #     key: ${{ runner.os }}-idp-data-clone
+    # - name: Clone idp.data
+    #   if: steps.cache-idp-data.outputs.cache-hit != 'true'
+    #   run: cd /srv/data/papyri.info && sudo git clone https://github.com/papyri/idp.data.git
+    # - name: Install Fuseki
+    #   run: sudo mkdir -p /opt/fuseki && wget --no-check-certificate https://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-3.17.0.tar.gz -O-|sudo tar -zx --strip-components 1 -C /opt/fuseki/ apache-jena-fuseki-3.17.0
+    # - name: Run Fuseki
+    #   run: cd /opt/fuseki && sudo nohup ./fuseki-server --port=8090 --tdb2 --loc=/data --update /pi &
+    #   env:
+    #     FUSEKI_HOME: /opt/fuseki
+    # - name: Run pn-sync tests
+    #   run: cd pn-sync && mvn test
