@@ -10,15 +10,18 @@
   <url>http://maven.apache.org</url>
   <repositories>
     <repository>
-        <name>maven</name>
-        <id>maven</id>
-        <url>https://mvnrepository.com</url>
-      </repository>
+      <name>maven</name>
+      <id>maven</id>
+      <url>https://mvnrepository.com</url>
+    </repository>
     <repository>
-        <id>github</id>
-        <name>GitHub papyri Apache Maven Packages</name>
-        <url>https://maven.pkg.github.com/papyri/navigator</url>
-      </repository>
+      <id>github</id>
+      <name>GitHub papyri Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/papyri/navigator</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <releases>
         <enabled>false</enabled>
@@ -87,7 +90,7 @@
     <dependency>
       <groupId>edu.unc.epidoc</groupId>
       <artifactId>transcoder</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.antlr</groupId>
@@ -116,8 +119,8 @@
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-he</artifactId>
-      <version>9.4.0.3</version>
+      <artifactId>Saxon-HE</artifactId>
+      <version>10.5</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jgit</groupId>

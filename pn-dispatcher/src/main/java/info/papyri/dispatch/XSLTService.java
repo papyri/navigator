@@ -90,7 +90,8 @@ public class XSLTService extends HttpServlet {
             xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
           }
           xslt.setSource(new StreamSource(util.getXmlFileFromId(request.getParameter("doc"))));
-          xslt.setDestination(new Serializer(out));
+          Processor processor = new Processor(false);
+          xslt.setDestination(processor.newSerializer(out));
           xslt.transform();
         } catch (Exception e) {
           log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
@@ -128,7 +129,8 @@ public class XSLTService extends HttpServlet {
           xslt.setParameter(new QName("collection"), new XdmAtomicValue(request.getParameter("coll")));
         }
         xslt.setSource(new StreamSource(request.getReader()));
-        xslt.setDestination(new Serializer(out));
+        Processor processor = new Processor(false);
+        xslt.setDestination(processor.newSerializer(out));
         xslt.transform();
       } catch (Exception e) {
         log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
