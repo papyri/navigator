@@ -134,6 +134,7 @@ public class GitWrapperTest {
     assertEquals(expResult, result);
   }
   
+  
   @Test
   public void testMapping() {
     System.out.println("Testing Mapping");

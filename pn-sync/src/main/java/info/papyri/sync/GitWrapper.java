@@ -17,9 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  *
@@ -414,7 +413,7 @@ public class GitWrapper {
     try {
         URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
         JsonNode root = getJson(m);
-        Iterator<JsonNode> i = root.path("results").path("bindings").getElements();
+        Iterator<JsonNode> i = root.path("results").path("bindings").elements();
         while (i.hasNext()) {
           result.add(i.next().path("id").path("value").asText());
         }
