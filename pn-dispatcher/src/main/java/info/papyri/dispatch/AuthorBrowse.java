@@ -5,30 +5,28 @@
 package info.papyri.dispatch;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.FacetField.Count;
+import org.apache.solr.client.solrj.response.QueryResponse;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.response.FacetField.Count;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 
 /**
@@ -46,7 +44,6 @@ public class AuthorBrowse extends HttpServlet {
   public void init(ServletConfig config) {
     TEMPLATE = config.getInitParameter("template");
     solrUrl = config.getInitParameter("solrUrl");
-    ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
     logger.info("Template: " + TEMPLATE);
     logger.info("Solr URL: " + solrUrl);
   }
@@ -81,7 +78,7 @@ public class AuthorBrowse extends HttpServlet {
         QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
         authors = qr.getFacetField("author_work").getValues();
     } catch (SolrServerException sse) {
-        logger.error("Unable to execute query.", sse);
+        logger.log(Level.SEVERE, "Unable to execute query.", sse);
         authors = new ArrayList<>();
     }
 

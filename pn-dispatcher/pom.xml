@@ -5,7 +5,7 @@
   <groupId>info.papyri</groupId>
   <artifactId>pn-dispatcher</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1</version>
   <name>pn-dispatcher</name>
   <url>https://maven.apache.org</url>
   <pluginRepositories>
@@ -56,6 +56,13 @@
       <url>https://repo.eclipse.org/content/groups/releases/</url>
     </repository>
   </repositories>
+  <distributionManagement>
+    <repository>
+     <id>github</id>
+     <name>GitHub papyri Apache Maven Packages</name>
+     <url>https://maven.pkg.github.com/papyri/navigator</url>
+    </repository>
+  </distributionManagement>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -110,16 +117,6 @@
       <version>1.1.1</version>  
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.6.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.6.0</version>
-    </dependency>
-    <dependency>
       <groupId>net.sf.saxon</groupId>
       <artifactId>Saxon-HE</artifactId>
       <version>10.5</version>
@@ -133,7 +130,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.2</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -147,6 +144,9 @@
           <source>11</source>
           <target>11</target>
           <encoding>${project.build.sourceEncoding}</encoding>
+          <compilerArgs>
+            <arg>-Xlint:unchecked</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>

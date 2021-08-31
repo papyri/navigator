@@ -30,7 +30,8 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -47,7 +48,7 @@ public class XSLTService extends HttpServlet {
 
   @Override
   public void init(ServletConfig config) {
-    log = Logger.getLogger(this.getClass());
+    log = Logger.getLogger("pn-dispatch");
     util = new FileUtils(config.getInitParameter("xmlPath"));
     Enumeration<String> names = config.getInitParameterNames();
     xslts = new HashMap<String, XsltExecutable>();
@@ -64,7 +65,7 @@ public class XSLTService extends HttpServlet {
           XsltExecutable xslt = compiler.compile(new StreamSource(new File(config.getInitParameter(name))));
           xslts.put(name, xslt);
         } catch (SaxonApiException e) {
-          log.error("Failed to compile "+name+".", e);
+          log.log(Level.SEVERE, "Failed to compile "+name+".", e);
         }
       }
     }
@@ -94,7 +95,7 @@ public class XSLTService extends HttpServlet {
           xslt.setDestination(processor.newSerializer(out));
           xslt.transform();
         } catch (Exception e) {
-          log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
+          log.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
         } finally {
           out.close();
         }
@@ -133,7 +134,7 @@ public class XSLTService extends HttpServlet {
         xslt.setDestination(processor.newSerializer(out));
         xslt.transform();
       } catch (Exception e) {
-        log.error("Transformation "+request.getParameter("xsl")+" failed.", e);
+        log.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
       } finally {
         out.close();
       }

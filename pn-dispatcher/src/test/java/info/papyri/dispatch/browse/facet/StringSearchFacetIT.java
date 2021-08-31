@@ -97,32 +97,32 @@ public class StringSearchFacetIT extends TestCase {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
-              @Override
-              public Servlet getServlet(String string) throws ServletException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-              }
+                @Override
+                public Servlet getServlet(String s) throws ServletException {
+                    return null;
+                }
 
-              @Override
-              public Enumeration getServlets() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-              }
+                @Override
+                public Enumeration getServlets() {
+                    return null;
+                }
 
-              @Override
-              public Enumeration getServletNames() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-              }
+                @Override
+                public Enumeration getServletNames() {
+                    return null;
+                }
 
-              @Override
+                @Override
               public void log(String string) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
-              @Override
-              public void log(Exception excptn, String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-              }
+                @Override
+                public void log(Exception e, String s) {
 
-              @Override
+                }
+
+                @Override
               public void log(String string, Throwable thrwbl) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }

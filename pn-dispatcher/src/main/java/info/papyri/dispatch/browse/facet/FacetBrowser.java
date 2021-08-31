@@ -39,7 +39,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import info.papyri.dispatch.ServletUtils;
 import java.util.logging.Level;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 @WebServlet(name = "FacetBrowser", urlPatterns = {"/search"})
 /**
@@ -93,7 +93,6 @@ public class FacetBrowser extends HttpServlet {
   public void init(ServletConfig config) throws ServletException {
 
     super.init(config);
-    ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
     SOLR_URL = config.getInitParameter("solrUrl");
     SOLR_UTIL = new SolrUtils(config);
     home = config.getInitParameter("home");
@@ -335,10 +334,10 @@ public class FacetBrowser extends HttpServlet {
       QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
       return qr;
     } catch (MalformedURLException murle) {
-      logger.error("MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
+      logger.log(Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
       return null;
     } catch (SolrServerException sse) {
-      logger.error("SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
+      logger.log(Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
       return null;
     } catch (IOException ex) {
           java.util.logging.Logger.getLogger(FacetBrowser.class.getName()).log(Level.SEVERE, null, ex);
@@ -439,7 +438,7 @@ public class FacetBrowser extends HttpServlet {
         counter++;
 
       } catch (MalformedURLException mue) {
-        logger.error("Malformed URL in retrieveRecords: " + mue.getMessage(), mue);
+        logger.log(Level.SEVERE, "Malformed URL in retrieveRecords: " + mue.getMessage(), mue);
       }
     }
 
@@ -480,7 +479,6 @@ public class FacetBrowser extends HttpServlet {
    * @param constraintsPresent
    * @param resultsSize
    * @param returnedRecords
-   * @param solrQuery Used for cheap 'n' easy debugging only
    * @return The complete HTML for all interactive portions of the page, as
    * a <code>String</code>
    */
@@ -540,7 +538,7 @@ public class FacetBrowser extends HttpServlet {
 
     } catch (FacetNotFoundException fnfe) {
 
-      logger.warn(fnfe.getMessage(), fnfe);
+      logger.log(Level.WARNING, fnfe.getMessage(), fnfe);
       html.append("<!-- Facet not found ");
       html.append(fnfe.getMessage());
       html.append(" -->");
@@ -599,7 +597,6 @@ public class FacetBrowser extends HttpServlet {
    * @param constraintsPresent
    * @param resultSize
    * @param html
-   * @param sq Used in debugging only
    * @return A <code>StringBuilder</code> holding the HTML for the records
    * returned by the Solr server
    * @see DocumentBrowseRecord#getHTML()
@@ -833,7 +830,7 @@ public class FacetBrowser extends HttpServlet {
    * The complicating factor is that the current query string needs to be
    * regenerated for each link in order to maintain state across the pages.
    *
-   * @param paramsToFacets
+   * @param facets
    * @param resultSize
    * @return The HTML used for pagination display, as a <code>String</code>
    * @see #buildFullQueryString(java.util.EnumMap)

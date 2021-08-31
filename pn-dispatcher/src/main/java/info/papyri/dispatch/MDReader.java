@@ -4,7 +4,6 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.DataHolder;
-import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import info.papyri.dispatch.markdown.PNLinkExtension;
 
@@ -25,8 +24,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
-import org.apache.log4j.Logger;
-
 
 /**
  *
@@ -41,14 +38,11 @@ public class MDReader extends HttpServlet {
           Collections.singletonList(PNLinkExtension.create()));
   private static final Parser PARSER = Parser.builder(OPTIONS).build();
   private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
-  private static final Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) {
     DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
-    
-    ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
   }
 
   /**

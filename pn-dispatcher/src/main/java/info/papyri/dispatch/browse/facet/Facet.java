@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
@@ -335,7 +336,7 @@ abstract public class Facet {
 
 
         } catch (UnsupportedEncodingException uee) {
-          logger.error(uee.getMessage(), uee);
+          logger.log(Level.SEVERE, uee.getMessage(), uee);
         }
 
       }

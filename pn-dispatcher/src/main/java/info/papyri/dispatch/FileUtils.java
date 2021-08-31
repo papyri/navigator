@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -365,14 +366,14 @@ public class FileUtils {
         t.append(buffer, 0, size);
       }
     } catch (Exception e) {
-      logger.error("Failed to read " + f.getAbsolutePath(), e);
+      logger.log(Level.SEVERE, "Failed to read " + f.getAbsolutePath(), e);
     } finally {
       try {
         if (reader != null) {
           reader.close();
         }
       } catch (IOException e) {
-        logger.error(e.getLocalizedMessage(), e);
+        logger.log(Level.SEVERE, e.getLocalizedMessage(), e);
       }
     }
     return t.toString();

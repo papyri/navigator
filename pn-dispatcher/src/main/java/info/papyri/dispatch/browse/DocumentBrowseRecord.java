@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The
@@ -710,7 +711,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       html.append("</td></tr>");
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
-      logger.error("Highlightling failure", e);
+      logger.log(Level.SEVERE, "Highlightling failure", e);
     }
     return html.toString();
 

@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import javax.servlet.ServletConfig;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
@@ -64,7 +65,7 @@ public class GitAPI extends HttpServlet {
       out.println("\"");
       out.println("}");
     } catch (Exception e) {
-      logger.error(e);
+      logger.log(Level.SEVERE, "Couldn't get last commit", e);
     } finally {      
       out.close();
     }
@@ -77,7 +78,7 @@ public class GitAPI extends HttpServlet {
         this.repo = new FileRepository(repo);
         this.git = new org.eclipse.jgit.api.Git(this.repo);
       } catch (IOException e) {
-        logger.error(e);
+        logger.log(Level.SEVERE, "Couldn't get repository " + repo, e);
       }
     }
     
@@ -102,7 +103,7 @@ public class GitAPI extends HttpServlet {
           walk.next();
           return walk.getObjectId(0).name();
       } catch (Exception e) {
-          logger.error(e);
+          logger.log(Level.SEVERE, "Failure walking tree " + path, e);
           return "";
       }
     }

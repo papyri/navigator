@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -43,7 +44,6 @@ public class Reader extends HttpServlet {
     util = new FileUtils(xmlPath, htmlPath);
     solrutil = new SolrUtils(config);
     sparqlServer = config.getInitParameter("sparqlUrl");
-    ServletUtils.setupLogging(config.getServletContext(), config.getInitParameter("log4j-properties-location"));
   }
 
   /**
@@ -121,7 +121,7 @@ public class Reader extends HttpServlet {
         query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
         q = query.toString();
       } catch (Exception e) {
-        logger.error("Error expanding lemmas.", e);
+        logger.log(Level.SEVERE, "Error expanding lemmas.", e);
       }
     }
     if (f != null && f.exists()) {
@@ -129,7 +129,7 @@ public class Reader extends HttpServlet {
         Pattern[] patterns = util.buildPatterns(q);
         out.write(util.highlight(patterns, util.loadFile(f)));
       } catch (Exception e) {
-        logger.error("Error while writing highligted file " + f.getAbsolutePath(), e);
+        logger.log(Level.SEVERE, "Error while writing highligted file " + f.getAbsolutePath(), e);
       } finally {
         out.close();
       }
@@ -169,7 +169,7 @@ public class Reader extends HttpServlet {
       }
       
     } catch (Exception e) {
-      logger.error("Unable to resolve file using query; " + sparql, e);
+      logger.log(Level.SEVERE, "Unable to resolve file using query; " + sparql, e);
       return null;
     }
     return result;

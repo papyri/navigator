@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,8 +23,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Servlet enabling collection-browsing functionality
@@ -42,7 +43,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  * 
  * 
  * @author thill
- * @see CollectionBrowser#parseUriToCollectionRecord(java.util.LinkedHashMap, java.lang.String, java.lang.String, java.lang.String)  
+ * @see CollectionBrowser#parseUriToCollectionRecord(java.util.EnumMap, String, String, String, String)
  * @see DocumentCollectionBrowseRecord
  */
 @WebServlet(name = "CollectionBrowser", urlPatterns = {"/browse"})
@@ -63,9 +64,8 @@ public class CollectionBrowser extends HttpServlet {
     /* an ordered list of the classification hierarchy: collection (ddbdp | hgv | apis), series, volume, and item identifer.
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
-    static ArrayList<SolrField> ORG_HIERARCHY = new ArrayList<SolrField>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume));
-    static ArrayList<String> COLLECTIONS = new ArrayList<String>(Arrays.asList("ddbdp", "hgv", "apis", "dclp"));
-    
+    static ArrayList<SolrField> ORG_HIERARCHY = new ArrayList<>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume));
+
     @Override
     public void init(ServletConfig config) throws ServletException{
         
@@ -101,7 +101,7 @@ public class CollectionBrowser extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             request.setCharacterEncoding("UTF-8");        
             EnumMap<SolrField, String> pathParts = parseRequest(request);
-            ArrayList<DocumentCollectionBrowseRecord> records = new ArrayList<DocumentCollectionBrowseRecord>();
+            ArrayList<DocumentCollectionBrowseRecord> records;
             String sparqlQuery = buildSparqlQuery(pathParts);
             JsonNode resultNode = runSparqlQuery(sparqlQuery);
             records = buildCollectionList(pathParts, resultNode);    
@@ -127,7 +127,7 @@ public class CollectionBrowser extends HttpServlet {
         String queryParam = request.getParameter("q");
         int docIndex = queryParam.indexOf(docPath);
         String pathInfo = (docIndex == -1 ? queryParam : queryParam.substring(0, docIndex - 1));
-        EnumMap<SolrField, String> pathComponents = new EnumMap<SolrField, String>(SolrField.class);
+        EnumMap<SolrField, String> pathComponents = new EnumMap<>(SolrField.class);
         
         String[] pathParts = pathInfo.split("/");
         
@@ -163,9 +163,8 @@ public class CollectionBrowser extends HttpServlet {
         // extract info from pathbits
         
         // delimiter form: collection/series;volume 
-    
-        String collection = pathParts.get(SolrField.collection);
-        String subj = collection;
+
+        String subj = pathParts.get(SolrField.collection);
         if(pathParts.get(SolrField.series) != null){
             
             subj += "/" + pathParts.get(SolrField.series);
@@ -203,7 +202,7 @@ public class CollectionBrowser extends HttpServlet {
         
         try{
               
-          URL sparq = new URL("http://localhost:8090/pi/query?query=" + URLEncoder.encode(sparqlQuery, "UTF-8") + "&output=json");
+          URL sparq = new URL("http://localhost:8090/pi/query?query=" + URLEncoder.encode(sparqlQuery, StandardCharsets.UTF_8) + "&output=json");
           HttpURLConnection http = (HttpURLConnection)sparq.openConnection();
           http.setConnectTimeout(2000);
           ObjectMapper o = new ObjectMapper();
@@ -224,7 +223,7 @@ public class CollectionBrowser extends HttpServlet {
     /**
      * Parses the root JsonNode into a list of <code>DocumentCollectionBrowseRecord</code>s.
      * 
-     * @param A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
      * of the collection hierarchy
      * @param resultNode The root JsonNode returned by Mulgara
      * @return An ArrayList of <code>BrowseRecord</code> objects
@@ -236,16 +235,16 @@ public class CollectionBrowser extends HttpServlet {
     
     ArrayList<DocumentCollectionBrowseRecord> buildCollectionList(EnumMap<SolrField, String> pathParts, JsonNode resultNode){
         
-        ArrayList<DocumentCollectionBrowseRecord> records = new ArrayList<DocumentCollectionBrowseRecord>();
+        ArrayList<DocumentCollectionBrowseRecord> records = new ArrayList<>();
         Iterator<JsonNode> rnit = resultNode.iterator();
-        ArrayList<String> childLog = new ArrayList<String>();
+        ArrayList<String> childLog = new ArrayList<>();
         while(rnit.hasNext()){
             
             JsonNode result = rnit.next();
-            String child = result.path("child").path("value").getValueAsText();
-            String type = result.path("type").path("value").getValueAsText();
-            String label = stringifyUnicodeLiterals(result.path("label").path("value").getValueAsText());
-            String parent = stringifyUnicodeLiterals(result.path("parent").path("value").getValueAsText());
+            String child = result.path("child").path("value").asText();
+            String type = result.path("type").path("value").asText();
+            String label = stringifyUnicodeLiterals(result.path("label").path("value").asText());
+            String parent = stringifyUnicodeLiterals(result.path("parent").path("value").asText());
             if(!childLog.contains(child)){
                 
                 DocumentCollectionBrowseRecord dbr = parseUriToCollectionRecord(pathParts, child, type, label, parent);
@@ -272,17 +271,17 @@ public class CollectionBrowser extends HttpServlet {
         
         if(lbl == null || lbl.equals("")) return "";
         
-        String cleanLabel = "";
+        StringBuilder cleanLabel = new StringBuilder();
         
         char[] labelBits = lbl.toCharArray();
         
         for(int i = 0; i < labelBits.length; i++){
             
-            cleanLabel += labelBits[i];
+            cleanLabel.append(labelBits[i]);
             
         }
         
-        return cleanLabel;
+        return cleanLabel.toString();
         
     }
     
@@ -295,10 +294,10 @@ public class CollectionBrowser extends HttpServlet {
      * <http://purl.org/dc/terms/hasPart> relation to the currently displayed children, as do the children with their 
      * grandchildren.
      * 
-     * @param A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
+     * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
      * of the collection hierarchy
-     * @param child A URI returned from Mulgara and representing a document collection
-     * @param grandchild A URI returned from Mulgara, representing a document collection or document 
+     * @param child A URI returned from triplestore and representing a document collection
+     * @param type A URI returned from triplestore, representing a document collection or document
      * descended from <code>child</code>
      * @return DocumentCollectionBrowseRecord The DocumentCollectionBrowseRecord derived from <code>child</code>
      * and <code>grandchild</code>
@@ -366,7 +365,7 @@ public class CollectionBrowser extends HttpServlet {
             } 
         
         }
-        catch(Exception e){ }
+        catch(Exception ignored){ }
         
     }
     
@@ -403,10 +402,9 @@ public class CollectionBrowser extends HttpServlet {
      * 
      * @param records The list of records to be displayed
      * @return String A String of html
-     * @deprecated 
      */
     String buildHTML(LinkedHashMap<SolrField, String> pathParts, ArrayList<DocumentCollectionBrowseRecord> records){
-        
+
         StringBuilder html = new StringBuilder("<h2>");
         html.append(pathParts.get(SolrField.collection));
         html.append("</h2>"); 
