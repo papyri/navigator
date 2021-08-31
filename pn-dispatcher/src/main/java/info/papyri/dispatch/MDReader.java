@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -38,6 +40,7 @@ public class MDReader extends HttpServlet {
           Collections.singletonList(PNLinkExtension.create()));
   private static final Parser PARSER = Parser.builder(OPTIONS).build();
   private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
+  private static final Logger LOGGER = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) {
@@ -97,6 +100,7 @@ public class MDReader extends HttpServlet {
             }
           }
         } catch (IOException e) {
+          LOGGER.log(Level.SEVERE, "Unable to process MarkDown.", e);
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
           out.close();

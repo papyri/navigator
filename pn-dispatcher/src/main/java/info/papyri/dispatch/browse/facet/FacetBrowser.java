@@ -340,7 +340,7 @@ public class FacetBrowser extends HttpServlet {
       logger.log(Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
       return null;
     } catch (IOException ex) {
-          java.util.logging.Logger.getLogger(FacetBrowser.class.getName()).log(Level.SEVERE, null, ex);
+          logger.log(Level.SEVERE, null, ex);
           return null;
       }
 

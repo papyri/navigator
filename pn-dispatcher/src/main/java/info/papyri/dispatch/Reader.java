@@ -15,8 +15,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -159,7 +159,7 @@ public class Reader extends HttpServlet {
       Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
       String uri;
       while (i.hasNext()) {
-        uri = FileUtils.substringBefore(i.next().path("related").path("value").getTextValue(), "/source");
+        uri = FileUtils.substringBefore(i.next().path("related").path("value").asText(), "/source");
         if (uri.contains("ddbdp/") || uri.contains("hgv/") || uri.contains("dclp/")) {
           result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
         }
