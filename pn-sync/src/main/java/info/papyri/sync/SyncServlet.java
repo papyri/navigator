@@ -14,15 +14,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import static java.util.concurrent.TimeUnit.*;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -34,25 +32,11 @@ public class SyncServlet extends HttpServlet {
   private Publisher publisher;
   private static final ScheduledExecutorService scheduler =
           Executors.newScheduledThreadPool(1);
-  private static Logger logger = Logger.getLogger("pnsync");
+  private static final Logger logger = Logger.getLogger("pn-sync");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    String log4j = config.getInitParameter("log4j-properties-location");
-    ServletContext sc = config.getServletContext();
-    if (log4j == null) {
-      BasicConfigurator.configure();
-    } else {
-      try {
-        PropertyConfigurator.configure(config.getServletContext().getRealPath("/") + log4j);
-        System.out.print("LOG4J INFO: ");
-        System.out.println(config.getServletContext().getRealPath("/") + log4j);
-      } catch (Exception e) {
-        System.out.println("Unable to load log4j properties from " + log4j);
-        BasicConfigurator.configure();
-      }
-    }
     GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
     // Run at 5 minutes past the hour, and every hour thereafter.
@@ -67,31 +51,27 @@ public class SyncServlet extends HttpServlet {
     scheduler.scheduleWithFixedDelay(publisher, start, 60, MINUTES);
     final File mdDir = new File(config.getInitParameter("mdDir"));
     // pull any changes to site-docs so they get published
-    scheduler.scheduleWithFixedDelay(new Runnable() {
-      @Override
-      public void run() {
-        ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", "master");
-        pb.directory(mdDir);
-        try {
-          pb.start().waitFor();
-          logger.info("MarkDown directory synced at " + new Date());
-        } catch (Exception e) {
-          logger.error("Failed to sync MarkDown directory " + mdDir, e);
-        } 
+    scheduler.scheduleWithFixedDelay(() -> {
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", "master");
+      pb.directory(mdDir);
+      try {
+        pb.start().waitFor();
+        logger.info("MarkDown directory synced at " + new Date());
+      } catch (Exception e) {
+        logger.log(Level.SEVERE, "Failed to sync MarkDown directory " + mdDir, e);
       }
     }, start + 15, 15, MINUTES);
-    logger.debug("Syncing scheduled.");
+    logger.fine("Syncing scheduled.");
   }
 
   /** 
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
    * @param request servlet request
    * @param response servlet response
-   * @throws ServletException if a servlet-specific error occurs
    * @throws IOException if an I/O error occurs
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-          throws ServletException, IOException {
+          throws IOException {
     
     PrintWriter out = response.getWriter();
     String action = request.getParameter("action");
@@ -125,10 +105,10 @@ public class SyncServlet extends HttpServlet {
               }
             }
             result.append("]}");
-            out.println(result.toString());
+            out.println(result);
           } catch (Exception e) {
             out.println("{ \"error\": \"" + e.getMessage() + "\"}");
-            logger.error("Update failed.", e);
+            logger.log(Level.SEVERE, "Update failed.", e);
           }
         }
       }
@@ -142,12 +122,11 @@ public class SyncServlet extends HttpServlet {
    * Handles the HTTP <code>GET</code> method.
    * @param request servlet request
    * @param response servlet response
-   * @throws ServletException if a servlet-specific error occurs
    * @throws IOException if an I/O error occurs
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-          throws ServletException, IOException {
+          throws IOException {
     processRequest(request, response);
   }
 
@@ -155,12 +134,11 @@ public class SyncServlet extends HttpServlet {
    * Handles the HTTP <code>POST</code> method.
    * @param request servlet request
    * @param response servlet response
-   * @throws ServletException if a servlet-specific error occurs
    * @throws IOException if an I/O error occurs
    */
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-          throws ServletException, IOException {
+          throws IOException {
     processRequest(request, response);
   }
 

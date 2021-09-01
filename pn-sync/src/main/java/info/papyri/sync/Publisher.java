@@ -6,7 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author hcayless
@@ -60,13 +61,13 @@ public class Publisher implements Runnable {
         logger.info(head + " = " + GitWrapper.getHead() + "?");
         if (!head.equals(GitWrapper.getHead())) {
           List<String> diffs = GitWrapper.getDiffs(head);
-          List<String> files = new ArrayList<String>();
-          List<String> urls = new ArrayList<String>();
+          List<String> files = new ArrayList<>();
+          List<String> urls = new ArrayList<>();
           for (String diff : diffs) {
             String url = GitWrapper.filenameToUri(base + File.separator + diff, false);
             if (!"".equals(url)) {
               files.add(base + File.separator + diff);
-              logger.debug(base + File.separator + diff);
+              logger.fine(base + File.separator + diff);
               urls.add(url);
             }
           }
@@ -107,7 +108,7 @@ public class Publisher implements Runnable {
         status = IDLE;
         started = null;
       } catch (Throwable e) {
-        logger.error(e.getLocalizedMessage(), e);
+        logger.log(Level.SEVERE, e.getLocalizedMessage(), e);
         success = false;
       }
     }

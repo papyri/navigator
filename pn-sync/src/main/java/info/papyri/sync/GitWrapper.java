@@ -16,9 +16,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 
 /**
  *
@@ -27,10 +29,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class GitWrapper {
   
   private static GitWrapper git;
-  private static String graph = "http://papyri.info/graph";
-  private static String path = "/pi/query";
-  private static String sparqlserver = "http://localhost:8090";
-  private static Logger logger = Logger.getLogger("pn-sync");
+  private static final String PATH = "/pi/query";
+  private static final String SPARQLSERVER = "http://localhost:8090";
+  private static final Logger logger = Logger.getLogger("pn-sync");
   
   public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
     git = new GitWrapper();
@@ -77,7 +78,7 @@ public class GitWrapper {
       if (git.success) {
         git.success = false;
       }
-      logger.error("Sync Failed", e);
+      logger.log(Level.SEVERE, "Sync Failed", e);
     }
 
     // get current HEAD's SHA : git rev-parse HEAD
@@ -87,15 +88,13 @@ public class GitWrapper {
     // execute indexing on file list
   }
   
-  @SuppressWarnings({"null", "ConstantConditions"})
+  @SuppressWarnings({"null"})
   public static String getPreviousSync() throws Exception {
     String result = null;
-    Connection connect = null;
     Class.forName("com.mysql.jdbc.Driver");
-    try {
-      connect = DriverManager.getConnection(
-              "jdbc:mysql://localhost/pn?"
-              + "user=" + git.dbUser + "&password=" + git.dbPass);
+    try (Connection connect = DriverManager.getConnection(
+            "jdbc:mysql://localhost/pn?"
+                    + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       ResultSet rs = st.executeQuery("SELECT hash FROM sync_history ORDER BY date DESC LIMIT 2");
       if (rs.next()) {
@@ -105,44 +104,34 @@ public class GitWrapper {
           result = rs.getString("hash");
         }
       }
-    } finally {
-      connect.close();
     }
     return result;
   }
 
-  @SuppressWarnings({"null", "ConstantConditions"})
+  @SuppressWarnings({"null"})
   public static String getLastSync() throws Exception {
     String result = null;
-    Connection connect = null;
     Class.forName("com.mysql.jdbc.Driver");
-    try {
-      connect = DriverManager.getConnection(
-              "jdbc:mysql://localhost/pn?"
-              + "user=" + git.dbUser + "&password=" + git.dbPass);
+    try (Connection connect = DriverManager.getConnection(
+            "jdbc:mysql://localhost/pn?"
+                    + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       ResultSet rs = st.executeQuery("SELECT hash FROM sync_history WHERE date = (SELECT MAX(date) FROM sync_history)");
       if (rs.next()) {
         result = rs.getString("hash");
       }
-    } finally {
-      connect.close();
     }
     return result;
   }
 
-  @SuppressWarnings({"null", "ConstantConditions"})
+  @SuppressWarnings({"null"})
   private void storeHead() throws Exception {
-    Connection connect = null;
     Class.forName("com.mysql.jdbc.Driver");
-    try {
-      connect = DriverManager.getConnection(
-              "jdbc:mysql://localhost/pn?"
-              + "user=" + git.dbUser + "&password=" + git.dbPass);
+    try (Connection connect = DriverManager.getConnection(
+            "jdbc:mysql://localhost/pn?"
+                    + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       st.executeUpdate("INSERT INTO sync_history (hash, date) VALUES ('" + git.head + "', NOW())");
-    } finally {
-      connect.close();
     }
   }
 
@@ -157,7 +146,7 @@ public class GitWrapper {
       while ((line = reader.readLine()) != null) {
         newhead = line;
       }
-    } catch (Exception e) {
+    } catch (IOException e) {
       git.success = false;
       throw e;
     }
@@ -180,7 +169,7 @@ public class GitWrapper {
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
-      logger.error("Pull failed", e);
+      logger.log(Level.SEVERE, "Pull failed", e);
       throw e;
     }
     if (p.exitValue() != 0) {
@@ -206,7 +195,7 @@ public class GitWrapper {
     } catch (Exception e) {
       git.success = false;
       git.reset(git.head);
-      logger.error("Push failed", e);
+      logger.log(Level.SEVERE, "Push failed", e);
       throw e;
     }
     if (p.exitValue() != 0) {
@@ -225,7 +214,7 @@ public class GitWrapper {
   public static List<String> getDiffs(String commit) throws Exception {
     ProcessBuilder pb = new ProcessBuilder("git", "diff", "--name-only", commit, git.head);
     pb.directory(git.gitDir);
-    List<String> diffs = new ArrayList<String>();
+    List<String> diffs = new ArrayList<>();
     try {
       Process p = pb.start();
       BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -233,24 +222,19 @@ public class GitWrapper {
       while ((line = reader.readLine()) != null) {
         diffs.add(line);
       }
-    } catch (Exception e) {
+    } catch (IOException e) {
       git.success = false;
       throw e;
     }
-    List<String> result = new ArrayList<String>();
-    for (String diff : diffs) {
-      result.add(diff);
-    }
-    return result;
+    return new ArrayList<>(diffs);
   }
   
+  @SuppressWarnings("null")
   public static List<String> getDiffsSince(String date) throws Exception {
-    Connection connect = null;
     Class.forName("com.mysql.jdbc.Driver");
-    try {
-      connect = DriverManager.getConnection(
-              "jdbc:mysql://localhost/pn?"
-              + "user=" + git.dbUser + "&password=" + git.dbPass);
+    try (Connection connect = DriverManager.getConnection(
+            "jdbc:mysql://localhost/pn?"
+                    + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       PreparedStatement st = connect.prepareStatement("SELECT hash FROM sync_history WHERE date > ? ORDER BY date LIMIT 1");
       st.setDate(1, Date.valueOf(date));
       ResultSet rs = st.executeQuery();
@@ -259,8 +243,6 @@ public class GitWrapper {
       } else {
         return getDiffs(rs.getString("hash"));
       }
-    } finally {
-      connect.close();
     }
   }
   
@@ -276,12 +258,12 @@ public class GitWrapper {
             .append("select ?id ")
             .append("from <http://papyri.info/graph> ")
             .append("where { ?id dc:identifier \"")
-            .append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")))
+            .append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."))
             .append("\" }");
       try {
         // If the numbers server already knows the id for the filename, use that
         // because it will be 100% accurate. 
-        URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+        URL m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
         JsonNode root = getJson(m);
         if (root.path("results").path("bindings").size() > 0) {
           result.append(URLDecoder.decode(root.path("results").path("bindings").path(0).path("id").path("value").asText(),"UTF-8"));
@@ -294,13 +276,13 @@ public class GitWrapper {
           sparql.append("SELECT * ")
                   .append("FROM <http://papyri.info/graph> ")
                   .append("WHERE { <http://papyri.info/ddbdp/").append(collection).append("> ?p ?o }");
-          m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+          m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
           root = getJson(m);
           if (root.path("results").path("bindings").size() > 0) {
             result.append(collection).append(";");
             String rest = file.substring(file.lastIndexOf("/") + collection.length() + 2).replaceAll("\\.xml$", "");
             if (rest.contains(".")) {
-              result.append(rest.substring(0, rest.indexOf(".")));
+              result.append(rest, 0, rest.indexOf("."));
               result.append(";");
               result.append(rest.substring(rest.indexOf(".") + 1));
             } else {
@@ -316,33 +298,34 @@ public class GitWrapper {
           }
         }
       } catch (Exception e) {
-        logger.error("Failed to resolve URI.", e);
+        logger.log(Level.SEVERE, "Failed to resolve URI.", e);
         result.delete(0, result.length());
       }
     } else {
+
       if (file.contains("HGV_meta")) {
         result.append("http://papyri.info/hgv/");
-        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/source");
       }
       if (file.contains("DCLP")) {
         result.append("http://papyri.info/dclp/");
-        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/source");
       }
       if (file.contains("APIS")) {
         result.append("http://papyri.info/apis/");
-        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/source");
       }
       if (file.contains("Biblio")) {
         result.append("http://papyri.info/biblio/");
-        result.append(file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/ref");
       }
       
     }
-    logger.debug(result);
+    logger.fine(result.toString());
     if (!resolve || result.toString().contains("/biblio/")) {
       return result.toString();
     } else {
@@ -368,7 +351,7 @@ public class GitWrapper {
           .append("filter regex(str(?id), \"^http://papyri.info/ddbdp/.*\") ")
           .append("filter not exists {?id dct:isReplacedBy ?b} }");
     try {
-      URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+      URL m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
       JsonNode root = getJson(m);
       if (root.path("results").path("bindings").size() > 0) {
         return root.path("results").path("bindings").path(0).path("id").path("value").asText();
@@ -382,15 +365,15 @@ public class GitWrapper {
                 .append(id)
                 .append("> ")
                 .append("filter regex(str(?id), \"^http://papyri.info/hgv/.*\") }");
-          m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+          m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
           root = getJson(m);
           if (root.path("results").path("bindings").size() > 0) {
             return root.path("results").path("bindings").path(0).path("id").path("value").asText();
           }
         }
       }
-    } catch (Exception e) {
-      logger.error("Failed to look up query: \n" + sparql.toString());
+    } catch (IOException e) {
+      logger.log(Level.SEVERE, "Failed to look up query: \n" + sparql);
     }
     return null;
   }
@@ -399,26 +382,25 @@ public class GitWrapper {
       HttpURLConnection http = (HttpURLConnection)q.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();
-      JsonNode result = o.readValue(http.getInputStream(), JsonNode.class);
-      return result;
+    return o.readValue(http.getInputStream(), JsonNode.class);
   }
   
   private static List<String> loadDDbCollections() {
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
     String sparql = "prefix dc: <http://purl.org/dc/terms/> "
             + "select ?id "
             + "from <http://papyri.info/graph> "
             + "where { <http://papyri.info/ddbdp> dc:hasPart ?id } "
             + "order by desc(?id)";
     try {
-        URL m = new URL(sparqlserver + path + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+        URL m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&output=json");
         JsonNode root = getJson(m);
         Iterator<JsonNode> i = root.path("results").path("bindings").elements();
         while (i.hasNext()) {
           result.add(i.next().path("id").path("value").asText());
         }
-      } catch (Exception e) {
-        logger.error("Failed to resolve URI.", e);
+      } catch (IOException e) {
+        logger.log(Level.SEVERE, "Failed to resolve URI.", e);
       }
     return result;
   }
