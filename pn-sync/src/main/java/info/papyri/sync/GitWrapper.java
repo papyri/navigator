@@ -91,9 +91,9 @@ public class GitWrapper {
   @SuppressWarnings({"null"})
   public static String getPreviousSync() throws Exception {
     String result = null;
-    Class.forName("com.mysql.jdbc.Driver");
+    Class.forName("com.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:mysql://localhost/pn?"
+            "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       ResultSet rs = st.executeQuery("SELECT hash FROM sync_history ORDER BY date DESC LIMIT 2");
@@ -111,9 +111,9 @@ public class GitWrapper {
   @SuppressWarnings({"null"})
   public static String getLastSync() throws Exception {
     String result = null;
-    Class.forName("com.mysql.jdbc.Driver");
+    Class.forName("com.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:mysql://localhost/pn?"
+            "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       ResultSet rs = st.executeQuery("SELECT hash FROM sync_history WHERE date = (SELECT MAX(date) FROM sync_history)");
@@ -126,9 +126,9 @@ public class GitWrapper {
 
   @SuppressWarnings({"null"})
   private void storeHead() throws Exception {
-    Class.forName("com.mysql.jdbc.Driver");
+    Class.forName("com.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:mysql://localhost/pn?"
+            "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       st.executeUpdate("INSERT INTO sync_history (hash, date) VALUES ('" + git.head + "', NOW())");
@@ -231,9 +231,9 @@ public class GitWrapper {
   
   @SuppressWarnings("null")
   public static List<String> getDiffsSince(String date) throws Exception {
-    Class.forName("com.mysql.jdbc.Driver");
+    Class.forName("com.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:mysql://localhost/pn?"
+            "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       PreparedStatement st = connect.prepareStatement("SELECT hash FROM sync_history WHERE date > ? ORDER BY date LIMIT 1");
       st.setDate(1, Date.valueOf(date));
