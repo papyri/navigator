@@ -23,6 +23,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +37,7 @@ public class MDReader extends HttpServlet {
 
   private static String DOCSHOME;
   private static String TEMPLATE;
-  private static final DataHolder OPTIONS = new MutableDataSet().set(Parser.EXTENSIONS, 
+  private static final DataHolder OPTIONS = new MutableDataSet().set(Parser.EXTENSIONS,
           Collections.singletonList(PNLinkExtension.create()));
   private static final Parser PARSER = Parser.builder(OPTIONS).build();
   private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
@@ -77,9 +78,9 @@ public class MDReader extends HttpServlet {
       if (f.lastModified() > cf.lastModified()) {
         PrintWriter out = response.getWriter();
         try {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("UTF-8")));
+          BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8));
           cfTmp = File.createTempFile(cf.getName(), null, f.getParentFile());
-          cacheOut = new PrintWriter(new OutputStreamWriter (new FileOutputStream(cfTmp), Charset.forName("UTF-8")));
+          cacheOut = new PrintWriter(new OutputStreamWriter (new FileOutputStream(cfTmp), StandardCharsets.UTF_8));
           StringBuilder mdf = new StringBuilder();
           char[] ch = new char[1024];
           int c;
