@@ -91,7 +91,6 @@ public class GitWrapper {
   @SuppressWarnings({"null"})
   public static String getPreviousSync() throws Exception {
     String result = null;
-    Class.forName("org.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
             "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
