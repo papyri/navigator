@@ -12,6 +12,7 @@
   
   <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="morelikethis-varsandparams.xsl"/>
+  <xsl:import href="../epidoc-xslt/functions.xsl"/>
   
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
   <xsl:import href="../epidoc-xslt/htm-teiab.xsl"/>

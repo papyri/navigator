@@ -7,6 +7,7 @@
   version="2.0">
 
   <xsl:import href="pi-global-varsandparams.xsl"/>
+  <xsl:import href="../epidoc-xslt/functions.xsl"/>
 
   <xsl:import href="../epidoc-xslt/txt-teiab.xsl"/>
   <xsl:import href="../epidoc-xslt/txt-teiapp.xsl"/>
