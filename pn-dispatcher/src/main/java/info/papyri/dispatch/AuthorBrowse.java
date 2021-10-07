@@ -75,7 +75,7 @@ public class AuthorBrowse extends HttpServlet {
     sq.setFacetLimit(-1);
     List<Count> authors;
     try {
-        QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
+        QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
         authors = qr.getFacetField("author_work").getValues();
     } catch (SolrServerException sse) {
         logger.log(Level.SEVERE, "Unable to execute query.", sse);

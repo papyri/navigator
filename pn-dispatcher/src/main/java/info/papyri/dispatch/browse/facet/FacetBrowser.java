@@ -331,7 +331,7 @@ public class FacetBrowser extends HttpServlet {
       HttpSolrClient solr = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH)
               .withSocketTimeout(SOCKET_TIMEOUT).build();
       //logger.info(sq.toString());
-      QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
+      QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
       return qr;
     } catch (MalformedURLException murle) {
       logger.log(Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
