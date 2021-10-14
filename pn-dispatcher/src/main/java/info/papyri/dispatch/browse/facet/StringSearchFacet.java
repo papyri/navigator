@@ -2786,6 +2786,7 @@ public class StringSearchFacet extends Facet{
 
                 } 
                declinedForm = "(" + declinedForm + ")";
+               solr.close();
                return declinedForm;
            
            } catch (SolrServerException sse) {

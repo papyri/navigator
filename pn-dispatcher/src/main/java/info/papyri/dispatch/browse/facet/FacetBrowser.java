@@ -325,11 +325,9 @@ public class FacetBrowser extends HttpServlet {
    * @return The <code>QueryResponse</code> returned by the Solr server
    */
   private QueryResponse runFacetQuery(SolrQuery sq) {
-
+    HttpSolrClient solr = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH)
+            .withSocketTimeout(SOCKET_TIMEOUT).build();
     try {
-
-      HttpSolrClient solr = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH)
-              .withSocketTimeout(SOCKET_TIMEOUT).build();
       //logger.info(sq.toString());
       QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
       return qr;
@@ -340,9 +338,15 @@ public class FacetBrowser extends HttpServlet {
       logger.log(Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
       return null;
     } catch (IOException ex) {
-          logger.log(Level.SEVERE, null, ex);
-          return null;
+        logger.log(Level.SEVERE, null, ex);
+        return null;
+    } finally {
+      try {
+        solr.close();
+      } catch (IOException ioe) {
+        logger.log(Level.WARNING, "Error closing Solr client.");
       }
+    }
 
 
   }
