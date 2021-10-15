@@ -110,7 +110,6 @@ public class GitWrapper {
   @SuppressWarnings({"null"})
   public static String getLastSync() throws Exception {
     String result = null;
-    Class.forName("com.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
             "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
@@ -125,7 +124,6 @@ public class GitWrapper {
 
   @SuppressWarnings({"null"})
   private void storeHead() throws Exception {
-    Class.forName("com.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
             "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
@@ -230,7 +228,6 @@ public class GitWrapper {
   
   @SuppressWarnings("null")
   public static List<String> getDiffsSince(String date) throws Exception {
-    Class.forName("com.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
             "jdbc:postgresql://localhost/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {

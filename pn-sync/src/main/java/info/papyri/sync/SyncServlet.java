@@ -37,7 +37,7 @@ public class SyncServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    GitWrapper.init(config.getInitParameter("gitDir"), config.getInitParameter("dbUser"), config.getInitParameter("dbPass"));
+    GitWrapper.init(config.getServletContext().getInitParameter("gitDir"), config.getServletContext().getInitParameter("dbUser"), config.getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
     // Run at 5 minutes past the hour, and every hour thereafter.
     Calendar cal = Calendar.getInstance();
