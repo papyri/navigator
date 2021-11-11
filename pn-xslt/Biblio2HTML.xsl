@@ -7,8 +7,8 @@
   version="2.0">
   
   <xsl:import href="pi-global-varsandparams.xsl"/>
-  <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
-  <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
+  <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
+  <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
   <xsl:include href="htm-teibibl.xsl"/>
