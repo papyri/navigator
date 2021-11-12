@@ -35,7 +35,7 @@
     <xsl:choose>
       <xsl:when test="contains($url, 'ddbdp')">
         <xsl:choose>
-          <xsl:when test="matches($url, 'https?://papyri.info/ddbdp')"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/index.html')"/></xsl:when>
+          <xsl:when test="matches($url, '^https?://papyri.info/ddbdp$')"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/index.html')"/></xsl:when>
           <xsl:when test="ends-with($url, '/source')">
             <xsl:variable name="id" select="tokenize(substring-before(substring-after($url, 'papyri.info/ddbdp/'), '/'), ';')"/>
             <xsl:choose>
