@@ -5,7 +5,7 @@
   <groupId>info.papyri</groupId>
   <artifactId>pn-dispatcher</artifactId>
   <packaging>war</packaging>
-  <version>1.1.8</version>
+  <version>1.1.9</version>
   <name>pn-dispatcher</name>
   <url>https://maven.apache.org</url>
   <pluginRepositories>
