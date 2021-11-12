@@ -35,25 +35,25 @@
     <xsl:choose>
       <xsl:when test="contains($url, 'ddbdp')">
         <xsl:choose>
-          <xsl:when test="$url = 'http://papyri.info/ddbdp'"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/index.html')"/></xsl:when>
+          <xsl:when test="matches($url, 'https?://papyri.info/ddbdp')"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/index.html')"/></xsl:when>
           <xsl:when test="ends-with($url, '/source')">
-            <xsl:variable name="id" select="tokenize(substring-before(substring-after($url, 'http://papyri.info/ddbdp/'), '/'), ';')"/>
+            <xsl:variable name="id" select="tokenize(substring-before(substring-after($url, 'papyri.info/ddbdp/'), '/'), ';')"/>
             <xsl:choose>
-              <!-- like http://papyri.info/ddbdp/c.etiq.mom;;165/source -->
+              <!-- like https://papyri.info/ddbdp/c.etiq.mom;;165/source -->
               <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.', $format)"/></xsl:when>
-              <!-- like http://papyri.info/ddbdp/bgu;1;1/source -->
+              <!-- like https://papyri.info/ddbdp/bgu;1;1/source -->
               <xsl:otherwise><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/', $id[1], '.', $id[2], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.', $format)"/></xsl:otherwise>
             </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
             <xsl:choose>
-              <!-- like http://papyri.info/ddbdp/bgu;1 -->
+              <!-- like https://papyri.info/ddbdp/bgu;1 -->
               <xsl:when test="contains($url, ';')">
-                <xsl:variable name="id" select="tokenize(substring-after($url, 'http://papyri.info/ddbdp/'), ';')"/>
+                <xsl:variable name="id" select="tokenize(substring-after($url, 'papyri.info/ddbdp/'), ';')"/>
                 <xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/index.html')"/>
               </xsl:when>
-              <!-- like http://papyri.info/ddbdp/bgu -->
-              <xsl:otherwise><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', substring-after($url, 'http://papyri.info/ddbdp/'), '/index.html')"/></xsl:otherwise>
+              <!-- like https://papyri.info/ddbdp/bgu -->
+              <xsl:otherwise><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/', substring-after($url, 'papyri.info/ddbdp/'), '/index.html')"/></xsl:otherwise>
             </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
@@ -61,17 +61,17 @@
       <xsl:when test="contains($url, 'hgv/')">
         <xsl:variable name="dir">
           <xsl:choose>
-            <xsl:when test="ends-with($url, '/source')"><xsl:value-of select="ceiling(number(replace(substring-before(substring-after($url, 'http://papyri.info/hgv/'), '/'), '[a-z]', '')) div 1000)"></xsl:value-of></xsl:when>
-            <xsl:otherwise><xsl:value-of select="substring-after($url, 'http://papyri.info/hgv/')"/></xsl:otherwise>
+            <xsl:when test="ends-with($url, '/source')"><xsl:value-of select="ceiling(number(replace(substring-before(substring-after($url, 'papyri.info/hgv/'), '/'), '[a-z]', '')) div 1000)"></xsl:value-of></xsl:when>
+            <xsl:otherwise><xsl:value-of select="substring-after($url, 'papyri.info/hgv/')"/></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
-        <xsl:sequence select="concat($base, '/HGV_meta_EpiDoc/HGV', $dir, '/', replace(substring-after($url, 'http://papyri.info/hgv/'), '/source', ''), '.', $format)"/>
+        <xsl:sequence select="concat($base, '/HGV_meta_EpiDoc/HGV', $dir, '/', replace(substring-after($url, 'papyri.info/hgv/'), '/source', ''), '.', $format)"/>
       </xsl:when>
       <xsl:when test="contains($url, 'hgvtrans')">
-        <xsl:sequence select="concat($base, '/HGV_trans_EpiDoc/', substring-before(substring-after($url, 'http://papyri.info/hgvtrans/'), '/'), '.', $format)"/>
+        <xsl:sequence select="concat($base, '/HGV_trans_EpiDoc/', substring-before(substring-after($url, 'papyri.info/hgvtrans/'), '/'), '.', $format)"/>
       </xsl:when>
       <xsl:when test="contains($url, 'apis')">
-        <xsl:variable name="id" select="tokenize(replace(substring-after($url, 'http://papyri.info/apis/'), '/source', ''), '\.')"/>
+        <xsl:variable name="id" select="tokenize(replace(substring-after($url, 'papyri.info/apis/'), '/source', ''), '\.')"/>
         <xsl:choose>
           <xsl:when test="contains($url, '.')">
             <xsl:choose>
@@ -79,7 +79,7 @@
               <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', $id[1], '/', $format, '/', $id[1], '.', $id[2], '.', $id[3], '.', $format)"/></xsl:otherwise>
             </xsl:choose>
           </xsl:when>
-          <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', substring-after($url, 'http://papyri.info/apis/'), 'index.html')"/></xsl:otherwise>
+          <xsl:otherwise><xsl:sequence select="concat($base, '/APIS/', substring-after($url, 'papyri.info/apis/'), 'index.html')"/></xsl:otherwise>
         </xsl:choose>
       </xsl:when>
       <xsl:when test="contains($url, 'dclp/')">
@@ -91,16 +91,16 @@
       <xsl:when test="contains($url, 'trismegistos.org')">
         <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'http://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'http://www.trismegistos.org/text/'), '.xml')"/>
       </xsl:when>
-      <!-- Like http://papyri.info/biblio/54953/source -->
+      <!-- Like https://papyri.info/biblio/54953/source -->
       <xsl:when test="contains($url, 'biblio/')">
         <xsl:choose>
           <xsl:when test="contains($url, '/source')">
-            <xsl:variable name="dir" select="ceiling(number(substring-before(substring-after($url, 'http://papyri.info/biblio/'), '/source')) div 1000)"/>
-            <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-before(substring-after($url, 'http://papyri.info/biblio/'), '/source'), '.xml')"/>
+            <xsl:variable name="dir" select="ceiling(number(substring-before(substring-after($url, 'papyri.info/biblio/'), '/source')) div 1000)"/>
+            <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-before(substring-after($url, 'papyri.info/biblio/'), '/source'), '.xml')"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:variable name="dir" select="ceiling(number(substring-after($url, 'http://papyri.info/biblio/')) div 1000)"/>
-            <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-after($url, 'http://papyri.info/biblio/'), '.xml')"/>
+            <xsl:variable name="dir" select="ceiling(number(substring-after($url, 'papyri.info/biblio/')) div 1000)"/>
+            <xsl:sequence select="concat($base, '/Biblio/', $dir, '/', substring-after($url, 'papyri.info/biblio/'), '.xml')"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
@@ -114,9 +114,9 @@
     <xsl:variable name="id" select="tokenize($identifier, ';')"/>
     <xsl:choose>
       <xsl:when test="$identifier/@type='dclp'"><xsl:sequence select="concat($base, 'DCLP/', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/></xsl:when>
-      <!-- like http://papyri.info/ddbdp/c.etiq.mom;;165/source -->
+      <!-- like https://papyri.info/ddbdp/c.etiq.mom;;165/source -->
       <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, 'DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:when>
-      <!-- like http://papyri.info/ddbdp/bgu;1;1/source -->
+      <!-- like https://papyri.info/ddbdp/bgu;1;1/source -->
       <xsl:otherwise><xsl:sequence select="concat($base, 'DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', $id[2], '/', $id[1], '.', $id[2], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:otherwise>
     </xsl:choose>
   </xsl:function>
@@ -126,11 +126,11 @@
     <xsl:param name="url"/>
     
     <xsl:choose>
-      <xsl:when test="matches($url, '^http://papyri\.info/(ddbdp|hgv|dclp|apis)$')">
-        <xsl:sequence select="pi:decode-uri(upper-case(replace($url, 'http://papyri\.info/', '')))"/>
+      <xsl:when test="matches($url, '^https?://papyri\.info/(ddbdp|hgv|dclp|apis)$')">
+        <xsl:sequence select="pi:decode-uri(upper-case(replace($url, 'https?://papyri\.info/', '')))"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="pi:decode-uri(replace(replace(replace(replace($url, 'http://papyri\.info/[^/]+/', ''), '/source$', ''), ';;', '.'), ';', '.'))"/>
+        <xsl:sequence select="pi:decode-uri(replace(replace(replace(replace($url, 'https?://papyri\.info/[^/]+/', ''), '/source$', ''), ';;', '.'), ';', '.'))"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
@@ -378,16 +378,16 @@
     <xsl:param name="pub-stmt"></xsl:param>
     <xsl:choose>
       <xsl:when test="$collection='ddbdp'">
-       <xsl:sequence select="concat('http://papyri.info/ddbdp/', $pub-stmt/t:idno[@type = 'ddb-hybrid'])"></xsl:sequence>      
+       <xsl:sequence select="concat('https://papyri.info/ddbdp/', $pub-stmt/t:idno[@type = 'ddb-hybrid'])"></xsl:sequence>      
       </xsl:when>
       <xsl:when test="$collection='hgv'">
-        <xsl:sequence select="concat('http://papyri.info/hgv/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
+        <xsl:sequence select="concat('https://papyri.info/hgv/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
       </xsl:when>
       <xsl:when test="$collection='dclp'">
-        <xsl:sequence select="concat('http://papyri.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
+        <xsl:sequence select="concat('https://papyri.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="concat('http://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>
+        <xsl:sequence select="concat('https://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>
       </xsl:otherwise>
     </xsl:choose> 
   </xsl:function>

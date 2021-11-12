@@ -46,7 +46,7 @@
 
   <xsl:template name="buildCitation">
     <xsl:param name="biblType"/>
-    <xsl:variable name="mainWork" select="pi:get-docs(concat(t:relatedItem[@type='appearsIn' and t:bibl/t:ptr/@target != 'http://papyri.info/biblio/0'][1]//t:ptr/@target, '/source'), 'xml')"/>
+    <xsl:variable name="mainWork" select="pi:get-docs(concat(t:relatedItem[@type='appearsIn' and t:bibl/t:ptr/@target != 'https://papyri.info/biblio/0'][1]//t:ptr/@target, '/source'), 'xml')"/>
     <xsl:variable name="author"><xsl:call-template name="author"/></xsl:variable>
     <xsl:variable name="editor"><xsl:call-template name="editor"/></xsl:variable>
     <xsl:variable name="edFirst" select="string-length($author) = 0 and string-length($editor) > 0"/>
