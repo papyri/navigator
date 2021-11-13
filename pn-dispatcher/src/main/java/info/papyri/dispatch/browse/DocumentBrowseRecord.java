@@ -770,7 +770,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     String startURL = url.toString().substring("https://papyri.info".length());
     String sh = getHighlightString();
     String sq = getSolrQueryString();
-    String fullURL = (startURL + sh + sq).length() < 2000 ? startURL + sh + sq : (startURL + sq).length() < 2000 ? startURL + "/?q=" + sq : startURL;
+    String fullURL = (startURL + sh + sq).length() < 2000 ? startURL + sh + sq : (startURL + sq).length() < 2000 ? startURL + "?" + sq.substring(1) : startURL;
     return fullURL;
 
   }
