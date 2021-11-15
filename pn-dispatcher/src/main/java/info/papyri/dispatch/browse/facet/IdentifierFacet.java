@@ -1129,7 +1129,7 @@ public class IdentifierFacet extends Facet{
      * Note that browsing by DDbDP/HGV series is incompatible with browsing by APIS collection - 
      * only one of <code>SeriesSearchConfiguration</code> and <code>CollectionSearchConfiguration</code>
      * may be active at any given time. In addition, APIS collections do not use volume numbers,
-     * so only on of <code>CollectionSearchConfiguration</code> and <code>VolumeSearchConfiguration</code>
+     * so only one of <code>CollectionSearchConfiguration</code> and <code>VolumeSearchConfiguration</code>
      * may be active at any one time.
      */
     
@@ -1466,6 +1466,7 @@ public class IdentifierFacet extends Facet{
         public Boolean isDisabled(){
             
             if(this.hasConstraint()) return true;
+            if(searchConfigurations.get(IdParam.SERIES).hasConstraint()) return false;
             if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint() && !searchConfigurations.get(IdParam.SERIES).hasConstraint()) return true;
             return idValues.isEmpty() && anyConstraintSet();
             
