@@ -2345,10 +2345,9 @@ public class StringSearchFacet extends Facet{
             String numChars = charProxMatcher.group(1);
             String operator = charProxMatcher.group(2);
             String distRegex = ".{1," + numChars + "}";
-            // # is conventionally used to indicate word-boundaries on the user-end
-            prevTerm = prevTerm.replaceAll("#", " ").replace("\\s+", " ");
-            nextTerm = nextTerm.replaceAll("#", " ").replace("\\s+", " ");
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
+            // # is conventionally used to indicate word-boundaries on the user-end
+            regex = regex.replaceAll("#", " ").replace("\\s+", " ");
             if(operator.equals("w")) return regex;
             // if we are doing an unordered proximity search we also need to invert the terms
             String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
