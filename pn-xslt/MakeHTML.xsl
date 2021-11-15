@@ -446,6 +446,9 @@
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
                     </div>
                   </xsl:if>
+                  <xsl:if test="$image">
+                    <xsl:call-template name="images"/>
+                  </xsl:if>
                 </xsl:if>
                 <xsl:if test="$collection = 'hgv'">
                   <div class="metadata">
