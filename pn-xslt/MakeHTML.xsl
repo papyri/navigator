@@ -305,7 +305,7 @@
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
                             <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
                           </xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
@@ -320,7 +320,7 @@
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
                             <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
                           </xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
                       </xsl:for-each>
                       <xsl:for-each select="$relations[contains(., 'dclp/')]">
@@ -329,7 +329,7 @@
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
                             <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
                           </xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
                       </xsl:for-each>
                       <xsl:call-template name="biblio"/>
@@ -393,7 +393,7 @@
                       <xsl:for-each select="$relations[contains(., '/apis/')]">
                         <xsl:choose>
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))"><xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/></xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
                       </xsl:for-each>
                     </xsl:if>
@@ -462,7 +462,7 @@
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
                             <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
                           </xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
                       </xsl:for-each>
                     </xsl:if>
@@ -475,7 +475,7 @@
                           <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
                             <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/>
                           </xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
                         </xsl:choose>
                       </xsl:for-each>
                     </div>
@@ -567,7 +567,10 @@
           <h2>DDbDP transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2></xsl:otherwise></xsl:choose>
       <xsl:variable name="text">
         <xsl:choose>
-          <xsl:when test="$type = 'DCLP'"><xsl:apply-templates select=".//t:div[@type='edition']"/></xsl:when>
+          <xsl:when test="$type = 'DCLP'">
+            <xsl:apply-templates select=".//t:body/t:head"/>
+            <xsl:apply-templates select=".//t:div[@type='edition']"/>
+          </xsl:when>
           <xsl:otherwise><xsl:apply-templates select=".//t:body"/></xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
