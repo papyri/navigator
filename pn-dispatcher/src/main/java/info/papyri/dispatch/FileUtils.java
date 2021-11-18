@@ -308,7 +308,7 @@ public class FileUtils {
       }
       return pathname.toString();
     }  else if ("biblio".equals(collection)) {
-      pathname.append("biblio/")
+      pathname.append("Biblio/")
               .append((int)Math.ceil(Double.parseDouble(item) / 1000))
               .append("/")
               .append(item)

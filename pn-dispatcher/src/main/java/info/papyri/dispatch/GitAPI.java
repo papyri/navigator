@@ -39,7 +39,7 @@ public class GitAPI extends HttpServlet {
   }
   
   private String repo;
-  private static Logger logger = Logger.getLogger("pn-dispatch");
+  private static final Logger LOGGER = Logger.getLogger("pn-dispatch");
 
   /**
    * Processes requests for both HTTP
@@ -65,7 +65,7 @@ public class GitAPI extends HttpServlet {
       out.println("\"");
       out.println("}");
     } catch (Exception e) {
-      logger.log(Level.SEVERE, "Couldn't get last commit", e);
+      LOGGER.log(Level.SEVERE, "Couldn't get last commit", e);
     } finally {      
       out.close();
     }
@@ -78,7 +78,7 @@ public class GitAPI extends HttpServlet {
         this.repo = new FileRepository(repo);
         this.git = new org.eclipse.jgit.api.Git(this.repo);
       } catch (IOException e) {
-        logger.log(Level.SEVERE, "Couldn't get repository " + repo, e);
+        LOGGER.log(Level.SEVERE, "Couldn't get repository " + repo, e);
       }
     }
     
@@ -103,7 +103,7 @@ public class GitAPI extends HttpServlet {
           walk.next();
           return walk.getObjectId(0).name();
       } catch (Exception e) {
-          logger.log(Level.SEVERE, "Failure walking tree " + path, e);
+          LOGGER.log(Level.SEVERE, "Failure walking tree " + path, e);
           return "";
       }
     }
