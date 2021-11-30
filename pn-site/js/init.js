@@ -493,7 +493,7 @@ function hideCampaign(duration) {
 }
 
 function canShowCampaign() {
-	//return false; // comment out to launch; re-comment to suspend
+	return false; // comment out to launch; re-comment to suspend
 	let time = window.localStorage.getItem("Hide-papyriCampaign");
 	if (time) {
 		time = Number.parseInt(time);
