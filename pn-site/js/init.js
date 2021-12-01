@@ -191,7 +191,7 @@ function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
 		var link = jQuery("<a></a>");
 		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
+		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
 		var title = jQuery(jQuery(record).children()[1]).text();
 		var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
 		link.attr("title", title);
@@ -233,7 +233,7 @@ function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
 		var link = jQuery("<a></a>");
 		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
+		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
 		var title = jQuery(jQuery(record).children()[1]).text();
 		var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
 		link.attr("title", title);
