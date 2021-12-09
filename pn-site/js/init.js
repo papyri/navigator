@@ -399,6 +399,9 @@ function getCookie(name) {
     return null;
 }
 
+/**
+ *  Pad
+ */
 function alignRTL() {
   //return true;
   jQuery("span.ab").each(function(i, ab) {
@@ -458,7 +461,7 @@ function alignRTL() {
         }
       } else {
         var offset = width - e.width();
-        if (e[0].previousSibling.textContent.trim() == "" && (e[0].previousElementSibling.localName == "br" || e[0].previousElementSibling.localName == "a")) {
+        if ((e[0].previousSibling.textContent.trim() == "" && (e[0].previousElementSibling.localName == "br" || e[0].previousElementSibling.localName == "a")) || e[0].previousSibling.localName == 'span' && e[0].previousSibling.classList.contains('linenumber')) {
           e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
         }
         e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
