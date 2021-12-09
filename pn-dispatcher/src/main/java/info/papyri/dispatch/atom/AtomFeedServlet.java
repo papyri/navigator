@@ -55,6 +55,7 @@ public class AtomFeedServlet extends HttpServlet{
     final static String ERROR_ID = SELF + "error";
     /** Identifier assigned for requests that return no results */
     final static String NONEFOUND_ID = SELF + "none";
+    private static final Logger LOGGER = Logger.getLogger(AtomFeedServlet.class.getName());
 
     /** The possible temporal parameters passed to the servlet */
     private enum TimeParam{
@@ -323,7 +324,7 @@ public class AtomFeedServlet extends HttpServlet{
             return buildErrorDocumentList("SolrServerException: " + sse.getMessage());
             
         } catch (IOException ex) {
-            Logger.getLogger(AtomFeedServlet.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             return buildErrorDocumentList("IOException: " + ex.getMessage());
         }
           

@@ -44,6 +44,7 @@ public class Search extends HttpServlet {
   private SolrUtils solrutil;
   private static String PNSearch = "pn-search/";
   private static String morphSearch = "morph-search/";
+  private static final Logger LOGGER = Logger.getLogger(Search.class.getName());
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -302,7 +303,7 @@ public class Search extends HttpServlet {
         try {
             query.append(solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
         } catch (SolrServerException ex) {
-            Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             throw new IOException(ex);
         }
       query.append(")");
@@ -325,7 +326,7 @@ public class Search extends HttpServlet {
         uq = URLEncoder.encode(q, "UTF-8");
       } catch (Exception e) {}
       for (SolrDocument doc : docs) {
-        Object[] translations = (doc.getFieldValues(SolrField.translations.name()) == null ? new Object[0] : doc.getFieldValues(SolrField.has_translation.name()).toArray());
+        Object[] translations = (doc.getFieldValues(SolrField.translations.name()) == null ? new Object[0] : doc.getFieldValues(SolrField.translation_language.name()).toArray());
         boolean hasImages = doc.getFieldValuesMap().containsKey(SolrField.images.name()) && (Boolean)doc.getFieldValue(SolrField.images.name()) ? true : false;
         boolean languageIsNull = doc.getFieldValue(SolrField.language.name()) == null;
         String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.language.name()).toString().replaceAll("[\\[\\]]", "");
@@ -392,7 +393,7 @@ public class Search extends HttpServlet {
       out.println("<p>Unable to execute query.  Please try again.</p>");
       throw e;
     } catch (SolrServerException ex) {
-          Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+          LOGGER.log(Level.SEVERE, null, ex);
           throw new IOException(ex);
       }
   }
