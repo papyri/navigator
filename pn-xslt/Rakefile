@@ -3,6 +3,7 @@ task setup: [] do
 		sh "cd ../epidoc-xslt; git pull"
 	else
 		sh "git clone https://github.com/EpiDoc/Stylesheets.git ../epidoc-xslt"
+		sh "cd ../epidoc-xslt && git checkout LTR_space"
 	end
 end
 
