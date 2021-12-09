@@ -711,7 +711,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       html.append("</td></tr>");
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
-      logger.log(Level.SEVERE, "Highlightling failure", e);
+      logger.log(Level.SEVERE, "Highlightling failure for " + url.toExternalForm(), e);
     }
     return html.toString();
 
