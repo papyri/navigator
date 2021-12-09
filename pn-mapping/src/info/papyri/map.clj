@@ -12,7 +12,7 @@
             #^{:static true} [mapAll [java.util.List] void]
             ])
   (:require [clojure.string :as str])
-  (:import (java.io BufferedReader ByteArrayInputStream ByteArrayOutputStream File FileInputStream FileOutputStream FileReader StringReader StringWriter)
+  (:import (java.io BufferedReader ByteArrayInputStream ByteArrayOutputStream File FileInputStream FileOutputStream FileReader InputStream StringReader StringWriter)
            (java.net URI)
            (java.nio.charset Charset)
            (java.util.concurrent Executors ConcurrentLinkedQueue)
@@ -93,9 +93,9 @@
     (try
       (if (not (nil? @param))
         (doto transformer
-          (.setParameter (QName. (first @param)) (XdmAtomicValue. (second @param)))))
+          (.setParameter (QName. ^String (first @param)) (XdmAtomicValue. ^String (second @param)))))
       (doto transformer
-        (.setSource (StreamSource. (FileInputStream. file)))
+        (.setSource (StreamSource. ^InputStream (FileInputStream. ^String file)))
         (.setDestination dest))
       (.transform transformer)
       ;; (println (.toString out))
@@ -110,11 +110,11 @@
     (if (.contains xslt "ddbdp-rdf")
       (dosync (ref-set param (list "root" idproot)))
       (dosync (ref-set param (list "DDB-root" ddbroot))))
-    (let [xsl-src (StreamSource. (FileInputStream. xslt))
+    (let [xsl-src (StreamSource. ^InputStream (FileInputStream. ^String xslt))
           processor (Processor. false)
           compiler (.newXsltCompiler processor)]
         (doto xsl-src
-          (.setSystemId xslt))
+          (.setSystemId ^String xslt))
         (dosync (ref-set pxslt (.compile compiler xsl-src))))))
 
 (defn choose-xslt
@@ -210,7 +210,7 @@
         model (ModelFactory/createDefaultModel)]
     (prn (str "Reading " f))
     (.. (RDFParser/create)
-      (source (FileInputStream. f))
+      (source (FileInputStream. ^String f))
       (lang lang)
       (errorHandler (ErrorHandlerFactory/errorHandlerWarn))
       (parse model))
@@ -390,15 +390,14 @@
 
 (defn load-map
   [file]
-  (def nthreads (.availableProcessors (Runtime/getRuntime)))
   (dosync (ref-set buffer (ConcurrentLinkedQueue.) ))
   (let [xsl (choose-xslt file)]
     (init-xslt xsl))
   (let [request (UpdateFactory/create)]
     (.add request "CREATE SILENT GRAPH <http://papyri.info/graph>")
     (execute-update request))
-  (let [pool (Executors/newFixedThreadPool nthreads)
-      files (file-seq (File. file))
+  (let [pool (Executors/newFixedThreadPool (.availableProcessors (Runtime/getRuntime)))
+      files (file-seq (File. ^String file))
       tasks (map (fn [x]
         (fn []
           (transform x)
