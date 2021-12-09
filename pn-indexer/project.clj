@@ -1,5 +1,5 @@
-(defproject pn-indexer "1.0-SNAPSHOT"
-  :repositories {"papyri.info" "http://dev.papyri.info/maven/"
+(defproject pn-indexer "1.1.15"
+  :repositories {"github" "https://maven.pkg.github.com/papyri/navigator"
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
   :jvm-opts ["-Xms1G" "-Xmx1G" "-Djava.awt.headless=true"]
