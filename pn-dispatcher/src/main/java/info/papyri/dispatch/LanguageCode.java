@@ -229,12 +229,14 @@ public enum LanguageCode {
     faspal_Phli("Persian - Pahlavi script"),
     grcegy_Egyhegy_Egyp("Ancient Greek\\Egyptian - Hieratic script\\Egyptian - Hieroglyphic script"),
     ar_Arabegy_Egyd("Arabic - Arabic script\\Egyptian - Demotic script"),
-    egy("Egypian"),
+    egy("Egyptian"),
     egy_Coptegy_Egydegy_Egyh("Egyptian - Coptic\\Egyptian - Demotic script\\Egyptian - Hieratic script"),
     egy_Coptgrcund("Egyptian - Coptic\\Ancient Greek\\Undetermined"),
     egy_Copthe_Hebr("Egyptian - Coptic\\Hebrew - Hebrew script"),
     egy_Egydgrcegy_Egyh("Egyptian - Demotic script\\Ancient Greek\\Egyptian - Hieratic script"),
     fas("Persian"),
+    pal("Middle Persian"),
+    got("Gothic"),
     grcegy_Egyh("Ancient Greek\\Egyptian - Hieratic script"),
     xpr_Prti("Parthian");
     
