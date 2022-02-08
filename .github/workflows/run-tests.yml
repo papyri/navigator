@@ -18,15 +18,9 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Cache Java Packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('pn-dispatcher/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        cache: 'maven'
     - name: Run pn-dispatcher tests
-      run: cd pn-dispatcher && mvn test -U
+      run: cd pn-dispatcher && mvn test
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     # - name: Install dependencies
