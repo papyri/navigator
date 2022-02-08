@@ -12,7 +12,6 @@
                  [org.apache.jena/jena-core "3.10.0"]
                  [org.apache.jena/jena-iri "3.10.0"]
                  [org.apache.jena/jena-arq "3.10.0"]
-                 [org.slf4j/slf4j-log4j12 "1.7.25"]
                  [commons-logging/commons-logging "1.1.1"]
                  [commons-codec/commons-codec "1.7"]]
   :main info.papyri.map

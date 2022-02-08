@@ -5,7 +5,7 @@
     <groupId>info.papyri</groupId>
     <artifactId>pn-sync</artifactId>
     <packaging>war</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <name>pn-sync</name>
 
     <properties>
@@ -83,7 +83,7 @@
         <dependency>
           <groupId>papyri.info</groupId>
           <artifactId>map</artifactId>
-          <version>1.0-SNAPSHOT</version> 
+          <version>1.0.1</version>
         </dependency>
         <dependency>
           <groupId>org.apache.jena</groupId>
@@ -124,7 +124,7 @@
         <dependency>
           <groupId>papyri.info</groupId>
           <artifactId>indexer</artifactId>
-          <version>1.0-SNAPSHOT</version> 
+          <version>1.1.16</version>
         </dependency>
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>

@@ -1,4 +1,4 @@
-(defproject pn-indexer "1.1.15"
+(defproject pn-indexer "1.1.16"
   :repositories {"github" "https://maven.pkg.github.com/papyri/navigator"
                  "apache" "https://repository.apache.org/content/repositories/releases/"
                  "apache-snapshots" "https://repository.apache.org/content/repositories/snapshots"}
