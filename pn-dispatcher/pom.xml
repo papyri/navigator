@@ -39,11 +39,6 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    <repository>
-      <id>eclipse</id>
-      <name>jgit-repository</name>
-      <url>https://repo.eclipse.org/content/groups/releases/</url>
-    </repository>
   </repositories>
   <distributionManagement>
     <repository>
