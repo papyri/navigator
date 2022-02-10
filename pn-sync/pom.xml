@@ -1,11 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>info.papyri</groupId>
     <artifactId>pn-sync</artifactId>
     <packaging>war</packaging>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <name>pn-sync</name>
 
     <properties>
@@ -81,9 +80,9 @@
           <version>1.10.3</version>
         </dependency>
         <dependency>
-          <groupId>papyri.info</groupId>
+          <groupId>info.papyri</groupId>
           <artifactId>map</artifactId>
-          <version>1.0.1</version>
+          <version>1.0.3</version>
         </dependency>
         <dependency>
           <groupId>org.apache.jena</groupId>
@@ -119,12 +118,12 @@
         <dependency>
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
-          <version>1.5</version> 
+          <version>1.15</version> 
         </dependency>
         <dependency>
-          <groupId>papyri.info</groupId>
+          <groupId>info.papyri</groupId>
           <artifactId>indexer</artifactId>
-          <version>1.1.16</version>
+          <version>1.1.19</version>
         </dependency>
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>

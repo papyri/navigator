@@ -42,7 +42,7 @@
     (java.nio.charset Charset)
     (java.text Normalizer Normalizer$Form)
     (java.util ArrayList TreeMap)
-    (java.util.concurrent Executors ConcurrentLinkedQueue ConcurrentSkipListSet)
+    (java.util.concurrent Executors Future ConcurrentLinkedQueue ConcurrentSkipListSet)
     (javax.xml.parsers SAXParserFactory)
     (javax.xml.transform Result )
     (javax.xml.transform.sax SAXResult)
@@ -871,7 +871,7 @@
                (.printStackTrace e)
                (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
        @html)]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))
@@ -898,7 +898,7 @@
           (.printStackTrace e)
           (println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
        @text)]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))
@@ -988,7 +988,7 @@
                                   (.newSerializer processor (FileOutputStream. out))
                                   @bibhtmltemplates))))
                     (filter #(.endsWith (.getName %) ".xml") files))]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))
@@ -1073,7 +1073,7 @@
   		   (transform (first x)
   			      (list (second x) (nth x 2) (nth x 6))
   			      (dochandler) @solrtemplates)))) @text)]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))
