@@ -301,25 +301,25 @@
                                  "WHERE { ?o dc:relation <" url "> "
                                  "FILTER regex(\"" url "\", \"^http://papyri.info\") "
                                  "FILTER regex(str(?o), \"^http://papyri.info\")}")
-          transitive-rels (str "PREFIX dc: <http://purl.org/terms/> "
+          transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                "WITH <http://papyri.info/graph> "
                                "INSERT {<" url "> dc:relation ?o2} "
                                "WHERE { <" url "> dc:relation ?o1 . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
-          converse-rels (str "PREFIX dc: <http://purl.org/terms/> "
+          converse-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                "WITH <http://papyri.info/graph> "
                                "INSERT {?o2 dc:relation <" url ">} "
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
           ;; Add APIS -> TM -> DDb, etc.
-          replaces-rels (str "PREFIX dc: <http://purl.org/terms/> "
+          replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {<" url "> dc:replaces ?o} "
                              "WHERE {<" url "> dc:replaces ?s .
                                      ?s dc:replaces ?o }")
-          replaces-relations (str "PREFIX dc: <http://purl.org/terms/> "
+          replaces-relations (str "PREFIX dc: <http://purl.org/dc/terms/> "
                              "WITH <http://papyri.info/graph> "
                              "INSERT {<" url "> dc:relation ?o} "
                              "WHERE {<" url "> dc:replaces ?s .
@@ -350,15 +350,14 @@
                             "FILTER  regex(str(?i), \"^http://papyri.info/hgv\") "
                             "FILTER  regex(str(?r1), \"^http://papyri.info/ddbdp\") "
                             "FILTER  regex(str(?r2), \"^http://papyri.info/hgvtrans\")}")
-          images (str "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
-                      "PREFIX dcterms: <http://purl.org/dc/terms/>"
+          images (str "PREFIX dc: <http://purl.org/dc/terms/> "
                       "WITH <http://papyri.info/graph> "
                       "INSERT { ?r1 dcterms:relation ?r2 } "
                       "WHERE { "
-                      "?c dcterms:isPartOf <http://papyri.info/apis> . "
-                      "?i dcterms:isPartOf ?c . "
-                      "?i dcterms:relation ?r1 . "
-                      "?i dcterms:relation ?r2 . "
+                      "?c dc:isPartOf <http://papyri.info/apis> . "
+                      "?i dc:isPartOf ?c . "
+                      "?i dc:relation ?r1 . "
+                      "?i dc:relation ?r2 . "
                       "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
                       "FILTER  regex(str(?r2), \"^http://papyri.info/apis/[^/]+/images\")}")
           transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
