@@ -37,7 +37,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import info.papyri.dispatch.ServletUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -686,8 +685,8 @@ public class FacetBrowser extends HttpServlet {
    * @param html
    * @return A <code>StringBuilder</code> holding the HTML for all previous
    * constraints defined on the dataset
-   * @see #buildFilteredQueryString(java.util.EnumMap,
-   * info.papyri.dispatch.browse.facet.FacetParam, java.lang.String)
+   * @see #buildFilteredQueryString(java.util.ArrayList,
+   * info.papyri.dispatch.browse.facet.Facet, java.lang.String, java.lang.String, int)
    */
   private StringBuilder assemblePreviousValuesHTML(ArrayList<Facet> facets, StringBuilder html, Map<String, String[]> submittedParams, int docsPerPage) {
 
@@ -798,8 +797,7 @@ public class FacetBrowser extends HttpServlet {
    *
    * @param response
    * @param html
-   * @see #assembleHTML(java.util.EnumMap, java.lang.Boolean, long,
-   * java.util.ArrayList, org.apache.solr.client.solrj.SolrQuery)
+   * @see #assembleHTML(ArrayList, Boolean, long, ArrayList, Map, int , ArrayList, int)
    */
   void displayBrowseResult(HttpServletResponse response, String html) {
 
