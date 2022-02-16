@@ -4,7 +4,7 @@
     <groupId>info.papyri</groupId>
     <artifactId>pn-sync</artifactId>
     <packaging>war</packaging>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <name>pn-sync</name>
 
     <properties>

@@ -323,6 +323,11 @@ public class GitWrapper {
         result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/ref");
       }
+      if (file.contains("HGV_trans")) {
+        result.append("http://papyri.info/hgvtrans/");
+        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+        result.append("/source");
+      }
       
     }
     logger.fine(result.toString());
