@@ -181,7 +181,7 @@
         </init-param>
         <init-param>
             <param-name>epidoc</param-name>
-            <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/start-edition.xsl</param-value>
+            <param-value>/srv/data/papyri.info/git/navigator/epidoc-xslt/start-edition.xsl</param-value>
         </init-param>
         <init-param>
             <param-name>epidoc-type</param-name>
@@ -205,11 +205,7 @@
         </init-param>
         <init-param>
             <param-name>papyri.info-solr-type</param-name>
-            <param-value>text/html</param-value>
-        </init-param>
-        <init-param>
-            <param-name>papyri.info-solr-type</param-name>
-            <param-value>text/html</param-value>
+            <param-value>application/xml</param-value>
         </init-param>
         <init-param>
             <param-name>papyri.info-text</param-name>

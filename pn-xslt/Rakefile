@@ -2,7 +2,8 @@ task setup: [] do
 	if File.exists? "../epidoc-xslt"
 		sh "cd ../epidoc-xslt; git pull"
 	else
-		sh "git clone https://github.com/papyri/Stylesheets.git ../epidoc-xslt"
+		sh "git clone https://github.com/EpiDoc/Stylesheets.git ../epidoc-xslt"
+		sh "cd ../epidoc-xslt && git checkout LTR_space"
 	end
 end
 

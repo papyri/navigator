@@ -144,7 +144,7 @@
     <field name="transcription_ngram_ic" type="ntext" indexed="true" stored="false" multiValued="true"/>
     <field name="transcription_ngram_id" type="nuppertext" indexed="true" stored="false" multiValued="true"/>
     <field name="translation" type="lctext" indexed="true" stored="false" multiValued="true"/>
-    <field name="translation_language" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="translation_language" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="unknown_date_flag" type="boolean" indexed="true" multiValued="false" required="false"/>
     <field name="untokenized" type="untokenized" indexed="true" stored="false" multiValued="true"></field>
     <field name="untokenized_ia" type="untokenized" indexed="true" stored="false" multiValued="true"></field>

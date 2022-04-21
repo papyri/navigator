@@ -15,6 +15,7 @@ import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingExc
 import info.papyri.dispatch.browse.facet.customexceptions.SubstringTooSmallException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -87,14 +88,14 @@ public class StringSearchFacet extends Facet{
      * </dl>
      * 
      */
-    public enum SearchType{ PHRASE, SUBSTRING, REGEX, LEMMA, USER_DEFINED, PROXIMITY };
+    public enum SearchType{ PHRASE, SUBSTRING, REGEX, LEMMA, USER_DEFINED, PROXIMITY }
     
     /**
      * Used in relation to PROXIMITY searches to indicate whether the relevant metric
      * of distance is characters (CHARS) or words (WORDS).     * 
      */
     
-    enum SearchUnit{ WORDS, CHARS };
+    enum SearchUnit{ WORDS, CHARS }
     
     /**
      * Frontend descriptions of the fields to search
@@ -104,13 +105,13 @@ public class StringSearchFacet extends Facet{
      * the submitted SearchOption(s) and SearchType.
      * 
      */
-    enum SearchTarget{ METADATA, TEXT, TRANSLATION, USER_DEFINED };
+    enum SearchTarget{ METADATA, TEXT, TRANSLATION, USER_DEFINED }
     /**
      * Values indicating whether or not capitalisation and diacritics should be considered
      * significant for the search
      * 
      */
-    enum SearchOption{ NO_CAPS, NO_MARKS, PROXCOUNT, PROXUNIT };
+    enum SearchOption{ NO_CAPS, NO_MARKS, PROXCOUNT, PROXUNIT }
     
     /**
      * Values indicating the function of a given <code>SearchTerm</code> within a search.
@@ -129,7 +130,7 @@ public class StringSearchFacet extends Facet{
      * 
      */
     
-    public enum ClauseRole{LEMMA, REGEX, NEGATIVE_ASSERTION, START_PROX, END_PROX, AND, OR, NOT, OPERATOR, DEFAULT};
+    public enum ClauseRole{LEMMA, REGEX, NEGATIVE_ASSERTION, START_PROX, END_PROX, AND, OR, NOT, OPERATOR, DEFAULT}
     
     /**
      * The list of possible search operators.
@@ -146,7 +147,7 @@ public class StringSearchFacet extends Facet{
      * 
      */
     
-    enum SearchOperator{AND, OR, REGEX, THEN, NEAR, NOT, LEX };
+    enum SearchOperator{AND, OR, REGEX, THEN, NEAR, NOT, LEX }
     
     /**
      * List of button controls for the <code>Facet</code>
@@ -226,7 +227,7 @@ public class StringSearchFacet extends Facet{
      * @see SubClause#convertCharProxToRegexSyntax(java.lang.String, java.lang.String, java.lang.String) 
      */
 
-    static Pattern CHAR_PROX_REGEX = Pattern.compile(".*?(\\d{1,2})(w|n)c.*");
+    static Pattern CHAR_PROX_REGEX = Pattern.compile(".*?(\\d{1,2})([wn])c.*");
     
     /**
      * Regular Expression <code>Pattern</code> for detecting the presence of a 
@@ -235,7 +236,7 @@ public class StringSearchFacet extends Facet{
      * @see SubClause#convertWordProxToRegexSyntax(java.lang.String, java.lang.String, java.lang.String) 
      */
     
-    static Pattern WORD_PROX_REGEX = Pattern.compile(".*?(\\d{1,2})?(w|n).*");
+    static Pattern WORD_PROX_REGEX = Pattern.compile(".*?(\\d{1,2})?([wn]).*");
     
     /**
      * Regular Expression <code>Pattern</code> for determining whether a given 
@@ -245,7 +246,7 @@ public class StringSearchFacet extends Facet{
      * @see SearchTerm#isCharactersProxTerm() 
      */
     
-    static Pattern CHAR_PROX_TERM_REGEX = Pattern.compile("\\d{1,2}(w|n)c");
+    static Pattern CHAR_PROX_TERM_REGEX = Pattern.compile("\\d{1,2}([wn])c");
     
     
     /**
@@ -255,7 +256,7 @@ public class StringSearchFacet extends Facet{
      * @see SearchTerm#isWordsProxTerm() 
      */
     
-    static Pattern WORD_PROX_TERM_REGEX = Pattern.compile("(\\d{1,2})?(w|n)");   
+    static Pattern WORD_PROX_TERM_REGEX = Pattern.compile("(\\d{1,2})?([wn])");
     
     /**
      * Regular Expression <code>Pattern</code> for determining whether a given
@@ -266,7 +267,7 @@ public class StringSearchFacet extends Facet{
      * 
      */
     
-    static String PHRASE_MARKER = ".*(\"|')[\\p{L}]+(\\s+[\\p{L}]+)*(\\1).*";
+    static String PHRASE_MARKER = ".*([\"|'])[\\p{L}]+(\\s+[\\p{L}]+)*(\\1).*";
     
     /**
      * Regular Expression <code>Pattern</code> for determining whether a given String
@@ -356,13 +357,13 @@ public class StringSearchFacet extends Facet{
         
     @Override
     public String generateWidget() {
-        
+
         StringBuilder html = new StringBuilder("<div class=\"facet-widget\" id=\"text-search-widget\" title=\"");
         html.append(getToolTipText());
         html.append("\">");
-        
+
         html.append("<div class=\"stringsearch-top-controls\">");
-        
+
         // textbox HTML
         html.append("<p class=\"ui-corner-all facet-stringsearch-wrapper\">");
         html.append("<input type=\"text\" name=\"");
@@ -383,20 +384,20 @@ public class StringSearchFacet extends Facet{
         // search options control
         html.append("<div class=\"stringsearch-section\">");
         html.append("<p>");
-        html.append("<input type=\"checkbox\" name=\"beta-on\" id=\"beta-on\" value=\"on\"></input>");  
+        html.append("<input type=\"checkbox\" name=\"beta-on\" id=\"beta-on\" value=\"on\"></input>");
         html.append("<label for=\"beta-on\" id=\"marks-label\">Convert from betacode as you type</label><br/>");
         html.append("<input type=\"checkbox\" name=\"");
         html.append(SearchOption.NO_CAPS.name().toLowerCase());
-        html.append("\" id=\"caps\" value=\"on\" checked></input>");    
+        html.append("\" id=\"caps\" value=\"on\" checked></input>");
         html.append("<label for=\"caps\" id=\"caps-label\">ignore capitalization</label><br/>");
         html.append("<input type=\"checkbox\" name=\"");
         html.append(SearchOption.NO_MARKS.name().toLowerCase());
-        html.append("\" id=\"marks\" value=\"on\" checked></input>");  
+        html.append("\" id=\"marks\" value=\"on\" checked></input>");
         html.append("<label for=\"marks\" id=\"marks-label\">ignore diacritics/accents</label>");
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
-        
-                
+
+
         // search target control
         html.append("<div class=\"stringsearch-section\">");
         html.append("<p>");
@@ -412,7 +413,7 @@ public class StringSearchFacet extends Facet{
         html.append("<label for=\"");
         html.append(SearchTarget.METADATA.name().toLowerCase());
         html.append("\" id=\"metadata-label\">Metadata</label>");
-        html.append("<input type=\"radio\" name=\"target\" value=\"");        
+        html.append("<input type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.TRANSLATION.name().toLowerCase());
         html.append("\" value=\"on\" id=\"target-translations\" class=\"target\"/>");
         html.append("<label for=\"");
@@ -421,7 +422,7 @@ public class StringSearchFacet extends Facet{
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
         html.append(generateHiddenFields());
-       
+
         html.append("</div><!-- closing .facet-widget -->");
         
         return html.toString();
@@ -492,7 +493,7 @@ public class StringSearchFacet extends Facet{
             String c = "'/>";
             html.append(inp);
             html.append(formName.name());
-            html.append(String.valueOf(index));
+            html.append(index);
             html.append(v);
             html.append(concatenatedStringQuery);
             html.append(c);
@@ -790,7 +791,7 @@ public class StringSearchFacet extends Facet{
         if(!"".equals(clause.getProximityDisplayString())) searchType = SearchType.PROXIMITY.name();
         searchType = searchType.toLowerCase();
         String firstCap = searchType.substring(0, 1).toUpperCase();
-        return firstCap + searchType.substring(1, searchType.length());
+        return firstCap + searchType.substring(1);
         
         
     }
@@ -869,8 +870,7 @@ public class StringSearchFacet extends Facet{
             qs.append(kwParam);
             qs.append("=");
             String rawClauses = this.concatenateSearchClauses(clauses);
-            try{ rawClauses = URLEncoder.encode(rawClauses, "UTF-8"); } 
-            catch(UnsupportedEncodingException uee){}
+            rawClauses = URLEncoder.encode(rawClauses, StandardCharsets.UTF_8);
             qs.append(rawClauses);
             
             SearchClause leadClause = clauses.get(0);
@@ -2344,14 +2344,34 @@ public class StringSearchFacet extends Facet{
             if(!charProxMatcher.matches()) throw new RegexCompilationException();
             String numChars = charProxMatcher.group(1);
             String operator = charProxMatcher.group(2);
-            String distRegex = ".{1," + numChars + "}";
-            // # is conventionally used to indicate word-boundaries on the user-end
-            prevTerm = prevTerm.replaceAll("#", " ").replace("\\s+", " ");
-            nextTerm = nextTerm.replaceAll("#", " ").replace("\\s+", " ");
+            String distRegex;
+            // '#' in the query indicates a word boundary. Since we can't actually do \b
+            // in Solr's regex syntax, these are replaced by spaces. The following code
+            // deals with cases like `word# THEN #word` where some of the character proximity
+            // space must be occupied by ' '.
+            int nc = Integer.parseInt(numChars);
+            if (prevTerm.endsWith("#")) nc--;
+            if (nextTerm.startsWith("#")) nc--;
+            if (nc < 1) {
+                distRegex = " ";
+            } else {
+                if (prevTerm.endsWith("#") || nextTerm.startsWith("#")) {
+                    distRegex = "( |" + (prevTerm.endsWith("#") ? " " : "")
+                            + ".{1," + Integer.toString(nc) + "}" + (nextTerm.startsWith("#") ? " " : "") + ")";
+                    prevTerm = prevTerm.endsWith("#") ? prevTerm.substring(0,prevTerm.length() - 1) : prevTerm;
+                    nextTerm = nextTerm.startsWith("#") ? nextTerm.substring(1) : nextTerm;
+                } else {
+                    distRegex = ".{1," + numChars + "}";
+                }
+            }
             String regex = prevTerm.trim() + distRegex + nextTerm.trim();
+            // clean up any remaining '#'
+            regex = regex.replaceAll("#", " ")
+                    .replaceAll("\\s+", " ");
             if(operator.equals("w")) return regex;
             // if we are doing an unordered proximity search we also need to invert the terms
-            String revRegex = nextTerm.trim() + distRegex + prevTerm.trim();
+            // The regex needs to be recalculated because it may be different
+            String revRegex = convertCharProxToRegexSyntax(nextTerm, prevTerm, charProx.replaceAll("nc", "wc"));
             String nearRegex = "(" + revRegex + "|" + regex + ")";
             return nearRegex;
             
@@ -2786,6 +2806,7 @@ public class StringSearchFacet extends Facet{
 
                 } 
                declinedForm = "(" + declinedForm + ")";
+               solr.close();
                return declinedForm;
            
            } catch (SolrServerException sse) {

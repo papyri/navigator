@@ -44,11 +44,10 @@ public class XSLTService extends HttpServlet {
   private HashMap<String, String> resultTypes;
   private FileUtils util;
   private Processor processor = new Processor(false);
-  private Logger log;
+  private static final Logger LOGGER = Logger.getLogger(XSLTService.class.getName());
 
   @Override
   public void init(ServletConfig config) {
-    log = Logger.getLogger("pn-dispatch");
     util = new FileUtils(config.getInitParameter("xmlPath"));
     Enumeration<String> names = config.getInitParameterNames();
     xslts = new HashMap<String, XsltExecutable>();
@@ -58,14 +57,14 @@ public class XSLTService extends HttpServlet {
       if (name.contains("Path")) continue;
       if (name.contains("-type")) {
         resultTypes.put(name, config.getInitParameter(name));
-        log.info("Adding " + name + ": " + config.getInitParameter(name));
+        LOGGER.log(Level.INFO, "Adding " + name + ": " + config.getInitParameter(name));
       } else {
         try {
           XsltCompiler compiler = processor.newXsltCompiler();
           XsltExecutable xslt = compiler.compile(new StreamSource(new File(config.getInitParameter(name))));
           xslts.put(name, xslt);
         } catch (SaxonApiException e) {
-          log.log(Level.SEVERE, "Failed to compile "+name+".", e);
+          LOGGER.log(Level.SEVERE, "Failed to compile "+name+".", e);
         }
       }
     }
@@ -95,7 +94,7 @@ public class XSLTService extends HttpServlet {
           xslt.setDestination(processor.newSerializer(out));
           xslt.transform();
         } catch (Exception e) {
-          log.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
+          LOGGER.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
         } finally {
           out.close();
         }
@@ -134,7 +133,7 @@ public class XSLTService extends HttpServlet {
         xslt.setDestination(processor.newSerializer(out));
         xslt.transform();
       } catch (Exception e) {
-        log.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
+        LOGGER.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
       } finally {
         out.close();
       }

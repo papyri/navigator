@@ -68,14 +68,14 @@ public class AuthorBrowse extends HttpServlet {
       //filter those for the current author and display, selecting one gives you
     response.setContentType("text/html;charset=UTF-8");
     logger.info("Author Browsing!");
-    SolrClient solr = new HttpSolrClient.Builder(solrUrl).build();
+    SolrClient solr = new HttpSolrClient.Builder(solrUrl).withConnectionTimeout(5000).build();
     SolrQuery sq = new SolrQuery();
     sq.add("q", "*:*");
     sq.addFacetField("author_work");
     sq.setFacetLimit(-1);
     List<Count> authors;
     try {
-        QueryResponse qr = solr.query(sq, SolrRequest.METHOD.GET);
+        QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
         authors = qr.getFacetField("author_work").getValues();
     } catch (SolrServerException sse) {
         logger.log(Level.SEVERE, "Unable to execute query.", sse);
@@ -179,6 +179,7 @@ public class AuthorBrowse extends HttpServlet {
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     } finally {
       out.close();
+      solr.close();
     }
   }
 

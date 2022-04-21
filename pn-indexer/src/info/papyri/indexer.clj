@@ -42,7 +42,7 @@
     (java.nio.charset Charset)
     (java.text Normalizer Normalizer$Form)
     (java.util ArrayList TreeMap)
-    (java.util.concurrent Executors ConcurrentLinkedQueue ConcurrentSkipListSet)
+    (java.util.concurrent Executors Future ConcurrentLinkedQueue ConcurrentSkipListSet)
     (javax.xml.parsers SAXParserFactory)
     (javax.xml.transform Result )
     (javax.xml.transform.sax SAXResult)
@@ -380,6 +380,15 @@
             where { <%s> dct:relation ?a
             filter(!regex(str(?a),'/images$'))}" url))
 
+(defn primary-query
+  "For HGV, APIS, or translations, finds the DDbDP or DCLP relation"
+  [url]
+  (format "prefix dct: <http://purl.org/dc/terms/>
+           select ?a
+           from <http://papyri.info/graph>
+           where { <%s> dct:relation ?a
+           filter(regex(str(?a),'/(ddbdp|dclp)/'))}" url))
+
 (defn batch-replaces-query
   "Gets the set of triples where A `<dct:replaces>` B for a given collection."
   [url]
@@ -567,20 +576,22 @@
       (println (.getMessage e))
       (println query))))
 
-
 ;; ## Data queueing functions
 
 (defn queue-item
   "Adds the given URL to the @html queue for processing, along with associated data."
   [url]
   (let [relations (execute-query (relation-query url))
+        primary (if (not (empty? (re-seq #"/(apis|hgv|hgvtrans)/" url)))
+                  (execute-query (primary-query url))
+                  '())
         replaces (execute-query (replaces-query url))
         is-replaced-by (execute-query (is-replaced-by-query url))
         is-part-of (execute-query (is-part-of-query url))
         source (if (empty? (re-seq #"/hgv/" url))
        		   	  (execute-query (other-source-query url))
        		   	  (execute-query (hgv-source-query url)))
-        citation(if (empty? (re-seq #"/hgv" url))
+        citation (if (empty? (re-seq #"/hgv" url))
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
@@ -589,21 +600,23 @@
                        (fn [x] (> (count x) 0))
                        (for [r relations] (execute-query (images-query (first r)))))))
        ]
-     ;; If doc is being replaced, don't publish it, but make sure to publish its replacement.
-     ;; This might be redundant, but we can't be sure.
-    (if (not (first is-replaced-by))
-      (.add @html (list (str "file:" (get-filename url))
-                  (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
-                  (list "related" (apply str (interpose " " (for [x relations] (first x)))))
-                  (list "replaces" (apply str (interpose " " (for [x replaces] (first x)))))
-                  (list "isPartOf" (apply str (interpose " " (first is-part-of))))
-                  (list "sources" (apply str (interpose " " (for [x source](first x)))))
-                  (list "images" (apply str (interpose " " images)))
-                  (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
-                  (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
-                  (list "selfUrl" (substring-before url "/source"))
-                  (list "server" nserver)))
-      (queue-item (first (last is-replaced-by))))))
+    (if (not (first primary))
+      ;; If doc is being replaced, don't publish it, but make sure to publish its replacement.
+      ;; This might be redundant, but we can't be sure.
+      (if (not (first is-replaced-by))
+        (.add @html (list (str "file:" (get-filename url))
+                          (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
+                          (list "related" (apply str (interpose " " (for [x relations] (first x)))))
+                          (list "replaces" (apply str (interpose " " (for [x replaces] (first x)))))
+                          (list "isPartOf" (apply str (interpose " " (first is-part-of))))
+                          (list "sources" (apply str (interpose " " (for [x source](first x)))))
+                          (list "images" (apply str (interpose " " images)))
+                          (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
+                          (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
+                          (list "selfUrl" (substring-before url "/source"))
+                          (list "server" nserver)))
+        (queue-item (first (last is-replaced-by))))
+      (queue-item (first (last primary))))))
 
 (defn queue-items
   "Adds children of the given collection or volume to the @html queue for processing,
@@ -858,7 +871,7 @@
                (.printStackTrace e)
                (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
        @html)]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))
@@ -885,7 +898,7 @@
           (.printStackTrace e)
           (println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
        @text)]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))
@@ -975,7 +988,7 @@
                                   (.newSerializer processor (FileOutputStream. out))
                                   @bibhtmltemplates))))
                     (filter #(.endsWith (.getName %) ".xml") files))]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))
@@ -1060,7 +1073,7 @@
   		   (transform (first x)
   			      (list (second x) (nth x 2) (nth x 6))
   			      (dochandler) @solrtemplates)))) @text)]
-    (doseq [future (.invokeAll pool tasks)]
+    (doseq [^Future future (.invokeAll pool tasks)]
       (.get future))
     (doto pool
       (.shutdown)))

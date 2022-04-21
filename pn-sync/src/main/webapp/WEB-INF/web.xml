@@ -19,14 +19,6 @@
           <param-name>mdDir</param-name>
           <param-value>/srv/data/papyri.info/pn/docs</param-value>
         </init-param>
-        <init-param>
-            <param-name>dbUser</param-name>
-            <param-value>pn</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbPass</param-name>
-            <param-value>p4pyr!</param-value>  
-        </init-param>
         <load-on-startup>0</load-on-startup>
      </servlet>
      <servlet-mapping>
@@ -38,5 +30,13 @@
             30
         </session-timeout>
     </session-config>
+    <context-param>
+        <param-name>dbUser</param-name>
+        <param-value>pn</param-value>
+    </context-param>
+    <context-param>
+        <param-name>dbPass</param-name>
+        <param-value>p4pyr!</param-value>
+    </context-param>
 </web-app>
 

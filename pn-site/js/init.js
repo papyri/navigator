@@ -191,7 +191,7 @@ function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
 		var link = jQuery("<a></a>");
 		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
+		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
 		var title = jQuery(jQuery(record).children()[1]).text();
 		var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
 		link.attr("title", title);
@@ -233,7 +233,7 @@ function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
 		var link = jQuery("<a></a>");
 		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("http://papyri.info".length);
+		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
 		var title = jQuery(jQuery(record).children()[1]).text();
 		var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
 		link.attr("title", title);
@@ -399,6 +399,9 @@ function getCookie(name) {
     return null;
 }
 
+/**
+ *  Pad
+ */
 function alignRTL() {
   //return true;
   jQuery("span.ab").each(function(i, ab) {
@@ -458,7 +461,7 @@ function alignRTL() {
         }
       } else {
         var offset = width - e.width();
-        if (e[0].previousSibling.textContent.trim() == "" && (e[0].previousElementSibling.localName == "br" || e[0].previousElementSibling.localName == "a")) {
+        if ((e[0].previousSibling.textContent.trim() == "" && (e[0].previousElementSibling.localName == "br" || e[0].previousElementSibling.localName == "a")) || e[0].previousSibling.localName == 'span' && e[0].previousSibling.classList.contains('linenumber')) {
           e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
         }
         e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
@@ -493,7 +496,7 @@ function hideCampaign(duration) {
 }
 
 function canShowCampaign() {
-	//return false; // comment out to launch; re-comment to suspend
+	return false; // comment out to launch; re-comment to suspend
 	let time = window.localStorage.getItem("Hide-papyriCampaign");
 	if (time) {
 		time = Number.parseInt(time);

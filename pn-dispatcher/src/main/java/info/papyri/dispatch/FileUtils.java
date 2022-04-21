@@ -236,7 +236,7 @@ public class FileUtils {
   }
   
   public String getXmlFilePathFromId(String id) {
-     return this.getXmlFilePath(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+     return this.getXmlFilePath(substringBefore(id.replaceFirst("^https?://papyri.info/", ""), "/"), substringAfter(id.replaceFirst("^https?://papyri.info/", ""), "/"));
   }
   
   public String getXmlFilePath(String collection, String item) {
@@ -308,7 +308,7 @@ public class FileUtils {
       }
       return pathname.toString();
     }  else if ("biblio".equals(collection)) {
-      pathname.append("biblio/")
+      pathname.append("Biblio/")
               .append((int)Math.ceil(Double.parseDouble(item) / 1000))
               .append("/")
               .append(item)
@@ -324,7 +324,7 @@ public class FileUtils {
    * @return the text
    */
   public String loadTextFromId(String id) {
-    return loadFile(getTextFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/")));
+    return loadFile(getTextFile(substringBefore(id.replaceFirst("^https?://papyri.info/", ""), "/"), substringAfter(id.replaceFirst("^https?://papyri.info/", ""), "/")));
   }
 
   /**
@@ -333,19 +333,19 @@ public class FileUtils {
    * @return the HTML
    */
   public String loadHtmlFromId(String id) {
-    return loadFile(getHtmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/")));
+    return loadFile(getHtmlFile(substringBefore(id.replaceFirst("^https?://papyri.info/", ""), "/"), substringAfter(id.replaceFirst("^https?://papyri.info/", ""), "/")));
   }
 
   public File getTextFileFromId(String id) {
-    return this.getTextFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+    return this.getTextFile(substringBefore(id.replaceFirst("^https?://papyri.info/", ""), "/"), substringAfter(id.replaceFirst("^https?://papyri.info/", ""), "/"));
   }
 
   public File getHtmlFileFromId(String id) {
-    return this.getHtmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+    return this.getHtmlFile(substringBefore(id.replaceFirst("^https?://papyri.info/", ""), "/"), substringAfter(id.replaceFirst("^https?://papyri.info/", ""), "/"));
   }
 
   public File getXmlFileFromId(String id) {
-    return this.getXmlFile(substringBefore(id.substring("http://papyri.info/".length()), "/"), substringAfter(id.substring("http://papyri.info/".length()), "/"));
+    return this.getXmlFile(substringBefore(id.replaceFirst("^https?://papyri.info/", ""), "/"), substringAfter(id.replaceFirst("^https?://papyri.info/", ""), "/"));
   }
 
   /**
@@ -478,7 +478,6 @@ public class FileUtils {
    * context
    */
   public List<String> highlightMatches(String t, Pattern[] patterns) {
-    logger.info(t);
     List<String> result = new ArrayList<String>();
     String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$4ⓞ")
             .replaceAll(hyphenatedLineNum, "Ⓝ$4ⓜ")
@@ -849,12 +848,12 @@ public class FileUtils {
     String[] staticpath = substringAfter(url, "/html/").split("/");
     StringBuilder result = new StringBuilder();
     if (staticpath.length == 3) {
-      result.append("http://papyri.info/ddbdp/").append(staticpath[0])
+      result.append("https://papyri.info/ddbdp/").append(staticpath[0])
             .append(";").append(substringAfter(staticpath[1], staticpath[0] + "."))
             .append(";")
             .append(substringBefore(substringAfter(staticpath[2], staticpath[1] + ".").replace("_", "/").replace(",", "-"), ".html"));
     } else {
-      result.append("http://papyri.info/ddbdp/").append(staticpath[0])
+      result.append("https://papyri.info/ddbdp/").append(staticpath[0])
             .append(";;").append(substringBefore(substringAfter(staticpath[1], staticpath[0] + ".").replace("_", "/").replace(",", "-"), ".html"));
     }
     return result.toString();
