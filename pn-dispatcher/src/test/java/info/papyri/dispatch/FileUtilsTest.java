@@ -457,16 +457,16 @@ public class FileUtilsTest extends TestCase {
 
   public void testRewriteOldUrl() {
     String url = "/idp_static/current/data/ddb/html/bgu/bgu.1/bgu.1.308.html";
-    String expResult = "http://papyri.info/ddbdp/bgu;1;308";
+    String expResult = "https://papyri.info/ddbdp/bgu;1;308";
     assertEquals(expResult, FileUtils.rewriteOldUrl(url));
     url = "/idp_static/current/data/aggregated/html/p.aberd/p.aberd.98.html";
-    expResult = "http://papyri.info/ddbdp/p.aberd;;98";
+    expResult = "https://papyri.info/ddbdp/p.aberd;;98";
     assertEquals(expResult, FileUtils.rewriteOldUrl(url));
   }
 
   public void testRewriteOldUrl2() {
     String url = "/idp_static/current/data/aggregated/html/p.aberd/p.aberd.98.html";
-    String expResult = "http://papyri.info/ddbdp/p.aberd;;98";
+    String expResult = "https://papyri.info/ddbdp/p.aberd;;98";
     assertEquals(expResult, FileUtils.rewriteOldUrl(url));
   }
   

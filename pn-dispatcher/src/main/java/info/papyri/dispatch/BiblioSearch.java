@@ -78,7 +78,9 @@ public class BiblioSearch extends HttpServlet {
       String line = "";
       while ((line = reader.readLine()) != null) {
         if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
-          SolrClient solr = new HttpSolrClient.Builder(solrUrl + BiblioSearch).build();
+          SolrClient solr = new HttpSolrClient.Builder(solrUrl + BiblioSearch)
+                  .withConnectionTimeout(5000)
+                  .build();
           int rows = 30;
           try {
             rows = Integer.parseInt(request.getParameter("rows"));
@@ -141,6 +143,8 @@ public class BiblioSearch extends HttpServlet {
           } catch (SolrServerException e) {
             out.println("<p>Unable to execute query.  Please try again.</p>");
             throw new ServletException(e);
+          } finally {
+            solr.close();
           }
         } else {
           out.println(line);

@@ -29,7 +29,7 @@
       </div>
     </xsl:if>
     <div class="biblio">
-      <h4>Provisional papyri.info output</h4>
+      <h4>Citation</h4>
       <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="{t:idno[@type='pi']}/source">xml</a><xsl:text>] [</xsl:text><a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text></p>
     </div>
     <xsl:if test="count(t:relatedItem[@type='mentions']/t:bibl) &gt; 0">
@@ -46,7 +46,7 @@
 
   <xsl:template name="buildCitation">
     <xsl:param name="biblType"/>
-    <xsl:variable name="mainWork" select="pi:get-docs(concat(t:relatedItem[@type='appearsIn' and t:bibl/t:ptr/@target != 'http://papyri.info/biblio/0'][1]//t:ptr/@target, '/source'), 'xml')"/>
+    <xsl:variable name="mainWork" select="pi:get-docs(concat(t:relatedItem[@type='appearsIn' and t:bibl/t:ptr/@target != 'https://papyri.info/biblio/0'][1]//t:ptr/@target, '/source'), 'xml')"/>
     <xsl:variable name="author"><xsl:call-template name="author"/></xsl:variable>
     <xsl:variable name="editor"><xsl:call-template name="editor"/></xsl:variable>
     <xsl:variable name="edFirst" select="string-length($author) = 0 and string-length($editor) > 0"/>
@@ -82,7 +82,7 @@
     <xsl:if test="t:idno[@type='pi']"><b><xsl:value-of select="t:idno[@type='pi']"/>. </b> </xsl:if><xsl:if test="string-length($author) > 0"><xsl:value-of select="$author"/>, </xsl:if>
     <xsl:if test="$edFirst"><xsl:value-of select="normalize-space($editor)"/>, </xsl:if>
     <xsl:if test="t:relatedItem[@type='appearsIn']"><xsl:if test="t:title">"</xsl:if><xsl:copy-of select="$articleTitle"/><xsl:if test="@subtype='journal'">,</xsl:if><xsl:if test="t:title">"</xsl:if><xsl:text> </xsl:text></xsl:if>
-    <xsl:copy-of select="$mainTitle"/><xsl:if test="string-length($pubInfo) > 0">, </xsl:if><xsl:value-of select="$pubInfo"/>. </xsl:otherwise></xsl:choose></xsl:template>
+    <xsl:copy-of select="$mainTitle"/><xsl:if test="string-length($pubInfo) > 0">, </xsl:if><xsl:value-of select="$pubInfo"/>. <xsl:apply-templates select="t:ptr"> </xsl:apply-templates></xsl:otherwise></xsl:choose></xsl:template>
 
   <xsl:template name="author">
     <xsl:for-each select="t:author"><xsl:if test="count(../t:author) > 1 and position() = last()"><xsl:text> and </xsl:text></xsl:if>
@@ -192,6 +192,10 @@
   <xsl:template match="t:note[@resp='#BP']">
     Résumé: <xsl:value-of select="."/><br/>
   </xsl:template>
+  
+  <xsl:template match="t:ptr">
+    <a href="{@target}"><xsl:value-of select="@target"/></a>
+  </xsl:template>
 
   <xsl:template name="bpId">
     <xsl:choose>
@@ -281,7 +285,7 @@
   
   <xsl:function name="pi:checkFile">
     <xsl:param name="ddb" />
-    <xsl:variable name="link" select="concat('http://papyri.info/ddbdp/', $ddb)" />
+    <xsl:variable name="link" select="concat('https://papyri.info/ddbdp/', $ddb)" />
     <xsl:variable name="test" select="doc-available(pi:get-filename(concat($link, '/source'), 'xml'))"/>
     <xsl:if test="$test">
       <xsl:value-of select="$link" />

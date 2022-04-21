@@ -50,6 +50,7 @@ public class SolrUtils {
         formSet.add(FileUtils.stripDiacriticals((String)forms.get(i).getFieldValue("form")).replaceAll("[_^]", "").toLowerCase());
       }
     }
+    solr.close();
     return FileUtils.interpose(formSet, " OR ");
   }
   

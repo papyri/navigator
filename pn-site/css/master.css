@@ -356,6 +356,7 @@ div#edition {
 div#edition[lang=ar] {
   float: left;
   margin-left: 1em;
+  min-width: 300px;
 }
 div#history {
   clear: both;
@@ -441,9 +442,6 @@ span.lang>span[lang=ar] {
 span[lang=ar] {
     text-align: right;
 }
-span[lang="ara"] * {
-    font-size: .67em;
-}
 span[lang="en"] {
 direction: ltr;
 display: inline-block;
@@ -463,7 +461,9 @@ font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", 
     "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon",
     "Verdana", "Tahoma";
 }
-
+div[lang="ar"]>span.ab {
+  width: 100%;
+}
 span.ab {
   line-height: 1.4;
   margin-bottom: 8px;

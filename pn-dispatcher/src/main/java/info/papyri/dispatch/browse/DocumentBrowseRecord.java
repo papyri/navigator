@@ -711,7 +711,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
       html.append("</td></tr>");
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
-      logger.log(Level.SEVERE, "Highlightling failure", e);
+      logger.log(Level.SEVERE, "Highlightling failure for " + url.toExternalForm(), e);
     }
     return html.toString();
 
@@ -767,10 +767,12 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
 
   private String generateLink() {
 
-    String startURL = url.toString().substring("http://papyri.info".length());
+    String startURL = url.toString().substring("https://papyri.info".length());
     String sh = getHighlightString();
     String sq = getSolrQueryString();
-    String fullURL = (startURL + sh + sq).length() < 2000 ? startURL + sh + sq : (startURL + sq).length() < 2000 ? startURL + sq : startURL;
+    String fullURL = (startURL + sh + sq).length() < 2000 ? startURL + sh + sq :
+            (startURL + sq).length() < 2000 ? startURL + "?" + (sq.length() > 0 ? sq.substring(1) : "") :
+            startURL;
     return fullURL;
 
   }

@@ -2,3 +2,12 @@
 */classes/
 pn-indexer/lib/
 /epidoc-xslt/
+*/.idea/
+nohup.out
+.DS_Store
+.vscode
+.classpath
+.lein-deps-sum
+.lein-repl-history
+.project
+.settings/
