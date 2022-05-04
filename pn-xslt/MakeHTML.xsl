@@ -378,24 +378,7 @@
                       <xsl:call-template name="images"/>
                     </xsl:if>
                     <xsl:if test="$translation">
-                      <xsl:for-each select="pi:get-docs($relations[contains(., 'hgvtrans')], 'xml')/t:TEI//t:div[@type = 'translation']">
-                        <xsl:sort select="number(ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
-                        <div class="translation data">
-                          <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
-                            [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
-                          <div lang="{@xml:lang}">
-                            <xsl:apply-templates>
-                              <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                            </xsl:apply-templates>
-                          </div>
-                        </div>
-                      </xsl:for-each>
-                      <xsl:for-each select="$relations[contains(., '/apis/')]">
-                        <xsl:choose>
-                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))"><xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/></xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                        </xsl:choose>
-                      </xsl:for-each>
+                      <xsl:call-template name="translations"/>
                     </xsl:if>
                   </div>
                 </xsl:if>
@@ -448,6 +431,9 @@
                   </xsl:if>
                   <xsl:if test="$image">
                     <xsl:call-template name="images"/>
+                  </xsl:if>
+                  <xsl:if test="$translation">
+                    <xsl:call-template name="translations"/>
                   </xsl:if>
                 </xsl:if>
                 <xsl:if test="$collection = 'hgv'">
@@ -534,6 +520,27 @@
           the <a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/permissions.html">owning institution</a> 
           if you wish to use any image in APIS or to publish any material from APIS.</p>
     </div>
+  </xsl:template>
+  
+  <xsl:template name="translations">
+    <xsl:for-each select="pi:get-docs($relations[contains(., 'hgvtrans')], 'xml')/t:TEI//t:div[@type = 'translation']">
+      <xsl:sort select="number(ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
+      <div class="translation data">
+        <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
+          [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
+        <div lang="{@xml:lang}">
+          <xsl:apply-templates>
+            <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+          </xsl:apply-templates>
+        </div>
+      </div>
+    </xsl:for-each>
+    <xsl:for-each select="$relations[contains(., '/apis/')]">
+      <xsl:choose>
+        <xsl:when test="doc-available(pi:get-filename(., 'xml'))"><xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/></xsl:when>
+        <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
   </xsl:template>
   
   <xsl:function name="pi:get-toc">
