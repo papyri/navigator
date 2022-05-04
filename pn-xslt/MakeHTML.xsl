@@ -413,8 +413,8 @@
                     </xsl:if>
                     <xsl:call-template name="biblio"/>
                   </div>
-                  <xsl:if test="//t:div[@type='edition']//*">
-                    <div class="text">
+                  <div class="text">
+                    <xsl:if test="//t:div[@type='edition']//*">
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
                       <xsl:apply-templates select="/t:TEI" mode="text">
                         <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
@@ -427,14 +427,14 @@
                         <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
                       </xsl:apply-templates>
                       <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
-                    </div>
-                  </xsl:if>
-                  <xsl:if test="$image">
-                    <xsl:call-template name="images"/>
-                  </xsl:if>
-                  <xsl:if test="$translation">
-                    <xsl:call-template name="translations"/>
-                  </xsl:if>
+                    </xsl:if>
+                    <xsl:if test="$image">
+                      <xsl:call-template name="images"/>
+                    </xsl:if>
+                    <xsl:if test="$translation">
+                      <xsl:call-template name="translations"/>
+                    </xsl:if>
+                  </div>
                 </xsl:if>
                 <xsl:if test="$collection = 'hgv'">
                   <div class="metadata">
