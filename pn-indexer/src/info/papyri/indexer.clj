@@ -210,10 +210,10 @@
     (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
       (if (= (second identifier) "")
         (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-       (decode-url (.replace (.replace (last identifier) "," "-") "/" "_")) ".xml")
+       (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")
         (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier)
        "/" (first identifier) "." (second identifier) "."
-       (decode-url (.replace (.replace (last identifier) "," "-") "/" "_")) ".xml")))
+       (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")))
     (if (.contains url "hgv/")
       (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
             id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
