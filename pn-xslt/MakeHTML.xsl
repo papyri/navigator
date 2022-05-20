@@ -813,12 +813,12 @@
   <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add[not(parent::t:subst)]|t:del[not(parent::t:subst)]" mode="app-flatten">_<xsl:value-of select="local-name(.)"/>_<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="."/>"_</xsl:for-each><xsl:apply-templates mode="app-flatten"/>@<xsl:value-of select="local-name(.)"/>@</xsl:template>
   
   <xsl:template match="text()" mode="app-tokenize">
-    <xsl:analyze-string select="." regex="(\s|,|\.)+">
+    <xsl:analyze-string select="." regex="(\s|,(\s)|\.(\s))+">
       <xsl:matching-substring>
         <xsl:value-of select="."/>
       </xsl:matching-substring>
       <xsl:non-matching-substring>
-        <t:w><xsl:value-of select="."/></t:w>
+        <t:w><xsl:value-of select="regex-group(2)"/><xsl:value-of select="."/></t:w>
       </xsl:non-matching-substring>
     </xsl:analyze-string>
   </xsl:template>
