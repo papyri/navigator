@@ -121,10 +121,7 @@ public class GitWrapperTest {
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
-  
-  /**
-   * Test of filenameToUri method, of class GitWrapper.
-   */
+
   @Test
   public void testFilenameToUriHGV() {
     System.out.println("filenameToUri for HGV");
@@ -133,7 +130,15 @@ public class GitWrapperTest {
     String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
-  
+
+  @Test
+  public void testFilenameToURIHGVTrans() {
+    System.out.println("filenameToURI for HGV_trans");
+    String file = "HGV_trans_EpiDoc/78091.xml";
+    String expResult = "http://papyri.info/hgvtrans/78091/source";
+    String result = GitWrapper.filenameToUri(file);
+    assertEquals(expResult, result);
+  }
   
   @Test
   public void testMapping() {
