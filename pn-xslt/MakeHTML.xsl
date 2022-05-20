@@ -778,28 +778,153 @@
     <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"> = APD <a href="http://www.apd.gwi.uni-muenchen.de:8080/apd/show2.jsp?papname={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"/></a></xsl:if>
   </xsl:template>
   
+  
+  <!-- Apparatus munging
+       1. Flatten the text by resolving <supplied> (which can cross word boundaries),
+          and turning <hi> and <g> into plain text <hi rend="diairesis">i</hi> -> _hi_rend="diairesis"_i_hi_ (e.g.).
+       2. Tokenize the text on space, wrapping the tokens in <pi:t> tags.
+       3. Restore the flattened markup. 
+  
+       This allows us to process the apparatus while collecting, e.g. multiple ancient diacritics on a single word
+       into a single apparatus entry. -->
+  
+  <xsl:template match="*" mode="app-flatten app-tokenize app-restore">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="t:supplied|t:unclear" mode="app-flatten">
+    <xsl:apply-templates select="."/>
+  </xsl:template>
+  
+  <!-- Flatten nested <hi> -->
+  <xsl:template match="t:hi[t:hi]" mode="app-flatten">
+    <xsl:variable name="result">
+      <t:hi>
+        <xsl:attribute name="rend"><xsl:value-of select="string-join(descendant-or-self::*/@rend, '•')"/></xsl:attribute>
+        <xsl:value-of select="."/>
+      </t:hi>
+    </xsl:variable>
+    <xsl:apply-templates select="$result" mode="app-flatten"/>
+  </xsl:template>
+  
+  <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add[not(parent::t:subst)]|t:del[not(parent::t:subst)]" mode="app-flatten">_<xsl:value-of select="local-name(.)"/>_<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="."/>"_</xsl:for-each><xsl:apply-templates mode="app-flatten"/>@<xsl:value-of select="local-name(.)"/>@</xsl:template>
+  
+  <xsl:template match="text()" mode="app-tokenize">
+    <xsl:analyze-string select="." regex="(\s|,|\.)+">
+      <xsl:matching-substring>
+        <xsl:value-of select="."/>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <t:w><xsl:value-of select="."/></t:w>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
+  </xsl:template>
+  
+  <xsl:template match="text()" mode="app-restore">
+    <xsl:variable name="pass1">
+      <xsl:analyze-string select="." regex="_([^_]+)_(([^_]+=&quot;[^&quot;]+&quot;_)*)([^_]*)">
+        <xsl:matching-substring>
+          <xsl:element namespace="http://www.tei-c.org/ns/1.0" name="{regex-group(1)}">
+            <xsl:attribute name="x">open</xsl:attribute>
+            <xsl:analyze-string select="regex-group(2)" regex="([^=]+)=&quot;([^&quot;]+)&quot;_">
+              <xsl:matching-substring>
+                <xsl:attribute name="{regex-group(1)}"><xsl:value-of select="replace(regex-group(2), '•', ' ')"/></xsl:attribute>
+              </xsl:matching-substring>
+            </xsl:analyze-string>
+          </xsl:element>
+          <xsl:value-of select="regex-group(4)"/>
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:value-of select="."/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:variable>
+    <xsl:variable name="pass2">
+      <xsl:apply-templates select="$pass1" mode="app-restore-close"/>
+    </xsl:variable>
+    <!-- Re-impose hierarchy -->
+    <xsl:apply-templates select="$pass2/*[1]" mode="app-hierarchy"/>
+  </xsl:template>
+  
+  <xsl:template match="text()" mode="app-restore-close">
+    <xsl:analyze-string select="." regex="@([^@]+)@">
+      <xsl:matching-substring>
+        <xsl:element namespace="http://www.tei-c.org/ns/1.0" name="{regex-group(1)}">
+          <xsl:attribute name="x">close</xsl:attribute>
+        </xsl:element>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <txt x="open" xmlns="http://www.tei-c.org/ns/1.0"/><xsl:value-of select="."/><txt x="close" xmlns="http://www.tei-c.org/ns/1.0"/>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="app-restore-close">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="app-hierarchy">
+    <xsl:variable name="name" select="local-name(.)"/>
+    <xsl:variable name="closers" select="following-sibling::*[local-name() = local-name(current())][@x='close']"/>
+    <xsl:variable name="close" select="$closers[count(preceding-sibling::*[local-name() = $name][@x='close']) = (count(preceding-sibling::*[local-name() = $name][@x='open']) - 1)][1]"/>
+    <xsl:element name="{local-name()}" namespace="http://www.tei-c.org/ns/1.0">
+      <xsl:copy-of select="@*[not(local-name() = 'x')]"/>
+      <xsl:apply-templates select="following-sibling::*[@x='open'][following-sibling::* = $close/preceding-sibling::*][1]" mode="app-hierarchy"/>
+    </xsl:element>
+    <xsl:apply-templates select="$close/following-sibling::*[1]" mode="app-hierarchy"/>
+  </xsl:template>
+  
+  <xsl:template match="t:txt" mode="app-hierarchy">
+    <xsl:value-of select="following-sibling::text()[1]"/>
+    <xsl:if test="following-sibling::*[2][@x='open']">
+      <xsl:apply-templates select="following-sibling::*[2]" mode="app-hierarchy"/>
+    </xsl:if>
+  </xsl:template>
+    
+  <!-- restore nested <hi> -->
+  <xsl:template match="t:hi[contains(@rend, ' ')]" mode="app-restore">
+    <xsl:variable name="rends" select="tokenize(@rend, ' ')"/>
+    <t:hi rend="{$rends[1]}"><t:hi rend="{$rends[2]}"><xsl:value-of select="."/></t:hi></t:hi>
+  </xsl:template>
+  
   <!-- Override template in htm-tpl-apparatus.xsl -->
   <xsl:template name="tpl-apparatus">
     <!-- An apparatus is only created if one of the following is true -->
     <xsl:if test=".//t:choice | .//t:subst | .//t:app | .//t:g[@type=('apostrophe','high-punctus','middot','low-punctus','diastole','hypodiastole')] |
-      .//t:hi[@rend = 'diaeresis' or @rend = 'grave' or @rend = 'acute' or @rend = 'asper' or @rend = 'lenis' or @rend = 'circumflex'] |
+      .//t:hi[@rend = ('diaeresis','grave','acute','asper','lenis','circumflex')] |
       .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
       
       <div id="apparatus" lang="en">
         <h2>Apparatus</h2>
+        <xsl:variable name="pass1">
+          <xsl:apply-templates select="." mode="app-flatten"/>
+        </xsl:variable>
+        <xsl:variable name="pass2">
+          <xsl:apply-templates select="$pass1" mode="app-tokenize"/>
+        </xsl:variable>
+        <xsl:variable name="pass2b">
+          <xsl:apply-templates select="$pass2" mode="app-restore"/>
+        </xsl:variable>
+        <xsl:variable name="pass3">
+          <xsl:apply-templates select="$pass2b" mode="app-restore"/>
+        </xsl:variable>
         <xsl:variable name="apparatus">
           <!-- An entry is created for-each of the following instances
                   * choice, subst or app not nested in another;
                   * hi not nested in the app part of an app;
                   * del or milestone.
         -->
-          <xsl:for-each select="(.//t:choice | .//t:subst | .//t:app)[not(ancestor::t:*[local-name()=('choice','subst','app')])] | .//t:g[@type=('apostrophe','high-punctus','middot','low-punctus','diastole','hypodiastole')] |
-            .//t:hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')][not(ancestor::t:*[local-name()=('orig','reg','sic','corr','lem','rdg') 
+          <xsl:for-each select="($pass3//t:choice | $pass3//t:subst | $pass3//t:app)[not(ancestor::t:*[local-name()=('choice','subst','app')])] | 
+            $pass3//t:w[t:g[@type=('apostrophe','high-punctus','middot','low-punctus','diastole','hypodiastole')]] |
+            $pass3//t:w[t:hi[@rend=('diaeresis','grave','acute','asper','lenis','circumflex')]][not(ancestor::t:*[local-name()=('orig','reg','sic','corr','lem','rdg') 
             or self::t:del[@rend='corrected'] 
             or self::t:add[@place='inline']][1][local-name()=('reg','corr','rdg') 
             or self::t:del[@rend='corrected']]
             or ancestor::t:hi)] |
-            .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
+            $pass3//t:del[@rend='slashes' or @rend='cross-strokes'] | $pass3//t:milestone[@rend = 'box']">
             <app>
               <!-- Found in tpl-apparatus.xsl -->
               <xsl:call-template name="ddbdp-app">
@@ -832,7 +957,7 @@
             </app>
           </xsl:for-each>
         </xsl:variable>
-        <!-- XSL for-each-group effectively suppresses any duplicate apparati generated due to sibling triggers.   -->
+        <!-- XSL for-each-group effectively suppresses any duplicate apparatus generated due to sibling triggers.   -->
         <xsl:for-each-group select="$apparatus/*:app" group-by=".">
           <xsl:copy-of select="node()"/>
         </xsl:for-each-group>
