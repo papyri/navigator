@@ -803,14 +803,14 @@
   <xsl:template match="t:hi[t:hi]" mode="app-flatten">
     <xsl:variable name="result">
       <t:hi>
-        <xsl:attribute name="rend"><xsl:value-of select="string-join(descendant-or-self::*/@rend, '•')"/></xsl:attribute>
+        <xsl:attribute name="rend"><xsl:value-of select="string-join(descendant-or-self::*/@rend, '🦊')"/></xsl:attribute>
         <xsl:value-of select="."/>
       </t:hi>
     </xsl:variable>
     <xsl:apply-templates select="$result" mode="app-flatten"/>
   </xsl:template>
   
-  <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add[not(parent::t:subst)]|t:del[not(parent::t:subst)]" mode="app-flatten">_<xsl:value-of select="local-name(.)"/>_<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="."/>"_</xsl:for-each><xsl:apply-templates mode="app-flatten"/>@<xsl:value-of select="local-name(.)"/>@</xsl:template>
+  <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add[not(parent::t:subst)]|t:del[not(parent::t:subst)]" mode="app-flatten">🐯<xsl:value-of select="local-name(.)"/>🐯<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="."/>"🐯</xsl:for-each><xsl:apply-templates mode="app-flatten"/>🐹<xsl:value-of select="local-name(.)"/>🐹</xsl:template>
   
   <xsl:template match="text()" mode="app-tokenize">
     <xsl:analyze-string select="." regex="(\s|,(\s)|\.(\s))+">
@@ -825,13 +825,13 @@
   
   <xsl:template match="text()" mode="app-restore">
     <xsl:variable name="pass1">
-      <xsl:analyze-string select="." regex="_([^_]+)_(([^_]+=&quot;[^&quot;]+&quot;_)*)([^_]*)">
+      <xsl:analyze-string select="." regex="🐯([^🐯]+)🐯(([^🐯]+=&quot;[^&quot;]+&quot;🐯)*)([^🐯]*)">
         <xsl:matching-substring>
           <xsl:element namespace="http://www.tei-c.org/ns/1.0" name="{regex-group(1)}">
             <xsl:attribute name="x">open</xsl:attribute>
-            <xsl:analyze-string select="regex-group(2)" regex="([^=]+)=&quot;([^&quot;]+)&quot;_">
+            <xsl:analyze-string select="regex-group(2)" regex="([^=]+)=&quot;([^&quot;]+)&quot;🐯">
               <xsl:matching-substring>
-                <xsl:attribute name="{regex-group(1)}"><xsl:value-of select="replace(regex-group(2), '•', ' ')"/></xsl:attribute>
+                <xsl:attribute name="{regex-group(1)}"><xsl:value-of select="replace(regex-group(2), '🦊', ' ')"/></xsl:attribute>
               </xsl:matching-substring>
             </xsl:analyze-string>
           </xsl:element>
@@ -850,7 +850,7 @@
   </xsl:template>
   
   <xsl:template match="text()" mode="app-restore-close">
-    <xsl:analyze-string select="." regex="@([^@]+)@">
+    <xsl:analyze-string select="." regex="🐹([^🐹]+)🐹">
       <xsl:matching-substring>
         <xsl:element namespace="http://www.tei-c.org/ns/1.0" name="{regex-group(1)}">
           <xsl:attribute name="x">close</xsl:attribute>
