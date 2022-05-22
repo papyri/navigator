@@ -872,7 +872,7 @@
     <xsl:variable name="close" select="$closers[count(preceding-sibling::*[local-name() = $name][@x='close']) = (count(preceding-sibling::*[local-name() = $name][@x='open']) - 1)][1]"/>
     <xsl:element name="{local-name()}" namespace="http://www.tei-c.org/ns/1.0">
       <xsl:copy-of select="@*[not(local-name() = 'x')]"/>
-      <xsl:apply-templates select="following-sibling::*[@x='open'][following-sibling::* = $close/preceding-sibling::*][1]" mode="app-hierarchy"/>
+      <xsl:apply-templates select="following-sibling::*[@x='open'][following-sibling::* intersect $close/preceding-sibling::*][1]" mode="app-hierarchy"/>
     </xsl:element>
     <xsl:apply-templates select="$close/following-sibling::*[1]" mode="app-hierarchy"/>
   </xsl:template>
