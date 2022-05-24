@@ -810,15 +810,15 @@
     <xsl:apply-templates select="$result" mode="app-flatten"/>
   </xsl:template>
   
-  <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add[not(parent::t:subst)]|t:del[not(parent::t:subst)]" mode="app-flatten">🐯<xsl:value-of select="local-name(.)"/>🐯<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="."/>"🐯</xsl:for-each><xsl:apply-templates mode="app-flatten"/>🐹<xsl:value-of select="local-name(.)"/>🐹</xsl:template>
+  <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add|t:del|t:subst" mode="app-flatten">🐯<xsl:value-of select="local-name(.)"/>🐯<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="."/>"🐯</xsl:for-each><xsl:apply-templates mode="app-flatten"/>🐹<xsl:value-of select="local-name(.)"/>🐹</xsl:template>
   
   <xsl:template match="text()" mode="app-tokenize">
-    <xsl:analyze-string select="." regex="(\s|,(\s)|\.(\s))+">
+    <xsl:analyze-string select="." regex="([ \n\r\t,.;;··])+">
       <xsl:matching-substring>
         <xsl:value-of select="."/>
       </xsl:matching-substring>
       <xsl:non-matching-substring>
-        <t:w><xsl:value-of select="regex-group(2)"/><xsl:value-of select="."/></t:w>
+        <t:w><xsl:value-of select="."/></t:w>
       </xsl:non-matching-substring>
     </xsl:analyze-string>
   </xsl:template>
@@ -874,7 +874,7 @@
       <xsl:copy-of select="@*[not(local-name() = 'x')]"/>
       <xsl:apply-templates select="following-sibling::*[@x='open'][following-sibling::* intersect $close/preceding-sibling::*][1]" mode="app-hierarchy"/>
     </xsl:element>
-    <xsl:apply-templates select="$close/following-sibling::*[1]" mode="app-hierarchy"/>
+    <xsl:apply-templates select="$close/following-sibling::*[@x='open'][1]" mode="app-hierarchy"/>
   </xsl:template>
   
   <xsl:template match="t:txt" mode="app-hierarchy">
