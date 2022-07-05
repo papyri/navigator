@@ -352,7 +352,7 @@
                             "FILTER  regex(str(?r2), \"^http://papyri.info/hgvtrans\")}")
           images (str "PREFIX dc: <http://purl.org/dc/terms/> "
                       "WITH <http://papyri.info/graph> "
-                      "INSERT { ?r1 dcterms:relation ?r2 } "
+                      "INSERT { ?r1 dc:relation ?r2 } "
                       "WHERE { "
                       "?c dc:isPartOf <http://papyri.info/apis> . "
                       "?i dc:isPartOf ?c . "

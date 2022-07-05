@@ -39,7 +39,7 @@ public class SyncServlet extends HttpServlet {
     super.init(config);
     GitWrapper.init(config.getInitParameter("gitDir"), config.getServletContext().getInitParameter("dbUser"), config.getServletContext().getInitParameter("dbPass"));
     publisher = new Publisher(config.getInitParameter("gitDir"));
-    // Run at 5 minutes past the hour, and every hour thereafter.
+    // Run at 5 minutes past the hour, and every half hour thereafter.
     Calendar cal = Calendar.getInstance();
     int start = cal.get(Calendar.MINUTE);
     if (start > 5) {
@@ -48,7 +48,7 @@ public class SyncServlet extends HttpServlet {
       start = 5 - start;
     }
     // check for updates to idp.data repo and sync them across Github and Canonical
-    scheduler.scheduleWithFixedDelay(publisher, start, 60, MINUTES);
+    scheduler.scheduleWithFixedDelay(publisher, start, 30, MINUTES);
     final File mdDir = new File(config.getInitParameter("mdDir"));
     // pull any changes to site-docs so they get published
     scheduler.scheduleWithFixedDelay(() -> {
