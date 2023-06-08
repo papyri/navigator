@@ -67,7 +67,6 @@ public class AuthorBrowse extends HttpServlet {
       //selecting one is a search on author_str:"<selected author>" gets back author_work facets
       //filter those for the current author and display, selecting one gives you
     response.setContentType("text/html;charset=UTF-8");
-    logger.info("Author Browsing!");
     SolrClient solr = new HttpSolrClient.Builder(solrUrl).withConnectionTimeout(5000).build();
     SolrQuery sq = new SolrQuery();
     sq.add("q", "*:*");
