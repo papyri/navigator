@@ -971,7 +971,7 @@
       <!--[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]-->
     <script type="text/javascript">
 
-     $(document).ready(function(){
+      $(document).ready(function(){
 
      	$("#opening-info h2, #info").css("display", "block");
         $(".info-section h4").click(function(){
@@ -981,39 +981,31 @@
 
         		var newHeight = $("#facet-wrapper").height();
         	    if(newHeight != startHeight){
-
                 	$("#search-toggle").height(newHeight);
-
         		}
         	});
-
-
         });
-
-
-
-
-
      });
 
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-19774706-1']);
-      _gaq.push(['_trackPageview']);
-
+      var _paq = window._paq = window._paq || [];
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
       (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        var u="//analytics.lib.duke.edu/";
+        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setSiteId', '34']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
       })();
 
-	function findTM(href){
+      function findTM(href){
 
-		var loc = window.location.toString();
-		if(loc.charAt(loc.length - 1) == "#") loc = loc.substring(0, loc.length - 1);
-		loc = loc + "?target=user_defined&STRING=(identifier:" + href + ")";
-		window.location = loc;
+        var loc = window.location.toString();
+        if(loc.charAt(loc.length - 1) == "#") loc = loc.substring(0, loc.length - 1);
+        loc = loc + "?target=user_defined&STRING=(identifier:" + href + ")";
+        window.location = loc;
 
-	}
+      }
 
     </script>
   </head>
