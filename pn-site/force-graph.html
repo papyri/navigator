@@ -191,7 +191,7 @@
         sparql +=    "LIMIT 500";
         jsonUri = "/sparql?query=" + encodeURIComponent(sparql);
       } else {
-        query = url = window.location.href.replace(/:\/\/[^\/]+/, "://papyri.info").replace(/\/graph$/, "");
+        query = url = window.location.href.replace(/s?:\/\/[^\/]+/, "://papyri.info").replace(/\/graph$/, "");
         jsonUri = window.location.href.replace(/\/graph$/, "/json");
       }
 
