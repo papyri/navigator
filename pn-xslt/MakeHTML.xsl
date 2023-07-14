@@ -809,7 +809,7 @@
     <xsl:apply-templates select="$result" mode="app-flatten"/>
   </xsl:template>
   
-  <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add|t:del|t:subst" mode="app-flatten">🐯<xsl:value-of select="local-name(.)"/>🐯<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="."/>"🐯</xsl:for-each><xsl:apply-templates mode="app-flatten"/>🐹<xsl:value-of select="local-name(.)"/>🐹</xsl:template>
+  <xsl:template match="t:hi|t:g|t:lb[@break='no']|t:add|t:del|t:subst" mode="app-flatten">🐯<xsl:value-of select="local-name(.)"/>🐯<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="translate(.,',.','🦋🐌')"/>"🐯</xsl:for-each><xsl:apply-templates mode="app-flatten"/>🐹<xsl:value-of select="local-name(.)"/>🐹</xsl:template>
   
   <xsl:template match="text()" mode="app-tokenize">
     <xsl:analyze-string select="." regex="([ \n\r\t,.;;··])+">
@@ -823,8 +823,9 @@
   </xsl:template>
   
   <xsl:template match="text()" mode="app-restore">
+    <xsl:variable name="restore" select="translate(.,'🦋🐌',',.')"/>
     <xsl:variable name="pass1">
-      <xsl:analyze-string select="." regex="🐯([^🐯]+)🐯(([^🐯]+=&quot;[^&quot;]+&quot;🐯)*)([^🐯]*)">
+      <xsl:analyze-string select="$restore" regex="🐯([^🐯]+)🐯(([^🐯]+=&quot;[^&quot;]+&quot;🐯)*)([^🐯]*)">
         <xsl:matching-substring>
           <xsl:element namespace="http://www.tei-c.org/ns/1.0" name="{regex-group(1)}">
             <xsl:attribute name="x">open</xsl:attribute>
