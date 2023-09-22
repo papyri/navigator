@@ -1058,14 +1058,14 @@
   []
   (dosync (ref-set solr
     (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "pn-search/"))]
-      (-> cb (.withQueueSize 500) 
-        (.withThreadCount nthreads)
+      (-> cb (.withQueueSize 50) 
+        (.withThreadCount 1)
         (.build))))
 	  (.setRequestWriter @solr (BinaryRequestWriter.)))
 
   ;; Index docs queued in @text
   (println "Indexing text...")
-  (let [pool (Executors/newFixedThreadPool nthreads)
+  (let [pool (Executors/newFixedThreadPool 1)
         tasks
     	(map (fn [x]
   	       (fn []
