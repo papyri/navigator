@@ -30,10 +30,12 @@
         <!-- Catalog(s)/MP3 number -->
         <xsl:if test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='MP3']">
             <tr>
-                <th class="rowheader">Catalog(s)</th>
+                <th class="rowheader">Mertens-Pack</th>
                 <td>
                     <xsl:for-each select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='MP3']">
-                        <xsl:value-of select="concat('MP3 ',.)"/>
+                    <a href="{concat('http://www.cedopalmp3.uliege.be/cdp_MP3_display.aspx?numNot=', .)}">
+                        <xsl:value-of select="concat('MP3 ', .)"/>
+                    </a>
                         <xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
                     </xsl:for-each>
                 </td>
