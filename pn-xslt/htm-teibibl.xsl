@@ -226,7 +226,7 @@
                   <xsl:with-param name="series" select="./t:title[@level='s'][@type='short']" />
                   <xsl:with-param name="volume" select="./t:biblScope[@type=$values-issues or @unit=$values-issues]" />
                   <xsl:with-param name="number" select="./t:biblScope[@type=$values-numbers or @unit=$values-numbers]" />
-                  <xsl:with-param name="ddbId" select="./t:idno[@type='ddb']" />
+                  <xsl:with-param name="id" select="./t:idno[@type=('ddb', 'dclp')]" />
                   <xsl:with-param name="inventory" select="./t:idno[@type='invNo']" />
                 </xsl:call-template>
               </li>
@@ -239,7 +239,7 @@
               <xsl:with-param name="series" select="normalize-space($relatedArticle/t:title[@level='s'][@type='short'])" />
               <xsl:with-param name="volume" select="normalize-space($relatedArticle/t:biblScope[@type=$values-issues or @unit=$values-issues])" />
               <xsl:with-param name="number" select="normalize-space($relatedArticle/t:biblScope[@type=$values-numbers or @unit=$values-numbers])" />
-              <xsl:with-param name="ddbId" select="normalize-space($relatedArticle/t:idno[@type='ddb'])" />
+              <xsl:with-param name="id" select="normalize-space($relatedArticle/t:idno[@type=('ddb', 'dclp')])" />
               <xsl:with-param name="inventory" select="normalize-space($relatedArticle/t:idno[@type='invNo'])" />
             </xsl:call-template>
           </p>
@@ -253,10 +253,10 @@
     <xsl:param name="series" />
     <xsl:param name="volume" />
     <xsl:param name="number" />
-    <xsl:param name="ddbId" />
+    <xsl:param name="id" />
     <xsl:param name="inventory" />
 
-    <xsl:variable name="link" select="pi:checkFile($ddbId)"/>
+    <xsl:variable name="link" select="pi:checkFile($id)"/>
     <xsl:variable name="related">
       <xsl:choose>
         <xsl:when test="string($inventory)">
@@ -284,8 +284,13 @@
   </xsl:template>
   
   <xsl:function name="pi:checkFile">
-    <xsl:param name="ddb" />
-    <xsl:variable name="link" select="concat('https://papyri.info/ddbdp/', $ddb)" />
+    <xsl:param name="id" />
+    <xsl:variable name="link">
+      <xsl:choose>
+        <xsl:when test="contains($id, ';')"><xsl:value-of select="concat('https://papyri.info/ddbdp/', $id)"/></xsl:when>
+        <xsl:when test="matches($id, '\d+')"><xsl:value-of select="concat('https://papyri.info/dclp/', $id)"/></xsl:when>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="test" select="doc-available(pi:get-filename(concat($link, '/source'), 'xml'))"/>
     <xsl:if test="$test">
       <xsl:value-of select="$link" />
