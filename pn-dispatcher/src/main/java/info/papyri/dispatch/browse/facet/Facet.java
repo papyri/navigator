@@ -329,7 +329,8 @@ abstract public class Facet {
 
           String param = java.net.URLDecoder.decode(values[i], "UTF-8");
 
-          if (param != null && !param.equals("default") && !param.equals("")) {
+          if (param != null && !param.equals("default") && !param.equals("")
+              && !param.contains("<") && !param.contains(">") && !param.contains(";")) {
             addConstraint(param);
             hasConstraint = true;
           }
