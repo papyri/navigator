@@ -510,7 +510,8 @@
     <tr>
       <th class="rowheader" rowspan="1">Post-Concordance BL Entries</th>
       <td>
-        <xsl:for-each select=".//t:bibl"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each>
+        <xsl:if test=".//t:bibl[@type='BL-online']"><a href="{../t:bibl[@type='BL-online']/t:ptr/@target}">BL-online</a><xsl:text>; </xsl:text></xsl:if>
+        <xsl:for-each select=".//t:bibl[@type='BL']"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each>
       </td>
     </tr>
   </xsl:template>
