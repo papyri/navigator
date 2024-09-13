@@ -4,11 +4,7 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
@@ -386,40 +382,175 @@ public class FileUtils {
    * @param t
    * @return the highlighted text
    */
-  public String standardHighlight(String query, String t) {
-    Pattern[] patterns = getPatterns(query);
-    List<String> exclusions = getExclusions(t);
-    String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
-    int index = 0;
-    for (Pattern pattern : patterns) {
-      StringBuilder hl = new StringBuilder();
-      Matcher m = pattern.matcher(text);
-      while (m.find()) {
-        hl.append(text.substring(index, m.start()));
-        hl.append(hlStartMark);
-        hl.append(text.substring(m.start(), m.end()));
-        hl.append(hlEndMark);
-        index = m.end();
+  public String highlightText(String query, String t) {
+    String text = Normalizer.normalize(t, Normalizer.Form.NFD);
+    int[] map;
+    if (t.startsWith("<")) {
+      text = text.replace("-<br", "- <br")
+          .replace("<br", " <br")
+          .replace("-  ", "-");
+      map = mapHtml(text);
+    } else {
+      map = mapText(text);
+    }
+    StringBuilder processedText = new StringBuilder();
+    for (int i = 0; i < map.length; i++) {
+      processedText.append(text.charAt(map[i]));
+    }
+    return highlight(query, processedText.toString(), text, map);
+  }
+
+  private static int[] mapHtml(String text) {
+    int[] letters = new int[5000];
+    boolean skip = false;
+    boolean inBody = false;
+    int letterIndex = 0;
+    for (int i = 0; i < text.length(); i++) {
+      if (skip && text.charAt(i) != '>') {
+        continue;
       }
-      if (hl.length() > 0) {
-        hl.append(text.substring(index));
-        text = hl.toString();
-        index = 0;
+      if (skip && text.charAt(i) == '>') {
+        skip = false;
+        continue;
+      }
+      if (text.charAt(i) == '<') {
+        skip = true;
+        // Skip line numbers
+        if (text.startsWith("<span class=\"linenumber\">", i)) {
+          i = text.indexOf("</span>", i);
+        }
+        if (text.startsWith("<body", i)) {
+          inBody = true;
+        }
+        continue;
+      }
+      if (!inBody) {
+        continue;
+      }
+      if (letterIndex >= letters.length - 1) {
+        int[] exp = new int[letters.length * 2];
+        System.arraycopy(letters, 0, exp, 0, letters.length);
+        letters = exp;
+      }
+      if (Character.isAlphabetic(text.codePointAt(i)) ||
+          Character.isDigit(text.codePointAt(i)) ||
+          Character.isWhitespace(text.codePointAt(i)) ||
+          text.codePointAt(i) == '.' ||
+          text.codePointAt(i) == ',' ||
+          text.codePointAt(i) == ';'
+      ) {
+        letters[letterIndex++] = i;
       }
     }
-    Pattern p = Pattern.compile("ⓐⓐⓐ\\n?");
-    int i = 0;
+    return letters;
+  }
+
+  public int[] mapText(String text) {
+    int[] letters = new int[5000];
+    int letterIndex = 0;
+    for (int i = 0; i < text.length(); i++) {
+      // Treat word-breaking newlines as nothing;
+      // these have the form wordpart-\n\d(\w|,|/)+\.\s+wordpart, so you find things like '2/3,md.'
+      if (text.charAt(i) == '-') {
+        if (text.startsWith("-\n", i)) {
+          i++;
+          while (text.charAt(i) != '.') {
+            i++;
+          }
+          i++;
+          while (Character.isWhitespace(text.charAt(i))) {
+            i++;
+          }
+          continue;
+        }
+      }
+      // Treat numbered lines as whitespace; these have the form \n\d(\w|,|/)+\. followed by spaces
+      if (text.charAt(i) == '\n') {
+        int next = text.length() - i;
+        if (next > 10) {
+          next = 10;
+        }
+        String foo = text.substring(i+1, i + next);
+        boolean bar = foo.matches("^\\d(\\w|,|/)*\\.\\s{2}.*");
+        if (i < text.length() - 1 && text.substring(i+1, i + next).matches("^\\d(\\w|,|/)*\\.\\s{2}.*")) {
+          while (text.charAt(i) != '.') {
+            i++;
+          }
+          i++;
+          continue;
+        }
+      }
+      if (letterIndex >= letters.length - 1) {
+        int[] exp = new int[letters.length * 2];
+        System.arraycopy(letters, 0, exp, 0, letters.length);
+        letters = exp;
+      }
+      if (text.charAt(i) == 'ͅ') { // ignore U+0345, COMBINING GREEK YPOGEGRAMMENI
+        continue;
+      }
+      if (Character.isLetterOrDigit(text.codePointAt(i)) ||
+          Character.isWhitespace(text.codePointAt(i)) ||
+          text.codePointAt(i) == '.' ||
+          text.codePointAt(i) == ',' ||
+          text.codePointAt(i) == ';'
+      ) {
+        letters[letterIndex++] = i;
+      }
+    }
+    return letters;
+  }
+
+  public String highlight(String query, String t, String originalText, int[] map) {
+    String searchText = t.toLowerCase();
+    List<String> tokens = getTokensFromQuery(query);
+    ArrayList<Hit> locations = new ArrayList<>();
     int start = 0;
-    Matcher m = p.matcher(text);
-    StringBuilder result = new StringBuilder();
-    while (m.find()) {
-      result.append(text.substring(start, m.start()));
-      result.append(exclusions.get(i));
-      start = m.end();
-      i++;
+    for (String token : tokens) {
+      token = token.replaceAll("\"", "");
+      if (token.contains("#")) {
+        Pattern p = Pattern.compile(token
+            .replaceAll("^#", "(?<=\\\\s|[,.;])")
+            .replaceAll("#$", "(?=\\\\s|[,.;])")
+            .replaceAll("# ", "(?=\\\\s|[,.;]) ")
+            .replaceAll(" #", " (?<=\\\\s|[,.;])"),
+            Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(searchText);
+        while (m.find()) {
+          locations.add(new Hit(m.start(), searchText.substring(m.start(), m.end())));
+        }
+        continue;
+      }
+      if (token.contains("£") || token.contains("¥")) {
+        Pattern p = Pattern.compile(substituteWildcards(token));
+        Matcher m = p.matcher(searchText);
+        while (m.find()) {
+          locations.add(new Hit(m.start(), searchText.substring(m.start(), m.end())));
+        }
+        continue;
+      }
+      int found = searchText.indexOf(token.toLowerCase(), start);
+      while (found != -1) {
+        locations.add(new Hit(found, token));
+        start = found + token.length();
+        found = searchText.indexOf(token, start);
+      }
+      start = 0;
     }
-    result.append(text.substring(start));
-    return result.toString().replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
+    locations.sort(new HitComparator());
+    locations = prune(locations);
+
+    StringBuilder result = new StringBuilder();
+    start = 0;
+    for (Hit hit : locations) {
+      result.append(originalText.substring(start, map[hit.location]));
+      start = map[hit.location];
+      result.append(hlStart);
+      result.append(originalText.substring(start, map[hit.location + hit.token.length()]));
+      start = map[hit.location + hit.token.length()];
+      result.append(hlEnd);
+    }
+    result.append(originalText.substring(start));
+    return Normalizer.normalize(result, Normalizer.Form.NFC);
   }
   
   public String highlight(Pattern[] patterns, String t) {
@@ -460,14 +591,11 @@ public class FileUtils {
     result.append(text.substring(start));
     return result.toString().replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
   }
-  
 
-  public List<String> highlightStandardMatches(String query, String t) {
-
-      Pattern[] patterns = getPatterns(query);
-      return highlightMatches(t, patterns);  
+  public List<String> highlightMatches(String t, Pattern[] patterns) {
+    String highlightedText = highlight(patterns, t);
+    return getNMatches(highlightedText, 3);
   }
-  
     
   /**
    * Finds matches in a text file and returns the top 3 matches with HTML
@@ -477,62 +605,57 @@ public class FileUtils {
    * @return A <code>java.util.List</code> containing the top 3 matches plus
    * context
    */
-  public List<String> highlightMatches(String t, Pattern[] patterns) {
-    List<String> result = new ArrayList<String>();
-    String text = t.toString().replaceAll(hyphenatedLineNumInSupplied, "Ⓜ$4ⓞ")
-            .replaceAll(hyphenatedLineNum, "Ⓝ$4ⓜ")
-            .replaceAll(lineNum, "\nⓝ$4ⓜ")
-            .replace("\n", " ⓝ")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;");
-    for (Pattern pattern : patterns) {
-      // If pattern is something dumb, like '.', skip it.
-      if (bustedRegexes.contains(pattern.toString())) {
-        continue;
-      }
-      Matcher m = pattern.matcher(text);
-      int prevEnd = 0;
-      while (m.find()) {
-        int start = m.toMatchResult().start();
-        int end = m.toMatchResult().end();
-        if (text.substring(0, start).indexOf('ⓝ') > 0) {
-          start = text.substring(0, start).lastIndexOf("ⓝ");
-        } else {
-          start = 0;
-        }
-        if (end > text.length() - 50) {
-          end = text.length();
-        } else {
-          if (text.indexOf('ⓝ', end) > 0) {
-            end = text.indexOf('ⓝ', end) - 1;
-          }
-        }
-        // if our lines are excessively long, then trim them
-        if (end - start > 150) {
-          while (m.toMatchResult().start() - start > 100) {
-            start = text.indexOf(' ', start + 70) + 1; 
-          }
-          if (end - m.toMatchResult().end() > 100) {
-            end = text.lastIndexOf(' ', m.toMatchResult().end() + 70);
-          }
-        }
-        if (start >= prevEnd) {
-          result.add(highlight(patterns, text.substring(start, end)).replaceAll("Ⓜ([^ⓞ]+)ⓞ"
-                  + "", "-]<br/>$1 ").replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
-          if (result.size() > 2) {
-            return result;
-          }
-          prevEnd = end;
-        } else {
-          String hit = result.remove(result.size() - 1) + text.substring(prevEnd, end);
-          result.add(highlight(patterns, hit).replaceAll("Ⓜ([^ⓞ]+)ⓞ", "-]<br/>$1 ").replaceAll("Ⓝ([^ⓜ]+)ⓜ", "-<br/>$1 ").replaceAll("ⓝ([^ⓜ]+)ⓜ", "$1 ").replace("ⓝ", ""));
-          if (result.size() > 2) {
-            return result;
-          }
-        }
-      }
+  public List<String> highlightMatches(String query, String t) {
+    String text = Normalizer.normalize(t, Normalizer.Form.NFD);
+    int[] map = mapText(text);
+    StringBuilder processedText = new StringBuilder();
+    for (int i = 0; i < map.length; i++) {
+      processedText.append(text.charAt(map[i]));
     }
-    return result;
+    String highlightedText = highlight(query, processedText.toString(), text, map);
+    return getNMatches(highlightedText, 3);
+  }
+
+  private List<String> getNMatches(String text, int n) {
+    String[] lines = text.split("\\n+");
+    int found = 0;
+    ArrayList<String> hits = new ArrayList<>();
+    for (int i = 0; i < lines.length; i++) {
+      String line = lines[i];
+      if (found >= n) {
+        break;
+      }
+      int start = line.indexOf(hlStart);
+      if (start == -1) {
+        continue;
+      } else {
+        found++;
+      }
+      String hitline;
+      if (line.indexOf(hlEnd, start) != -1) { // end is on same line
+        hitline = line;
+      } else {
+        int end = lines[i + 1].indexOf(hlStart);
+        if (end > 0) {
+          hitline = line + " | " + lines[i + 1].substring(start, end);
+        } else {
+          hitline = line + " | " + lines[i + 1];
+        }
+      }
+      if (hitline.length() > 60) {
+        start = hitline.indexOf(hlStart) - 10;
+        if (start >= 0) {
+          hitline = hitline.substring(start);
+          hitline = '…' + hitline.substring(hitline.indexOf(" ") + 1);
+        }
+        int end = hitline.lastIndexOf(' ', hitline.lastIndexOf(hlEnd) + 12);
+        if (end < hitline.length()) {
+          hitline = hitline.substring(0, end);
+        }
+      }
+      hits.add(hitline);
+    }
+    return hits;
   }
   
     public Pattern[] getPatterns(String query) {
@@ -828,7 +951,7 @@ public class FileUtils {
     }
   }
   
-  public static String interpose(Collection coll, String sep) {
+  public static String interpose(Collection<String> coll, String sep) {
     StringBuilder result = new StringBuilder();
     for (Iterator<String> i = coll.iterator(); i.hasNext();) {
       result.append(i.next());
@@ -857,6 +980,37 @@ public class FileUtils {
             .append(";;").append(substringBefore(substringAfter(staticpath[1], staticpath[0] + ".").replace("_", "/").replace(",", "-"), ".html"));
     }
     return result.toString();
+  }
+
+  private ArrayList<Hit> prune(ArrayList<Hit> hits) {
+    return prune(hits, 0);
+  }
+
+  private ArrayList<Hit> prune(ArrayList<Hit> hits, int start) {
+    if (start >= hits.size() - 1) return hits;
+    if (hits.get(start).location + hits.get(start).token.length() > hits.get(start + 1).location) {
+      hits.remove(start + 1);
+      return prune(hits, start);
+    } else {
+      return prune(hits, start + 1);
+    }
+  }
+
+  private class Hit {
+    Hit (int location, String token) {
+      this.location = location;
+      this.token = token;
+    }
+
+    int location;
+    String token;
+  }
+
+  private class HitComparator implements Comparator<Hit> {
+
+    public int compare(Hit lhs, Hit rhs) {
+      return lhs.location - rhs.location;
+    }
   }
 
   private String xmlPath;

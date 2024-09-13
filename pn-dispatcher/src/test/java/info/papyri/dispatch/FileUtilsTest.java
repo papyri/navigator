@@ -95,7 +95,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("Ostrakon");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -116,7 +116,7 @@ public class FileUtilsTest extends TestCase {
     expResult.add("Sheep");
     expResult.add("sheep");
     expResult.add("sheep");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -136,13 +136,12 @@ public class FileUtilsTest extends TestCase {
     List<String> expResult = new ArrayList<String>();
     expResult.add("ἀναγκαία̣ς");
     expResult.add("χ[ρ]είας");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
         if (r.contains(e)) {
           matches++;
-          break;
         }
       }
     }
@@ -172,7 +171,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("καὶ στρ]ατηγ");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -191,7 +190,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("μεν) κα");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -211,7 +210,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("στρ̣[ατη-]<br/>31. γῶι");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -230,7 +229,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("σ]τρατηγ</span>είας");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -249,7 +248,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("Alexandria");
-    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
+    String result = instance.highlightText(query, instance.loadHtmlFromId(id));
     int matches = 0;
     for (String e : expResult) {
       if (result.contains(e)) {
@@ -266,7 +265,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("τουτ’έστιν");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -285,7 +284,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("sheep");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -305,7 +304,7 @@ public class FileUtilsTest extends TestCase {
     List<String> expResult = new ArrayList<String>();
     expResult.add("<span class=\"highlight\">sheep</span>");
     expResult.add("<span class=\"highlight\">sheep-</span>pens");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -322,7 +321,7 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/bgu;2;521";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     String text = instance.loadTextFromId(id);
-    String result = instance.standardHighlight(query, text);
+    String result = instance.highlightText(query, text);
     assertTrue(result.equals(text));
   }
 
@@ -332,7 +331,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("κα̣ισ");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -350,51 +349,8 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/p.ryl;2;215";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     assertTrue(result.size() > 0);
-  }
-  
-  public void testFindMatchesFromPatterns() {
-      StringBuilder pattern = new StringBuilder();
-      pattern.append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*(σ|ς)")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*τ")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*(ρ|ῥ)")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*τ")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("(η|ἠ|ἡ|ἢ|ἣ|ἤ|ἥ|ἦ|ἧ|ή|ὴ|ᾐ|ᾑ|ᾒ|ᾓ|ᾔ|ᾕ|ᾖ|ᾗ|ῂ|ῃ|ῄ|ῆ|ῇ)")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*γ")
-              .append("([-’ʼ\\[\\]()̣〚〛\\\\/|?*ⓐⒶⒷ.]|&gt;|&lt;|ca.|ⓝ")
-              .append("[0-9a-z]+\\.ⓜ|Ⓝ[0-9a-z]+\\.ⓜ|Ⓜ[0-9a-z]+\\.ⓞ)*");
-      Pattern[] patterns = new Pattern[]{Pattern.compile(pattern.toString())};
-      String id = "http://papyri.info/ddbdp/bgu;1;2";
-      FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-      String expResult = "<span class=\"highlight\">στρ(ατηγ</span>";
-      List<String> result = instance.highlightMatches(
-              instance.loadTextFromId(id), patterns);
-      assertTrue(result.get(0).contains(expResult));
   }
 
   public void testFindNgram() {
@@ -403,7 +359,7 @@ public class FileUtilsTest extends TestCase {
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("<span class=\"highlight\">μὲν [κα</span>");
-    List<String> result = instance.highlightStandardMatches(query, instance.loadTextFromId(id));
+    List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
       for (String e : expResult) {
@@ -420,7 +376,7 @@ public class FileUtilsTest extends TestCase {
     String query = "transcription_ngram_ia:(θμοινεθυμις)";
     String id = "http://papyri.info/ddbdp/p.fuad.i.univ;;5";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
+    String result = instance.highlightText(query, instance.loadHtmlFromId(id));
     assertTrue(result.contains("<br id=\"av,2-l3\"><span class=\"linenumber\">3</span><span class=\"highlight\">Θμ̣ο̣ινεθῦμις</span>"));
   }
   
@@ -428,7 +384,7 @@ public class FileUtilsTest extends TestCase {
     String query = "transcription_ngram_ia:(#θρασω#)";
     String id = "http://papyri.info/ddbdp/p.sakaon;;94";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
+    String result = instance.highlightText(query, instance.loadHtmlFromId(id));
     assertTrue(result.contains("<br id=\"ar-l5\"><span class=\"linenumber\">5</span><span class=\"highlight\">Θρασώ</span>"));
   }
 
@@ -436,15 +392,15 @@ public class FileUtilsTest extends TestCase {
     String query = "transcription_ngram_ia:(απολλωνιωι)";
     String id = "http://papyri.info/ddbdp/bgu;10;1941";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
-    assertTrue(result.contains("<span class=\"highlight\">Ἀπολλωνί̣ωι<br id=\"aFrA,2-l3\"></span>"));
+    String result = instance.highlightText(query, instance.loadHtmlFromId(id));
+    assertTrue(result.contains("<span class=\"highlight\">Ἀπολλωνί̣ωι</span> <br id=\"aFrA,2-l3\">"));
   }
   /*
   public void testHighLightRegex() {
     String query = "{!regexp cache=false qf=\"untokenized_ia\"}^.*\bδια\b.{1,30}\bβοηθου\b.*$";
     String id = "http://papyri.info/ddbdp/p.lond;2;459";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
-    String result = instance.standardHighlight(query, instance.loadHtmlFromId(id));
+    String result = instance.highlightText(query, instance.loadHtmlFromId(id));
     assertTrue(result.contains("<span class=\"highlight\">διὰ<br id=\"al3\">Λ̣ο̣υκίου Ἀνουβίωνος βοηθοῦ</span>"));
   }
   * */

@@ -363,7 +363,7 @@ public class Search extends HttpServlet {
         row.append("</td>");
         row.append("</tr>");
         row.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"6\">");
-        for (String line : util.highlightStandardMatches(sq.getQuery(), util.loadTextFromId((String)doc.getFieldValue("id")))) {
+        for (String line : util.highlightMatches(sq.getQuery(), util.loadTextFromId((String)doc.getFieldValue("id")))) {
           row.append(line + "<br>\n");
         }
         row.append("</td></tr>");
