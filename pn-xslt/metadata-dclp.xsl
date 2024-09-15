@@ -33,7 +33,10 @@
                 <th class="rowheader">Catalog(s)</th>
                 <td>
                     <xsl:for-each select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='MP3']">
-                        <xsl:value-of select="concat('MP3 ',.)"/>
+                        <xsl:text>MP3 </xsl:text>
+                    <a href="{concat('http://www.cedopalmp3.uliege.be/cdp_MP3_display.aspx?numNot=', .)}">
+                        <xsl:value-of select="."/>
+                    </a>
                         <xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
                     </xsl:for-each>
                 </td>
