@@ -16,4 +16,4 @@ ADD https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein /usr
 RUN chmod a+x /usr/local/bin/lein
 ADD . /navigator
 WORKDIR /navigator
-CMD cd pn-dispatcher && mvn test
+CMD make test-in-docker
