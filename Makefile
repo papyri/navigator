@@ -7,4 +7,4 @@ build:
 	docker build -t $(CI_REGISTRY_IMAGE)/builds:$(CI_COMMIT_SHORT_SHA) .
 
 test:
-	docker run $(build_tag)
+	docker run -e GITHUB_TOKEN -e GITHUB_USERNAME $(build_tag)
