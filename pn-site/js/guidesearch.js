@@ -179,7 +179,7 @@ $(document).ready(
 
 	    	}
 
-	    	var combos = $(".combobox");
+	    	var combos = $(".custom-combobox");
 
 	    	for(var m = 0; m < combos.length; m++){
 
@@ -205,13 +205,19 @@ $(document).ready(
 
 				var fel = filteredels[k];
 				var name = $(fel).attr("name");
-				var val = $(fel).attr("value");
+				var val = $(fel).val();
 
 				// workaround for jQuery hidden field blindness
 				if(typeof name == 'undefined' || typeof val == 'undefined'){
 
-					name = fel.getAttribute("name");
-					val = fel.getAttribute("value");
+          /**
+           * guidesearch.js:213 Uncaught TypeError: fel.getAttribute is not a function
+    at hic.tidyQueryString (guidesearch.js:213:17)
+    at HTMLFormElement.dispatch (jquery-3.7.1.min.js:2:40035)
+    at v.handle (jquery-3.7.1.min.js:2:38006)
+           */
+					name = fel.attr("name");
+					val = fel.val();
 
 				}
 				val = val.replace(/\s*\(\d+\)\s*$/, "");
@@ -395,9 +401,9 @@ $(document).ready(
 
 	    hic.monitorTextInput = function(){
 
-	    	$(this).unbind('focus');
-			$(this).unbind('keypress');
-			$(this).unbind('keyup');
+	    	$(this).off('focus');
+			$(this).off('keypress');
+			$(this).off('keyup');
 	    	var betaOn = $("#beta-on").attr("checked");
 	    	colonFound = false;
 	    	var selectedRadios = [];
@@ -429,7 +435,7 @@ $(document).ready(
 					$(".stringsearch-section input:radio").removeAttr("disabled");
 				    for(var i = 0; i < selectedRadios.length; i++){
 
-                	    selectedRadios[i].click();   
+                	    selectedRadios[i].trigger('click');   
 
 			    	} 
 
@@ -487,8 +493,8 @@ $(document).ready(
     				hic.positionTogglePointer();
 
     			});
-    	$("#search-toggle").unbind('click');
-    	$("#search-toggle").click(hic.showSearch);
+    	$("#search-toggle").off('click');
+    	$("#search-toggle").on("click", hic.showSearch);
     	$.cookie(hic.COOKIE, 0);
 
    }
@@ -537,8 +543,8 @@ $(document).ready(
 				}
 
 			);
-			$("#search-toggle").unbind('click');
-			$("#search-toggle").click({ delay:325 }, hic.hideSearch);
+			$("#search-toggle").off('click');
+			$("#search-toggle").on("click", { delay:325 }, hic.hideSearch);
 			$.cookie(hic.COOKIE, null);
 
 		}
@@ -568,7 +574,7 @@ $(document).ready(
 		 * to appropriate text input
 		 */
 
-		$("select[name='DATE_START'], select[name='DATE_END']").change(function(){ 
+		$("select[name='DATE_START'], select[name='DATE_END']").on("change", () => { 
 
 			var val = $(this).val();
 			val = val == "0" ? 1 : val;
@@ -578,7 +584,7 @@ $(document).ready(
 			var passedValue = val == "Unknown" ? "n.a." : Math.abs(val);
 			$("input[name='" + correspondingTextInput + "']").val(passedValue);
 			$("select[name='" + correspondingEraInput + "']").val(era);
-			$("form[name='facets']").submit();
+			$("form[name='facets']").trigger("submit");
 
 
 		});
@@ -588,14 +594,14 @@ $(document).ready(
 		 * value has been entered
 		 *
 		 */
-		$("input[name='after-era'], input[name='before-era']").change(function(){
+		$("input[name='after-era'], input[name='before-era']").on("change", () => {
 
 	    	var correlatedText = $(this).attr("name") == 'after-era' ? 'DATE_START' : 'DATE_END';
 	    	var correlatedTextInput = $("input[name='" + correlatedText + "']");
 	    	var correlatedValue = correlatedTextInput.val();
 	    	if(correlatedValue == "" || correlatedValue == "n.a.") return false;	
 	    	correlatedTextInput.val(correlatedValue.replace(/\s*\(\d+\)[\s]*$/g, "").replace(/\D/g, "").trim());
-			$("form[name='facets']").submit();
+			$("form[name='facets']").trigger("submit");
 
 		});
 
@@ -604,7 +610,7 @@ $(document).ready(
 		 * values manually
 		 *
 		 */
-		$("input#DATE_START_TEXT, input#DATE_END_TEXT").focus(function(){
+		$("input#DATE_START_TEXT, input#DATE_END_TEXT").on("focus", () => {
 
 			$(this).css("font-style", "normal");
 
@@ -615,7 +621,7 @@ $(document).ready(
 		 * DATE_END_TEXT controls
 		 *
 		 */
-		$("input#DATE_START_TEXT, input#DATE_END_TEXT").blur(function(){
+		$("input#DATE_START_TEXT, input#DATE_END_TEXT").on("blur", () => {
 
 			if($(this).val() == "n.a."){
 
@@ -698,18 +704,18 @@ $(document).ready(
 
 		}
 
-		$("#text-search-widget").find("input[name='target']").click(hic.configureSearchSettings);
+		$("#text-search-widget").find("input[name='target']").on("click", hic.configureSearchSettings);
 		// select substring as default
-		$("#substring").click();
-		$(".toggle-open").click({ delay: 325 }, hic.hideSearch);
-		$(".toggle-closed").click(hic.showSearch);		
+		$("#substring").trigger('click');
+		$(".toggle-open").on("click", { delay: 325 }, hic.hideSearch);
+		$(".toggle-closed").on("click", hic.showSearch);		
 		$("#vals-and-records-wrapper").width(hic.getValsAndRecordsWidth("init"));
 		hic.positionTogglePointer();
 		$("#search-toggle").height($("#facet-wrapper").height());
 		// changing date mode causes tidy and submit
-		$("input:radio[name='DATE_MODE']").change(hic.tidyQueryString);
+		$("input:radio[name='DATE_MODE']").on("change", hic.tidyQueryString);
 		// turning betacode on/off selects text input
-		$("#beta-on").change(function(){
+		$("#beta-on").on("change", () => {
 
 			$(".stringsearch-top-controls:last .keyword").focus();
 			var beta = $(this).attr("checked") ? "beta-on" : "beta-off";
@@ -721,13 +727,13 @@ $(document).ready(
 
 		//$(".stringsearch-top-controls:last .keyword").live("blur", function(){ $("#keyword").focus(hic.monitorTextInput) });
 		// submit triggers tidy ...
-		$("form[name='facets']").submit(hic.tidyQueryString);
+		$("form[name='facets']").on("submit", hic.tidyQueryString);
 		// ... unless checks need to be in place first
-		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").change(hic.tidyQueryString);
+		$("form select").not("select[name='DATE_START']").not("select[name='DATE_START_ERA']").not("select[name='DATE_END']").not("select[name='DATE_END_ERA']").not("select[name='prxunit']").on("change", hic.tidyQueryString);
 
 		// sets cookie on click to record to allow reversion to current search results
-		$("td.identifier a").click(function(e){  hic.setCookie("lbpersist", window.location.search, 12); return true; });
-		$("#reset-all").click(function(e){
+		$("td.identifier a").on("click", (e) => {  hic.setCookie("lbpersist", window.location.search, 12); return true; });
+		$("#reset-all").on("click", (e) => {
 
 			$.cookie(hic.SEARCH_STACK, null);
 			return true;
@@ -753,106 +759,109 @@ $(document).ready(
 		$("select[name='DATE_END']").combobox();
 		$("select[name='LANG']").combobox();
 		$("select[name='TRANSL']").combobox();
-		$(".combobox").click(function(evt){
+		$(".custom-combobox").on("click", (evt) => {
 
-			$(this).val("");	
-			var button = $(this).next("button");
-			button.css("outline-color", $(this).css("outline-color"));
-			button.css("outline-width", $(this).css("outline-width"));
-			button.css("outline-style", $(this).css("outline-style"));
+      const actionTarget = evt.target;
+			$(actionTarget).val("");	
+			var button = $(actionTarget).next("a");
+			button.css("outline-color", $(actionTarget).css("outline-color"));
+			button.css("outline-width", $(actionTarget).css("outline-width"));
+			button.css("outline-style", $(actionTarget).css("outline-style"));
 
 		});
-		$(".combobox").blur(function(evt){
+		$(".custom-combobox").on("blur", (evt) => {
 
-			var button = $(this).next("button");
+      const actionTarget = evt.target;
+			var button = $(actionTarget).next("a");
 			button.css("outline","none");
 
 
 		});
-		$(".combobox").focus(function(evt){
+		$(".custom-combobox").on("focus", (evt) => {
 
-			var button = $(this).next("button");
-			button.css("outline-color", $(this).css("outline-color"));
-			button.css("outline-width", $(this).css("outline-width"));
-			button.css("outline-style", $(this).css("outline-style"));		
+      const actionTarget = evt.target;
+			var button = $(actionTarget).next("a");
+			button.css("outline-color", $(actionTarget).css("outline-color"));
+			button.css("outline-width", $(actionTarget).css("outline-width"));
+			button.css("outline-style", $(actionTarget).css("outline-style"));		
 
 		});
 		
-		$("input[name=DATE_START]").focus(function(evt){
+		$("input[name=DATE_START]").on("focus", (evt) => {
 			
 			hic.startDateSet = true;
-			$(this).unbind("focus");
+			$(evt.target).off("focus");
 		
 		});
 		
-		$("input[name=DATE_START]").click(function(evt){
+		$("input[name=DATE_START]").on("click", (evt) => {
 			
 			$("input:radio[name=after-era]").removeAttr("disabled");
 		
 		});
 
-		$("input[name=DATE_END]").click(function(evt){
+		$("input[name=DATE_END]").on("click", (evt) => {
 			
 			$("input:radio[name=before-era]").removeAttr("disabled");
 
 		});
 		
-		$("input[name=DATE_START]").blur(function(evt){
+		$("input[name=DATE_START]").on("blur", (evt) => {
 			
-			var val = $(this).val();
+			var val = $(evt.target).val();
 			if(val == "" || val == "default") $("input:radio[name=after-era]").attr("disabled", "");
 
 		});
 
-		$("input[name=DATE_END]").blur(function(evt){
+		$("input[name=DATE_END]").on("blur", (evt) => {
 			
-			var val = $(this).val();
+			var val = $(evt.target).val();
 			if(val == "" || val == "default") $("input:radio[name=before-era]").attr("disabled", "");
 		
 		});
 		
 
-		$("input[name=DATE_END]").focus(function(evt){
+		$("input[name=DATE_END]").on("focus", (evt) => {
 			
 			hic.endDateSet = true;
-			$(this).unbind("focus");
+			$(evt.target).off("focus");
 		
 		});
 		
-		$("input:radio[name=after-era]").change(function(evt){
+		$("input:radio[name=after-era]").on("change", (evt) => {
 		
 			if($("input[name=DATE_START]").val() != "default" && $("input[name=DATE_START]").val() != "Unknown"){
 			
 				hic.startDateSet = true;
-				$(this).unbind("change");
+				$(evt.target).off("change");
 				
 			}
 			
 		});
 		
-	    $("input:radio[name=before-era]").change(function(evt){
+	    $("input:radio[name=before-era]").on("change", (evt) => {
 		
 			if($("input[name=DATE_END]").val() != "default" && $("input[name=DATE_END]").val() != "Unknown"){
 			
 				hic.endDateSet = true;
-				$(this).unbind("change");
+				$(evt.target).off("change");
 				
 			}
 			
 		});
 		
-		$("input:radio[name=DATE_MODE]").change(function(evt){
+		$("input:radio[name=DATE_MODE]").on("change", (evt) => {
 		
 			if($("input[name=DATE_START]").val() != "default" && $("input[name=DATE_START]").val() != "Unknown"){
 			
 				hic.startDateSet = true;
-				$(this).unbind("change");
+				$(evt.target).off("change");
 				
 			}		
 			if($("input[name=DATE_END]").val() != "default" && $("input[name=DATE_END]").val() != "Unknown"){	
 			
 				hic.endDateSet = true;
-				$(this).unbind("change");
+				$(evt.target).off("change");
 				
 			}		
 			

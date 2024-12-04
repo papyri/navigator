@@ -5,11 +5,13 @@
     <title>PN Search</title>
     <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.14.1.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-dul-theme-shim.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/jquery.bubblepopup.v2.1.5.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <script src="/js/jquery-1.7.min.js" type="text/javascript" charset="utf-8"></script>
-   <script src="/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery-migrate-3.5.2.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/js/jquery-ui-1.14.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <!-- typegreek code written by Randy Hoyt, http://www.typegreek.com/overview/. Used with gratitude and permission -->
@@ -176,9 +178,14 @@
 
       .facet-widget select, .facet-widget input{
 
-        float: right;
         padding-top: 0;
         margin-top: 0;
+
+      }
+
+      .facet-widget input#id-idno, .facet-widget input#id-volume, .facet-widget select[name=TRANSC] {
+
+      	float: right;
 
       }
 
@@ -188,13 +195,13 @@
 
       }
 
-      #place-selector input{
+      #place-selector .custom-combobox {
 
       	width: 63%;
 
       }
 
-      #nome-selector input{
+      #nome-selector .custom-combobo {
 
       	width: 63%;
 
@@ -706,11 +713,17 @@
 
       #after-era-selector, #before-era-selector{
 
-      		float: left;
+      		float: inline-end;
       		position: relative;
       		margin-left: 2em;
       		padding-top: 2px;
 
+      }
+
+      .custom-combobox {
+        float: right;
+        margin-right: 1em;
+        vertical-align: middle;
       }
 
 	#after-era-selector input, #before-era-selector input{
