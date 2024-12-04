@@ -52,6 +52,7 @@ div.content.search {
   .facet-widget p span.custom-combobox, #author-selector p span.option-label, #work-selector p span.option-label, #transl-selector p span.option-label, #lang-selector p span.option-label { flex: 1 }
   .facet-widget p span.custom-combobox, input.custom-combobox-input { width: 100% }
   .facet-widget.date-facet-widget { display: flex }
+  .search-closed .facet-widget.date-facet-widget { display: none }
   .facet-widget.date-facet-widget input.custom-combobox-input { width: auto }
   #id-selector-wrapper input.custom-combobox-input { width: auto }
 }
