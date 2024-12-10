@@ -1,14 +1,16 @@
 function init() {
-    jQuery("div#hd h1").click(function() {window.location = "/"});
+    jQuery("div#hd h1").on('click', () => { window.location = "/" });
     jQuery("li.dialog").each(function(i) {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
         jQuery(this).hide();
     });
-    jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").hover(function() {
-      jQuery(this).css('background-color', '#F8F6F4');
-    },
-    function() {
-      jQuery(this).css('background-color', 'transparent');
+    jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").on({
+      mouseenter: function() {
+          jQuery(this).css('background-color', '#F8F6F4');
+      },
+      mouseleave: function() {
+          jQuery(this).css('background-color', 'initial'); //set it back to its initial state
+      }
     });
     jQuery("div.controls input").each(function() {
         if (!this.checked) {
