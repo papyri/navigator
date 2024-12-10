@@ -210,12 +210,6 @@ $(document).ready(
 				// workaround for jQuery hidden field blindness
 				if(typeof name == 'undefined' || typeof val == 'undefined'){
 
-          /**
-           * guidesearch.js:213 Uncaught TypeError: fel.getAttribute is not a function
-    at hic.tidyQueryString (guidesearch.js:213:17)
-    at HTMLFormElement.dispatch (jquery-3.7.1.min.js:2:40035)
-    at v.handle (jquery-3.7.1.min.js:2:38006)
-           */
 					name = fel.attr("name");
 					val = fel.val();
 

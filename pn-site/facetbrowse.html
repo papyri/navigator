@@ -987,10 +987,10 @@
       $(document).ready(function(){
 
      	$("#opening-info h2, #info").css("display", "block");
-        $(".info-section h4").click(function(){
+        $(".info-section h4").on('click', (e) => {
 
         	var startHeight = $("#facet-wrapper").height();
-        	$(this).next(".info-content").slideToggle(200, 'linear', function(){
+        	$(e.currentTarget).next(".info-content").slideToggle(200, 'linear', function(){
 
         		var newHeight = $("#facet-wrapper").height();
         	    if(newHeight != startHeight){
