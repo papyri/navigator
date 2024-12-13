@@ -170,6 +170,8 @@
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
         <link rel="stylesheet" href="{$cssbase}/master.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <link rel="stylesheet" href="{$cssbase}/custom-theme/jquery-ui-1.14.1.min.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+        <link rel="stylesheet" href="{$cssbase}/custom-theme/jquery-ui-dul-theme-shim.css" type="text/css" media="screen" title="no title" charset="utf-8" />
         <xsl:if test="$image">
           <link rel="stylesheet" href="{$cssbase}/imageviewer.css" type="text/css" />
         </xsl:if>
@@ -200,8 +202,9 @@
           <xsl:call-template name="title-references"/>
         </title>
         <!-- scripts -->
-        <script src="{$jsbase}/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="{$jsbase}/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="{$jsbase}/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="{$jsbase}/jquery-migrate-3.5.2.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="{$jsbase}/jquery-ui-1.14.1.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="{$jsbase}/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$image">
           <script src="{$jsbase}/imageviewer.js" type="text/javascript" charset="utf-8"></script>
