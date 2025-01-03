@@ -1,6 +1,5 @@
 package info.papyri.dispatch.browse.facet;
 
-import edu.unc.epidoc.transcoder.TransCoder;
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.browse.SolrField;
@@ -13,9 +12,9 @@ import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketExcep
 import info.papyri.dispatch.browse.facet.customexceptions.RegexCompilationException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
 import info.papyri.dispatch.browse.facet.customexceptions.SubstringTooSmallException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,7 +60,6 @@ import org.apache.solr.common.SolrDocumentList;
  * 
  * @author thill
  * @version 2012.02.08
- * @see info.papyri.dispatch.Search
  * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause
  * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause
  * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm
@@ -207,7 +205,7 @@ public class StringSearchFacet extends Facet{
     /**
      * Regular Expression <code>Pattern</code> for detecting the presence of a 
      * proximity operator in a <code>SearchClause</code>.
-     * 
+     * <p>
      * Note the syntax here:
      * \d{1,2}: An integer between 1 and 99 indicating the number of proximity untis
      * within which a search term has to fall
@@ -500,7 +498,7 @@ public class StringSearchFacet extends Facet{
             
             html.append(inp);
             html.append("target");
-            html.append(String.valueOf(index));
+            html.append(index);
             html.append(v);
             html.append(clauses.get(0).getSearchTarget().name());
             html.append(c);
@@ -509,7 +507,7 @@ public class StringSearchFacet extends Facet{
                 
                 html.append(inp);
                 html.append(SearchOption.NO_CAPS.name().toLowerCase());
-                html.append(String.valueOf(index));                
+                html.append(index);
                 html.append(v);
                 html.append("on");
                 html.append(c);
@@ -1113,8 +1111,7 @@ public class StringSearchFacet extends Facet{
          * proximity searches Solr does not directly support, however, the pseudo-Solr syntax generated 
          * will be further transformed into a regular expression.
          * 
-         * @see SubClause#doProxTransform(java.util.ArrayList) 
-         * @see SubClause#doCharsProxTransform(java.util.ArrayList, int) 
+         * @see SubClause#doCharsProxTransform(java.util.ArrayList, int)
          * @see SubClause#doWordsProxTransform(java.util.ArrayList, int) 
          * @param fullString
          * @return
@@ -1313,11 +1310,7 @@ public class StringSearchFacet extends Facet{
         final String transcodeToUnicodeC(String dString){
             
             try{
-                
-                TransCoder tc = new TransCoder();
-                tc.setParser("Unicode");
-                tc.setConverter("UnicodeC");
-                return tc.getString(dString);
+                return Normalizer.normalize(dString, Normalizer.Form.NFC);
             } catch(Exception e){ return dString; }
             
             
