@@ -74,13 +74,13 @@ public class LanguageFacet extends Facet{
             
         }
         
-        Collections.sort(valuesAndCounts, new Comparator(){
+        Collections.sort(valuesAndCounts, new Comparator<Count>(){
 
             @Override
-            public int compare(Object t, Object t1) {
+            public int compare(Count t, Count t1) {
                 
-                Count count1 = (Count) t;
-                Count count2 = (Count) t1;
+                Count count1 = t;
+                Count count2 = t1;
                 
                 if(count1.getCount() < count2.getCount()) return 1;
                 if(count1.getCount() > count2.getCount()) return -1;

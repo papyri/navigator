@@ -13,18 +13,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  *
@@ -75,7 +75,7 @@ public class CTSServlet extends HttpServlet {
         writeStart(out, req, inv, cts);
         CTSReffContentHandler handler = new CTSReffContentHandler();
         handler.setup(out, cts);
-        XMLReader reader = XMLReaderFactory.createXMLReader();
+        XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
         reader.setContentHandler(handler);
         reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
         reader.setFeature("http://xml.org/sax/features/validation", false);
@@ -102,7 +102,7 @@ public class CTSServlet extends HttpServlet {
         handler.parseReference(location);
         try {
           writeStart(out, req, inv, new CTSUrn(cts));
-          XMLReader reader = XMLReaderFactory.createXMLReader();
+          XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
           reader.setContentHandler(handler);
           reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
           reader.setFeature("http://xml.org/sax/features/validation", false);

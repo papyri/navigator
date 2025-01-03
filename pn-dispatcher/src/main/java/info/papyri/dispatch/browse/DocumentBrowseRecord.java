@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  *
  * @author thill
  */
-public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
+public class DocumentBrowseRecord extends BrowseRecord {
 
   private ArrayList<String> itemIds = new ArrayList<String>();
   private final String preferredId;
@@ -676,7 +676,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
    * @return
    */
   @Override
-  public int compareTo(Object o) {
+  public int compareTo(BrowseRecord o) {
 
     DocumentBrowseRecord comparandum = (DocumentBrowseRecord) o;
     String thisId = this.getDisplayId() != null ? this.getDisplayId() : "";

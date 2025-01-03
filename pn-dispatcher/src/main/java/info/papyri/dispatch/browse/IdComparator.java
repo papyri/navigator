@@ -16,13 +16,13 @@ import java.util.regex.Pattern;
  * 
  * @author thill
  */
-public class IdComparator implements Comparator {
+public class IdComparator implements Comparator<String> {
 
     @Override
-    public int compare(Object t, Object t1) {
+    public int compare(String t, String t1) {
         
-        String id1 = (String) t;
-        String id2 = (String) t1;
+        String id1 = t;
+        String id2 = t1;
         
         ArrayList<String> ids1 = splitIntoNumericAndAlphabeticComponents(id1);
         ArrayList<String> ids2 = splitIntoNumericAndAlphabeticComponents(id2);

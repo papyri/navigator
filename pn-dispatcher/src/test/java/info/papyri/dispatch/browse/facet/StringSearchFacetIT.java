@@ -11,8 +11,8 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.regex.Pattern;
-import javax.servlet.*;
-import javax.servlet.descriptor.JspConfigDescriptor;
+import jakarta.servlet.*;
+import jakarta.servlet.descriptor.JspConfigDescriptor;
 
 import junit.framework.TestCase;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -79,7 +79,7 @@ public class StringSearchFacetIT extends TestCase {
               }
 
               @Override
-              public Set getResourcePaths(String string) {
+              public Set<String> getResourcePaths(String string) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
@@ -103,32 +103,20 @@ public class StringSearchFacetIT extends TestCase {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
-                @Override
-                public Servlet getServlet(String s) throws ServletException {
-                    return null;
-                }
 
-                @Override
-                public Enumeration getServlets() {
-                    return null;
-                }
 
-                @Override
-                public Enumeration getServletNames() {
-                    return null;
-                }
 
-                @Override
+
+
+
+
+              @Override
               public void log(String string) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
-                @Override
-                public void log(Exception e, String s) {
 
-                }
-
-                @Override
+              @Override
               public void log(String string, Throwable thrwbl) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
@@ -149,7 +137,7 @@ public class StringSearchFacetIT extends TestCase {
               }
 
               @Override
-              public Enumeration getInitParameterNames() {
+              public Enumeration<String> getInitParameterNames() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
@@ -164,7 +152,7 @@ public class StringSearchFacetIT extends TestCase {
               }
 
               @Override
-              public Enumeration getAttributeNames() {
+              public Enumeration<String> getAttributeNames() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
@@ -353,7 +341,7 @@ public class StringSearchFacetIT extends TestCase {
           }
 
           @Override
-          public Enumeration getInitParameterNames() {
+          public Enumeration<String> getInitParameterNames() {
             return null;
           }
           

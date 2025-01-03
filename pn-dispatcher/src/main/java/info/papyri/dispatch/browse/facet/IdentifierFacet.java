@@ -1056,13 +1056,13 @@ public class IdentifierFacet extends Facet{
             
             ArrayList<String> stringifiedValues = new ArrayList<>(idValues.keySet());
             
-            Collections.sort(stringifiedValues, new Comparator(){
+            Collections.sort(stringifiedValues, new Comparator<String>(){
 
                 @Override
-                public int compare(Object t, Object t1) {
+                public int compare(String t, String t1) {
                     
-                    String rawFirst = (String)t;
-                    String rawSecond = (String) t1;
+                    String rawFirst = t;
+                    String rawSecond = t1;
                     int pass1 = rawFirst.substring(rawFirst.indexOf(';') + 1)
                             .compareToIgnoreCase(rawSecond.substring(rawSecond.indexOf(';') + 1));
                     if (pass1 == 0) {
@@ -1221,13 +1221,13 @@ public class IdentifierFacet extends Facet{
             
             ArrayList<String> stringifiedValues = new ArrayList<>(idValues.keySet());
             
-            Collections.sort(stringifiedValues, new Comparator(){
+            Collections.sort(stringifiedValues, new Comparator<String>(){
 
                 @Override
-                public int compare(Object t, Object t1) {
+                public int compare(String t, String t1) {
                     
-                    String rawFirst = (String) t;
-                    String rawSecond = (String) t1;
+                    String rawFirst = t;
+                    String rawSecond = t1;
                     if ("ddbdp".equals(rawFirst)) return -1;
                     if ("ddbdp".equals(rawSecond)) return 1;
                     if ("dclp".equals(rawFirst)) return -1;

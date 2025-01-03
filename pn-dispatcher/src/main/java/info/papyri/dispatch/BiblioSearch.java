@@ -6,21 +6,22 @@ package info.papyri.dispatch;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
-import javax.servlet.ServletConfig;
+import java.util.concurrent.TimeUnit;
+import jakarta.servlet.ServletConfig;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.request.QueryRequest;
@@ -78,8 +79,8 @@ public class BiblioSearch extends HttpServlet {
       String line = "";
       while ((line = reader.readLine()) != null) {
         if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
-          SolrClient solr = new HttpSolrClient.Builder(solrUrl + BiblioSearch)
-                  .withConnectionTimeout(5000)
+          SolrClient solr = new Http2SolrClient.Builder(solrUrl + BiblioSearch)
+                  .withConnectionTimeout(5, TimeUnit.SECONDS)
                   .build();
           int rows = 30;
           try {

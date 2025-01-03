@@ -642,13 +642,13 @@ public class FileUtils {
           hitline = line + " | " + lines[i + 1];
         }
       }
-      if (hitline.length() > 60) {
-        start = hitline.indexOf(hlStart) - 10;
+      if (hitline.length() > 150) {
+        start = hitline.indexOf(hlStart) - 30;
         if (start >= 0) {
           hitline = hitline.substring(start);
           hitline = '…' + hitline.substring(hitline.indexOf(" ") + 1);
         }
-        int end = hitline.lastIndexOf(' ', hitline.lastIndexOf(hlEnd) + 12);
+        int end = hitline.lastIndexOf(' ', hitline.lastIndexOf(hlEnd) + 30);
         if (end < hitline.length()) {
           hitline = hitline.substring(0, end);
         }
