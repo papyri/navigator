@@ -3,7 +3,7 @@ FROM ubuntu:focal
 # Install Git
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
-  apt-get install -y git subversion wget locales build-essential maven openjdk-11-jdk curl
+  apt-get install -y git subversion wget locales build-essential maven openjdk-17-jdk curl
 
 # Set the locale.
 RUN locale-gen en_US.UTF-8
