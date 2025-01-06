@@ -14,9 +14,9 @@
 
     <repositories>
       <repository>
-        <name>GitHub papyri Apache Maven Packages</name>
-        <id>github</id>
-        <url>https://maven.pkg.github.com/papyri/navigator</url>
+        <id>gitlab-maven</id>
+        <name>GitLab Apache Maven Packages</name>
+        <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
         <snapshots>
           <enabled>true</enabled>
         </snapshots>
@@ -32,9 +32,9 @@
     </repositories>
     <distributionManagement>
       <repository>
-      <id>gitlab-maven</id>
-      <name>GitLab Apache Maven Packages</name>
-      <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+        <id>gitlab-maven</id>
+        <name>GitLab Apache Maven Packages</name>
+        <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
       </repository>
   </distributionManagement>
     <dependencies>
@@ -77,7 +77,7 @@
         <dependency>
           <groupId>info.papyri</groupId>
           <artifactId>map</artifactId>
-          <version>1.0.3</version>
+          <version>1.0.4</version>
         </dependency>
         <dependency>
           <groupId>org.apache.jena</groupId>
