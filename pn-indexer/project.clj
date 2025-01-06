@@ -2,8 +2,11 @@
   :repositories {"github" "https://maven.pkg.github.com/papyri/navigator"
                  "apache" "https://repository.apache.org/content/repositories/releases/"}
   :jvm-opts ["-Xms1G" "-Xmx1G" "-Djava.awt.headless=true"]
-  :deploy-repositories [["releases" {:url "https://maven.pkg.github.com/papyri/navigator"
-                                     :sign-releases false}]]
+  :pom-addition [:distribution-management 
+                [:repository [:id "gitlab-maven"]
+                            [:url "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven"]]
+                [:snapshot-repository [:id "gitlab-maven"]
+                                      [:url "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven"]]]
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.apache.solr/solr-solrj "8.11.1"]
                  [org.apache.jena/jena-core "4.2.0"]
