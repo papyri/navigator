@@ -7,7 +7,7 @@ build:
 	docker build -t $(CI_REGISTRY_IMAGE)/builds:$(CI_COMMIT_SHORT_SHA) .
 
 test:
-	docker run -e GITHUB_TOKEN -e GITHUB_USERNAME $(build_tag)
+	docker run -e GITHUB_TOKEN -e GITHUB_USERNAME -e CI_API_V4_URL -e CI_PROJECT_ID -e CI_JOB_TOKEN $(build_tag)
 
 deploy-packages:
 	cd pn-mapping && lein pom && mvn deploy -s ../ci_settings.xml
