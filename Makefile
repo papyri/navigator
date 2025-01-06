@@ -11,6 +11,8 @@ test:
 
 deploy-packages:
 	cd pn-mapping
+	pwd
+	ls
 	lein pom
 	mvn deploy -s ../ci_settings.xml
 	cd ../pn-indexer
