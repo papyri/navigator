@@ -29,18 +29,13 @@
           <enabled>false</enabled>
         </snapshots>
       </repository>
-      <repository>
-        <id>maven-restlet</id>
-        <name>Public online Restlet repository</name>
-        <url>https://maven.restlet.com</url>
-      </repository>
     </repositories>
     <distributionManagement>
-    <repository>
-     <id>gitlab-maven</id>
-     <name>GitLab Apache Maven Packages</name>
-     <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
-    </repository>
+      <repository>
+      <id>gitlab-maven</id>
+      <name>GitLab Apache Maven Packages</name>
+      <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+      </repository>
   </distributionManagement>
     <dependencies>
         <dependency>
@@ -52,7 +47,7 @@
         <dependency>
           <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
-          <version>42.7.3</version>
+          <version>42.7.4</version>
         </dependency>
         <dependency>
           <groupId>net.sf.saxon</groupId>
