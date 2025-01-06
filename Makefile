@@ -11,12 +11,12 @@ test:
 
 deploy-packages:
 	cd pn-mapping && VERSION=`head -1 project.clj | sed 's/.*"\([^"]*\)"/\1/'` && lein jar && \
-		mvn deploy:deploy-file -s ../ci_settings.xml -DgroupId=info.papyri -DartifactId=mapping -Dversion=${VERSION} \
-		-Dpackaging=jar -Dfile=target/mapping-${VERSION}.jar -DrepositoryId=gitlab-maven \
+		mvn deploy:deploy-file -s ../ci_settings.xml -DgroupId=info.papyri -DartifactId=mapping -Dversion=$VERSION \
+		-Dpackaging=jar -Dfile=target/mapping-$VERSION.jar -DrepositoryId=gitlab-maven \
 		-Durl="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven"
 	cd pn-indexer && VERSION=`head -1 project.clj | sed 's/.*"\([^"]*\)"/\1/'` && lein jar \
-		&& mvn deploy:deploy-file -s ../ci_settings.xml -DgroupId=info.papyri -DartifactId=indexer -Dversion=${VERSION} \
-		-Dpackaging=jar -Dfile=target/indexer-${VERSION}.jar -DrepositoryId=gitlab-maven \
+		&& mvn deploy:deploy-file -s ../ci_settings.xml -DgroupId=info.papyri -DartifactId=indexer -Dversion=$VERSION \
+		-Dpackaging=jar -Dfile=target/indexer-$VERSION.jar -DrepositoryId=gitlab-maven \
 		-Durl="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven"
 	cd pn-dispatcher &&	mvn deploy -s ../ci_settings.xml
 	cd pn-sync && mvn deploy -s ../ci_settings.xml
