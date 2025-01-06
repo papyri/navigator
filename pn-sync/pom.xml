@@ -36,12 +36,12 @@
       </repository>
     </repositories>
     <distributionManagement>
-      <repository>
-        <id>github</id>
-        <name>GitHub papyri Apache Maven Packages</name>
-        <url>https://maven.pkg.github.com/papyri/navigator</url>
-      </repository>
-    </distributionManagement>
+    <repository>
+     <id>gitlab-maven</id>
+     <name>GitLab Apache Maven Packages</name>
+     <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+    </repository>
+  </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.apache.tomcat</groupId>

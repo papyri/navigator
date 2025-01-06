@@ -471,7 +471,6 @@ public class FileUtils {
           next = 10;
         }
         String foo = text.substring(i+1, i + next);
-        boolean bar = foo.matches("^\\d(\\w|,|/)*\\.\\s{2}.*");
         if (i < text.length() - 1 && text.substring(i+1, i + next).matches("^\\d(\\w|,|/)*\\.\\s{2}.*")) {
           while (text.charAt(i) != '.') {
             i++;
