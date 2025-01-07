@@ -202,7 +202,7 @@ public class CollectionBrowser extends HttpServlet {
         
         try{
               
-          URL sparq = new URL("http://fuseki:8090/pi/query?query=" + URLEncoder.encode(sparqlQuery, StandardCharsets.UTF_8) + "&output=json");
+          URL sparq = new URL("http://localhost:8090/pi/query?query=" + URLEncoder.encode(sparqlQuery, StandardCharsets.UTF_8) + "&output=json");
           HttpURLConnection http = (HttpURLConnection)sparq.openConnection();
           http.setConnectTimeout(2000);
           ObjectMapper o = new ObjectMapper();
