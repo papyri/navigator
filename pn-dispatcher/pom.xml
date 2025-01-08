@@ -66,11 +66,6 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>commons-httpclient</groupId>  
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
       <version>9.6.1</version>
