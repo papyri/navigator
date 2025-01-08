@@ -16,7 +16,7 @@
       <repository>
         <id>gitlab-maven</id>
         <name>GitLab Apache Maven Packages</name>
-        <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+        <url>https://gitlab.oit.duke.edu/api/v4/projects/44380/packages/maven</url>
         <snapshots>
           <enabled>true</enabled>
         </snapshots>
@@ -34,7 +34,7 @@
       <repository>
         <id>gitlab-maven</id>
         <name>GitLab Apache Maven Packages</name>
-        <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+        <url>https://gitlab.oit.duke.edu/api/v4/projects/44380/packages/maven</url>
       </repository>
   </distributionManagement>
     <dependencies>
