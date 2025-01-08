@@ -49,7 +49,7 @@
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://solr:8983/solr/</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
