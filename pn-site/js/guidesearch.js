@@ -398,7 +398,7 @@ $(document).ready(
 	    	$(this).off('focus');
 			$(this).off('keypress');
 			$(this).off('keyup');
-	    	var betaOn = $("#beta-on").attr("checked");
+	    	var betaOn = $("#beta-on").is(":checked");
 	    	colonFound = false;
 	    	var selectedRadios = [];
 
@@ -688,11 +688,11 @@ $(document).ready(
 
 			if($.cookie(hic.BETA_COOKIE) == "beta-on"){
 
-				$("#beta-on").attr("checked", "checked");
+				$("#beta-on").prop("checked", true);
 
 			} else {
 
-				$("#beta-on").removeAttr("checked");
+				$("#beta-on").prop("checked", false);
 
 			}		
 
@@ -712,7 +712,7 @@ $(document).ready(
 		$("#beta-on").on("change", () => {
 
 			$(".stringsearch-top-controls:last .keyword").focus();
-			var beta = $(this).attr("checked") ? "beta-on" : "beta-off";
+			var beta = $(this).is(":checked") ? "beta-on" : "beta-off";
 			$.cookie(hic.BETA_COOKIE, beta);
 
 		});
