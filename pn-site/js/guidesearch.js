@@ -179,7 +179,7 @@ $(document).ready(
 
 	    	}
 
-	    	var combos = $(".custom-combobox");
+	    	var combos = $(".custom-combobox").prev('select');
 
 	    	for(var m = 0; m < combos.length; m++){
 
@@ -266,7 +266,7 @@ $(document).ready(
 	    	var datefield = $(date_selector);
 	    	var selected_date = datefield.val();
 	    	
-	    	if(selected_date == "" || !hic.dateIsSignificant(date_wrapper_name)) return;
+	    	if(selected_date == "") return;
 	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");	// trim count
 	    	var era_finder = new RegExp(/\s*(B?CE)$/);
 	    	var era = "";
@@ -304,45 +304,6 @@ $(document).ready(
 	    	filteredels.push(era_el);
 
 	    }
-	    
-	    hic.dateIsSignificant = function(date_name){
-	    
-	    	if(date_name == "date-start-selector") return hic.startDateSignificant();
-	    	return hic.endDateSignificant();
-	    
-	    
-	    }
-	    
-	    hic.startDatePreviouslySelected = function(){
-	    
-	    	var startdates = $("#previous-values .constraint-date_start_text");
-	    	if(startdates.length > 0) return true;
-	    	return false;
-	    
-	    }
-	    
-	    hic.endDatePreviouslySelected = function(){
-	    
-	    	var enddates = $("#previous-values .constraint-date_end_text");
-	    	if(enddates.length > 0) return true;
-	    	return false;	    
-	    
-	    }
-	    
-	    hic.startDateSignificant = function(){
-	    
-	    	if(hic.startDatePreviouslySelected()) return true;
-	    	return hic.startDateSet;
-	    
-	    }
-	    
-	    hic.endDateSignificant = function(){
-	    
-	    	if(hic.endDatePreviouslySelected()) return true;
-	    	return hic.endDateSet;
-	    
-	    }
-
 	    hic.buildTextSearchString = function(){
 
 	    	var proxRegExp = new RegExp(/\s+(THEN|NEAR)\s+/);
@@ -562,26 +523,6 @@ $(document).ready(
 	    /***********************************************
 	     END HIDE/REVEAL
 	     **********************************************/
-
-		/**
-		 * Passes values selected using drop-down date selector
-		 * to appropriate text input
-		 */
-
-		$("select[name='DATE_START'], select[name='DATE_END']").on("change", () => { 
-
-			var val = $(this).val();
-			val = val == "0" ? 1 : val;
-			var era = val < 0 ? "BCE" : "CE";
-			var correspondingTextInput = $(this).attr("name") + "_TEXT";
-			var correspondingEraInput = $(this).attr("name") + "_ERA";
-			var passedValue = val == "Unknown" ? "n.a." : Math.abs(val);
-			$("input[name='" + correspondingTextInput + "']").val(passedValue);
-			$("select[name='" + correspondingEraInput + "']").val(era);
-			$("form[name='facets']").trigger("submit");
-
-
-		});
 
 		/**
 		 * Ensures that date era selector change events do not trigger submit unless a date
