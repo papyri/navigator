@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script src="/js/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery-migrate-3.5.2.min.js" type="text/javascript" charset="utf-8"></script>
-   <script src="/js/jquery-ui-1.14.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/jquery-ui-1.14.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.bubblepopup.v2.1.5.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <!-- typegreek code written by Randy Hoyt, http://www.typegreek.com/overview/. Used with gratitude and permission -->
@@ -21,49 +21,45 @@
     <script src="/js/combobox.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
 
-   <style type="text/css">
+    <style type="text/css">
 
-      body, html{
-
-      	height: 100%;
-
+      body,
+      html {
+        height: 100%;
       }
 
-      select, input, label, button, textarea, button, .option-label, #img-selector-lbl{
-
-        font-size:90%;
+      #img-selector-lbl,
+      .option-label,
+      button,
+      button,
+      input,
+      label,
+      select,
+      textarea {
+        font-size: 90%;
         font-family: Georgia, serif;
-
       }
 
+      #sparql-wrap {
+        width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+        word-wrap: break-word;
+      }
 
-	  #sparql-wrap{
+      div.content {
+        padding-bottom: 0;
+        min-height: 100%;
+      }
 
-	  	width: 1400px;
-	  	margin-left: auto;
-	  	margin-right: auto;
-	  	word-wrap: break-word;
-
-	  }
-
-	  div.content{
-
-	  	padding-bottom: 0px;
-	  	min-height: 100%;
-
-	  }
-
-      #facet-wrapper{
-
+      #facet-wrapper {
         width: 100%;
         min-height: 100%;
         float: left;
         clear: both;
-
       }
 
-      #facet-widgets-wrapper{
-
+      #facet-widgets-wrapper {
         position: relative;
         float: left;
         margin-right: 25px;
@@ -74,196 +70,153 @@
         padding-top: 0.5em;
       }
 
-
-      div.stringsearch-top-controls:first-child p.facet-stringsearch-wrapper{
-
+      div.stringsearch-top-controls:first-child p.facet-stringsearch-wrapper {
         margin-top: 3.5em;
-
       }
 
-	div.stringsearch-top-controls p.facet-stringsearch-wrapper{
-
+      div.stringsearch-top-controls p.facet-stringsearch-wrapper {
         margin-top: 1em;
-
       }
 
-      .stringsearch-top-controls p.facet-stringsearch-wrapper{
-
+      .stringsearch-top-controls p.facet-stringsearch-wrapper {
         width: 400px;
         margin-bottom: 0.5em;
-    	background:white;
-    	border:thin solid silver;
-    	padding:1em;
-
+        background: white;
+        border: thin solid silver;
+        padding: 1em;
       }
 
-      #facet-widgets-wrapper.search-closed{
-
-      	position: absolute;
-      	left: -23px;
-      	min-width: 0px;
-      	width: 0px;
-
+      #facet-widgets-wrapper.search-closed {
+        position: absolute;
+        left: -23px;
+        min-width: 0;
+        width: 0;
       }
 
-	 .search-closed #facet-widgets-wrapper h2, .search-closed .facet-widget, .search-closed#search-reset-wrapper {
+      .search-closed #facet-widgets-wrapper h2,
+      .search-closed .facet-widget,
+      .search-closed#search-reset-wrapper {
+        display: none;
+      }
 
-	 	display: none;
-
-	 }
-
-      form[name="facets"]{
-
+      form[name="facets"] {
         width: 100%;
-      	position: relative;
-
+        position: relative;
       }
 
-      div.nav{
-
-      	z-index: 500;
-
+      div.nav {
+        z-index: 500;
       }
 
-     /* search pane toggle */
-      .search table{
-
-      	width: 100%;
-
+      /* search pane toggle */
+      .search table {
+        width: 100%;
       }
 
-
-      #search-toggle{
-
-      	display: block;
-      	cursor: pointer;
-      	width: 20px;
-      	height: 100%;
-		position: absolute;
-		border: 1px solid lightGrey;
-		background: url(/images/greenfade.png) 100% 100% repeat-y;
-		font-weight: normal;
-		color: #555;
-		right: -45px;
-
+      #search-toggle {
+        display: block;
+        cursor: pointer;
+        width: 20px;
+        height: 100%;
+        position: absolute;
+        border: 1px solid lightGrey;
+        background: url("/images/greenfade.png") 100% 100% repeat-y;
+        font-weight: normal;
+        color: #555;
+        right: -45px;
       }
 
-
-      #search-toggle-pointer{
-
-      	position: relative;
-      	color: #000;
-      	font-size: 10px;
-      	font-weight: bold;
-      	width: 100%;
-      	text-align: center;
-
+      #search-toggle-pointer {
+        position: relative;
+        color: #000;
+        font-size: 10px;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
       }
 
-      .facet-widget{
-
+      .facet-widget {
         position: relative;
         width: 100%;
         margin-bottom: 20px;
         clear: left;
-
       }
 
-      .facet-widget .combobox{
-
-      	position: relative;
-      	right: 25px;
-
+      .facet-widget .combobox {
+        position: relative;
+        right: 25px;
       }
 
-      .facet-widget select, .facet-widget input{
-
+      .facet-widget input,
+      .facet-widget select {
         padding-top: 0;
         margin-top: 0;
-
       }
 
-      .facet-widget input#id-idno, .facet-widget input#id-volume, .facet-widget select[name=TRANSC] {
-
-      	float: right;
-
+      .facet-widget input#id-idno,
+      .facet-widget input#id-volume,
+      .facet-widget select[name=TRANSC] {
+        float: right;
       }
 
-      #text-search-widget select, #text-search-widget input, #img-select input{
-
+      #img-select input,
+      #text-search-widget input,
+      #text-search-widget select {
         float: none;
-
       }
 
       #place-selector .custom-combobox {
-
-      	width: 63%;
-
+        width: 63%;
       }
 
       #nome-selector .custom-combobo {
-
-      	width: 63%;
-
+        width: 63%;
       }
 
-      #date-start-selector input, #date-end-selector input{
-
-      	min-width: 10.5em;
-
+      #date-end-selector input,
+      #date-start-selector input {
+        min-width: 10.5em;
       }
 
-      #text-search-widget label, #img-select label,#text-search-widget #search{
-
+      #img-select label,
+      #text-search-widget #search,
+      #text-search-widget label {
         margin-left: 7.5px;
-
       }
 
-      div.search h2{
-
+      div.search h2 {
         font-size: 133%;
-
       }
 
-      #vals-and-records-wrapper{
-
+      #vals-and-records-wrapper {
         float: left;
         margin-left: 23px;
         padding-left: 1%;
         padding-right: 1%;
         min-height: 1100px;
-
       }
 
-      td.doc-title{
-
-      	margin-top: 0px;
-
-
+      td.doc-title {
+        margin-top: 0;
       }
 
-      .title-long{
-
-      	white-space: nowrap;
-      	overflow: hidden;
-      	top:0px;
-      	left:0px;
-      	display: none;
-
+      .title-long {
+        white-space: nowrap;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        display: none;
       }
 
-      #previous-values{
-
+      #previous-values {
         position: relative;
         width: 99%;
         border: 3px solid gray;
         padding: 10px 0.5%;
         margin-top: 15px;
-
       }
 
-      .facet-constraint{
-
+      .facet-constraint {
         color: #fff;
         background-color: #333;
         position: relative;
@@ -275,92 +228,74 @@
         width: 100%;
       }
 
-      .constraint-label{
-
+      .constraint-label {
         float: left;
         margin-right: 3em;
-
       }
-      .facet-constraint a, .facet-constraint a:link, .facet-constraint a:hover, .facet-constraint a:active, .facet-constraint a:visited{
-
+      .facet-constraint a,
+      .facet-constraint a:active,
+      .facet-constraint a:hover,
+      .facet-constraint a:link,
+      .facet-constraint a:visited {
         color: #fff;
-
       }
 
-      .constraint-closer{
-
+      .constraint-closer {
         float: right;
         padding-right: 4px;
         font-weight: bold;
-
       }
 
       /* selectors for img-facet previous constraints */
 
-      .prev-constraint-wrapper{
-
-      	float: left;
-      	width: 31%;
-      	margin-right: 2%;
-      	position: relative;
-
+      .prev-constraint-wrapper {
+        float: left;
+        width: 31%;
+        margin-right: 2%;
+        position: relative;
       }
 
-      .prev-constraint-wrapper:after{
-
-      	content:".";
-      	display: block;
-      	height: 0;
-      	clear: both;
-      	visibility: hidden;
-
-
+      .prev-constraint-wrapper:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
       }
 
-      #prev-constraint-img{
-
-      	position: relative;
-      	margin-top: 5px;
-
+      #prev-constraint-img {
+        position: relative;
+        margin-top: 5px;
       }
 
-      #prev-constraint-img .semicolon{
-
-      	display: none;
-
+      #prev-constraint-img .semicolon {
+        display: none;
       }
 
-      #prev-constraint-img .constraint-label{
-
-      	margin-right: 1.53em;
-
+      #prev-constraint-img .constraint-label {
+        margin-right: 1.53em;
       }
 
-      #prev-constraint-img .facet-constraint{
-
-      	margin-top: 0px;
-      	margin-bottom: 0px;
-
+      #prev-constraint-img .facet-constraint {
+        margin-top: 0;
+        margin-bottom: 0;
       }
 
-     #img-go{
-	margin-left:1em;
-     	bottom: 0px;
-     }
-
-     /* pagination selectors */
-
-      #pagination{
-
-          position: relative;
-          clear: both;
-          margin-left: auto;
-          margin-right: auto;
-
+      #img-go {
+        margin-left: 1em;
+        bottom: 0;
       }
 
-      #pagination .page{
+      /* pagination selectors */
 
+      #pagination {
+        position: relative;
+        clear: both;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #pagination .page {
         width: 30px;
         min-width: 30px;
         height: 25px;
@@ -369,355 +304,281 @@
         margin-right: 15px;
         margin-left: 15px;
         text-align: center;
-
       }
 
-	  #pagination .currentpage{
-
-	  	border: 2px solid #999;
-	  	margin: 1px 14px 1px 14px;
-
-	  }
+      #pagination .currentpage {
+        border: 2px solid #999;
+        margin: 1px 14px;
+      }
 
       /* identifier facet selectors */
 
-	  #series-coll-wrapper, #vol-idno-wrapper{
+      #series-coll-wrapper,
+      #vol-idno-wrapper {
+        float: left;
+      }
 
-	  	float: left;
+      #series-coll-wrapper {
+        width: 65%;
+      }
 
-	  }
+      #series-coll-wrapper p {
+        margin-right: 0;
+      }
 
-	  #series-coll-wrapper{
+      #vol-idno-wrapper {
+        width: 35%;
+      }
 
-	  	width: 65%;
+      div.content p.coll-or {
+        position: absolute;
+        top: 2.7em;
+        font-size: 12px;
+        font-style: italic;
+        margin-left: 1.5em;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
 
-	  }
-
-	  #series-coll-wrapper p{
-
-	  	margin-right: 0px;
-
-	  }
-
-	  #vol-idno-wrapper{
-
-	  	width: 35%;
-
-	  }
-
-	 div.content p.coll-or{
-
-	  	  position: absolute;
-	  	  top: 2.7em;
-	  	  font-size: 12px;
-	  	  font-style: italic;
-	  	  margin-left: 1.5em;
-	  	  margin-top: 0px;
-	  	  margin-bottom: 0px;
-
-	  }
-
-      table{
-
+      table {
         margin-top: 2em;
         margin-bottom: 2em;
         width: 100%;
       }
 
-      .tablehead{
-
+      .tablehead {
         font-weight: bold;
-
       }
 
-      .tablehead td{
-
+      .tablehead td {
         text-align: center;
         padding-bottom: 10px;
-
       }
 
-      td{
-
+      td {
         padding-left: 10px;
         padding-right: 10px;
-
       }
 
-      .ddbdp-ids, .hgv-ids, .apis-ids, .has-translation, .display-date, .display-place, .language{
-
+      .apis-ids,
+      .ddbdp-ids,
+      .display-date,
+      .display-place,
+      .has-translation,
+      .hgv-ids,
+      .language {
         text-align: center;
-
       }
 
-      div.content{
-
+      div.content {
         margin-left: auto;
-
       }
 
-      .identifier{
-
+      .identifier {
         min-width: 6em;
-
       }
-      .keyword{
-
-      	margin-right: 5px;
-
+      .keyword {
+        margin-right: 5px;
       }
 
-      .prx{
-
-      	display: inline-block;
-
+      .prx {
+        display: inline-block;
       }
 
-      .str-operator{
-
-      	display: inline-block;
-      	width: 40px;
-      	padding-right: 5px;
-
-
+      .str-operator {
+        display: inline-block;
+        width: 40px;
+        padding-right: 5px;
       }
 
-      .spacer{
-
+      .spacer {
         height: 1px;
         clear: both;
         width: 100%;
         overflow: hidden;
-
       }
 
-      div.stringsearch-section p{
-
-      	padding-bottom: 20px;
-      	border-bottom: thin solid gray;
-
+      div.stringsearch-section p {
+        padding-bottom: 20px;
+        border-bottom: thin solid gray;
       }
 
-      #str-search-controls{
-
-      	position: relative;
+      #str-search-controls {
+        position: relative;
         padding-left: 1em;
         clear: both;
-
       }
 
-	  #str-search-controls input{
-
-	  	float: left;
-	  	margin-right: 0;
-	  	/*margin-left: 5px;*/
-	  	margin-bottom: 4px;
-	  	font-size: 80%;
-
-	  }
-
-
-	  .syntax-regex{
-
-	  	clear: left;
-	  	margin-left: 0px;
-
-	  }
-
-	  #str-search-controls .syntax-and, #str-search-controls .syntax-not,  #str-search-controls .syntax-or,  #str-search-controls .syntax-then,  #str-search-controls .syntax-near,  #str-search-controls .syntax-lex{
-
-	  	width: 42px;
-	  	margin-right: 3px;
-
-	  }
-
-
-	   #str-search-controls .syntax-regex, #str-search-controls .syntax-abbr,  #str-search-controls .syntax-startnot,  #str-search-controls .syntax-endnot{
-
-	   	 width: 63px;
-	   	 margin-right: 5px;
-
-	   }
-
-	  #str-search-controls input.syntax-remove{
-
-	  	position: absolute;
-	  	top: 0px;
-	  	right: 0.5em;
-
-	  }
-
-	  #str-search-controls input.syntax-clear{
-
-	  	position: absolute;
-	  	top: 0px;
-	  	right: 30px;
-
-	  }
-
-	  #str-search-controls:after{
-
-	  	content:".";
-	  	display: block;
-	  	height: 0px;
-	  	font-size: 0;
-	  	clear: both;
-	  	visibility: hidden;
-
-	  }
-
-      #marks, #caps, #beta-on{
-
-      	margin-left: 1em;
-
+      #str-search-controls input {
+        float: left;
+        margin-right: 0;
+        /*margin-left: 5px;*/
+        margin-bottom: 4px;
+        font-size: 80%;
       }
 
-      #place-search-widget{
-
-      	margin-bottom: 0px;
-
+      .syntax-regex {
+        clear: left;
+        margin-left: 0;
       }
 
-      #place-search-widget p{
-
-      	margin-bottom: 0.3em;
-
+      #str-search-controls .syntax-and,
+      #str-search-controls .syntax-lex,
+      #str-search-controls .syntax-near,
+      #str-search-controls .syntax-not,
+      #str-search-controls .syntax-or,
+      #str-search-controls .syntax-then {
+        width: 42px;
+        margin-right: 3px;
       }
 
-      div.unknown-date input#DATE_START_TEXT, div.unknown-date input#DATE_END_TEXT{
-
-      	width: 4em;
-      	z-index: 1000;
-
+      #str-search-controls .syntax-abbr,
+      #str-search-controls .syntax-endnot,
+      #str-search-controls .syntax-regex,
+      #str-search-controls .syntax-startnot {
+        width: 63px;
+        margin-right: 5px;
       }
 
-      .vol-disabled, div.unknown-date input#DATE_START_TEXT, div.unknown-date input#DATE_END_TEXT{
-
-      	color: #444;
-      	font-style: italic;
-
+      #str-search-controls input.syntax-remove {
+        position: absolute;
+        top: 0;
+        right: 0.5em;
       }
 
-      #id-idno:disabled, #id-volume:disabled{
-
-       	color: #444;
-      	font-style: italic;
-
+      #str-search-controls input.syntax-clear {
+        position: absolute;
+        top: 0;
+        right: 30px;
       }
 
-      .autocomplete-values{
-
-		display: none;
-
+      #str-search-controls:after {
+        content: ".";
+        display: block;
+        height: 0;
+        font-size: 0;
+        clear: both;
+        visibility: hidden;
       }
 
-      .ui-autocomplete{
-
-      	text-align: left;
-
+      #beta-on,
+      #caps,
+      #marks {
+        margin-left: 1em;
       }
 
-      .ui-menu-item{
-
-      	font-size: 72%;
-
+      #place-search-widget {
+        margin-bottom: 0;
       }
 
-      #search-reset-wrapper{
-
-      	float: right;
-      	margin-top: 15px;
-
+      #place-search-widget p {
+        margin-bottom: 0.3em;
       }
 
-      a#reset-all{
-
-      	padding: 0.2em 0.5em;
-      	margin-right: 15px;
-      color: #555;
+      div.unknown-date input#DATE_END_TEXT,
+      div.unknown-date input#DATE_START_TEXT {
+        width: 4em;
+        z-index: 1000;
       }
 
-      .unknown-date{
+      .vol-disabled,
+      div.unknown-date input#DATE_END_TEXT,
+      div.unknown-date input#DATE_START_TEXT {
+        color: #444;
+        font-style: italic;
+      }
 
-      	color: #444;
-      	font-style: italic;
+      #id-idno:disabled,
+      #id-volume:disabled {
+        color: #444;
+        font-style: italic;
+      }
 
+      .autocomplete-values {
+        display: none;
+      }
+
+      .ui-autocomplete {
+        text-align: left;
+      }
+
+      .ui-menu-item {
+        font-size: 72%;
+      }
+
+      #search-reset-wrapper {
+        float: right;
+        margin-top: 15px;
+      }
+
+      a#reset-all {
+        padding: 0.2em 0.5em;
+        margin-right: 15px;
+        color: #555;
+      }
+
+      .unknown-date {
+        color: #444;
+        font-style: italic;
       }
 
       /*date widget styles */
 
-      .date-facet-widget{
-
-      	margin: 1em;
-      	margin-bottom: 0.25em;
-      	padding-left: 4px;
-      	position: relative;
-      	float: left;
-
+      .date-facet-widget {
+        margin: 1em 1em 0.25em;
+        padding-left: 4px;
+        position: relative;
+        float: left;
       }
 
-      .date-facet-widget select, .date-facet-widget input{
-
-      	float: left;
-
+      .date-facet-widget input,
+      .date-facet-widget select {
+        float: left;
       }
 
-      .date-facet-widget .option-label{
-
-      	display: block;
-      	width: 10em;
-      	float: left;
-
+      .date-facet-widget .option-label {
+        display: block;
+        width: 10em;
+        float: left;
       }
 
-      .date-facet-widget .date-input-box{
-
-      	position: relative;
-      	float: right;
-      	margin-right: 35px;
-      	display: inline-block;
-		top: 0;
+      .date-facet-widget .date-input-box {
+        position: relative;
+        float: right;
+        margin-right: 35px;
+        display: inline-block;
+        top: 0;
       }
 
-      .date-input-box input{
-
-      	float: left;
-
+      .date-input-box input {
+        float: left;
       }
 
-      .date-input-box select{
-
-      	float: right;
-
+      .date-input-box select {
+        float: right;
       }
 
-      #date-mode-facet-widget input{
-
-      	float: none;
-      	margin-right: 0.5em;
-
+      #date-mode-facet-widget input {
+        float: none;
+        margin-right: 0.5em;
       }
 
-      #date-mode-facet-widget{
-
-      	padding-bottom: 0;
-      	margin-top: 0.35em;
-      	margin-bottom: 1.5em;
-
+      #date-mode-facet-widget {
+        padding-bottom: 0;
+        margin-top: 0.35em;
+        margin-bottom: 1.5em;
       }
 
-     input#STRICT{
-
-      	margin-left: 3em;
+      input#STRICT {
+        margin-left: 3em;
       }
 
-      #after-era-selector, #before-era-selector{
-
-      		float: inline-end;
-      		position: relative;
-      		margin-left: 2em;
-      		padding-top: 2px;
-
+      #after-era-selector,
+      #before-era-selector {
+        float: inline-end;
+        position: relative;
+        margin-left: 2em;
+        padding-top: 2px;
       }
 
       .custom-combobox {
@@ -726,307 +587,265 @@
         vertical-align: middle;
       }
 
-	#after-era-selector input, #before-era-selector input{
-
-      	float: none;
-      	margin-right: 10px;
-      	min-width: 10px;
-
+      #after-era-selector input,
+      #before-era-selector input {
+        float: none;
+        margin-right: 10px;
+        min-width: 10px;
       }
 
-      #after-era-selector label, #before-era-selector label{
-
-      	margin-right: 0.5em;
-      	float: none;
-
+      #after-era-selector label,
+      #before-era-selector label {
+        margin-right: 0.5em;
+        float: none;
       }
 
-      #opening-info h2{
-
-      	margin-top: 30px;
-
+      #opening-info h2 {
+        margin-top: 30px;
       }
 
-      #results-prefix-wrapper{
-
-      	position: relative;
-
+      #results-prefix-wrapper {
+        position: relative;
       }
 
-      #results-prefix{
-      	float: left;
-      	width: 100%;
+      #results-prefix {
+        float: left;
+        width: 100%;
       }
 
-      #results-prefix p{
-      	clear: both;
-      	margin-top: 0px;
+      #results-prefix p {
+        clear: both;
+        margin-top: 0;
       }
 
-      #docs-per-page{
-      	position: absolute;
-      	right: 20px;
-      	width: 230px;
+      #docs-per-page {
+        position: absolute;
+        right: 20px;
+        width: 230px;
       }
 
-      #docs-per-page input#DOCS_PER_PAGE{
-
-      	width: 35px;
-
+      #docs-per-page input#DOCS_PER_PAGE {
+        width: 35px;
       }
 
-      #docs-per-page label{
-
-      	font-size: 85%;
-	padding-right: 10px;
+      #docs-per-page label {
+        font-size: 85%;
+        padding-right: 10px;
       }
 
-      .ui-widget{
-
+      .ui-widget {
         font-size: 92%;
-
       }
 
-      #parse-errors{
-
-      	font-size: 110%;
-      	margin-top: 25px;
-
+      #parse-errors {
+        font-size: 110%;
+        margin-top: 25px;
       }
 
-      #parse-errors p{
-
-    	font-weight: bold;
-
+      #parse-errors p {
+        font-weight: bold;
       }
 
-      #parse-errors ul{
-
-      	margin-left: 3em;
-      	list-style-type: disc;
-
+      #parse-errors ul {
+        margin-left: 3em;
+        list-style-type: disc;
       }
 
-      #parse-errors ul li{
-
-      	list-style-type: disc;
-
+      #parse-errors ul li {
+        list-style-type: disc;
       }
 
-      .within{
-
-      	display: inline-block;
-      	color: #aaa;
-      	font-size: 85%;
-      	margin-left: 3px;
-      	margin-right: 7px;
-
+      .within {
+        display: inline-block;
+        color: #aaa;
+        font-size: 85%;
+        margin-left: 3px;
+        margin-right: 7px;
       }
 
-      .combobox{
-
-        	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
-			font-size: 90%;
-      		padding-left: 4px;
-      		padding-bottom: 1px;
-      		height: 1.3em;
-
-
+      .combobox {
+        font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
+        font-size: 90%;
+        padding-left: 4px;
+        padding-bottom: 1px;
+        height: 1.3em;
       }
 
-      ul.ui-autocomplete, .combobox{
-
-      	font-family:"Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
-
+      .combobox,
+      ul.ui-autocomplete {
+        font-family: "Lucida Grande", "Arial Unicode MS", Verdana, Cardo, Arial, Helvetica, sans-serif;
       }
 
-      .facet-widget button.ui-corner-all, .facet-widget button.ui-corner-bottom, .facet-widget button.ui-corner-right, .facet-widget button.ui-corner-br {
-
-		-moz-border-radius-bottomright: 0px;
-		-webkit-border-bottom-right-radius: 0px;
-		-khtml-border-bottom-right-radius: 0px;
-		border-bottom-right-radius: 0px;
-		-moz-border-radius-topright: 0px;
-		-webkit-border-top-right-radius: 0px;
-		-khtml-border-top-right-radius:0px;
-		border-top-right-radius: 0px;
-
-		}
-
-     .facet-widget .ui-state-default, .facet-widget .ui-widget-content, .facet-widget .ui-state-default, .facet-widget .ui-widget-header, .facet-widget .ui-state-default{
-
-     	border: none;
-
-     }
-
-	  ul.ui-autocomplete li a strong{
-
-	  	font-weight: bold;
-
-	  }
-      #transcription-selectors{
-
-      		float: right;
-      		display: inline-block;
-      }
-      #transcription-selectors input{
-
-      		float: none;
-
+      .facet-widget button.ui-corner-all,
+      .facet-widget button.ui-corner-bottom,
+      .facet-widget button.ui-corner-br,
+      .facet-widget button.ui-corner-right {
+        -moz-border-radius-bottomright: 0;
+        -webkit-border-bottom-right-radius: 0;
+        -khtml-border-bottom-right-radius: 0;
+        border-bottom-right-radius: 0;
+        -moz-border-radius-topright: 0;
+        -webkit-border-top-right-radius: 0;
+        -khtml-border-top-right-radius: 0;
+        border-top-right-radius: 0;
       }
 
-      #transcription-selectors label{
-
-      	margin-right: 1em;
-
-      }
-      #check-true{
-
-      	margin-right: 2em;
-
-      }
-      #timeout{
-
-      	clear: both;
-      	width: 6em;
-      	margin-left: 1em;
-
-      }
-      .deactivated{
-
-      	color: #888;
-
-      }
-      #js-warning{
-
-      	font-size: 110%;
-      	color: red;
-      	width: 35em;
-      	padding: 2em;
-      	border: thin dashed black;
-      	margin-top: 5em;
-
-      }
-      #opening-info h2, #info{
-
-      	display: none;
-
+      .facet-widget .ui-state-default,
+      .facet-widget .ui-state-default,
+      .facet-widget .ui-state-default,
+      .facet-widget .ui-widget-content,
+      .facet-widget .ui-widget-header {
+        border: none;
       }
 
-      .info-section .info-content{
-
-      	display: none;
-
+      ul.ui-autocomplete li a strong {
+        font-weight: bold;
       }
 
-	  .info-section{
+      #after-era-selector label,
+      #before-era-selector label {
+        font-size: 90#;
+      }
 
-	  	margin-left: 2em;
+      #transcription-selectors {
+        float: right;
+        display: inline-block;
+      }
 
-	  }
+      #transcription-selectors input {
+        float: none;
+      }
 
-	  .info-content{
+      #transcription-selectors label {
+        margin-right: 1em;
+      }
+      #check-true {
+        margin-right: 2em;
+      }
+      #timeout {
+        clear: both;
+        width: 6em;
+        margin-left: 1em;
+      }
+      .deactivated {
+        color: #888;
+      }
+      #js-warning {
+        font-size: 110%;
+        color: red;
+        width: 35em;
+        padding: 2em;
+        border: thin dashed black;
+        margin-top: 5em;
+      }
+      #info,
+      #opening-info h2 {
+        display: none;
+      }
 
-	  	margin-bottom: 10px;
+      .info-section .info-content {
+        display: none;
+      }
 
-	  }
+      .info-section {
+        margin-left: 2em;
+      }
 
-	  .info-section h4{
+      .info-content {
+        margin-bottom: 10px;
+      }
 
-	  	cursor: pointer;
-	  	margin-bottom: 10px;
+      .info-section h4 {
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
 
-	  }
+      .info-content h5 {
+        font-weight: bold;
+        margin-top: 0.75em;
+        margin-bottom: 0.75em;
+      }
 
-	  .info-content h5{
+      .info-content ol {
+        margin: 1em;
+      }
 
-	  	font-weight: bold;
-	  	margin-top: 0.75em;
-	  	margin-bottom: 0.75em;
+      .info-content ol li {
+        margin: 0.75em;
+      }
 
-	  }
+      .topic-intro {
+        font-weight: bold;
+      }
 
-	  .info-content ol{
-
-	  	margin: 1em;
-
-	  }
-
-	  .info-content ol li{
-
-	  	margin: 0.75em;
-
-	  }
-
-	  .topic-intro{
-
-	  	font-weight: bold;
-
-	  }
-
-	  .topic-intro:after{
-
-	  	content:": ";
-
-	  }
-
-
+      .topic-intro:after {
+        content: ": ";
+      }
     </style>
-          <!--[if IE 6]>
+    <!--[if IE 6]>
           <script type="text/javascript">
           	alert("This site will display unpredictably in Internet Explorer 6. In order for this site to work, you will need to upgrad IE installation, or switch to an alternative browser");
           </script>
           <![endif]-->
 
-      <!--[if IE]>
+    <!--[if IE]>
     <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <![endif]-->
-      <!--[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]-->
+    <!--[if IE 7]><link rel="stylesheet" href="/css/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]-->
     <script type="text/javascript">
 
-      $(document).ready(function(){
-
-     	$("#opening-info h2, #info").css("display", "block");
+      $(document).ready(function () {
+        $("#opening-info h2, #info").css("display", "block");
         $(".info-section h4").on('click', (e) => {
-
-        	var startHeight = $("#facet-wrapper").height();
-        	$(e.currentTarget).next(".info-content").slideToggle(200, 'linear', function(){
-
-        		var newHeight = $("#facet-wrapper").height();
-        	    if(newHeight != startHeight){
-                	$("#search-toggle").height(newHeight);
-        		}
-        	});
+          var startHeight = $("#facet-wrapper").height();
+          $(e.currentTarget)
+            .next(".info-content")
+            .slideToggle(200, 'linear', function () {
+              var newHeight = $("#facet-wrapper").height();
+              if (newHeight != startHeight) {
+                $("#search-toggle").height(newHeight);
+              }
+            });
         });
-     });
+      });
 
       var _paq = window._paq = window._paq || [];
       _paq.push(['trackPageView']);
       _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//analytics.lib.duke.edu/";
-        _paq.push(['setTrackerUrl', u+'matomo.php']);
+      (function () {
+        var u = "//analytics.lib.duke.edu/";
+        _paq.push([
+          'setTrackerUrl', u + 'matomo.php'
+        ]);
         _paq.push(['setSiteId', '34']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        var d = document,
+          g = d.createElement('script'),
+          s = d.getElementsByTagName('script')[0];
+        g.async = true;
+        g.src = u + 'matomo.js';
+        s
+          .parentNode
+          .insertBefore(g, s);
       })();
 
-      function findTM(href){
-
-        var loc = window.location.toString();
-        if(loc.charAt(loc.length - 1) == "#") loc = loc.substring(0, loc.length - 1);
+      function findTM(href) {
+        var loc = window
+          .location
+          .toString();
+        if (loc.charAt(loc.length - 1) == "#") 
+          loc = loc.substring(0, loc.length - 1);
         loc = loc + "?target=user_defined&STRING=(identifier:" + href + ")";
         window.location = loc;
-
       }
-
     </script>
   </head>
   <body onload="init()">
     <div id="d">
       <div id="hd">
         <h1>Papyri.info</h1>
-        <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>
+        <h2 id="login">
+          <a href="/editor/user/signin">sign in</a>
+        </h2>
       </div>
       <div id="bd">
         <div class="nav">
@@ -1049,7 +868,9 @@
               <li>
                 <a href="/authors">Authors</a>
               </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="findTM(jQuery('#tmid').attr('value'))" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+              <li class="dialog" id="tm" title="TM Number" >
+                <div id="tmc">TM#: <input type="text" name="tmid" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/>
+                  <input onclick="findTM(jQuery('#tmid').attr('value'))" type="button" name="tmgo" id="tmgo" value=" &gt; "/></div>
               </li>
               <li>or Search:</li>
               <li class="current">
@@ -1073,41 +894,68 @@
             <div id="footer-left-col">
               <div id="secondary-nav">
                 <ul class="nav">
-                  <li><a href="/" title="Project Home">Home</a></li>
-                  <li><a href="/docs/help" title="Site help">Help</a></li>
+                  <li>
+                    <a href="/" title="Project Home">Home</a>
+                  </li>
+                  <li>
+                    <a href="/docs/help" title="Site help">Help</a>
+                  </li>
                   <!-- following two links SoSOL only -->
                   <!-- <li><a href="">Leiden<sup>+</sup> Text Help</a></li> -->
                   <!-- <li><a href="">Leiden<sup>+</sup> Translation Help</a></li> -->
                   <!-- insert link for SoSOL admin email here -->
-                  <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
-                  <li><a href="/docs/resources" title="Papyrological tools and resources">Resources</a></li>
-                  <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
-                  <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
+                  <li>
+                    <a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a>
+                  </li>
+                  <li>
+                    <a href="/docs/resources" title="Papyrological tools and resources">Resources</a>
+                  </li>
+                  <li>
+                    <a href="/feedback.html" title="Feeback">Feedback</a>
+                  </li>
+                  <li>
+                    <a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a>
+                  </li>
                 </ul>
               </div>
               <div class="spacer"></div>
             </div>
             <div id="footer-right-col">
               <p>Produced by</p>
-              <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a>
+              <p>
+                <a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a>
                 <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
-                Ancient World</a></p>
+                Ancient World</a>
+              </p>
               <div id="about-nav">
                 <ul class="nav">
-                  <li><a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a></li>
-                  <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
-                  <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
-                    der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
-                  <li><a href="/docs/ddbdp" title="Duke Databank of Documentary Papyri - Home">DDbDP</a></li>
-                  <li><a href="/docs/apis">APIS</a></li>
-                  <li class="last-child"><a href="/docs/about" title="Papyri.info">Papyri.info</a></li>
+                  <li>
+                    <a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a>
+                  </li>
+                  <li>
+                    <a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a>
+                  </li>
+                  <li>
+                    <a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
+                    der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a>
+                  </li>
+                  <li>
+                    <a href="/docs/ddbdp" title="Duke Databank of Documentary Papyri - Home">DDbDP</a>
+                  </li>
+                  <li>
+                    <a href="/docs/apis">APIS</a>
+                  </li>
+                  <li class="last-child">
+                    <a href="/docs/about" title="Papyri.info">Papyri.info</a>
+                  </li>
                 </ul>
                 <h3 id="about-hdr">About:</h3>
               </div>
             </div>
             <div class="spacer"></div>
           </div>
-        </div>      </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
