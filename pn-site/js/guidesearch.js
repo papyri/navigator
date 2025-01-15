@@ -185,7 +185,7 @@ $(document).ready(
 
 	    		var combo = $(combos[m]);
 
-	    		if(combo.attr("name") != "DATE_START" && combo.attr("name") != "DATE_END" && !combo.attr("disabled")){
+	    		if(combo.attr("name") != "DATE_START" && combo.attr("name") != "DATE_END" && !combo.prop("disabled")){
 
 					var hiddenselect = combo.prev();
 					var val = $(hiddenselect).val();
