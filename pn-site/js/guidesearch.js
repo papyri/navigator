@@ -187,11 +187,10 @@ $(document).ready(
 
 	    		if(combo.attr("name") != "DATE_START" && combo.attr("name") != "DATE_END" && !combo.prop("disabled")){
 
-					var hiddenselect = combo.prev();
-					var val = $(hiddenselect).val();
+					var val = $(combo).val();
 					if(val != "" && val != "default"){
 
-						filteredels.push(hiddenselect);
+						filteredels.push(combo);
 
 					}
 
