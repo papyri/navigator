@@ -1,4 +1,5 @@
 function init() {
+    initjQueryMigrate();
     jQuery("div#hd h1").on('click', () => { window.location = "/" });
     jQuery("li.dialog").each(function(i) {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
@@ -72,6 +73,16 @@ function init() {
     addLinearBrowseControls();
 		getAlert();
 		getCampaign();
+}
+
+function initjQueryMigrate() {
+  jQuery.migrateMute = true;
+  jQuery.migrateTrace = false;
+  jQuery.migrateWarnings.push = (message) => {
+    const stacktrace = new Error().stack;
+    const cleanedStacktrace = stacktrace.replace(/^.*at jQuery\.migrateWarnings\.push.*$/gm, '');
+    _paq.push(['trackEvent', 'warning.jqmigrate', message + '\n' + cleanedStacktrace]);
+  };
 }
 
 function getPath() {
