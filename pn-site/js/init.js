@@ -79,7 +79,7 @@ function initjQueryMigrate() {
   jQuery.migrateMute = true;
   jQuery.migrateTrace = false;
   jQuery.migrateWarnings.push = (message) => {
-    stacktrace = new Error().stack;
+    const stacktrace = new Error().stack;
     const cleanedStacktrace = stacktrace.replace(/^.*at jQuery\.migrateWarnings\.push.*$/gm, '');
     _paq.push(['trackEvent', 'warning.jqmigrate', message + '\n' + cleanedStacktrace]);
   };
