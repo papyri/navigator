@@ -1,5 +1,5 @@
 function init() {
-    initjQueryMigrate();
+    //mute: initjQueryMigrate();
     jQuery("div#hd h1").on('click', () => { window.location = "/" });
     jQuery("li.dialog").each(function(i) {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
