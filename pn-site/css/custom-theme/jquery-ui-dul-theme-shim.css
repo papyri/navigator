@@ -51,4 +51,6 @@ div.content.search {
 
 .tooltip-dul-custom {
   opacity: 95%;
+  font-family: Georgia, serif;
+  font-size: 1em;
 }
