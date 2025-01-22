@@ -29,6 +29,7 @@ function init() {
     jQuery("span.term").each( function (i, elt) {
         const htmlContent = $(elt).find("span.gloss").html();
         if (htmlContent) {
+          $(elt).attr('title', htmlContent);
           $(elt).tooltip({
             content: htmlContent,
             position: {
