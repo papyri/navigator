@@ -36,7 +36,7 @@ function init() {
               my: "center bottom",
               at: "center top",
             },
-            classes: 'tooltip-dul-custom'
+            classes: { 'ui-tooltip': 'tooltip-dul-custom' },
           });
         }
     });
