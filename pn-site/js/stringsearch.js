@@ -11,7 +11,7 @@
     {
     return this.each(function()
     {
-        $(this).focus()
+        $(this).trigger('focus');
 
         // If this function exists...
         if (this.setSelectionRange)
@@ -272,7 +272,7 @@ $(document).ready(
 		
 			if(boxval.match(proxRegExp)){
 	
-				$(controls).find(".prxcount").removeAttr("disabled");
+				$(controls).find(".prxcount").prop("disabled", false);
 				$(controls).find(".within").css("color", "#000");
 				
 			}
@@ -295,7 +295,7 @@ $(document).ready(
 			if(boxval.match(proxCountRegExp)){
 			
 				var prxunit = $($(controls).find(".prxunit"));
-				prxunit.removeAttr("disabled");
+				prxunit.prop("disabled", false);
 				if(prxunit.val() != "words" && prxunit.val() != "chars") prxunit.val("chars");
 			
 			}
@@ -345,7 +345,7 @@ $(document).ready(
 		
 		hic.activateButton = function(button){
 		
-			$(button).removeAttr("disabled");
+			$(button).prop("disabled", false);
 			$(button).removeClass("ui-state-disabled");
 			$(button).css("background", "#C0D3BC url(css/custom-theme/images/ui-bg_glass_75_c0d3bc_1x400.png) 50% 50% repeat-x");
 		
@@ -367,7 +367,7 @@ $(document).ready(
 			var input = $(parent).find(".keyword");
 			var val = input.val();
 			var newVal = (hic.needsSpace(val, keyword) ? val + " " : val) + keyword;
-			input.focus();
+			input.trigger('focus');
 			input.val(newVal);
 			hic.doButtonActivationCheck(input.val(), parent);
 			hic.doProxControlsActivationCheck(input.val(), parent);
@@ -398,7 +398,7 @@ $(document).ready(
 			var input = $(parent).find(".keyword");
 			var val = input.val();
 			var newVal = val + mark;
-			input.focus();
+			input.trigger('focus');
 			input.val(newVal);
 			hic.doButtonActivationCheck(input.val(), parent);
 			hic.doProxControlsActivationCheck(input.val(), parent);	
@@ -418,8 +418,8 @@ $(document).ready(
 			mtr.after(searchHTML.clone());
 			var displayVal = val == "+" ? "" : val.toUpperCase() + " ";
 			var textbox = $(lastTopSelector + " .keyword");
-			textbox.removeAttr("disabled");
-			textbox.focus();
+			textbox.prop("disabled", false);
+			textbox.trigger('focus');
 			textbox.val(displayVal);
 			hic.doButtonActivationCheck("", $(lastTopSelector));
 			hic.doProxControlsActivationCheck("", $(lastTopSelector));
@@ -449,7 +449,7 @@ $(document).ready(
 			$(this).parents(topSelector).find(".str-operator").text("");	
 			hic.clearProxValues(this);
 			hic.doButtonActivationCheck("", $(topSelector));
-			$(textbox).focus();
+			$(textbox).trigger('focus');
 			
 		}
 		
@@ -487,8 +487,8 @@ $(document).ready(
 				var searchbits = hic.trimRecoveredStringSearches(nowsearch);
 				hic.addReqdSearchBoxes(searchbits);
 				hic.removeSearchFromStack(stringbits);	
-				$(topSelector + ":last .keyword").removeAttr("disabled");
-				$(topSelector + ":last .keyword").focus();
+				$(topSelector + ":last .keyword").prop("disabled", false);
+				$(topSelector + ":last .keyword").trigger('focus');
 				$(topSelector + ":last .keyword").putCursorAtEnd();
 			
 			}
@@ -572,12 +572,12 @@ $(document).ready(
 			var buttonBar = $(this).parent().clone();
 			$(this).parent().parent().remove();
 			$(lastTopSelector).append(buttonBar);
-			$(lastTopSelector).find(".keyword").removeAttr("disabled");
-			$(lastTopSelector).find(".keyword").focus();
+			$(lastTopSelector).find(".keyword").prop("disabled", false);
+			$(lastTopSelector).find(".keyword").trigger('focus');
 			var prxcount = $(lastTopSelector + " input.prxcount");
 			if(prxcount.val().length > 0){
 			
-				$(lastTopSelector + " .prx *").removeAttr("disabled");
+				$(lastTopSelector + " .prx *").prop("disabled", false);
 			
 			}
 			hic.doButtonActivationCheck($(lastTopSelector).find(".keyword").val(), $(lastTopSelector));

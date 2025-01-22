@@ -27,14 +27,17 @@ function init() {
     alignRTL();
     jQuery("#tmgo").button();
     jQuery("span.term").each( function (i, elt) {
-        jQuery(elt).CreateBubblePopup({
-            innerHtml: jQuery(elt).find("span.gloss").html(),
-            position: "top",
-            themePath: "/jquerybubblepopup-template/",
-            selectable: "true",
-            width: 200,
-            closingDelay: 500
-        });
+        const htmlContent = $(elt).find("span.gloss").html();
+        if (htmlContent) {
+          $(elt).tooltip({
+            content: innerContent,
+            position: {
+              my: "center bottom",
+              at: "center top",
+            },
+            classes: 'tooltip-dul-custom'
+          });
+        }
     });
     jQuery.ajax({
       type: "GET",

@@ -48,3 +48,7 @@ div.content.search {
   .facet-widget.date-facet-widget input.custom-combobox-input { width: auto }
   #id-selector-wrapper input.custom-combobox-input { width: auto }
 }
+
+.tooltip-dul-custom {
+  opacity: 95%;
+}

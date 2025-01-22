@@ -51,18 +51,18 @@ $(document).ready(
 
 	   		if(val == "text"){
 
-	   			$("#beta-on, #caps, #marks").removeAttr("disabled", "disabled");
+	   			$("#beta-on, #caps, #marks").prop("disabled", false);
 	   			hic.checkBetacode();
 
 	   		} 
 	   		else{
 
-	   			$("#beta-on").removeAttr("checked");
-	   			$("#beta-on").attr("disabled", "disabled");
-	   			$("#caps").attr("checked", "checked");
-	   			$("#caps").attr("disabled", "disabled");
-	   			$("#marks").attr("checked", "checked");
-	   			$("#marks").attr("disabled", "disabled");	   			
+	   			$("#beta-on").prop("checked", false);
+	   			$("#beta-on").prop("disabled", true);
+	   			$("#caps").prop("checked", true);
+	   			$("#caps").prop("disabled", true);
+	   			$("#marks").prop("checked", true);
+	   			$("#marks").prop("disabled", true);	   			
 
 	   		}
 
@@ -313,7 +313,7 @@ $(document).ready(
 
 	    		var keyword = $(stringcontrols[i]).find(".keyword").val();
 	    		var searchString = keyword.replace(/(\s+)/g, " ");
-	    		searchString = $.trim(searchString);	    		
+	    		searchString = searchString.trim();	    		
 	    		if(searchString.length == 0) continue;
 	    		searchString = "(" + searchString + ")";
 	    		if(keyword.match(proxRegExp)){
@@ -364,29 +364,29 @@ $(document).ready(
 
 	    	if(betaOn){
 
-				$(this).keypress(function(event){ return convertCharToggle(this, true, event); });
-	    		$(this).keyup(function(event){ return convertStr( this, event ); });	    	    	
+				$(this).on('keypress', function(event){ return convertCharToggle(this, true, event); });
+	    		$(this).on('keyup', function(event){ return convertStr( this, event ); });	    	    	
 
 	    	}
 	    	else{
 
-			$(this).keyup(function(event){			
+			$(this).on('keyup', function(event){			
 				event.stopPropagation();
 				var val = $(this).val();
 				if(!colonFound && val.match(":")) {
 
 					colonFound = true;
-					$(".stringsearch-section input:radio").attr("disabled", "disabled");
-					$(".stringsearch-section input:checkbox").removeAttr("disabled");
+					$(".stringsearch-section input:radio").prop("disabled", true);
+					$(".stringsearch-section input:checkbox").prop("disabled", false);
 					selectedRadios = $(".stringsearch-section input:radio:checked");
-					$(".stringsearch-section input:radio:checked").removeAttr("checked");
+					$(".stringsearch-section input:radio:checked").prop("checked", false);
 
 				}
 				// check to make sure user hasn't deleted a previously-entered colon char
 				else if(!val.match(":") && colonFound){
 
 		            colonFound = false;
-					$(".stringsearch-section input:radio").removeAttr("disabled");
+					$(".stringsearch-section input:radio").prop("disabled", false);
 				    for(var i = 0; i < selectedRadios.length; i++){
 
                 	    selectedRadios[i].trigger('click');   
@@ -651,7 +651,7 @@ $(document).ready(
 		// turning betacode on/off selects text input
 		$("#beta-on").on("change", () => {
 
-			$(".stringsearch-top-controls:last .keyword").focus();
+			$(".stringsearch-top-controls:last .keyword").trigger('focus');
 			var beta = $(this).is(":checked") ? "beta-on" : "beta-off";
 			$.cookie(hic.BETA_COOKIE, beta);
 
@@ -730,13 +730,13 @@ $(document).ready(
 		
 		$("input[name=DATE_START]").on("click", (evt) => {
 			
-			$("input:radio[name=after-era]").removeAttr("disabled");
+			$("input:radio[name=after-era]").prop("disabled", false);
 		
 		});
 
 		$("input[name=DATE_END]").on("click", (evt) => {
 			
-			$("input:radio[name=before-era]").removeAttr("disabled");
+			$("input:radio[name=before-era]").prop("disabled", false);
 
 		});
 		
