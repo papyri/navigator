@@ -30,7 +30,7 @@ function init() {
         const htmlContent = $(elt).find("span.gloss").html();
         if (htmlContent) {
           $(elt).tooltip({
-            content: innerContent,
+            content: htmlContent,
             position: {
               my: "center bottom",
               at: "center top",
