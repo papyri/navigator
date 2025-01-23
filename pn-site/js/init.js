@@ -1,4 +1,5 @@
 function init() {
+    //mute: initjQueryMigrate();
     jQuery("div#hd h1").on('click', () => { window.location = "/" });
     jQuery("li.dialog").each(function(i) {
         jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
@@ -26,14 +27,18 @@ function init() {
     alignRTL();
     jQuery("#tmgo").button();
     jQuery("span.term").each( function (i, elt) {
-        jQuery(elt).CreateBubblePopup({
-            innerHtml: jQuery(elt).find("span.gloss").html(),
-            position: "top",
-            themePath: "/jquerybubblepopup-template/",
-            selectable: "true",
-            width: 200,
-            closingDelay: 500
-        });
+        const htmlContent = $(elt).find("span.gloss").html();
+        if (htmlContent) {
+          $(elt).attr('title', htmlContent);
+          $(elt).tooltip({
+            content: htmlContent,
+            position: {
+              my: "center bottom",
+              at: "center top",
+            },
+            classes: { 'ui-tooltip': 'tooltip-dul-custom' },
+          });
+        }
     });
     jQuery.ajax({
       type: "GET",
@@ -72,6 +77,16 @@ function init() {
     addLinearBrowseControls();
 		getAlert();
 		getCampaign();
+}
+
+function initjQueryMigrate() {
+  jQuery.migrateMute = true;
+  jQuery.migrateTrace = false;
+  jQuery.migrateWarnings.push = (message) => {
+    const stacktrace = new Error().stack;
+    const cleanedStacktrace = stacktrace.replace(/^.*at jQuery\.migrateWarnings\.push.*$/gm, '');
+    _paq.push(['trackEvent', 'warning.jqmigrate', message + '\n' + cleanedStacktrace]);
+  };
 }
 
 function getPath() {

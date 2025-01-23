@@ -83,7 +83,11 @@ jQuery.cookie = function(name, value, options) {
         if (document.cookie && document.cookie != '') {
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
+              // Modified from original code to trim the cookie value using native String.prototype.trim
+              let cookie = cookies[i];
+              if (typeof cookie === 'string') {
+                cookie = cookie.trim();
+              }
                 // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
