@@ -203,7 +203,6 @@
         </title>
         <!-- scripts -->
         <script src="{$jsbase}/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="{$jsbase}/jquery-migrate-3.5.2.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="{$jsbase}/jquery-ui-1.14.1.min.js" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$image">
           <script src="{$jsbase}/imageviewer.js" type="text/javascript" charset="utf-8"></script>
