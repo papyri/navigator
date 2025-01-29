@@ -28,5 +28,5 @@ publish:
     - publish
   stage: deploy
   script:
-    - make deploy-packages
+    - make publish
   when: manual
