@@ -13,6 +13,8 @@ publish:
 	docker run -e GITHUB_TOKEN -e GITHUB_USERNAME -e CI_API_V4_URL -e CI_PROJECT_ID -e CI_JOB_TOKEN $(build_tag) make deploy-packages
 
 deploy-packages:
+	mkdir -p ~/.m2
+	sed -e "s/GITLAB_USERNAME/gitlab-ci-token/" -e "s/GITLAB_TOKEN/$(CI_JOB_TOKEN)/" .settings.example.xml > ~/.m2/settings.xml
 	cd pn-mapping && export VERSION=`head -1 project.clj | sed 's/.*"\([^"]*\)"/\1/'` && lein jar && lein pom && \
 		mvn deploy:deploy-file -s ../ci_settings.xml -DpomFile=pom.xml -Dfile=target/map-$$VERSION.jar -DrepositoryId=gitlab-maven \
 		-Durl="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven"

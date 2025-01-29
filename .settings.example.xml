@@ -32,5 +32,16 @@
       <username>GITHUB_USERNAME</username>
       <password>GITHUB_TOKEN</password>
     </server>
+    <server>
+      <id>gitlab-maven</id>
+      <configuration>
+        <httpHeaders>
+          <property>
+            <name>GITLAB_USERNAME</name>
+            <value>GITLAB_TOKEN</value>
+          </property>
+        </httpHeaders>
+      </configuration>
+    </server>
   </servers>
 </settings>
