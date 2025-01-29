@@ -9,6 +9,7 @@ include:
 stages:
   - build
   - test
+  - deploy
 
 .job:
   except:
@@ -20,3 +21,12 @@ build:
 
 test:
   extends: .test
+
+publish:
+  extends: .job
+  tags:
+    - publish
+  stage: deploy
+  script:
+    - make deploy-packages
+  when: manual
