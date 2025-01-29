@@ -9,6 +9,9 @@ build:
 test:
 	docker run -e GITHUB_TOKEN -e GITHUB_USERNAME -e CI_API_V4_URL -e CI_PROJECT_ID -e CI_JOB_TOKEN $(build_tag)
 
+publish:
+	docker run -e GITHUB_TOKEN -e GITHUB_USERNAME -e CI_API_V4_URL -e CI_PROJECT_ID -e CI_JOB_TOKEN $(build_tag) make deploy-packages
+	
 deploy-packages:
 	cd pn-mapping && export VERSION=`head -1 project.clj | sed 's/.*"\([^"]*\)"/\1/'` && lein jar && lein pom && \
 		mvn deploy:deploy-file -s ../ci_settings.xml -DpomFile=pom.xml -Dfile=target/map-$$VERSION.jar -DrepositoryId=gitlab-maven \
