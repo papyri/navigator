@@ -9,6 +9,7 @@ include:
 stages:
   - build
   - test
+  - publish
   - deploy
 
 .job:
@@ -26,7 +27,17 @@ publish:
   extends: .job
   tags:
     - publish
-  stage: deploy
+  stage: publish
   script:
     - make publish
+  when: manual
+
+deploy-dev:
+  extends: .job
+  tags:
+    - deploy
+  stage: deploy
+  script:
+    - cd /opt/antsy
+    - ansible-playbook -i development papyri-debian12.yml --tags navigator
   when: manual
