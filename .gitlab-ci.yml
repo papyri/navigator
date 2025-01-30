@@ -33,7 +33,6 @@ publish:
   when: manual
 
 deploy-dev:
-  extends: .job
   tags:
     - deploy
   stage: deploy
