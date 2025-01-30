@@ -37,6 +37,5 @@ deploy-dev:
     - deploy
   stage: deploy
   script:
-    - cd /opt/antsy
-    - ansible-playbook -i development papyri-debian12.yml --tags navigator
+    - sudo /usr/bin/systemctl start papyri-navigator-playbook.service
   when: manual
