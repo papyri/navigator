@@ -38,4 +38,5 @@ deploy-dev:
   stage: deploy
   script:
     - sudo /usr/bin/systemctl start papyri-navigator-playbook.service
+    - sudo /usr/bin/journalctl -u papyri-navigator-playbook
   when: manual
