@@ -20,13 +20,14 @@
            (javax.xml.transform.stream StreamSource StreamResult)
            (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
            (org.apache.jena.graph Node)
-           (org.apache.jena.query QueryExecutionFactory)
+           (org.apache.jena.sparql.exec.http QueryExecutionHTTP)
            (org.apache.jena.rdf.model Model ModelFactory)
            (org.apache.jena.riot RDFLanguages RDFParser)
            (org.apache.jena.riot.system ErrorHandlerFactory)
+           (org.apache.jena.rdfconnection RDFConnection RDFConnectionFuseki)
            (org.apache.jena.sparql.modify.request UpdateCreate UpdateLoad)
            (org.apache.jena.sparql.lang UpdateParser)
-           (org.apache.jena.web DatasetAdapter DatasetGraphAccessorHTTP)
+           (org.apache.jena.update Update UpdateExecutionFactory UpdateFactory UpdateRequest)
            (org.apache.jena.update Update UpdateExecutionFactory UpdateFactory UpdateRequest)
            (org.apache.commons.codec.digest DigestUtils)))
 
@@ -61,8 +62,7 @@
   (println (str "Loading records to " server "/data"))
   (let [rdf (StringBuffer.)
         times (if (not (nil? n)) n 5000)
-        dga (DatasetGraphAccessorHTTP. (str server "/data"))
-        adapter (DatasetAdapter. dga)]
+        connection (RDFConnectionFuseki/connect (str server "/data"))]
     (try
       (doto rdf
         (.append "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
@@ -79,7 +79,7 @@
         (.append "</rdf:RDF>"))
       (let [model (ModelFactory/createDefaultModel)]
         (.read model (StringReader. (.toString rdf)) nil "RDF/XML")
-        (.add adapter graph model))
+        (.load connection graph model))
       (Thread/sleep 2)
       (catch Exception e
         (.println *err* (str (.getMessage e) " talking to Fuseki"))
@@ -136,7 +136,7 @@
 
 (defn execute-query
   [query]
-  (let [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
+  (let [exec (QueryExecutionHTTP/service (str server "/query") query)]
     (.execSelect exec)))
 
 (defn get-identifier
@@ -201,8 +201,7 @@
 
 (defn -loadFile
   [f]
-  (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
-        adapter (DatasetAdapter. dga)
+  (let [connection (RDFConnectionFuseki/connect (str server "/data"))
         lang (cond 
           (.endsWith f ".rdf") RDFLanguages/RDFXML 
           (.endsWith f ".ttl") RDFLanguages/TURTLE
@@ -215,7 +214,7 @@
       (errorHandler (ErrorHandlerFactory/errorHandlerWarn))
       (parse model))
     (try
-      (.add adapter graph model)
+      (.load connection graph model)
       (catch Exception e
         (prn (str "Error loading file: " f ": " (.getMessage e)))
         (.printStackTrace e *err*)))))
@@ -223,8 +222,7 @@
 (defn -insertPelagiosAnnotations
   [url]
   (if-not (nil? url)
-    (let [dga (DatasetGraphAccessorHTTP. (str server "/data"))
-          adapter (DatasetAdapter. dga)
+    (let [connection (RDFConnectionFuseki/connect (str server "/data"))
           model (ModelFactory/createDefaultModel)
           pi-uri (str/replace url "/source" "/original")
           query (str "PREFIX lawd: <http://lawd.info/ontology/> "
@@ -253,7 +251,7 @@
                               "</rdf:Description>"
                             "</rdf:RDF>")]
               (.read model (StringReader. rdf) nil "RDF/XML")
-              (.add adapter graph model))))
+              (.load connection graph model))))
     (let [query (str "PREFIX lawd: <http://lawd.info/ontology/> "
                      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
                      "SELECT ?uri ?pleiades ?label "

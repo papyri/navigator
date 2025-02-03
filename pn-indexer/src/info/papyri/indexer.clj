@@ -53,7 +53,7 @@
     (org.apache.solr.client.solrj.impl ConcurrentUpdateSolrClient ConcurrentUpdateSolrClient$Builder BinaryRequestWriter HttpSolrClient HttpSolrClient$Builder)
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
-    (org.apache.jena.query QueryExecutionFactory)
+    (org.apache.jena.sparql.exec.http QueryExecutionHTTP)
     (org.xml.sax InputSource)
     (org.xml.sax.helpers DefaultHandler)))
 
@@ -565,7 +565,7 @@
   "Executes the query provided and returns a vector of vectors containing the results"
   [query]
   (try
-    (with-open [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
+    (with-open [exec (QueryExecutionHTTP/service (str server "/query") query)]
       (let [answer (.execSelect exec)]
         (loop [result []]
           (if (.hasNext answer)
