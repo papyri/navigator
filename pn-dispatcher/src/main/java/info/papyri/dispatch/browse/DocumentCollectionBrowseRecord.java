@@ -159,7 +159,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         public String getVolume(){ return (volume == null) ? "" : volume; }
 
         @Override
-        public int compareTo(BrowseRecord o) {
+        public int compareTo(Object o) {
             
             DocumentCollectionBrowseRecord comparandum = (DocumentCollectionBrowseRecord)o;
             

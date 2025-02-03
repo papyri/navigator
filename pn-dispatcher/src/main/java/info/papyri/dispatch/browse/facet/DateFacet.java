@@ -118,7 +118,7 @@ public class DateFacet extends Facet {
    /**
     * Comparator used in ordering dates in the <code>Facet</code> widget.
     */
-   private static Comparator<Count> dateCountComparator;
+   private static Comparator dateCountComparator;  
    
    /** Object representing a date <em>after which</em> sought items must have originated -
     *  that is to say, the <i>terminus post quem</i>.
@@ -155,10 +155,10 @@ public class DateFacet extends Facet {
         // dates need to sort with 'Unknown' at the top
         // followed by BCE dates (= negative date value)
         // followed by CE dates (= positive date value)
-        dateCountComparator = new Comparator<Count>() {
+        dateCountComparator = new Comparator() {
 
             @Override
-            public int compare(Count t, Count t1) {
+            public int compare(Object t, Object t1) {
                 
                 Count count1 = (Count)t;
                 Count count2 = (Count)t1;
@@ -612,7 +612,7 @@ public class DateFacet extends Facet {
          * The <code>Comparator</code> used to sort the faceting values returned from 
          * the server
          */
-        Comparator<RangeFacet.Count> facetCountComparator;
+        Comparator facetCountComparator;
         
         /**
          * Constructor
@@ -629,13 +629,13 @@ public class DateFacet extends Facet {
             /** Sorting should be from lowest to highest, but needs to take account
              *  of the possibility of string values being submitted.
              */
-            facetCountComparator = new Comparator<RangeFacet.Count>()  {
+            facetCountComparator = new Comparator()  {
 
                 @Override
-                public int compare(RangeFacet.Count t, RangeFacet.Count t1) {
+                public int compare(Object t, Object t1) {
                     
-                    String c1 = t.getValue();
-                    String c2 = t1.getValue();
+                    String c1 = ((RangeFacet.Count)t).getValue();
+                    String c2 = ((RangeFacet.Count)t1).getValue();
                     
                     try{
                         
@@ -746,8 +746,7 @@ public class DateFacet extends Facet {
          * @see Terminus#calculateLooseWidgetValues(long) 
          * 
          */
-
-        @SuppressWarnings("unchecked")
+        
         void calculateWidgetValues(QueryResponse qr) {
             
             addUnknownCount(qr);
@@ -757,10 +756,8 @@ public class DateFacet extends Facet {
                         
             for(RangeFacet rf : facetQueries){
             
-              String rangeName = rf.getName();
-              if(rangeName.equals(this.getFacetField().name())) {
-                  dateList = (List<RangeFacet.Count>)rf.getCounts();
-                }
+                String rangeName = rf.getName();
+                if(rangeName.equals(this.getFacetField().name())) dateList = rf.getCounts();
                       
             }
             this.calculateStrictWidgetValues(dateList);            

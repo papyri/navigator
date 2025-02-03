@@ -11,7 +11,7 @@ package info.papyri.dispatch.browse;
      * 
      */
     
-    public abstract class BrowseRecord implements Comparable<BrowseRecord> {
+    public abstract class BrowseRecord implements Comparable{
         
         /**
          * Returns an html representation of the Record.

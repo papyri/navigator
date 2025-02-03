@@ -471,6 +471,7 @@ public class FileUtils {
           next = 10;
         }
         String foo = text.substring(i+1, i + next);
+        boolean bar = foo.matches("^\\d(\\w|,|/)*\\.\\s{2}.*");
         if (i < text.length() - 1 && text.substring(i+1, i + next).matches("^\\d(\\w|,|/)*\\.\\s{2}.*")) {
           while (text.charAt(i) != '.') {
             i++;
@@ -641,13 +642,13 @@ public class FileUtils {
           hitline = line + " | " + lines[i + 1];
         }
       }
-      if (hitline.length() > 150) {
-        start = hitline.indexOf(hlStart) - 30;
+      if (hitline.length() > 60) {
+        start = hitline.indexOf(hlStart) - 10;
         if (start >= 0) {
           hitline = hitline.substring(start);
           hitline = '…' + hitline.substring(hitline.indexOf(" ") + 1);
         }
-        int end = hitline.lastIndexOf(' ', hitline.lastIndexOf(hlEnd) + 30);
+        int end = hitline.lastIndexOf(' ', hitline.lastIndexOf(hlEnd) + 12);
         if (end < hitline.length()) {
           hitline = hitline.substring(0, end);
         }

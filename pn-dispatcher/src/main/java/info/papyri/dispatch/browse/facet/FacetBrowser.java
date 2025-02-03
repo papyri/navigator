@@ -25,16 +25,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import java.util.logging.Level;
@@ -324,8 +324,8 @@ public class FacetBrowser extends HttpServlet {
    * @return The <code>QueryResponse</code> returned by the Solr server
    */
   private QueryResponse runFacetQuery(SolrQuery sq) {
-    Http2SolrClient solr = new Http2SolrClient.Builder(SOLR_URL + PN_SEARCH)
-            .withConnectionTimeout(SOCKET_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS).build();
+    HttpSolrClient solr = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH)
+            .withSocketTimeout(SOCKET_TIMEOUT).build();
     try {
       //logger.info(sq.toString());
       QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
@@ -340,7 +340,11 @@ public class FacetBrowser extends HttpServlet {
         logger.log(Level.SEVERE, null, ex);
         return null;
     } finally {
-      solr.close();
+      try {
+        solr.close();
+      } catch (IOException ioe) {
+        logger.log(Level.WARNING, "Error closing Solr client.");
+      }
     }
 
 

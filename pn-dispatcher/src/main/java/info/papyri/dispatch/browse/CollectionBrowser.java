@@ -17,12 +17,12 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -225,9 +225,9 @@ public class CollectionBrowser extends HttpServlet {
      * 
      * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
      * of the collection hierarchy
-     * @param resultNode The root JsonNode returned by Fuseki
+     * @param resultNode The root JsonNode returned by Mulgara
      * @return An ArrayList of <code>BrowseRecord</code> objects
-     * @see #processRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse)
+     * @see #processRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
      * @see BrowseRecord
      * @see DocumentCollectionBrowseRecord
      * 

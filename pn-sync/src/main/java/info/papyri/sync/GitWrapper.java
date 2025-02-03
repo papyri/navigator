@@ -245,16 +245,12 @@ public class GitWrapper {
       }
     }
   }
-
+  
   public static String filenameToUri(String file) {
-    return filenameToUri(file, false, SPARQLSERVER + PATH);
-  }
-
-  public static String filenameToUri(String file, boolean resolve) {
-    return filenameToUri(file, resolve, SPARQLSERVER + PATH);
+    return filenameToUri(file, false);
   }
   
-  public static String filenameToUri(String file, boolean resolve, String server) {
+  public static String filenameToUri(String file, boolean resolve) {
     StringBuilder result = new StringBuilder();
     if (file.contains("DDB")) {
       StringBuilder sparql = new StringBuilder();
@@ -267,7 +263,7 @@ public class GitWrapper {
       try {
         // If the numbers server already knows the id for the filename, use that
         // because it will be 100% accurate. 
-        URL m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+        URL m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
         JsonNode root = getJson(m);
         if (root.path("results").path("bindings").size() > 0) {
           result.append(URLDecoder.decode(root.path("results").path("bindings").path(0).path("id").path("value").asText(),"UTF-8"));
@@ -280,7 +276,7 @@ public class GitWrapper {
           sparql.append("SELECT * ")
                   .append("FROM <http://papyri.info/graph> ")
                   .append("WHERE { <http://papyri.info/ddbdp/").append(collection).append("> ?p ?o }");
-          m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+          m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
           root = getJson(m);
           if (root.path("results").path("bindings").size() > 0) {
             result.append(collection).append(";");
@@ -348,12 +344,8 @@ public class GitWrapper {
     }
     
   }
-
+  
   public static String lookupMainId(String id) {
-    return lookupMainId(id, SPARQLSERVER + PATH);
-  }
-
-  public static String lookupMainId(String id, String server) {
     StringBuilder sparql = new StringBuilder();
     sparql.append("prefix dct: <http://purl.org/dc/terms/> ")
           .append("select ?id ")
@@ -364,7 +356,7 @@ public class GitWrapper {
           .append("filter regex(str(?id), \"^http://papyri.info/ddbdp/.*\") ")
           .append("filter not exists {?id dct:isReplacedBy ?b} }");
     try {
-      URL m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+      URL m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
       JsonNode root = getJson(m);
       if (root.path("results").path("bindings").size() > 0) {
         return root.path("results").path("bindings").path(0).path("id").path("value").asText();
@@ -378,7 +370,7 @@ public class GitWrapper {
                 .append(id)
                 .append("> ")
                 .append("filter regex(str(?id), \"^http://papyri.info/hgv/.*\") }");
-          m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
+          m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
           root = getJson(m);
           if (root.path("results").path("bindings").size() > 0) {
             return root.path("results").path("bindings").path(0).path("id").path("value").asText();

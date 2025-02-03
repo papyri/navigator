@@ -39,7 +39,7 @@ public class GitWrapperTest {
     System.out.println("filenameToUri for DDbDP");
     String file = base + "/DDB_EpiDoc_XML/p.mich/p.mich.20/p.mich.20.809.xml";
     String expResult = "http://papyri.info/ddbdp/p.mich;20;809/source";
-    String result = GitWrapper.filenameToUri(file, false, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
   
@@ -49,7 +49,7 @@ public class GitWrapperTest {
     //Fake filename — does not exist in numbers server
     String file = base + "/DDB_EpiDoc_XML/sb/sb.26/sb.26.1234.xml";
     String expResult = "http://papyri.info/ddbdp/sb;26;1234/source";
-    String result = GitWrapper.filenameToUri(file, false, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
   
@@ -58,7 +58,7 @@ public class GitWrapperTest {
     System.out.println("filenameToUri for 2 level DDbDP");
     String file = base + "/DDB_EpiDoc_XML/p.vet.aelii/p.vet.aelii.9.xml";
     String expResult = "http://papyri.info/ddbdp/p.vet.aelii;;9/source";
-    String result = GitWrapper.filenameToUri(file, false, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
   
@@ -67,7 +67,7 @@ public class GitWrapperTest {
     System.out.println("filenameToUri for file where collection name contains another collection name");
     String file = base + "/DDB_EpiDoc_XML/o.theb.taxes/o.theb.taxes.2/o.theb.taxes.2.21.xml";
     String expResult = "http://papyri.info/ddbdp/o.theb.taxes;2;21/source";
-    String result = GitWrapper.filenameToUri(file, false, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
           
@@ -76,7 +76,7 @@ public class GitWrapperTest {
     System.out.println("filenameToUri for 2 level DDbDP");
     String file = base + "/DDB_EpiDoc_XML/p.count/p.count.45.xml";
     String expResult = "http://papyri.info/ddbdp/p.count;;45/source";
-    String result = GitWrapper.filenameToUri(file, false, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file);
     assertEquals(expResult, result);
   }
   
@@ -85,7 +85,7 @@ public class GitWrapperTest {
     System.out.println("Looking up DDbDP ID");
     String id = "http://papyri.info/apis/gothenburg.apis.14/source";
     String expResult = "http://papyri.info/ddbdp/sb;20;14671/source";
-    String result = GitWrapper.lookupMainId(id, "https://papyri.info/sparql");
+    String result = GitWrapper.lookupMainId(id);
     assertEquals(expResult, result);
   }
   
@@ -93,7 +93,7 @@ public class GitWrapperTest {
   public void testFileNameWithPageNumberToURI() {
     String id = "http://papyri.info/ddbdp/upz;1;pg604,8b/source";
     String file = "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/upz/upz.1/upz.1.pg604-8b.xml";
-    String result = GitWrapper.filenameToUri(file,true, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file,true);
     assertEquals(id, result);
   }
   
@@ -101,7 +101,7 @@ public class GitWrapperTest {
   public void testFileNameWithPageNumberToURI2() {
     String id = "http://papyri.info/ddbdp/stud.pal;4;pg58-78/source";
     String file = "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/stud.pal/stud.pal.4/stud.pal.4.pg58-78.xml";
-    String result = GitWrapper.filenameToUri(file, true, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file, true);
     assertEquals(id, result);
   }
   
@@ -109,7 +109,7 @@ public class GitWrapperTest {
   public void testFileNameWithMultiEditionToURI() {
     String id = "http://papyri.info/ddbdp/p.tebt;3.2;974/source";
     String file = "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/p.tebt/p.tebt.3.2/p.tebt.3.2.974.xml";
-    String result = GitWrapper.filenameToUri(file, true, "https://papyri.info/sparql");
+    String result = GitWrapper.filenameToUri(file, true);
     assertEquals (id, result);
   }
   
