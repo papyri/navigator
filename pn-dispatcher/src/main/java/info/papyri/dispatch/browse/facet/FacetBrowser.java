@@ -31,6 +31,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -726,13 +727,13 @@ public class FacetBrowser extends HttpServlet {
             if (!"".equals(displayName)) {
               values.append("<span class='semicolon'>:</span> ");
             }
-            values.append(displayFacetValue);
+            values.append(StringEscapeUtils.escapeHtml4(displayFacetValue));
             values.append("</div><!-- closing .constraint-label -->");
             values.append("<div class='constraint-closer'>");
             values.append("<a href='");
             values.append(FACET_PATH);
             values.append("".equals(queryString) ? "" : "?");
-            values.append(queryString);
+            values.append(StringEscapeUtils.escapeHtml4(queryString));
             values.append("' title ='Remove facet value'>X</a>");
             values.append("</div><!-- closing .constraint-closer -->");
             values.append("<div class='spacer'></div>");
