@@ -727,7 +727,7 @@ public class FacetBrowser extends HttpServlet {
             if (!"".equals(displayName)) {
               values.append("<span class='semicolon'>:</span> ");
             }
-            values.append(StringEscapeUtils.escapeHtml4(displayFacetValue));
+            values.append(displayFacetValue);
             values.append("</div><!-- closing .constraint-label -->");
             values.append("<div class='constraint-closer'>");
             values.append("<a href='");
