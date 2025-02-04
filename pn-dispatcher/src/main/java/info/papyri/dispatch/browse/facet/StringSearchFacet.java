@@ -836,7 +836,7 @@ public class StringSearchFacet extends Facet{
             
             if(!String.valueOf(counter - 1).equals(filterValue)){
             
-                qs.append(getClauseAsQueryString(index, clauses));
+                qs.append(ServletUtils.scrub(getClauseAsQueryString(index, clauses)));
                 qs.append("&");
                 index++;
                 

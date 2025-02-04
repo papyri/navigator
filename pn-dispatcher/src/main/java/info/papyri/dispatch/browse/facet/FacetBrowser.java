@@ -1,6 +1,7 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.FileUtils;
+import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
@@ -17,12 +18,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
@@ -195,7 +191,13 @@ public class FacetBrowser extends HttpServlet {
 
       /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
        * the returned records, and pagination information */
-      String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog, page);
+      Map<String, String[]> params = new HashMap<>();
+      request.getParameterMap().forEach((key, value) -> {
+        params.put(key, value);
+      });
+
+      params.replaceAll((key, value) -> ServletUtils.scrub(value));
+      String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, params, docsPerPage, exceptionLog, page);
 
       /* Inject the generated HTML */
       displayBrowseResult(response, html);
@@ -900,7 +902,7 @@ public class FacetBrowser extends HttpServlet {
     while (fit.hasNext()) {
 
       Facet facet = fit.next();
-      String queryString = facet.getAsQueryString();
+      String queryString = ServletUtils.scrub(facet.getAsQueryString());
       if (!"".equals(queryString)) {
         queryStrings.add(queryString);
       }

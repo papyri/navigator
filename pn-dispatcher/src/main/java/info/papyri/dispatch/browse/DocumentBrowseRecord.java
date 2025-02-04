@@ -2,6 +2,7 @@ package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.LanguageCode;
+import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.browse.facet.StringSearchFacet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
@@ -830,11 +831,11 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   }
   
   private String scrubURL(String url) {
-      return url.replace("{", "%7B")
+      return ServletUtils.scrub(url.replace("{", "%7B")
               .replace("}", "%7D")
               .replace("[", "%5B")
               .replace("]", "%5D")
-              .replace("|", "%7C");
+              .replace("|", "%7C"));
   }
 
   private void setPosition(long p) {
