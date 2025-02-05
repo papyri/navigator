@@ -239,7 +239,7 @@ abstract public class Facet {
     Iterator<String> cit = facetConstraints.iterator();
     while (cit.hasNext()) {
 
-      String value = cit.next();
+      String value = ServletUtils.scrub(cit.next());
 
       if (!value.equals(filterValue)) {
 
@@ -327,10 +327,9 @@ abstract public class Facet {
 
         try {
 
-          String param = java.net.URLDecoder.decode(values[i], "UTF-8");
+          String param = ServletUtils.scrub(java.net.URLDecoder.decode(values[i], "UTF-8"));
 
-          if (param != null && !param.equals("default") && !param.equals("")
-              && !param.contains("<") && !param.contains(">") && !param.contains(";")) {
+          if (param != null && !param.equals("default") && !param.equals("")) {
             addConstraint(param);
             hasConstraint = true;
           }

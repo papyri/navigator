@@ -22,7 +22,16 @@ public class ServletUtils {
    * Cleans out any embedded markup in the input string.
    */
   public static String scrub(String in) {
-    return in.replaceAll("<[^>]+>", "");
+    return in.replaceAll("<[^>]+>", "")
+        .replaceAll("[;<>'\"]", "");
+  }
+
+  public static String[] scrub(String[] in) {
+    String[] out = new String[in.length];
+    for (int i = 0; i < in.length; i++) {
+      out[i] = scrub(in[i]);
+    }
+    return out;
   }
 
   public static void send(HttpServletResponse response, File f)

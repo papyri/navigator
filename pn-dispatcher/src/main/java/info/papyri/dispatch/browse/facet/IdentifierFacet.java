@@ -566,7 +566,7 @@ public class IdentifierFacet extends Facet{
             if(searchConfigurations.get(ip).hasConstraint()){
                 
                 String param = ip.name();
-                String val = searchConfigurations.get(ip).getConstraint();
+                String val = ServletUtils.scrub(searchConfigurations.get(ip).getConstraint());
                 html.append("<input type=\"hidden\" name=\"");
                 html.append(param);
                 html.append("\" value=\"");
@@ -649,11 +649,13 @@ public class IdentifierFacet extends Facet{
             SearchConfiguration sc = searchConfigurations.get(ip);
                         
             if(!filterParam.equals(ip.name()) && sc.hasConstraint()){
-                
+
+                String value = ServletUtils.scrub(sc.getConstraint());
+                if (!"".equals(value)) {
                     queryString += "&";
                     queryString += ip.name() + "=";
-                    queryString += sc.getConstraint();
-                
+                    queryString += value;
+                }
             }
             
         }

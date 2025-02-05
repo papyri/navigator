@@ -196,10 +196,6 @@
             <param-value>text/html</param-value>
         </init-param>
         <init-param>
-            <param-name>papyri.info-full-type</param-name>
-            <param-value>text/html</param-value>
-        </init-param>
-        <init-param>
             <param-name>papyri.info-solr</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-xslt/MakeSolr.xsl</param-value>
         </init-param>
@@ -244,18 +240,6 @@
             <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
     </servlet>
-    <servlet>
-        <servlet-name>GitAPI</servlet-name>
-        <servlet-class>info.papyri.dispatch.GitAPI</servlet-class>
-        <init-param>
-            <param-name>repository</param-name>
-            <param-value>/srv/data/papyri.info/idp.data/.git</param-value>
-        </init-param>
-    </servlet>
-    <servlet>
-        <servlet-name>DTSServlet</servlet-name>
-        <servlet-class>info.papyri.dispatch.DTSServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
         <url-pattern>/browse/*</url-pattern>
@@ -299,10 +283,6 @@
     <servlet-mapping>
         <servlet-name>XSLTService</servlet-name>
         <url-pattern>/epidocinator</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DTSServlet</servlet-name>
-        <url-pattern>/dts</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
