@@ -155,7 +155,7 @@ $(document).ready(
 	    			// control itself
 	    			if(hidden.getAttribute("name") == "COLLECTION"){
 
-	    				var collvalue = $("select[name='COLLECTION']").attr("value");
+	    				var collvalue = $("select[name='COLLECTION']").prop("value");
 	    				if(collvalue != "default"){
 
 	    					filteredels.push($("select[name='COLLECTION']"));
