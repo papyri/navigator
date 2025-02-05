@@ -41,3 +41,11 @@ deploy-dev:
     - sudo /usr/bin/systemctl start papyri-navigator-playbook.service
     - sudo /usr/bin/journalctl -u papyri-navigator-playbook --since "${CURRENT_TIME}"
   when: manual
+
+reindex:
+  tags:
+    - deploy
+  stage: deploy
+  script:
+    - sudo /usr/bin/systemctl start papyri-navigator-indexing-playbook.service
+  when: manual
