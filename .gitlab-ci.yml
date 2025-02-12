@@ -48,25 +48,6 @@ reindex:
   stage: deploy
   script:
     - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - delay=300
     - sudo /usr/bin/systemctl start papyri-navigator-indexing-playbook.service
-    - sleep 5
-    - |
-      while true; do
-        status=$(systemctl status $service_name | grep Active | awk '{print $2}');
-        if [ "$status" == "failed" ]; then
-            echo "Service failed to start";
-            exit 1;
-        elif [ "$status" == "inactive" ]; then
-            echo "Service completed";
-            break;
-        elif [ "$status" == "active" ] || [ "$status" == "activating" ] || [ "$status" == "deactivating" ]; then
-            echo "Indexing in progress...";
-            sleep $delay;
-            continue;
-        else
-            break;
-        fi;
-      done
-      sudo /usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"
+    - ./poll-for-indexing-completion.sh "${CURRENT_TIME}"
   when: manual
