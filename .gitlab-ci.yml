@@ -68,5 +68,5 @@ reindex:
             break;
         fi;
       done
-    - sudo /usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"
+      sudo /usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"
   when: manual
