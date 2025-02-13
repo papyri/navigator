@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# Parse CURRENT_TIME argument
-if [ -z "$1" ]; then
-    echo "No argument supplied. Please provide the CURRENT_TIME argument.";
-    exit 1;
-fi;
-
-# set argument as CURRENT_TIME
-CURRENT_TIME=$1;
-
 delay=300
 
 while true; do
@@ -27,5 +18,3 @@ while true; do
       break;
   fi;
 done
-
-/usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"
