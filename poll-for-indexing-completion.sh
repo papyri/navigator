@@ -28,4 +28,4 @@ while true; do
   fi;
 done
 
-sudo /usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"
+/usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"

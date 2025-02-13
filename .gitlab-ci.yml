@@ -49,5 +49,5 @@ reindex:
   script:
     - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
     - sudo /usr/bin/systemctl start papyri-navigator-indexing-playbook.service
-    - ./poll-for-indexing-completion.sh "${CURRENT_TIME}"
+    - sudo ./poll-for-indexing-completion.sh "${CURRENT_TIME}"
   when: manual
