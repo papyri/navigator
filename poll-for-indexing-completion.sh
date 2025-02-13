@@ -3,7 +3,7 @@
 delay=300
 
 while true; do
-  status=$(systemctl status $service_name | grep Active | awk '{print $2}');
+  status=$(systemctl status papyri-navigator-indexing-playbook | grep Active | awk '{print $2}');
   if [ "$status" == "failed" ]; then
       echo "Service failed to start";
       exit 1;
