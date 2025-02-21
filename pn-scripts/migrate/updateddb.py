@@ -25,6 +25,7 @@ def main(argv=None):
         if file.endswith('.xml'):
           xslt.set_property('s', os.path.join(root, file))
           xslt.set_property('o', os.path.join(root, file))
+          xslt.set_parameter('id', processor.make_string_value(os.path.basename(file).replace('.xml', '')))
           xslt.transform_to_file()
           xml = ET.parse(os.path.join(root, file))
           target_refs = xml.findall('.//tei:body/tei:head/tei:ref[@target]', namespaces)

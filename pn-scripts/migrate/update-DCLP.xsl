@@ -20,7 +20,7 @@
   <xsl:template match="tei:div[@type='edition']//tei:div[@n][not(@xml:id)]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:attribute name="xml:id">{@subtype}_{translate(@n, ',', '_')}</xsl:attribute>
+      <xsl:attribute name="xml:id">{generate-id(.)}</xsl:attribute>
       <head><xsl:if test="@subtype">{upper-case(substring(@subtype, 1, 1))}{substring(@subtype, 2)} </xsl:if>{@n}</head>
       <xsl:apply-templates/>
     </xsl:copy>

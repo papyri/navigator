@@ -9,6 +9,7 @@
   
   <xsl:mode on-no-match="shallow-copy"/>
   
+  <xsl:param name="id"/>
   <xsl:variable name="base">file:///Users/hac13/Development/APIS/idp.data</xsl:variable>
   <xsl:variable name="HGV" select="tei:getHGV(/)"/>
   
@@ -28,13 +29,17 @@
           <ref>{normalize-space(.)}</ref>
         </xsl:for-each>
       </xsl:for-each>
-          <ref target="https://papyri.info/pub/{replace(//tei:idno[@type='ddb-hybrid'], ';+', '/')}">{//tei:idno[@type='ddb-hybrid']}</ref>
+          <ref target="https://papyri.info/hist/{replace(//tei:idno[@type='ddb-hybrid'], ';+', '/')}">{//tei:idno[@type='ddb-hybrid']}</ref>
       <xsl:for-each select="tei:ref[@type='reprint-from']/@n">
         <xsl:for-each select="tokenize(., '\|')">
-           <ref target="https://papyri.info/pub/{replace(.,';+', '/')}">{.}</ref>
+           <ref target="https://papyri.info/hist/{replace(.,';+', '/')}">{.}</ref>
         </xsl:for-each>
       </xsl:for-each>
     </head>
+  </xsl:template>
+
+  <xsl:template match="tei:idno[@type='filename']">
+    <idno type="filename">{$id}</idno>
   </xsl:template>
   
   <xsl:template match="tei:div[@type='edition']//tei:div[@n]">
