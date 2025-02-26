@@ -34,7 +34,6 @@ publish:
   when: manual
 
 deploy-prod-deb-12:
-  extends: .deploy
   tags:
     - deploy
   stage: deploy
