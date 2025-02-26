@@ -11,6 +11,7 @@ stages:
   - test
   - publish
   - deploy
+  - tasks
 
 .job:
   except:
@@ -32,20 +33,31 @@ publish:
     - make publish
   when: manual
 
+deploy-prod-deb-12:
+  extends: .deploy
+  tags:
+    - deploy
+  stage: deploy
+  script:
+    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
+    - sudo /usr/bin/systemctl start papyri-navigator-deploy-playbook.service
+    - sudo /usr/bin/journalctl -u papyri-navigator-deploy-playbook --since "${CURRENT_TIME}"
+  when: manual
+
 deploy-dev:
   tags:
     - deploy
   stage: deploy
   script:
     - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-navigator-playbook.service
-    - sudo /usr/bin/journalctl -u papyri-navigator-playbook --since "${CURRENT_TIME}"
+    - sudo /usr/bin/systemctl start papyri-navigator-dev-deploy-playbook.service
+    - sudo /usr/bin/journalctl -u papyri-navigator-dev-deploy-playbook --since "${CURRENT_TIME}"
   when: manual
 
 reindex:
   tags:
-    - deploy
-  stage: deploy
+    - tasks
+  stage: tasks
   script:
     - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
     - sudo /usr/bin/systemctl start papyri-navigator-indexing-playbook.service
