@@ -1,9 +1,15 @@
 #!/bin/bash
 
+if [ -z "$1" ]; then
+  echo "Please provide the service name as an argument."
+  exit 1
+fi
+
+SERVICE_NAME=$1
 delay=300
 
 while true; do
-  status=$(systemctl status papyri-navigator-indexing-playbook | grep Active | awk '{print $2}');
+  status=$(systemctl status $SERVICE_NAME | grep Active | awk '{print $2}');
   if [ "$status" == "failed" ]; then
       echo "Service failed to start";
       exit 1;

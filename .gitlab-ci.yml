@@ -53,13 +53,24 @@ deploy-dev:
     - sudo /usr/bin/journalctl -u papyri-navigator-dev-deploy-playbook --since "${CURRENT_TIME}"
   when: manual
 
-reindex:
+reindex-prod:
   tags:
     - tasks
   stage: tasks
   script:
     - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
     - sudo /usr/bin/systemctl start papyri-navigator-indexing-playbook.service
-    - ./poll-for-indexing-completion.sh
+    - ./poll-for-indexing-completion.sh papyri-navigator-indexing-playbook
     - sudo /usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"
+  when: manual
+
+reindex-dev:
+  tags:
+    - tasks
+  stage: tasks
+  script:
+    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
+    - sudo /usr/bin/systemctl start papyri-navigator-indexing-dev-playbook.service
+    - ./poll-for-indexing-completion.sh papyri-navigator-indexing-dev-playbook
+    - sudo /usr/bin/journalctl -u papyri-navigator-indexing-dev-playbook --since "${CURRENT_TIME}"
   when: manual
