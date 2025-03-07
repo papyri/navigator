@@ -72,7 +72,7 @@
   <xsl:include href="../epidoc-xslt/htm-tpl-structure.xsl"/>
   <xsl:include href="metadata.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
-  <xsl:param name="collection"/>
+  <xsl:param name="collection" required="yes"/>
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
   <xsl:param name="isReplacedBy"/>
