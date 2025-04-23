@@ -6,6 +6,9 @@ package info.papyri.dispatch;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +31,8 @@ import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  *
@@ -157,6 +162,89 @@ public class BiblioSearch extends HttpServlet {
     }
   }
 
+  /**
+   * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  protected void processJSONRequest(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    response.setContentType("application/json;charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    BufferedReader reader = null;
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      ObjectNode root = mapper.createObjectNode();
+      ArrayNode results = mapper.createArrayNode();
+
+      String q = request.getParameter("q");
+      String line = "";
+      SolrClient solr = new Http2SolrClient.Builder(solrUrl + BiblioSearch)
+          .withConnectionTimeout(5, TimeUnit.SECONDS)
+          .build();
+      int rows = 30;
+      try {
+        rows = Integer.parseInt(request.getParameter("rows"));
+      } catch (Exception e) {
+      }
+      int start = 0;
+      try {
+        start = Integer.parseInt(request.getParameter("start"));
+      } catch (Exception e) {}
+      SolrQuery sq = new SolrQuery();
+      try {
+        sq.setQuery(q.toLowerCase());
+        sq.setStart(start);
+        sq.setRows(rows);
+        sq.addSort("date", SolrQuery.ORDER.asc);
+        sq.addSort("sort", SolrQuery.ORDER.asc);
+        QueryRequest req = new QueryRequest(sq);
+        req.setMethod(METHOD.POST);
+        QueryResponse rs = req.process(solr);
+        SolrDocumentList docs = rs.getResults();
+        String uq = q;
+        try {
+          uq = URLEncoder.encode(q, "UTF-8");
+        } catch (Exception e) {
+        }
+        for (SolrDocument doc : docs) {
+          ObjectNode node = mapper.createObjectNode();
+          node.set("id", mapper.convertValue(doc.getFieldValue("id"), ObjectNode.class));
+          node.set("display", mapper.convertValue(doc.getFieldValue("display"), ObjectNode.class));
+          results.add(node);
+        }
+        root.set("results", results);
+        if (docs.getNumFound() > rows) {
+          ObjectNode pagination = mapper.createObjectNode();
+          int pages = (int) Math.ceil((double) docs.getNumFound() / (double) rows);
+          int p = 0;
+          ArrayNode pageLinks = mapper.createArrayNode();
+          while (p < pages) {
+            if ((p * rows) == start) {
+              pagination.put("current", p + 1);
+            }
+            String plink = new String("/bibliosearch?q=" + uq + "&start=" + p * rows + "&rows=" + rows);
+            pageLinks.add(plink);
+            p++;
+          }
+          pagination.set("pages", pageLinks);
+          root.set("pagination", pagination);
+        }
+        out.println(mapper.writeValueAsString(root));
+      } catch (SolrServerException e) {
+        out.println("{\"error\": \"Unable to execute query.  Please try again.\"}");
+        throw new ServletException(e);
+      } finally {
+        solr.close();
+      }
+
+    } finally {
+      out.close();
+    }
+  }
+
   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
   /** 
    * Handles the HTTP <code>GET</code> method.
@@ -168,7 +256,11 @@ public class BiblioSearch extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
-    processRequest(request, response);
+    if (request.getHeader("Accepts").equals("application/json")) {
+      processJSONRequest(request, response);
+    } else {
+      processRequest(request, response);
+    }
   }
 
   /** 
@@ -181,7 +273,11 @@ public class BiblioSearch extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
-    processRequest(request, response);
+    if (request.getHeader("Accept").equals("application/json")) {
+      processJSONRequest(request, response);
+    } else {
+      processRequest(request, response);
+    }
   }
 
   /** 
