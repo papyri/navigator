@@ -192,7 +192,8 @@ public class BiblioSearch extends HttpServlet {
       int start = 0;
       try {
         start = Integer.parseInt(request.getParameter("start"));
-      } catch (Exception e) {}
+      } catch (Exception e) {
+      }
       SolrQuery sq = new SolrQuery();
       try {
         sq.setQuery(q.toLowerCase());
@@ -211,8 +212,8 @@ public class BiblioSearch extends HttpServlet {
         }
         for (SolrDocument doc : docs) {
           ObjectNode node = mapper.createObjectNode();
-          node.set("id", mapper.convertValue(doc.getFieldValue("id"), ObjectNode.class));
-          node.set("display", mapper.convertValue(doc.getFieldValue("display"), ObjectNode.class));
+          node.put("id", (String)doc.getFieldValue("id"));
+          node.put("display", (String)doc.getFieldValue("display"));
           results.add(node);
         }
         root.set("results", results);
@@ -232,6 +233,7 @@ public class BiblioSearch extends HttpServlet {
           pagination.set("pages", pageLinks);
           root.set("pagination", pagination);
         }
+        root.put("numFound", docs.getNumFound());
         out.println(mapper.writeValueAsString(root));
       } catch (SolrServerException e) {
         out.println("{\"error\": \"Unable to execute query.  Please try again.\"}");
@@ -239,7 +241,8 @@ public class BiblioSearch extends HttpServlet {
       } finally {
         solr.close();
       }
-
+    } catch (Exception e) {
+      out.println("{\"error\": \"Unable to execute query.  Please try again.\"}");
     } finally {
       out.close();
     }
