@@ -273,7 +273,7 @@ public class BiblioSearch extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
-    if (request.getHeader("Accept").equals("application/json")) {
+    if ((request.getHeader("Accept") != null) && request.getHeader("Accept").equals("application/json")) {
       processJSONRequest(request, response);
     } else {
       processRequest(request, response);
