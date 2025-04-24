@@ -29,8 +29,6 @@ publish:
   stage: deploy
   script:
     - make publish
-<<<<<<< HEAD
-=======
   when: manual
 
 deploy-prod-deb-12:
@@ -73,5 +71,4 @@ reindex-dev:
     - sudo /usr/bin/systemctl start papyri-navigator-indexing-dev-playbook.service
     - ./poll-for-indexing-completion.sh papyri-navigator-indexing-dev-playbook
     - sudo /usr/bin/journalctl -u papyri-navigator-indexing-dev-playbook --since "${CURRENT_TIME}"
->>>>>>> a90b82a5 (Add indexing for future prod environment and pass service for completion progress polling script)
   when: manual
