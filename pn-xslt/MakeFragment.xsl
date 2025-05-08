@@ -157,6 +157,7 @@
               <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
               <xsl:apply-templates select="/t:TEI">
                 <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                 <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                 <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
                 <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
