@@ -30,7 +30,7 @@ for d in `find . -type d`; do
                 if [ ${#ID} -lt 4 ]; then
                     FOLDER="0"
                 else
-                    FOLDER=`echo $ID | sed 's/[^0-9]*//' | sed 's/...$//'`
+                    FOLDER=`echo $ID | sed 's/[^0-9]//g' | sed 's/...$//'`
                 fi
                 if [ ! -d "$HOME/DDbDP/$FOLDER" ]; then
                     echo "Creating folder $FOLDER"

@@ -38,17 +38,18 @@
 (def flushing (ref false))
 (def output (ref nil))
 (def server "http://localhost:8090/pi")
-(def graph "http://papyri.info/graph")
+(def graph "https://papyri.info/graph")
 (def param (ref nil))
 ;; NOTE hard-coded file and directory locations
-(def xslts {"DDB_EpiDoc_XML" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/ddbdp-rdf.xsl",
+(def xslts {
+      "DDbDP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/current-ddbdp-rdf.xsl",
+      "DCLP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/dclp-rdf.xsl",
+      "Historical" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/historical-rdf.xsl",
       "HGV_meta_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
-      "HGV_trans_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgvtrans-rdf.xsl",
-      "DCLP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/dclp-rdf.xsl",
+      "Translations" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/translations-rdf.xsl",
       "Biblio" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/biblio-rdf.xsl"})
 (def idproot "/srv/data/papyri.info/idp.data")
-(def ddbroot "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML")
 (def domain "papyri.info")
 (def help (str "Usage: <function> [<params>]\n"
      "Functions: map-all <directory>, map-files <file list>, load-file <file>, "
@@ -107,9 +108,8 @@
     [xslt]
   (when (not= xslt @xsl)
     (dosync (ref-set xsl xslt))
-    (if (.contains xslt "ddbdp-rdf")
-      (dosync (ref-set param (list "root" idproot)))
-      (dosync (ref-set param (list "DDB-root" ddbroot))))
+    (if (or (.contains xslt "ddbdp-rdf") (.contains xslt "dclp-rdf"))
+      (dosync (ref-set param (list "root" idproot))))
     (let [xsl-src (StreamSource. (FileInputStream. xslt))
           processor (Processor. false)
           compiler (.newXsltCompiler processor)]
@@ -119,10 +119,11 @@
 
 (defn choose-xslt
   [file]
-  (cond (.contains (str file) "DDB_EpiDoc_XML") (xslts "DDB_EpiDoc_XML")
+  (cond (.contains (str file) "DDbDP") (xslts "DDbDP")
+    (.contains (str file) "Historical") (xslts "Historical")
     (.contains (str file) "HGV_meta_EpiDoc") (xslts "HGV_meta_EpiDoc")
     (.contains (str file) "APIS") (xslts "APIS")
-    (.contains (str file) "HGV_trans_EpiDoc") (xslts "HGV_trans_EpiDoc")
+    (.contains (str file) "Translations") (xslts "Translations")
     (.contains (str file) "DCLP") (xslts "DCLP")
     (.contains (str file) "Biblio") (xslts "Biblio")))
 
@@ -131,7 +132,7 @@
   (format
     "prefix dc: <http://purl.org/dc/elements/1.1/>
     select ?uri
-    from <http://papyri.info/graph>
+    from <https://papyri.info/graph>
     where {?uri dc:identifier \"%s\"}" filename))
 
 (defn execute-query
@@ -142,19 +143,20 @@
 (defn get-identifier
   [file]
   (cond
-    (.contains file "DDB_EpiDoc_XML") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")
+    (.contains file "DDbDP") (str "papyri.info/current/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "HGV_meta_EpiDoc") (str "papyri.info/hgv/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
     (.contains file "APIS") (str "papyri.info/apis/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
-    (.contains file "HGV_trans_EpiDoc") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
-    (.contains file "DCLP") (str "papyri.info/dclp/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
-    (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml")))
+    (.contains file "Translations") (str "papyri.info/hgvtrans/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "DCLP") (str "papyri.info/current/" (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "Historical") (str "papyri.info/editions/" (substring-before file (inc (.lastIndexOf file "/"))) ".xml"))
+    (.contains file "Biblio") (substring-before (.substring file (inc (.lastIndexOf file "/"))) ".xml"))
 
 (defn url-from-file
   [file]
   (if (not (.contains file "Biblio"))
     (let [answer (execute-query (format-url-query (get-identifier file)))]
       (.toString (.getResource (.next answer) "uri")))
-    (str "http://papyri.info/biblio/" (get-identifier file) "/ref")))
+    (str "https://papyri.info/biblio/" (get-identifier file) "/ref")))
 
 (defn execute-update
   [request]
@@ -165,15 +167,15 @@
   []
   (let [request (UpdateFactory/create)]
     (.add request "DROP ALL")
-    (.add request (UpdateCreate. "http://papyri.info/graph"))
+    (.add request (UpdateCreate. "https://papyri.info/graph"))
     (execute-update request)))
 
 (defn -deleteUri
   [uri]
-  (let [deletesub (str "WITH <http://papyri.info/graph>
+  (let [deletesub (str "WITH <https://papyri.info/graph>
                         DELETE { <" uri "> ?p ?r }
                         WHERE { <" uri "> ?p ?r }")
-        deleteobj (str "WITH <http://papyri.info/graph>
+        deleteobj (str "WITH <https://papyri.info/graph>
                         DELETE { ?s ?p <" uri ">}
                         WHERE { ?s ?p <" uri ">}")
         req (UpdateFactory/create)]
@@ -183,7 +185,7 @@
 
 (defn -deleteRelation
   [uri]
-  (let [deleterel (str "WITH <http://papyri.info/graph>
+  (let [deleterel (str "WITH <https://papyri.info/graph>
                         DELETE { ?s <" uri "> ?r }
                         WHERE { ?s <" uri "> ?r }")
         req (UpdateFactory/create)]
@@ -192,7 +194,7 @@
 
 (defn -deleteTriple
   [s p o]
-  (let [deleterel (str "WITH <http://papyri.info/graph>
+  (let [deleterel (str "WITH <https://papyri.info/graph>
                         DELETE { <" s "> <" p "> <" o "> }
                         WHERE { <" s "> <" p "> <" o "> }")
         req (UpdateFactory/create)]
@@ -228,7 +230,7 @@
           query (str "PREFIX lawd: <http://lawd.info/ontology/> "
                      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
                      "SELECT ?pleiades ?label "
-                     "FROM <http://papyri.info/graph> "
+                     "FROM <https://papyri.info/graph> "
                      "WHERE { <" pi-uri "> lawd:foundAt ?pleiades . "
                             " ?pleiades rdfs:label ?label }")
           answer (execute-query query)]
@@ -255,7 +257,7 @@
     (let [query (str "PREFIX lawd: <http://lawd.info/ontology/> "
                      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
                      "SELECT ?uri ?pleiades ?label "
-                     "FROM <http://papyri.info/graph> "
+                     "FROM <https://papyri.info/graph> "
                      "WHERE { ?uri lawd:foundAt ?pleiades . "
                             " ?pleiades rdfs:label ?label }")
           answer (execute-query query)
@@ -284,104 +286,88 @@
   (if (not (nil? url))
     (let [request (UpdateFactory/create)
           haspart (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                       "WITH <http://papyri.info/graph> "
+                       "WITH <https://papyri.info/graph> "
                        "INSERT {?s dc:hasPart <" url ">} "
                        "WHERE { <" url "> dc:isPartOf ?s}")
           relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                        "WITH <http://papyri.info/graph> "
+                        "WITH <https://papyri.info/graph> "
                         "INSERT {?s dc:relation <" url ">} "
                         "WHERE { <" url "> dc:relation ?s "
-                        "FILTER regex(\"" url "\", \"^http://papyri.info\") "
-                        "FILTER regex(str(?s), \"^http://papyri.info\")}")
+                        "FILTER regex(\"" url "\", \"^https://papyri.info\") "
+                        "FILTER regex(str(?s), \"^https://papyri.info\")}")
           converse-relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                                 "WITH <http://papyri.info/graph> "
+                                 "WITH <https://papyri.info/graph> "
                                  "INSERT {<" url "> dc:relation ?o} "
                                  "WHERE { ?o dc:relation <" url "> "
-                                 "FILTER regex(\"" url "\", \"^http://papyri.info\") "
-                                 "FILTER regex(str(?o), \"^http://papyri.info\")}")
+                                 "FILTER regex(\"" url "\", \"^https://papyri.info\") "
+                                 "FILTER regex(str(?o), \"^https://papyri.info\")}")
           transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                               "WITH <http://papyri.info/graph> "
+                               "WITH <https://papyri.info/graph> "
                                "INSERT {<" url "> dc:relation ?o2} "
                                "WHERE { <" url "> dc:relation ?o1 . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
           converse-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                               "WITH <http://papyri.info/graph> "
+                               "WITH <https://papyri.info/graph> "
                                "INSERT {?o2 dc:relation <" url ">} "
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
                                "FILTER (!sameTerm(<" url ">, ?o2))}")
-          ;; Add APIS -> TM -> DDb, etc.
-          replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                             "WITH <http://papyri.info/graph> "
-                             "INSERT {<" url "> dc:replaces ?o} "
-                             "WHERE {<" url "> dc:replaces ?s .
-                                     ?s dc:replaces ?o }")
-          replaces-relations (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                             "WITH <http://papyri.info/graph> "
-                             "INSERT {<" url "> dc:relation ?o} "
-                             "WHERE {<" url "> dc:replaces ?s .
-                                     ?o dc:relation ?s }")]
+          version (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                        "WITH <https://papyri.info/graph> "
+                        "INSERT {?s dc:hasVersion <" url ">} "
+                        "WHERE { <" url "> dc:isVersionOf ?s}")
+          converse-version (str "PREFIX dc: <http://purl.org/dc/terms/> "
+                                 "WITH <https://papyri.info/graph> "
+                                 "INSERT {<" url "> dc:isVersionOf ?o} "
+                                 "WHERE { ?o dc:hasVersion <" url "> ")]
       (.add request haspart)
       (.add request relation)
       (.add request transitive-rels)
       (.add request converse-rels)
       (.add request converse-relation)
-      (.add request replaces-rels)
-      (.add request replaces-relations)
+      (.add request version)
+      (.add request converse-version)
       (execute-update request))
     (let [request (UpdateFactory/create)
           hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                       "WITH <http://papyri.info/graph> "
+                       "WITH <https://papyri.info/graph> "
                        "INSERT{?s dc:hasPart ?o} "
                        "WHERE { ?o dc:isPartOf ?s}")
           relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                        "WITH <http://papyri.info/graph> "
+                        "WITH <https://papyri.info/graph> "
                         "INSERT {?s dc:relation ?o} "
                         "WHERE { ?o dc:relation ?s}")
           translations (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                            "WITH <http://papyri.info/graph> "
+                            "WITH <https://papyri.info/graph> "
                             "INSERT { ?r1 dc:relation ?r2 } "
                             "WHERE { "
                             "?i dc:relation ?r1 . "
                             "?i dc:relation ?r2 . "
-                            "FILTER  regex(str(?i), \"^http://papyri.info/hgv\") "
-                            "FILTER  regex(str(?r1), \"^http://papyri.info/ddbdp\") "
-                            "FILTER  regex(str(?r2), \"^http://papyri.info/hgvtrans\")}")
+                            "FILTER  regex(str(?i), \"^https://papyri.info/hgv\") "
+                            "FILTER  regex(str(?r1), \"^https://papyri.info/ddbdp\") "
+                            "FILTER  regex(str(?r2), \"^https://papyri.info/hgvtrans\")}")
           images (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                      "WITH <http://papyri.info/graph> "
+                      "WITH <https://papyri.info/graph> "
                       "INSERT { ?r1 dc:relation ?r2 } "
                       "WHERE { "
-                      "?c dc:isPartOf <http://papyri.info/apis> . "
+                      "?c dc:isPartOf <https://papyri.info/apis> . "
                       "?i dc:isPartOf ?c . "
                       "?i dc:relation ?r1 . "
                       "?i dc:relation ?r2 . "
-                      "FILTER ( regex(str(?r1), \"^http://papyri.info/ddbdp\") || regex(str(?r1), \"^http://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
-                      "FILTER  regex(str(?r2), \"^http://papyri.info/apis/[^/]+/images\")}")
+                      "FILTER ( regex(str(?r1), \"^https://papyri.info/ddbdp\") || regex(str(?r1), \"^https://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
+                      "FILTER  regex(str(?r2), \"^https://papyri.info/apis/[^/]+/images\")}")
           transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                                "WITH <http://papyri.info/graph> "
+                                "WITH <https://papyri.info/graph> "
                                 "INSERT {?s dc:relation ?o2} "
                                 "WHERE { ?s dc:relation ?o1 . "
                                          "?o1 dc:relation ?o2 "
-                                "FILTER (!sameTerm(?s, ?o2)) }")
-          replaces-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                             "WITH <http://papyri.info/graph> "
-                             "INSERT {?s dc:replaces ?o} "
-                             "WHERE { ?s dc:replaces ?s2 .
-                                      ?s2 dc:replaces ?o }")
-          replaces-relations (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                                  "WITH <http://papyri.info/graph> "
-                                  "INSERT {?s dc:relation ?o} "
-                                  "WHERE { ?s dc:replaces ?s2 .
-                                           ?o dc:relation ?s2 "
-                                  "FILTER (!sameTerm(?s, ?o))}")]
+                                "FILTER (!sameTerm(?s, ?o2)) }")]
       (.add request hasPart)
       (.add request relation)
       (.add request translations)
       (.add request images)
       (.add request transitive-rels)
-      (.add request replaces-rels)
-      (.add request replaces-relations)
       (.add request relation) ;; repeat in order to pick up new dc:relations
       (execute-update request))))
 
@@ -392,7 +378,7 @@
   (let [xsl (choose-xslt file)]
     (init-xslt xsl))
   (let [request (UpdateFactory/create)]
-    (.add request "CREATE SILENT GRAPH <http://papyri.info/graph>")
+    (.add request "CREATE SILENT GRAPH <https://papyri.info/graph>")
     (execute-update request))
   (let [pool (Executors/newFixedThreadPool nthreads)
       files (file-seq (File. file))
@@ -433,21 +419,26 @@
       (-deleteRelation "http://purl.org/dc/terms/replaces")
       (-deleteRelation "http://purl.org/dc/terms/isReplacedBy")
       (-deleteRelation "http://purl.org/dc/terms/isPartOf")
+      (-deleteRelation "http://purl.org/dc/terms/isVersionOf")
+      (-deleteRelation "http://purl.org/dc/terms/hasVersion")
       (-deleteRelation "http://purl.org/dc/terms/source")
       (-deleteRelation "http://purl.org/dc/terms/identifier")
       (-deleteRelation "http://purl.org/dc/terms/bibliographicCitation")
       (-deleteRelation "http://www.w3.org/2000/01/rdf-schema#label")
+      (-deleteRelation "http://purl.org/ontology/bibo/translationOf")
       (-deleteRelation "http://xmlns.com/foaf/0.1/page")
-      (println "Processing DDB_EpiDoc_XML")
-      (load-map (str idproot "/DDB_EpiDoc_XML"))
+      (println "Processing DDbDP")
+      (load-map (str idproot "/DDbDP"))
       (println "Processing HGV_meta_EpiDoc")
       (load-map (str idproot "/HGV_meta_EpiDoc"))
       (println "Processing APIS")
       (load-map (str idproot "/APIS"))
-      (println "Processing HGV_trans_EpiDoc")
-      (load-map (str idproot "/HGV_trans_EpiDoc"))
+      (println "Processing Translations")
+      (load-map (str idproot "/Translations"))
       (println "Processing DCLP")
       (load-map (str idproot "/DCLP"))
+      (println "Processing Historical")
+      (load-map (str idproot "/Historical"))
       (println "Processing Bibliography")
       (load-map (str idproot "/Biblio"))
       (-loadFile "/srv/data/papyri.info/idp.data/RDF/collection.rdf")

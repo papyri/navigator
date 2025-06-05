@@ -17,7 +17,7 @@
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
   <xsl:variable name="abbreviation-marker">&#x00B0;</xsl:variable>
-  <xsl:variable name="id">http://papyri.info/biblio/<xsl:value-of
+  <xsl:variable name="id">https://papyri.info/biblio/<xsl:value-of
       select="replace(/t:bibl/@xml:id, '[a-zA-Z]', '')"/>/ref</xsl:variable>
   <xsl:variable name="cite">http://papyri.info/biblio/<xsl:value-of
     select="replace(/t:bibl/@xml:id, '[a-zA-Z]', '')"/></xsl:variable>

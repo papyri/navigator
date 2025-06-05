@@ -6,7 +6,7 @@
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
   <xsl:param name="root">/srv/data/papyri.info/idp.data</xsl:param>
-  <xsl:param name="DDB-root">/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML</xsl:param>
+  <xsl:param name="DDB-root">/srv/data/papyri.info/idp.data/DDbDP</xsl:param>
 
   <xsl:template match="/tei:TEI">
     <xsl:if test="string-length(//tei:publicationStmt/tei:idno[@type = 'apisid']) gt 0">
@@ -53,13 +53,6 @@
                 <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
             </dct:relation>
-            <xsl:for-each select="tokenize($ddb-doc//tei:titleStmt/tei:title/@n, '\s')">
-              <dct:relation>
-                <rdf:Description rdf:about="http://papyri.info/hgv/{.}/source">
-                  <dct:relation rdf:resource="{$id}"/>
-                </rdf:Description>
-              </dct:relation>
-            </xsl:for-each>
           </xsl:if>
         </xsl:for-each>
         <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']">
@@ -92,7 +85,7 @@
             <xsl:if
               test="doc-available(concat('file://', $root, '/HGV_meta_EpiDoc/HGV', $dir, '/', ., '.xml'))">
               <dct:relation>
-                <rdf:Description rdf:about="http://papyri.info/hgv/{.}/source">
+                <rdf:Description rdf:about="https://papyri.info/hgv/{.}/source">
                   <dct:relation rdf:resource="{$id}"/>
                 </rdf:Description>
               </dct:relation>

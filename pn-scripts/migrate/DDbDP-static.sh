@@ -5,8 +5,8 @@ if [ ! -d "DDB_EpiDoc_XML" ]; then
     exit 1
 fi
 
-if [ ! -d "Published" ]; then
-    mkdir "Published"
+if [ ! -d "Historical" ]; then
+    mkdir "Historical"
 fi
 
 touch errors.log
@@ -19,13 +19,13 @@ for d in `find . -type d`; do
         for f in `ls *.xml`; do
             NAME=`grep -e "<idno type=\"ddb-hybrid\">[^<]*</idno>" -o $f | sed 's/<idno type="ddb-hybrid">//' | sed 's/<\/idno>//' | sed -E 's/;+/\//g'`.xml
             DIR=`dirname $NAME`
-            if [ ! -d "$HOME/Published/#DIR" ]; then
-                mkdir -p "$HOME/Published/$DIR"
+            if [ ! -d "$HOME/Historical/#DIR" ]; then
+                mkdir -p "$HOME/Historical/$DIR"
             fi
-            if [ ! -f "$HOME/Published/$NAME" ]; then
-                git mv $f "$HOME/Published/$NAME"
+            if [ ! -f "$HOME/Historical/$NAME" ]; then
+                git mv $f "$HOME/Historical/$NAME"
             else
-                echo "File $HOME/Published/$NAME already exists" >> "$HOME/errors.log"
+                echo "File $HOME/Historical/$NAME already exists" >> "$HOME/errors.log"
             fi
         done
     fi

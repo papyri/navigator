@@ -41,7 +41,6 @@ def main(argv=None):
                   ratio = fuzz.token_set_ratio(ref.text, plain.text)
                   found = plain
             if found is not None:
-              print(f'{ref.text} -> {found.text} ({ratio})')
               ref.text = found.text
               if not found.text in removed:
                 head.remove(found)

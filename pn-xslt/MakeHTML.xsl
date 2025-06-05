@@ -8,7 +8,7 @@
   xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
-  version="2.0" exclude-result-prefixes="#all">
+  version="3.0" exclude-result-prefixes="#all">
   
   <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="morelikethis-varsandparams.xsl"/>
@@ -72,6 +72,8 @@
   <xsl:include href="../epidoc-xslt/htm-tpl-structure.xsl"/>
   <xsl:include href="metadata.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
+  
+  <!-- Parameters -->
   <xsl:param name="collection" required="yes"/>
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
@@ -82,12 +84,14 @@
   <xsl:param name="citationForm"/>
   <xsl:param name="selfUrl"/>
   <xsl:param name="biblio"/>
+  <xsl:param name="translations"/>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:param name="path">/srv/data/papyri.info/idp.data</xsl:param>
   <!-- variables to assist in offline testing by controlling paths and behaviors in the output html -->
   <xsl:param name="cssbase">/css</xsl:param>
   <xsl:param name="jsbase">/js</xsl:param>
   <xsl:param name="analytics">yes</xsl:param>
+  
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
   <xsl:variable name="imgs" select="tokenize($images, '\s+')"/>
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
@@ -129,43 +133,36 @@
   </xsl:template>
   <xsl:include href="pi-functions.xsl"/>
   
-  <xsl:output method="html"/>
+  <xsl:output method="html" html-version="5"/>
   
   <xsl:template match="/">
     <!-- set variables to control dispatch of transformation based on context -->
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
-    <xsl:variable name="dclp" select="$collection = 'dclp' or contains($related, 'dclp/')"/>
-    <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+    <xsl:variable name="dclp" select="contains($related, 'dclp/')"/>
+    <xsl:variable name="ddbdp" select="contains($related, '/ddbdp/')"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="tm" select="contains($related, 'trismegistos.org/')"/>
+    <xsl:variable name="current" select="$collection = 'current'"/>
+    <xsl:variable name="historical" select="$collection = 'editions'"/>
     <xsl:variable name="image" select="count($imgs) gt 0"/>
-    <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
+    
     <!-- start writing the output file -->
-    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;
- </xsl:text>
-   
-    <html lang="en" version="HTML+RDFa 1.1"
-      prefix="dc: http://purl.org/dc/terms/">
+    <html lang="en">
       <head>
+        <link rel="schema.dcterms" href="http://purl.org/dc/terms/"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta property="dc:identifier" content="{$selfUrl}"/>
+        <meta property="dcterms.identifier" content="{$selfUrl}"/>
         <xsl:call-template name="collection-hierarchy">
           <xsl:with-param name="all-ancestors"><xsl:value-of select="$isPartOf"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
         <xsl:for-each select="tokenize($sources, '\s')">
-          <meta property="dc:source" content="{.}"/>
+          <meta property="dcterms.source" content="{.}"/>
         </xsl:for-each>
         <xsl:for-each select="$relations">
-          <meta property="dc:relation" content="{.}"/>
-        </xsl:for-each>
-        <xsl:for-each select="tokenize($replaces, ' ')">
-          <meta property="dc:replaces" content="{.}"/>
-        </xsl:for-each>
-        <xsl:for-each select="tokenize($isReplacedBy, ' ')">
-          <meta property="dc:isReplacedBy" content="{.}"/>
+          <meta property="dcterms.relation" content="{.}"/>
         </xsl:for-each>
        <xsl:if test="string-length($citationForm) > 0">
-          <meta property="dc:bibliographicCitation" datatype="xsd:string" content="{replace($citationForm, '&quot;', '')}"/>
+          <meta property="dcterms.bibliographicCitation" datatype="xsd:string" content="{replace($citationForm, '&quot;', '')}"/>
        </xsl:if>
         <!-- cascading stylesheets -->
         <link rel="stylesheet" href="{$cssbase}/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8"/>
@@ -175,28 +172,7 @@
         <xsl:if test="$image">
           <link rel="stylesheet" href="{$cssbase}/imageviewer.css" type="text/css" />
         </xsl:if>
-        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>
-        <xsl:comment>
-          <xsl:text><![CDATA[[if IE]><link rel="stylesheet" href="]]></xsl:text>
-          <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
-        </xsl:comment>
-        <xsl:comment>
-          <xsl:text><![CDATA[[if IE 7]><link rel="stylesheet" href="]]></xsl:text>
-          <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie7.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
-        </xsl:comment>
-        <xsl:comment>
-          <xsl:text><![CDATA[[if IE 8]><link rel="stylesheet" href="]]></xsl:text>
-          <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie8.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
-        </xsl:comment>        
-        <xsl:comment>
-          <xsl:text><![CDATA[[if IE 9]><link rel="stylesheet" href="]]></xsl:text>
-          <xsl:value-of select="$cssbase"/>
-          <xsl:text><![CDATA[/ie9.css" type="text/css" media="screen" charset="utf-8" /><![endif]]]></xsl:text>
-        </xsl:comment>        
-        
+        <link rel="bookmark" href="{$selfUrl}" title="Canonical URI"/>      
         <!-- document title -->
         <title>
           <xsl:call-template name="title-references"/>
@@ -256,7 +232,7 @@
                       </xsl:if>
                     </div>
                   </xsl:if>
-                  <xsl:if test="$ddbdp or $image or $translation or $dclp">
+                  <xsl:if test="$ddbdp or $image or $translations or $dclp">
                     <div id="textcontrols" class="ui-widget-content ui-corner-all">
                       <label for="txt">text</label><input type="checkbox" name="text" id="txt" checked="checked"/><br/>
                       <xsl:if test="$ddbdp or $dclp">
@@ -265,18 +241,23 @@
                       <xsl:if test="$image">
                         <label for="img">images</label><input type="checkbox" name="image" id="img" checked="checked"/>
                       </xsl:if>
-                      <xsl:if test="$translation">
+                      <xsl:if test="$translations">
                         <label for="tslt">translation</label><input type="checkbox" name="translation" id="tslt" checked="checked"/>
                       </xsl:if>
                     </div>
                   </xsl:if>
                   <!-- todo: add dclp handling here, similar to what's below for other collections -->
-                  <xsl:if test="$ddbdp">
+                  <xsl:if test="$current">
                     <div id="editthis" class="ui-widget-content ui-corner-all">
-                      <a href="/editor/publications/create_from_identifier/papyri.info/ddbdp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}" rel="nofollow">open in editor</a>
+                      <a href="/editor/publications/create_from_identifier/papyri.info/current/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
                     </div>
                   </xsl:if>
-                  <xsl:if test="$hgv and not($ddbdp)">
+                  <xsl:if test="$historical">
+                    <div id="editthis" class="ui-widget-content ui-corner-all">
+                      <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                    </div>
+                  </xsl:if>
+                  <xsl:if test="$hgv and not($current)">
                     <div id="editthis" class="ui-widget-content ui-corner-all">
                       <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
                     </div>
@@ -286,17 +267,12 @@
                       <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
                     </div>
                   </xsl:if>
-                  <xsl:if test="$dclp and not($ddbdp or $hgv)">
-                    <div id="editthis" class="ui-widget-content ui-corner-all">
-                      <a href="/editor/publications/create_from_identifier/papyri.info/dclp/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']}" rel="nofollow">open in editor</a>
-                    </div>
-                  </xsl:if>
                   <div id="canonical-uri" class="ui-widget-content ui-corner-all">
                     <span id="canonical-uri-label">Canonical URI: </span>
                     <span id="canonical-uri-value"><a href="{$selfUrl}"><xsl:value-of select="$selfUrl"/></a></span>
                   </div>
                 </div>
-                <xsl:if test="$collection = 'ddbdp'">
+                <xsl:if test="$collection = 'current'">
                   <xsl:if test="$hgv or $apis or $tm or $dclp">
                     <div class="metadata">
                       <xsl:for-each select="$relations[contains(., 'hgv/')]">
@@ -346,92 +322,30 @@
                       <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
                       <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
                     </xsl:apply-templates>
-                    <xsl:for-each select="pi:get-docs($relations[contains(., '/ddbdp/') and not(contains($replaces,.))], 'xml')/t:TEI">
-                      <xsl:apply-templates select="." mode="text">
-                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-                      </xsl:apply-templates>
-                    </xsl:for-each>
-                    <xsl:for-each select="pi:get-docs($relations[contains(., '/dclp/') and not(contains($replaces,.))], 'xml')/t:TEI">
-                      <xsl:if test="//t:div[@type='edition']//*">
-                        <xsl:apply-templates select=".//t:div[@type='commentary'][@subtype='frontmatter']"/>
-                        <xsl:apply-templates select="." mode="text">
-                          <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                          <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
-                          <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                          <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                          <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                          <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                          <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                          <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-                        </xsl:apply-templates>
-                        <xsl:apply-templates select=".//t:div[@type='commentary'][@subtype='linebyline']"/>
-                      </xsl:if>
-                    </xsl:for-each>
                     <xsl:if test="$image">
                       <xsl:call-template name="images"/>
                     </xsl:if>
-                    <xsl:if test="$translation">
+                    <xsl:if test="$translations">
                       <xsl:call-template name="translations"/>
                     </xsl:if>
                   </div>
                 </xsl:if>
-                <xsl:if test="$collection = 'dclp'">
-                  <div class="metadata">
-                    <xsl:apply-templates select="/t:TEI" mode="metadata"/>
-                    <xsl:if test="$hgv or $apis or $tm">
-                      <xsl:for-each select="$relations[contains(., 'hgv/')]">
-                        <xsl:sort select="." order="ascending"/>
-                        <xsl:choose>
-                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
-                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
-                          </xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                        </xsl:choose>
-                      </xsl:for-each>
-                      <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
-                        <xsl:sort select="." order="ascending"/>
-                        <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-                          <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
-                        </xsl:if>
-                      </xsl:for-each>
-                      <xsl:for-each select="$relations[contains(., '/apis/')]">
-                        <xsl:sort select="." order="ascending"/>
-                        <xsl:choose>
-                          <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
-                            <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
-                          </xsl:when>
-                          <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-                        </xsl:choose>
-                      </xsl:for-each>
-                    </xsl:if>
-                    <xsl:call-template name="biblio"/>
-                  </div>
+                <xsl:if test="$collection = 'historical'">
                   <div class="text">
-                    <xsl:if test="//t:div[@type='edition']//*">
-                      <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
-                      <xsl:apply-templates select="/t:TEI" mode="text">
-                        <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
-                        <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
-                        <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
-                        <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-                        <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
-                        <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
-                      </xsl:apply-templates>
-                      <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
-                    </xsl:if>
+                    <xsl:apply-templates select="/t:TEI" mode="text">
+                      <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                      <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
+                      <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+                      <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+                      <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+                      <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+                      <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+                      <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+                    </xsl:apply-templates>
                     <xsl:if test="$image">
                       <xsl:call-template name="images"/>
                     </xsl:if>
-                    <xsl:if test="$translation">
+                    <xsl:if test="$translations">
                       <xsl:call-template name="translations"/>
                     </xsl:if>
                   </div>
@@ -485,9 +399,6 @@
                     <xsl:if test="$image">
                       <xsl:call-template name="images"/>
                     </xsl:if>
-                    <xsl:if test="$translation">
-                      <xsl:apply-templates select="/t:TEI" mode="apistrans"/>
-                    </xsl:if>
                   </div>
                 </xsl:if>
                 <div id="ld" class="data">
@@ -523,10 +434,10 @@
   </xsl:template>
   
   <xsl:template name="translations">
-    <xsl:for-each select="pi:get-docs($relations[contains(., 'hgvtrans')], 'xml')/t:TEI//t:div[@type = 'translation']">
+    <xsl:for-each select="pi:get-docs(tokenize($translations), 'xml')">
       <xsl:sort select="number(ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
       <div class="translation data">
-        <h2>HGV <xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
+        <h2><xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
           [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
         <div lang="{@xml:lang}">
           <xsl:apply-templates>
@@ -534,12 +445,6 @@
           </xsl:apply-templates>
         </div>
       </div>
-    </xsl:for-each>
-    <xsl:for-each select="$relations[contains(., '/apis/')]">
-      <xsl:choose>
-        <xsl:when test="doc-available(pi:get-filename(., 'xml'))"><xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="apistrans"/></xsl:when>
-        <xsl:otherwise><xsl:message>Error: <xsl:value-of select="."/> (<xsl:value-of select="pi:get-filename(., 'xml')"/>) not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
-      </xsl:choose>
     </xsl:for-each>
   </xsl:template>
   

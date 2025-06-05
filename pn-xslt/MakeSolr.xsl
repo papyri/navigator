@@ -4,7 +4,8 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:pi="http://papyri.info/ns"
   xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:t="http://www.tei-c.org/ns/1.0"
   exclude-result-prefixes="xs dc rdf pi tei t xd" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
-  version="2.0">
+  expand-text="yes"
+  version="3.0">
 
   <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="../epidoc-xslt/functions.xsl"/>
@@ -57,21 +58,22 @@
   <xsl:param name="collection"/>
   <xsl:param name="related"/>
   <xsl:param name="images"/>
+  <xsl:param name="translations"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
-  <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+  <xsl:variable name="current" select="$collection = 'current'"/>
+  <xsl:variable name="historical" select="$collection = 'editions'"/>
+  <xsl:variable name="ddbdp" select="$collection = 'ddbdp' or contains($related, 'ddbdp/')"/>
   <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
   <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
   <xsl:variable name="dclp" select="$collection = 'dclp' or contains($related, 'dclp/')"/>
   <xsl:include href="pi-functions.xsl"/>
 
   <xsl:template match="/">
-    <xsl:variable name="translation"
-      select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     <add>
       <doc>
         <field name="project">IDP</field>
@@ -89,7 +91,7 @@
         </xsl:if>
         <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
-          <xsl:when test="$collection = 'ddbdp'">
+          <xsl:when test="$collection = 'current' and $ddbdp">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="idnos">
               <xsl:with-param name="idnos" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type != 'HGV']"/>
@@ -156,7 +158,7 @@
                 </xsl:call-template>
                 <xsl:call-template name="translation">
                   <xsl:with-param name="docs"
-                    select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
+                    select="pi:get-docs(tokenize($translations, ' '), 'xml')"
                   />
                 </xsl:call-template>
               </xsl:when>
@@ -174,7 +176,7 @@
                 contains(., 'dclp/') or contains(., '/apis/')], 'xml') union /"/>        
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$collection = 'dclp'">
+          <xsl:when test="$collection = 'current' and $dclp">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="idnos">
               <xsl:with-param name="idnos" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[not(@type = ('dclp', 'filename', 'herc-fr'))]"/>
@@ -216,7 +218,7 @@
             </xsl:call-template>
             <xsl:call-template name="translation">
               <xsl:with-param name="docs"
-                select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
+                select="pi:get-docs(tokenize($translations, ' '), 'xml')"
               />
             </xsl:call-template>
             <xsl:call-template name="images">
@@ -277,7 +279,9 @@
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
             <xsl:call-template name="translation">
-              <xsl:with-param name="docs" select="/"/>
+              <xsl:with-param name="docs"
+                select="pi:get-docs(tokenize($translations, ' '), 'xml')"
+              />
             </xsl:call-template>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:profileDesc/t:langUsage/t:language[@ident != 'en']">
@@ -289,6 +293,23 @@
               </field>
             </xsl:for-each>
             <xsl:call-template name="images"/>
+            <xsl:call-template name="revision-history">
+              <xsl:with-param name="docs" select="/"></xsl:with-param>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:when test="$collection = 'editions'">
+            <xsl:for-each select="$relations">
+              <field name="identifier">
+                <xsl:value-of select="."/>
+              </field>
+            </xsl:for-each>
+            <xsl:call-template name="text"><xsl:with-param name="docs" select="/"/></xsl:call-template>
+            <xsl:call-template name="images"/>
+            <xsl:call-template name="translation">
+              <xsl:with-param name="docs"
+                select="pi:get-docs(tokenize($translations, ' '), 'xml')"
+              />
+            </xsl:call-template>
             <xsl:call-template name="revision-history">
               <xsl:with-param name="docs" select="/"></xsl:with-param>
             </xsl:call-template>

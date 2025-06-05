@@ -386,6 +386,12 @@
       <xsl:when test="$collection='dclp'">
         <xsl:sequence select="concat('https://papyri.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
       </xsl:when>
+      <xsl:when test="$collection = 'editions'">
+        <xsl:sequence select="concat('https://papyri.info/editions/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
+      </xsl:when>
+      <xsl:when test="$collection = 'current'">
+        <xsl:sequence select="concat('https://papyri.info/current/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
+      </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="concat('https://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>
       </xsl:otherwise>

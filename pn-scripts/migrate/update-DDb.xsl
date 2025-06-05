@@ -29,10 +29,10 @@
           <ref>{normalize-space(.)}</ref>
         </xsl:for-each>
       </xsl:for-each>
-          <ref target="https://papyri.info/hist/{replace(//tei:idno[@type='ddb-hybrid'], ';+', '/')}">{//tei:idno[@type='ddb-hybrid']}</ref>
+          <ref target="https://papyri.info/editions/{replace(//tei:idno[@type='ddb-hybrid'], ';+', '/')}">{//tei:idno[@type='ddb-hybrid']}</ref>
       <xsl:for-each select="tei:ref[@type='reprint-from']/@n">
         <xsl:for-each select="tokenize(., '\|')">
-           <ref target="https://papyri.info/hist/{replace(.,';+', '/')}">{.}</ref>
+           <ref target="https://papyri.info/editions/{replace(.,';+', '/')}">{.}</ref>
         </xsl:for-each>
       </xsl:for-each>
     </head>

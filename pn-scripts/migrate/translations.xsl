@@ -22,6 +22,11 @@
       </xsl:result-document>
     </xsl:for-each>
   </xsl:template>
+
+  <xsl:template match="idno[@type='filename']" mode="out">
+    <xsl:param name="position" as="xs:integer" tunnel="yes"/>
+    <idno type="filename">{.}-{$position + 1}</idno>
+  </xsl:template>
   
   <xsl:template match="body/div[@type='translation']" mode="out">
     <xsl:param name="position" as="xs:integer" tunnel="yes"/>

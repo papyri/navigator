@@ -124,6 +124,7 @@
   
   <xsl:template match="/">
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+    <xsl:variable name="dclp" select="$collection = 'dclp'"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
@@ -237,6 +238,53 @@
             </xsl:if>
           </div>
         </xsl:if>
+      <xsl:if test="$collection = 'dclp'">
+        <div class="metadata">
+          <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+          <xsl:if test="$hgv or $apis">
+            <xsl:for-each select="$relations[contains(., 'hgv/')]">
+              <xsl:sort select="." order="ascending"/>
+              <xsl:choose>
+                <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                  <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each>
+            <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+              <xsl:sort select="." order="ascending"/>
+              <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+              </xsl:if>
+            </xsl:for-each>
+            <xsl:for-each select="$relations[contains(., '/apis/')]">
+              <xsl:sort select="." order="ascending"/>
+              <xsl:choose>
+                <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                  <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each>
+          </xsl:if>
+        </div>
+        <div class="text">
+          <xsl:if test="//t:div[@type='edition']//*">
+            <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
+            <xsl:apply-templates select="/t:TEI" mode="text">
+              <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+              <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
+              <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+              <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+              <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+              <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+              <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+              <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+            </xsl:apply-templates>
+            <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
+          </xsl:if>
+        </div>
+      </xsl:if>
         <xsl:if test="$collection = 'hgv'">
           <div class="metadata">
             <xsl:apply-templates select="/t:TEI" mode="metadata"/>

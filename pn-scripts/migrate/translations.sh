@@ -9,6 +9,7 @@ mkdir -p "Translations"
 
 HOME=`pwd`
 cd "HGV_trans_EpiDoc"
+git mv glossary.xml "$HOME/Translations/glossary.xml"
 for f in `ls *.xml`; do
     ID=`echo $f | sed 's/.xml//'`
     if [ ${#ID} -lt 4 ]; then
