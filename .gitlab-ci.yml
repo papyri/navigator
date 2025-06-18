@@ -36,7 +36,7 @@ integration-tests:
   extends: .trigger_downstream_pipeline
   variables:
     DOWNSTREAM_PROJECT: "papyri/papyri-docker"
-    DOWNSTREAM_BRANCH: "submodule-auto-update"
+    DOWNSTREAM_BRANCH: "master"
   allow_failure: true
   # Might be annoying to have this run on every commit, but it is useful to have
   when: manual
