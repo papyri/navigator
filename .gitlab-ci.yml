@@ -1,10 +1,17 @@
 include:
   - project: devops/ci-config
+    ref: main
     file:
       - /templates/audit-jobs.gitlab-ci.yml
       - /templates/container-flexible.gitlab-ci.yml
       - /templates/environments.gitlab-ci.yml
       - /templates/tag-release-version.gitlab-ci.yml
+      - /templates/submodule-workflow.gitlab-ci.yml
+
+variables:
+  COMMIT_MESSAGE: "Update submodule to latest commit"
+  DOWNSTREAM_PROJECT: "papyri/papyri-docker"
+
 
 stages:
   - build
@@ -24,6 +31,22 @@ build:
 test:
   extends: .test
 
+integration-tests:
+  stage: test
+  extends: .trigger_downstream_pipeline
+  variables:
+    DOWNSTREAM_PROJECT: "papyri/papyri-docker"
+    DOWNSTREAM_BRANCH: "master"
+  allow_failure: true
+  # Might be annoying to have this run on every commit, but it is useful to have
+  when: manual
+
+update_submodules:
+  stage: publish
+  extends: .update_submodule
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  
 publish:
   extends: .job
   tags:
