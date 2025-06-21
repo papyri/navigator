@@ -32,11 +32,11 @@
             <xsl:choose>
               <xsl:when test="count($ddb-seq) = 2">
                 <xsl:value-of
-                  select="concat($DDB-root, '/', $col, '/', $col, '.', $ddb-seq[2], '.xml')"/>
+                  select="concat($DDB-root, '/', $col, '/', $ddb-seq[2], '.xml')"/>
               </xsl:when>
               <xsl:when test="count($ddb-seq) = 3">
                 <xsl:value-of
-                  select="concat($DDB-root, '/', $col, '/', $col, '.', $ddb-seq[2], '/', $col, '.', $ddb-seq[2], '.', $ddb-seq[3], '.xml')"
+                  select="concat($DDB-root, '/', $col, '/', $ddb-seq[2], '/', $ddb-seq[3], '.xml')"
                 />
               </xsl:when>
               <xsl:otherwise>/</xsl:otherwise>

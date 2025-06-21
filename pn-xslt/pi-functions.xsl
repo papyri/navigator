@@ -84,7 +84,7 @@
       </xsl:when>
       <xsl:when test="contains($url, 'dclp/')">
         <xsl:variable name="tm" select="replace($url, '^.+dclp/(\d+)(/source)?$', '$1')"/>
-        <xsl:variable name="dir" select="ceiling(number($tm) div 1000)"/>
+        <xsl:variable name="dir" select="floor(number($tm) div 1000)"/>
         <xsl:sequence select="concat($base, '/DCLP/', $dir, '/', $tm, '.', $format)"/>
       </xsl:when>
       <!-- Like http://www.trismegistos.org/text/11999 -->

@@ -75,11 +75,6 @@
             </xsl:if>
           <xsl:for-each select="//tei:idno[@type = 'TM']">
             <dct:relation rdf:resource="http://www.trismegistos.org/text/{.}"/>
-            <dct:relation>
-              <rdf:Description rdf:about="https://papyri.info/trismegistos/{.}">
-                <dct:relation rdf:resource="{$id}"/>
-              </rdf:Description>
-            </dct:relation>
           </xsl:for-each>
             <xsl:for-each select="//tei:text/tei:body/tei:div[@type='figure']//tei:graphic[contains(@url, 'columbia.edu') and contains(@url, 'key')]">
                 <dct:relation>
@@ -87,7 +82,7 @@
                         <dct:relation rdf:resource="{$id}"/>
                         <dct:relation>
                             <rdf:Description> 
-                                <xsl:attribute name="rdf:about">https://papyri.info/current/<xsl:value-of select="//tei:idno[@type='filename']"/>/source</xsl:attribute>
+                                <xsl:attribute name="rdf:about">https://papyri.info/hgv/<xsl:value-of select="//tei:idno[@type='filename']"/>/source</xsl:attribute>
                                 <dct:relation rdf:resource="https://papyri.info/apis/{normalize-space(substring-after(@url, 'key='))}/source"/>
                             </rdf:Description>
                         </dct:relation>
@@ -104,7 +99,7 @@
             </dct:source>
             <rdfs:label><xsl:value-of select="$unicode-title"></xsl:value-of></rdfs:label>
           <foaf:page>
-            <rdf:Description rdf:about="https://papyri.info/current/{//tei:publicationStmt/tei:idno[@type='filename']}">
+            <rdf:Description rdf:about="https://papyri.info/hgv/{//tei:publicationStmt/tei:idno[@type='filename']}">
               <foaf:topic rdf:resource="{$id}"/>
             </rdf:Description>
           </foaf:page>

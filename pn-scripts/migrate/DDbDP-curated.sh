@@ -27,10 +27,11 @@ for d in `find . -type d`; do
                 ID=$HGV
             fi
             if [ ! -z "$ID" ]; then
-                if [ ${#ID} -lt 4 ]; then
+                STRIPPED_ID=`echo $ID | sed 's/[^0-9]//g'`
+                if [ ${#STRIPPED_ID} -lt 4 ]; then
                     FOLDER="0"
                 else
-                    FOLDER=`echo $ID | sed 's/[^0-9]//g' | sed 's/...$//'`
+                    FOLDER=`echo $STRIPPED_ID | sed 's/...$//'`
                 fi
                 if [ ! -d "$HOME/DDbDP/$FOLDER" ]; then
                     echo "Creating folder $FOLDER"

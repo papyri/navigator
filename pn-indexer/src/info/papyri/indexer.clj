@@ -50,7 +50,7 @@
     (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
     (net.sf.saxon.lib AugmentedSource ParseOptions)
     (org.apache.solr.client.solrj SolrClient SolrQuery)
-    (org.apache.solr.client.solrj.impl ConcurrentUpdateSolrClient ConcurrentUpdateSolrClient$Builder BinaryRequestWriter HttpSolrClient HttpSolrClient$Builder)
+    (org.apache.solr.client.solrj.impl ConcurrentUpdateHttp2SolrClient ConcurrentUpdateHttp2SolrClient$Builder BinaryRequestWriter Http2SolrClient Http2SolrClient$Builder)
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
     (org.apache.jena.sparql.exec.http QueryExecutionHTTP)
@@ -94,7 +94,7 @@
   "A document handler for Solr that handles the conversion of a SOLR XML
   document into a Java object representing an add document and then when
   the document has been read to its end, adds that document to the
-  `ConcurrentUpdateSolrClient` stored in the @solr ref."
+  `ConcurrentUpdateHttp2SolrClient` stored in the @solr ref."
   []
   (SAXDestination.
     (let [current (StringBuilder.)
@@ -220,16 +220,15 @@
             (str filepath "/DDbDP/" dir "/" identifier ".xml")
             (str filepath "/DCLP/" dir "/" identifier ".xml")))
         (if (.contains url "editions/")
-          (let [identifier (substring-before (substring-after url "https://papyri.info/editions/") "/source")]
+          (let [identifier (decode-url (substring-before (substring-after url "https://papyri.info/editions/") "/source"))]
             (str filepath "/Historical/" identifier ".xml"))
           (if (.contains url "ddbdp/")
             (let [identifier (.split (substring-before (substring-after url "https://papyri.info/ddbdp/") "/source") ";")]
               (if (= (second identifier) "")
-                (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-              (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")
-                (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier)
-              "/" (first identifier) "." (second identifier) "."
-              (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")))
+                (str filepath "/Historical/" (first identifier) "/" (.replace 
+                  (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")
+                (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (second identifier)
+              "/" (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")))
             (if (.contains url "hgv/")
               (let [identifier (substring-before (substring-after url "https://papyri.info/hgv/") "/source")
                     id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
@@ -237,7 +236,7 @@
               (if (.contains url "dclp/")
                 (let [identifier (substring-before (substring-after url "https://papyri.info/dclp/") "/source")
                     id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-                    (str filepath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".xml"))
+                    (str filepath "/DCLP/" (floor (/ id-int 1000)) "/" identifier ".xml"))
                 (when (.contains url "apis/")
                   (let [identifier (.split (substring-before (substring-after url "https://papyri.info/apis/") "/source") "\\.")]
                     (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))))
@@ -247,7 +246,7 @@
             (.printStackTrace e)))))]
         (if (and result (.exists (File. result)))
           result
-          (println (str result " does not exist.")))))
+          (throw (Exception. (str result " does not exist, processing " url "."))))))
 
 (defn get-txt-filename
   "Resolves the filename of the local text file associated with the given URL."
@@ -302,8 +301,7 @@
   (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a
             from <https://papyri.info/graph>
-            where { <%s> dct:hasPart ?a
-            filter not exists {?a dct:isReplacedBy ?b }}" url ))
+            where { <%s> dct:hasPart ?a }" url ))
 
 (defn is-part-of-query
   "Returns a flattened list of parent, child, grandchild URIs."
@@ -354,8 +352,8 @@
                     ?a dct:replaces ?b .
                     ?b dct:isReplacedBy ?a }" url))
 
-(defn batch-hgv-source-query
-  "Gets the set of triples where A `<dct:source` B for a given collection."
+(defn batch-source-query
+  "Gets the set of triples where A `<dct:source>` B for a given collection."
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?b
@@ -363,13 +361,21 @@
               where { <%s> dct:hasPart ?a .
                       ?a dct:source ?b }" url))
 
-(defn hgv-source-query
+(defn source-query
   "Returns A where the given URI `<dct:source>` A."
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
               from <https://papyri.info/graph>
               where { <%s> dct:source ?a  }" url))
+
+(defn has-source-query
+  "Returns A where the given A `<dct:source>` URL."
+	[url]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
+              select ?a
+              from <https://papyri.info/graph>
+              where { ?a dct:source <%s>  }" url))
 
 (defn batch-other-source-query
   "Gets `dct:source`s for items in a given collection where there are
@@ -551,9 +557,7 @@
         replaces (execute-query (replaces-query url))
         is-replaced-by (execute-query (is-replaced-by-query url))
         is-part-of (execute-query (is-part-of-query url))
-        source (if (empty? (re-seq #"/hgv/" url))
-       		   	  (execute-query (other-source-query url))
-       		   	  (execute-query (hgv-source-query url)))
+        source (execute-query (source-query url))
         citation (if (empty? (re-seq #"/hgv" url))
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
@@ -568,7 +572,8 @@
       ;; If doc is being replaced, don't publish it, but make sure to publish its replacement.
       ;; This might be redundant, but we can't be sure.
       (if (not (first is-replaced-by))
-        (.add @html (list (str "file:" (get-filename url))
+        (try
+          (.add @html (list (str "file:" (get-filename url))
                           (list "collection" (substring-before (substring-after url "https://papyri.info/") "/"))
                           (list "related" (apply str (interpose " " (for [x relations] (first x)))))
                           (list "replaces" (apply str (interpose " " (for [x replaces] (first x)))))
@@ -580,6 +585,9 @@
                           (list "translations" (apply str (interpose " " (for [x translations] (first x)))))
                           (list "selfUrl" (substring-before url "/source"))
                           (list "server" nserver)))
+            (catch Exception e
+              (println (str (.getMessage e) " processing " url "."))
+              (.printStackTrace e)))
         (queue-item (first (last is-replaced-by))))
       (queue-item (first (last primary))))))
 
@@ -592,9 +600,7 @@
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
         is-replaced-by (execute-query (batch-is-replaced-by-query url))
-        all-sources (if (empty? (re-seq #"/hgv/" url))
-                      (execute-query (batch-other-source-query url))
-        			        (execute-query (batch-hgv-source-query url)))
+        all-sources (execute-query (batch-source-query url))
         all-citations (if (empty? (re-seq #"/hgv/" url))
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
@@ -622,7 +628,7 @@
              images (if (empty? all-images) () (filter (fn [x] (= (first x) (last item))) all-images))
             ]
         (if (nil? exclusion)
-          ( .add @html (list (str "file:" (get-filename (last item)))
+          (try (.add @html (list (str "file:" (get-filename (last item)))
                              (list "collection" (substring-before (substring-after (last item) "https://papyri.info/") "/"))
                              (list "related" (apply str (interpose " " (for [x related] (last x)))))
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x)))))
@@ -633,6 +639,9 @@
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x)))))
                              (list "selfUrl" (substring-before (last item) "/source"))
                              (list "server" nserver)))
+            (catch Exception e
+              (println (str (.getMessage e) " processing " (last item) "."))
+              (.printStackTrace e)))
           (do (.add @links (list (get-html-filename
                                    (.toString
                                      (last
@@ -669,6 +678,14 @@
     (let [url (str "https://papyri.info/current/" (.replace (.getName file) ".xml" "/source"))]
         (queue-item url))))
 
+(defn queue-sources
+  "Queues a set of sources for processing based on an editions URL."
+  [url]
+  (doseq [source (execute-query (has-source-query url))]
+    (let [source-url (first source)]
+      (when-not (st/blank? source-url)
+        (queue-item source-url)))))
+
 ;; ## File generation and indexing functions
 
 (defn delete-html
@@ -676,22 +693,24 @@
  [files]
  (when (> (count files) 0)
    (doseq [file (.split files "\\s")]
+    (if (.matches file "https://papyri.info/(current|editions|hgv|apis)/.*")
      (let [fname (get-html-filename file)]
-     (when-not (nil? fname)
-       (let [f (File. fname)]
-         (when (.exists f)
-           (.delete f))))))))
+      (when-not (nil? fname)
+        (let [f (File. fname)]
+          (when (.exists f)
+            (.delete f)))))))))
 
 (defn delete-text
   "Get rid of any old/stale versions of related files"
   [files]
   (when (> (count files) 0)
     (doseq [file (.split files "\\s")]
-      (let [fname (get-txt-filename file)]
-      (when-not (nil? fname)
-        (let [f (File. fname)]
-          (when (.exists f)
-            (.delete f))))))))
+      (if (.matches file "https://papyri.info/(current|editions|hgv|apis)/.*")
+        (let [fname (get-txt-filename file)]
+          (when-not (nil? fname)
+            (let [f (File. fname)]
+              (when (.exists f)
+                (.delete f)))))))))
 
 (def re-start-end-quotes #"(^\"|\"$)")
 (def re-delimiter #"\",\"")
@@ -886,7 +905,7 @@
 (defn commit-and-optimize
   "Runs an asynchronous commit and then optimize on the named Solr index."
   [index]
-  (let [solr (.build (.withSocketTimeout (HttpSolrClient$Builder. (str solrurl index "/")) 3600000))]
+  (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl index "/")) 3600000))]
     (.commit solr false false )
     ;;(.optimize solr false false)
     (.close solr)))
@@ -925,11 +944,12 @@
       *doc* nil
 	    *index* 0]
     (dosync (ref-set solr 
-      (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "morph-search/"))]
+      (let [c (.build (Http2SolrClient$Builder.))
+            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "morph-search/") c)]
+        (.setRequestWriter c (BinaryRequestWriter.))
         (-> cb (.withQueueSize 5000) 
           (.withThreadCount nthreads)
-          (.build))))
-	    (.setRequestWriter @solr (BinaryRequestWriter.)))
+          (.build)))))
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
     (commit-and-optimize "morph-search")))
@@ -940,11 +960,12 @@
   (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
   (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")
   (dosync (ref-set solrbiblio 
-    (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "biblio-search/"))]
+    (let [c (.build (Http2SolrClient$Builder.))
+          cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "biblio-search/") c)]
+      (.setRequestWriter c (BinaryRequestWriter.))
       (-> cb (.withQueueSize 1000) 
         (.withThreadCount nthreads)
-        (.build))))
-    (.setRequestWriter @solrbiblio (BinaryRequestWriter.)))
+        (.build)))))
 
   ;; Generate and Index bibliography
   (println "Generating and indexing bibliography...")
@@ -986,13 +1007,13 @@
       (queue-collection (str filepath "/DCLP"))
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing Historical Editions...")
-      (queue-collections "https://papyri.info/editions" () ())
+      (queue-collections "https://papyri.info/editions" '("current") ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing HGV...")
-      (queue-collections "https://papyri.info/hgv" '("ddbdp", "dclp") ())
+      (queue-collections "https://papyri.info/hgv" '("ddbdp", "dclp", "editions", "current") ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
-      (queue-collections "https://papyri.info/apis" '("ddbdp", "dclp", "hgv") ())
+      (queue-collections "https://papyri.info/apis" '("ddbdp", "dclp", "hgv", "editions", "current") ())
       (println (str "Queued " (count @html) " documents.")))
     (doseq [arg args] (queue-item arg))))
 
@@ -1037,38 +1058,59 @@
 (defn -index
   "Runs the main PN indexing process."
   []
-  (dosync (ref-set solr
-    (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "pn-search/"))]
-      (-> cb (.withQueueSize 50) 
-        (.withThreadCount 1)
-        (.build))))
-	  (.setRequestWriter @solr (BinaryRequestWriter.)))
+  (System/setProperty "solr.cloud.client.stallTime" "100000") ;; 100 seconds
+  (let [c (.build (Http2SolrClient$Builder.))]
+    (dosync (ref-set solr
+      (let [c (.build (Http2SolrClient$Builder.))
+            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "pn-search/") c)]
+        (.setRequestWriter c (BinaryRequestWriter.))
+        (-> cb (.withQueueSize 100) 
+          (.withThreadCount nthreads)
+          (.build))
+          )))
+    ;; Index docs queued in @text
+    (println "Indexing text...")
+    (let [pool (Executors/newFixedThreadPool nthreads)
+          tasks
+        (map (fn [x]
+            (fn []
+        (when (not (.startsWith (first x) "http"))
+          (transform (first x)
+                (list (second x) (nth x 2) (nth x 6) (nth x 9)) ;; collection, related, images, translations
+                (dochandler) @solrtemplates)))) @text)]
+      (doseq [^Future future (.invokeAll pool tasks)]
+        (.get future))
+      (println "Finished indexing " (count @text) " documents.")
+      (doto pool
+        (.shutdown))))
 
-  ;; Index docs queued in @text
-  (println "Indexing text...")
-  (let [pool (Executors/newFixedThreadPool 1)
-        tasks
-    	(map (fn [x]
-  	       (fn []
-  		 (when (not (.startsWith (first x) "http"))
-  		   (transform (first x)
-  			      (list (second x) (nth x 2) (nth x 6) (nth x 9)) ;; collection, related, images, translations
-  			      (dochandler) @solrtemplates)))) @text)]
-    (doseq [^Future future (.invokeAll pool tasks)]
-      (.get future))
-    (doto pool
-      (.shutdown)))
+    ;;(println "Optimizing index...")
+    ;;(commit-and-optimize "pn-search")
 
-  (println "Optimizing index...")
-  (commit-and-optimize "pn-search")
+    (dosync (ref-set html nil)
+      (ref-set text nil)
+      (ref-set solrtemplates nil))
 
-  (dosync (ref-set html nil)
-    (ref-set text nil)
-    (ref-set solrtemplates nil))
+    (println "Done indexing.")
+    (System/exit 0))
 
-  ;;(print-words)
-  )
-
+(defn sample-data
+  []
+  (dosync (ref-set html (ConcurrentLinkedQueue.)))
+  (queue-collections "https://papyri.info/editions/p.mich" () ())
+  (queue-collections "https://papyri.info/editions/bgu/1" () ())
+  (doseq [source @html] 
+    (let [url (str (second (nth source 9)) "/source")] 
+      (queue-sources url)))
+  (init-templates (str xsltpath "/MakeHTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
+  (init-templates (str xsltpath "/MakeSolr.xsl") nthreads "info.papyri.indexer/solrtemplates")
+  (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
+  (println "Generating HTML...")
+  (generate-html)
+  (println "Generating text...")
+  (generate-text)
+  (-index)
+  (println "Done."))
 
 (defn -main [& args]
   (if (> (count args) 0)
@@ -1077,6 +1119,7 @@
       "biblio" (-loadBiblio)
       "generate-pages" (-generatePages (rest args))
       "process-tm" (preprocess-tm)
+      "sample" (sample-data)
       (do (-generatePages args)
         (-index)))
     (do (-generatePages args)

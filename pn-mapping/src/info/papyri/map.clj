@@ -43,7 +43,7 @@
 ;; NOTE hard-coded file and directory locations
 (def xslts {
       "DDbDP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/current-ddbdp-rdf.xsl",
-      "DCLP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/dclp-rdf.xsl",
+      "DCLP" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/current-dclp-rdf.xsl",
       "Historical" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/historical-rdf.xsl",
       "HGV_meta_EpiDoc" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/hgv-rdf.xsl",
       "APIS" "/srv/data/papyri.info/git/navigator/pn-mapping/xslt/apis-rdf.xsl",
@@ -306,13 +306,19 @@
                                "INSERT {<" url "> dc:relation ?o2} "
                                "WHERE { <" url "> dc:relation ?o1 . "
                                "?o1 dc:relation ?o2 "
-                               "FILTER (!sameTerm(<" url ">, ?o2))}")
+                               "FILTER (!sameTerm(<" url ">, ?o2)) "
+                               "FILTER regex(\"" url "\", \"^https://papyri.info\") "
+                               "FILTER regex(str(?o1), \"^https://papyri.info\") "
+                               "FILTER regex(str(?o2), \"^https://papyri.info\")}")
           converse-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                "WITH <https://papyri.info/graph> "
                                "INSERT {?o2 dc:relation <" url ">} "
                                "WHERE { ?o1 dc:relation <" url "> . "
                                "?o1 dc:relation ?o2 "
-                               "FILTER (!sameTerm(<" url ">, ?o2))}")
+                               "FILTER (!sameTerm(<" url ">, ?o2)) "
+                               "FILTER regex(\"" url "\", \"^https://papyri.info\") "
+                               "FILTER regex(str(?o1), \"^https://papyri.info\") "
+                               "FILTER regex(str(?o2), \"^https://papyri.info\")}")
           version (str "PREFIX dc: <http://purl.org/dc/terms/> "
                         "WITH <https://papyri.info/graph> "
                         "INSERT {?s dc:hasVersion <" url ">} "
@@ -320,7 +326,7 @@
           converse-version (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                  "WITH <https://papyri.info/graph> "
                                  "INSERT {<" url "> dc:isVersionOf ?o} "
-                                 "WHERE { ?o dc:hasVersion <" url "> ")]
+                                 "WHERE { ?o dc:hasVersion <" url ">}")]
       (.add request haspart)
       (.add request relation)
       (.add request transitive-rels)
@@ -337,16 +343,9 @@
           relation (str "PREFIX dc: <http://purl.org/dc/terms/> "
                         "WITH <https://papyri.info/graph> "
                         "INSERT {?s dc:relation ?o} "
-                        "WHERE { ?o dc:relation ?s}")
-          translations (str "PREFIX dc: <http://purl.org/dc/terms/> "
-                            "WITH <https://papyri.info/graph> "
-                            "INSERT { ?r1 dc:relation ?r2 } "
-                            "WHERE { "
-                            "?i dc:relation ?r1 . "
-                            "?i dc:relation ?r2 . "
-                            "FILTER  regex(str(?i), \"^https://papyri.info/hgv\") "
-                            "FILTER  regex(str(?r1), \"^https://papyri.info/ddbdp\") "
-                            "FILTER  regex(str(?r2), \"^https://papyri.info/hgvtrans\")}")
+                        "WHERE { ?o dc:relation ?s "
+                        "FILTER regex(str(?s), \"^https://papyri.info\") "
+                        "FILTER regex(str(?o), \"^https://papyri.info\")}")
           images (str "PREFIX dc: <http://purl.org/dc/terms/> "
                       "WITH <https://papyri.info/graph> "
                       "INSERT { ?r1 dc:relation ?r2 } "
@@ -361,11 +360,15 @@
                                 "WITH <https://papyri.info/graph> "
                                 "INSERT {?s dc:relation ?o2} "
                                 "WHERE { ?s dc:relation ?o1 . "
-                                         "?o1 dc:relation ?o2 "
-                                "FILTER (!sameTerm(?s, ?o2)) }")]
+                                        "?o1 dc:relation ?o2 "
+                                "FILTER (!sameTerm(?s, ?o2)) "
+                                "FILTER regex(str(?s), \"^https://papyri.info\") "
+                                "FILTER regex(str(?o1), \"^https://papyri.info\") "
+                                "FILTER regex(str(?o2), \"^https://papyri.info\")}")]
+      (println relation)
+      (println transitive-rels)
       (.add request hasPart)
       (.add request relation)
-      (.add request translations)
       (.add request images)
       (.add request transitive-rels)
       (.add request relation) ;; repeat in order to pick up new dc:relations

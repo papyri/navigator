@@ -29,7 +29,7 @@
           <ref>{normalize-space(.)}</ref>
         </xsl:for-each>
       </xsl:for-each>
-          <ref target="https://papyri.info/editions/{replace(//tei:idno[@type='ddb-hybrid'], ';+', '/')}">{//tei:idno[@type='ddb-hybrid']}</ref>
+          <ref target="https://papyri.info/editions/{tei:makeURI(replace(//tei:idno[@type='ddb-hybrid'], ';+', '/'))}">{//tei:idno[@type='ddb-hybrid']}</ref>
       <xsl:for-each select="tei:ref[@type='reprint-from']/@n">
         <xsl:for-each select="tokenize(., '\|')">
            <ref target="https://papyri.info/editions/{replace(.,';+', '/')}">{.}</ref>
@@ -60,6 +60,13 @@
           <xsl:copy-of select="doc(concat($base, '/HGV_meta_EpiDoc/HGV', $folder, '/', ., '.xml'))"/>
         </xsl:if>
       </xsl:for-each>
+    </xsl:for-each>
+  </xsl:function>
+  
+  <xsl:function name="tei:makeURI">
+    <xsl:param name="filename"/>
+    <xsl:for-each select="tokenize($filename, '/')">
+      <xsl:text>{encode-for-uri(.)}</xsl:text><xsl:if test="position() != last()">/</xsl:if>
     </xsl:for-each>
   </xsl:function>
   

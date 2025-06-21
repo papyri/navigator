@@ -77,6 +77,12 @@
     <add>
       <doc>
         <field name="project">IDP</field>
+        <xsl:if test="$collection = 'current'">
+          <field name="collection">current</field>
+        </xsl:if>
+        <xsl:if test="$collection = 'editions'">
+          <field name="collection">editions</field>
+        </xsl:if>
         <xsl:if test="$ddbdp = true()">
           <field name="collection">ddbdp</field>
         </xsl:if>
@@ -106,18 +112,6 @@
               <xsl:for-each select="tokenize(., ' ')">
                 <field name="identifier">http://papyri.info/hgv/<xsl:value-of select="."/></field>
               </xsl:for-each>
-            </xsl:for-each>
-            <xsl:variable name="languages"
-              select="distinct-values(//t:div[@type='edition']/descendant-or-self::*/@xml:lang)"/>
-            <xsl:for-each select="//t:langUsage/t:language">
-              <xsl:if test="index-of($languages, string(@ident))">
-                <field name="language">
-                  <xsl:value-of select="."/>
-                </field>
-                <field name="facet_language">
-                  <xsl:value-of select="string(@ident)"/>
-                </field>
-              </xsl:if>
             </xsl:for-each>
             <xsl:call-template name="text"><xsl:with-param name="docs" select="pi:get-docs($relations[contains(., '/dclp/')], 'xml') union /"/></xsl:call-template>
             <xsl:call-template name="languages"/>
@@ -298,11 +292,17 @@
             </xsl:call-template>
           </xsl:when>
           <xsl:when test="$collection = 'editions'">
+            <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:for-each select="$relations">
               <field name="identifier">
                 <xsl:value-of select="."/>
               </field>
             </xsl:for-each>
+            <xsl:call-template name="languages"/>
+            <xsl:call-template name="facetfields">
+              <xsl:with-param name="docs" select="/"/>
+              <xsl:with-param name="alterity">self</xsl:with-param>
+            </xsl:call-template>
             <xsl:call-template name="text"><xsl:with-param name="docs" select="/"/></xsl:call-template>
             <xsl:call-template name="images"/>
             <xsl:call-template name="translation">
@@ -603,7 +603,7 @@
       <!-- 2017-08-18 With DCLP, can't count on the following being a test for HGV any longer, as
         DCLP has principal editions too, so checking that we're not looking at a DCLP document. -->
       <xsl:when
-        test="not($docs[1]//t:idno[@type='dclp']) 
+        test="not($docs[1]//t:idno[@type='dclp']) and not($docs[1]//t:idno[@type='HGV'])
         and $docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'][matches(.,'^\d+[a-z]*')]">
         <!-- IFF HGV document -->
         <xsl:variable name="hgv_identifiers">
