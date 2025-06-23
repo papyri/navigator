@@ -907,7 +907,7 @@
   [index]
   (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl index "/")) 3600000))]
     (.commit solr false false )
-    ;;(.optimize solr false false)
+    (.optimize solr false false)
     (.close solr)))
 
 (defn load-morphs
@@ -1111,7 +1111,6 @@
   (generate-text)
   (-index)
   (println "Done.")
-
   (System/exit 0))
 
 (defn -main [& args]
