@@ -1062,12 +1062,13 @@
   (let [c (.build (Http2SolrClient$Builder.))]
     (dosync (ref-set solr
       (let [c (.build (Http2SolrClient$Builder.))
-            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "pn-search/") c)]
+            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "pn-search/") c true)]
         (.setRequestWriter c (BinaryRequestWriter.))
         (-> cb (.withQueueSize 100) 
           (.withThreadCount nthreads)
           (.build))
           )))
+    (.blockUntilFinished @solr)
     ;; Index docs queued in @text
     (println "Indexing text...")
     (let [pool (Executors/newFixedThreadPool nthreads)
@@ -1084,15 +1085,14 @@
       (doto pool
         (.shutdown))))
 
-    ;;(println "Optimizing index...")
-    ;;(commit-and-optimize "pn-search")
+    (println "Committing...")
+    (commit-and-optimize "pn-search")
 
     (dosync (ref-set html nil)
       (ref-set text nil)
       (ref-set solrtemplates nil))
-
     (println "Done indexing.")
-    (System/exit 0))
+    (.close @solr))
 
 (defn sample-data
   []
@@ -1110,7 +1110,9 @@
   (println "Generating text...")
   (generate-text)
   (-index)
-  (println "Done."))
+  (println "Done.")
+
+  (System/exit 0))
 
 (defn -main [& args]
   (if (> (count args) 0)
@@ -1121,6 +1123,8 @@
       "process-tm" (preprocess-tm)
       "sample" (sample-data)
       (do (-generatePages args)
-        (-index)))
+        (-index)
+        (System/exit 0)))
     (do (-generatePages args)
-      (-index))))
+      (-index)
+      (System/exit 0))))
