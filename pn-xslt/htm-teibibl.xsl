@@ -200,7 +200,8 @@
   <xsl:template name="bpId">
     <xsl:choose>
       <xsl:when test="string(//t:idno[@type='bp'])">
-        No: <xsl:value-of select="//t:idno[@type='bp']"/><br/>
+        <xsl:variable name="bpIdno" select="//t:idno[@type='bp']"/>
+        No: <a href="{concat('https://bibpap.be/BP_enl/?n=',$bpIdno)}"><xsl:value-of select="$bpIdno"/></a><br/>
       </xsl:when>
       <xsl:when test="string(//t:idno[@type='bp_old'])">
         Ancien No: <xsl:value-of select="//t:idno[@type='bp_old']"/><br/>
