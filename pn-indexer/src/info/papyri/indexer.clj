@@ -62,6 +62,7 @@
 (def tmpath "/srv/data/papyri.info/TM")
 (def xsltpath "/srv/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/srv/data/papyri.info/pn/idp.html")
+;;(def solrurl "https://solr-dul-papyri-dev.apps.prod.okd4.fitz.cloud.duke.edu/solr/")
 (def solrurl "http://localhost:8983/solr/")
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
 (def server "http://localhost:8090/pi")
@@ -121,8 +122,8 @@
   "A document handler that behaves much like `dochandler` above, but
   works for bibliographic records."
   []
-     (SAXDestination.
-      (let [current (StringBuilder.)
+  (SAXDestination.
+    (let [current (StringBuilder.)
 	    chars  (StringBuilder.)
 	    solrdoc (SolrInputDocument. (make-array String 0))]
 	(proxy [DefaultHandler] []
@@ -369,7 +370,16 @@
               from <https://papyri.info/graph>
               where { <%s> dct:source ?a  }" url))
 
-(defn has-source-query
+(defn batch-source-for-query
+  "Returns a set of triples where A `<dct:source>` B for a given collection."
+  [url]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
+              select ?a ?b
+              from <https://papyri.info/graph>
+              where { <%s> dct:hasPart ?b .
+                      ?a dct:source ?b }" url))
+
+(defn source-for-query
   "Returns A where the given A `<dct:source>` URL."
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
@@ -558,6 +568,7 @@
         is-replaced-by (execute-query (is-replaced-by-query url))
         is-part-of (execute-query (is-part-of-query url))
         source (execute-query (source-query url))
+        source-for (execute-query (source-for-query url))
         citation (if (empty? (re-seq #"/hgv" url))
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
@@ -579,6 +590,7 @@
                           (list "replaces" (apply str (interpose " " (for [x replaces] (first x)))))
                           (list "isPartOf" (apply str (interpose " " (first is-part-of))))
                           (list "sources" (apply str (interpose " " (for [x source](first x)))))
+                          (list "sources-for" (apply str (interpose " " (for [x source-for] (first x)))))
                           (list "images" (apply str (interpose " " images)))
                           (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                           (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
@@ -601,6 +613,7 @@
         replaces (execute-query (batch-replaces-query url))
         is-replaced-by (execute-query (batch-is-replaced-by-query url))
         all-sources (execute-query (batch-source-query url))
+        all-sources-for (execute-query (batch-source-for-query url))
         all-citations (if (empty? (re-seq #"/hgv/" url))
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
@@ -613,6 +626,8 @@
                             (filter (fn [x] (= (first x) (last item))) replaces))
              sources (if (empty? all-sources) ()
                        (filter (fn [x] (= (first x) (last item))) all-sources))
+             sources-for (if (empty? all-sources-for) ()
+                            (filter (fn [x] (= (first x) (last item))) all-sources-for))
              citations (if (empty? all-citations) ()
                          (filter (fn [x] (= (first x) (last item))) all-citations))
              biblio (if (empty? all-biblio) ()
@@ -681,10 +696,14 @@
 (defn queue-sources
   "Queues a set of sources for processing based on an editions URL."
   [url]
-  (doseq [source (execute-query (has-source-query url))]
-    (let [source-url (first source)]
-      (when-not (st/blank? source-url)
-        (queue-item source-url)))))
+  (doseq [source-for (execute-query (source-for-query url))]
+    (let [source-for-url (first source-for)]
+      (when-not (st/blank? source-for-url)
+        (queue-item source-for-url)
+        (doseq [source (execute-query (source-query source-for-url))]
+          (let [source-url (first source)]
+            (when-not (st/blank? source-url)
+              (queue-item source-url))))))))
 
 ;; ## File generation and indexing functions
 
@@ -902,12 +921,11 @@
        (for [word @words]
    (.write out (str word "\n")))))
 
-(defn commit-and-optimize
+(defn commit
   "Runs an asynchronous commit and then optimize on the named Solr index."
   [index]
   (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl index "/")) 3600000))]
     (.commit solr false false )
-    (.optimize solr false false)
     (.close solr)))
 
 (defn load-morphs
@@ -941,8 +959,8 @@
   NOTE: hard code file paths."
   []
   (binding [*current* nil
-      *doc* nil
-	    *index* 0]
+            *doc* nil
+	          *index* 0]
     (dosync (ref-set solr 
       (let [c (.build (Http2SolrClient$Builder.))
             cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "morph-search/") c)]
@@ -952,7 +970,9 @@
           (.build)))))
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
-    (commit-and-optimize "morph-search")))
+    (commit "morph-search")
+    (.close @solr)
+    (System/exit 0)))
 
 (defn -loadBiblio
   "Loads bibliographic data into the biblio-search Solr index."
@@ -986,8 +1006,10 @@
     (doto pool
       (.shutdown)))
 
-  (println "Optimizing index...")
-  (commit-and-optimize "biblio-search"))
+  (println "Committing index...")
+  (commit "biblio-search")
+  (.close @solrbiblio)
+  (System/exit 0))
 
 (defn queue-docs
   [args]
@@ -1086,7 +1108,7 @@
         (.shutdown))))
 
     (println "Committing...")
-    (commit-and-optimize "pn-search")
+    (commit "pn-search")
 
     (dosync (ref-set html nil)
       (ref-set text nil)
