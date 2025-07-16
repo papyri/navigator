@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema name="epidoc" version="1.2">
+<schema name="epidoc" version="1.7">
   <types>
     <fieldType name="lctext" class="solr.TextField" sortMissingLast="true" omitNorms="true">
       <analyzer type="index">
@@ -16,8 +16,7 @@
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
     <fieldType name="int" class="solr.IntPointField" omitNorms="true"
       positionIncrementGap="0"/>
-    <fieldType name="long" class="solr.LongPointField" omitNorms="true"
-      positionIncrementGap="0"/>
+    <fieldType name="plongs" class="solr.LongPointField" omitNorms="true" positionIncrementGap="0"/>
   </types>
 
   <fields>
@@ -26,7 +25,7 @@
     <field name="date" type="int" indexed="true" stored="false" required="true"/>
     <field name="sort" type="string" indexed="true" stored="false" required="true"/>
     <field name="display" type="string" indexed="false" stored="true" required="true"/>
-    <field name="_version_" type="long" indexed="true" stored="true"/>
+    <field name="_version_" type="plongs" indexed="true" stored="true"/>
     <dynamicField name="*" type="lctext" indexed="true" stored="false" multiValued="true"/>
     <field name="all" type="lctext" indexed="true" stored="false" multiValued="true"/>
   </fields>
