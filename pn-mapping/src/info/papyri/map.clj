@@ -335,8 +335,7 @@
       (.add request version)
       (.add request converse-version)
       (execute-update request))
-    (let [request (UpdateFactory/create)
-          hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
+    (let [hasPart (str "PREFIX dc: <http://purl.org/dc/terms/> "
                        "WITH <https://papyri.info/graph> "
                        "INSERT{?s dc:hasPart ?o} "
                        "WHERE { ?o dc:isPartOf ?s}")
@@ -365,14 +364,21 @@
                                 "FILTER regex(str(?s), \"^https://papyri.info\") "
                                 "FILTER regex(str(?o1), \"^https://papyri.info\") "
                                 "FILTER regex(str(?o2), \"^https://papyri.info\")}")]
-      (println relation)
-      (println transitive-rels)
-      (.add request hasPart)
-      (.add request relation)
-      (.add request images)
-      (.add request transitive-rels)
-      (.add request relation) ;; repeat in order to pick up new dc:relations
-      (execute-update request))))
+      (let [request (UpdateFactory/create)] 
+        (.add request hasPart)
+        (execute-update request))
+      (let [request (UpdateFactory/create)]
+        (.add request relation)
+        (execute-update request))
+      (let [request (UpdateFactory/create)]
+        (.add request images)
+        (execute-update request))
+      ;;(let [request (UpdateFactory/create)]
+      ;;  (.add request transitive-rels)
+      ;;  (execute-update request))
+      (let [request (UpdateFactory/create)]
+        (.add request relation) ;; repeat in order to pick up new dc:relations
+        (execute-update request)))))
 
 (defn load-map
   [file]
