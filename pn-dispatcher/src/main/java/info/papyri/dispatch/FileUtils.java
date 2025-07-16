@@ -3,6 +3,8 @@ package info.papyri.dispatch;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -52,8 +54,31 @@ public class FileUtils {
     pathname.append(htmlPath);
     if ("editions".equals(collection)) {
       return new File(pathname.append("Historical/")
-              .append(item.replaceAll("[^a-zA-Z0-9]", "_"))
-              .append(".html").toString());)
+          .append(item.replaceAll("[^a-zA-Z0-9]", "_"))
+          .append(".html").toString());
+    } else if ("current".equals(collection)) {
+      StringBuilder ddbPath = new StringBuilder().append(htmlPath);
+      ddbPath.append("DDbDP/")
+          .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+          .append("/")
+          .append(item)
+          .append(".html").toString();
+      if (Files.exists(Path.of(ddbPath.toString()))) {
+        return new File(ddbPath.toString());
+      } else {
+        StringBuilder dclpPath = new StringBuilder().append(htmlPath);
+        dclpPath.append("DCLP/")
+            .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".html").toString();
+        if (Files.exists(Path.of(dclpPath.toString()))) {
+          return new File(dclpPath.toString());
+        } else {
+          logger.log(Level.WARNING, "No HTML file found for " + item + " in either DDB or DCLP.");
+        }
+      }
+    } else if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if (parts.length == 2) {
