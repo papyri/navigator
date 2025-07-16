@@ -80,6 +80,7 @@
   <xsl:param name="isReplacedBy"/>
   <xsl:param name="isPartOf"/>
   <xsl:param name="sources"/>
+  <xsl:param name="sources-for"/>
   <xsl:param name="images"/>
   <xsl:param name="citationForm"/>
   <xsl:param name="selfUrl"/>
@@ -330,7 +331,7 @@
                     </xsl:if>
                   </div>
                 </xsl:if>
-                <xsl:if test="$collection = 'historical'">
+                <xsl:if test="$collection = 'editions'">
                   <div class="text">
                     <xsl:apply-templates select="/t:TEI" mode="text">
                       <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
@@ -639,8 +640,28 @@
   <!-- Generate parallel reference string -->
   <xsl:template name="get-references">
     <xsl:choose>
-      <xsl:when test="$collection = 'dclp'">
-          <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'tm'))]">
+      <xsl:when test="$collection = 'current'">
+        <xsl:apply-templates select="//t:body/t:head"/>
+        <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+        <xsl:if test="count($relations[contains(., 'trismegistos/')]) gt 0"> = Trismegistos </xsl:if>
+        <xsl:for-each select="$relations[contains(., 'trismegistos/')]">
+          <a href="{.}">{replace(., 'https://www.trismegistos.org/text/', '')}</a>
+        </xsl:for-each>
+      </xsl:when>
+      <xsl:when test="$collection = 'editions'">
+        <xsl:for-each select="$sources-for">
+          <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+            <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
+              <xsl:apply-templates select=".//t:body/t:head"></xsl:apply-templates>
+              = <a href="https://papyri.info/current/{.//t:fileDesc/t:publicationStmt/t:idno[@type='filename']}">Current Edition</a>
+            </xsl:for-each>
+          </xsl:if>
+        </xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="$collection = 'dclp'">
+            <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid' and not(starts-with(., 'tm'))]">
               <xsl:for-each select="//t:div[@type='bibliography' and @subtype='principalEdition']">
                 <xsl:for-each select=".//t:bibl[@type = 'publication' and @subtype='principal']"> 
                   <xsl:text> </xsl:text>
@@ -648,39 +669,42 @@
                 </xsl:for-each>
                 <xsl:text> = </xsl:text>
               </xsl:for-each>
-          </xsl:if>
-          <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]">
+            </xsl:if>
+            <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]">
               <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title[matches(., '^P\.\s*Herc\.')]"/>
               <xsl:text> = </xsl:text>
+            </xsl:if>
+            <xsl:text>Trismegistos </xsl:text>
+            <a href="https://www.trismegistos.org/text/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></a>
+            <xsl:text> = </xsl:text>LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
+            <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></xsl:otherwise>
+        </xsl:choose>
+        <xsl:if test="count($relations[contains(., 'hgv/')]) gt 0"> = HGV </xsl:if>
+        <xsl:for-each select="$relations[contains(., 'hgv/')]">
+          <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+            <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
+              <xsl:text> </xsl:text>
+              <xsl:value-of select="."/>       
+            </xsl:for-each>
+            <xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
+            <xsl:if test="position() != last()"> = </xsl:if>
           </xsl:if>
-          <xsl:text>Trismegistos </xsl:text>
-          <a href="http://www.trismegistos.org/text/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></a>
-        <xsl:text> = </xsl:text>LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of>
-      </xsl:when>
-      <xsl:otherwise>
-          <xsl:if test="$collection = 'hgv'">HGV </xsl:if>
-          <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"></xsl:value-of></xsl:otherwise>
-    </xsl:choose>
-    <xsl:if test="count($relations[contains(., 'hgv/')]) gt 0"> = HGV </xsl:if>
-    <xsl:for-each select="$relations[contains(., 'hgv/')]">
-      <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-        <xsl:for-each select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"> 
-          <xsl:text> </xsl:text>
-          <xsl:value-of select="."/>       
         </xsl:for-each>
-        <xsl:if test="contains($relations[position() + 1], 'hgv/')">; </xsl:if>
-        <xsl:if test="position() != last()"> = </xsl:if>
-      </xsl:if>
-    </xsl:for-each>
-    <xsl:for-each-group select="$relations[contains(., 'hgv/')]" group-by="replace(., '[a-z]', '')">
-      <xsl:if test="contains(., 'hgv') and not($collection = 'dclp')">
-        = Trismegistos <a href="http://www.trismegistos.org/text/{replace(pi:get-id(.), '[a-z]', '')}"><xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/></a>
-    </xsl:if></xsl:for-each-group>
-    <xsl:for-each select="pi:get-docs($relations[contains(., 'dclp/')], 'xml')"> = LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of></xsl:for-each>
-    <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
-    <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
-    <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
-    <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"> = APD <a href="http://www.apd.gwi.uni-muenchen.de:8080/apd/show2.jsp?papname={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"/></a></xsl:if>
+        <xsl:for-each-group select="$relations[contains(., 'hgv/')]" group-by="replace(., '[a-z]', '')">
+          <xsl:if test="contains(., 'hgv') and not($collection = 'dclp')">
+            = Trismegistos <a href="http://www.trismegistos.org/text/{replace(pi:get-id(.), '[a-z]', '')}"><xsl:value-of select="replace(pi:get-id(.), '[a-z]', '')"/></a>
+          </xsl:if></xsl:for-each-group>
+        <xsl:for-each select="pi:get-docs($relations[contains(., 'dclp/')], 'xml')"> = LDAB <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='LDAB']"></xsl:value-of></xsl:for-each>
+        <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+        <xsl:for-each select="tokenize($isReplacedBy, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+        <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+        <xsl:if test="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"> = APD <a href="http://www.apd.gwi.uni-muenchen.de:8080/apd/show2.jsp?papname={/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']}"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='APD']"/></a></xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+    
   </xsl:template>
   
   

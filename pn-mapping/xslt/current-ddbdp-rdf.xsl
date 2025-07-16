@@ -21,12 +21,12 @@
     <rdf:Description rdf:about="{$id}">
       <dct:identifier>papyri.info/current/{//tei:publicationStmt/tei:idno[@type = 'filename']}</dct:identifier>
       <xsl:for-each select="//tei:body/tei:head/tei:ref[@target]">
-        <dct:source rdf:resource="{substring-before(@target, '/editions/')}/editions/{pi:makeURI(substring-after(@target, '/editions/'))}/source"/>
+        <dct:source rdf:resource="{@target}/source"/>
       </xsl:for-each>
       <dct:identifier>
         <xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']/text()"/>
       </dct:identifier>
-      <dct:relation rdf:resource="https://papyri.info/ddbdp/{//tei:publicationStmt/tei:idno[@type='ddb-hybrid']}/source"/>
+      <dct:relation rdf:resource="https://papyri.info/ddbdp/{pi:makeURI//tei:publicationStmt/tei:idno[@type='ddb-hybrid']}/source"/>
       <xsl:for-each select="//tei:idno[@type = 'HGV']">
         <xsl:for-each select="tokenize(., '\s')">
           <xsl:variable name="dir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>
@@ -56,8 +56,8 @@
   
   <xsl:function name="pi:makeURI">
     <xsl:param name="filename"/>
-    <xsl:for-each select="tokenize($filename, '/')">
-      <xsl:text>{encode-for-uri(.)}</xsl:text><xsl:if test="position() != last()">/</xsl:if>
+    <xsl:for-each select="tokenize($filename, ';')">
+      <xsl:text>{encode-for-uri(.)}</xsl:text><xsl:if test="position() != last()">;</xsl:if>
     </xsl:for-each>
   </xsl:function>
 </xsl:stylesheet>

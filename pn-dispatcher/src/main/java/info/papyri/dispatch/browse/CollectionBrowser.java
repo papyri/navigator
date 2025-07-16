@@ -286,7 +286,7 @@ public class CollectionBrowser extends HttpServlet {
     }
     
     /**
-     * Parses the URI identifiers returned by Mulgara into a <code>DocumentCollectionBrowseRecord</code> 
+     * Parses the URI identifiers returned by Jena into a <code>DocumentCollectionBrowseRecord</code>
      * 
      * Note the conceptualisation at work here: the page currently in the process of being displayed is viewed as
      * being the 'parent'; the document collections being displayed <i>on</i> that page are the "children"; and any

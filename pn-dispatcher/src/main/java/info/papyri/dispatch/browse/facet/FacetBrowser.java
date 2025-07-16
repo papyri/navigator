@@ -305,6 +305,8 @@ public class FacetBrowser extends HttpServlet {
       sq = facet.buildQueryContribution(sq);
 
     }
+    // NEW STRUCTURE: restrict all queries to the "current" collection
+    sq.addFilterQuery("collection:current");
     sq.addSort(SolrField.series.name(), SolrQuery.ORDER.asc);
     sq.addSort(SolrField.volume.name(), SolrQuery.ORDER.asc);
     sq.addSort(SolrField.item.name(), SolrQuery.ORDER.asc);

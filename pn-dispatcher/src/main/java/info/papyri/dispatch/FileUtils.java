@@ -38,7 +38,7 @@ public class FileUtils {
   }
 
   private final char[] buffer = new char[8192];
-  private static Logger logger = Logger.getLogger("pn-dispatch");
+  private static final Logger logger = Logger.getLogger("pn-dispatch");
   
   /**
    * Returns the HTML <code>java.io.File</code> for the given collection
@@ -50,7 +50,10 @@ public class FileUtils {
   public File getHtmlFile(String collection, String item) {
     StringBuilder pathname = new StringBuilder();
     pathname.append(htmlPath);
-    if ("ddbdp".equals(collection)) {
+    if ("editions".equals(collection)) {
+      return new File(pathname.append("Historical/")
+              .append(item.replaceAll("[^a-zA-Z0-9]", "_"))
+              .append(".html").toString());)
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if (parts.length == 2) {
@@ -599,8 +602,8 @@ public class FileUtils {
   /**
    * Finds matches in a text file and returns the top 3 matches with HTML
    * highlighting applied and with context surrounding the highlighted text.
+   * @param query the query to search for
    * @param t the text
-   * @param patterns the Regex patterns to match
    * @return A <code>java.util.List</code> containing the top 3 matches plus
    * context
    */

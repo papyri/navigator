@@ -4,9 +4,12 @@
   xmlns:dc="http://purl.org/dc/terms/" 
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
   xmlns:pi="http://papyri.info/ns"
-  xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:t="http://www.tei-c.org/ns/1.0"
+  xmlns:tei="http://www.tei-c.org/ns/1.0" 
+  xmlns:t="http://www.tei-c.org/ns/1.0"
+  xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   exclude-result-prefixes="xs"
-  xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" version="2.0">
+  expand-text="yes"
+  version="3.0">
   
   <xsl:function name="pi:get-docs">
     <xsl:param name="urls"/>
@@ -33,6 +36,22 @@
     </xsl:choose>
     </xsl:variable>
     <xsl:choose>
+      <xsl:when test="contains($url, 'editions')">
+        <xsl:variable name="id" select="pi:decode-uri-segment(substring-before(substring-after($url, 'papyri.info/editions/'), '/source'))"/>
+        <xsl:text>{$base}/Historical/{$id}.{$format}</xsl:text>
+      </xsl:when>
+      <xsl:when test="contains($url, 'current')">
+        <xsl:variable name="id" select="substring-before(substring-after($url, 'papyri.info/current/'), '/')"/>
+        <xsl:variable name="dir" select="floor(number(replace($id, '[a-z]', '')) div 1000)"/>
+        <xsl:choose>
+          <xsl:when test="doc-available(concat($base, '/DDbDP/', $dir, '/', $id, '.', $format ))">
+            <xsl:text>{$base}/DDbDP/{$dir}/{$id}.{$format}</xsl:text>
+          </xsl:when>
+          <xsl:when test="doc-available(concat($base, '/DCLP/', $dir, '/', $id, '.', $format))">
+            <xsl:text>{$base}/DCLP/{$dir}/{$id}.{$format}</xsl:text>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:when>
       <xsl:when test="contains($url, 'ddbdp')">
         <xsl:choose>
           <xsl:when test="matches($url, '^https?://papyri.info/ddbdp$')"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/index.html')"/></xsl:when>
