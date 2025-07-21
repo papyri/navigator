@@ -4,6 +4,8 @@ import info.papyri.dispatch.browse.facet.FacetBrowser;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
+
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -103,18 +105,10 @@ public class StringSearchFacetIT extends TestCase {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
 
-
-
-
-
-
-
-
               @Override
               public void log(String string) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               }
-
 
               @Override
               public void log(String string, Throwable thrwbl) {
@@ -331,13 +325,14 @@ public class StringSearchFacetIT extends TestCase {
 
           @Override
           public String getInitParameter(String string) {
-            if ("home".equals(string)) {
-              return "/srv/data/papyri.info/pn/home";
+            String config = Thread.currentThread().getContextClassLoader().getResource("servletconfig.properties").getPath();
+            Properties servletConfig = new Properties();
+            try {
+              servletConfig.load(new FileInputStream(config));
+              return servletConfig.getProperty(string);
+            } catch (Exception e) {
+              throw new RuntimeException("Could not load servlet config properties from " + config, e);
             }
-            if ("solrUrl".equals(string)) {
-              return "http://localhost:8983/solr/";
-            }
-            return null;
           }
 
           @Override
