@@ -5,7 +5,7 @@
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>sparqlUrl</param-name>
-            <param-value>http://localhost:8090</param-value>
+            <param-value>http://localhost:8090/pi/query</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -21,7 +21,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
-            <param-value>http://localhost:8090</param-value>
+            <param-value>http://localhost:8090/pi/query</param-value>
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
@@ -85,7 +85,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
-            <param-value>http://localhost:8090</param-value>
+            <param-value>http://localhost:8090/pi/query</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>

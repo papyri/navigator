@@ -326,7 +326,7 @@ public class FacetBrowser extends HttpServlet {
    * @return The <code>QueryResponse</code> returned by the Solr server
    */
   private QueryResponse runFacetQuery(SolrQuery sq) {
-    Http2SolrClient solr = new Http2SolrClient.Builder(SOLR_URL + PN_SEARCH)
+    Http2SolrClient solr = new Http2SolrClient.Builder(SOLR_URL)
             .withConnectionTimeout(SOCKET_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS).build();
     try {
       //logger.info(sq.toString());

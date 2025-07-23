@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 public class DispatcherServlet extends HttpServlet {
 
   private static String graph = "http://papyri.info/graph";
-  private static String path = "/pi/query";
   private String sparqlServer;
   private static Logger logger = Logger.getLogger("pn-dispatch");
   private enum Method {
@@ -117,7 +116,7 @@ public class DispatcherServlet extends HttpServlet {
         BufferedOutputStream out = null;
         HttpURLConnection http = null;
         try {
-          URL m = new URL(sparqlServer + path + "?" + readParams(params));
+          URL m = new URL(sparqlServer + "?" + readParams(params));
           http = (HttpURLConnection)m.openConnection();
           if ("rdfxml".equals(format)) {
             http.addRequestProperty("Accept", "application/rdf+xml");

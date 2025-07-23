@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 @WebServlet(name = "Reader", urlPatterns = {"/reader"})
 public class Reader extends HttpServlet {
   private static final String GRAPH = "http://papyri.info/graph";
-  private static final String PATH = "/pi/query";
   private String sparqlServer;
   private String xmlPath = "";
   private String htmlPath = "";
@@ -152,7 +151,7 @@ public class Reader extends HttpServlet {
     sparql.append("filter (!bound(?orig)) . ");
     sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv|dclp)\") }");
     try {
-      URL m = new URL(sparqlServer + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&format=json");
+      URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&format=json");
       HttpURLConnection http = (HttpURLConnection)m.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();

@@ -32,9 +32,9 @@
       </snapshots>
     </repository>
     <repository>
-      <id>github</id>
-      <name>GitHub papyri Apache Maven Packages</name>
-      <url>https://maven.pkg.github.com/papyri/navigator</url>
+      <id>gitlab-maven</id>
+      <name>GitLab papyri Apache Maven Packages</name>
+      <url>https://gitlab.oit.duke.edu/api/v4/projects/44380/packages/maven</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
