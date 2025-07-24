@@ -62,10 +62,9 @@
 (def tmpath "/srv/data/papyri.info/TM")
 (def xsltpath "/srv/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/srv/data/papyri.info/pn/idp.html")
-;;(def solrurl "https://solr-dul-papyri-dev.apps.prod.okd4.fitz.cloud.duke.edu/solr/")
-(def solrurl "http://localhost:8983/solr/")
+(def solrurl (if (System/getenv "SOLR_URL") (System/getenv "SOLR_URL") "http://localhost:8983/solr/"))
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
-(def server "http://localhost:8090/pi")
+(def server (if (System/getenv "NS_URL") (System/getenv "NS_URL") "http://localhost:8090/pi"))
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
@@ -924,7 +923,7 @@
 (defn commit
   "Runs an asynchronous commit and then optimize on the named Solr index."
   [index]
-  (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl index "/")) 3600000))]
+  (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl "/" index)) 3600000))]
     (.commit solr false false )
     (.close solr)))
 
@@ -1084,7 +1083,7 @@
   (let [c (.build (Http2SolrClient$Builder.))]
     (dosync (ref-set solr
       (let [c (.build (Http2SolrClient$Builder.))
-            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "pn-search/") c true)]
+            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "/pn-search") c true)]
         (.setRequestWriter c (BinaryRequestWriter.))
         (-> cb (.withQueueSize 100) 
           (.withThreadCount nthreads)
@@ -1117,7 +1116,7 @@
     (.close @solr))
 
 (defn sample-data
-  []
+  [index]
   (dosync (ref-set html (ConcurrentLinkedQueue.)))
   (queue-collections "https://papyri.info/editions/p.mich" () ())
   (queue-collections "https://papyri.info/editions/bgu/1" () ())
@@ -1131,6 +1130,11 @@
   (generate-html)
   (println "Generating text...")
   (generate-text)
+  (if index 
+    (do 
+      (println "Indexing sample data...")
+      (-index))
+    (println "Skipping indexing."))
   (-index)
   (println "Done.")
   (System/exit 0))
@@ -1142,7 +1146,8 @@
       "biblio" (-loadBiblio)
       "generate-pages" (-generatePages (rest args))
       "process-tm" (preprocess-tm)
-      "sample" (sample-data)
+      "sample" (sample-data true)
+      "sample-pages" (sample-data false)
       (do (-generatePages args)
         (-index)
         (System/exit 0)))

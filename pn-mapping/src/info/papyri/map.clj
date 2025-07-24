@@ -37,7 +37,7 @@
 (def buffer (ref nil))
 (def flushing (ref false))
 (def output (ref nil))
-(def server "http://localhost:8090/pi")
+(def server (if (System/getenv "NS_URL") (System/getenv "NS_URL") "http://localhost:8090/pi"))
 (def graph "https://papyri.info/graph")
 (def param (ref nil))
 ;; NOTE hard-coded file and directory locations
