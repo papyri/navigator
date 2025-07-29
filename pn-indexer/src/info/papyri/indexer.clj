@@ -923,7 +923,7 @@
 (defn commit
   "Runs an asynchronous commit and then optimize on the named Solr index."
   [index]
-  (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl "/" index)) 3600000))]
+  (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl index)) 3600000))]
     (.commit solr false false )
     (.close solr)))
 
@@ -1083,7 +1083,7 @@
   (let [c (.build (Http2SolrClient$Builder.))]
     (dosync (ref-set solr
       (let [c (.build (Http2SolrClient$Builder.))
-            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "/pn-search") c true)]
+            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "pn-search") c true)]
         (.setRequestWriter c (BinaryRequestWriter.))
         (-> cb (.withQueueSize 100) 
           (.withThreadCount nthreads)
