@@ -25,7 +25,7 @@ function init() {
         initImage();
     }
     alignRTL();
-    jQuery("#tmgo").button();
+
     jQuery("span.term").each( function (i, elt) {
         const htmlContent = $(elt).find("span.gloss").html();
         if (htmlContent) {
@@ -46,7 +46,7 @@ function init() {
       dataType: "json",
       success: function(data, status, xhr) {
         if (data.user) {
-         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\">home</a> | " + data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\" class=\"btn btn-link btn-sm text-decoration-none\">home</a><a href=\"/editor/users/edit\" class=\"btn btn-link btn-sm text-decoration-none\">" + data.user.name + "</a><a href=\"/editor/user/signout\" class=\"btn btn-link btn-sm text-decoration-none\">sign out</a>");
         }
       },
       error: function (data, status, xhr) {
@@ -77,6 +77,7 @@ function init() {
     addLinearBrowseControls();
 		getAlert();
 		getCampaign();
+		initBootstrapTooltips();
 }
 
 function initjQueryMigrate() {
@@ -504,7 +505,7 @@ function getCampaign() {
 			});
 	}
 }
-	
+
 function hideCampaign(duration) {
 	const day = 86400000;
 	window.localStorage.setItem("Hide-papyriCampaign", (Date.now() + (duration * day)).toString());
@@ -523,7 +524,7 @@ function canShowCampaign() {
 	}
 	return true;
 }
-		
+
 function getAlert() {
 	getMessage("/docs/alert")
 		.then(message => {
@@ -545,7 +546,7 @@ function hideAlert() {
 	alert.parentElement.removeChild(alert);
 	return false;
 }
-	
+
 function canShowAlert(alert) {
 	let oldAlert = window.localStorage.getItem("papyri.info-lastAlert");
 	if (oldAlert) {
@@ -554,7 +555,7 @@ function canShowAlert(alert) {
 		return true;
 	}
 }
-	
+
 async function getMessage(url) {
 	const parser = new DOMParser();
 	let response = await fetch(url);
@@ -566,4 +567,8 @@ async function getMessage(url) {
 	let doc = parser.parseFromString(body, "text/html");
 	return doc.querySelector("div.markdown");
 }
-	
+
+function initBootstrapTooltips() {
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+}

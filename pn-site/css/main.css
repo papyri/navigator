@@ -1,0 +1,66 @@
+body {
+  /* Ensure the footer is always at the bottom */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.bg-primary-darker {
+  background-color: var(--papyri-primary-darker) !important;
+}
+
+#masthead::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/header.jpg');
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.navbar[data-bs-theme="dark"] {
+  --bs-navbar-brand-font-size: 2rem;
+  --bs-navbar-color: rgba(255, 255, 255, 0.8);
+  --bs-navbar-hover-color: rgba(255, 255, 255, 1);
+  --bs-navbar-disabled-color: rgba(255, 255, 255, 1);
+  --bs-navbar-active-color: #fff;
+
+  --bs-link-color: var(--bs-navbar-color);
+  --bs-link-hover-color: var(--bs-navbar-hover-color);
+  --bs-navbar-toggler-border-color: var(--bs-navbar-color);
+}
+
+.navbar-brand {
+  font-family: var(--bs-font-serif);
+  font-weight: 500;
+}
+
+#primary-nav {
+  background-color: var(--papyri-primary-darker);
+}
+
+.nav-category {
+  font-family: var(--bs-font-sans-serif);
+  color: white;
+  font-weight: 600;
+}
+
+footer li a {
+  text-decoration: none;
+}
+
+footer ul.about-links {
+  column-count: 1;
+
+  @media (min-width: 992px) {
+    column-count: 2;
+    column-gap: 1.5rem;
+  }
+}
+
+h1 {
+  color: var(--bs-primary);
+}
