@@ -1,0 +1,22 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <activeProfiles>
+    <activeProfile>gitlab-maven</activeProfile>
+  </activeProfiles>
+
+  <profiles>
+    <profile>
+      <id>gitlab-maven</id>
+      <repositories>
+        <repository>
+          <id>gitlab-maven</id>
+          <url>https://gitlab.oit.duke.edu/api/v4/projects/44380/packages/maven</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+</settings>
