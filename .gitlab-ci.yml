@@ -16,7 +16,6 @@ variables:
 stages:
   - build
   - test
-  - publish
   - deploy
 
 .job:
@@ -38,16 +37,6 @@ integration-tests:
     DOWNSTREAM_BRANCH: "master"
   allow_failure: true
   # Might be annoying to have this run on every commit, but it is useful to have
-  when: manual
-  
-# todo: publish a version based on branch so isn't always latest
-publish:
-  extends: .job
-  tags:
-    - publish
-  stage: publish
-  script:
-    - make publish
   when: manual
 
 deploy-dev:
