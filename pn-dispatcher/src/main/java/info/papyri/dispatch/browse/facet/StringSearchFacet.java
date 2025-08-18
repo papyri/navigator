@@ -61,7 +61,6 @@ import org.apache.solr.common.SolrDocumentList;
  * 
  * @author thill
  * @version 2012.02.08
- * @see info.papyri.dispatch.Search
  * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause
  * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause
  * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm
@@ -404,21 +403,23 @@ public class StringSearchFacet extends Facet{
         html.append("<input type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.TEXT.name().toLowerCase());
         html.append("\" value=\"on\" id=\"target-text\" class=\"target\" checked/>");
-        html.append("<label for=\"");
+        html.append("<label for=\"target-");
         html.append(SearchTarget.TEXT.name().toLowerCase());
         html.append("\" id=\"text-label\">Text</label>");
         html.append("<input type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.METADATA.name().toLowerCase());
         html.append("\" value=\"on\" id=\"target-metadata\" class=\"target\"/>");
-        html.append("<label for=\"");
+        html.append("<label for=\"target-");
         html.append(SearchTarget.METADATA.name().toLowerCase());
         html.append("\" id=\"metadata-label\">Metadata</label>");
         html.append("<input type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.TRANSLATION.name().toLowerCase());
         html.append("\" value=\"on\" id=\"target-translations\" class=\"target\"/>");
-        html.append("<label for=\"");
+        html.append("<label for=\"target-");
         html.append(SearchTarget.TRANSLATION.name().toLowerCase());
         html.append("\" id=\"translation-label\">Translations</label>");
+        html.append("<input type=\"checkbox\" name=\"COLLECTION\" value=\"current\" id=\"target-collection\" class=\"target\"/>");
+        html.append("<label for=\"target-collection\" id=\"collection-label\">Current Editions</label>");
         html.append("</p>");
         html.append("</div><!-- closing .stringsearch-section -->");
         html.append(generateHiddenFields());
@@ -984,8 +985,7 @@ public class StringSearchFacet extends Facet{
     /**
      * Returns all the top-level <code>SearchClause</code>s being used by the <code>Facet</code>
      * 
-     * @see info.papyri.dispatch.browse.facet.FacetBrowser#generateHighlightString(java.util.ArrayList) 
-     * @return 
+     * @return
      */
     
     public ArrayList<SearchClause> getAllSearchClauses(){
@@ -1113,8 +1113,7 @@ public class StringSearchFacet extends Facet{
          * proximity searches Solr does not directly support, however, the pseudo-Solr syntax generated 
          * will be further transformed into a regular expression.
          * 
-         * @see SubClause#doProxTransform(java.util.ArrayList) 
-         * @see SubClause#doCharsProxTransform(java.util.ArrayList, int) 
+         * @see SubClause#doCharsProxTransform(java.util.ArrayList, int)
          * @see SubClause#doWordsProxTransform(java.util.ArrayList, int) 
          * @param fullString
          * @return
@@ -2048,7 +2047,6 @@ public class StringSearchFacet extends Facet{
          * Converts character-proximity searches into regular expression syntax
          * 
          * 
-         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doProxTransform(java.util.ArrayList) 
          * @param clauses
          * @param chpIndex
          * @return
@@ -2087,7 +2085,6 @@ public class StringSearchFacet extends Facet{
         /**
          * Transforms leading-wildcards in word-proximity searches into regular expression syntax
          * 
-         * @see info.papyri.dispatch.browse.facet.StringSearchFacet.SubClause#doProxTransform(java.util.ArrayList) 
          * @param clauses
          * @param metricIndex
          * @return

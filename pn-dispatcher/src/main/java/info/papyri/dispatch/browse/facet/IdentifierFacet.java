@@ -194,7 +194,9 @@ public class IdentifierFacet extends Facet{
             }
             else{
                 // If this is a DDbDP or DCLP collection, short-circuit the query building process
-                if (searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("dclp")
+                if (searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("current")
+                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("editions")
+                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("dclp")
                     || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("ddbdp")
                     || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("hgv")  ) {
                     solrQuery.addFilterQuery(SolrField.collection.name() + ":" + searchConfigurations.get(IdParam.COLLECTION).getConstraint());
@@ -288,6 +290,12 @@ public class IdentifierFacet extends Facet{
         SearchConfiguration idnoConfig = searchConfigurations.get(IdParam.IDNO);
                 
         switch(collectionConfig.getConstraint()) {
+            case("current"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":current");
+                break;
+            case("editions"):
+                solrQuery.addFilterQuery(SolrField.collection.name() + ":editions");
+                break;
             case("apisonly"):
                 solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
                 break;

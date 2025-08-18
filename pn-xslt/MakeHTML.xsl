@@ -477,14 +477,14 @@
     <div class="transcription data">
       <xsl:choose>
         <xsl:when test="$type = 'DCLP'">
-          <h2>DCLP transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source">xml</a>]</h2>
+          <h2>DCLP transcription [<a href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source">xml</a>]</h2>
         </xsl:when>
         <xsl:otherwise>
-          <h2>DDbDP transcription: <xsl:value-of select="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2></xsl:otherwise></xsl:choose>
+          <h2>DDbDP transcription [<a href="/editions/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source">xml</a>]</h2></xsl:otherwise></xsl:choose>
       <xsl:variable name="text">
         <xsl:choose>
           <xsl:when test="$type = 'DCLP'">
-            <xsl:apply-templates select=".//t:body/t:head"/>
+            <h2><xsl:apply-templates select=".//t:body/t:head"/></h2>
             <xsl:apply-templates select=".//t:div[@type='edition']"/>
           </xsl:when>
           <xsl:otherwise><xsl:apply-templates select=".//t:body"/></xsl:otherwise>
@@ -641,21 +641,25 @@
   <xsl:template name="get-references">
     <xsl:choose>
       <xsl:when test="$collection = 'current'">
-        <xsl:apply-templates select="//t:body/t:head"/>
-        <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
-        <xsl:if test="count($relations[contains(., 'trismegistos/')]) gt 0"> = Trismegistos </xsl:if>
-        <xsl:for-each select="$relations[contains(., 'trismegistos/')]">
-          <a href="{.}">{replace(., 'https://www.trismegistos.org/text/', '')}</a>
-        </xsl:for-each>
-      </xsl:when>
+        <h2>
+          <xsl:apply-templates select="//t:body/t:head"/>
+          <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+          <xsl:if test="count($relations[contains(., 'trismegistos/')]) gt 0"> = Trismegistos </xsl:if>
+          <xsl:for-each select="$relations[contains(., 'trismegistos/')]">
+            <a href="{.}">{replace(., 'https://www.trismegistos.org/text/', '')}</a>
+          </xsl:for-each>
+        </h2>
+              </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:for-each select="$sources-for">
-          <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-            <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
-              <xsl:apply-templates select=".//t:body/t:head"></xsl:apply-templates>
-              = <a href="https://papyri.info/current/{.//t:fileDesc/t:publicationStmt/t:idno[@type='filename']}">Current Edition</a>
-            </xsl:for-each>
-          </xsl:if>
+          <h2>
+            <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+              <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
+                <xsl:apply-templates select=".//t:body/t:head"/>
+                = <a href="/current/{.//t:fileDesc/t:publicationStmt/t:idno[@type='filename']}">Current Edition</a>
+              </xsl:for-each>
+            </xsl:if>
+          </h2>
         </xsl:for-each>
       </xsl:when>
       <xsl:otherwise>
@@ -895,11 +899,13 @@
     </xsl:if>
   </xsl:template>
   
-  <!-- Override EpiDoc template in htm-teihead.xsl -->
+  <!-- Override EpiDoc templates in htm-teihead.xsl -->
   <xsl:template match="t:div/t:head">
-    <h2>
       <xsl:apply-templates/>
-    </h2>
+  </xsl:template>
+  
+  <xsl:template match="t:body/t:head">
+    <xsl:apply-templates/>
   </xsl:template>
   
   <!-- Override EpiDoc template in htm-teiab.xsl -->
@@ -965,7 +971,7 @@
         </a>
       </xsl:when>
       <xsl:otherwise>
-        <a href="{@target}">
+        <a href="{replace(@target, 'https://papyri.info', '')}">
           <xsl:apply-templates/>
         </a>
       </xsl:otherwise>

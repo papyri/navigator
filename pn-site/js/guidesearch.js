@@ -104,11 +104,13 @@ $(document).ready(
 	    		var marks = $("#marks:checked");
 	    		if(marks.length > 0) filteredels.push(marks);
 
-                if(!mixedsearch){
+          if(!mixedsearch){
                  
 				     filteredels.push($("input[name='target']").filter(":checked"));	
 
 	    		}
+
+          filteredels.push($("input[name='collection']").filter(":checked"));
 
 
 	    	}		
@@ -649,10 +651,10 @@ $(document).ready(
 		// changing date mode causes tidy and submit
 		$("input:radio[name='DATE_MODE']").on("change", hic.tidyQueryString);
 		// turning betacode on/off selects text input
-		$("#beta-on").on("change", () => {
+		$("#beta-on").on("change", (event) => {
 
 			$(".stringsearch-top-controls:last .keyword").trigger('focus');
-			var beta = $(this).is(":checked") ? "beta-on" : "beta-off";
+			var beta = $(event.target).is(":checked") ? "beta-on" : "beta-off";
 			$.cookie(hic.BETA_COOKIE, beta);
 
 		});

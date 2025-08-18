@@ -54,7 +54,7 @@ public class FileUtils {
     pathname.append(htmlPath);
     if ("editions".equals(collection)) {
       return new File(pathname.append("Historical/")
-          .append(item.replaceAll("[^a-zA-Z0-9]", "_"))
+          .append(item)
           .append(".html").toString());
     } else if ("current".equals(collection)) {
       StringBuilder ddbPath = new StringBuilder().append(htmlPath);
@@ -190,6 +190,33 @@ public class FileUtils {
   public File getTextFile(String collection, String item) {
     StringBuilder pathname = new StringBuilder();
     pathname.append(htmlPath);
+    if ("editions".equals(collection)) {
+      return new File(pathname.append("Historical/")
+          .append(item)
+          .append(".txt").toString());
+    } else if ("current".equals(collection)) {
+      StringBuilder ddbPath = new StringBuilder().append(htmlPath);
+      ddbPath.append("DDbDP/")
+          .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+          .append("/")
+          .append(item)
+          .append(".txt").toString();
+      if (Files.exists(Path.of(ddbPath.toString()))) {
+        return new File(ddbPath.toString());
+      } else {
+        StringBuilder dclpPath = new StringBuilder().append(htmlPath);
+        dclpPath.append("DCLP/")
+            .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".txt").toString();
+        if (Files.exists(Path.of(dclpPath.toString()))) {
+          return new File(dclpPath.toString());
+        } else {
+          logger.log(Level.WARNING, "No text file found for " + item + " in either DDB or DCLP.");
+        }
+      }
+    }
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
@@ -266,6 +293,35 @@ public class FileUtils {
   public String getXmlFilePath(String collection, String item) {
     StringBuilder pathname = new StringBuilder();
     pathname.append(xmlPath);
+    if ("editions".equals(collection)) {
+      return pathname.append("Historical/")
+          .append(item)
+          .append(".xml").toString();
+    } else if ("current".equals(collection)) {
+      StringBuilder ddbPath = new StringBuilder().append(xmlPath);
+      ddbPath.append("DDbDP/")
+          .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+          .append("/")
+          .append(item)
+          .append(".xml").toString();
+      logger.info("DDbDP Path: " + ddbPath.toString());
+      if (Files.exists(Path.of(ddbPath.toString()))) {
+        return ddbPath.toString();
+      } else {
+        StringBuilder dclpPath = new StringBuilder().append(htmlPath);
+        dclpPath.append("DCLP/")
+            .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".xml").toString();
+        logger.info("DCLP Path: " + dclpPath.toString());
+        if (Files.exists(Path.of(dclpPath.toString()))) {
+          return dclpPath.toString();
+        } else {
+          logger.log(Level.WARNING, "No XML file found for " + item + " in either DDB or DCLP.");
+        }
+      }
+    }
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");

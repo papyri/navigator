@@ -121,7 +121,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         private String assembleLinkToFacetedBrowse(){
             String href = CollectionBrowser.FACET_SERVLET;
             href += "?";
-            if (collection.equals("ddbdp") || collection.equals("dclp")) {
+            if (collection.equals("editions")) {
                 href += "&" + IdentifierFacet.IdParam.COLLECTION.name() + "=" + collection + "&";
             }
             String collParam = IdentifierFacet.IdParam.SERIES.name();
