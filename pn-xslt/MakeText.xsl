@@ -87,7 +87,7 @@
         </xsl:variable>
         <xsl:apply-templates select="$text" mode="sqbrackets"/>
       </xsl:when>
-      <xsl:when test="$collection = 'historical'">
+      <xsl:when test="$collection = 'editions'">
         <xsl:variable name="text">
           <xsl:apply-templates>
             <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>

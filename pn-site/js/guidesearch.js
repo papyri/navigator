@@ -45,40 +45,40 @@ $(document).ready(
 		 * TODO: needs to be revised in wake of poor user response!
 		 */
 
-	   	hic.configureSearchSettings = function(){
+    hic.configureSearchSettings = function(){
 
-	   		var val = $(this).val();
+      var val = $(this).val();
 
-	   		if(val == "text"){
+      if(val == "text"){
 
-	   			$("#beta-on, #caps, #marks").prop("disabled", false);
-	   			hic.checkBetacode();
+        $("#beta-on, #caps, #marks").prop("disabled", false);
+        hic.checkBetacode();
 
-	   		} 
-	   		else{
+      } 
+      else{
 
-	   			$("#beta-on").prop("checked", false);
-	   			$("#beta-on").prop("disabled", true);
-	   			$("#caps").prop("checked", true);
-	   			$("#caps").prop("disabled", true);
-	   			$("#marks").prop("checked", true);
-	   			$("#marks").prop("disabled", true);	   			
+        $("#beta-on").prop("checked", false);
+        $("#beta-on").prop("disabled", true);
+        $("#caps").prop("checked", true);
+        $("#caps").prop("disabled", true);
+        $("#marks").prop("checked", true);
+        $("#marks").prop("disabled", true);	   			
 
-	   		}
+      }
 
-	    }
+    }
 
-	    /**
-	    * Without javascript, the form automatically sends values for every form field to the server -
-	    * including those wtih a null or default value, leading to very long and illegible querystrings.
-	    * This method strips out all default/null submitted values before passing them on to
-	    * the server.
-	    */
+    /**
+    * Without javascript, the form automatically sends values for every form field to the server -
+    * including those wtih a null or default value, leading to very long and illegible querystrings.
+    * This method strips out all default/null submitted values before passing them on to
+    * the server.
+    */
 
-	    hic.tidyQueryString = function(){
+    hic.tidyQueryString = function(){
 
             var querystring = "";
-	    	var filteredels = [];
+	    	var params = {};
 	    	// mixedsearch refers to string searches of the user-defined type
 	    	// i.e., not necessarily corresponding to the string-search types
 	    	// defined by the interface controls
@@ -90,187 +90,126 @@ $(document).ready(
 	    	var textval = hic.buildTextSearchString();
 	    	if(!textval.match(/^\s*$/)){
 
-				if(textval.indexOf(":") != -1) mixedsearch = true;
+				  if(textval.indexOf(":") != -1) mixedsearch = true;
 
-				var textel = $("<input type=\"text\" name=\"STRING\"></input>");
-				textel.val(textval);
-                filteredels.push(textel);
-	    		var betas = $("#betaYes:checked");
-	    		if(betas.length > 0) filteredels.push(betas);
+				  params["STRING"] = textval;
+	    		const betas = document.querySelector("#betaYes");
+	    		if(betas && betas.checked) params["BETA"] = true;
 
-	    		var caps = $("#caps:checked");
-	    		if(caps.length > 0) filteredels.push(caps);
+	    		const caps = document.querySelector("#caps");
+	    		if(caps && caps.checked) params["CAPS"] = true;
 
-	    		var marks = $("#marks:checked");
-	    		if(marks.length > 0) filteredels.push(marks);
+	    		const marks = document.querySelectorAll("#marks:checked");
+	    		if(marks.length > 0) params["MARKS"] = true;
 
           if(!mixedsearch){
-                 
-				     filteredels.push($("input[name='target']").filter(":checked"));	
+
+				     params["target"] = Array.from(document.querySelectorAll("input[name='target']:checked")).map(el => el.value);
 
 	    		}
-
-          filteredels.push($("input[name='collection']").filter(":checked"));
-
-
-	    	}		
+          if (document.querySelector("#target-collection").checked) {
+            params["COLLECTION"] = "current";
+          }
+	    	}
 	    	// image filter elements
-	    	var internals = $("input:checkbox[name='INT']:checked");
-	    	if(internals.length > 0) filteredels.push(internals);
-	    	var externals = $("input:checkbox[name='EXT']:checked");
-			if(externals.length > 0) filteredels.push(externals);
-			var printpubs = $("input:checkbox[name='PRINT']:checked");
-			if(printpubs.length > 0) filteredels.push(printpubs);
-			if($("select[name='TRANSC'] option:selected").val() != "default" && !($("select[name='TRANSC']").attr("disabled"))) filteredels.push($("select[name='TRANSC']"));
+        const internals = document.querySelector("input[name='INT']");
+        if(internals && internals.checked) params["INT"] = true;
+        const externals = document.querySelector("input[name='EXT']");
+        if(externals && externals.checked) params["EXT"] = true;
+        const printpubs = document.querySelector("input[name='PRINT']");
+        if(printpubs && printpubs.checked) params["PRINT"] = true;
 
-			// date mode selector
-			var datemode = $("input:radio[name='DATE_MODE']:checked");
-			if(datemode.length > 0) filteredels.push(datemode);
+        // has transcription
+        const transc = document.querySelector("select[name='TRANSC']");
+        if(transc && transc.value != "default" && !transc.disabled) params["TRANSC"] = transc.value;
 
+        const vol = document.querySelector("#id-volume");
+        if(vol.value != "" && vol.value != "n.a.") params["VOLUME"] = vol.value;
 
-			var vol = $("#id-volume");
-			var volno = vol.val();
-			if(volno != "" && volno != "n.a.") filteredels.push(vol);
+        const ident = document.querySelector("#id-idno");
+        if(ident.value != "" && ident.value != "n.a.") params["IDNO"] = ident.value;
 
-			var ident = $("#id-idno");
-			var identno = ident.val();
-			if(identno != "" && identno != "n.a.") filteredels.push(ident);
+        hic.addDatesToFilteredEls("date-start-selector", params);
+        hic.addDatesToFilteredEls("date-end-selector", params);
 
-			 hic.addDatesToFilteredEls("date-start-selector", filteredels);
-			 hic.addDatesToFilteredEls("date-end-selector", filteredels);
+	    	var docsperpage = document.getElementById("DOCS_PER_PAGE");
+	    	var docsval = docsperpage.value;
+	    	if(docsval.match(/^\d{1,3}$/) && docsval > 0) params[docsperpage.name] = docsval;
 
-	    	var docsperpage = $("#DOCS_PER_PAGE");
-	    	var docsval = docsperpage.val();
-	    	if(docsval.match(/^\d{1,3}$/) && docsval > 0) filteredels.push(docsperpage);
+	    	const hiddens = document.querySelectorAll("input[type='hidden']");
+        hiddens.forEach(hidden => {
 
-	    	var hiddens = document.getElementsByTagName("input");
+          // the hidden collection field should be overriden by settings in the
+          // control itself
+          if(hidden.getAttribute("name") == "COLLECTION"){
 
-	    	for(var j = 0; j < hiddens.length; j++){
+            const coll = document.querySelector("select[name='COLLECTION']");
+            if(coll.value != "default" && coll.value != "current"){
 
-	    		var hidden = hiddens[j];
-	    		var htype = hidden.getAttribute("type");
-	    		// note weirdness here - jQuery cannot retrieve attributes from hidden input fields
-	    		// standard js .getAttribute is thus used
-	    		if(htype == "hidden"){
+              params["COLLECTION"] = coll.value;
 
-	    			// the hidden collection field should be overriden by settings in the
-	    			// control itself
-	    			if(hidden.getAttribute("name") == "COLLECTION"){
+            } else{
 
-	    				var collvalue = $("select[name='COLLECTION']").attr("value");
-	    				if(collvalue != "default"){
+              params[hidden.getAttribute("name")] = hidden.getAttribute("value");
 
-	    					filteredels.push($("select[name='COLLECTION']"));
-	    					continue;
+            }
 
-	    				}
-	    				else{
+          } else {
+            if (hidden.getAttribute("value") != "default" && hidden.getAttribute("value") != ""){
+              params[hidden.getAttribute("name")] = hidden.getAttribute("value");
+            }
+          }
 
-	    					filteredels.push(hidden);
+        });
 
-	    				}
+        Array.from(document.querySelectorAll("select+*.custom-combobox"))
+          .map(elt => {return elt.previousElementSibling})
+          .forEach(combo => {
 
-	    			}
-	    			else{
+	    		  if(combo.getAttribute("name") != "DATE_START" && combo.getAttribute("name") != "DATE_END" && !combo.disabled){
 
-	    				filteredels.push(hidden);	
+              if(combo.value != "" && combo.value != "default"){
 
-	    			}
+                params[combo.getAttribute("name")] = combo.value;
 
-	    		}
+              }
 
-	    	}
+				    }
 
-	    	var combos = $(".custom-combobox").prev('select');
+        });
 
-	    	for(var m = 0; m < combos.length; m++){
-
-	    		var combo = $(combos[m]);
-
-	    		if(combo.attr("name") != "DATE_START" && combo.attr("name") != "DATE_END" && !combo.prop("disabled")){
-
-					var val = $(combo).val();
-					if(val != "" && val != "default"){
-
-						filteredels.push(combo);
-
-					}
-
-				}
-
-	    	}
-
-	    	var params = {};
-
-			for(var k = 0; k < filteredels.length; k++){
-
-				var fel = filteredels[k];
-				var name = $(fel).attr("name");
-				var val = $(fel).val();
-
-				// workaround for jQuery hidden field blindness
-				if(typeof name == 'undefined' || typeof val == 'undefined'){
-
-					name = fel.attr("name");
-					val = fel.val();
-
-				}
-				val = val.replace(/\s*\(\d+\)\s*$/, "");
-				if(name == "IDNO") val = val.replace(/:/g, "*");
-				if(!params[name] || params[name] == val){
-
-					params[name] = val;
-
-				} 
-				else{
-
-					var startVal = params[name];
-					if($.isArray(startVal)){
-
-						startVal.push(val);
-
-					}
-					else{
-				
-						var vals = new Array();
-						vals.push(startVal);
-						vals.push(val);
-						params[name] = vals;
-
-					}
-
-				}
-
-			}
+				if (params["IDNO"]) {
+          params["IDNO"] = params["IDNO"].replace(/:/g, "*");
+        }
 
 			if(mixedsearch){
 
 				params["target"] = "user_defined";
 
 			}
-				var current = window.location;
-				if(current.toString().match(/\?/)) {
-				var currentbits = current.toString().split("?");
-				current = currentbits[0];
-			}
+      var current = window.location;
+      if(current.toString().match(/\?/)) {
+        var currentbits = current.toString().split("?");
+        current = currentbits[0];
+      }
 			hic.concatenateSearchToCookie(textval);
-			var qs = $.param(params);
-			qs = qs.replace(/%5B%5D/g, "");
-			var hrefwquery = current + "?" + qs;
+      const qs = new URLSearchParams(params);
+			var hrefwquery = current + "?" + qs.toString();
 			window.location = hrefwquery;
 			return false;
-	    }
+    }
+    
 
-	    hic.addDatesToFilteredEls = function(date_wrapper_name, filteredels){
+	    hic.addDatesToFilteredEls = function(date_wrapper_name, params){
 
-	    	var date_selector = "#" + date_wrapper_name + " input";
-	    	var datefield = $(date_selector);
-	    	var selected_date = datefield.val();
+        const date_wrapper = document.getElementById(date_wrapper_name);
+	    	const datefield = date_wrapper.querySelector("input");
+	    	let selected_date = datefield.value;
 	    	
 	    	if(selected_date == "") return;
 	    	selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");	// trim count
-	    	var era_finder = new RegExp(/\s*(B?CE)$/);
-	    	var era = "";
+	    	const era_finder = new RegExp(/\s*(B?CE)$/);
+	    	let era = "";
 
 	    	if(selected_date.match(era_finder)){
 
@@ -281,7 +220,7 @@ $(document).ready(
 	    	else if(selected_date.toLowerCase() != "unknown"){
 
 	    		selected_date = selected_date.replace(/\D/g, "");
-	    		era = $(datefield.parents(".date-facet-widget").find("input[type=radio]:checked")).val();
+	    		era = date_wrapper.querySelector("input[type=radio]:checked").value;
 
 	    	}
 	    	else if(selected_date.toLowerCase() == "unknown"){
@@ -292,17 +231,12 @@ $(document).ready(
 	    	if(selected_date.match(/^\s*$/)) return;
 
 	    	// date mode selector
-			var datemode = $("input:radio[name='DATE_MODE']:checked");
-			if(datemode.length > 0) filteredels.push(datemode);
-	    	var date_el_name = date_wrapper_name.match("start") ? "DATE_START_TEXT" : "DATE_END_TEXT";
-	    	var era_el_name = date_wrapper_name.match("start") ? "DATE_START_ERA" : "DATE_END_ERA";
-	    	var date_el = $("<input type=\"text\" name=\"" + date_el_name + "\"></input>");
-	    	date_el.val(selected_date);
-	    	filteredels.push(date_el);
-	    	if(era == "") return;
-	    	var era_el = $("<input type=\"radio\" name=\"" + era_el_name + "\"></input>");
-	    	era_el.val(era);
-	    	filteredels.push(era_el);
+        const datemode = document.querySelector("input[name='DATE_MODE']:checked").value;
+        params["DATE_MODE"] = datemode;
+	    	const date_el_name = date_wrapper_name.match("start") ? "DATE_START_TEXT" : "DATE_END_TEXT";
+	    	const era_el_name = date_wrapper_name.match("start") ? "DATE_START_ERA" : "DATE_END_ERA";
+        params[date_el_name] = selected_date;
+        params[era_el_name] = era;
 
 	    }
 	    hic.buildTextSearchString = function(){
@@ -358,8 +292,8 @@ $(document).ready(
 	    hic.monitorTextInput = function(){
 
 	    	$(this).off('focus');
-			$(this).off('keypress');
-			$(this).off('keyup');
+        $(this).off('keypress');
+        $(this).off('keyup');
 	    	var betaOn = $("#beta-on").is(":checked");
 	    	colonFound = false;
 	    	var selectedRadios = [];
@@ -676,6 +610,16 @@ $(document).ready(
 
 		});
 		hic.checkBetacode();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("COLLECTION")) {
+      if (params.get("COLLECTION") === "current") {
+        document.querySelector("#target-collection").checked = true;
+      }
+    } else {
+      document.querySelector("#target-collection").checked = true;
+    }
+
 		if($.cookie(hic.HIDE_REVEAL_COOKIE) == 0 && hic.isSubsequentPage()){
 
 			var e = {};
