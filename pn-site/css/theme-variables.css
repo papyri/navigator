@@ -1,0 +1,138 @@
+/* https://getbootstrap.com/docs/5.3/customize/color/ */
+
+:root, [data-bs-theme=light] {
+  --bs-font-serif: "Noto Serif", serif;
+  --bs-font-sans-serif: "Noto Sans", sans-serif;
+  --bs-body-font-family: var(--bs-font-serif);
+
+  /* Main color palette */
+  --bs-link-color: #004ccc;
+  --bs-link-color-rgb: 0, 76, 204;
+
+  --bs-primary: #800000;
+  --bs-primary-rgb: 128, 0, 0;
+
+  --bs-light: #f8f6f4;
+  --bs-light-rgb: 248, 246, 244;
+
+  --bs-dark: #262424;
+  --bs-dark-rgb: 38, 36, 36;
+
+  --bs-secondary: #807868;
+  --bs-secondary-rgb: 128,120,104;
+
+  --bs-success: #008080;
+  --bs-success-rgb: 0,128,128;
+
+  --bs-warning: #e8c793;
+  --bs-warning-rgb: 232,199,147;
+
+  --bs-danger: #d53206;
+  --bs-danger-rgb: 213,50,6;
+
+  --bs-info: #e6edfa;
+  --bs-info-rgb: 230,237,250;
+
+  --bs-body-color: #000000;
+  --bs-body-bg: #f8f6f4;
+  --bs-table-bg: var(--bs-white) !important;
+}
+
+:root {
+  /* Establish some darker and lighter variants */
+  /* of the main palette colors */
+  --papyri-primary-darker: color-mix(in srgb, var(--bs-primary), black 15%) !important;
+  --papyri-primary-lighter: color-mix(in srgb, var(--bs-primary), white 10%) !important;
+
+  --papyri-secondary-darker: color-mix(in srgb, var(--bs-secondary), black 15%) !important;
+  --papyri-secondary-lighter: color-mix(in srgb, var(--bs-secondary), white 10%) !important;
+
+  --papyri-success-darker: color-mix(in srgb, var(--bs-success), black 10%) !important;
+  --papyri-success-lighter: color-mix(in srgb, var(--bs-success), white 10%) !important;
+
+
+  --papyri-info-darker: color-mix(in srgb, var(--bs-info), black 10%) !important;
+  --papyri-info-lighter: color-mix(in srgb, var(--bs-info), white 10%) !important;
+
+  --papyri-warning-darker: color-mix(in srgb, var(--bs-warning), black 10%) !important;
+  --papyri-warning-lighter: color-mix(in srgb, var(--bs-warning), white 10%) !important;
+
+  --papyri-danger-darker: color-mix(in srgb, var(--bs-danger), black 10%) !important;
+  --papyri-danger-lighter: color-mix(in srgb, var(--bs-danger), white 10%) !important;
+
+  --papyri-light-darker: color-mix(in srgb, var(--bs-light), black 5%) !important;
+  --papyri-light-lighter: color-mix(in srgb, var(--bs-light), white 10%) !important;
+
+  --papyri-link-darker: color-mix(in srgb, var(--bs-link-color), black 10%) !important;
+  --papyri-link-lighter: color-mix(in srgb, var(--bs-link-color), white 10%) !important;
+
+  --bs-link-hover-color: var(--papyri-link-lighter);
+  --bs-link-hover-color-rgb: 26, 102, 214;
+  --bs-heading-color: var(--bs-dark);
+}
+
+/* Some BS5 elements do not yet support CSS variables */
+/* so without Sass compilation we have to define them here */
+.btn-primary {
+  --bs-btn-color: var(--bs-white);
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--papyri-primary-darker);
+  --bs-btn-hover-border-color: var(--papyri-primary-darker);
+  --bs-btn-active-bg: var(--papyri-primary-darker);
+  --bs-btn-active-border-color: var(--papyri-primary-darker);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-hover-border-color: var(--bs-primary);
+  --bs-btn-active-bg: var(--papyri-primary-darker);
+  --bs-btn-active-border-color: var(--papyri-primary-darker);
+}
+
+.btn-secondary {
+  --bs-btn-bg: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-bg: var(--papyri-secondary-darker);
+  --bs-btn-hover-border-color: var(--papyri-secondary-darker);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--bs-success);
+  --bs-btn-border-color: var(--papyri-success-darker);
+  --bs-btn-hover-bg: var(--papyri-success-darker);
+  --bs-btn-hover-border-color: var(--papyri-success-darker);
+}
+
+.btn-info {
+  --bs-btn-bg: var(--bs-info);
+  --bs-btn-border-color: var(--papyri-info-darker);
+  --bs-btn-hover-bg: var(--papyri-info-darker);
+  --bs-btn-hover-border-color: var(--papyri-info-darker);
+}
+
+.btn-warning {
+  --bs-btn-bg: var(--bs-warning);
+  --bs-btn-border-color: var(--papyri-warning-darker);
+  --bs-btn-hover-bg: var(--papyri-warning-darker);
+  --bs-btn-hover-border-color: var(--papyri-warning-darker);
+}
+
+.btn-danger {
+  --bs-btn-bg: var(--bs-danger);
+  --bs-btn-border-color: var(--papyri-danger-darker);
+  --bs-btn-hover-bg: var(--papyri-danger-darker);
+  --bs-btn-hover-border-color: var(--papyri-danger-darker);
+}
+
+.btn-light {
+  --bs-btn-bg: var(--bs-light);
+  --bs-btn-border-color: var(--papyri-light-darker);
+  --bs-btn-hover-bg: var(--papyri-light-darker);
+  --bs-btn-hover-border-color: var(--papyri-light-darker);
+}
