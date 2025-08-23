@@ -83,7 +83,7 @@
   <xsl:param name="sources-for"/>
   <xsl:param name="images"/>
   <xsl:param name="citationForm"/>
-  <xsl:param name="selfUrl"/>
+  <xsl:param name="selfUrl" required="yes"/>
   <xsl:param name="biblio"/>
   <xsl:param name="translations"/>
   <xsl:param name="server">papyri.info</xsl:param>
@@ -436,10 +436,10 @@
   
   <xsl:template name="translations">
     <xsl:for-each select="pi:get-docs(tokenize($translations), 'xml')">
-      <xsl:sort select="number(ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
+      <xsl:sort select="number(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '-'))"/>
       <div class="translation data">
-        <h2><xsl:value-of select="ancestor::t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="ancestor::t:TEI/t:teiHeader//t:langUsage/t:language[@ident = current()/@xml:lang]"/>) 
-          [<a href="/hgvtrans/{ancestor::t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
+        <h2><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="/t:TEI/t:teiHeader//t:langUsage/t:language[@ident = //t:body/t:div/@xml:lang]"/>) 
+          [<a href="/translation/{/t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
         <div lang="{@xml:lang}">
           <xsl:apply-templates>
             <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
@@ -480,7 +480,7 @@
           <h2>DCLP transcription [<a href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source">xml</a>]</h2>
         </xsl:when>
         <xsl:otherwise>
-          <h2>DDbDP transcription [<a href="/editions/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source">xml</a>]</h2></xsl:otherwise></xsl:choose>
+          <h2>DDbDP transcription [<a href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source">xml</a>]</h2></xsl:otherwise></xsl:choose>
       <xsl:variable name="text">
         <xsl:choose>
           <xsl:when test="$type = 'DCLP'">
@@ -969,6 +969,9 @@
         <a href="http://www.perseus.tufts.edu/cgi-bin/ptext?doc=Perseus:text:1999.05.{$col}:volume={$vol}:document={$no}">
           <xsl:apply-templates/>
         </a>
+      </xsl:when>
+      <xsl:when test="not(@target)">
+        <xsl:apply-templates/>
       </xsl:when>
       <xsl:otherwise>
         <a href="{replace(@target, 'https://papyri.info', '')}">

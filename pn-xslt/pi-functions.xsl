@@ -86,8 +86,10 @@
         </xsl:variable>
         <xsl:sequence select="concat($base, '/HGV_meta_EpiDoc/HGV', $dir, '/', replace(substring-after($url, 'papyri.info/hgv/'), '/source', ''), '.', $format)"/>
       </xsl:when>
-      <xsl:when test="contains($url, 'hgvtrans')">
-        <xsl:sequence select="concat($base, '/HGV_trans_EpiDoc/', substring-before(substring-after($url, 'papyri.info/hgvtrans/'), '/'), '.', $format)"/>
+      <xsl:when test="contains($url, 'translation')">
+        <xsl:variable name="id" select="replace($url, '^.+translation/(\d+-\d+)(/source)?$', '$1')"/>
+        <xsl:variable name="dir" select="floor(number(substring-before($id, '-')) div 1000)"/>
+        <xsl:sequence select="concat($base, '/Translations/', $dir, '/', $id, '.', $format)"/>
       </xsl:when>
       <xsl:when test="contains($url, 'apis')">
         <xsl:variable name="id" select="tokenize(replace(substring-after($url, 'papyri.info/apis/'), '/source', ''), '\.')"/>

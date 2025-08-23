@@ -529,6 +529,16 @@
             from <https://papyri.info/graph>
             where { ?a bibo:translationOf <%s> }" url))
 
+(defn batch-translations-query
+  "Returns a set of translations for the given collection."
+  [url]
+  (format "prefix bibo: <http://purl.org/ontology/bibo/>
+           prefix dct: <http://purl.org/dc/terms/>
+           select ?a ?b
+           from <https://papyri.info/graph>
+           where { <%s> dct:hasPart ?a .
+                   ?a bibo:translationOf ?b }" url))
+
 ;; ## Jena functions
 
 (defn collect-row
@@ -617,7 +627,9 @@
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
         all-biblio (execute-query (batch-cited-by-query url))
-        all-images (execute-query (batch-images-query url))]
+        all-images (execute-query (batch-images-query url))
+        all-translations (execute-query (batch-translations-query url))
+        ]
     (doseq [item items]
       (let  [related (if (empty? relations) ()
                        (filter (fn [x] (= (first x) (last item))) relations))
@@ -640,6 +652,8 @@
                                     (substring-before (substring-after (last x) "https://papyri.info/") "/")))
                              exclude)
              images (if (empty? all-images) () (filter (fn [x] (= (first x) (last item))) all-images))
+             translations (if (empty? all-translations) ()
+                            (filter (fn [x] (= (first x) (last item))) all-translations))
             ]
         (if (nil? exclusion)
           (try (.add @html (list (str "file:" (get-filename (last item)))
@@ -648,9 +662,11 @@
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x)))))
                              (list "isPartOf" (apply str (interpose " " all-urls)))
                              (list "sources" (apply str (interpose " " (for [x sources] (last x)))))
+                             (list "sources-for" (apply str (interpose " " (for [x sources-for] (last x)))))
                              (list "images" (apply str (interpose " " (for [x images] (last x)))))
                              (list "citationForm" (apply str (interpose ", " (for [x citations] (last x)))))
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x)))))
+                             (list "translations" (apply str (interpose " " (for [x translations] (last x)))))
                              (list "selfUrl" (substring-before (last item) "/source"))
                              (list "server" nserver)))
             (catch Exception e
@@ -675,7 +691,6 @@
   "Adds URLs to the HTML transform and indexing queues for processing.  Takes a URL, like
   `https://papyri.info/ddbdp`, a set of collections to exclude and recurses down to the item level."
   [url exclude prev-urls]
-  ;; TODO: generate symlinks for relations
   ;; queue for HTML generation
    (let [all-urls (cons url prev-urls)
          items (execute-query (has-part-query url))]
@@ -695,13 +710,14 @@
 (defn queue-sources
   "Queues a set of sources for processing based on an editions URL."
   [url]
+  ;; (println (str "Queueing sources for " url))
   (doseq [source-for (execute-query (source-for-query url))]
     (let [source-for-url (first source-for)]
       (when-not (st/blank? source-for-url)
         (queue-item source-for-url)
         (doseq [source (execute-query (source-query source-for-url))]
           (let [source-url (first source)]
-            (when-not (st/blank? source-url)
+            (when-not (and (st/blank? source-url) (= url source-url))
               (queue-item source-url))))))))
 
 ;; ## File generation and indexing functions
@@ -861,7 +877,7 @@
 (defn generate-html
   "Builds the HTML files for the PN."
   []
-    (let [pool (Executors/newFixedThreadPool nthreads)
+    (let [pool (Executors/newFixedThreadPool 1)
     tasks (map (fn [x]
          (fn []
            (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
@@ -871,10 +887,11 @@
               (delete-html (last (nth x 3)))
               (let [processor (Processor. false)
                     out (.newSerializer processor)])
-              (transform (if (.startsWith (first x) "http")
-                (str (.replace (first x) "papyri.info" nserver) "/rdf")
-                (first x))
-                (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9))
+              (transform 
+                (if (.startsWith (first x) "http")
+                  (str (.replace (first x) "papyri.info" nserver) "/rdf")
+                  (first x))
+                (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9) (nth x 10) (nth x 11) (nth x 12)) 
                 (.newSerializer processor (FileOutputStream. (File. (get-html-filename (first x))))) @htmltemplates)
              (catch Exception e
                (.printStackTrace e)
@@ -898,9 +915,8 @@
         (delete-text (last (nth x 2)))
         (delete-text (last (nth x 3)))
         (transform (if (.startsWith (first x) "http")
-        							   ((println "File is " + (first x))
-                                       (str (.replace (first x) "papyri.info" nserver) "/rdf"))
-                                       (first x))
+        							   (str (.replace (first x) "papyri.info" nserver) "/rdf")
+                         (first x))
         (list (second x) (nth x 2) (nth x 3) (nth x 4))
         (.newSerializer processor (FileOutputStream. (File. (get-txt-filename (first x))))) @texttemplates)
         (catch Exception e
@@ -1085,14 +1101,14 @@
           )))
     (.blockUntilFinished @solr)
     ;; Index docs queued in @text
-    (println "Indexing text...")
     (let [pool (Executors/newFixedThreadPool nthreads)
           tasks
         (map (fn [x]
             (fn []
         (when (not (.startsWith (first x) "http"))
+          (println x)
           (transform (first x)
-                (list (second x) (nth x 2) (nth x 6) (nth x 9)) ;; collection, related, images, translations
+                (list (second x) (nth x 2) (nth x 7) (nth x 10)) ;; collection, related, images, translations
                 (dochandler) @solrtemplates)))) @text)]
       (doseq [^Future future (.invokeAll pool tasks)]
         (.get future))
@@ -1114,8 +1130,11 @@
   (dosync (ref-set html (ConcurrentLinkedQueue.)))
   (queue-collections "https://papyri.info/editions/p.mich" () ())
   (queue-collections "https://papyri.info/editions/bgu/1" () ())
-  (doseq [source @html] 
-    (let [url (str (second (nth source 9)) "/source")] 
+  (queue-collections "https://papyri.info/editions/bifao/117" () ())
+  (queue-collections "https://papyri.info/editions/p.kru" () ())
+  (queue-collections "https://papyri.info/editions/pylon/7" () ())
+  (doseq [source (.toArray @html)] 
+    (let [url (str (second (nth source 11)) "/source")] 
       (queue-sources url)))
   (init-templates (str xsltpath "/MakeHTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
   (init-templates (str xsltpath "/MakeSolr.xsl") nthreads "info.papyri.indexer/solrtemplates")

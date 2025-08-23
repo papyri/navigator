@@ -109,6 +109,8 @@ $(document).ready(
 	    		}
           if (document.querySelector("#target-collection").checked) {
             params["COLLECTION"] = "current";
+          } else {
+            params["COLLECTION"] = "editions";
           }
 	    	}
 	    	// image filter elements

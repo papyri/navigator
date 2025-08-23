@@ -76,7 +76,7 @@ public class Reader extends HttpServlet {
           response.setContentType("application/xml;charset=UTF-8");
           file = util.getXmlFile(collection, item.replace("/source", ""));
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Xml");
+            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Xml");
           }
         } else if (page.endsWith("text")) {
           response.setContentType("text/plain;charset=UTF-8");

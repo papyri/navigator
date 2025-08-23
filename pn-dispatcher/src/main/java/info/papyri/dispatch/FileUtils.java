@@ -291,6 +291,7 @@ public class FileUtils {
   }
   
   public String getXmlFilePath(String collection, String item) {
+    logger.log(Level.INFO, "Resolving XML file for " + collection + "/" + item);
     StringBuilder pathname = new StringBuilder();
     pathname.append(xmlPath);
     if ("editions".equals(collection)) {
@@ -304,7 +305,7 @@ public class FileUtils {
           .append("/")
           .append(item)
           .append(".xml").toString();
-      logger.info("DDbDP Path: " + ddbPath.toString());
+      logger.log(Level.INFO,"DDbDP Path: " + ddbPath.toString());
       if (Files.exists(Path.of(ddbPath.toString()))) {
         return ddbPath.toString();
       } else {
@@ -314,7 +315,7 @@ public class FileUtils {
             .append("/")
             .append(item)
             .append(".xml").toString();
-        logger.info("DCLP Path: " + dclpPath.toString());
+        logger.log(Level.INFO,"DCLP Path: " + dclpPath.toString());
         if (Files.exists(Path.of(dclpPath.toString()))) {
           return dclpPath.toString();
         } else {

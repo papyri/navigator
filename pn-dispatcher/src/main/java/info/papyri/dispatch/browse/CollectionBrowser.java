@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import jakarta.servlet.ServletConfig;
@@ -65,6 +67,7 @@ public class CollectionBrowser extends HttpServlet {
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
     static ArrayList<SolrField> ORG_HIERARCHY = new ArrayList<>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume));
+    static Logger logger = Logger.getLogger(CollectionBrowser.class.getName());
 
     @Override
     public void init(ServletConfig config) throws ServletException{
@@ -305,7 +308,7 @@ public class CollectionBrowser extends HttpServlet {
      */
     
     DocumentCollectionBrowseRecord parseUriToCollectionRecord(EnumMap<SolrField, String> pathParts, String child, String type, String label, String parentLabel){
-        
+
         String[] uriBits = child.split("/");
         int sIndex = 2;
         String collection = uriBits[sIndex + 1];
