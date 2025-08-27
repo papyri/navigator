@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Papyri.info - Style Guide</title>
+
+  <!-- https://getbootstrap.com/docs/5.3/getting-started/download/#cdn-via-jsdelivr -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/theme-variables.css" type="text/css">
+  <link rel="stylesheet" href="/css/main.css" type="text/css">
+  <!-- TODO: determine which styles from master.css need to be ported -->
+  <!--       over to main.css (if any) -->
+  <!-- <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"> -->
+
+  <script src="/js/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+
+  <!-- TODO: determine how much of init.js can be eliminated -->
+  <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
+
+  <script>
+    var _paq = window._paq = window._paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="//analytics.lib.duke.edu/";
+      _paq.push(['setTrackerUrl', u+'matomo.php']);
+      _paq.push(['setSiteId', '34']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+</head>
+
+<body onload="init()">
+  <nav id="skip-links" class="visually-hidden-focusable bg-dark" data-bs-theme="dark" aria-label="Skip link navigation">
+    <div class="container-xl px-4">
+      <a href="#main" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to main content</a>
+      <!-- TODO: Add more skip links in other views (e.g., search pages) -->
+      <!-- as needed -->
+      <!--
+      <a href="#search" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to search</a>
+      -->
+    </div>
+  </nav>
+
+  <header id="masthead" class="bg-primary text-white position-relative">
+    <nav id="masthead-nav" class="navbar flex-wrap navbar-expand-md" data-bs-theme="dark" aria-label="Masthead & user account navigation">
+      <div class="container-xl px-4">
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <a href="/" class="navbar-brand">Papyri.info</a>
+          <div class="d-flex align-items-center">
+            <div id="login">
+              <a href="/editor/user/signin" class="btn btn-link text-decoration-none">Sign In</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search & browse navigation">
+      <div class="container-xl px-4">
+        <div id="mainNavbar" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
+          <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" tabindex="-1">Browse</a></li>
+          <li class="nav-item"><a class="nav-link" href="/browse/editions/">Editions</a></li>
+          <li class="nav-item"><a class="nav-link" href="/browse/apis/">APIS</a></li>
+          <li class="nav-item"><a class="nav-link" href="/authors">Authors</a></li>
+          <li class="nav-item position-relative">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" role="button">TM Number</a>
+
+            <div class="bg-primary rounded-bottom p-2 mt-0 border-0 collapse position-absolute dropdown-menu" data-bs-theme="light" id="tmSearch">
+              <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value; return false;">
+                <div class="input-group">
+                  <input id="tmid" type="text" class="form-control bg-white" placeholder="" aria-label="TM Number">
+                  <button class="btn btn-light" type="submit" id="tmgo">Go</button>
+                </div>
+              </form>
+            </div>
+          </li>
+
+          <li class="nav-item"><a class="nav-link disabled nav-category ms-md-5 mt-3 mt-md-0" href="#" tabindex="-1">Search</a></li>
+          <li class="nav-item"><a class="nav-link" href="/search">Data</a></li>
+          <li class="nav-item"><a class="nav-link" href="/bibliosearch">Bibliography</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="container-fluid p-0 flex-grow-1 bg-light d-flex flex-column">
+    <div class="container-xl px-4 py-4 my-0 bg-white flex-grow-1">
+      <div class="content">
+        <h1>Style Guide</h1>
+        <p class="lead">This guide demonstrates to developers how various UI components will render using the <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">Bootstrap 5 framework</a> and local theme configuration.</p>
+
+        <nav class="navbar sticky-top navbar-expand-lg bg-light mb-5 fw-semibold border-bottom border-5 border-success">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Top</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#colors">Colors</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#typography">Typography</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#lists">Lists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#buttons">Buttons</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#forms">Forms</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#cards">Cards</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#tables">Tables</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#alerts">Alerts</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#tabs">Tabs</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#misc">Misc</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <section id="colors" class="mb-5">
+          <h2>Colors <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/utilities/colors/">Docs »</a></h2>
+          <button type="button" class="btn btn-primary">Primary</button>
+          <button type="button" class="btn btn-secondary">Secondary</button>
+          <button type="button" class="btn btn-success">Success</button>
+          <button type="button" class="btn btn-danger">Danger</button>
+          <button type="button" class="btn btn-warning">Warning</button>
+          <button type="button" class="btn btn-info">Info</button>
+          <button type="button" class="btn btn-light">Light</button>
+          <button type="button" class="btn btn-dark">Dark</button>
+          <button type="button" class="btn btn-link">Link</button>
+
+          <hr />
+
+          <div class="d-flex flex-wrap gap-3">
+            <div class="card text-bg-primary mb-3" style="max-width: 18rem;">
+              <div class="card-header">Primary</div>
+              <div class="card-body">
+                <div class="card-title h5">Primary card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+            <div class="card text-bg-secondary mb-3" style="max-width: 18rem;">
+              <div class="card-header">Secondary</div>
+              <div class="card-body">
+                <div class="card-title h5">Secondary card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+            <div class="card text-bg-success mb-3" style="max-width: 18rem;">
+              <div class="card-header">Success</div>
+              <div class="card-body">
+                <div class="card-title h5">Success card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+            <div class="card text-bg-danger mb-3" style="max-width: 18rem;">
+              <div class="card-header">Danger</div>
+              <div class="card-body">
+                <div class="card-title h5">Danger card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+            <div class="card text-bg-warning mb-3" style="max-width: 18rem;">
+              <div class="card-header">Warning</div>
+              <div class="card-body">
+                <div class="card-title h5">Warning card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+            <div class="card text-bg-info text-white mb-3" style="max-width: 18rem;">
+              <div class="card-header">Info</div>
+              <div class="card-body">
+                <div class="card-title h5">Info card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+            <div class="card text-bg-light mb-3" style="max-width: 18rem;">
+              <div class="card-header">Light</div>
+              <div class="card-body">
+                <div class="card-title h5">Light card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+            <div class="card text-bg-dark mb-3" style="max-width: 18rem;">
+              <div class="card-header">Dark</div>
+              <div class="card-body">
+                <div class="card-title h5">Dark card title</div>
+                <p class="card-text">Example text to demonstrate style</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="typography" class="mb-5">
+          <h2>Typography <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/content/typography/">Docs »</a></h2>
+
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <h3>Body Copy</h3>
+              <p>
+                This is the default body copy text style in use throughout Papyri.info.
+                Here is a longer block of paragraph text to demonstrate how lines of text are spaced vertically.
+                This text is encoded in <code>&lt;p&gt;</code> tags to indicate it is a paragraph.
+              </p>
+              <p>
+                Here is a second paragraph. This has <a href="https://papyri.info">a link to demonstrate</a>
+                how that will render inline. Some additional characteristics:</p>
+
+              <ul>
+                <li><strong>Font Family:</strong> <code id="styleguide-body-font">&nbsp;</code></li>
+                <li><strong>Font Size:</strong> <code id="styleguide-body-size">&nbsp;</code></li>
+                <li><strong>Color:</strong> <code id="styleguide-body-color">&nbsp;</code></li>
+                <li><strong>Line Height:</strong> <code id="styleguide-body-lineheight">&nbsp;</code></li>
+              </ul>
+              <h3>Links <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/utilities/link/">Docs »</a></h3>
+              <p>
+                Links need to be <a href="https://dequeuniversity.com/rules/axe/4.10/link-in-text-block">distinguishable from surrounding text</a> by more than just color when the contrast difference is less than 3:1. If a set of links within an element won't have surrounding text, you can remove the underlines by adding class <code>no-link-underline</code> to the element (rather than adding <code>text-decoration-none</code> to each individual link).
+              </p>
+            </div>
+            <div class="col-md-3">
+              <h3>Type Variations</h3>
+              <p><strong>Strong text</strong> — <code>&lt;strong&gt;</code><br>
+                <em>Italic text</em> — <code>&lt;em&gt;</code><br>
+                <small>Smaller text</small> — <code>&lt;small&gt;</code><br>
+                <span class="text-muted">Muted text</span> — <code>.text-muted</code><br>
+                <mark>Highlighted text</mark> - <code>&lt;mark&gt;</code><br>
+                <span class="fw-bold">Bold text</span> — <code>.fw-bold</code><br>
+                <span class="fw-semibold">Semibold text</span> — <code>.fw-semibold</code><br>
+                <code>Code</code> — <code>&lt;code&gt;</code>
+              </p>
+            </div>
+            <div class="col-md-3">
+              <h3>Headings <a class="btn btn-outline-success btn-sm"
+                  href="https://getbootstrap.com/docs/5.3/content/typography/#headings">Docs »</a></h3>
+              <h1>Heading 1</h1>
+              <h2>Heading 2</h2>
+              <h3>Heading 3</h3>
+              <h4>Heading 4</h4>
+              <h5>Heading 5</h5>
+              <h6>Heading 6</h6>
+            </div>
+          </div>
+
+          <h3 class="mt-4">Blockquotes <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/content/typography/#blockquotes">Docs »</a></h3>
+
+          <div class="row mt-4">
+            <div class="col">
+              <figure>
+                <blockquote class="blockquote">
+                  <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                </blockquote>
+                <figcaption class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite>
+                </figcaption>
+              </figure>
+            </div>
+            <div class="col">
+              <figure class="text-center">
+                <blockquote class="blockquote">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                </blockquote>
+                <figcaption class="blockquote-footer">
+                  Someone famous in <cite title="Source Title">Source Title</cite>
+                </figcaption>
+              </figure>
+            </div>
+            <div class="col">
+              <figure class="text-end">
+                <blockquote class="blockquote">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                </blockquote>
+                <figcaption class="blockquote-footer">
+                  Someone famous in <cite title="Source Title">Source Title</cite>
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="lists" class="mb-5">
+          <h2>Lists <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/content/typography/#lists">Docs »</a></h2>
+
+          <div class="row">
+            <div class="col-md-4">
+              <h3>Unordered</h3>
+              <code>&lt;ul&gt;</code>
+              <ul>
+                <li>List item one</li>
+                <li>List item two</li>
+                <li>List item three</li>
+                <li>List item four</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h3>Ordered</h3>
+              <code>&lt;ol&gt;</code>
+              <ol>
+                <li>List item one</li>
+                <li>List item two</li>
+                <li>List item three</li>
+                <li>List item four</li>
+              </ol>
+            </div>
+            <div class="col-md-4">
+              <h3>Unstyled</h3>
+              <code>&lt;ul class="list-unstyled"&gt;</code>
+              <ul class="list-unstyled">
+                <li>List item one</li>
+                <li>List item two</li>
+                <li>List item three</li>
+                <li>List item four</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h3>Nested</h3>
+              <code>&lt;ul&gt;&lt;li&gt;&lt;ul&gt;&lt;li&gt;</code>
+              <ul>
+                <li>List item one</li>
+                <li>List item two</li>
+                <li>List item three with sub-items:
+                  <ul>
+                    <li>Sub-item one</li>
+                    <li>Sub-item two</li>
+                    <li>Sub-item three</li>
+                  </ul>
+                <li>List item four</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h3>Inline</h3>
+              <code>&lt;ul class="list-inline"&gt;<br>
+            &nbsp;&nbsp;&lt;li class="list-inline-item"&gt;...</code>
+              <ul class="list-inline">
+                <li class="list-inline-item">List item one</li>
+                <li class="list-inline-item">List item two</li>
+                <li class="list-inline-item">List item three</li>
+                <li class="list-inline-item">List item four</li>
+                <li class="list-inline-item">List item five</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h3>Outdent</h3>
+              <code>&lt;ul class="list-unstyled list-outdent"&gt;</code>
+              <ul class="list-unstyled list-outdent">
+                <li>List item one and this has long enough text that is has to wrap to a new line</li>
+                <li>List item two also has enough content to not fit all on one line</li>
+                <li>List item three will likewise start wrapping to multiple lines</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <h3>Columns-2</h3>
+              <code>&lt;ul class="columns-2 list-unstyled"&gt;</code>
+              <ul class="columns-2 list-unstyled">
+                <li><a href="#">One</a></li>
+                <li><a href="#">Two</a></li>
+                <li><a href="#">Three</a></li>
+                <li><a href="#">Four</a></li>
+                <li><a href="#">Five</a></li>
+                <li><a href="#">Six</a></li>
+                <li><a href="#">Seven</a></li>
+                <li><a href="#">Eight</a></li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h3>Columns-3</h3>
+              <code>&lt;ul class="columns-3 list-unstyled"&gt;</code>
+              <ul class="columns-3 list-unstyled">
+                <li><a href="#">One</a></li>
+                <li><a href="#">Two</a></li>
+                <li><a href="#">Three</a></li>
+                <li><a href="#">Four</a></li>
+                <li><a href="#">Five</a></li>
+                <li><a href="#">Six</a></li>
+                <li><a href="#">Seven</a></li>
+                <li><a href="#">Eight</a></li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h3>Columns-4</h3>
+              <code>&lt;ul class="columns-4 list-unstyled"&gt;</code>
+              <ul class="columns-4 list-unstyled">
+                <li><a href="#">One</a></li>
+                <li><a href="#">Two</a></li>
+                <li><a href="#">Three</a></li>
+                <li><a href="#">Four</a></li>
+                <li><a href="#">Five</a></li>
+                <li><a href="#">Six</a></li>
+                <li><a href="#">Seven</a></li>
+                <li><a href="#">Eight</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <h3 id="description-list">Description List <a class="btn btn-outline-success btn-sm"
+                  href="https://getbootstrap.com/docs/5.3/content/typography/#description-list-alignment">Docs »</a></h3>
+              <p>
+                <code>
+                  &lt;dl&gt;<br>
+                  &nbsp;&nbsp;&lt;dt&gt;...&lt;/dt&gt;<br>
+                  &nbsp;&nbsp;&lt;dd&gt;...&lt;/dd&gt;<br>
+                  &lt;/dl&gt;
+                </code>
+              </p>
+              <dl>
+                <dt>Term one</dt>
+                <dd>This is the description or value for the first term.</dd>
+                <dt>A second term that is longer</dt>
+                <dd>Here's the description or value for the second term.</dd>
+                <dt>Term three</dt>
+                <dd>The final description.</dd>
+              </dl>
+            </div>
+            <div class="col-md-4">
+              <h3 id="description-list-horizontal">Description List Horiz. <a class="btn btn-outline-success btn-sm"
+                  href="https://getbootstrap.com/docs/5.3/content/typography/#description-list-alignment">Docs »</a></h3>
+              <p>
+                <code>
+                  &lt;dl class="row"&gt;<br>
+                  &nbsp;&nbsp;&lt;dt class="col-sm-3"&gt;...&lt;/dt&gt;<br>
+                  &nbsp;&nbsp;&lt;dd class="col-sm-9"&gt;...&lt;/dd&gt;<br>
+                  &lt;/dl&gt;
+                </code>
+              </p>
+              <dl class="row">
+                <dt class="col-sm-3">Term one</dt>
+                <dd class="col-sm-9">This is the description or value for the first term.</dd>
+                <dt class="col-sm-3">A second term that is longer</dt>
+                <dd class="col-sm-9">Here's the description or value for the second term.</dd>
+                <dt class="col-sm-3">Term three</dt>
+                <dd class="col-sm-9">The final description.</dd>
+              </dl>
+            </div>
+            <div class="col-md-4">
+              <h3>No Underlines</h3>
+              <code>&lt;ul class="list-unstyled no-link-underline"&gt;</code>
+              <ul class="list-unstyled no-link-underline">
+                <li><a href="#">One</a></li>
+                <li><a href="#">Two</a></li>
+                <li><a href="#">Three</a></li>
+                <li><a href="#">Four</a></li>
+                <li><a href="#">Five</a></li>
+                <li><a href="#">Six</a></li>
+                <li><a href="#">Seven</a></li>
+                <li><a href="#">Eight</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="buttons" class="mb-5">
+          <h2>Buttons <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/components/buttons/">Docs »</a></h2>
+
+          <div class="row">
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-primary" href="#">My Button</a><br>
+              <code>.btn-primary</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-secondary" href="#">My Button</a><br>
+              <code>.btn-secondary</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-success" href="#">My Button</a><br>
+              <code>.btn-success</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-info" href="#">My Button</a><br>
+              <code>.btn-info</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-warning" href="#">My Button</a><br>
+              <code>.btn-warning</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-danger" href="#">My Button</a><br>
+              <code>.btn-danger</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-primary" href="#">My Button</a><br>
+              <code>.btn-outline-primary</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-secondary" href="#">My Button</a><br>
+              <code>.btn-outline-secondary</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-success" href="#">My Button</a><br>
+              <code>.btn-outline-success</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-info" href="#">My Button</a><br>
+              <code>.btn-outline-info</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-warning" href="#">My Button</a><br>
+              <code>.btn-outline-warning</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-danger" href="#">My Button</a><br>
+              <code>.btn-outline-danger</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-light" href="#">My Button</a><br>
+              <code>.btn-light</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-dark" href="#">My Button</a><br>
+              <code>.btn-dark</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-light" href="#">My Button</a><br>
+              <code>.btn-outline-light</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-outline-dark" href="#">My Button</a><br>
+              <code>.btn-outline-dark</code>
+            </div>
+            <div class="col-sm-4 col-md-2 mb-3"><a class="btn btn-link" href="#">My Button</a><br>
+              <code>.btn-link</code>
+            </div>
+          </div>
+
+          <h3 class="mt-4">Button Sizes &amp; Variants <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/components/buttons/#sizes">Docs »</a></h3>
+
+          <div class="row">
+            <div class="col-md-4 col-lg-2"><a class="btn btn-primary btn-lg" href="#">My Button</a><br>
+              <code>.btn.btn-lg</code>
+            </div>
+            <div class="col-md-4 col-lg-2"><a class="btn btn-primary" href="#">My Button</a><br>
+              <code>.btn</code>
+            </div>
+            <div class="col-md-4 col-lg-2"><a class="btn btn-primary btn-sm" href="#">My Button</a><br>
+              <code>.btn.btn-sm</code>
+            </div>
+            <div class="col-md-4 col-lg-3">
+              <div class="btn-group">
+                <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="#">Separated link</a></li>
+                </ul>
+              </div>
+              <br />
+              <code>btn.dropdown-toggle</code>
+            </div>
+            <div class="col-md-4 col-lg-3">
+              <div class="btn-group">
+                <button type="button" class="btn btn-light">Split</button>
+                <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="#">Separated link</a></li>
+                </ul>
+              </div>
+              <br />
+              <code>btn.dropdown-toggle-split</code>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="forms" class="mb-5">
+          <h2>Forms <a class="btn btn-outline-success btn-sm" href="https://getbootstrap.com/docs/5.3/forms/">Docs »</a></h2>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <h3>Input with Button</h3>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Keywords" aria-label="Keywords for search" aria-describedby="button-addon2">
+                <button class="btn btn-primary" type="button" id="button-addon2">Search</button>
+              </div>
+              <div>
+                <code>.input-group</code><br/>
+                <code>&nbsp;input</code><br/>
+                <code>&nbsp;button</code>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <h3>Form select</h3>
+              <select class="form-select" aria-label="Default select example">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+              <div>
+                <code>select.form-select</code><br/>
+                <code>&nbsp;option</code><br/>
+                <code>&nbsp;option</code>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <h3>Form Select disabled</h3>
+              <select class="form-select" aria-label="Disabled select example" disabled>
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+              <div>
+                <code>select.form-select[disabled]</code><br/>
+                <code>&nbsp;option</code><br/>
+                <code>&nbsp;option</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <h3>Checkboxes</h3>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                <label class="form-check-label" for="checkDefault">
+                  Default checkbox
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="checkChecked" checked>
+                <label class="form-check-label" for="checkChecked">
+                  Checked checkbox
+                </label>
+              </div>
+              <div>
+                <code>.form-check</code><br/>
+                <code>&nbsp;input.form-check-input[type="checkbox"]</code><br/>
+                <code>&nbsp;label.form-check-label</code>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <h3>Radio Buttons</h3>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault1">
+                <label class="form-check-label" for="radioDefault1">
+                  Default radio
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault2" checked>
+                <label class="form-check-label" for="radioDefault2">
+                  Default checked radio
+                </label>
+              </div>
+              <div>
+                <code>.form-check</code><br/>
+                <code>&nbsp;input.form-check-input[type="radio"]</code><br/>
+                <code>&nbsp;label.form-check-label</code>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <h3>Switches</h3>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                <label class="form-check-label" for="switchCheckDefault">Default switch checkbox input</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                <label class="form-check-label" for="switchCheckChecked">Checked switch checkbox input</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDisabled" disabled>
+                <label class="form-check-label" for="switchCheckDisabled">Disabled switch checkbox input</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckCheckedDisabled" checked disabled>
+                <label class="form-check-label" for="switchCheckCheckedDisabled">Disabled checked switch checkbox input</label>
+              </div>
+              <div>
+                <code>.form-check.form-switch</code><br/>
+                <code>&nbsp;input.form-check-input[type="checkbox"]</code><br/>
+                <code>&nbsp;label.form-check-label</code>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="cards" class="mb-5">
+          <h2>Cards <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/components/card/">Docs »</a></h2>
+
+          <div class="row">
+            <div class="col-md-5">
+              <div class="card">
+                <img class="card-img-top"
+                  src="https://repository.duke.edu/iiif/ark:/87924/r47944q1d/pct:33,33,33,33/!850,850/0/default.jpg" alt="">
+                <div class="card-body">
+                  <div class="card-title h5">Image Card</div>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                    content.</p>
+                  <a class="btn btn-primary" href="#">Go somewhere</a>
+                </div>
+              </div>
+              <div class="mb-3">
+                <code>.card</code><br>
+                <code>&nbsp;.card-img-top</code><br>
+                <code>&nbsp;.card-body</code>
+              </div>
+              <div class="card">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img class="rounded-start object-fit-cover w-100 h-100" alt="" src="https://repository.duke.edu/iiif/ark:/87924/r47944q1d/pct:33,33,20,40/!850,850/0/default.jpg">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <div class="card-title h5">Horizontal Card</div>
+                      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                      <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <code>.card</code><br>
+                <code>&nbsp;.row.g-0</code><br>
+                <code>&nbsp;&nbsp;.col-*</code>
+              </div>
+              <div class="card text-bg-dark mb-2">
+                <img class="card-img" alt="" src="https://repository.duke.edu/iiif/ark:/87924/r47944q1d/pct:33,33,33,33/!850,850/0/default.jpg">
+                <div class="card-img-overlay">
+                  <div class="card-title h5">Overlay Card</div>
+                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                  <p class="card-text"><small>Last updated 3 mins ago</small></p>
+                </div>
+              </div>
+              <div class="mb-3">
+                <code>.card</code><br>
+                <code>&nbsp;.card-img</code><br>
+                <code>&nbsp;.card-img-overlay</code>
+              </div>
+            </div>
+            <div class="col-md-7">
+              <div class="card mb-2">
+                <div class="card-header">Card With Header</div>
+                <div class="card-body">
+                  <h3 class="card-title">Card Title Here</h3>
+                  <p class="card-text">
+                    With supporting text below as a natural lead-in to additional content.
+                  </p>
+                </div>
+              </div>
+              <div class="mb-3">
+                <code>.card</code><br>
+                <code>&nbsp;.card-header</code><br>
+                <code>&nbsp;.card-body</code>
+              </div>
+              <div class="card text-white bg-primary">
+                <div class="card-header">Primary Card</div>
+                <div class="card-body">
+                  <div class="card-title h5">Primary card title</div>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+              </div>
+              <div class="mb-3">
+                <code>.card.bg-primary</code>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  List Group Card
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">First Item</li>
+                  <li class="list-group-item">Next Item</li>
+                  <li class="list-group-item">Final Item</li>
+                </ul>
+              </div>
+              <div class="mb-3">
+                <code>.card</code><br>
+                <code>&nbsp;.card-header</code><br>
+                <code>&nbsp;.list-group.list-group-flush</code><br>
+                <code>&nbsp;&nbsp;.list-group-item</code>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  Action List Group Card
+                </div>
+                <div class="list-group list-group-flush">
+                  <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                    The current link item
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action">About</a>
+                  <a href="#" class="list-group-item list-group-item-action">Collections</a>
+                  <a href="#" class="list-group-item list-group-item-action">Contact Us</a>
+                  <a href="#" class="list-group-item list-group-item-action disabled" aria-disabled="true">A disabled link item</a>
+                </div>
+              </div>
+              <div class="mb-3">
+                <code>.card</code><br>
+                <code>&nbsp;.card-header</code><br>
+                <code>&nbsp;.list-group.list-group-flush</code><br>
+                <code>&nbsp;&nbsp;.list-group-item.list-group-item-action</code>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="tables" class="mb-5">
+          <h2>Tables <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/content/tables/">Docs »</a></h2>
+
+          <div class="row">
+            <div class="col-md-6">
+              <code>&lt;table class="table"&gt;</code>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column B</th>
+                    <th>Column C</th>
+                    <th>Column D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Value B1</td>
+                    <td>Value C1</td>
+                    <td>Value D1</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Value B2</td>
+                    <td>Value C2</td>
+                    <td>Value D2</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td colspan="2">Value BC3</td>
+                    <td>Value D3</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <code>&lt;table class="table table-striped"&gt;</code>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column B</th>
+                    <th>Column C</th>
+                    <th>Column D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Value B1</td>
+                    <td>Value C1</td>
+                    <td>Value D1</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Value B2</td>
+                    <td>Value C2</td>
+                    <td>Value D2</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td colspan="2">Value BC3</td>
+                    <td>Value D3</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <code>&lt;table class="table table-bordered"&gt;</code>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column B</th>
+                    <th>Column C</th>
+                    <th>Column D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Value B1</td>
+                    <td>Value C1</td>
+                    <td>Value D1</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Value B2</td>
+                    <td>Value C2</td>
+                    <td>Value D2</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td colspan="2">Value BC3</td>
+                    <td>Value D3</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <code>&lt;table class="table table-sm"&gt;</code>
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column B</th>
+                    <th>Column C</th>
+                    <th>Column D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Value B1</td>
+                    <td>Value C1</td>
+                    <td>Value D1</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Value B2</td>
+                    <td>Value C2</td>
+                    <td>Value D2</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td colspan="2">Value BC3</td>
+                    <td>Value D3</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <code>&lt;table class="table table-bordered table-sm table-striped table-hover"&gt;</code>
+              <table class="table table-bordered table-sm table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column B</th>
+                    <th>Column C</th>
+                    <th>Column D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Value B1</td>
+                    <td>Value C1</td>
+                    <td>Value D1</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Value B2</td>
+                    <td>Value C2</td>
+                    <td>Value D2</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td colspan="2">Value BC3</td>
+                    <td>Value D3</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <code>&lt;table class="table table-borderless"&gt;</code>
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column B</th>
+                    <th>Column C</th>
+                    <th>Column D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Value B1</td>
+                    <td>Value C1</td>
+                    <td>Value D1</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Value B2</td>
+                    <td>Value C2</td>
+                    <td>Value D2</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td colspan="2">Value BC3</td>
+                    <td>Value D3</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="alerts" class="mb-5">
+          <h2>Alerts <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/components/alerts/">Docs »</a></h2>
+
+          <div class="mb-4">
+            <code>&lt;div class="alert alert-primary" role="alert"&gt;</code>
+          </div>
+
+          <div class="alert alert-primary" role="alert">
+            A simple primary alert with <a class="alert-link" href="#">an example link</a>. Please ensure the link styles are accessible.
+          </div>
+
+          <div class="alert alert-success" role="alert">
+            A simple success alert with <a class="alert-link" href="#">an example link</a>. Please ensure the link styles are accessible.
+          </div>
+
+          <div class="alert alert-warning" role="alert">
+            A simple warning alert with <a class="alert-link" href="#">an example link</a>. Please ensure the link styles are accessible.
+          </div>
+
+          <div class="alert alert-danger" role="alert">
+            A simple danger alert with <a class="alert-link" href="#">an example link</a>. Please ensure the link styles are accessible.
+          </div>
+
+          <div class="alert alert-info" role="alert">
+            A simple info alert with <a class="alert-link" href="#">an example link</a>. Please ensure the link styles are accessible.
+          </div>
+
+          <div class="alert alert-secondary" role="alert">
+            A simple secondary alert with <a class="alert-link" href="#">an example link</a>. Please ensure the link styles are accessible.
+          </div>
+
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <h3>Warning</h3>
+            A more advanced dismissible warning alert with <a class="alert-link" href="#">an example link</a> and some additional HTML. It might even have a button like this. <a class="btn btn-secondary btn-sm" href="#"><strong>Action</strong></a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="tabs" class="mb-5">
+          <h2>Tabs <a class="btn btn-outline-success btn-sm"
+              href="https://getbootstrap.com/docs/5.3/components/navs/#tabs">Docs »</a></h2>
+
+          <div class="row">
+            <div class="col-sm-7">
+              <h3>Horizontal Nav Tabs</h3>
+              <div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-one" data-bs-toggle="tab" data-bs-target="#tab-one-pane"
+                      type="button" role="tab" aria-controls="tab-one-pane" aria-selected="true">Tab One (Active)</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-two" data-bs-toggle="tab" data-bs-target="#tab-two-pane" type="button"
+                      role="tab" aria-controls="tab-two-pane" aria-selected="false">Tab Two</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-three" data-bs-toggle="tab" data-bs-target="#tab-three-pane" type="button"
+                      role="tab" aria-controls="tab-three-pane" aria-selected="false">Tab Three</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-four" data-bs-toggle="tab" data-bs-target="#tab-four-pane" type="button"
+                      role="tab" aria-controls="tab-four-pane" aria-selected="false" disabled>Tab Four (Disabled)</button>
+                  </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade show active" id="tab-one-pane" role="tabpanel" aria-labelledby="tab-one"
+                    tabindex="0">
+                    <p>Content for tab one.</p>
+                  </div>
+                  <div class="tab-pane fade" id="tab-two-pane" role="tabpanel" aria-labelledby="tab-two" tabindex="0">
+                    <p>Content for tab two.</p>
+                  </div>
+                  <div class="tab-pane fade" id="tab-three-pane" role="tabpanel" aria-labelledby="tab-three" tabindex="0">
+                    <p>Content for tab three.</p>
+                  </div>
+                  <div class="tab-pane fade" id="tab-four-pane" role="tabpanel" aria-labelledby="tab-four" tabindex="0">
+                    <p>Content for tab four.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-5">
+              <h3>Vertical Pill Tabs</h3>
+              <div class="d-flex align-items-start">
+                <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                  <button class="nav-link active" id="v-pills-tab-one" data-bs-toggle="pill" data-bs-target="#v-pills-one"
+                    type="button" role="tab" aria-controls="v-pills-one" aria-selected="true">Tab One (Active)</button>
+                  <button class="nav-link" id="v-pills-tab-two" data-bs-toggle="pill" data-bs-target="#v-pills-two"
+                    type="button" role="tab" aria-controls="v-pills-two" aria-selected="false">Tab Two</button>
+                  <button class="nav-link" id="v-pills-tab-three" data-bs-toggle="pill" data-bs-target="#v-pills-three"
+                    type="button" role="tab" aria-controls="v-pills-three" aria-selected="false">Tab Three</button>
+                  <button class="nav-link" id="v-pills-tab-four" data-bs-toggle="pill" data-bs-target="#v-pills-four"
+                    type="button" role="tab" aria-controls="v-pills-four" aria-selected="false" disabled>Tab (Disabled)</button>
+                </div>
+                <div class="tab-content" id="v-pills-tabContent">
+                  <div class="tab-pane fade show active" id="v-pills-one" role="tabpanel" aria-labelledby="v-pills-tab-one"
+                    tabindex="0"><p>Content for tab one.</p></div>
+                  <div class="tab-pane fade" id="v-pills-two" role="tabpanel" aria-labelledby="v-pills-tab-two"
+                    tabindex="0"><p>Content for tab two.</p></div>
+                  <div class="tab-pane fade" id="v-pills-three" role="tabpanel" aria-labelledby="v-pills-tab-three"
+                    tabindex="0"><p>Content for tab three.</p></div>
+                  <div class="tab-pane fade" id="v-pills-four" role="tabpanel" aria-labelledby="v-pills-tab-four"
+                    tabindex="0"><p>Content for tab four.</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="mb-5">
+
+        <section id="misc" class="mb-5">
+          <h2>Miscellaneous</h2>
+
+          <div class="row">
+            <div class="col-lg-6">
+              <h3>Tooltips <a class="btn btn-outline-success btn-sm"
+                  href="https://getbootstrap.com/docs/5.3/components/tooltips/">Docs »</a></h3>
+              <button class="btn btn-light me-2" data-bs-toggle="tooltip" title="Default tooltip position"
+                type="button">Default Tooltip</button>
+              <button class="btn btn-light" data-bs-placement="right"
+                data-bs-toggle="tooltip" title="Tooltip on right (with data-placement attribute)" type="button">Right Tooltip</button>
+              <div>
+                <code>&lt;button data-bs-toggle="tooltip" title="the tip"&gt;...&lt;/button&gt;</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-5">
+            <div class="col-lg-6">
+              <h3>Accordions <a class="btn btn-outline-success btn-sm"
+                  href="https://getbootstrap.com/docs/5.3/components/accordion/">Docs »</a></h3>
+              <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                      Accordion Item #1
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                      <strong>This is the first item’s accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      Accordion Item #2
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                      <strong>This is the second item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                      Accordion Item #3
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                      <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <h3>Utility Classes <a class="btn btn-outline-success btn-sm"
+                  href="https://getbootstrap.com/docs/4.0/layout/utilities-for-layout/">Docs »</a></h3>
+              <p>Use HTML classes instead of CSS for common layout needs.</p>
+              <p>Example <a href="https://getbootstrap.com/docs/5.3/utilities/spacing/">spacing classes</a>:</p>
+              <ul class="list-unstyled">
+                <li><code>m-0</code> - no margin</li>
+                <li><code>p-0</code> - no padding</li>
+                <li><code>mt-1</code> - a little top margin</li>
+                <li><code>mt-5</code> - a big top margin</li>
+                <li><code>ps-3</code> - some start padding (left in LTR text)</li>
+              </ul>
+              <p>Example <a href="https://getbootstrap.com/docs/5.3/utilities/display/">display classes</a>:</p>
+              <ul class="list-unstyled">
+                <li><code>d-none</code> - don't display</li>
+                <li><code>d-lg-block</code> - display as block for large screens</li>
+                <li><code>d-inline</code> - display inline</li>
+                <li><code>d-none d-xl-block</code> - visible only on xl screens</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-dark py-5" data-bs-theme="dark">
+    <div class="container-xl px-4">
+      <div class="row">
+        <div class="col-6 col-md-3 mb-3">
+          <h2 class="h4">Links</h2>
+          <ul class="list-unstyled no-link-underline">
+            <li><a href="/">Home</a></li>
+            <li><a href="/docs/help">Help</a></li>
+            <li><a href="/docs/resources">Resources</a></li>
+            <li><a href="/feedback.html">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <h2 class="h4">About</h2>
+          <ul class="list-unstyled about-links no-link-underline">
+            <li><a href="/docs/about">Papyri.info</a></li>
+            <li><a href="/docs/apis">APIS</a></li>
+            <li><a href="/docs/ddbdp">DDbDP</a></li>
+            <li><a href="https://aquila.zaw.uni-heidelberg.de/start">HGV</a></li>
+            <li><a href="http://www.trismegistos.org/">Trismegistos</a></li>
+            <li><a href="https://bibpap.be/">BP</a></li>
+            <li><a href="http://epidoc.sourceforge.net/">EpiDoc</a></li>
+          </ul>
+        </div>
+        <div class="d-none d-md-flex col-md-1 justify-content-center">
+          <div class="vr my-auto h-100 bg-light"></div>
+        </div>
+        <div class="d-md-none d-flex">
+          <hr class="border-light w-100"/>
+        </div>
+        <div class="col-12 col-md-5 mb-3">
+          <h2 class="h4 text-light">Produced by</h2>
+          <p class="text-light">The <a href="http://blogs.library.duke.edu/dcthree/">Duke Collaboratory for Classics Computing</a> &amp;<br/>the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    /* Report font styles for body copy */
+    $('#styleguide-body-font').text($('body').css('font-family'));
+    $('#styleguide-body-size').text($('body').css('font-size'));
+    $('#styleguide-body-color').text($('body').css('color'));
+    $('#styleguide-body-lineheight').text($('body').css('line-height'));
+  </script>
+</body>
+</html>
