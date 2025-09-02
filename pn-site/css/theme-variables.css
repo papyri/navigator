@@ -1,6 +1,6 @@
 /* https://getbootstrap.com/docs/5.3/customize/color/ */
 
-:root, [data-bs-theme=light] {
+:root, [data-bs-theme=light], [data-bs-theme=dark] {
   --bs-font-serif: "Noto Serif", serif;
   --bs-font-sans-serif: "Noto Sans", sans-serif;
   --bs-body-font-family: var(--bs-font-serif);
@@ -11,64 +11,69 @@
 
   --bs-primary: #800000;
   --bs-primary-rgb: 128, 0, 0;
+  --bs-primary-text-emphasis: color-mix(in srgb, var(--bs-primary), black 15%);
+  --bs-primary-bg-subtle: color-mix(in srgb, var(--bs-primary), white 90%);
+  --bs-primary-border-subtle: color-mix(in srgb, var(--bs-primary), white 50%);
 
   --bs-light: #f8f6f4;
   --bs-light-rgb: 248, 246, 244;
+  --bs-light-text-emphasis: color-mix(in srgb, var(--bs-light), black 5%);
+  --bs-light-bg-subtle: color-mix(in srgb, var(--bs-light), white 50%);
+  --bs-light-border-subtle: color-mix(in srgb, var(--bs-light), white 50%);
 
   --bs-dark: #262424;
   --bs-dark-rgb: 38, 36, 36;
 
-  --bs-secondary: #807868;
-  --bs-secondary-rgb: 128,120,104;
+  --bs-secondary: #746D5E;
+  --bs-secondary-rgb: 116, 109, 94;
+  --bs-secondary-text-emphasis: color-mix(in srgb, var(--bs-secondary), black 20%);
+  --bs-secondary-bg-subtle: color-mix(in srgb, var(--bs-secondary), white 80%);
+  --bs-secondary-border-subtle: color-mix(in srgb, var(--bs-secondary), white 50%);
 
   --bs-success: #008080;
-  --bs-success-rgb: 0,128,128;
+  --bs-success-rgb: 0, 128, 128;
+  --bs-success-text-emphasis: color-mix(in srgb, var(--bs-success), black 20%);
+  --bs-success-bg-subtle: color-mix(in srgb, var(--bs-success), white 90%);
+  --bs-success-border-subtle: color-mix(in srgb, var(--bs-success), white 50%);
 
-  --bs-warning: #e8c793;
-  --bs-warning-rgb: 232,199,147;
+  --bs-warning: #FFD700;
+  --bs-warning-rgb: 255, 215, 0;
+  --bs-warning-text-emphasis: color-mix(in srgb, var(--bs-warning), black 50%);
+  --bs-warning-bg-subtle: color-mix(in srgb, var(--bs-warning), white 90%);
+  --bs-warning-border-subtle: color-mix(in srgb, var(--bs-warning), white 50%);
 
   --bs-danger: #d53206;
-  --bs-danger-rgb: 213,50,6;
+  --bs-danger-rgb: 213, 50, 6;
+  --bs-danger-text-emphasis: color-mix(in srgb, var(--bs-danger), black 20%);
+  --bs-danger-bg-subtle: color-mix(in srgb, var(--bs-danger), white 80%);
+  --bs-danger-border-subtle: color-mix(in srgb, var(--bs-danger), white 50%);
 
-  --bs-info: #e6edfa;
-  --bs-info-rgb: 230,237,250;
+  --bs-info: var(--bs-link-color);
+  --bs-info-rgb: 0, 76, 204;
+  --bs-info-text-emphasis: color-mix(in srgb, var(--bs-info), black 40%);
+  --bs-info-bg-subtle: color-mix(in srgb, var(--bs-info), white 80%);
+  --bs-info-border-subtle: color-mix(in srgb, var(--bs-info), white 10%);
+
+  --bs-tertiary-bg: var(--bs-light);
 
   --bs-body-color: #000000;
-  --bs-body-bg: #f8f6f4;
-  --bs-table-bg: var(--bs-white) !important;
-}
+  --bs-body-bg: white;
 
-:root {
-  /* Establish some darker and lighter variants */
-  /* of the main palette colors */
-  --papyri-primary-darker: color-mix(in srgb, var(--bs-primary), black 15%) !important;
-  --papyri-primary-lighter: color-mix(in srgb, var(--bs-primary), white 10%) !important;
+  --bs-link-darker: color-mix(in srgb, var(--bs-link-color), black 10%) !important;
+  --bs-link-lighter: color-mix(in srgb, var(--bs-link-color), white 10%) !important;
 
-  --papyri-secondary-darker: color-mix(in srgb, var(--bs-secondary), black 15%) !important;
-  --papyri-secondary-lighter: color-mix(in srgb, var(--bs-secondary), white 10%) !important;
-
-  --papyri-success-darker: color-mix(in srgb, var(--bs-success), black 10%) !important;
-  --papyri-success-lighter: color-mix(in srgb, var(--bs-success), white 10%) !important;
-
-
-  --papyri-info-darker: color-mix(in srgb, var(--bs-info), black 10%) !important;
-  --papyri-info-lighter: color-mix(in srgb, var(--bs-info), white 10%) !important;
-
-  --papyri-warning-darker: color-mix(in srgb, var(--bs-warning), black 10%) !important;
-  --papyri-warning-lighter: color-mix(in srgb, var(--bs-warning), white 10%) !important;
-
-  --papyri-danger-darker: color-mix(in srgb, var(--bs-danger), black 10%) !important;
-  --papyri-danger-lighter: color-mix(in srgb, var(--bs-danger), white 10%) !important;
-
-  --papyri-light-darker: color-mix(in srgb, var(--bs-light), black 5%) !important;
-  --papyri-light-lighter: color-mix(in srgb, var(--bs-light), white 10%) !important;
-
-  --papyri-link-darker: color-mix(in srgb, var(--bs-link-color), black 10%) !important;
-  --papyri-link-lighter: color-mix(in srgb, var(--bs-link-color), white 10%) !important;
-
-  --bs-link-hover-color: var(--papyri-link-lighter);
+  --bs-link-hover-color: var(--bs-link-lighter);
   --bs-link-hover-color-rgb: 26, 102, 214;
   --bs-heading-color: var(--bs-dark);
+}
+
+[data-bs-theme=dark] {
+  --bs-body-color: var(--bs-light);
+  --bs-heading-color: var(--bs-light);
+  --bs-link-color: var(--bs-white);
+  --bs-link-color-rgb: 255, 255, 255;
+  --bs-link-hover-color: var(--bs-white);
+  --bs-link-hover-color-rgb: 255, 255, 255;
 }
 
 /* Some BS5 elements do not yet support CSS variables */
@@ -78,10 +83,10 @@
   --bs-btn-bg: var(--bs-primary);
   --bs-btn-border-color: var(--bs-primary);
   --bs-btn-hover-color: var(--bs-white);
-  --bs-btn-hover-bg: var(--papyri-primary-darker);
-  --bs-btn-hover-border-color: var(--papyri-primary-darker);
-  --bs-btn-active-bg: var(--papyri-primary-darker);
-  --bs-btn-active-border-color: var(--papyri-primary-darker);
+  --bs-btn-hover-bg: var(--bs-primary-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-primary-text-emphasis);
+  --bs-btn-active-bg: var(--bs-primary-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-primary-text-emphasis);
 }
 
 .btn-outline-primary {
@@ -91,48 +96,135 @@
   --bs-btn-hover-color: var(--bs-white);
   --bs-btn-hover-bg: var(--bs-primary);
   --bs-btn-hover-border-color: var(--bs-primary);
-  --bs-btn-active-bg: var(--papyri-primary-darker);
-  --bs-btn-active-border-color: var(--papyri-primary-darker);
+  --bs-btn-active-bg: var(--bs-primary-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-primary-text-emphasis);
 }
 
 .btn-secondary {
   --bs-btn-bg: var(--bs-secondary);
   --bs-btn-border-color: var(--bs-secondary);
-  --bs-btn-hover-bg: var(--papyri-secondary-darker);
-  --bs-btn-hover-border-color: var(--papyri-secondary-darker);
+  --bs-btn-hover-bg: var(--bs-secondary-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-secondary-text-emphasis);
+  --bs-btn-active-bg: var(--bs-secondary-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-secondary-text-emphasis);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--bs-secondary);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-secondary);
+  --bs-btn-hover-border-color: var(--bs-secondary);
+  --bs-btn-active-bg: var(--bs-secondary-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-secondary-text-emphasis);
 }
 
 .btn-success {
   --bs-btn-bg: var(--bs-success);
-  --bs-btn-border-color: var(--papyri-success-darker);
-  --bs-btn-hover-bg: var(--papyri-success-darker);
-  --bs-btn-hover-border-color: var(--papyri-success-darker);
+  --bs-btn-border-color: var(--bs-success);
+  --bs-btn-hover-bg: var(--bs-success-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-success-text-emphasis);
+  --bs-btn-active-bg: var(--bs-success-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-success-text-emphasis);
+}
+
+.btn-outline-success {
+  --bs-btn-color: var(--bs-success);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-success);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-success);
+  --bs-btn-hover-border-color: var(--bs-success);
+  --bs-btn-active-bg: var(--bs-success-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-success-text-emphasis);
 }
 
 .btn-info {
+  --bs-btn-color: var(--bs-white);
   --bs-btn-bg: var(--bs-info);
-  --bs-btn-border-color: var(--papyri-info-darker);
-  --bs-btn-hover-bg: var(--papyri-info-darker);
-  --bs-btn-hover-border-color: var(--papyri-info-darker);
+  --bs-btn-border-color: var(--bs-info);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-info-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-info-text-emphasis);
+  --bs-btn-active-color: var(--bs-white);
+  --bs-btn-active-bg: var(--bs-info-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-info-text-emphasis);
+}
+
+.btn-outline-info {
+  --bs-btn-color: var(--bs-info);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-info);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-info);
+  --bs-btn-hover-border-color: var(--bs-info);
+  --bs-btn-active-color: var(--bs-white);
+  --bs-btn-active-bg: var(--bs-info-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-info-text-emphasis);
 }
 
 .btn-warning {
   --bs-btn-bg: var(--bs-warning);
-  --bs-btn-border-color: var(--papyri-warning-darker);
-  --bs-btn-hover-bg: var(--papyri-warning-darker);
-  --bs-btn-hover-border-color: var(--papyri-warning-darker);
+  --bs-btn-border-color: var(--bs-warning);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-warning-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-warning-text-emphasis);
+  --bs-btn-active-color: var(--bs-white);
+  --bs-btn-active-bg: var(--bs-warning-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-warning-text-emphasis);
+}
+
+.btn-outline-warning {
+  --bs-btn-color: var(--bs-warning-text-emphasis);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-warning);
+  --bs-btn-hover-color: var(--bs-dark);
+  --bs-btn-hover-bg: var(--bs-warning);
+  --bs-btn-hover-border-color: var(--bs-warning);
+  --bs-btn-active-color: var(--bs-white);
+  --bs-btn-active-bg: var(--bs-warning-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-warning-text-emphasis);
 }
 
 .btn-danger {
   --bs-btn-bg: var(--bs-danger);
-  --bs-btn-border-color: var(--papyri-danger-darker);
-  --bs-btn-hover-bg: var(--papyri-danger-darker);
-  --bs-btn-hover-border-color: var(--papyri-danger-darker);
+  --bs-btn-border-color: var(--bs-danger);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-danger-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-danger-text-emphasis);
+  --bs-btn-active-color: var(--bs-white);
+  --bs-btn-active-bg: var(--bs-danger-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-danger-text-emphasis);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--bs-danger);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-danger);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: var(--bs-danger);
+  --bs-btn-hover-border-color: var(--bs-danger);
+  --bs-btn-active-bg: var(--bs-danger-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-danger-text-emphasis);
 }
 
 .btn-light {
   --bs-btn-bg: var(--bs-light);
-  --bs-btn-border-color: var(--papyri-light-darker);
-  --bs-btn-hover-bg: var(--papyri-light-darker);
-  --bs-btn-hover-border-color: var(--papyri-light-darker);
+  --bs-btn-border-color: var(--bs-light-text-emphasis);
+  --bs-btn-hover-bg: var(--bs-light-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-light-text-emphasis);
+  --bs-btn-active-bg: var(--bs-light-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-light-text-emphasis);
+}
+
+.btn-outline-light {
+  --bs-btn-color: var(--bs-dark);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-light-text-emphasis);
+  --bs-btn-hover-color: var(--bs-dark);
+  --bs-btn-hover-bg: var(--bs-light-text-emphasis);
+  --bs-btn-hover-border-color: var(--bs-light-text-emphasis);
+  --bs-btn-active-bg: var(--bs-light-text-emphasis);
+  --bs-btn-active-border-color: var(--bs-light-text-emphasis);
 }
