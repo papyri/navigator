@@ -1,148 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>
-   	   PN Search
-    </title>
-    <link rel="stylesheet" href="/css/yui/reset-fonts-grids.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-1.14.1.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="/css/custom-theme/jquery-ui-dul-theme-shim.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <script src="/js/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/jquery-ui-1.14.1.min.js" type="text/javascript" charset="utf-8"></script>
-    <!--<link rel="stylesheet" href="/css/autocomplete/autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">-->
-      <!--[if IE]>
-    <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <![endif]-->
-    <!--<script src="/js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Papyri.info - Search Bibliography</title>
 
-    <script src="/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-      var _paq = window._paq = window._paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//analytics.lib.duke.edu/";
-        _paq.push(['setTrackerUrl', u+'matomo.php']);
-        _paq.push(['setSiteId', '34']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="d">
-      <div id="hd">
-        <h1>Papyri.info</h1>
-        <h2 id="login"><a href="/editor/user/signin">sign in</a></h2>
-      </div>
-      <div id="bd">
-        <div class="nav">
-          <!-- left nav -->
-          <form method="get" accept-charset="utf-8">
-            <ul class="nav">
-              <li>Browse: </li>
-              <li>
-                <a href="/browse/editions/">Editions</a>
-              </li>
-              <li>
-                <a href="/browse/apis/">APIS</a>
-              </li>
-              <li>
-                <a href="/authors">Authors</a>
-              </li>
-              <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
-              </li>
-              <li>or Search:</li>
-              <li>
-                <a href="/search">Data</a>
-              </li>
-              <li class="current">
-                <a href="/bibliosearch">Bibliography</a>
-              </li>
-            </ul>
-          </form>
-        </div>
-	<div id="main">
-	  <div class="content search">
-	    <h2>Search Bibliography</h2>
-	    <form name="bibsearch" method="get" action="/bibliosearch" id="bibsearch">
-         <div title="Performs a search of bibliographic records.">
-           <p class="ui-corner-all"><input type="text" name="q" size="50" maxlength="250" id="keyword"> <input type="submit" value="Search" id="search" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"></p>
-           <p>To search anywhere within a record enter the word or words in the search box, e.g.:
-           <span class="code">Bowman</span> or <span class="code">Bowman land</span> (space between words = 'and').</p>
-           <p>To restrict searches to specific fields enter, e.g.: <span class="code">author:Hombert title:bibliographie
-             date:1932</span>. A search <span class="code">title:"land lease"</span> finds all records with the phrase "land lease" or
-             "land-lease" in the title. A search for <span class="code">title:(land lease)</span> finds all records with the the
-           word "land" and the word "lease" in the title.</p>
-           <p>Such search constraints work with the following fields: <span class="code">author:</span>,
-              <span class="code">title:</span>, <span class="code">date:</span>, <span class="code">note:</span>,
-              <span class="code">index:</span>, <span class="code">editor:</span>, <span class="code">pubPlace:</span>,
-              <span class="code">original:</span> (original = the entire original BP record).</p>
-           <p>Accents are ignored, so that etudes finds études. Wildcard searches are possible, so that ptolem* will find
-              Ptolemy, Ptolemies, Ptolémées vel sim.</p>
-         </div>
-      </form>
-	    <!-- Results -->
+  <!-- https://getbootstrap.com/docs/5.3/getting-started/download/#cdn-via-jsdelivr -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/theme-variables.css" type="text/css">
+  <link rel="stylesheet" href="/css/main.css" type="text/css">
+  <!-- TODO: determine which styles from master.css need to be ported -->
+  <!--       over to main.css (if any) -->
+  <!-- <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"> -->
+
+  <script src="/js/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+
+  <!-- TODO: determine how much of init.js can be eliminated -->
+  <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
+
+  <script>
+    var _paq = window._paq = window._paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="//analytics.lib.duke.edu/";
+      _paq.push(['setTrackerUrl', u+'matomo.php']);
+      _paq.push(['setSiteId', '34']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+</head>
+
+<body onload="init()">
+  <nav id="skip-links" class="visually-hidden-focusable bg-dark" data-bs-theme="dark" aria-label="Skip link navigation">
+    <div class="container-xl px-4">
+      <a href="#main" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to main content</a>
+      <!-- TODO: Add more skip links in other views (e.g., search pages) -->
+      <!-- as needed -->
+      <!--
+      <a href="#search" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to search</a>
+      -->
     </div>
-	</div>
-      </div>
-      <div class="footer">
-        <div id="ft">
-          <div id="footer">
-            <div id="footer-left-col">
-              <div id="secondary-nav">
-                <ul class="nav">
-                  <li><a href="/" title="Project Home">Home</a></li>
-                  <li><a href="/docs/help" title="Site help">Help</a></li>
-                  <!-- following two links SoSOL only -->
-                  <!-- <li><a href="">Leiden<sup>+</sup> Text Help</a></li> -->
-                  <!-- <li><a href="">Leiden<sup>+</sup> Translation Help</a></li> -->
-                  <!-- insert link for SoSOL admin email here -->
-                  <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
-                  <li><a href="/resources.html" title="Papyrological tools and resources">Resources</a></li>
-                  <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
-                  <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
-                </ul>
-              </div>
-              <div class="spacer"></div>
+  </nav>
+
+  <header id="masthead" class="bg-primary text-white position-relative">
+    <nav id="masthead-nav" class="navbar flex-wrap navbar-expand-md" data-bs-theme="dark" aria-label="Masthead & user account navigation">
+      <div class="container-xl px-4">
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <a href="/" class="navbar-brand">Papyri.info</a>
+          <div class="d-flex align-items-center">
+            <div id="login">
+              <a href="/editor/user/signin" class="btn btn-link text-decoration-none">Sign In</a>
             </div>
-            <div id="footer-right-col">
-              <p>Produced by</p>
-              <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a>
-                <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
-                Ancient World</a></p>
-              <div id="about-nav">
-                <ul class="nav">
-                  <li><a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a></li>
-                  <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
-                  <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
-                    der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
-                  <li><a href="/docs/ddbdp" title="Duke Databank of Documentary Papyri - Home">DDbDP</a></li>
-                  <li><a href="/docs/ddbdp">APIS</a></li>
-                  <li class="last-child"><a href="/about.html" title="Papyri.info">Papyri.info</a></li>
-                </ul>
-                <h3 id="about-hdr">About:</h3>
-              </div>
-            </div>
-            <div class="spacer"></div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
           </div>
         </div>
+      </div>
+    </nav>
+
+    <nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search & browse navigation">
+      <div class="container-xl px-4">
+        <div id="mainNavbar" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
+          <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" tabindex="-1">Browse</a></li>
+          <li class="nav-item"><a class="nav-link" href="/browse/editions/">Editions</a></li>
+          <li class="nav-item"><a class="nav-link" href="/browse/apis/">APIS</a></li>
+          <li class="nav-item"><a class="nav-link" href="/authors">Authors</a></li>
+          <li class="nav-item position-relative">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" role="button">TM Number</a>
+
+            <div class="bg-primary rounded-bottom p-2 mt-0 border-0 collapse position-absolute dropdown-menu" data-bs-theme="light" id="tmSearch">
+              <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value; return false;">
+                <div class="input-group">
+                  <input id="tmid" type="text" class="form-control bg-white" placeholder="" aria-label="TM Number">
+                  <button class="btn btn-light" type="submit" id="tmgo">Go</button>
+                </div>
+              </form>
+            </div>
+          </li>
+
+          <li class="nav-item"><a class="nav-link disabled nav-category ms-md-5 mt-3 mt-md-0" href="#" tabindex="-1">Search</a></li>
+          <li class="nav-item"><a class="nav-link" href="/search">Data</a></li>
+          <li class="nav-item"><a class="nav-link" href="/bibliosearch">Bibliography</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="container-fluid p-0 flex-grow-1 bg-light d-flex flex-column">
+    <div class="container-xl px-4 py-4 my-0 bg-white flex-grow-1">
+      <div class="content">
+        <h1>Search Bibliography</h1>
+        <div class="content search">
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+              <form name="bibsearch" method="get" action="/bibliosearch" id="bibsearch">
+                <div class="input-group">
+                  <input type="text" name="q" id="keyword" class="form-control" aria-label="Keywords for searching bibliographic records">
+                  <button class="btn btn-primary" type="submit" id="search">Search</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div>
+            <p>
+              To search anywhere within a record enter the word or words in the search box, e.g.: <code>Bowman</code> or <code>Bowman land</code> (space between words = 'and').
+            </p>
+            <p>
+              To restrict searches to specific fields enter, e.g.: <code>author:Hombert title:bibliographie date:1932</code>. A search <code>title:"land lease"</code> finds all records with the phrase <code>"land lease"</code> or <code>"land-lease"</code> in the title. A search for <code>title:(land lease)</code> finds all records with the the word <code>"land"</code> and the word <code>"lease"</code> in the title.
+            </p>
+            <p>
+              Such search constraints work with the following fields: <code>author:</code>, <code>title:</code>, <code>date:</code>, <code>note:</code>, <code>index:</code>, <code>editor:</code>, <code>pubPlace:</code>, <code>original:</code> (original = the entire original BP record).
+            </p>
+            <p>
+              Accents are ignored, so that <code>etudes</code> finds <code>études</code>. Wildcard searches are possible, so that <code>ptoleme*</code> will find <code>Ptolemy</code>, <code>Ptolemies</code>, <code>Ptolémées vel sim</code>.
+            </p>
+          </div>
+
+          <!-- Results -->
         </div>
+      </div>
     </div>
-    <script type="text/javascript" charset="utf-8">
-      jQuery("div#hd h1").click(function() {window.location = "/"});
-      jQuery("a.button").button();
-      jQuery("#tmgo").button();
-      jQuery("#search").button();
-      jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").hover(function() {
-        jQuery(this).css('background-color', '#F8F6F4');
-      }, function() {
-        jQuery(this).css('background-color', 'transparent');
-      });
-      init();
-    </script>
-  </body>
+  </main>
+
+  <footer class="bg-dark py-5" data-bs-theme="dark">
+    <div class="container-xl px-4">
+      <div class="row">
+        <div class="col-6 col-md-3 mb-3">
+          <h2 class="h4">Links</h2>
+          <ul class="list-unstyled no-link-underline">
+            <li><a href="/">Home</a></li>
+            <li><a href="/docs/help">Help</a></li>
+            <li><a href="/docs/resources">Resources</a></li>
+            <li><a href="/feedback.html">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <h2 class="h4">About</h2>
+          <ul class="list-unstyled about-links no-link-underline">
+            <li><a href="/docs/about">Papyri.info</a></li>
+            <li><a href="/docs/apis">APIS</a></li>
+            <li><a href="/docs/ddbdp">DDbDP</a></li>
+            <li><a href="https://aquila.zaw.uni-heidelberg.de/start">HGV</a></li>
+            <li><a href="http://www.trismegistos.org/">Trismegistos</a></li>
+            <li><a href="https://bibpap.be/">BP</a></li>
+            <li><a href="http://epidoc.sourceforge.net/">EpiDoc</a></li>
+          </ul>
+        </div>
+        <div class="d-none d-md-flex col-md-1 justify-content-center">
+          <div class="vr my-auto h-100 bg-light"></div>
+        </div>
+        <div class="d-md-none d-flex">
+          <hr class="border-light w-100"/>
+        </div>
+        <div class="col-12 col-md-5 mb-3">
+          <h2 class="h4 text-light">Produced by</h2>
+          <p class="text-light">The <a href="http://blogs.library.duke.edu/dcthree/">Duke Collaboratory for Classics Computing</a> &amp;<br/>the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
 </html>

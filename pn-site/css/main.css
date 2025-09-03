@@ -1,3 +1,6 @@
+/* ------------------- */
+/* Main Page Structure */
+/* ------------------- */
 body {
   /* Ensure the footer is always at the bottom */
   display: flex;
@@ -6,7 +9,7 @@ body {
 }
 
 .bg-primary-darker {
-  background-color: var(--papyri-primary-darker) !important;
+  background-color: var(--bs-primary-text-emphasis);
 }
 
 #masthead::before {
@@ -38,18 +41,10 @@ body {
   font-weight: 500;
 }
 
-#primary-nav {
-  background-color: var(--papyri-primary-darker);
-}
-
 .nav-category {
   font-family: var(--bs-font-sans-serif);
   color: white;
   font-weight: 600;
-}
-
-footer li a {
-  text-decoration: none;
 }
 
 footer ul.about-links {
@@ -61,6 +56,104 @@ footer ul.about-links {
   }
 }
 
+/* ------------- */
+/* Headings      */
+/* ------------- */
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
 h1 {
   color: var(--bs-primary);
+}
+
+h2 {
+  color: var(--bs-success);
+}
+
+h3 {
+  color: var(--bs-secondary);
+}
+
+/* Improve spacing below elements that precede headings */
+*:has(+ h1),*:has(+ h2),*:has(+ h3),*:has(+ h4),*:has(+ h5),*:has(+ h6) {
+  margin-bottom: 2rem;
+}
+
+/* ----------------- */
+/* Misc Typography   */
+/* ----------------- */
+pre code {
+  color: var(--bs-code-color);
+}
+
+/* ------------- */
+/* Links         */
+/* ------------- */
+
+a {
+  text-underline-offset: 0.125em;
+}
+
+.no-link-underline a:not(:hover) {
+  text-decoration: none;
+}
+
+/* ------------- */
+/* Lists         */
+/* ------------- */
+.list-group {
+  --bs-list-group-action-color: var(--bs-body-color);
+  --bs-list-group-active-bg: var(--bs-primary);
+  --bs-list-group-active-border-color: var(--bs-list-group-active-bg);
+}
+
+.columns-2 {
+  column-count: 2;
+  column-gap: 1.5rem;
+}
+
+.columns-3 {
+  column-count: 3;
+  column-gap: 1.5rem;
+}
+
+.columns-4 {
+  column-count: 4;
+  column-gap: 1.5rem;
+}
+
+.list-outdent {
+  li {
+    text-indent: -1.2rem;
+    padding-left: 1.2rem;
+  }
+}
+
+/* ------------- */
+/* Forms         */
+/* ------------- */
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+/* ------------- */
+/* Accordions    */
+/* ------------- */
+.accordion {
+  --bs-accordion-btn-bg: var(--bs-light);
+  --bs-accordion-active-bg: var(--bs-secondary);
+  --bs-accordion-active-color: var(--bs-white);
+  --bs-accordion-active-border-color: var(--bs-secondary);
+  --bs-accordion-btn-active-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708'/></svg>")
+}
+
+/* ------------- */
+/* Navs          */
+/* ------------- */
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--bs-link-color);
 }
