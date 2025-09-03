@@ -93,7 +93,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlGraph</param-name>
-            <param-value>http://papyri.info/graph</param-value>
+            <param-value>https://papyri.info/graph</param-value>
         </init-param>
         <init-param>
             <param-name>browseServletPath</param-name>

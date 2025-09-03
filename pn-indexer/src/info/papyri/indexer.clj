@@ -1089,7 +1089,7 @@
 (defn -index
   "Runs the main PN indexing process."
   []
-  (System/setProperty "solr.cloud.client.stallTime" "100000") ;; 100 seconds
+  (System/setProperty "solr.cloud.client.stallTime" "1000000") ;; 1000 seconds
   (let [c (.build (Http2SolrClient$Builder.))]
     (dosync (ref-set solr
       (let [c (.build (Http2SolrClient$Builder.))
@@ -1106,7 +1106,6 @@
         (map (fn [x]
             (fn []
         (when (not (.startsWith (first x) "http"))
-          (println x)
           (transform (first x)
                 (list (second x) (nth x 2) (nth x 7) (nth x 10)) ;; collection, related, images, translations
                 (dochandler) @solrtemplates)))) @text)]

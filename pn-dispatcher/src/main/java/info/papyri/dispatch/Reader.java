@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 @WebServlet(name = "Reader", urlPatterns = {"/reader"})
 public class Reader extends HttpServlet {
-  private static final String GRAPH = "http://papyri.info/graph";
+  private static final String GRAPH = "https://papyri.info/graph";
   private String sparqlServer;
   private String xmlPath = "";
   private String htmlPath = "";
