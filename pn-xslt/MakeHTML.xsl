@@ -191,7 +191,6 @@
           <script src="{$jsbase}/imageviewer.js" type="text/javascript" charset="utf-8"></script>
         </xsl:if>
         <script src="{$jsbase}/init.js" type="text/javascript" charset="utf-8"></script>
-        <script src="{$jsbase}/titledate.js" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$analytics='yes'">
           <script>
             var _paq = window._paq = window._paq || [];
@@ -236,78 +235,104 @@
 
         <main id="main" class="container-fluid p-0 flex-grow-1 bg-light d-flex flex-column">
           <div class="container-xl px-4 py-4 my-0 bg-white flex-grow-1">
-            <div class="content ui-corner-all">
-              <h3 style="text-align:center">
+            <div class="content">
+              <h1>
                 <xsl:call-template name="get-references"/>
-              </h3>
+              </h1>
               <xsl:if test="$hgv or $apis or $dclp">
-                <h4 style="text-align:center" id="titledate"></h4>
+                <h2 id="titledate"></h2>
               </xsl:if>
-              <div id="controls" class="ui-widget">
+              <div id="controls" class="d-flex flex-wrap align-items-center bg-light p-3 mb-4">
                 <xsl:if test="$hgv or $apis or $dclp">
-                  <div id="metadatacontrols" class="ui-widget-content ui-corner-all">
-                    <label for="mdt">metadata</label>
-                    <input type="checkbox" name="metadata" id="mdt" checked="checked"/>
-                    <br/>
-                    <xsl:if test="$hgv">
-                      <label for="hgvm">HGV data</label>
-                      <input type="checkbox" name="hgv" id="hgvm" checked="checked"/>
-                    </xsl:if>
-                    <xsl:if test="$tm">
-                      <label for="tmm">TM data</label>
-                      <input type="checkbox" name="tm" id="tmm" checked="checked"/>
-                    </xsl:if>
-                    <xsl:if test="$apis">
-                      <label for="apism">APIS catalog record</label>
-                      <input type="checkbox" name="apis" id="apism" checked="checked"/>
-                    </xsl:if>
-                    <xsl:if test="$dclp">
-                      <label for="dclpm">DCLP data</label>
-                      <input type="checkbox" name="dclp" id="dclpm" checked="checked"/>
-                    </xsl:if>
+                  <div id="metadatacontrols" class="me-3">
+                    <div class="dropdown">
+                      <div class="form-check form-switch d-inline-block">
+                        <input class="form-check-input" type="checkbox" name="metadata" id="mdt" checked="checked"/>
+                        <label class="form-check-label" for="mdt">metadata</label>
+                      </div>
+                      <button class="btn btn-sm btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Toggle metadata sections"></button>
+                      <div class="dropdown-menu p-2">
+                        <xsl:if test="$hgv">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="hgv" id="hgvm" checked="checked"/>
+                            <label class="form-check-label" for="hgvm">HGV data</label>
+                          </div>
+                        </xsl:if>
+                        <xsl:if test="$tm">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="tm" id="tmm" checked="checked"/>
+                            <label class="form-check-label" for="tmm">TM data</label>
+                          </div>
+                        </xsl:if>
+                        <xsl:if test="$apis">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="apis" id="apism" checked="checked"/>
+                            <label class="form-check-label" for="apism">APIS catalog record</label>
+                          </div>
+                        </xsl:if>
+                        <xsl:if test="$dclp">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="dclp" id="dclpm" checked="checked"/>
+                            <label class="form-check-label" for="dclpm">DCLP data</label>
+                          </div>
+                        </xsl:if>
+                      </div>
+                    </div>
                   </div>
                 </xsl:if>
                 <xsl:if test="$ddbdp or $image or $translations or $dclp">
-                  <div id="textcontrols" class="ui-widget-content ui-corner-all">
-                    <label for="txt">text</label>
-                    <input type="checkbox" name="text" id="txt" checked="checked"/>
-                    <br/>
-                    <xsl:if test="$ddbdp or $dclp">
-                      <label for="tcpt">transcription</label>
-                      <input type="checkbox" name="transcription" id="tcpt" checked="checked"/>
-                    </xsl:if>
-                    <xsl:if test="$image">
-                      <label for="img">images</label>
-                      <input type="checkbox" name="image" id="img" checked="checked"/>
-                    </xsl:if>
-                    <xsl:if test="$translations">
-                      <label for="tslt">translation</label>
-                      <input type="checkbox" name="translation" id="tslt" checked="checked"/>
-                    </xsl:if>
+                  <div id="textcontrols" class="me-3">
+                    <div class="dropdown">
+                      <div class="form-check form-switch d-inline-block">
+                        <input class="form-check-input" type="checkbox" name="text" id="txt" checked="checked"/>
+                        <label class="form-check-label" for="txt">text</label>
+                      </div>
+                      <button class="btn btn-sm btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Toggle text sections"></button>
+                      <div class="dropdown-menu p-2">
+                        <xsl:if test="$ddbdp or $dclp">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="transcription" id="tcpt" checked="checked"/>
+                            <label class="form-check-label" for="tcpt">transcription</label>
+                          </div>
+                        </xsl:if>
+                        <xsl:if test="$image">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="image" id="img" checked="checked"/>
+                            <label class="form-check-label" for="img">images</label>
+                          </div>
+                        </xsl:if>
+                        <xsl:if test="$translations">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="translation" id="tslt" checked="checked"/>
+                            <label class="form-check-label" for="tslt">translation</label>
+                          </div>
+                        </xsl:if>
+                      </div>
+                    </div>
                   </div>
                 </xsl:if>
                 <!-- todo: add dclp handling here, similar to what's below for other collections -->
                 <xsl:if test="$current">
-                  <div id="editthis" class="ui-widget-content ui-corner-all">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/current/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                  <div id="editthis" class="me-3">
+                    <a href="/editor/publications/create_from_identifier/papyri.info/current/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$historical">
-                  <div id="editthis" class="ui-widget-content ui-corner-all">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                  <div id="editthis" class="me-3">
+                    <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$hgv and not($current)">
-                  <div id="editthis" class="ui-widget-content ui-corner-all">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow">open in editor</a>
+                  <div id="editthis" class="me-3">
+                    <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$apis and not($dclp or $ddbdp or $hgv)">
-                  <div id="editthis" class="ui-widget-content ui-corner-all">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow">open in editor</a>
+                  <div id="editthis">
+                    <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
-                <div id="canonical-uri" class="ui-widget-content ui-corner-all">
+                <div id="canonical-uri" class="me-3">
                   <span id="canonical-uri-label">Canonical URI: </span>
                   <span id="canonical-uri-value">
                     <a href="{$selfUrl}">
@@ -361,7 +386,7 @@
                     <xsl:call-template name="biblio"/>
                   </div>
                 </xsl:if>
-                <div class="text">
+                <div class="text row">
                   <xsl:apply-templates select="/t:TEI" mode="text">
                     <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                     <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
@@ -491,18 +516,20 @@
   </xsl:template>
 
   <xsl:template name="translations">
-    <xsl:for-each select="pi:get-docs(tokenize($translations), 'xml')">
-      <xsl:sort select="number(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '-'))"/>
-      <div class="translation data">
-        <h2><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="/t:TEI/t:teiHeader//t:langUsage/t:language[@ident = //t:body/t:div/@xml:lang]"/>)
-          [<a href="/translation/{/t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source">xml</a>]</h2>
-        <div lang="{@xml:lang}">
-          <xsl:apply-templates>
-            <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
-          </xsl:apply-templates>
+    <div class="translations col-12 col-lg-6">
+      <xsl:for-each select="pi:get-docs(tokenize($translations), 'xml')">
+        <xsl:sort select="number(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '-'))"/>
+        <div class="translation data">
+          <h2><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="/t:TEI/t:teiHeader//t:langUsage/t:language[@ident = //t:body/t:div/@xml:lang]"/>)
+            <a class="btn btn-link fw-semibold text-decoration-none" href="/translation/{/t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
+          <div lang="{@xml:lang}">
+            <xsl:apply-templates>
+              <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+            </xsl:apply-templates>
+          </div>
         </div>
-      </div>
-    </xsl:for-each>
+      </xsl:for-each>
+    </div>
   </xsl:template>
 
   <xsl:function name="pi:get-toc">
@@ -530,13 +557,13 @@
         <xsl:otherwise>DDbDP</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <div class="transcription data">
+    <div class="transcription data col-12 col-lg-6">
       <xsl:choose>
         <xsl:when test="$type = 'DCLP'">
-          <h2>DCLP transcription [<a href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source">xml</a>]</h2>
+          <h2>DCLP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source"><i class="bi bi-xml"></i>xml</a></h2>
         </xsl:when>
         <xsl:otherwise>
-          <h2>DDbDP transcription [<a href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source">xml</a>]</h2></xsl:otherwise></xsl:choose>
+          <h2>DDbDP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2></xsl:otherwise></xsl:choose>
       <xsl:variable name="text">
         <xsl:choose>
           <xsl:when test="$type = 'DCLP'">
@@ -548,43 +575,91 @@
       </xsl:variable>
       <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
       <xsl:apply-templates select="$text" mode="sqbrackets"/>
-      <div id="history">
-        <div id="history-headers">
-          <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>;
-            (<xsl:choose>
-              <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']"><a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp'])}" target="_blank">detailed</a></xsl:when>
-              <xsl:otherwise><a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a></xsl:otherwise></xsl:choose>)</h3>
+
+      <h2>History</h2>
+      <div id="history" class="mb-4">
+        <div class="accordion mb-2">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editorial-history-panel" aria-expanded="false" aria-controls="editorial-history-panel">
+                      Editorial History
+              </button>
+            </h3>
+            <div id="editorial-history-panel" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                <ul id="edit-history-list">
+                  <xsl:choose>
+                    <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+                    <xsl:when test="count(t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]) &gt; 0">
+                      <xsl:for-each select="t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]">
+                        <li>
+                          <xsl:value-of select="@when"/>
+                          [<a href="{@who}">
+                            <xsl:choose>
+                              <xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </a>]:
+                          <xsl:apply-templates/>
+                        </li>
+                      </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <li>No editorial history recorded.</li>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#all-history-panel" aria-expanded="false" aria-controls="all-history-panel">
+                      All History
+              </button>
+            </h3>
+            <div id="all-history-panel" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                <ul id="all-history-list">
+                  <xsl:choose>
+                    <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
+                    <xsl:when test="count(t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')])">
+                      <xsl:for-each select="t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')]">
+                        <li>
+                          <xsl:value-of select="@when"/>
+                          [<a href="{@who}">
+                            <xsl:choose>
+                              <xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </a>]:
+                          <xsl:value-of select="."/>
+                        </li>
+                      </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <li>No further history recorded.</li>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- closing #history-headers -->
-        <div id="history-lists">
-          <ul id="edit-history-list" style="display:none;">
-            <xsl:choose>
-              <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
-              <xsl:when test="count(t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]) &gt; 0">
-                <xsl:for-each select="t:teiHeader/t:revisionDesc/t:change[contains(@when, 'T')]">
-                  <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:choose><xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when><xsl:otherwise><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/></xsl:otherwise></xsl:choose></a>]: <xsl:apply-templates/></li>
-                </xsl:for-each>
-              </xsl:when>
-              <xsl:otherwise>
-                <li>No editorial history recorded.</li>
-              </xsl:otherwise>
-            </xsl:choose>
-          </ul>
-          <ul id="all-history-list" style="display:none">
-            <xsl:choose>
-              <!-- this test will need to be changed if a @type attribute is added to <change>, as discussed at http://idp.atlantides.org/trac/idp/ticket/967 -->
-              <xsl:when test="count(t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')])">
-                <xsl:for-each select="t:teiHeader/t:revisionDesc/t:change[matches(@when, '^\d{4}-\d{2}-\d{2}$')]">
-                  <li><xsl:value-of select="@when"/> [<a href="{@who}"><xsl:choose><xsl:when test="ends-with(@who,'about')">papyri.info</xsl:when><xsl:otherwise><xsl:value-of select="replace(@who,'.*/([^/]+)$','$1')"/></xsl:otherwise></xsl:choose></a>]: <xsl:value-of select="."/></li>
-                </xsl:for-each>
-              </xsl:when>
-              <xsl:otherwise>
-                <li>No further history recorded.</li>
-              </xsl:otherwise>
-            </xsl:choose>
-          </ul>
-        </div>
-        <!-- closing #history-lists -->
+        <p>
+          <xsl:choose>
+            <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">
+              <a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp'])}" target="_blank">Detailed history</a>
+            </xsl:when>
+            <xsl:otherwise>
+              <a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">Detailed history</a>
+            </xsl:otherwise>
+          </xsl:choose>
+        </p>
       </div>
       <!-- closing #history -->
       <p><a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a> © Duke Databank of Documentary Papyri.
@@ -696,25 +771,21 @@
   <xsl:template name="get-references">
     <xsl:choose>
       <xsl:when test="$collection = 'current'">
-        <h2>
-          <xsl:apply-templates select="//t:body/t:head"/>
-          <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
-          <xsl:if test="count($relations[contains(., 'trismegistos/')]) gt 0"> = Trismegistos </xsl:if>
-          <xsl:for-each select="$relations[contains(., 'trismegistos/')]">
-            <a href="{.}">{replace(., 'https://www.trismegistos.org/text/', '')}</a>
-          </xsl:for-each>
-        </h2>
+        <xsl:apply-templates select="//t:body/t:head"/>
+        <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
+        <xsl:if test="count($relations[contains(., 'trismegistos/')]) gt 0"> = Trismegistos </xsl:if>
+        <xsl:for-each select="$relations[contains(., 'trismegistos/')]">
+          <a href="{.}">{replace(., 'https://www.trismegistos.org/text/', '')}</a>
+        </xsl:for-each>
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:for-each select="$sources-for">
-          <h2>
-            <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-              <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
-                <xsl:apply-templates select=".//t:body/t:head"/>
-                = <a href="/current/{.//t:fileDesc/t:publicationStmt/t:idno[@type='filename']}">Current Edition</a>
-              </xsl:for-each>
-            </xsl:if>
-          </h2>
+          <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+            <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
+              <xsl:apply-templates select=".//t:body/t:head"/>
+              = <a href="/current/{.//t:fileDesc/t:publicationStmt/t:idno[@type='filename']}">Current Edition</a>
+            </xsl:for-each>
+          </xsl:if>
         </xsl:for-each>
       </xsl:when>
       <xsl:otherwise>
@@ -886,8 +957,8 @@
       .//t:hi[@rend = ('diaeresis','grave','acute','asper','lenis','circumflex')] |
       .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
 
-      <div id="apparatus" lang="en">
-        <h2>Apparatus</h2>
+      <div id="apparatus" lang="en" class="mt-3">
+        <h3>Apparatus</h3>
         <xsl:variable name="pass1">
           <xsl:apply-templates select="." mode="app-flatten"/>
         </xsl:variable>
