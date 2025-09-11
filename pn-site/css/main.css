@@ -75,8 +75,16 @@ footer ul.about-links {
   font-weight: 600;
 }
 
-h1 {
+h1, .h1 {
   color: var(--bs-primary);
+  margin-bottom: 1.25rem;
+  a {
+    color: inherit;
+  }
+  a:hover {
+    color: var(--bs-link-hover-color);
+    text-decoration-style: solid;
+  }
 }
 
 h2 {
@@ -97,6 +105,44 @@ h3 {
 /* ----------------- */
 pre code {
   color: var(--bs-code-color);
+}
+
+/* ------------------------------ */
+/* Transcriptions & Translations  */
+/* TODO: port more related styles */
+/* from master.css                */
+/* ------------------------------ */
+
+.transcription span[data-bs-original-title]:hover {
+  background-color: var(--bs-warning-bg-subtle);
+}
+
+.textpartnumber {
+  display: block;
+  margin-left: -3em;
+  font-weight: 600;
+}
+
+.linenumber, .linenumberbroken {
+  float: left;
+  margin-left: -2em;
+}
+
+.linenumberbroken {
+  color: var(--bs-danger);
+}
+
+#edition {
+  margin-left: 3em;
+}
+
+#apparatus {
+  margin-left: -3em;
+}
+
+span.term {
+  border: 1px solid var(--bs-success);
+  padding: 0.1rem 0.2rem;
 }
 
 /* ------------- */
@@ -211,4 +257,46 @@ span.linenumber {
 }
 *[lang=grc],*[lang=lat] {
   font-family: var(--bs-font-sans-serif), "Noto Sans Symbols 2";
+
+
+/* -------------- */
+/* Icons          */
+/* -------------- */
+
+/* Use Bootstrap Icons (https://icons.getbootstrap.com/) */
+/* without using the whole web font. The key is to copy each SVG */
+/* we need, escape it and store it as a CSS variable, then use it */
+/* as a mask so it inherits the text color. */
+
+:root {
+  --icon-edit: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3e%3cpath d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z'/%3e%3cpath fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z'/%3e%3c/svg%3e");
+
+  --icon-file-code: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z'/%3E%3Cpath d='M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708'/%3E%3C/svg%3E");
+
+  --icon-box-arrow-up-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5'/%3E%3Cpath fill-rule='evenodd' d='M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z'/%3E%3C/svg%3E");
+
+}
+
+.bi {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.25em;
+  vertical-align: -0.125em;
+  background-color: currentColor;
+  mask-size: contain !important;
+  mask-repeat: no-repeat !important;
+  mask-position: center !important;
+}
+
+.bi-edit {
+  mask: var(--icon-edit);
+}
+
+.bi-xml {
+  mask: var(--icon-file-code);
+}
+
+.bi-external-link {
+  mask: var(--icon-box-arrow-up-right);
 }

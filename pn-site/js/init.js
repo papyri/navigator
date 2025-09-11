@@ -26,20 +26,6 @@ function init() {
     }
     alignRTL();
 
-    jQuery("span.term").each( function (i, elt) {
-        const htmlContent = $(elt).find("span.gloss").html();
-        if (htmlContent) {
-          $(elt).attr('title', htmlContent);
-          $(elt).tooltip({
-            content: htmlContent,
-            position: {
-              my: "center bottom",
-              at: "center top",
-            },
-            classes: { 'ui-tooltip': 'tooltip-dul-custom' },
-          });
-        }
-    });
     jQuery.ajax({
       type: "GET",
       url: "/editor/user/info",
@@ -78,6 +64,7 @@ function init() {
 		getAlert();
 		getCampaign();
 		initBootstrapTooltips();
+		initMetadataTextSliders();
 }
 
 function initjQueryMigrate() {
@@ -185,40 +172,40 @@ function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 	var xml = jQuery(xmldoc);
 	var prevRecord = (position == 0 && rows == 2) ? null : xml.find("doc")[0];
 	var nextRecord = (position == total && rows == 2) ? null : xml.find("doc")[xml.find("doc").length - 1];
-	var htmlWrapper = jQuery("<div id=\"linear-browse-wrapper\"></div>");
+
+	var pageNavWrapper = jQuery("<nav aria-label=\"Page navigation\"></nav>");
+	var htmlWrapper = jQuery("<ul class=\"pagination pagination-sm\"></ul>");
+	pageNavWrapper.append(htmlWrapper);
+
 	addPrevRecordHTML(htmlWrapper, prevRecord, position, total, rows, querystring);
 	addBackToFacetBrowse(htmlWrapper)
 	addNextRecordHTML(htmlWrapper, nextRecord, position, total, rows, querystring);
-	var spacer = jQuery("<div style='height: 1px; width: 100%; clear: both;'></div>");
-	jQuery("#controls").before(htmlWrapper);
+
+	jQuery("#controls").before(pageNavWrapper);
 
 }
 
 function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = jQuery("<div id=\"linear-previous-record\"></div>");
-	var msg = "<< Previous record";
+	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
+	var msg = "&laquo; Previous record";
+
+	var link = jQuery("<a class=\"page-link\"></a>");
+	link.text(msg);
+	var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
+	var title = jQuery(jQuery(record).children()[1]).text();
+	var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
+	link.attr("title", title);
+	link.attr("href", href);
+
 	if(record == null){
-
-		var deadlink = jQuery("<span class='deadlink'></span>");
-		deadlink.text(msg);
-		arrowWrapper.append(deadlink);
-
+		arrowWrapper.addClass("disabled");
+		link.addClass("disabled");
+		link.attr("href", "#");
 	}
-	else{
 
-		var link = jQuery("<a></a>");
-		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
-		var title = jQuery(jQuery(record).children()[1]).text();
-		var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
-		link.attr("title", title);
-		link.attr("href", href);
-		arrowWrapper.append(link);
-
-	}
+	arrowWrapper.append(link);
 	wrapper.append(arrowWrapper);
-
 }
 
 function addBackToFacetBrowse(wrapper){
@@ -230,38 +217,36 @@ function addBackToFacetBrowse(wrapper){
 	var searchstring = getCookie("lbpersist");
 	if(searchstring == null) return;
 	var prevpageURL = window.location.protocol + "//" + window.location.host + "/search" + searchstring;
-	var linkwrapper = jQuery("<div id='linear-back'></div>");
-	var link = jQuery("<a href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");
-	linkwrapper.append(link);
-	wrapper.append(linkwrapper);
+
+	var linkWrapper = jQuery("<li class='page-item'></li>");
+	var link = jQuery("<a class='page-link' href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");
+	linkWrapper.append(link);
+	wrapper.append(linkWrapper);
 }
 
 function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = jQuery("<div id=\"linear-next-record\"></div>");
-	var msg = "Next record >>"
+	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
+	var msg = "Next record &raquo;";
+
+	var link = jQuery("<a class=\"page-link\"></a>");
+	link.text(msg);
+	var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
+	var title = jQuery(jQuery(record).children()[1]).text();
+	var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
+	link.attr("title", title);
+	link.attr("href", href);
+
 	if(record == null){
-
-		var deadlink = jQuery("<span class='deadlink'></span>");
-		deadlink.text(msg);
-		arrowWrapper.append(deadlink);
-
+		arrowWrapper.addClass("disabled");
+		link.addClass("disabled");
+		link.attr("href", "#");
 	}
-	else{
 
-		var link = jQuery("<a></a>");
-		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
-		var title = jQuery(jQuery(record).children()[1]).text();
-		var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
-		link.attr("title", title);
-		link.attr("href", href);
-		arrowWrapper.append(link);
-
-	}
+	arrowWrapper.append(link);
 	wrapper.append(arrowWrapper);
-
 }
+
 /**
  * Alters the query string used by the presently-displayed page so that it is suitable for use
  * by the next or previous record in the result set.
@@ -569,6 +554,77 @@ async function getMessage(url) {
 }
 
 function initBootstrapTooltips() {
-	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+	// Initialize tooltips for both standard elements and span elements within transcriptions
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"], .transcription span[title]');
 	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+	// Add tooltips for translation terms with glosses
+	jQuery(".translation span.term").each( function (i, elt) {
+		const htmlContent = $(elt).find("span.gloss").html();
+		if (htmlContent) {
+			$(elt).attr('title', htmlContent);
+			$(elt).tooltip({html: true});
+		}
+  });
 }
+
+function initMetadataTextSliders() {
+	$("#controls input").on("click", (e) => {
+    const target = e.currentTarget;
+    if (target.checked) {
+      $("." + target.name).show();
+    } else {
+      $("." + target.name).hide();
+    }
+  });
+}
+
+function highlightHash() {
+    // Only work within .transcription elements if they exist
+    const transcriptionContainer = document.querySelector('.transcription');
+    if (!transcriptionContainer) {
+        return;
+    }
+
+    // Remove existing highlights only within transcription
+    transcriptionContainer.querySelectorAll('.bg-warning').forEach(element => {
+        element.classList.remove('bg-warning');
+    });
+
+    const hash = window.location.hash;
+
+    // If there's a hash, find the element within transcription and highlight it
+    if (hash && hash.length > 1) {
+        const elementId = hash.substring(1);
+        const targetElement = transcriptionContainer.querySelector('#' + elementId);
+
+        if (targetElement) {
+            targetElement.classList.add('bg-warning');
+        }
+
+        // Also highlight the corresponding to/from element
+        let correspondingId = null;
+        if (elementId.startsWith('to-app-')) {
+            correspondingId = elementId.replace('to-app-', 'from-app-');
+        } else if (elementId.startsWith('from-app-')) {
+            correspondingId = elementId.replace('from-app-', 'to-app-');
+        }
+
+        if (correspondingId) {
+            const correspondingElement = transcriptionContainer.querySelector('#' + correspondingId);
+            if (correspondingElement) {
+                correspondingElement.classList.add('bg-warning');
+            }
+        }
+    }
+}
+
+// Initialize hash highlighting on page load
+document.addEventListener('DOMContentLoaded', function() {
+    highlightHash();
+});
+
+// Listen for hash changes and update highlighting
+window.addEventListener('hashchange', function() {
+    highlightHash();
+});
