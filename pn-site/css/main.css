@@ -257,7 +257,7 @@ span.linenumber {
 }
 *[lang=grc],*[lang=lat] {
   font-family: var(--bs-font-sans-serif), "Noto Sans Symbols 2";
-
+}
 
 /* -------------- */
 /* Icons          */
