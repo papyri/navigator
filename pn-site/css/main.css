@@ -1,3 +1,13 @@
+@font-face {
+  font-family: "IFAO-Grec Subset";
+  src:
+    url("/fonts/IFAO-Grec-Unicode-subset.woff2") format("woff2"),
+    url("/fonts/IFAO-Grec-Unicode-subset.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ------------------- */
 /* Main Page Structure */
 /* ------------------- */
@@ -156,4 +166,49 @@ a {
 /* ------------- */
 .nav-pills {
   --bs-nav-pills-link-active-bg: var(--bs-link-color);
+}
+
+/* -------------------------------- */
+/* Transcriptions and Languages     */
+/* -------------------------------- */
+span.ab {
+  display: block;
+  padding-left: 4em;
+  position: relative;
+}
+div.apparatus {
+  margin-top: 1em;
+}
+span.linenumber {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  text-align: right;
+  width: 3em;
+}
+*[lang=ar] {
+  font-family: "Noto Naskh Arabic", "Noto Sans Symbols 2", var(--bs-font-sans-serif);
+  font-size: 24px;
+}
+*[lang=ar] span.ab {
+  direction: rtl;
+  padding-left: 0;
+  padding-right: 2.5em;
+  text-align: right;
+}
+*[lang=ar] div.apparatus {
+  font-size: 16px;
+  margin-left: 0;
+}
+*[lang=ar] span.linenumber {
+  font-size: 16px;
+  margin-top: .4em;
+  right: 1em;
+}
+*[lang=cop] {
+  font-family: "Noto Sans Coptic", "Noto Sans Symbols 2", "IFAO-Grec Subset", var(--bs-font-sans-serif);
+  font-size: 18px;
+}
+*[lang=grc],*[lang=lat] {
+  font-family: var(--bs-font-sans-serif), "Noto Sans Symbols 2";
 }
