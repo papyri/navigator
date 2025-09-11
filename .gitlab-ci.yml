@@ -11,20 +11,40 @@ variables:
   COMMIT_MESSAGE: "Update submodule to latest commit"
   DOWNSTREAM_PROJECT: "papyri/papyri-docker"
   DOWNSTREAM_BRANCH: "master"
-
+  build_tag: $CI_REGISTRY_IMAGE/builds:$CI_COMMIT_SHORT_SHA
+  release_tag: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  apache_build_tag: $CI_REGISTRY_IMAGE/builds/apache:$CI_COMMIT_SHORT_SHA
+  tomcat_build_tag: $CI_REGISTRY_IMAGE/builds/tomcat:$CI_COMMIT_SHORT_SHA
+  apache_release_tag: $CI_REGISTRY_IMAGE/apache:$CI_COMMIT_REF_NAME
+  tomcat_release_tag: $CI_REGISTRY_IMAGE/tomcat:$CI_COMMIT_REF_NAME
 
 stages:
   - build
   - test
   - deploy
+  - release
 
 .job:
   except:
     variables:
       - $CI_SKIP_JOB_STAGE == $CI_JOB_STAGE
 
+.docker-job:
+  before_script:
+    - docker version
+    # Docker registry authn is required to pull
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
 build:
-  extends: .build
+  extends: .docker-job
+  stage: build
+  script:
+    - make
+    - docker push $build_tag
+    - docker push $apache_build_tag
+    - docker push $tomcat_build_tag
+  tags:
+    - build
 
 test:
   extends: .test
@@ -48,3 +68,16 @@ deploy-dev:
     - sudo /usr/bin/systemctl start papyri-navigator-dev-deploy-playbook.service
     - sudo /usr/bin/journalctl -u papyri-navigator-dev-deploy-playbook --since "${CURRENT_TIME}"
   when: manual
+
+release:
+  stage: release
+  extends: .docker-job
+  script:
+    - docker pull $apache_build_tag
+    - docker tag $apache_build_tag $apache_release_tag
+    - docker push $apache_release_tag
+    - docker pull $tomcat_build_tag
+    - docker tag $tomcat_build_tag $tomcat_release_tag
+    - docker push $tomcat_release_tag
+  tags:
+    - release
