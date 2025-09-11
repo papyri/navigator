@@ -5,6 +5,9 @@ CI_COMMIT_SHORT_SHA ?= $(shell basename $(shell git rev-parse --show-toplevel))
 
 build:
 	docker build -t $(CI_REGISTRY_IMAGE)/builds:$(CI_COMMIT_SHORT_SHA) .
+	echo "Building OKD container images..."
+	docker build -t $(apache_build_tag) -f deploy/apache/Dockerfile .
+	docker build -t $(tomcat_build_tag) --target fresh-build -f deploy/tomcat/Dockerfile .
 
 test:
 	docker run -e GITHUB_TOKEN -e GITHUB_USERNAME -e CI_API_V4_URL -e CI_PROJECT_ID -e CI_JOB_TOKEN $(build_tag)
