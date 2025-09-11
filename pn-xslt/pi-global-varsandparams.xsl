@@ -15,23 +15,23 @@
             </xsl:param>
 
             <xsl:param name="topNav"
-                        select="document($param-file)//parameter[name = 'topNav']/value[@on = 'yes']"/>
+                        select="string(document($param-file)//parameter[name = 'topNav']/value[@on = 'yes'])"/>
             <xsl:param name="verse-lines"
-                        select="document($param-file)//parameter[name = 'verse-lines']/value[@on = 'yes']"/>
+                        select="string(document($param-file)//parameter[name = 'verse-lines']/value[@on = 'yes'])"/>
             <xsl:param name="leiden-style"
-                        select="document($param-file)//parameter[name = 'leiden-style']/value[@on = 'yes']"/>
+                        select="string(document($param-file)//parameter[name = 'leiden-style']/value[@on = 'yes'])"/>
             <xsl:param name="edn-structure"
-                        select="document($param-file)//parameter[name = 'edn-structure']/value[@on = 'yes']"/>
+                        select="string(document($param-file)//parameter[name = 'edn-structure']/value[@on = 'yes'])"/>
             <xsl:param name="edition-type"
-                        select="document($param-file)//parameter[name = 'edition-type']/value[@on = 'yes']"/>
+                        select="string(document($param-file)//parameter[name = 'edition-type']/value[@on = 'yes'])"/>
             <xsl:param name="apparatus-style"
-                        select="document($param-file)//parameter[name = 'apparatus-style']/value[@on = 'yes']"/>
+                        select="string(document($param-file)//parameter[name = 'apparatus-style']/value[@on = 'yes'])"/>
             <xsl:param name="line-inc"
-                        select="document($param-file)//parameter[name = 'line-inc']/value"/>
+                        select="string(document($param-file)//parameter[name = 'line-inc']/value)"/>
             <xsl:param name="css-loc"
-                        select="document($param-file)//parameter[name = 'css-loc']/value"/>
+                        select="string(document($param-file)//parameter[name = 'css-loc']/value)"/>
             <xsl:param name="js-dir"
-                        select="document($param-file)//parameter[name = 'js-dir']/value"/>
+                        select="string(document($param-file)//parameter[name = 'js-dir']/value)"/>
     
             <xsl:param name="docroot">../output/data</xsl:param>
 

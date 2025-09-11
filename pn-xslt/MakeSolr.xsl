@@ -1484,7 +1484,7 @@
   
   <xsl:template name="lbrk-app">
     <xsl:text>
-&#xD;</xsl:text>
+</xsl:text>
   </xsl:template>
   
   <xsl:template name="ddbdp-app">
