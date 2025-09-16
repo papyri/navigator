@@ -16,6 +16,14 @@ COPY pn-site /srv/data/papyri.info/pn/home
 # but always with group ID 0 (root group)
 # Ensure non root can write to docs
 # https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/images/creating-images#use-uid_create-images
+
+RUN chgrp -R 0 /srv/data/papyri.info/git/navigator/ && \
+    chmod -R g=u /srv/data/papyri.info/git/navigator/
+
+RUN mkdir -p /srv/data/papyri.info/pn/idp.html/ && \
+    chgrp -R 0 /srv/data/papyri.info/pn/idp.html/ && \
+    chmod -R g=u /srv/data/papyri.info/pn/idp.html/
+
 RUN mkdir -p /srv/data/papyri.info/pn/docs/ && \
     chgrp -R 0 /srv/data/papyri.info/pn/docs/ && \
     chmod -R g=u /srv/data/papyri.info/pn/docs/
