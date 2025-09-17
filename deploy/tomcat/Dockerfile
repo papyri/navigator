@@ -6,6 +6,8 @@ ARG PN_SYNC_VERSION=1.0.8
 ARG FUSEKI_URL=fuseki:8090
 ARG SOLR_URL=solr:8983
 
+ENV LEIN_HOME=/tmp/.lein
+
 RUN apt-get update && apt-get install -y maven leiningen git
 
 COPY . /srv/data/papyri.info/git/navigator
