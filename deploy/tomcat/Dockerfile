@@ -19,6 +19,12 @@ COPY pn-site /srv/data/papyri.info/pn/home
 # Ensure non root can write to docs
 # https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/images/creating-images#use-uid_create-images
 
+
+# Create Maven directory
+RUN mkdir -p /.m2/repository && \
+    chgrp -R 0 /.m2 && \
+    chmod -R g=u /.m2
+
 RUN chgrp -R 0 /srv/data/papyri.info/git/navigator/ && \
     chmod -R g=u /srv/data/papyri.info/git/navigator/
 
