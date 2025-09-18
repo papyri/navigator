@@ -151,6 +151,7 @@
     <html lang="en">
       <head>
         <link rel="schema.dcterms" href="http://purl.org/dc/terms/"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta property="dcterms.identifier" content="{$selfUrl}"/>
         <xsl:call-template name="collection-hierarchy">
