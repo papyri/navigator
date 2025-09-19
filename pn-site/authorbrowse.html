@@ -39,7 +39,7 @@
   </script>
 </head>
 
-<body onload="init()">
+<body onload="init()" class="author-browse">
   <nav id="skip-links" class="visually-hidden-focusable bg-dark" data-bs-theme="dark" aria-label="Skip link navigation">
     <div class="container-xl px-4">
       <a href="#main" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to main content</a>
@@ -150,9 +150,112 @@
   </footer>
 
   <script type="text/javascript">
-    jQuery("#author-browse").append("<ul id=\"author-browse\" class=\"pagination\">" + jQuery("a.initial").map(function(i, elt){
-      return "<li class=\"page-item\"><a class=\"page-link\" href=\"#" + elt.name + "\">" + elt.innerText + "</a></li>";
-    }).toArray().join(" ") + "</ul>");
+
+    jQuery("#author-browse").append("<div class=\"d-flex flex-wrap gap-2 mb-3 align-items-start bg-white\">" +
+      "<div class=\"btn-group flex-wrap\" role=\"group\" aria-label=\"Author alphabet navigation\">" +
+      jQuery("a.initial").map(function(i, elt){
+        const isFirstLetter = i === 0;
+        const buttonClass = isFirstLetter ? "btn btn-outline-info btn-md active" : "btn btn-outline-info btn-md";
+        return "<button type=\"button\" class=\"" + buttonClass + "\" data-letter=\"" + elt.name + "\" onclick=\"activateLetterButton(this, '" + elt.name + "')\">" + elt.name + "</button>";
+      }).toArray().join("") +
+      "</div>" +
+      "<button type=\"button\" id=\"expandCollapseAll\" class=\"btn btn-outline-primary btn-md\" onclick=\"toggleAllAccordions()\">Expand All</button>" +
+      "</div>");
+
+    // Initialize: expand the first accordion and set button as active
+    jQuery(document).ready(function() {
+      setTimeout(() => {
+        const firstAccordion = document.querySelector('#authorAccordion .accordion-collapse');
+        if (firstAccordion) {
+          bootstrap.Collapse.getOrCreateInstance(firstAccordion).show();
+        }
+      }, 100);
+    });
+
+    // Activate letter button and scroll to accordion
+    window.activateLetterButton = function(button, letter) {
+      // Remove active state from all letter buttons
+      document.querySelectorAll('[data-letter]').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Add active state to clicked button
+      button.classList.add('active');
+
+      // Show accordion and scroll to it with dynamic offset
+      const targetElement = document.querySelector('#collapse' + letter);
+      const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+
+      // Calculate offset based on button container height plus 4.5rem
+      const buttonNavContainer = document.querySelector('#author-browse > div');
+      const containerHeight = buttonNavContainer.getBoundingClientRect().height;
+      const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const additionalOffset = 4.5 * rootFontSize; // 4.5rem in pixels
+      const dynamicOffset = containerHeight + additionalOffset;
+
+
+      const offsetPosition = elementPosition - dynamicOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+
+      bootstrap.Collapse.getOrCreateInstance(targetElement).show();
+
+      // Set focus to the accordion content for keyboard accessibility
+      // Add tabindex to make it focusable, then focus after scroll completes
+      targetElement.setAttribute('tabindex', '-1');
+      setTimeout(() => {
+        targetElement.focus();
+      }, 300); // Wait for scroll animation to complete
+    };
+
+    // Toggle all accordions
+    window.toggleAllAccordions = function() {
+      const button = document.getElementById('expandCollapseAll');
+      const accordionButtons = document.querySelectorAll('#authorAccordion .accordion-button');
+      const accordionItems = document.querySelectorAll('#authorAccordion .accordion-collapse');
+      const isExpanding = button.textContent === 'Expand All';
+
+      if (isExpanding) {
+        // Step 1: Force all accordions to collapsed state first
+        accordionButtons.forEach(accordionBtn => {
+          accordionBtn.classList.add('collapsed');
+          accordionBtn.setAttribute('aria-expanded', 'false');
+        });
+
+        accordionItems.forEach(item => {
+          item.classList.remove('show');
+        });
+
+        // Step 2: Now expand all of them using the API
+        setTimeout(() => {
+          accordionItems.forEach(item => {
+            const collapseInstance = bootstrap.Collapse.getOrCreateInstance(item);
+            collapseInstance.show();
+          });
+        }, 50); // Small delay to ensure state is reset
+
+      } else {
+        // For collapsing, use the API normally
+        accordionItems.forEach(item => {
+          const collapseInstance = bootstrap.Collapse.getOrCreateInstance(item);
+          if (item.classList.contains('show')) {
+            collapseInstance.hide();
+          }
+        });
+      }
+
+      button.textContent = isExpanding ? 'Collapse All' : 'Expand All';
+
+      // Clear active states when collapsing all
+      if (!isExpanding) {
+        document.querySelectorAll('[data-letter]').forEach(btn => {
+          btn.classList.remove('active');
+        });
+      }
+    };
   </script>
 </body>
 </html>

@@ -326,3 +326,27 @@ span.linenumber {
 .bi-external-link {
   mask: var(--icon-box-arrow-up-right);
 }
+
+
+/* -------------- */
+/* Page Specific  */
+/* -------------- */
+
+/* Author Browse Page */
+
+body.author-browse .btn-outline-info.bg-white:hover {
+  background-color: var(--bs-info) !important;
+  color: #fff !important;
+  border-color: var(--bs-info) !important;
+}
+
+body.author-browse .btn-outline-primary.bg-white:hover {
+  background-color: var(--bs-primary) !important;
+  color: #fff !important;
+  border-color: var(--bs-primary) !important;
+}
+
+body.author-browse .accordion-button {
+  font-size: 1.3rem !important;
+  font-weight: 500 !important;
+}
