@@ -350,3 +350,24 @@ body.author-browse .accordion-button {
   font-size: 1.3rem !important;
   font-weight: 500 !important;
 }
+
+body.author-browse .btn-group-vertical>.btn, .btn-group>.btn {
+  max-width: 2.375rem;
+}
+
+body.author-browse .btn-group .btn {
+  border-radius: 0;
+}
+
+@media (min-width: 1200px) {
+  body.author-browse .btn-group .btn:first-child {
+    border-top-left-radius: var(--bs-border-radius);
+    border-bottom-left-radius: var(--bs-border-radius);
+  }
+
+  body.author-browse .btn-group .btn:last-child {
+    border-top-right-radius: var(--bs-border-radius);
+    border-bottom-right-radius: var(--bs-border-radius);
+  }
+}
+
