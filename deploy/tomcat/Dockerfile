@@ -84,10 +84,11 @@ FROM setup as fresh-build
 # Build from repo
 
 # Replace localhost domain with okd routes
-ENV NS_URL=${FUSEKI_URL}
-ENV SOLR_URL=${SOLR_URL}
 RUN sed -i "s/localhost:8090/${FUSEKI_URL}/g" /srv/data/papyri.info/git/navigator/pn-dispatcher/src/main/webapp/WEB-INF/web.xml
+RUN sed -i "s/localhost:8090/${FUSEKI_URL}/g" /srv/data/papyri.info/git/navigator/pn-indexer/src/info/papyri/indexer.clj
 RUN sed -i "s/localhost:8983/${SOLR_URL}/g" /srv/data/papyri.info/git/navigator/pn-dispatcher/src/main/webapp/WEB-INF/web.xml
+RUN sed -i "s/localhost:8983/${SOLR_URL}/g" /srv/data/papyri.info/git/navigator/pn-indexer/src/info/papyri/indexer.clj
+RUN sed -i "s/localhost:8090/${FUSEKI_URL}/g" /srv/data/papyri.info/git/navigator/pn-mapping/src/info/papyri/map.clj
 
 RUN cd /srv/data/papyri.info/git/navigator/pn-dispatcher && \
     mvn clean package && \
