@@ -43,6 +43,13 @@ RUN mkdir -p /srv/data/papyri.info/idp.data/ && \
 RUN chgrp -R 0 /usr/local/tomcat/webapps/ && \
     chmod -R g=u /usr/local/tomcat/webapps/
 
+# Add git safe directories (more secure than writable .gitconfig)
+RUN git config --global --add safe.directory /srv/data/papyri.info/pn/docs && \
+    git config --global --add safe.directory /srv/data/papyri.info/idp.data && \
+    git config --global --add safe.directory /srv/data/papyri.info/pn/idp.html && \
+    # For indexing-jobs
+    git config --global --add safe.directory /srv/data/papyri.info/git/navigator/epidoc-xslt
+
 # Make Tomcat conf directory writable for OpenShift
 RUN chgrp -R 0 /usr/local/tomcat/conf/ && \
     chmod -R g=u /usr/local/tomcat/conf/
