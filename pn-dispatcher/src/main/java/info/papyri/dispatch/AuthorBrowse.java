@@ -115,7 +115,9 @@ public class AuthorBrowse extends HttpServlet {
                     closeAccordionItem = false;
                 }
                 out.print("<div class=\"accordion-item\">");
-                out.print("<h2 class=\"accordion-header\">");
+                out.print("<h2 class=\"accordion-header\" id=\"");
+                out.print(initial.toLowerCase());
+                out.print("\">");
                 out.print("<button class=\"accordion-button collapsed\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#collapse");
                 out.print(initial);
                 out.print("\" aria-expanded=\"false\" aria-controls=\"collapse");
