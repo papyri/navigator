@@ -181,24 +181,38 @@
             // Set the target button as active
             targetButton.classList.add('active');
 
-            // Show only the target accordion
-            bootstrap.Collapse.getOrCreateInstance(targetElement).show();
+            // Function to perform scroll after accordion is fully expanded
+            const performHashScroll = () => {
+              const anchorElement = document.querySelector('a[name="' + hash + '"]');
+              if (anchorElement) {
+                // Small delay to ensure DOM has settled after accordion animation
+                setTimeout(() => {
+                  const elementPosition = anchorElement.getBoundingClientRect().top + window.pageYOffset;
+                  const buttonNavContainer = document.querySelector('#author-browse > div');
+                  const containerHeight = buttonNavContainer.getBoundingClientRect().height;
+                  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                  const additionalOffset = 4.5 * rootFontSize;
+                  const marginOffset = 20;
+                  const dynamicOffset = containerHeight + additionalOffset + marginOffset;
+                  const offsetPosition = elementPosition - dynamicOffset;
 
-            // Scroll to it after a brief delay for expansion
-            setTimeout(() => {
-              const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-              const buttonNavContainer = document.querySelector('#author-browse > div');
-              const containerHeight = buttonNavContainer.getBoundingClientRect().height;
-              const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-              const additionalOffset = 4.5 * rootFontSize;
-              const dynamicOffset = containerHeight + additionalOffset;
-              const offsetPosition = elementPosition - dynamicOffset;
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }, 50); // Small delay for DOM settlement
+              }
+            };
 
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-              });
-            }, 150);
+            // Check if accordion is already open
+            if (targetElement.classList.contains('show')) {
+              // Already open, scroll immediately
+              performHashScroll();
+            } else {
+              // Listen for the accordion to finish opening
+              targetElement.addEventListener('shown.bs.collapse', performHashScroll, { once: true });
+              bootstrap.Collapse.getOrCreateInstance(targetElement).show();
+            }
           }
         } else {
           // Default behavior: expand the first accordion and set button as active
@@ -227,33 +241,48 @@
       // Show accordion first
       const targetElement = document.querySelector('#collapse' + letter);
       const collapseInstance = bootstrap.Collapse.getOrCreateInstance(targetElement);
-      collapseInstance.show();
 
-      // Wait for accordion to expand before calculating scroll position
-      setTimeout(() => {
-        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+      // Function to perform scroll after accordion is fully expanded
+      const performScroll = () => {
+        const anchorElement = document.querySelector('a[name="' + letter + '"]');
+        if (anchorElement) {
+          // Small delay to ensure DOM has settled after accordion animation
+          setTimeout(() => {
+            const elementPosition = anchorElement.getBoundingClientRect().top + window.pageYOffset;
 
-        // Calculate offset based on button container height plus 4.5rem
-        const buttonNavContainer = document.querySelector('#author-browse > div');
-        const containerHeight = buttonNavContainer.getBoundingClientRect().height;
-        const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-        const additionalOffset = 4.5 * rootFontSize; // 4.5rem in pixels
-        const dynamicOffset = containerHeight + additionalOffset;
+            // Calculate offset based on button container height plus 4.5rem
+            const buttonNavContainer = document.querySelector('#author-browse > div');
+            const containerHeight = buttonNavContainer.getBoundingClientRect().height;
+            const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const additionalOffset = 4.5 * rootFontSize; // 4.5rem in pixels
+            const marginOffset = 20;
+            const dynamicOffset = containerHeight + additionalOffset + marginOffset;
 
-        const offsetPosition = elementPosition - dynamicOffset;
+            const offsetPosition = elementPosition - dynamicOffset;
 
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
 
-        // Set focus to the accordion content for keyboard accessibility
-        // Add tabindex to make it focusable, then focus after scroll completes
-        targetElement.setAttribute('tabindex', '-1');
-        setTimeout(() => {
-          targetElement.focus();
-        }, 300); // Wait for scroll animation to complete
-      }, 150); // Wait for accordion expansion
+            // Set focus to the accordion content for keyboard accessibility
+            targetElement.setAttribute('tabindex', '-1');
+            setTimeout(() => {
+              targetElement.focus();
+            }, 300); // Wait for scroll animation to complete
+          }, 50); // Small delay for DOM settlement
+        }
+      };
+
+      // Check if accordion is already open
+      if (targetElement.classList.contains('show')) {
+        // Already open, scroll immediately
+        performScroll();
+      } else {
+        // Listen for the accordion to finish opening
+        targetElement.addEventListener('shown.bs.collapse', performScroll, { once: true });
+        collapseInstance.show();
+      }
     };
 
     // Toggle all accordions

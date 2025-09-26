@@ -352,6 +352,7 @@ body.author-browse .accordion-button {
 }
 
 body.author-browse .btn-group-vertical>.btn, .btn-group>.btn {
+  width: 2.375rem;
   max-width: 2.375rem;
 }
 
