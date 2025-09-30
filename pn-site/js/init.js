@@ -188,7 +188,7 @@ function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
 	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
-	var msg = "&laquo; Previous record";
+	var msg = "« Previous record"; // using raw unicode here for compatibility with link.text()
 
 	var link = jQuery("<a class=\"page-link\"></a>");
 	link.text(msg);
@@ -227,7 +227,7 @@ function addBackToFacetBrowse(wrapper){
 function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
 	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
-	var msg = "Next record &raquo;";
+	var msg = "Next record »"; // using raw unicode here for compatibility with link.text()
 
 	var link = jQuery("<a class=\"page-link\"></a>");
 	link.text(msg);

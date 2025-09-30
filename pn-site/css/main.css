@@ -1,3 +1,7 @@
+/* ----- */
+/* Fonts */
+/* ----- */
+
 @font-face {
   font-family: "IFAO-Grec Subset";
   src:
@@ -7,6 +11,8 @@
   font-style: normal;
   font-display: swap;
 }
+
+
 
 /* ------------------- */
 /* Main Page Structure */
@@ -217,6 +223,10 @@ a {
 /* -------------------------------- */
 /* Transcriptions and Languages     */
 /* -------------------------------- */
+
+/* Main Body Text */
+/* set in theme-variables.css: --bs-body-font-family: var(--bs-font-serif); */
+
 span.ab {
   display: block;
   padding-left: 4em;
@@ -232,6 +242,28 @@ span.linenumber {
   text-align: right;
   width: 3em;
 }
+
+/* Greek / Latin */
+*[lang=grc],*[lang=lat] {
+  font-family: var(--bs-font-sans-serif), "Noto Sans Symbols 2";
+  font-optical-sizing: auto;
+}
+
+/* Greek Numbers and Fractions */
+*[lang=grc] span[title^="number:"],
+*[lang=grc] span[title^="fraction:"] {
+  font-family: "Noto Sans Symbols", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+/* Coptic */
+*[lang=cop] {
+  font-family: "Noto Sans Coptic", "Noto Sans Symbols 2", "IFAO-Grec Subset", var(--bs-font-sans-serif);
+  font-size: 18px;
+}
+
+/* Arabic */
 *[lang=ar] {
   font-family: "Noto Naskh Arabic", "Noto Sans Symbols 2", var(--bs-font-sans-serif);
   font-size: 24px;
@@ -251,13 +283,7 @@ span.linenumber {
   margin-top: .4em;
   right: 1em;
 }
-*[lang=cop] {
-  font-family: "Noto Sans Coptic", "Noto Sans Symbols 2", "IFAO-Grec Subset", var(--bs-font-sans-serif);
-  font-size: 18px;
-}
-*[lang=grc],*[lang=lat] {
-  font-family: var(--bs-font-sans-serif), "Noto Sans Symbols 2";
-}
+
 
 /* -------------- */
 /* Icons          */
@@ -300,3 +326,49 @@ span.linenumber {
 .bi-external-link {
   mask: var(--icon-box-arrow-up-right);
 }
+
+
+/* -------------- */
+/* Page Specific  */
+/* -------------- */
+
+/* Author Browse Page */
+
+body.author-browse .btn-outline-info.bg-white:hover {
+  background-color: var(--bs-info) !important;
+  color: #fff !important;
+  border-color: var(--bs-info) !important;
+}
+
+body.author-browse .btn-outline-primary.bg-white:hover {
+  background-color: var(--bs-primary) !important;
+  color: #fff !important;
+  border-color: var(--bs-primary) !important;
+}
+
+body.author-browse .accordion-button {
+  font-size: 1.3rem !important;
+  font-weight: 500 !important;
+}
+
+body.author-browse .btn-group-vertical>.btn, .btn-group>.btn {
+  width: 2.375rem;
+  max-width: 2.375rem;
+}
+
+body.author-browse .btn-group .btn {
+  border-radius: 0;
+}
+
+@media (min-width: 1200px) {
+  body.author-browse .btn-group .btn:first-child {
+    border-top-left-radius: var(--bs-border-radius);
+    border-bottom-left-radius: var(--bs-border-radius);
+  }
+
+  body.author-browse .btn-group .btn:last-child {
+    border-top-right-radius: var(--bs-border-radius);
+    border-bottom-right-radius: var(--bs-border-radius);
+  }
+}
+

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Papyri.info - Authors and Works</title>
 
@@ -8,9 +9,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&family=Noto+Sans+Coptic&family=Noto+Sans+Symbols:wght@400..700&family=Noto+Sans:ital,wght@0,400..700;1,400..700&family=Noto+Serif:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/css/theme-variables.css" type="text/css"/>
   <link rel="stylesheet" href="/css/main.css" type="text/css"/>
@@ -37,7 +39,7 @@
   </script>
 </head>
 
-<body onload="init()">
+<body onload="init()" class="author-browse">
   <nav id="skip-links" class="visually-hidden-focusable bg-dark" data-bs-theme="dark" aria-label="Skip link navigation">
     <div class="container-xl px-4">
       <a href="#main" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to main content</a>
@@ -148,9 +150,186 @@
   </footer>
 
   <script type="text/javascript">
-    jQuery("#author-browse").append("<ul id=\"author-browse\" class=\"pagination\">" + jQuery("a.initial").map(function(i, elt){
-      return "<li class=\"page-item\"><a class=\"page-link\" href=\"#" + elt.name + "\">" + elt.innerText + "</a></li>";
-    }).toArray().join(" ") + "</ul>");
+
+    jQuery("#author-browse").append("<div class=\"d-flex flex-wrap gap-2 mb-3 align-items-start bg-white\">" +
+      "<div class=\"btn-group flex-wrap\" role=\"group\" aria-label=\"Author alphabet navigation\">" +
+      jQuery("a.initial").map(function(i, elt){
+        const isFirstLetter = i === 0;
+        const buttonClass = isFirstLetter ? "btn btn-outline-info btn-md active" : "btn btn-outline-info btn-md";
+        return "<button type=\"button\" class=\"" + buttonClass + "\" data-letter=\"" + elt.name + "\" onclick=\"activateLetterButton(this, '" + elt.name + "')\">" + elt.name + "</button>";
+      }).toArray().join("") +
+      "</div>" +
+      "<button type=\"button\" id=\"expandCollapseAll\" class=\"btn btn-outline-primary btn-md\" onclick=\"toggleAllAccordions()\">Expand All</button>" +
+      "</div>");
+
+    // Initialize: handle URL anchor or expand first accordion
+    jQuery(document).ready(function() {
+      setTimeout(() => {
+        const hash = window.location.hash.substring(1); // Remove the # symbol
+
+        if (hash) {
+          // If there's an anchor in the URL, expand that section
+          const targetElement = document.querySelector('#collapse' + hash);
+          const targetButton = document.querySelector('[data-letter="' + hash + '"]');
+
+          if (targetElement && targetButton) {
+            // Remove active state from all buttons first
+            document.querySelectorAll('[data-letter]').forEach(btn => {
+              btn.classList.remove('active');
+            });
+
+            // Set the target button as active
+            targetButton.classList.add('active');
+
+            // Function to perform scroll after accordion is fully expanded
+            const performHashScroll = () => {
+              const anchorElement = document.querySelector('a[name="' + hash + '"]');
+              if (anchorElement) {
+                // Small delay to ensure DOM has settled after accordion animation
+                setTimeout(() => {
+                  const elementPosition = anchorElement.getBoundingClientRect().top + window.pageYOffset;
+                  const buttonNavContainer = document.querySelector('#author-browse > div');
+                  const containerHeight = buttonNavContainer.getBoundingClientRect().height;
+                  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                  const additionalOffset = 4.5 * rootFontSize;
+                  const marginOffset = 20;
+                  const dynamicOffset = containerHeight + additionalOffset + marginOffset;
+                  const offsetPosition = elementPosition - dynamicOffset;
+
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }, 50); // Small delay for DOM settlement
+              }
+            };
+
+            // Check if accordion is already open
+            if (targetElement.classList.contains('show')) {
+              // Already open, scroll immediately
+              performHashScroll();
+            } else {
+              // Listen for the accordion to finish opening
+              targetElement.addEventListener('shown.bs.collapse', performHashScroll, { once: true });
+              bootstrap.Collapse.getOrCreateInstance(targetElement).show();
+            }
+          }
+        } else {
+          // Default behavior: expand the first accordion and set button as active
+          const firstAccordion = document.querySelector('#authorAccordion .accordion-collapse');
+          if (firstAccordion) {
+            bootstrap.Collapse.getOrCreateInstance(firstAccordion).show();
+          }
+        }
+      }, 100);
+    });
+
+    // Activate letter button and scroll to accordion
+    window.activateLetterButton = function(button, letter) {
+      // Remove active state from all letter buttons
+      document.querySelectorAll('[data-letter]').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Add active state to clicked button
+      button.classList.add('active');
+
+      // Update URL with anchor
+      const newUrl = window.location.pathname + window.location.search + '#' + letter;
+      window.history.pushState(null, '', newUrl);
+
+      // Show accordion first
+      const targetElement = document.querySelector('#collapse' + letter);
+      const collapseInstance = bootstrap.Collapse.getOrCreateInstance(targetElement);
+
+      // Function to perform scroll after accordion is fully expanded
+      const performScroll = () => {
+        const anchorElement = document.querySelector('a[name="' + letter + '"]');
+        if (anchorElement) {
+          // Small delay to ensure DOM has settled after accordion animation
+          setTimeout(() => {
+            const elementPosition = anchorElement.getBoundingClientRect().top + window.pageYOffset;
+
+            // Calculate offset based on button container height plus 4.5rem
+            const buttonNavContainer = document.querySelector('#author-browse > div');
+            const containerHeight = buttonNavContainer.getBoundingClientRect().height;
+            const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const additionalOffset = 4.5 * rootFontSize; // 4.5rem in pixels
+            const marginOffset = 20;
+            const dynamicOffset = containerHeight + additionalOffset + marginOffset;
+
+            const offsetPosition = elementPosition - dynamicOffset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+
+            // Set focus to the accordion content for keyboard accessibility
+            targetElement.setAttribute('tabindex', '-1');
+            setTimeout(() => {
+              targetElement.focus();
+            }, 300); // Wait for scroll animation to complete
+          }, 50); // Small delay for DOM settlement
+        }
+      };
+
+      // Check if accordion is already open
+      if (targetElement.classList.contains('show')) {
+        // Already open, scroll immediately
+        performScroll();
+      } else {
+        // Listen for the accordion to finish opening
+        targetElement.addEventListener('shown.bs.collapse', performScroll, { once: true });
+        collapseInstance.show();
+      }
+    };
+
+    // Toggle all accordions
+    window.toggleAllAccordions = function() {
+      const button = document.getElementById('expandCollapseAll');
+      const accordionButtons = document.querySelectorAll('#authorAccordion .accordion-button');
+      const accordionItems = document.querySelectorAll('#authorAccordion .accordion-collapse');
+      const isExpanding = button.textContent === 'Expand All';
+
+      if (isExpanding) {
+        // Step 1: Force all accordions to collapsed state first
+        accordionButtons.forEach(accordionBtn => {
+          accordionBtn.classList.add('collapsed');
+          accordionBtn.setAttribute('aria-expanded', 'false');
+        });
+
+        accordionItems.forEach(item => {
+          item.classList.remove('show');
+        });
+
+        // Step 2: Now expand all of them using the API
+        setTimeout(() => {
+          accordionItems.forEach(item => {
+            const collapseInstance = bootstrap.Collapse.getOrCreateInstance(item);
+            collapseInstance.show();
+          });
+        }, 50); // Small delay to ensure state is reset
+
+      } else {
+        // For collapsing, use the API normally
+        accordionItems.forEach(item => {
+          const collapseInstance = bootstrap.Collapse.getOrCreateInstance(item);
+          if (item.classList.contains('show')) {
+            collapseInstance.hide();
+          }
+        });
+      }
+
+      button.textContent = isExpanding ? 'Collapse All' : 'Expand All';
+
+      // Clear active states when collapsing all
+      if (!isExpanding) {
+        document.querySelectorAll('[data-letter]').forEach(btn => {
+          btn.classList.remove('active');
+        });
+      }
+    };
   </script>
 </body>
 </html>
