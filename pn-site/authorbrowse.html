@@ -156,134 +156,93 @@
       jQuery("a.initial").map(function(i, elt){
         const isFirstLetter = i === 0;
         const buttonClass = isFirstLetter ? "btn btn-outline-info btn-md active" : "btn btn-outline-info btn-md";
-        return "<button type=\"button\" class=\"" + buttonClass + "\" data-letter=\"" + elt.name + "\" onclick=\"activateLetterButton(this, '" + elt.name + "')\">" + elt.name + "</button>";
+        return "<button type=\"button\" class=\"" + buttonClass + "\" data-letter=\"" + elt.name + "\" href=\"\" \">" + elt.name + "</button>";
       }).toArray().join("") +
       "</div>" +
       "<button type=\"button\" id=\"expandCollapseAll\" class=\"btn btn-outline-primary btn-md\" onclick=\"toggleAllAccordions()\">Expand All</button>" +
       "</div>");
 
-    // Initialize: handle URL anchor or expand first accordion
-    jQuery(document).ready(function() {
-      setTimeout(() => {
-        const hash = window.location.hash.substring(1); // Remove the # symbol
+    // Add click handlers to alphabet navigation buttons - collapse all accordions
+    document.querySelectorAll('[data-letter]').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const letter = this.getAttribute('data-letter');
 
-        if (hash) {
-          // If there's an anchor in the URL, expand that section
-          const targetElement = document.querySelector('#collapse' + hash);
-          const targetButton = document.querySelector('[data-letter="' + hash + '"]');
+        // Update active state on navigation buttons
+        document.querySelectorAll('[data-letter]').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        this.classList.add('active');
 
-          if (targetElement && targetButton) {
-            // Remove active state from all buttons first
-            document.querySelectorAll('[data-letter]').forEach(btn => {
-              btn.classList.remove('active');
-            });
-
-            // Set the target button as active
-            targetButton.classList.add('active');
-
-            // Function to perform scroll after accordion is fully expanded
-            const performHashScroll = () => {
-              const anchorElement = document.querySelector('a[name="' + hash + '"]');
-              if (anchorElement) {
-                // Small delay to ensure DOM has settled after accordion animation
-                setTimeout(() => {
-                  const elementPosition = anchorElement.getBoundingClientRect().top + window.pageYOffset;
-                  const buttonNavContainer = document.querySelector('#author-browse > div');
-                  const containerHeight = buttonNavContainer.getBoundingClientRect().height;
-                  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-                  const additionalOffset = 4.5 * rootFontSize;
-                  const marginOffset = 20;
-                  const dynamicOffset = containerHeight + additionalOffset + marginOffset;
-                  const offsetPosition = elementPosition - dynamicOffset;
-
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                  });
-                }, 50); // Small delay for DOM settlement
-              }
-            };
-
-            // Check if accordion is already open
-            if (targetElement.classList.contains('show')) {
-              // Already open, scroll immediately
-              performHashScroll();
-            } else {
-              // Listen for the accordion to finish opening
-              targetElement.addEventListener('shown.bs.collapse', performHashScroll, { once: true });
-              bootstrap.Collapse.getOrCreateInstance(targetElement).show();
-            }
-          }
-        } else {
-          // Default behavior: expand the first accordion and set button as active
-          const firstAccordion = document.querySelector('#authorAccordion .accordion-collapse');
-          if (firstAccordion) {
-            bootstrap.Collapse.getOrCreateInstance(firstAccordion).show();
-          }
+        // Update expand/collapse all button text
+        const expandCollapseBtn = document.getElementById('expandCollapseAll');
+        if (expandCollapseBtn) {
+          expandCollapseBtn.textContent = 'Expand All';
         }
-      }, 100);
+
+        // Collapse all accordions
+        const accordionItems = document.querySelectorAll('#authorAccordion .accordion-collapse');
+        const openItems = Array.from(accordionItems).filter(item => item.classList.contains('show'));
+
+        const scrollToHeader = function() {
+          const accordionHeader = document.getElementById(letter.toLowerCase());
+          if (accordionHeader) {
+            const navDiv = document.querySelector('#author-browse > div');
+            const navHeight = navDiv ? navDiv.offsetHeight : 0;
+            const headerTop = accordionHeader.getBoundingClientRect().top + window.scrollY;
+            const targetScroll = headerTop - navHeight - 10;
+            window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+
+            // Expand the accordion after scrolling
+            setTimeout(() => {
+              const collapseId = 'collapse' + letter;
+              const collapseElement = document.getElementById(collapseId);
+              if (collapseElement) {
+                const collapseInstance = bootstrap.Collapse.getOrCreateInstance(collapseElement);
+                collapseInstance.show();
+
+                // Move focus to the accordion button after expansion
+                const accordionButton = document.querySelector('[data-bs-target="#' + collapseId + '"]');
+                if (accordionButton) {
+                  accordionButton.focus();
+                }
+              }
+            }, 500);
+          }
+        };
+
+        if (openItems.length === 0) {
+          // No items open, scroll immediately
+          scrollToHeader();
+        } else {
+          // Wait for all items to finish collapsing
+          let collapsedCount = 0;
+          const totalToCollapse = openItems.length;
+
+          const scrollWhenDone = function() {
+            collapsedCount++;
+            if (collapsedCount === totalToCollapse) {
+              // All items collapsed, now scroll
+              scrollToHeader();
+            }
+          };
+
+          openItems.forEach(item => {
+            item.addEventListener('hidden.bs.collapse', scrollWhenDone, { once: true });
+            const collapseInstance = bootstrap.Collapse.getOrCreateInstance(item);
+            collapseInstance.hide();
+          });
+        }
+      });
     });
 
-    // Activate letter button and scroll to accordion
-    window.activateLetterButton = function(button, letter) {
-      // Remove active state from all letter buttons
-      document.querySelectorAll('[data-letter]').forEach(btn => {
-        btn.classList.remove('active');
-      });
+    // Expand the first accordion on page load
+    const firstAccordion = document.querySelector('#authorAccordion .accordion-collapse');
+    if (firstAccordion) {
+      const collapseInstance = bootstrap.Collapse.getOrCreateInstance(firstAccordion);
+      collapseInstance.show();
+    }
 
-      // Add active state to clicked button
-      button.classList.add('active');
-
-      // Update URL with anchor
-      const newUrl = window.location.pathname + window.location.search + '#' + letter;
-      window.history.pushState(null, '', newUrl);
-
-      // Show accordion first
-      const targetElement = document.querySelector('#collapse' + letter);
-      const collapseInstance = bootstrap.Collapse.getOrCreateInstance(targetElement);
-
-      // Function to perform scroll after accordion is fully expanded
-      const performScroll = () => {
-        const anchorElement = document.querySelector('a[name="' + letter + '"]');
-        if (anchorElement) {
-          // Small delay to ensure DOM has settled after accordion animation
-          setTimeout(() => {
-            const elementPosition = anchorElement.getBoundingClientRect().top + window.pageYOffset;
-
-            // Calculate offset based on button container height plus 4.5rem
-            const buttonNavContainer = document.querySelector('#author-browse > div');
-            const containerHeight = buttonNavContainer.getBoundingClientRect().height;
-            const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-            const additionalOffset = 4.5 * rootFontSize; // 4.5rem in pixels
-            const marginOffset = 20;
-            const dynamicOffset = containerHeight + additionalOffset + marginOffset;
-
-            const offsetPosition = elementPosition - dynamicOffset;
-
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
-
-            // Set focus to the accordion content for keyboard accessibility
-            targetElement.setAttribute('tabindex', '-1');
-            setTimeout(() => {
-              targetElement.focus();
-            }, 300); // Wait for scroll animation to complete
-          }, 50); // Small delay for DOM settlement
-        }
-      };
-
-      // Check if accordion is already open
-      if (targetElement.classList.contains('show')) {
-        // Already open, scroll immediately
-        performScroll();
-      } else {
-        // Listen for the accordion to finish opening
-        targetElement.addEventListener('shown.bs.collapse', performScroll, { once: true });
-        collapseInstance.show();
-      }
-    };
 
     // Toggle all accordions
     window.toggleAllAccordions = function() {
