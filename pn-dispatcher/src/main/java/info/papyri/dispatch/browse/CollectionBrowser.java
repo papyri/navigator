@@ -434,34 +434,17 @@ public class CollectionBrowser extends HttpServlet {
      */
     
     private StringBuilder buildCollectionsHTML(StringBuilder html, ArrayList<DocumentCollectionBrowseRecord> records){
-       
-        int numColumns = records.size() > 20 ? 5 : 1;
-        int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
-        int modulus = records.size() - initTotalPerColumn;
-        
-        for(int currentColumn = 0; currentColumn < numColumns; currentColumn++){
-            
-           html.append("<ul class=\"collections-column\">");
 
-           int totalThisColumn = initTotalPerColumn;
-            
-           if(currentColumn < modulus) totalThisColumn++;
-           
-           if(totalThisColumn > records.size()) totalThisColumn = records.size();
-            
-           for(int i = 0; i < totalThisColumn; i++){
-            
-                html.append(records.remove(0).getHTML());
-               
-            
-            }
-           
-           html.append("</ul>");
-            
+        html.append("<ul class=\"collections-list\">");
+
+        for(DocumentCollectionBrowseRecord record : records){
+            html.append(record.getHTML());
         }
-        
+
+        html.append("</ul>");
+
         return html;
-        
+
     } 
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

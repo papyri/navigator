@@ -372,3 +372,18 @@ body.author-browse .btn-group .btn {
   }
 }
 
+/* Collections Browse List */
+
+.collections-list {
+  column-width: 12.5rem;
+  column-gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.collections-list li {
+  break-inside: avoid;
+  margin-bottom: 0.5rem;
+}
+
