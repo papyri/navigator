@@ -140,17 +140,26 @@ abstract public class Facet {
     Boolean allSelected = facetConstraints.size() == valuesAndCounts.size();
     String disabled = (onlyOneValue || allSelected) ? " disabled=\"true\"" : "";
     String defaultSelected = (onlyOneValue || allSelected) ? "" : "selected=\"true\"";
-    html.append("<span class=\"option-label\">");
+
+    html.append("<label class=\"form-label\" for=\"");
+    html.append(this.getCSSSelector());
+    html.append("\">");
     html.append(getDisplayName(null, null));
-    html.append("</span>");
+    html.append("</label>");
+
     html.append("<select");
     html.append(disabled);
     html.append(" name=\"");
     html.append(formName.name());
+    html.append("\" id=\"");
+    html.append(this.getCSSSelector());
+    html.append("\" class=\"form-select\"");
+    html.append(" placeholder=\"");
+    html.append(Facet.defaultValue);
     html.append("\">");
     html.append("<option ");
     html.append(defaultSelected);
-    html.append(" value=\"default\">");
+    html.append(" value=\"\">");
     html.append(Facet.defaultValue);
     html.append("</option>");
 
@@ -397,9 +406,9 @@ abstract public class Facet {
    *
    * @return
    */
-  public String getCSSSelectorID() {
+  public String getCSSSelector() {
 
-    return this.formName.name().toLowerCase();
+    return "id-" + this.formName.name().toLowerCase();
 
   }
 

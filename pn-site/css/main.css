@@ -63,6 +63,24 @@ body {
   font-weight: 600;
 }
 
+#sidebarContent {
+  opacity: 1;
+  transition: opacity 0.3s ease, width 0.3s ease;
+}
+
+#sidebarContent.collapsing {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+#sidebarContent.collapse:not(.show) {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+
 footer ul.about-links {
   column-count: 1;
 
@@ -112,6 +130,103 @@ h3 {
 pre code {
   color: var(--bs-code-color);
 }
+
+/* ----------------- */
+/* Forms             */
+/* ----------------- */
+.form-select:disabled,
+.form-control:disabled {
+  opacity: 0.5;
+}
+
+/* Fixup TomSelect */
+.ts-wrapper.single .ts-control {
+  flex-wrap: nowrap;
+}
+.ts-wrapper.single .ts-control .item {
+  flex-shrink: 0;
+}
+
+/* ----------------- */
+/* Search Results    */
+/* ----------------- */
+
+#toggleIcon {
+  transition: transform 0.3s ease;
+}
+
+#facet-wrapper .form-label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+a.facet-constraint:hover,
+a.facet-constraint:focus {
+  .bi {
+    color: var(--bs-primary);
+  }
+}
+
+a.facet-constraint .constraint-label {
+  .string-option {
+    font-weight: normal;
+  }
+  /* mdash character separator */
+  .string-option:before {
+    content: " \2014  ";
+  }
+}
+
+table#search-results-table {
+  th {
+    background-color: var(--bs-light);
+    border-bottom-width: 2px;
+    position: sticky;
+    top: 0;
+  }
+}
+
+/* Border between result record rows but not their associated text */
+tr.result-record {
+  border-top: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+
+/* Slightly hacky way to get pagination links to truncate with */
+/* ellipses when there are many pages of results. TODO: consider */
+/* whether to write this kind of logic in FacetBrowser.java */
+ul#results-pagination {
+  li:not(.active) {
+    display: none;
+  }
+
+  /* Show first three pages */
+  li:not(.active):nth-child(-n+3) {
+    display: list-item !important;
+  }
+
+  /* Show final two pages */
+  li:not(.active):nth-last-child(-n+2) {
+    display: list-item !important;
+  }
+
+  /* Show the next five pages after the .active page */
+  li.active + li:not(.active),
+  li.active + li:not(.active) + li:not(.active),
+  li.active + li:not(.active) + li:not(.active) + li:not(.active),
+  li.active + li:not(.active) + li:not(.active) + li:not(.active) + li:not(.active),
+  li.active + li:not(.active) + li:not(.active) + li:not(.active) + li:not(.active) + li:not(.active) {
+    display: list-item !important;
+  }
+
+  /* Show the three pages before the .active page */
+  li:not(.active):has(+ li.active),
+  li:not(.active):has(+ li:not(.active) + li.active),
+  li:not(.active):has(+ li:not(.active) + li:not(.active) + li.active) {
+    display: list-item !important;
+  }
+}
+
 
 /* ------------------------------ */
 /* Transcriptions & Translations  */
@@ -295,12 +410,15 @@ span.linenumber {
 /* as a mask so it inherits the text color. */
 
 :root {
+  --icon-chevron-left: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-left' viewBox='0 0 16 16'%3e%3cpath fill-rule='evenodd' d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3e%3c/svg%3e");
+
   --icon-edit: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3e%3cpath d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z'/%3e%3cpath fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z'/%3e%3c/svg%3e");
 
   --icon-file-code: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z'/%3E%3Cpath d='M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708'/%3E%3C/svg%3E");
 
   --icon-box-arrow-up-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5'/%3E%3Cpath fill-rule='evenodd' d='M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z'/%3E%3C/svg%3E");
 
+  --icon-x-circle-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-x-circle-fill' viewBox='0 0 16 16'%3E%3Cpath d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z'/%3E%3C/svg%3E");
 }
 
 .bi {
@@ -315,6 +433,10 @@ span.linenumber {
   mask-position: center !important;
 }
 
+.bi-chevron-left {
+  mask: var(--icon-chevron-left);
+}
+
 .bi-edit {
   mask: var(--icon-edit);
 }
@@ -325,6 +447,10 @@ span.linenumber {
 
 .bi-external-link {
   mask: var(--icon-box-arrow-up-right);
+}
+
+.bi-x-circle-fill {
+  mask: var(--icon-x-circle-fill);
 }
 
 
@@ -351,7 +477,8 @@ body.author-browse .accordion-button {
   font-weight: 500 !important;
 }
 
-body.author-browse .btn-group-vertical>.btn, .btn-group>.btn {
+body.author-browse .btn-group-vertical>.btn,
+body.author-browse .btn-group>.btn {
   width: 2.375rem;
   max-width: 2.375rem;
 }
