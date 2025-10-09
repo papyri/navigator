@@ -369,8 +369,8 @@ public class StringSearchFacet extends Facet{
         html.append("    </div>");
         html.append("    <div class=\"d-none flex-shrink-1 d-flex prx\">");
         html.append("      <span class=\"within mx-2 form-text\">within</span>");
-        html.append("      <input type=\"text\" class=\"form-control form-control-sm w-auto prxcount\" name=\"prxcount\" size=\"2\" maxlength=\"2\" disabled=\"disabled\"/>");
-        html.append("      <select class=\"form-select form-select-sm w-auto prxunit\" name=\"prxunit\" disabled=\"disabled\">");
+        html.append("      <input type=\"text\" class=\"form-control form-control-sm w-auto prxcount\" name=\"prxcount\" size=\"2\" maxlength=\"2\" aria-label=\"number of words or characters between terms\" disabled=\"disabled\"/>");
+        html.append("      <select class=\"form-select form-select-sm w-auto prxunit\" name=\"prxunit\" aria-label=\"measure proximity in words or characters\" disabled=\"disabled\">");
         html.append("        <option selected=\"selected\" value=\"chars\">chars</option>");
         html.append("        <option value=\"words\">words</option>");
         html.append("      </select>");
@@ -403,9 +403,9 @@ public class StringSearchFacet extends Facet{
 
 
         // search target control
-        html.append("<div class=\"stringsearch-section bg-light p-3 mb-3\">");
+        html.append("<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label\">");
 
-        html.append("  <div class=\"h6 mb-2\">Search In</div>");
+        html.append("  <div class=\"h6 mb-2\" id=\"search-in-label\">Search In</div>");
         html.append("  <div class=\"form-check form-check-inline\">");
         html.append("    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.TEXT.name().toLowerCase());

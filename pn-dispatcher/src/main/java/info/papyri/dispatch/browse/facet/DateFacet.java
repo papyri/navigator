@@ -359,14 +359,14 @@ public class DateFacet extends Facet {
     private String generateModeSelector(){
 
         StringBuilder html = new StringBuilder();
-        html.append("<div class=\"facet-widget date-facet-widget mt-3\" id=\"date-mode-facet-widget\">");
+        html.append("<div class=\"facet-widget date-facet-widget mt-3\" id=\"date-mode-facet-widget\" role=\"radiogroup\" aria-labelledby=\"date-mode-label\">");
         String l = DateMode.LOOSE.name();
         String s = DateMode.STRICT.name();
         String checked = "\" checked=\"checked\" ";
         String unchecked = "\"";
         String looseChecked = dateMode == DateMode.LOOSE ? checked : unchecked;
         String strictChecked = dateMode == DateMode.STRICT ? checked : unchecked;
-        html.append("  <div class=\"form-label d-inline-block me-2\">Date Match</div>");
+        html.append("  <div class=\"form-label d-inline-block me-2\" id=\"date-mode-label\">Date Match</div>");
         html.append("  <div class=\"form-check form-check-inline me-2\">");
         html.append("    <input class=\"form-check-input\" type=\"radio\" title=\"Items fall within defined timespan: i.e., their date-range overlaps with the range specified \" name=\"");
         html.append(DateParam.DATE_MODE.name());
@@ -1169,7 +1169,7 @@ public class DateFacet extends Facet {
             // Render the BCE/CE radio buttons, but don't display them.
             // They are no longer needed as active controls, but are retained
             // for continuity. Consider whether to remove them entirely in future.
-            html.append("<div id=\"after-era-selector\" class=\"d-none\">");
+            html.append("<div id=\"after-era-selector\" class=\"d-none\" role=\"radiogroup\" aria-label=\"Select era\">");
 
             String allOptions = "";
             Boolean isUnknown = "Unknown".equals(currentValue) || "Unknown".equals(terminusBeforeWhich.getCurrentValue());
@@ -1179,8 +1179,8 @@ public class DateFacet extends Facet {
 
             for(String era : eras){
 
-                String tag = "<label id=\"after-" + era + "-label\">" + era  + "</label>";
-                tag += "<input type=\"radio\" name=\"after-era\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ?  " checked" : "");
+                String tag = "<label id=\"after-" + era + "-label\" for=\"after-" + era + "\">" + era  + "</label>";
+                tag += "<input type=\"radio\" name=\"after-era\" id=\"after-" + era + "\" aria-labelledby=\"after-" + era + "-label\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ?  " checked" : "");
                 tag += " disabled";
                 tag += "/>";
                 allOptions += tag;
@@ -1677,8 +1677,7 @@ public class DateFacet extends Facet {
             // for continuity. Consider whether to remove them entirely in future.
 
             StringBuilder html = new StringBuilder();
-            html.append("<div id=\"before-era-selector\" class=\"d-none\">");
-
+            html.append("<div id=\"before-era-selector\" class=\"d-none\" role=\"radiogroup\" aria-label=\"Select era\">");
 
             String allOptions = "";
             String otherVal = terminusAfterWhich.getCurrentValue();
@@ -1697,8 +1696,8 @@ public class DateFacet extends Facet {
 
             for(String era : eras){
 
-                String tag = "<label id=\"before-" + era + "-label\">" + era  + "</label>";
-                tag += "<input type=\"radio\" name=\"before-era\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ? " checked" : "");
+                String tag = "<label id=\"before-" + era + "-label\" for=\"before-" + era + "\">" + era  + "</label>";
+                tag += "<input type=\"radio\" name=\"before-era\" id=\"before-" + era + "\" aria-labelledby=\"before-" + era + "-label\" value=\"" + era + "\"" + (era.equals(selectedEra) && !isUnknown ? " checked" : "");
                 tag += " disabled";
                 tag += "/>";
                 allOptions += tag;
