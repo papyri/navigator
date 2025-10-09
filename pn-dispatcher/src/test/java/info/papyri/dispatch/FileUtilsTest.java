@@ -29,7 +29,7 @@ public class FileUtilsTest extends TestCase {
   protected void tearDown() throws Exception {
     super.tearDown();
   }
-  
+
   private static String BASEDATA = FileUtilsTest.class.getResource("/").toString().substring(5);
   private static String BASEHTML = FileUtilsTest.class.getResource("/").toString().substring(5);
 
@@ -46,7 +46,7 @@ public class FileUtilsTest extends TestCase {
     assert(expResult.exists());
     assert(result.exists());
   }
-  
+
   public void testGetHtmlBiblioFile() {
     String collection = "biblio";
     String item = "1234";
@@ -128,7 +128,7 @@ public class FileUtilsTest extends TestCase {
     }
     assertEquals(expResult.size(), matches);
   }
-  
+
   public void testFindMatchesMultipleTerms() {
     String query = "αναγκαιας χρειας";
     String id = "http://papyri.info/ddbdp/bgu;12;2188";
@@ -222,13 +222,13 @@ public class FileUtilsTest extends TestCase {
     }
 //    assertEquals(expResult.size(), matches);
   }
-  
+
   public void testFindMatchesLinebreak() {
     String query = "transcription_ngram_ia:(στρατηγ)";
     String id = "http://papyri.info/ddbdp/bgu;2;432";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
-    expResult.add("σ]τρατηγ</span>είας");
+    expResult.add("σ]τρατηγ</mark>είας");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
@@ -296,14 +296,14 @@ public class FileUtilsTest extends TestCase {
     }
     assertEquals(expResult.size(), matches);
   }
-  
+
   public void testFindMatchesSheep() {
     String query = "sheep";
     String id = "http://papyri.info/ddbdp/p.cair.zen;1;59068";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
-    expResult.add("<span class=\"highlight\">sheep</span>");
-    expResult.add("<span class=\"highlight\">sheep-</span>pens");
+    expResult.add("<mark class=\"highlight\">sheep</mark>");
+    expResult.add("<mark class=\"highlight\">sheep-</mark>pens");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
@@ -343,7 +343,7 @@ public class FileUtilsTest extends TestCase {
     }
     assertEquals(expResult.size(), matches);
   }
-  
+
   public void testFindMatchesIdiwLogw() {
     String query = "\"ιδιω λογω\"";
     String id = "http://papyri.info/ddbdp/p.ryl;2;215";
@@ -358,7 +358,7 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/bgu;3;923";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
-    expResult.add("<span class=\"highlight\">μὲν [κα</span>");
+    expResult.add("<mark class=\"highlight\">μὲν [κα</mark>");
     List<String> result = instance.highlightMatches(query, instance.loadTextFromId(id));
     int matches = 0;
     for (String r : result) {
@@ -377,15 +377,15 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/p.fuad.i.univ;;5";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     String result = instance.highlightText(query, instance.loadHtmlFromId(id));
-    assertTrue(result.contains("<br id=\"av,2-l3\"><span class=\"linenumber\">3</span><span class=\"highlight\">Θμ̣ο̣ινεθῦμις</span>"));
+    assertTrue(result.contains("<br id=\"av,2-l3\"><span class=\"linenumber\">3</span><mark class=\"highlight\">Θμ̣ο̣ινεθῦμις</mark>"));
   }
-  
+
   public void testNgramHighlightLineNo() {
     String query = "transcription_ngram_ia:(#θρασω#)";
     String id = "http://papyri.info/ddbdp/p.sakaon;;94";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     String result = instance.highlightText(query, instance.loadHtmlFromId(id));
-    assertTrue(result.contains("<br id=\"ar-l5\"><span class=\"linenumber\">5</span><span class=\"highlight\">Θρασώ</span>"));
+    assertTrue(result.contains("<br id=\"ar-l5\"><span class=\"linenumber\">5</span><mark class=\"highlight\">Θρασώ</mark>"));
   }
 
   public void testHighlightByAnchor() {
@@ -393,7 +393,7 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/bgu;10;1941";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     String result = instance.highlightText(query, instance.loadHtmlFromId(id));
-    assertTrue(result.contains("<span class=\"highlight\">Ἀπολλωνί̣ωι</span> <br id=\"aFrA,2-l3\">"));
+    assertTrue(result.contains("<mark class=\"highlight\">Ἀπολλωνί̣ωι</mark> <br id=\"aFrA,2-l3\">"));
   }
   /*
   public void testHighLightRegex() {
@@ -401,7 +401,7 @@ public class FileUtilsTest extends TestCase {
     String id = "http://papyri.info/ddbdp/p.lond;2;459";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     String result = instance.highlightText(query, instance.loadHtmlFromId(id));
-    assertTrue(result.contains("<span class=\"highlight\">διὰ<br id=\"al3\">Λ̣ο̣υκίου Ἀνουβίωνος βοηθοῦ</span>"));
+    assertTrue(result.contains("<mark class=\"highlight\">διὰ<br id=\"al3\">Λ̣ο̣υκίου Ἀνουβίωνος βοηθοῦ</mark>"));
   }
   * */
 
@@ -425,6 +425,6 @@ public class FileUtilsTest extends TestCase {
     String expResult = "https://papyri.info/ddbdp/p.aberd;;98";
     assertEquals(expResult, FileUtils.rewriteOldUrl(url));
   }
-  
+
 
 }

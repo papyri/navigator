@@ -9,6 +9,8 @@
   --bs-link-color: #004ccc;
   --bs-link-color-rgb: 0, 76, 204;
 
+  --bs-border-color: color-mix(in srgb, var(--bs-light), black 8%);
+
   --bs-primary: #800000;
   --bs-primary-rgb: 128, 0, 0;
   --bs-primary-text-emphasis: color-mix(in srgb, var(--bs-primary), black 15%);
@@ -227,4 +229,8 @@
   --bs-btn-hover-border-color: var(--bs-light-text-emphasis);
   --bs-btn-active-bg: var(--bs-light-text-emphasis);
   --bs-btn-active-border-color: var(--bs-light-text-emphasis);
+}
+
+.badge {
+  --bs-badge-font-weight: 400;
 }
