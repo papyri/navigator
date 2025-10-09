@@ -160,6 +160,14 @@ pre code {
   margin-bottom: 0.25rem;
 }
 
+.facet-widget.bg-light {
+  /* ensure color contrast a11y is sufficient for */
+  /* disabled checkbox labels on bg-light background */
+  .form-check-input:disabled~.form-check-label, .form-check-input[disabled]~.form-check-label {
+    opacity: 0.6;
+  }
+}
+
 a.facet-constraint:hover,
 a.facet-constraint:focus {
   .bi {
@@ -184,6 +192,8 @@ table#search-results-table {
     position: sticky;
     top: 0;
   }
+
+
 }
 
 /* Border between result record rows but not their associated text */
