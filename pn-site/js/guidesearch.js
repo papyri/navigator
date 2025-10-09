@@ -634,6 +634,15 @@ $(document).ready(
         handlePageJump();
       });
 
+      // Focus keyword search input when no search parameters exist
+      const keywordSearch = document.getElementById('keyword-search');
+      if (keywordSearch) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.toString()) {
+          keywordSearch.focus();
+        }
+      }
+
     });
 
   }
