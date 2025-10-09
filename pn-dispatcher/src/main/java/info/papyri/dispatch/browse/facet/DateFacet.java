@@ -1114,12 +1114,10 @@ public class DateFacet extends Facet {
             html.append("\" id=\"date-start-selector\">");
             Boolean onlyOneValue = valuesAndCounts.size() <= 1;
             String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
-            String disabled = onlyOneValue ? " disabled=\"true\"" : "";
             html.append("<label class=\"form-label\" for=\"id-date-start\">Date On or After</label>");
             html.append("<select class=\"form-select\" name=\"");
             html.append(FacetParam.DATE_START.name());
             html.append("\" id=\"id-date-start\"");
-            html.append(disabled);
             html.append(">");
             html.append("<option ");
             html.append(defaultSelected);
@@ -1528,12 +1526,10 @@ public class DateFacet extends Facet {
             html.append("\" id=\"date-end-selector\">");
             Boolean onlyOneValue = valuesAndCounts.size() <= 1;
             String defaultSelected = onlyOneValue  ? " selected=\"true\"" : "";
-            String disabled = onlyOneValue ? " disabled=\"true\"" : "";
             html.append("<label class=\"form-label\" for=\"id-date-end\">Date Before</label>");
             html.append("<select class=\"form-select\" name=\"");
             html.append(FacetParam.DATE_END.name());
             html.append("\" id=\"id-date-end\"");
-            html.append(disabled);
             html.append(">");
             html.append("<option ");
             html.append(defaultSelected);
