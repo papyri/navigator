@@ -500,15 +500,15 @@ public class FacetBrowser extends HttpServlet {
 
     html.append("  </section>");
     html.append("  <section id=\"sidebar\" class=\"page-sidebar col-lg-4 order-first border-end border-1 position-relative\" aria-label=\"limit your search\">");
-    html.append("    <div id=\"sidebarContent\" class=\"collapse collapse-horizontal show\">");
+    html.append("    <button id=\"toggleNavButton\" class=\"btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-2\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#sidebarContent\" aria-expanded=\"true\" aria-label=\"Hide Filters\" aria-controls=\"sidebarContent\">");
+    html.append("      <span id=\"toggleNavLabel\" class=\"d-inline-block d-lg-none\">Hide Filters</span><span id=\"toggleIcon\" class=\"d-inline-block\"><i class=\"bi bi-chevron-left m-0\"></i></span>");
+    html.append("    </button>");
 
+    html.append("    <div id=\"sidebarContent\" class=\"collapse collapse-horizontal show\">");
     html.append("        <div id=\"facet-wrapper\">");
     assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
     html.append("        </div><!-- closing #facet-wrapper -->");
     html.append("    </div>");
-    html.append("    <button id=\"toggleNavButton\" class=\"btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-2\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#sidebarContent\" aria-expanded=\"true\" aria-label=\"Hide Filters\" aria-controls=\"sidebarContent\">");
-    html.append("      <span id=\"toggleNavLabel\" class=\"d-inline-block d-lg-none\">Hide Filters</span><span id=\"toggleIcon\" class=\"d-inline-block\"><i class=\"bi bi-chevron-left m-0\"></i></span>");
-    html.append("    </button>");
     html.append("  </section>");
     html.append("</div>");
     html.append("</form>");
