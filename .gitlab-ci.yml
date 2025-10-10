@@ -23,6 +23,7 @@ stages:
   - test
   - deploy
   - release
+  - deploy-okd
 
 .job:
   except:
@@ -69,15 +70,6 @@ deploy-dev:
     - sudo /usr/bin/journalctl -u papyri-navigator-dev-deploy-playbook --since "${CURRENT_TIME}"
   when: manual
 
-deploy-okd:
-  stage: deploy
-  tags:
-    - deploy
-  when: manual
-  script:
-    - echo "Triggering downstream deployment pipeline in dul-its/dul-papyri"
-    - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=main "https://gitlab.oit.duke.edu/api/v4/projects/dul-its%2Fdul-papyri/trigger/pipeline"
-
 release:
   stage: release
   extends: .docker-job
@@ -90,3 +82,12 @@ release:
     - docker push $tomcat_release_tag
   tags:
     - release
+
+deploy-okd:
+  stage: okd-deploy
+  tags:
+    - okd-deploy
+  when: manual
+  script:
+    - echo "Triggering downstream deployment pipeline in dul-its/dul-papyri"
+    - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=main "https://gitlab.oit.duke.edu/api/v4/projects/dul-its%2Fdul-papyri/trigger/pipeline"
