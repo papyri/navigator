@@ -84,9 +84,9 @@ release:
     - release
 
 deploy-okd:
-  stage: okd-deploy
+  stage: deploy-okd
   tags:
-    - okd-deploy
+    - deploy-okd
   when: manual
   script:
     - echo "Triggering downstream deployment pipeline in dul-its/dul-papyri"
