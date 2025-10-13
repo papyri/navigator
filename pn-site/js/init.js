@@ -815,12 +815,12 @@ function transformApparatusContent() {
     });
 
         // Set apparatus section max-height to match the transcription height
-        const edition = document.querySelector('#edition');
-        const transcription = edition.querySelector('span.ab');
-        if (transcription) {
-            const transcriptionHeight = transcription.offsetHeight;
-            apparatus.style.maxHeight = transcriptionHeight + 'px';
-        }
+        // const edition = document.querySelector('#edition');
+        // const transcription = edition.querySelector('span.ab');
+        // if (transcription) {
+        //     const transcriptionHeight = transcription.offsetHeight;
+        //     apparatus.style.maxHeight = transcriptionHeight + 'px';
+        // }
 
         // Resolve the promise after DOM updates
         resolve();
@@ -917,6 +917,9 @@ function handleApparatusHashOnLoad() {
             const transcriptionElement = document.querySelector(backLink);
             if (transcriptionElement) {
                 transcriptionElement.classList.add('active');
+
+                // Scroll the transcription element into view as well
+                transcriptionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
     } 
