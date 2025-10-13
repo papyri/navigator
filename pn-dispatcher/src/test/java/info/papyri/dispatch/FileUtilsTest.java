@@ -426,5 +426,21 @@ public class FileUtilsTest extends TestCase {
     assertEquals(expResult, FileUtils.rewriteOldUrl(url));
   }
 
+  public void testHighlightColonQuery() {
+    // Test case-insensitive highlighting for colon-separated queries like "author:bowman"
+    String content = "This is a test with Bowman in it.";
+    FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
+
+    // Test both cases: with and without space after colon
+    String result1 = instance.highlightText("author:bowman", content);
+    String result2 = instance.highlightText("author: bowman", content);
+
+    // Both should highlight "Bowman" despite case difference
+    assertTrue("Query 'author:bowman' should highlight 'Bowman'",
+               result1.contains("<mark class=\"highlight\">Bowman</mark>"));
+    assertTrue("Query 'author: bowman' should highlight 'Bowman'",
+               result2.contains("<mark class=\"highlight\">Bowman</mark>"));
+  }
+
 
 }

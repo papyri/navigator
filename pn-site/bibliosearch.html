@@ -22,6 +22,8 @@
 
   <script src="/js/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
 
+  <script src="/js/bibliosearch.js" type="text/javascript" charset="utf-8"></script>
+
   <!-- TODO: determine how much of init.js can be eliminated -->
   <script src="/js/init.js" type="text/javascript" charset="utf-8"></script>
 
@@ -43,11 +45,8 @@
   <nav id="skip-links" class="visually-hidden-focusable bg-dark" data-bs-theme="dark" aria-label="Skip link navigation">
     <div class="container-xl px-4">
       <a href="#main" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to main content</a>
-      <!-- TODO: Add more skip links in other views (e.g., search pages) -->
-      <!-- as needed -->
-      <!--
-      <a href="#search" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to search</a>
-      -->
+      <a href="#keyword" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to search</a>
+      <a href="#biblio-results" class="d-inline-flex p-2 m-1 text-decoration-none">Skip to results</a>
     </div>
   </nav>
 
@@ -103,32 +102,39 @@
       <div class="content">
         <h1>Search Bibliography</h1>
         <div class="content search">
-          <div class="card text-bg-light mb-3">
-            <div class="card-body">
-              <form name="bibsearch" method="get" action="/bibliosearch" id="bibsearch">
-                <div class="input-group">
-                  <input type="text" name="q" id="keyword" class="form-control" aria-label="Keywords for searching bibliographic records">
-                  <button class="btn btn-primary" type="submit" id="search">Search</button>
+          <div class="row">
+            <section class="col-lg-8">
+              <div class="card text-bg-light mb-4">
+                <div class="card-body">
+                  <form name="bibsearch" id="bibsearch" method="get" action="/bibliosearch">
+                    <div class="input-group">
+                      <input type="text" name="q" id="keyword" class="form-control" aria-label="Keywords for searching bibliographic records">
+                      <button class="btn btn-primary" type="submit" id="search">Search</button>
+                    </div>
+                  </form>
                 </div>
-              </form>
-            </div>
-          </div>
-          <div>
-            <p>
-              To search anywhere within a record enter the word or words in the search box, e.g.: <code>Bowman</code> or <code>Bowman land</code> (space between words = 'and').
-            </p>
-            <p>
-              To restrict searches to specific fields enter, e.g.: <code>author:Hombert title:bibliographie date:1932</code>. A search <code>title:"land lease"</code> finds all records with the phrase <code>"land lease"</code> or <code>"land-lease"</code> in the title. A search for <code>title:(land lease)</code> finds all records with the the word <code>"land"</code> and the word <code>"lease"</code> in the title.
-            </p>
-            <p>
-              Such search constraints work with the following fields: <code>author:</code>, <code>title:</code>, <code>date:</code>, <code>note:</code>, <code>index:</code>, <code>editor:</code>, <code>pubPlace:</code>, <code>original:</code> (original = the entire original BP record).
-            </p>
-            <p>
-              Accents are ignored, so that <code>etudes</code> finds <code>études</code>. Wildcard searches are possible, so that <code>ptoleme*</code> will find <code>Ptolemy</code>, <code>Ptolemies</code>, <code>Ptolémées vel sim</code>.
-            </p>
+              </div>
+              <!-- Results -->
+            </section>
+            <section class="col-lg-4">
+              <h2 class="h4">Search Tips</h2>
+              <p>
+                To search anywhere within a record enter the word or words in the search box, e.g.: <code>Bowman</code> or <code>Bowman land</code> (space between words = 'and').
+              </p>
+              <p>
+                To restrict searches to specific fields enter, e.g.: <code>author:Hombert title:bibliographie date:1932</code>. A search <code>title:"land lease"</code> finds all records with the phrase <code>"land lease"</code> or <code>"land-lease"</code> in the title. A search for <code>title:(land lease)</code> finds all records with the the word <code>"land"</code> and the word <code>"lease"</code> in the title.
+              </p>
+              <p>
+                Such search constraints work with the following fields: <code>author:</code>, <code>title:</code>, <code>date:</code>, <code>note:</code>, <code>index:</code>, <code>editor:</code>, <code>pubPlace:</code>, <code>original:</code> (original = the entire original BP record).
+              </p>
+              <p>
+                Accents are ignored, so that <code>etudes</code> finds <code>études</code>. Wildcard searches are possible, so that <code>ptolem*</code> will find <code>Ptolemy</code>, <code>Ptolemies</code>, <code>Ptolémées vel sim</code>.
+              </p>
+
+            </section>
           </div>
 
-          <!-- Results -->
+
         </div>
       </div>
     </div>

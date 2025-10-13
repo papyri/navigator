@@ -640,6 +640,7 @@ public class FileUtils {
   public String highlight(Pattern[] patterns, String t) {
     List<String> exclusions = getExclusions(t);
     String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
+
     int index = 0;
     for (Pattern pattern : patterns) {
       // If pattern is something dumb, like '.', skip it.
@@ -937,29 +938,28 @@ public class FileUtils {
       for(int i = 0; i < qbits.length; i++){
 
           String qbit = qbits[i];
-          String term = qbit.substring(qbit.indexOf(":") + 2);
+          String term;
+          int colonIndex = qbit.indexOf(":");
+          if (colonIndex >= 0) {
+            term = qbit.substring(colonIndex + 1).trim();
+          } else {
+            term = qbit.trim();
+          }
+
           try{
-
               term = URLDecoder.decode(term, "UTF-8");
-
           }catch(UnsupportedEncodingException uee){}
 
           if(qbit.contains("PHRASE:")){
-
               patterns.addAll(Arrays.asList(getPhraseHighlightPatterns(term)));
-
           }
-
-
           else if(qbit.contains("SUBSTRING")) {
-
                patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(term)));
-
           }
           else{
-
-              patterns.add(Pattern.compile(term));
-
+              if (term != null && !term.trim().isEmpty()) {
+                patterns.add(Pattern.compile(term, Pattern.CASE_INSENSITIVE));
+              }
           }
 
       }
