@@ -65,6 +65,16 @@ function init() {
 		getCampaign();
 		initBootstrapTooltips();
 		initMetadataTextSliders();
+
+		// Initialize apparatus link transformation for /current/ pages
+		if (window.location.pathname.includes('/current/')) {
+		    hideLineNumbersFromScreenReaders();
+		    transformApparatusLinks();
+		    transformApparatusContent().then(() => {
+		        addLineNumberHoverEffect();
+		        handleApparatusHashOnLoad();
+		    });
+		}
 }
 
 function initjQueryMigrate() {
@@ -587,8 +597,8 @@ function highlightHash() {
     }
 
     // Remove existing highlights only within transcription
-    transcriptionContainer.querySelectorAll('.bg-warning').forEach(element => {
-        element.classList.remove('bg-warning');
+    transcriptionContainer.querySelectorAll('.active').forEach(element => {
+        element.classList.remove('active');
     });
 
     const hash = window.location.hash;
@@ -599,7 +609,7 @@ function highlightHash() {
         const targetElement = transcriptionContainer.querySelector('#' + elementId);
 
         if (targetElement) {
-            targetElement.classList.add('bg-warning');
+            targetElement.classList.add('active');
         }
 
         // Also highlight the corresponding to/from element
@@ -613,7 +623,7 @@ function highlightHash() {
         if (correspondingId) {
             const correspondingElement = transcriptionContainer.querySelector('#' + correspondingId);
             if (correspondingElement) {
-                correspondingElement.classList.add('bg-warning');
+                correspondingElement.classList.add('active');
             }
         }
     }
@@ -628,3 +638,297 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('hashchange', function() {
     highlightHash();
 });
+
+
+/***********************/
+/** APPARATUS SCRIPTS **/
+/***********************/
+
+// hide hard-coded line numbers from screen readers
+function hideLineNumbersFromScreenReaders() {
+	jQuery('span.linenumber').attr('aria-hidden', 'true');
+}
+
+// replace (*) with 'asterisk operator'
+function transformApparatusLinks() {
+    jQuery('#edition span.ab a[href^="#to-app-"]').addClass('apparatus-link').html('<span aria-hidden="true">&lowast;</span>').attr('aria-label', 'Apparatus note');
+
+    // control apparatus link behavior
+    jQuery('.apparatus-link').on('click', function(e) {
+        e.preventDefault();
+        const href = jQuery(this).attr('href');
+        const targetId = href.substring(1); // Remove the #
+
+        jQuery('.apparatus-link.active').removeClass('active');
+        jQuery(this).addClass('active');
+        jQuery('.apparatus-entry.active').removeClass('active');
+
+        // Find and highlight the corresponding apparatus entry
+        const apparatusEntry = document.getElementById(targetId);
+        if (apparatusEntry) {
+            apparatusEntry.classList.add('active');
+
+            // Scroll apparatus entry into view within its container
+            apparatusEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
+}
+
+// apparatus content
+// - Wrap each entry in a div instead of using <br> separators
+// - Move anchor IDs from <a> tags to wrapper divs
+// - Remove the "^" link text
+// - Make line numbers clickable to highlight words in transcription
+function transformApparatusContent() {
+    return new Promise((resolve) => {
+        const apparatus = document.querySelector('#apparatus');
+        if (!apparatus) {
+            resolve();
+            return;
+        }
+
+    let html = apparatus.innerHTML;
+    const heading = '<h3>Apparatus</h3>';
+    html = html.replace('<h3>Apparatus</h3>', '').replace(/^<br>/, '');
+
+    // Split by <br> to get individual entries
+    const entries = html.split('<br>').filter(entry => entry.trim().length > 0);
+    // Parse each entry
+    const parsedEntries = [];
+    const lineNumberPattern = /<a\s+id="([^"]+)"\s+href="([^"]+)"[^>]*>\^<\/a>\s*(\d+)\.\s*(.+)$/;
+
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i].trim();
+        if (!entry) continue;
+
+        const match = entry.match(lineNumberPattern);
+        if (match) {
+            const anchorId = match[1]; // e.g., "to-app-t:w06"
+            const backLink = match[2].substring(1); // Remove # from "#from-app-t:w06"
+            const lineNumber = parseInt(match[3]);
+            const content = match[4];
+
+            parsedEntries.push({
+                anchorId,
+                lineNumber,
+                content,
+                backLink
+            });
+        }
+    }
+
+    // Assign display numbers
+    for (let entry of parsedEntries) {
+        entry.displayNumber = entry.lineNumber + ':';
+    }
+
+    // Build new HTML
+    let newHtml = heading + '\n';
+
+    // Check if there's a hash in the URL that we need to match
+    const hash = window.location.hash;
+    const targetIdFromHash = hash ? hash.substring(1) : null; // Remove the #
+
+    for (let entry of parsedEntries) {
+        // Extract content from data-bs-original-title attribute if present
+        let mainContent = entry.content;
+        let detailContent = '';
+
+        // Check if the span has data-bs-original-title attribute
+        const tooltipMatch = entry.content.match(/<span[^>]*data-bs-original-title="([^"]*)"[^>]*>([^<]*)<\/span>/);
+
+        if (tooltipMatch) {
+            const tooltipText = tooltipMatch[1]; // Content from data-bs-original-title
+
+            // Set the detail content from the tooltip
+            detailContent = `<span class="apparatus-detail">${tooltipText}</span>`;
+        }
+
+        // Replace span tags with h4 tags for a11y
+        mainContent = mainContent.replace(/<span([^>]*)>([^<]*)<\/span>/g, '<h4$1>$2</h4>');
+
+        // Check if this entry matches the hash in the URL
+        const activeClass = (targetIdFromHash && entry.anchorId === targetIdFromHash) ? ' active' : '';
+
+        newHtml += `<div aria-label="Line ${entry.lineNumber}" class="apparatus-entry${activeClass}" id="${entry.anchorId}" data-back-link="#${entry.backLink}">
+            <a href="#${entry.backLink}" class="apparatus-line-number" aria-label="Go to text">${entry.displayNumber}</a>
+            <span class="apparatus-content">${mainContent}</span>
+            ${detailContent}
+        </div>\n`;
+    }
+
+    // Update the apparatus HTML
+    apparatus.innerHTML = newHtml;
+
+    // Add click handlers to line numbers to highlight corresponding words
+    const lineNumbers = apparatus.querySelectorAll('.apparatus-line-number');
+
+    lineNumbers.forEach(lineNum => {
+        lineNum.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            const targetId = href.substring(1); // Remove the #
+
+            // Update URL with to-app- version of the link (change from-app- to to-app-)
+            const apparatusEntryId = this.closest('.apparatus-entry').id;
+            if (apparatusEntryId) {
+                history.replaceState(null, '', '#' + apparatusEntryId);
+            }
+
+            // Remove active class from all apparatus entries
+            document.querySelectorAll('.apparatus-entry.active').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Add active class to the clicked entry's parent
+            this.closest('.apparatus-entry').classList.add('active');
+
+            // Remove active class from all apparatus links in transcription
+            document.querySelectorAll('.apparatus-link.active').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Find the target element in the transcription and add active class
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.classList.add('active');
+
+                // Remove previous highlights
+                document.querySelectorAll('.apparatus-highlight').forEach(el => {
+                    el.classList.remove('apparatus-highlight');
+                });
+
+                // Highlight the target word
+                targetElement.classList.add('apparatus-highlight');
+
+                // Scroll to it
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Set focus to the target element for keyboard navigation
+                // If it's not naturally focusable, make it focusable
+                if (!targetElement.hasAttribute('tabindex')) {
+                    targetElement.setAttribute('tabindex', '-1');
+                }
+                targetElement.focus();
+            }
+        });
+    });
+
+        // Set apparatus section max-height to match the transcription height
+        // const edition = document.querySelector('#edition');
+        // const transcription = edition.querySelector('span.ab');
+        // if (transcription) {
+        //     const transcriptionHeight = transcription.offsetHeight;
+        //     apparatus.style.maxHeight = transcriptionHeight + 'px';
+        // }
+
+        // Resolve the promise after DOM updates
+        resolve();
+    });
+}
+
+// Wrap each line in a span with line number class and add hover effect
+function addLineNumberHoverEffect() {
+
+    const edition = document.querySelector('#edition');
+    if (!edition) {
+        return;
+    }
+
+    const transcription = edition.querySelector('span.ab');
+    if (!transcription) {
+        return;
+    }
+
+    // Get the HTML content
+    let html = transcription.innerHTML;
+
+    // Get all line breaks with id="alN"
+    const lineBreakPattern = /<br\s+id="al(\d+)"[^>]*>/g;
+    const lineBreaks = [];
+    let match;
+
+    while ((match = lineBreakPattern.exec(html)) !== null) {
+        lineBreaks.push({
+            fullMatch: match[0],
+            lineNumber: parseInt(match[1]),
+            index: match.index
+        });
+    }
+
+    // Build new HTML with wrapped lines
+    let newHtml = '';
+    let currentPos = 0;
+    let currentLineNumber = 1;
+
+    // Wrap line 1
+    if (lineBreaks.length > 0) {
+        const firstBreakPos = lineBreaks[0].index;
+        const line1Content = html.substring(0, firstBreakPos);
+        newHtml += `<span class="text-line line-${currentLineNumber}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${line1Content}</span>`;
+        // Skip the <br> tag itself
+        currentPos = lineBreaks[0].index + lineBreaks[0].fullMatch.length;
+        currentLineNumber = lineBreaks[0].lineNumber;
+    }
+
+    // Wrap remaining lines
+    for (let i = 0; i < lineBreaks.length; i++) {
+        const nextBreak = lineBreaks[i + 1];
+        const lineContent = nextBreak
+            ? html.substring(currentPos, nextBreak.index)
+            : html.substring(currentPos);
+
+        if (lineContent.trim()) {
+            newHtml += `<span class="text-line line-${currentLineNumber}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${lineContent}</span>`;
+        }
+
+        if (nextBreak) {
+            // Skip the <br> tag itself
+            currentPos = nextBreak.index + nextBreak.fullMatch.length;
+            currentLineNumber = nextBreak.lineNumber;
+        }
+    }
+
+    // Update the transcription HTML
+    transcription.innerHTML = newHtml;
+}
+
+// apparatus links
+function handleApparatusHashOnLoad() {
+    const hash = window.location.hash;
+
+    // Only proceed if there's a hash that starts with #to-app-
+    if (!hash || !hash.startsWith('#to-app-')) {
+        return;
+    }
+
+    const targetId = hash.substring(1); // Remove the #
+
+    // Find the apparatus entry with this ID (should already have active class)
+    const apparatusEntry = document.getElementById(targetId);
+
+    if (apparatusEntry) {
+        // Scroll apparatus entry into view
+        apparatusEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Find the backlink (from-app-xxx) to activate in transcription
+        const backLink = apparatusEntry.getAttribute('data-back-link');
+        if (backLink) {
+            const transcriptionElement = document.querySelector(backLink);
+            if (transcriptionElement) {
+                transcriptionElement.classList.add('active');
+
+                // Scroll the transcription element into view as well
+                transcriptionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    } 
+
+    // Find the corresponding link in the transcription
+    // The link will have href="#to-app-xxx"
+    const correspondingLink = document.querySelector(`a.apparatus-link[href="${hash}"]`);
+    if (correspondingLink) {
+        // Add active class to the link
+        correspondingLink.classList.add('active');
+    }
+}
