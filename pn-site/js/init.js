@@ -766,12 +766,12 @@ function reorderTextSections() {
 
 // Transform h2 headings to h3 in translation sections
 function transformTranslationHeadings() {
-	jQuery('.translation.data h2').each(function() {
+	jQuery('.translation.data div h2').each(function() {
 		const $h2 = jQuery(this);
 		const text = $h2.text().trim().toLowerCase();
 
 		// Only transform h2s that contain "translation" or "bibliography"
-		if (text === 'translation' || text === 'bibliography') {
+        if (text.includes('translation') || text.includes('bibliography')) {
 			const h3 = jQuery('<h3></h3>').html($h2.html());
 
 			// Copy any attributes
