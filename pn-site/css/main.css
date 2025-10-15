@@ -3,6 +3,16 @@
 /* ----- */
 
 @font-face {
+  font-family: "Noto Sans Greek";
+  src: 
+    url("/fonts/NotoSans-Greek-Regular.woff2") format("woff2"),
+    url("/fonts/NotoSans-Greek-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "IFAO-Grec Subset";
   src:
     url("/fonts/IFAO-Grec-Unicode-subset.woff2") format("woff2"),
@@ -245,16 +255,8 @@ span.linenumber {
 
 /* Greek / Latin */
 *[lang=grc],*[lang=lat] {
-  font-family: var(--bs-font-sans-serif), "Noto Sans Symbols 2";
+  font-family: "Noto Sans Greek", var(--bs-font-sans-serif);
   font-optical-sizing: auto;
-}
-
-/* Greek Numbers and Fractions */
-*[lang=grc] span[title^="number:"],
-*[lang=grc] span[title^="fraction:"] {
-  font-family: "Noto Sans Symbols", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
 }
 
 /* Coptic */
