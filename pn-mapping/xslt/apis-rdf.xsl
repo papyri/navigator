@@ -10,7 +10,7 @@
 
   <xsl:template match="/tei:TEI">
     <xsl:if test="string-length(//tei:publicationStmt/tei:idno[@type = 'apisid']) gt 0">
-      <xsl:variable name="id">http://papyri.info/apis/<xsl:value-of
+      <xsl:variable name="id">https://papyri.info/apis/<xsl:value-of
           select="//tei:publicationStmt/tei:idno[@type = 'apisid']/text()"/>/source</xsl:variable>
       <rdf:Description rdf:about="{$id}">
         <dct:identifier>papyri.info/apis/<xsl:value-of
@@ -20,8 +20,8 @@
         </dct:identifier>
         <dct:isPartOf>
           <rdf:Description
-            rdf:about="http://papyri.info/apis/{substring-before(//tei:publicationStmt/tei:idno[@type = 'apisid'], '.')}">
-            <dct:isPartOf rdf:resource="http://papyri.info/apis"/>
+            rdf:about="https://papyri.info/apis/{substring-before(//tei:publicationStmt/tei:idno[@type = 'apisid'], '.')}">
+            <dct:isPartOf rdf:resource="https://papyri.info/apis"/>
           </rdf:Description>
         </dct:isPartOf>
         <!-- Captures old-style DDbDP references -->
@@ -49,7 +49,7 @@
             <xsl:variable name="ddb-doc" select="doc($ddb-doc-uri)"/>
             <dct:relation>
               <rdf:Description
-                rdf:about="http://papyri.info/ddbdp/{$ddb-doc//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/source">
+                rdf:about="https://papyri.info/ddbdp/{$ddb-doc//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/source">
                 <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
             </dct:relation>
@@ -73,7 +73,7 @@
           </xsl:variable>
           <xsl:if test="doc-available($ddb-doc-uri)">
             <dct:relation>
-              <rdf:Description rdf:about="http://papyri.info/ddbdp/{./text()}/source">
+              <rdf:Description rdf:about="https://papyri.info/ddbdp/{./text()}/source">
                 <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
             </dct:relation>
@@ -89,6 +89,11 @@
                   <dct:relation rdf:resource="{$id}"/>
                 </rdf:Description>
               </dct:relation>
+              <dct:relation>
+                <rdf:Description rdf:about="https://papyri.info/current/{.}/source">
+                  <dct:relation rdf:resource="{$id}"/>
+                </rdf:Description>
+              </dct:relation>
             </xsl:if>
           </xsl:for-each>
         </xsl:for-each>
@@ -98,7 +103,7 @@
             <xsl:if
               test="doc-available(concat('file://', $root, '/DCLP/', $dir, '/', ., '.xml'))">
               <dct:relation>
-                <rdf:Description rdf:about="http://papyri.info/dclp/{.}/source">
+                <rdf:Description rdf:about="https://papyri.info/dclp/{.}/source">
                   <dct:relation rdf:resource="{$id}"/>
                 </rdf:Description>
               </dct:relation>
@@ -116,7 +121,7 @@
         </xsl:for-each>
         <xsl:if test="//tei:facsimile">
           <dct:relation
-            rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images"
+            rdf:resource="https://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images"
           />
         </xsl:if>
         <foaf:page>
@@ -127,7 +132,7 @@
       </rdf:Description>
       <xsl:if test="//tei:facsimile">
         <rdf:Description
-          rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images">
+          rdf:about="https://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images">
           <rdf:type rdf:resource="http://purl.org/ontology/olo/core#OrderedList"/>
           <olo:length rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">
             <xsl:value-of select="count(//tei:facsimile//tei:graphic)"/>
@@ -135,7 +140,7 @@
           <xsl:for-each select="//tei:facsimile//tei:graphic">
             <olo:slot>
               <rdf:Description
-                rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images/{position()}">
+                rdf:about="https://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/images/{position()}">
                 <olo:index rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">
                   <xsl:value-of select="position()"/>
                 </olo:index>
@@ -168,7 +173,7 @@
                     </rdfs:label>
                     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Image"/>
                     <foaf:depicts
-                      rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"
+                      rdf:resource="https://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"
                     />
                   </rdf:Description>
                 </olo:item>
@@ -177,9 +182,9 @@
           </xsl:for-each>
         </rdf:Description>
         <rdf:Description
-          rdf:about="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/source">
+          rdf:about="https://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/source">
           <dct:source
-            rdf:resource="http://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"
+            rdf:resource="https://papyri.info/apis/{//tei:publicationStmt/tei:idno[@type = 'apisid']/text()}/original"
           />
         </rdf:Description>
       </xsl:if>
