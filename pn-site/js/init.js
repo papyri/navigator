@@ -66,13 +66,31 @@ function init() {
 		initBootstrapTooltips();
 		initMetadataTextSliders();
 
-		// Initialize apparatus link transformation for /current/ pages
-		if (window.location.pathname.includes('/current/')) {
+		// Initialize apparatus link transformation for /current/ and /editions/ pages
+		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
+		    transformTextPartNumbers();
+		    reorderTextSections();
+		    transformTranslationHeadings();
 		    hideLineNumbersFromScreenReaders();
 		    transformApparatusLinks();
 		    transformApparatusContent().then(() => {
 		        addLineNumberHoverEffect();
 		        handleApparatusHashOnLoad();
+
+		        // Add resize listener to recalculate apparatus max-height
+		        let resizeTimer;
+		        window.addEventListener('resize', () => {
+		            clearTimeout(resizeTimer);
+		            resizeTimer = setTimeout(() => {
+		                setApparatusMaxHeight();
+		            }, 250);
+		        });
+
+		        // Fade in the #edition element now that all processing is complete
+		        const edition = document.querySelector('#edition');
+		        if (edition) {
+		            edition.classList.add('ready');
+		        }
 		    });
 		}
 }
@@ -644,6 +662,131 @@ window.addEventListener('hashchange', function() {
 /** APPARATUS SCRIPTS **/
 /***********************/
 
+// Transform textpartnumber spans into H3 elements and wrap content
+function transformTextPartNumbers() {
+	const edition = jQuery('#edition');
+	if (!edition.length) return;
+
+	// Remove text nodes that appear between textpartnumber spans and ab spans
+	edition.find('span.textpartnumber').each(function() {
+		let nextNode = this.nextSibling;
+		// Keep removing text nodes until we hit an element node (or end of siblings)
+		while (nextNode && nextNode.nodeType === 3) {
+			const nodeToRemove = nextNode;
+			nextNode = nextNode.nextSibling;
+			nodeToRemove.remove();
+		}
+	});
+
+	// Collect all direct children of #edition (textpartnumber spans and ab spans)
+	const children = edition.children('span.textpartnumber, span.ab').toArray();
+
+	// If there are no children, or all children are empty, remove the #edition element
+	if (children.length === 0) {
+		edition.remove();
+		return;
+	}
+
+	// Check if all children are empty (have no text content)
+	const allEmpty = children.every(child => jQuery(child).text().trim() === '');
+	if (allEmpty) {
+		edition.remove();
+		return;
+	}
+
+	// Create wrapper div
+	const wrapper = jQuery('<div></div>').addClass('edition-content');
+
+	// Process all children and add to wrapper
+	children.forEach(function(element) {
+		const $element = jQuery(element);
+		if ($element.hasClass('textpartnumber')) {
+			// Transform textpartnumber span to h3
+			const textContent = $element.text();
+			const id = $element.attr('id');
+			const h3 = jQuery('<h3></h3>').text(textContent).attr('id', id).addClass('textpartnumber-heading');
+			wrapper.append(h3);
+		} else {
+			// Detach and append ab span
+			wrapper.append($element.detach());
+		}
+	});
+
+	// Remove any remaining textpartnumber spans
+	edition.find('span.textpartnumber').remove();
+
+	// Insert wrapper at the beginning of #edition
+	edition.prepend(wrapper);
+}
+
+// Reorder text sections: move #history and related elements to be direct children of .text.row
+function reorderTextSections() {
+	const textRow = jQuery('.text.row');
+	if (!textRow.length) return;
+
+	// Find sections
+	const history = jQuery('#history');
+	const translations = jQuery('.translations');
+	const ld = jQuery('#ld');
+
+	// Move #history, its h2, and the copyright paragraph together
+	if (history.length) {
+		// Find the h2 that precedes #history
+		const historyH2 = history.prev('h2');
+
+		// Find the copyright paragraph that follows #history
+		const copyrightP = history.next('p').filter(':has(a[rel="license"])');
+
+		// Create a wrapper for all history-related content
+		const historyWrapper = jQuery('<div></div>').attr('id', 'history-section');
+
+		// Move elements into wrapper
+		if (historyH2.length) {
+			historyWrapper.append(historyH2.detach());
+		}
+		historyWrapper.append(history.detach());
+		if (copyrightP.length) {
+			historyWrapper.append(copyrightP.detach());
+		}
+
+		// Insert the wrapper in the correct position
+		// Order will be: transcription, translations, history-section, ld
+		if (translations.length) {
+			historyWrapper.insertAfter(translations);
+		} else {
+			// If no translations, insert before #ld or append to textRow
+			if (ld.length) {
+				historyWrapper.insertBefore(ld);
+			} else {
+				textRow.append(historyWrapper);
+			}
+		}
+	}
+}
+
+// Transform h2 headings to h3 in translation sections
+function transformTranslationHeadings() {
+	jQuery('.translation.data h2').each(function() {
+		const $h2 = jQuery(this);
+		const text = $h2.text().trim().toLowerCase();
+
+		// Only transform h2s that contain "translation" or "bibliography"
+		if (text === 'translation' || text === 'bibliography') {
+			const h3 = jQuery('<h3></h3>').html($h2.html());
+
+			// Copy any attributes
+			if ($h2.attr('id')) {
+				h3.attr('id', $h2.attr('id'));
+			}
+			if ($h2.attr('class')) {
+				h3.attr('class', $h2.attr('class'));
+			}
+
+			$h2.replaceWith(h3);
+		}
+	});
+}
+
 // hide hard-coded line numbers from screen readers
 function hideLineNumbersFromScreenReaders() {
 	jQuery('span.linenumber').attr('aria-hidden', 'true');
@@ -693,33 +836,55 @@ function transformApparatusContent() {
 
     // Split by <br> to get individual entries
     const entries = html.split('<br>').filter(entry => entry.trim().length > 0);
-    // Parse each entry
+
+    // Parse each entry by breaking down its structure
     const parsedEntries = [];
-    const lineNumberPattern = /<a\s+id="([^"]+)"\s+href="([^"]+)"[^>]*>\^<\/a>\s*(\d+)\.\s*(.+)$/;
 
     for (let i = 0; i < entries.length; i++) {
         const entry = entries[i].trim();
         if (!entry) continue;
 
-        const match = entry.match(lineNumberPattern);
-        if (match) {
-            const anchorId = match[1]; // e.g., "to-app-t:w06"
-            const backLink = match[2].substring(1); // Remove # from "#from-app-t:w06"
-            const lineNumber = parseInt(match[3]);
-            const content = match[4];
+        // Create a temporary DOM element to parse the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = entry;
 
-            parsedEntries.push({
-                anchorId,
-                lineNumber,
-                content,
-                backLink
-            });
-        }
-    }
+        // Find the anchor tag
+        const anchor = tempDiv.querySelector('a');
+        if (!anchor) continue;
 
-    // Assign display numbers
-    for (let entry of parsedEntries) {
-        entry.displayNumber = entry.lineNumber + ':';
+        const anchorId = anchor.getAttribute('id');
+        const href = anchor.getAttribute('href');
+        const backLink = href ? href.substring(1) : ''; // Remove # from "#from-app-xxx"
+
+        // Get the text content after the anchor (this contains line number and content)
+        // Remove the anchor element and get remaining text
+        anchor.remove();
+        const remainingContent = tempDiv.innerHTML.trim();
+
+        // Parse the line number
+        // Formats supported: "r.6. ", "7-8. ", "ii.3. ", "FrA.2. ", "Fr2.1. ", "r.ii.12. "
+        // Pattern: optional prefix (can have multiple dot-separated parts), then number/range, period, space
+        const lineNumMatch = remainingContent.match(/^((?:[a-z0-9]+\.)+)?(\d+(?:-\d+)?)\.\s+/i);
+
+        if (!lineNumMatch) continue;
+
+        const prefix = lineNumMatch[1] ? lineNumMatch[1].slice(0, -1) : ''; // Remove trailing period
+        const lineNumberStr = lineNumMatch[2]; // e.g., "6" or "7-8"
+        const lineNumber = parseInt(lineNumberStr.split('-')[0]); // First number for aria-label
+
+        // Get the content after the line number
+        const content = remainingContent.substring(lineNumMatch[0].length);
+
+        // Build display number
+        const displayNumber = prefix ? `${prefix}.${lineNumberStr}:` : `${lineNumberStr}:`;
+
+        parsedEntries.push({
+            anchorId,
+            lineNumber,
+            displayNumber,
+            content,
+            backLink
+        });
     }
 
     // Build new HTML
@@ -730,22 +895,19 @@ function transformApparatusContent() {
     const targetIdFromHash = hash ? hash.substring(1) : null; // Remove the #
 
     for (let entry of parsedEntries) {
-        // Extract content from data-bs-original-title attribute if present
+        // Extract content from data-bs-original-title or title attribute if present
         let mainContent = entry.content;
         let detailContent = '';
 
-        // Check if the span has data-bs-original-title attribute
-        const tooltipMatch = entry.content.match(/<span[^>]*data-bs-original-title="([^"]*)"[^>]*>([^<]*)<\/span>/);
+        // Check if the first span has data-bs-original-title or title attribute
+        const tooltipMatch = entry.content.match(/<span[^>]*(?:data-bs-original-title|title)="([^"]*)"[^>]*>/);
 
         if (tooltipMatch) {
-            const tooltipText = tooltipMatch[1]; // Content from data-bs-original-title
+            const tooltipText = tooltipMatch[1]; // Content from data-bs-original-title or title
 
             // Set the detail content from the tooltip
             detailContent = `<span class="apparatus-detail">${tooltipText}</span>`;
         }
-
-        // Replace span tags with h4 tags for a11y
-        mainContent = mainContent.replace(/<span([^>]*)>([^<]*)<\/span>/g, '<h4$1>$2</h4>');
 
         // Check if this entry matches the hash in the URL
         const activeClass = (targetIdFromHash && entry.anchorId === targetIdFromHash) ? ' active' : '';
@@ -759,6 +921,9 @@ function transformApparatusContent() {
 
     // Update the apparatus HTML
     apparatus.innerHTML = newHtml;
+
+    // Set max-height based on viewport and ab span height
+    setApparatusMaxHeight();
 
     // Add click handlers to line numbers to highlight corresponding words
     const lineNumbers = apparatus.querySelectorAll('.apparatus-line-number');
@@ -835,62 +1000,130 @@ function addLineNumberHoverEffect() {
         return;
     }
 
-    const transcription = edition.querySelector('span.ab');
-    if (!transcription) {
+    // Handle multiple span.ab sections
+    const transcriptions = edition.querySelectorAll('span.ab');
+    if (!transcriptions || transcriptions.length === 0) {
         return;
     }
 
-    // Get the HTML content
-    let html = transcription.innerHTML;
+    transcriptions.forEach(transcription => {
+        // Get the HTML content
+        let html = transcription.innerHTML;
 
-    // Get all line breaks with id="alN"
-    const lineBreakPattern = /<br\s+id="al(\d+)"[^>]*>/g;
-    const lineBreaks = [];
-    let match;
+        // Get all line breaks with id="alN" or id="aN-lN" format
+        const lineBreakPattern = /<br\s+id="a([^"]+)"[^>]*>/g;
+        const lineBreaks = [];
+        let match;
 
-    while ((match = lineBreakPattern.exec(html)) !== null) {
-        lineBreaks.push({
-            fullMatch: match[0],
-            lineNumber: parseInt(match[1]),
-            index: match.index
-        });
-    }
+        while ((match = lineBreakPattern.exec(html)) !== null) {
+            const idPart = match[1];
+            // Extract line number from formats like "l1", "i-l1", "ii-l1", "v-l35", etc.
+            const lineNumMatch = idPart.match(/l(\d+)$/);
+            const lineNumber = lineNumMatch ? parseInt(lineNumMatch[1]) : 1;
 
-    // Build new HTML with wrapped lines
-    let newHtml = '';
-    let currentPos = 0;
-    let currentLineNumber = 1;
+            lineBreaks.push({
+                fullMatch: match[0],
+                lineNumber: lineNumber,
+                index: match.index
+            });
+        }
 
-    // Wrap line 1
-    if (lineBreaks.length > 0) {
+        // If there are no line breaks, skip this transcription (leave it as-is)
+        if (lineBreaks.length === 0) {
+            return;
+        }
+
+        // Build new HTML with wrapped lines
+        let newHtml = '';
+        let currentPos = 0;
+        let currentLineNumber = 1;
+
+        // Helper function to check if line should skip line numbering
+        const shouldSkipLineNumber = (content) => {
+            // Skip if line contains the dash separator pattern
+            if (content.includes('-- -- -- -- -- -- -- -- -- --')) {
+                return true;
+            }
+            // Skip if line number contains 'bis' (e.g., "20bis")
+            if (content.includes('bis')) {
+                return true;
+            }
+            // Skip if line contains "lines missing" or "line missing" pattern (e.g., "[ca.26 lines missing]" or "[2 lines missing]")
+            if (content.includes('lines missing') || content.includes('line missing')) {
+                return true;
+            }
+            return false;
+        };
+
+        // Wrap line 1
         const firstBreakPos = lineBreaks[0].index;
         const line1Content = html.substring(0, firstBreakPos);
-        newHtml += `<span class="text-line line-${currentLineNumber}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${line1Content}</span>`;
+        const noDashClass = shouldSkipLineNumber(line1Content) ? ' no-line-number' : '';
+        // Add 'multiple-of-5' class if line number is divisible by 5
+        const multipleOf5Class = (currentLineNumber % 5 === 0) ? ' multiple-of-5' : '';
+        newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${line1Content}</span>`;
         // Skip the <br> tag itself
         currentPos = lineBreaks[0].index + lineBreaks[0].fullMatch.length;
         currentLineNumber = lineBreaks[0].lineNumber;
-    }
 
-    // Wrap remaining lines
-    for (let i = 0; i < lineBreaks.length; i++) {
-        const nextBreak = lineBreaks[i + 1];
-        const lineContent = nextBreak
-            ? html.substring(currentPos, nextBreak.index)
-            : html.substring(currentPos);
+        // Wrap remaining lines
+        for (let i = 0; i < lineBreaks.length; i++) {
+            const nextBreak = lineBreaks[i + 1];
+            const lineContent = nextBreak
+                ? html.substring(currentPos, nextBreak.index)
+                : html.substring(currentPos);
 
-        if (lineContent.trim()) {
-            newHtml += `<span class="text-line line-${currentLineNumber}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${lineContent}</span>`;
+            if (lineContent.trim()) {
+                // Check if line should skip line numbering
+                const noDashClass = shouldSkipLineNumber(lineContent) ? ' no-line-number' : '';
+                // Add 'multiple-of-5' class if line number is divisible by 5
+                const multipleOf5Class = (currentLineNumber % 5 === 0) ? ' multiple-of-5' : '';
+                newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${lineContent}</span>`;
+            }
+
+            if (nextBreak) {
+                // Skip the <br> tag itself
+                currentPos = nextBreak.index + nextBreak.fullMatch.length;
+                currentLineNumber = nextBreak.lineNumber;
+            }
         }
 
-        if (nextBreak) {
-            // Skip the <br> tag itself
-            currentPos = nextBreak.index + nextBreak.fullMatch.length;
-            currentLineNumber = nextBreak.lineNumber;
-        }
-    }
+        // Update the transcription HTML
+        transcription.innerHTML = newHtml;
+    });
+}
 
-    // Update the transcription HTML
-    transcription.innerHTML = newHtml;
+// Set apparatus max-height based on viewport and ab span height
+function setApparatusMaxHeight() {
+    const apparatus = document.querySelector('#apparatus');
+    if (!apparatus) return;
+
+    const edition = document.querySelector('#edition');
+    if (!edition) return;
+
+    // Get all ab spans and find the tallest one
+    const abSpans = edition.querySelectorAll('span.ab');
+    if (!abSpans || abSpans.length === 0) return;
+
+    // Find the maximum height among all ab spans
+    let maxAbHeight = 0;
+    abSpans.forEach(abSpan => {
+        const height = abSpan.offsetHeight;
+        if (height > maxAbHeight) {
+            maxAbHeight = height;
+        }
+    });
+
+    // Get viewport height minus some padding (accounting for sticky top offset)
+    const viewportHeight = window.innerHeight;
+    const apparatusTopOffset = apparatus.getBoundingClientRect().top;
+    const maxViewportHeight = viewportHeight - apparatusTopOffset - 32; // 32px for bottom padding
+
+    // Use the smaller of the two (viewport height or tallest ab span)
+    const maxHeight = Math.min(maxViewportHeight, maxAbHeight);
+
+    // Set the max-height
+    apparatus.style.maxHeight = `${maxHeight}px`;
 }
 
 // apparatus links

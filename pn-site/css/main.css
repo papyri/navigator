@@ -251,6 +251,16 @@ ul#results-pagination {
   font-weight: 600;
 }
 
+h3.textpartnumber-heading {
+  display: block;
+  margin-left: 0;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--bs-secondary);
+}
+
 span.term {
   border: 1px solid var(--bs-success);
   padding: 0.1rem 0.2rem;
@@ -498,16 +508,69 @@ body.author-browse .btn-group .btn {
   flex-direction: row;
   gap: 2rem;
   align-items: flex-start;
+  min-height: 100vh;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+#edition.ready {
+  opacity: 1;
+}
+
+/* Reorder text sections: edition first, translation second, history third, linked data last */
+.text.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.transcription {
+  order: 1;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+}
+
+.translations {
+  order: 2;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+  margin-top: 2rem;
+}
+
+#history-section {
+  order: 3;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+  margin-top: 2rem;
+}
+
+#ld {
+  order: 4;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+  margin-top: 2rem;
+}
+
+#bibliography {
+  margin-top: 2em;
+}
+
+.translation.data {
+  margin-top: 3em;
+}
+
+.edition-content {
+  flex: 1;
+  min-width: 0;
 }
 
 #edition span.ab {
-  flex: 1;
-  min-width: 0;
+  display: block;
   background-color: rgba(var(--bs-warning-rgb), 0.075);
 
   padding: 3rem 3rem 3rem 6rem;
   letter-spacing: 0.05rem;
   line-height: 2.5;
+  margin-bottom: 1rem;
 }
 
 #edition .linenumber,
@@ -545,6 +608,10 @@ body.author-browse .btn-group .btn {
     flex-direction: column;
   }
 
+  #edition .edition-content {
+    min-width: 100%;
+  }
+
   #edition #apparatus {
     flex: 1;
     position: static;
@@ -558,6 +625,8 @@ body.author-browse .btn-group .btn {
   transition: background-color 0.2s ease;
   margin-left: -5.5rem;
   padding-left: 5.5rem;
+  margin-right: -2.5em;
+  padding-right: 1em;
 }
 
 #edition span.text-line:hover {
@@ -565,7 +634,8 @@ body.author-browse .btn-group .btn {
 }
 
 /* Only show hover line number if it's NOT a multiple of 5 (those already have permanent line numbers) */
-#edition span.text-line:not(.line-5):not(.line-10):not(.line-15):not(.line-20):not(.line-25):not(.line-30):not(.line-35):not(.line-40):not(.line-45):not(.line-50):hover::before {
+/* and NOT a line that should be skipped (dashes, 'bis', 'lines missing', etc.) */
+#edition span.text-line:not(.no-line-number):not(.multiple-of-5):hover::before {
   content: attr(data-line);
   position: absolute;
   left: 0;
