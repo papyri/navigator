@@ -792,9 +792,9 @@ function hideLineNumbersFromScreenReaders() {
 	jQuery('span.linenumber').attr('aria-hidden', 'true');
 }
 
-// replace (*) with 'asterisk operator'
+// replace (*) with *
 function transformApparatusLinks() {
-    jQuery('#edition span.ab a[href^="#to-app-"]').addClass('apparatus-link').html('<span aria-hidden="true">&lowast;</span>').attr('aria-label', 'Apparatus note');
+    jQuery('#edition span.ab a[href^="#to-app-"]').addClass('apparatus-link').html('<span aria-hidden="true">*</span>').attr('aria-label', 'Apparatus note');
 
     // control apparatus link behavior
     jQuery('.apparatus-link').on('click', function(e) {
