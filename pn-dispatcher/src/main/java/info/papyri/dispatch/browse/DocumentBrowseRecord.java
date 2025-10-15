@@ -451,7 +451,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
     anchor.append("'>");
     anchor.append(getDisplayId());
     anchor.append("</a>");
-    StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\" title=\"");
+    StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier fw-semibold\" title=\"");
     html.append(getAlternativeIds());
     html.append("\">");
     html.append(anchor.toString());
@@ -702,13 +702,29 @@ public class DocumentBrowseRecord extends BrowseRecord {
     try {
 
       List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
-      html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"7\">");
-      for (String kwic : kwix) {
-        html.append(kwic.replaceAll("\\s*ⓐ\\s*", "")); // TODO: why is this character sneaking through when the user does a regex word-boundary (\b) search?
-        html.append("<br/>\n");
 
+      // Only render the row if there's actual KWIC content
+      if (kwix != null && !kwix.isEmpty()) {
+        boolean hasContent = false;
+        StringBuilder kwicContent = new StringBuilder();
+
+        for (String kwic : kwix) {
+          String cleanedKwic = kwic.replaceAll("\\s*ⓐ\\s*", ""); // TODO: why is this character sneaking through when the user does a regex word-boundary (\b) search?
+          if (!cleanedKwic.trim().isEmpty()) {
+            hasContent = true;
+            kwicContent.append(cleanedKwic);
+            kwicContent.append("<br/>\n");
+          }
+        }
+
+        // Only add the table row if we have actual content
+        if (hasContent) {
+          html.append("<tr class=\"result-text\"><td class=\"kwic small pb-4\" colspan=\"7\">");
+          html.append(kwicContent.toString());
+          html.append("</td></tr>");
+        }
       }
-      html.append("</td></tr>");
+
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
       logger.log(Level.SEVERE, "Highlightling failure for " + url.toExternalForm(), e);
@@ -828,7 +844,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
     return scrubURL(sq);
 
   }
-  
+
   private String scrubURL(String url) {
       return url.replace("{", "%7B")
               .replace("}", "%7D")

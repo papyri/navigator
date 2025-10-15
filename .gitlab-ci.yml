@@ -23,6 +23,7 @@ stages:
   - test
   - deploy
   - release
+  - deploy-okd
 
 .job:
   except:
@@ -81,3 +82,12 @@ release:
     - docker push $tomcat_release_tag
   tags:
     - release
+
+deploy-okd:
+  stage: deploy-okd
+  tags:
+    - deploy-okd
+  when: manual
+  script:
+    - echo "Triggering downstream deployment pipeline in dul-its/dul-papyri"
+    - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=main "https://gitlab.oit.duke.edu/api/v4/projects/dul-its%2Fdul-papyri/trigger/pipeline"

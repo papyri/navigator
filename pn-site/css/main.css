@@ -73,6 +73,24 @@ body {
   font-weight: 600;
 }
 
+#sidebarContent {
+  opacity: 1;
+  transition: opacity 0.3s ease, width 0.3s ease;
+}
+
+#sidebarContent.collapsing {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+#sidebarContent.collapse:not(.show) {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+
 footer ul.about-links {
   column-count: 1;
 
@@ -123,15 +141,119 @@ pre code {
   color: var(--bs-code-color);
 }
 
+/* ----------------- */
+/* Forms             */
+/* ----------------- */
+.form-select:disabled,
+.form-control:disabled {
+  opacity: 0.5;
+}
+
+/* Fixup TomSelect */
+.ts-wrapper.single .ts-control {
+  flex-wrap: nowrap;
+}
+.ts-wrapper.single .ts-control .item {
+  flex-shrink: 0;
+}
+
+/* ----------------- */
+/* Search Results    */
+/* ----------------- */
+
+#toggleIcon {
+  transition: transform 0.3s ease;
+}
+
+#facet-wrapper .form-label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.facet-widget.bg-light {
+  /* ensure color contrast a11y is sufficient for */
+  /* disabled checkbox labels on bg-light background */
+  .form-check-input:disabled~.form-check-label, .form-check-input[disabled]~.form-check-label {
+    opacity: 0.6;
+  }
+}
+
+a.facet-constraint:hover,
+a.facet-constraint:focus {
+  .bi {
+    color: var(--bs-primary);
+  }
+}
+
+a.facet-constraint .constraint-label {
+  .string-option {
+    font-weight: normal;
+  }
+  /* mdash character separator */
+  .string-option:before {
+    content: " \2014  ";
+  }
+}
+
+table#search-results-table {
+  th {
+    background-color: var(--bs-light);
+    border-bottom-width: 2px;
+    position: sticky;
+    top: 0;
+  }
+
+
+}
+
+/* Border between result record rows but not their associated text */
+tr.result-record {
+  border-top: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+
+/* Slightly hacky way to get pagination links to truncate with */
+/* ellipses when there are many pages of results. TODO: consider */
+/* whether to write this kind of logic in FacetBrowser.java */
+ul#results-pagination {
+  li:not(.active) {
+    display: none;
+  }
+
+  /* Show first three pages */
+  li:not(.active):nth-child(-n+3) {
+    display: list-item !important;
+  }
+
+  /* Show final two pages */
+  li:not(.active):nth-last-child(-n+2) {
+    display: list-item !important;
+  }
+
+  /* Show the next five pages after the .active page */
+  li.active + li:not(.active),
+  li.active + li:not(.active) + li:not(.active),
+  li.active + li:not(.active) + li:not(.active) + li:not(.active),
+  li.active + li:not(.active) + li:not(.active) + li:not(.active) + li:not(.active),
+  li.active + li:not(.active) + li:not(.active) + li:not(.active) + li:not(.active) + li:not(.active) {
+    display: list-item !important;
+  }
+
+  /* Show the three pages before the .active page */
+  li:not(.active):has(+ li.active),
+  li:not(.active):has(+ li:not(.active) + li.active),
+  li:not(.active):has(+ li:not(.active) + li:not(.active) + li.active) {
+    display: list-item !important;
+  }
+}
+
+
 /* ------------------------------ */
 /* Transcriptions & Translations  */
 /* TODO: port more related styles */
 /* from master.css                */
 /* ------------------------------ */
 
-.transcription span[data-bs-original-title]:hover {
-  background-color: var(--bs-warning-bg-subtle);
-}
 
 .textpartnumber {
   display: block;
@@ -139,21 +261,14 @@ pre code {
   font-weight: 600;
 }
 
-.linenumber, .linenumberbroken {
-  float: left;
-  margin-left: -2em;
-}
-
-.linenumberbroken {
-  color: var(--bs-danger);
-}
-
-#edition {
-  margin-left: 3em;
-}
-
-#apparatus {
-  margin-left: -3em;
+h3.textpartnumber-heading {
+  display: block;
+  margin-left: 0;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--bs-secondary);
 }
 
 span.term {
@@ -237,22 +352,6 @@ a {
 /* Main Body Text */
 /* set in theme-variables.css: --bs-body-font-family: var(--bs-font-serif); */
 
-span.ab {
-  display: block;
-  padding-left: 4em;
-  position: relative;
-}
-div.apparatus {
-  margin-top: 1em;
-}
-span.linenumber {
-  display: inline-block;
-  position: absolute;
-  left: 0;
-  text-align: right;
-  width: 3em;
-}
-
 /* Greek / Latin */
 *[lang=grc],*[lang=lat] {
   font-family: "Noto Sans Greek", var(--bs-font-sans-serif);
@@ -297,12 +396,15 @@ span.linenumber {
 /* as a mask so it inherits the text color. */
 
 :root {
+  --icon-chevron-left: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-left' viewBox='0 0 16 16'%3e%3cpath fill-rule='evenodd' d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3e%3c/svg%3e");
+
   --icon-edit: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3e%3cpath d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z'/%3e%3cpath fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z'/%3e%3c/svg%3e");
 
   --icon-file-code: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z'/%3E%3Cpath d='M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708'/%3E%3C/svg%3E");
 
   --icon-box-arrow-up-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5'/%3E%3Cpath fill-rule='evenodd' d='M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z'/%3E%3C/svg%3E");
 
+  --icon-x-circle-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-x-circle-fill' viewBox='0 0 16 16'%3E%3Cpath d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z'/%3E%3C/svg%3E");
 }
 
 .bi {
@@ -317,6 +419,10 @@ span.linenumber {
   mask-position: center !important;
 }
 
+.bi-chevron-left {
+  mask: var(--icon-chevron-left);
+}
+
 .bi-edit {
   mask: var(--icon-edit);
 }
@@ -327,6 +433,10 @@ span.linenumber {
 
 .bi-external-link {
   mask: var(--icon-box-arrow-up-right);
+}
+
+.bi-x-circle-fill {
+  mask: var(--icon-x-circle-fill);
 }
 
 
@@ -353,7 +463,8 @@ body.author-browse .accordion-button {
   font-weight: 500 !important;
 }
 
-body.author-browse .btn-group-vertical>.btn, .btn-group>.btn {
+body.author-browse .btn-group-vertical>.btn,
+body.author-browse .btn-group>.btn {
   width: 2.375rem;
   max-width: 2.375rem;
 }
@@ -389,3 +500,219 @@ body.author-browse .btn-group .btn {
   margin-bottom: 0.5rem;
 }
 
+
+/* ------------------ */
+/* Apparatus Display  */
+/* ------------------ */
+
+#edition {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+  /* min-height: 100vh; */
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+#edition.ready {
+  opacity: 1;
+}
+
+/* Reorder text sections: edition first, translation second, history third, linked data last */
+.text.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.transcription {
+  order: 1;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+}
+
+.translations {
+  order: 2;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+  margin-top: 2rem;
+}
+
+#history-section {
+  order: 3;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+  margin-top: 2rem;
+}
+
+#ld {
+  order: 4;
+  flex-basis: 100% !important;
+  max-width: 100% !important;
+  margin-top: 2rem;
+}
+
+#bibliography {
+  margin-top: 2em;
+}
+
+.translation.data {
+  margin-top: 3em;
+}
+
+.edition-content {
+  flex: 1;
+  min-width: 0;
+}
+
+#edition span.ab {
+  display: block;
+  background-color: rgba(var(--bs-warning-rgb), 0.075);
+
+  padding: 3rem 3rem 3rem 6rem;
+  letter-spacing: 0.05rem;
+  line-height: 2.5;
+  margin-bottom: 1rem;
+}
+
+#edition .linenumber,
+#edition .linenumberbroken {
+  width: 3rem;
+  float: left;
+  margin-left: -6rem;
+  text-align: right;
+  letter-spacing: 0;
+  color: #867100;
+}
+
+#edition .linenumber-hover {
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+#edition .text-line:hover {
+  background-color: rgba(0,0,0,0.025);
+}
+
+#edition #apparatus {
+  flex: 0 0 35%;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  #edition {
+    flex-direction: column;
+  }
+
+  #edition .edition-content {
+    min-width: 100%;
+  }
+
+  #edition #apparatus {
+    flex: 1;
+    position: static;
+    max-height: none;
+  }
+}
+
+#edition span.text-line {
+  display: block;
+  position: relative;
+  transition: background-color 0.2s ease;
+  margin-left: -5.5rem;
+  padding-left: 5.5rem;
+  margin-right: -2.5em;
+  padding-right: 1em;
+}
+
+#edition span.text-line:hover {
+  background-color: rgba(0, 0, 0, 0.035);
+}
+
+/* Only show hover line number if it's NOT a multiple of 5 (those already have permanent line numbers) */
+/* and NOT a line that should be skipped (dashes, 'bis', 'lines missing', etc.) */
+#edition span.text-line:not(.no-line-number):not(.multiple-of-5):hover::before {
+  content: attr(data-line);
+  position: absolute;
+  left: 0;
+  width: 3rem;
+  text-align: right;
+  color: #867100;
+  opacity: 0.8;
+  padding-right: 0.5rem;
+}
+
+/* Apparatus entry styling */
+.apparatus-entry {
+  margin-bottom: 0.125rem;
+  padding: 0.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+a.apparatus-link {
+  color: #911C1D;
+  text-decoration: none;
+  font-size: 1.5rem;
+  line-height: .5;
+}
+
+a.apparatus-link:hover,
+a.apparatus-link:focus,
+a.apparatus-link.active {
+  text-decoration: underline;
+  background: rgba(255,255,0,0.7);
+}
+
+.apparatus-line-number {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--bs-primary);
+  text-decoration: underline;
+  text-align: right;
+  margin-right: 0.5rem;
+  margin-left: 0.25rem;
+  min-width: 3rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.apparatus-line-number:hover {
+  color: var(--bs-primary);
+  text-decoration: underline;
+}
+
+.apparatus-content {
+  color: var(--bs-body-color);
+  flex: 1;
+  width: 100%;
+  line-height: 1.2;
+}
+
+.apparatus-content h4 {
+  display: inline;
+  font-size: 1em;
+  font-weight: 400;
+  margin: 0;
+}
+
+.apparatus-detail {
+  display: block;
+  margin-left: 3.75rem;
+  margin-top: 0.25rem;
+  font-size: 0.9em;
+  color: var(--bs-secondary);
+  font-style: italic;
+  width: 100%;
+}
+
+.apparatus-entry.active {
+  background-color: rgba(0,0,0,0.05);
+  background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity))
+}
