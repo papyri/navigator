@@ -508,7 +508,7 @@ body.author-browse .btn-group .btn {
   flex-direction: row;
   gap: 2rem;
   align-items: flex-start;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   opacity: 0;
   transition: opacity 0.3s ease-in;
 }
@@ -650,36 +650,22 @@ body.author-browse .btn-group .btn {
 .apparatus-entry {
   margin-bottom: 0.125rem;
   padding: 0.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 a.apparatus-link {
-  /* color: rgb(var(--bs-primary-rgb)); */
   color: #911C1D;
   text-decoration: none;
-  font-size: 2rem;
+  font-size: 1.5rem;
   line-height: .5;
 }
 
 a.apparatus-link:hover,
 a.apparatus-link:focus,
 a.apparatus-link.active {
-  text-decoration: none;
-  font-weight: bold;
-  /* background-color: rgb(var(--bs-primary-rgb)); */
-  background-color: #911C1D;
-  color: #fff;
-
-  display: inline-block;
-  margin: 0 0.1em;
-  padding: 0 .15rem .55rem .15rem;
-  border-radius: .25rem;
-}
-
-a.apparatus-link:focus-visible {
-    max-height: 25px;
-    overflow: hidden;
-    position: relative;
-    bottom: -6px;
+  text-decoration: underline;
+  background: rgba(255,255,0,0.7);
 }
 
 .apparatus-line-number {
@@ -689,8 +675,10 @@ a.apparatus-link:focus-visible {
   text-decoration: underline;
   text-align: right;
   margin-right: 0.5rem;
-  margin-left: 0.5rem;
-  min-width: 1.5rem;
+  margin-left: 0.25rem;
+  min-width: 3rem;
+  line-height: 1.2;
+  flex-shrink: 0;
 }
 
 .apparatus-line-number:hover {
@@ -700,6 +688,9 @@ a.apparatus-link:focus-visible {
 
 .apparatus-content {
   color: var(--bs-body-color);
+  flex: 1;
+  width: 100%;
+  line-height: 1.2;
 }
 
 .apparatus-content h4 {
@@ -711,13 +702,15 @@ a.apparatus-link:focus-visible {
 
 .apparatus-detail {
   display: block;
-  margin-left: 3rem;
+  margin-left: 3.75rem;
   margin-top: 0.25rem;
   font-size: 0.9em;
   color: var(--bs-secondary);
   font-style: italic;
+  width: 100%;
 }
 
 .apparatus-entry.active {
   background-color: rgba(0,0,0,0.05);
+  background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity))
 }

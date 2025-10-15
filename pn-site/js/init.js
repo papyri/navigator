@@ -766,12 +766,12 @@ function reorderTextSections() {
 
 // Transform h2 headings to h3 in translation sections
 function transformTranslationHeadings() {
-	jQuery('.translation.data h2').each(function() {
+	jQuery('.translation.data div h2').each(function() {
 		const $h2 = jQuery(this);
 		const text = $h2.text().trim().toLowerCase();
 
 		// Only transform h2s that contain "translation" or "bibliography"
-		if (text === 'translation' || text === 'bibliography') {
+        if (text.includes('translation') || text.includes('bibliography')) {
 			const h3 = jQuery('<h3></h3>').html($h2.html());
 
 			// Copy any attributes
@@ -792,9 +792,9 @@ function hideLineNumbersFromScreenReaders() {
 	jQuery('span.linenumber').attr('aria-hidden', 'true');
 }
 
-// replace (*) with 'asterisk operator'
+// replace (*) with *
 function transformApparatusLinks() {
-    jQuery('#edition span.ab a[href^="#to-app-"]').addClass('apparatus-link').html('<span aria-hidden="true">&lowast;</span>').attr('aria-label', 'Apparatus note');
+    jQuery('#edition span.ab a[href^="#to-app-"]').addClass('apparatus-link').html('<span aria-hidden="true">*</span>').attr('aria-label', 'Apparatus note');
 
     // control apparatus link behavior
     jQuery('.apparatus-link').on('click', function(e) {
@@ -1033,11 +1033,6 @@ function addLineNumberHoverEffect() {
             return;
         }
 
-        // Build new HTML with wrapped lines
-        let newHtml = '';
-        let currentPos = 0;
-        let currentLineNumber = 1;
-
         // Helper function to check if line should skip line numbering
         const shouldSkipLineNumber = (content) => {
             // Skip if line contains the dash separator pattern
@@ -1055,13 +1050,59 @@ function addLineNumberHoverEffect() {
             return false;
         };
 
+        // Helper function to track and close/reopen open tags across line breaks
+        const getOpenTags = (htmlContent) => {
+            const tags = [];
+            const tagPattern = /<(\/?)([\w-]+)([^>]*)>/g;
+            let tagMatch;
+
+            while ((tagMatch = tagPattern.exec(htmlContent)) !== null) {
+                const isClosing = tagMatch[1] === '/';
+                const tagName = tagMatch[2];
+                const attributes = tagMatch[3];
+
+                if (isClosing) {
+                    // Remove the last occurrence of this tag from the stack
+                    for (let i = tags.length - 1; i >= 0; i--) {
+                        if (tags[i].name === tagName) {
+                            tags.splice(i, 1);
+                            break;
+                        }
+                    }
+                } else if (tagName !== 'br' && tagName !== 'a') {
+                    // Add opening tag to stack (skip br and a tags)
+                    tags.push({ name: tagName, attributes: attributes });
+                }
+            }
+
+            return tags;
+        };
+
+        const closeOpenTags = (openTags) => {
+            return openTags.map(tag => `</${tag.name}>`).reverse().join('');
+        };
+
+        const reopenTags = (openTags) => {
+            return openTags.map(tag => `<${tag.name}${tag.attributes}>`).join('');
+        };
+
+        // Build new HTML with wrapped lines
+        let newHtml = '';
+        let currentPos = 0;
+        let currentLineNumber = 1;
+
         // Wrap line 1
         const firstBreakPos = lineBreaks[0].index;
         const line1Content = html.substring(0, firstBreakPos);
         const noDashClass = shouldSkipLineNumber(line1Content) ? ' no-line-number' : '';
-        // Add 'multiple-of-5' class if line number is divisible by 5
         const multipleOf5Class = (currentLineNumber % 5 === 0) ? ' multiple-of-5' : '';
-        newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${line1Content}</span>`;
+
+        // Track open tags at end of line 1
+        const openTags1 = getOpenTags(line1Content);
+        const closingTags1 = closeOpenTags(openTags1);
+
+        newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${line1Content}${closingTags1}</span>`;
+
         // Skip the <br> tag itself
         currentPos = lineBreaks[0].index + lineBreaks[0].fullMatch.length;
         currentLineNumber = lineBreaks[0].lineNumber;
@@ -1074,11 +1115,19 @@ function addLineNumberHoverEffect() {
                 : html.substring(currentPos);
 
             if (lineContent.trim()) {
+                // Reopen any tags that were open at the end of the previous line
+                const openTagsAtLineStart = (i === 0) ? openTags1 : getOpenTags(html.substring(0, currentPos));
+                const reopenedTags = reopenTags(openTagsAtLineStart);
+
+                // Track open tags at end of current line
+                const openTagsAtLineEnd = getOpenTags(html.substring(0, nextBreak ? nextBreak.index : html.length));
+                const closingTags = closeOpenTags(openTagsAtLineEnd);
+
                 // Check if line should skip line numbering
                 const noDashClass = shouldSkipLineNumber(lineContent) ? ' no-line-number' : '';
-                // Add 'multiple-of-5' class if line number is divisible by 5
                 const multipleOf5Class = (currentLineNumber % 5 === 0) ? ' multiple-of-5' : '';
-                newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${lineContent}</span>`;
+
+                newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${reopenedTags}${lineContent}${closingTags}</span>`;
             }
 
             if (nextBreak) {
