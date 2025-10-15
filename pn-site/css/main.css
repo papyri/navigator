@@ -655,7 +655,6 @@ body.author-browse .btn-group .btn {
 }
 
 a.apparatus-link {
-  /* color: rgb(var(--bs-primary-rgb)); */
   color: #911C1D;
   text-decoration: none;
   font-size: 1.5rem;
@@ -667,26 +666,6 @@ a.apparatus-link:focus,
 a.apparatus-link.active {
   text-decoration: underline;
   background: rgba(255,255,0,0.7);
-
-  /* text-decoration: none;
-  font-weight: bold; */
-
-  /* background-color: rgb(var(--bs-primary-rgb)); */
-  
-  /* background-color: #911C1D;
-  color: #fff;
-
-  display: inline-block;
-  margin: 0 0.1em;
-  padding: 0 .15rem .55rem .15rem;
-  border-radius: .25rem; */
-}
-
-a.apparatus-link:focus-visible {
-    /* max-height: 25px;
-    overflow: hidden;
-    position: relative;
-    bottom: -6px; */
 }
 
 .apparatus-line-number {
