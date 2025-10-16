@@ -87,9 +87,9 @@ function init() {
 		        });
 
 		        // Fade in the #edition element now that all processing is complete
-		        const edition = document.querySelector('#edition');
-		        if (edition) {
-		            edition.classList.add('ready');
+		        const editions = document.querySelectorAll('#edition');
+		        if (editions) {
+		            editions.forEach(edition => edition.classList.add('ready'));
 		        }
 		    });
 		}
