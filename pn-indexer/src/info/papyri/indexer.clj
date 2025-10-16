@@ -373,7 +373,7 @@
   "Returns a set of triples where A `<dct:source>` B for a given collection."
   [url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
-              select ?a ?b
+              select ?b ?a
               from <https://papyri.info/graph>
               where { <%s> dct:hasPart ?b .
                       ?a dct:source ?b }" url))
