@@ -203,10 +203,10 @@ $(document).ready(
           if(betas && betas.checked) params["BETA"] = true;
 
           const caps = document.querySelector("#caps");
-          if(caps && caps.checked) params["CAPS"] = true;
+          if(caps && caps.checked) params[caps.name] = caps.value;
 
-          const marks = document.querySelectorAll("#marks:checked");
-          if(marks.length > 0) params["MARKS"] = true;
+          const marks = document.querySelector("#marks");
+          if(marks && marks.checked) params[marks.name] = marks.value;
 
           if(!mixedsearch){
 
