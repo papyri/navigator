@@ -18,44 +18,40 @@ $(document).ready(
       }
     };
 
-    new TomSelect("#id-collection",{
-      sortField: {
-        field: "text",
-        direction: "asc"
-      },
+    // Base configuration for all TomSelect instances
+    // Note that maxOptions: null prevents comboboxes from
+    // truncating at 50 items (default behavior)
+    const baseTomSelectConfig = {
+      maxOptions: null,
       onInitialize: fixAriaLabel
-    });
-    new TomSelect("#id-series",{
-      sortField: {
-        field: "text",
-        direction: "asc"
-      },
-      onInitialize: fixAriaLabel
-    });
+    };
 
-    new TomSelect("#id-author", {
-      onInitialize: fixAriaLabel
-    });
-    new TomSelect("#id-work", {
-      onInitialize: fixAriaLabel
-    });
-    new TomSelect("#id-place", {
-      onInitialize: fixAriaLabel
-    });
-    new TomSelect("#id-nome", {
-      onInitialize: fixAriaLabel
-    });
-    new TomSelect("#id-transc", {
-      onInitialize: fixAriaLabel
-    });
+    new TomSelect("#id-collection", Object.assign({}, baseTomSelectConfig, {
+      sortField: {
+        field: "text",
+        direction: "asc"
+      }
+    }));
+
+    new TomSelect("#id-series", Object.assign({}, baseTomSelectConfig, {
+      sortField: {
+        field: "text",
+        direction: "asc"
+      }
+    }));
+
+    new TomSelect("#id-author", baseTomSelectConfig);
+    new TomSelect("#id-work", baseTomSelectConfig);
+    new TomSelect("#id-place", baseTomSelectConfig);
+    new TomSelect("#id-nome", baseTomSelectConfig);
+    new TomSelect("#id-transc", baseTomSelectConfig);
 
     // Shared configuration object for date selectors
-    const dateSelectConfig = {
+    const dateSelectConfig = Object.assign({}, baseTomSelectConfig, {
       maxItems: 1,
       create: true,
       createOnBlur: true,
       persist: false,
-      onInitialize: fixAriaLabel,
       createFilter: (input) => {
         // Allow freeform input of either:
         // 1. A zero/positive integer (just digits) optionally followed by a space and BCE/CE
@@ -86,18 +82,14 @@ $(document).ready(
           data.text = fixedValue;
         }
       }
-    };
+    });
 
     // Apply the shared config to both date selectors
     new TomSelect("#id-date-start", dateSelectConfig);
     new TomSelect("#id-date-end", dateSelectConfig);
 
-    new TomSelect("#id-lang", {
-      onInitialize: fixAriaLabel
-    });
-    new TomSelect("#id-transl", {
-      onInitialize: fixAriaLabel
-    });
+    new TomSelect("#id-lang", baseTomSelectConfig);
+    new TomSelect("#id-transl", baseTomSelectConfig);
 
     // Create TomSelect widgets for Volume and ID input fields ONLY IF they have
     // autocomplete lists available, otherwise they are just free text input fields
@@ -107,18 +99,17 @@ $(document).ready(
         autocompleteElement.getAttribute("data-list") &&
         autocompleteElement.getAttribute("data-list").trim() !== "") {
 
-        new TomSelect(selectId, {
+        new TomSelect(selectId, Object.assign({}, baseTomSelectConfig, {
           maxItems: 1,
           create: true,
           createOnBlur: true,
           persist: false,
           allowEmptyOption: true,
-          onInitialize: fixAriaLabel,
           options: (function() {
             const values = autocompleteElement.getAttribute("data-list").split(" ");
             return values.map(value => ({ value: value, text: value }));
           })()
-        });
+        }));
       }
     };
     createTomSelectFromAutocomplete("#volume-autocomplete", "#id-volume");
@@ -212,10 +203,10 @@ $(document).ready(
           if(betas && betas.checked) params["BETA"] = true;
 
           const caps = document.querySelector("#caps");
-          if(caps && caps.checked) params["CAPS"] = true;
+          if(caps && caps.checked) params[caps.name] = caps.value;
 
-          const marks = document.querySelectorAll("#marks:checked");
-          if(marks.length > 0) params["MARKS"] = true;
+          const marks = document.querySelector("#marks");
+          if(marks && marks.checked) params[marks.name] = marks.value;
 
           if(!mixedsearch){
 
