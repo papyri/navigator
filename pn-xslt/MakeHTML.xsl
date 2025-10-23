@@ -518,7 +518,7 @@
   </xsl:template>
 
   <xsl:template name="translations">
-    <div class="translations col-12 col-lg-6">
+    <div id="translations" class="col-12 col-lg-6">
       <xsl:for-each select="pi:get-docs(tokenize($translations), 'xml')">
         <xsl:sort select="number(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '-'))"/>
         <div class="translation data">
@@ -995,7 +995,13 @@
       .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
 
       <div id="apparatus" lang="en" class="mt-3">
-        <h3>Apparatus</h3>
+        <div class="d-flex align-items-center mb-3">
+          <h2 class="mb-0">Apparatus</h2>
+          <div class="form-check form-switch ms-auto">
+            <input class="form-check-input" type="checkbox" id="detailsToggle"/>
+            <label class="form-check-label" for="detailsToggle">details</label>
+          </div>
+        </div>
         <xsl:variable name="pass1">
           <xsl:apply-templates select="." mode="app-flatten"/>
         </xsl:variable>
@@ -1584,7 +1590,9 @@
 
   <!-- Override EpiDoc templates in htm-teihead.xsl -->
   <xsl:template match="t:div/t:head">
-      <xsl:apply-templates/>
+      <h3>
+         <xsl:apply-templates/>
+      </h3>
   </xsl:template>
 
   <xsl:template match="t:body/t:head">
@@ -1593,7 +1601,7 @@
   
   <xsl:template match="t:hi[ancestor::t:w][@rend=('diaeresis','grave','acute','asper','lenis','circumflex')]">
     <xsl:call-template name="hirend_print"/>
-  </xsl:template>
+  </xsl:template>  
 
   <!-- Override template in htm-teiref.xsl -->
   <xsl:template match="t:ref">
