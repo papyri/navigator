@@ -21,9 +21,7 @@
   <xsl:template match="idno[@type='filename']">
     <idno type="filename">{$filename}</idno>
   </xsl:template>
-  
-  <xsl:template match="idno[@type='dclp-hybrid'][. != $filename]"/>
-  
+    
   <xsl:template match="sourceDesc">
     <sourceDesc>
       <bibl>{$filename}</bibl>
