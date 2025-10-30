@@ -95,11 +95,6 @@
       <artifactId>Saxon-HE</artifactId>
       <version>10.5</version>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>6.9.0.202403050737-r</version>
-    </dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>

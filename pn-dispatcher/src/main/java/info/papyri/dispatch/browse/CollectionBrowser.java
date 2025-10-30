@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import jakarta.servlet.ServletConfig;
@@ -65,6 +67,7 @@ public class CollectionBrowser extends HttpServlet {
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
     static ArrayList<SolrField> ORG_HIERARCHY = new ArrayList<>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume));
+    static Logger logger = Logger.getLogger(CollectionBrowser.class.getName());
 
     @Override
     public void init(ServletConfig config) throws ServletException{
@@ -178,10 +181,10 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
-        queryBuilder.append("WHERE { <http://papyri.info/");
+        queryBuilder.append("WHERE { <https://papyri.info/");
         queryBuilder.append(subj);
         queryBuilder.append("> dcterms:hasPart ?child . ");
-        queryBuilder.append("OPTIONAL {<http://papyri.info/");
+        queryBuilder.append("OPTIONAL {<https://papyri.info/");
         queryBuilder.append(subj);
         queryBuilder.append("> dcterms:bibliographicCitation ?parent . } ");
         queryBuilder.append("OPTIONAL { ?child dcterms:bibliographicCitation ?label . } ");
@@ -305,7 +308,7 @@ public class CollectionBrowser extends HttpServlet {
      */
     
     DocumentCollectionBrowseRecord parseUriToCollectionRecord(EnumMap<SolrField, String> pathParts, String child, String type, String label, String parentLabel){
-        
+
         String[] uriBits = child.split("/");
         int sIndex = 2;
         String collection = uriBits[sIndex + 1];
@@ -316,9 +319,16 @@ public class CollectionBrowser extends HttpServlet {
             return new DocumentCollectionBrowseRecord(collection, series, true);
             
         }
-        String otherInfo = uriBits[sIndex + 2];
+        if ("editions".equals(collection)) {
+            switch (uriBits.length) {
+                case 5:
+                    return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], "http://purl.org/ontology/bibo/Book".equals(type));
+                case 6:
+                    return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], uriBits[sIndex + 3]);
+            }
+        }
         if("ddbdp".equals(collection) || "dclp".equals(collection)){
-            
+            String otherInfo = uriBits[sIndex + 2];
             String delimiter = ";";
             if(otherInfo.indexOf(delimiter) == -1) return new DocumentCollectionBrowseRecord(collection, otherInfo, "http://purl.org/ontology/bibo/Book".equals(type));
             String[] infoBits = otherInfo.split(delimiter);
@@ -424,34 +434,17 @@ public class CollectionBrowser extends HttpServlet {
      */
     
     private StringBuilder buildCollectionsHTML(StringBuilder html, ArrayList<DocumentCollectionBrowseRecord> records){
-       
-        int numColumns = records.size() > 20 ? 5 : 1;
-        int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
-        int modulus = records.size() - initTotalPerColumn;
-        
-        for(int currentColumn = 0; currentColumn < numColumns; currentColumn++){
-            
-           html.append("<ul class=\"collections-column\">");
 
-           int totalThisColumn = initTotalPerColumn;
-            
-           if(currentColumn < modulus) totalThisColumn++;
-           
-           if(totalThisColumn > records.size()) totalThisColumn = records.size();
-            
-           for(int i = 0; i < totalThisColumn; i++){
-            
-                html.append(records.remove(0).getHTML());
-               
-            
-            }
-           
-           html.append("</ul>");
-            
+        html.append("<ul class=\"collections-list\">");
+
+        for(DocumentCollectionBrowseRecord record : records){
+            html.append(record.getHTML());
         }
-        
+
+        html.append("</ul>");
+
         return html;
-        
+
     } 
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

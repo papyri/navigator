@@ -66,7 +66,7 @@ public class BiblioSearch extends HttpServlet {
 
   }
 
-  /** 
+  /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
    * @param request servlet request
    * @param response servlet response
@@ -83,7 +83,9 @@ public class BiblioSearch extends HttpServlet {
       reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
       String line = "";
       while ((line = reader.readLine()) != null) {
-        if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
+        if (line.contains("<!-- Results -->") && ("".equals(q) || q == null)) {
+          out.println("<div class=\"alert alert-warning\">Please enter query terms to return results.</div>");
+        } else if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
           SolrClient solr = new Http2SolrClient.Builder(solrUrl + BiblioSearch)
                   .withConnectionTimeout(5, TimeUnit.SECONDS)
                   .build();
@@ -107,15 +109,15 @@ public class BiblioSearch extends HttpServlet {
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);
             SolrDocumentList docs = rs.getResults();
-            out.println("<p>" + docs.getNumFound() + " hits on \"" + q.toString() + "\".</p>");
-            out.println("<table>");
+            out.println("<p><span class=\"fs-4 fw-semibold\">" + String.format("%,d", docs.getNumFound()) + "</span> hits for " + "<a href=\"/bibliosearch\" class=\"badge rounded-pill bg-light text-dark fs-6 text-decoration-none py-2 me-2 mb-2 facet-constraint constraint-series\" aria-label=\"Remove filter\"><span class=\"constraint-label fw-semibold\">" + q.toString() + "</span> <i class=\"bi bi-x-circle-fill\"></i></a></p>");
+            out.println("<div id=\"biblio-results\" class=\"mb-4\">");
             String uq = q;
             try {
               uq = URLEncoder.encode(q, "UTF-8");
             } catch (Exception e) {
             }
             for (SolrDocument doc : docs) {
-              StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td>");
+              StringBuilder row = new StringBuilder("<div class=\"result-record mb-3\">");
               row.append("<a href=\"");
               row.append("/biblio/");
               row.append(((String) doc.getFieldValue("id")));
@@ -124,27 +126,24 @@ public class BiblioSearch extends HttpServlet {
               row.append("\">");
               row.append(doc.getFieldValue("display"));
               row.append("</a>");
-              row.append("</td>");
-              row.append("</tr>");
+              row.append("</div>");
               out.print(row);
             }
-            out.println("</table>");
+            out.println("</div>");
             if (docs.getNumFound() > rows) {
-              out.println("<div id=\"pagination\">");
+              out.println("<div class='pagination-wrapper d-flex justify-content-between border-top pt-4 mb-4'><ul id='pagination' class='pagination flex-wrap'>");
               int pages = (int) Math.ceil((double) docs.getNumFound() / (double) rows);
               int p = 0;
               while (p < pages) {
+                StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
                 if ((p * rows) == start) {
-                  out.print("<div class=\"page current\">");
-                  out.print((p + 1) + " ");
-                  out.print("</div>");
+                  out.print("<li class='page-item active'><a class='page-link' href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></li>");
                 } else {
-                  StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
-                  out.print("<div class=\"page\"><a href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></div>");
+                  out.print("<li class='page-item'><a class='page-link' href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></li>");
                 }
                 p++;
               }
-              out.println("</div>");
+              out.println("</ul></div>");
             }
           } catch (SolrServerException e) {
             out.println("<p>Unable to execute query.  Please try again.</p>");
@@ -249,7 +248,7 @@ public class BiblioSearch extends HttpServlet {
   }
 
   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-  /** 
+  /**
    * Handles the HTTP <code>GET</code> method.
    * @param request servlet request
    * @param response servlet response
@@ -266,7 +265,7 @@ public class BiblioSearch extends HttpServlet {
     }
   }
 
-  /** 
+  /**
    * Handles the HTTP <code>POST</code> method.
    * @param request servlet request
    * @param response servlet response
@@ -283,7 +282,7 @@ public class BiblioSearch extends HttpServlet {
     }
   }
 
-  /** 
+  /**
    * Returns a short description of the servlet.
    * @return a String containing servlet description
    */

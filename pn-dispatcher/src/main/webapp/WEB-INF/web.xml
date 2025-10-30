@@ -93,7 +93,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlGraph</param-name>
-            <param-value>http://papyri.info/graph</param-value>
+            <param-value>https://papyri.info/graph</param-value>
         </init-param>
         <init-param>
             <param-name>browseServletPath</param-name>
@@ -218,14 +218,6 @@
         <init-param>
             <param-name>htmlPath</param-name>
             <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
-        </init-param>
-    </servlet>
-    <servlet>
-        <servlet-name>GitAPI</servlet-name>
-        <servlet-class>info.papyri.dispatch.GitAPI</servlet-class>
-        <init-param>
-            <param-name>repository</param-name>
-            <param-value>/srv/data/papyri.info/idp.data/.git</param-value>
         </init-param>
     </servlet>
     <servlet>

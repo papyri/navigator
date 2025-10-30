@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 @WebServlet(name = "Reader", urlPatterns = {"/reader"})
 public class Reader extends HttpServlet {
-  private static final String GRAPH = "http://papyri.info/graph";
+  private static final String GRAPH = "https://papyri.info/graph";
   private String sparqlServer;
   private String xmlPath = "";
   private String htmlPath = "";
@@ -76,7 +76,7 @@ public class Reader extends HttpServlet {
           response.setContentType("application/xml;charset=UTF-8");
           file = util.getXmlFile(collection, item.replace("/source", ""));
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Xml");
+            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Xml");
           }
         } else if (page.endsWith("text")) {
           response.setContentType("text/plain;charset=UTF-8");

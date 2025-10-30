@@ -89,37 +89,51 @@ public class AuthorBrowse extends HttpServlet {
       while ((line = reader.readLine()) != null) {
         out.println(line);
         if (line.contains("<div class=\"browse\">")) {
-          out.println("<ul>");
+          out.println("<div class=\"accordion\" id=\"authorAccordion\">");
           String initial = "";
           String auth = "";
-          boolean closeInitial = false;
+          boolean closeAccordionItem = false;
           boolean closeAuthor = false;
           boolean worksOpen = false;
           Collections.sort(authors, (Comparator<Count>) (o1, o2) -> ((Count)o1).getName().trim().compareTo(((Count)o2).getName().trim()));
           for (Count author : authors) {
               String name = author.getName();
-              
-              //Initial Link
+
+              //Initial Letter Accordion Item
               if (!initial.equals(name.substring(0,1))) {
                 initial = name.substring(0,1);
                 if (worksOpen) {
-                    out.print("</ul>");
+                    out.println("</ul>");
                     worksOpen = false;
                 }
                 if (closeAuthor) {
-                    out.print("</li></ul>");
+                    out.println("</li></ul>");
                     closeAuthor = false;
                 }
-                if (closeInitial) {
-                    out.println("</li>");
-                    closeInitial = false;
+                if (closeAccordionItem) {
+                    out.println("</div></div></div>");
+                    closeAccordionItem = false;
                 }
-                out.print("<li><a name=\"");
+                out.print("<div class=\"accordion-item\">");
+                out.print("<h2 class=\"accordion-header\" id=\"");
+                out.print(initial.toLowerCase());
+                out.print("\">");
+                out.print("<button class=\"accordion-button collapsed\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#collapse");
                 out.print(initial);
-                out.print("\" class=\"initial\">");
+                out.print("\" aria-expanded=\"false\" aria-controls=\"collapse");
                 out.print(initial);
-                out.println("</a> <a class=\"top\" href=\"#\">^</a><ul class=\"authors\">");
-                closeInitial = true;
+                out.print("\">");
+                out.print(initial);
+                out.println("</button></h2>");
+                out.print("<div id=\"collapse");
+                out.print(initial);
+                out.print("\" class=\"accordion-collapse collapse\" data-bs-parent=\"#authorAccordion\">");
+                out.print("<div class=\"accordion-body\">");
+                out.print("<a name=\"");
+                out.print(initial);
+                out.print("\" class=\"initial\"></a>");
+                out.println("<ul class=\"authors list-unstyled\">");
+                closeAccordionItem = true;
               }
               //Author link
               if (!auth.equals(FileUtils.substringBefore(name, " // "))) {
@@ -134,11 +148,11 @@ public class AuthorBrowse extends HttpServlet {
                 auth = FileUtils.substringBefore(name, " // ");
                 out.print("<li><a href=\"/author/");
                 out.print(URLEncoder.encode(FileUtils.substringBefore(name, " // "), "UTF-8"));
-                out.print("\">");
+                out.print("\" class=\"author-link\">");
                 out.print(FileUtils.substringBefore(name, " // "));
                 out.print("</a>");
                 if (name.contains(" // ")) {
-                    out.println("<ul class=\"works\">");
+                    out.println("<ul class=\"works list-unstyled ms-3\">");
                     worksOpen = true;
                 }
                 closeAuthor = true;
@@ -146,18 +160,18 @@ public class AuthorBrowse extends HttpServlet {
               //Work Link
               if (name.contains(" // ")) {
                 if (!worksOpen) {
-                    out.print("<ul class=\"works\">");
+                    out.print("<ul class=\"works list-unstyled ms-3\">");
                     worksOpen = true;
                 }
                 out.print("<li><a href=\"/author/");
                 out.print(URLEncoder.encode(FileUtils.substringBefore(name, " // "), "UTF-8"));
                 out.print("/");
                 out.print(URLEncoder.encode(FileUtils.substringAfter(name, " // "), "UTF-8"));
-                out.print("\">");
+                out.print("\" class=\"work-link\">");
                 out.print(FileUtils.substringAfter(name, " // "));
                 out.print("</a></li>");
               }
-              
+
           }
           if (worksOpen) {
               out.println("</ul>");
@@ -165,7 +179,10 @@ public class AuthorBrowse extends HttpServlet {
           if (closeAuthor) {
              out.println("</li></ul>");
           }
-          out.println("</li></ul>");
+          if (closeAccordionItem) {
+             out.println("</div></div></div>");
+          }
+          out.println("</div>");
           reader.readLine(); // assume template has a throwaway line inside the content div
         }
       }

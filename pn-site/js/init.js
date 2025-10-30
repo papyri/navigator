@@ -25,28 +25,14 @@ function init() {
         initImage();
     }
     alignRTL();
-    jQuery("#tmgo").button();
-    jQuery("span.term").each( function (i, elt) {
-        const htmlContent = $(elt).find("span.gloss").html();
-        if (htmlContent) {
-          $(elt).attr('title', htmlContent);
-          $(elt).tooltip({
-            content: htmlContent,
-            position: {
-              my: "center bottom",
-              at: "center top",
-            },
-            classes: { 'ui-tooltip': 'tooltip-dul-custom' },
-          });
-        }
-    });
+
     jQuery.ajax({
       type: "GET",
       url: "/editor/user/info",
       dataType: "json",
       success: function(data, status, xhr) {
         if (data.user) {
-         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\">home</a> | " + data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\" class=\"btn btn-link btn-sm text-decoration-none\">home</a><a href=\"/editor/users/edit\" class=\"btn btn-link btn-sm text-decoration-none\">" + data.user.name + "</a><a href=\"/editor/user/signout\" class=\"btn btn-link btn-sm text-decoration-none\">sign out</a>");
         }
       },
       error: function (data, status, xhr) {
@@ -77,6 +63,36 @@ function init() {
     addLinearBrowseControls();
 		getAlert();
 		getCampaign();
+		initBootstrapTooltips();
+		initMetadataTextSliders();
+
+		// Initialize apparatus link transformation for /current/ and /editions/ pages
+		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
+		    transformTextPartNumbers();
+		    reorderTextSections();
+		    transformTranslationHeadings();
+		    hideLineNumbersFromScreenReaders();
+		    transformApparatusLinks();
+		    transformApparatusContent().then(() => {
+		        addLineNumberHoverEffect();
+		        handleApparatusHashOnLoad();
+
+		        // Add resize listener to recalculate apparatus max-height
+		        let resizeTimer;
+		        window.addEventListener('resize', () => {
+		            clearTimeout(resizeTimer);
+		            resizeTimer = setTimeout(() => {
+		                setApparatusMaxHeight();
+		            }, 250);
+		        });
+
+		        // Fade in the #edition element now that all processing is complete
+		        const editions = document.querySelectorAll('#edition');
+		        if (editions) {
+		            editions.forEach(edition => edition.classList.add('ready'));
+		        }
+		    });
+		}
 }
 
 function initjQueryMigrate() {
@@ -184,40 +200,40 @@ function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 	var xml = jQuery(xmldoc);
 	var prevRecord = (position == 0 && rows == 2) ? null : xml.find("doc")[0];
 	var nextRecord = (position == total && rows == 2) ? null : xml.find("doc")[xml.find("doc").length - 1];
-	var htmlWrapper = jQuery("<div id=\"linear-browse-wrapper\"></div>");
+
+	var pageNavWrapper = jQuery("<nav aria-label=\"Page navigation\"></nav>");
+	var htmlWrapper = jQuery("<ul class=\"pagination pagination-sm\"></ul>");
+	pageNavWrapper.append(htmlWrapper);
+
 	addPrevRecordHTML(htmlWrapper, prevRecord, position, total, rows, querystring);
 	addBackToFacetBrowse(htmlWrapper)
 	addNextRecordHTML(htmlWrapper, nextRecord, position, total, rows, querystring);
-	var spacer = jQuery("<div style='height: 1px; width: 100%; clear: both;'></div>");
-	jQuery("#controls").before(htmlWrapper);
+
+	jQuery("#controls").before(pageNavWrapper);
 
 }
 
 function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = jQuery("<div id=\"linear-previous-record\"></div>");
-	var msg = "<< Previous record";
+	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
+	var msg = "« Previous record"; // using raw unicode here for compatibility with link.text()
+
+	var link = jQuery("<a class=\"page-link\"></a>");
+	link.text(msg);
+	var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
+	var title = jQuery(jQuery(record).children()[1]).text();
+	var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
+	link.attr("title", title);
+	link.attr("href", href);
+
 	if(record == null){
-
-		var deadlink = jQuery("<span class='deadlink'></span>");
-		deadlink.text(msg);
-		arrowWrapper.append(deadlink);
-
+		arrowWrapper.addClass("disabled");
+		link.addClass("disabled");
+		link.attr("href", "#");
 	}
-	else{
 
-		var link = jQuery("<a></a>");
-		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
-		var title = jQuery(jQuery(record).children()[1]).text();
-		var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
-		link.attr("title", title);
-		link.attr("href", href);
-		arrowWrapper.append(link);
-
-	}
+	arrowWrapper.append(link);
 	wrapper.append(arrowWrapper);
-
 }
 
 function addBackToFacetBrowse(wrapper){
@@ -229,38 +245,36 @@ function addBackToFacetBrowse(wrapper){
 	var searchstring = getCookie("lbpersist");
 	if(searchstring == null) return;
 	var prevpageURL = window.location.protocol + "//" + window.location.host + "/search" + searchstring;
-	var linkwrapper = jQuery("<div id='linear-back'></div>");
-	var link = jQuery("<a href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");
-	linkwrapper.append(link);
-	wrapper.append(linkwrapper);
+
+	var linkWrapper = jQuery("<li class='page-item'></li>");
+	var link = jQuery("<a class='page-link' href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");
+	linkWrapper.append(link);
+	wrapper.append(linkWrapper);
 }
 
 function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = jQuery("<div id=\"linear-next-record\"></div>");
-	var msg = "Next record >>"
+	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
+	var msg = "Next record »"; // using raw unicode here for compatibility with link.text()
+
+	var link = jQuery("<a class=\"page-link\"></a>");
+	link.text(msg);
+	var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
+	var title = jQuery(jQuery(record).children()[1]).text();
+	var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
+	link.attr("title", title);
+	link.attr("href", href);
+
 	if(record == null){
-
-		var deadlink = jQuery("<span class='deadlink'></span>");
-		deadlink.text(msg);
-		arrowWrapper.append(deadlink);
-
+		arrowWrapper.addClass("disabled");
+		link.addClass("disabled");
+		link.attr("href", "#");
 	}
-	else{
 
-		var link = jQuery("<a></a>");
-		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
-		var title = jQuery(jQuery(record).children()[1]).text();
-		var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
-		link.attr("title", title);
-		link.attr("href", href);
-		arrowWrapper.append(link);
-
-	}
+	arrowWrapper.append(link);
 	wrapper.append(arrowWrapper);
-
 }
+
 /**
  * Alters the query string used by the presently-displayed page so that it is suitable for use
  * by the next or previous record in the result set.
@@ -504,7 +518,7 @@ function getCampaign() {
 			});
 	}
 }
-	
+
 function hideCampaign(duration) {
 	const day = 86400000;
 	window.localStorage.setItem("Hide-papyriCampaign", (Date.now() + (duration * day)).toString());
@@ -523,7 +537,7 @@ function canShowCampaign() {
 	}
 	return true;
 }
-		
+
 function getAlert() {
 	getMessage("/docs/alert")
 		.then(message => {
@@ -545,7 +559,7 @@ function hideAlert() {
 	alert.parentElement.removeChild(alert);
 	return false;
 }
-	
+
 function canShowAlert(alert) {
 	let oldAlert = window.localStorage.getItem("papyri.info-lastAlert");
 	if (oldAlert) {
@@ -554,7 +568,7 @@ function canShowAlert(alert) {
 		return true;
 	}
 }
-	
+
 async function getMessage(url) {
 	const parser = new DOMParser();
 	let response = await fetch(url);
@@ -566,4 +580,637 @@ async function getMessage(url) {
 	let doc = parser.parseFromString(body, "text/html");
 	return doc.querySelector("div.markdown");
 }
-	
+
+function initBootstrapTooltips() {
+	// Initialize tooltips for both standard elements and span elements within transcriptions
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"], .transcription span[title]');
+	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+	// Add tooltips for translation terms with glosses
+	jQuery(".translation span.term").each( function (i, elt) {
+		const htmlContent = $(elt).find("span.gloss").html();
+		if (htmlContent) {
+			$(elt).attr('title', htmlContent);
+			$(elt).tooltip({html: true});
+		}
+  });
+}
+
+function initMetadataTextSliders() {
+	$("#controls input").on("click", (e) => {
+    const target = e.currentTarget;
+    if (target.checked) {
+      $("." + target.name).show();
+    } else {
+      $("." + target.name).hide();
+    }
+  });
+}
+
+function highlightHash() {
+    // Only work within .transcription elements if they exist
+    const transcriptionContainer = document.querySelector('.transcription');
+    if (!transcriptionContainer) {
+        return;
+    }
+
+    // Remove existing highlights only within transcription
+    transcriptionContainer.querySelectorAll('.active').forEach(element => {
+        element.classList.remove('active');
+    });
+
+    const hash = window.location.hash;
+
+    // If there's a hash, find the element within transcription and highlight it
+    if (hash && hash.length > 1) {
+        const elementId = hash.substring(1);
+        const targetElement = transcriptionContainer.querySelector('#' + elementId);
+
+        if (targetElement) {
+            targetElement.classList.add('active');
+        }
+
+        // Also highlight the corresponding to/from element
+        let correspondingId = null;
+        if (elementId.startsWith('to-app-')) {
+            correspondingId = elementId.replace('to-app-', 'from-app-');
+        } else if (elementId.startsWith('from-app-')) {
+            correspondingId = elementId.replace('from-app-', 'to-app-');
+        }
+
+        if (correspondingId) {
+            const correspondingElement = transcriptionContainer.querySelector('#' + correspondingId);
+            if (correspondingElement) {
+                correspondingElement.classList.add('active');
+            }
+        }
+    }
+}
+
+// Initialize hash highlighting on page load
+document.addEventListener('DOMContentLoaded', function() {
+    highlightHash();
+});
+
+// Listen for hash changes and update highlighting
+window.addEventListener('hashchange', function() {
+    highlightHash();
+});
+
+
+/***********************/
+/** APPARATUS SCRIPTS **/
+/***********************/
+
+// Transform textpartnumber spans into H3 elements and wrap content
+function transformTextPartNumbers() {
+	const edition = jQuery('#edition');
+	if (!edition.length) return;
+
+	// Remove text nodes that appear between textpartnumber spans and ab spans
+	edition.find('span.textpartnumber').each(function() {
+		let nextNode = this.nextSibling;
+		// Keep removing text nodes until we hit an element node (or end of siblings)
+		while (nextNode && nextNode.nodeType === 3) {
+			const nodeToRemove = nextNode;
+			nextNode = nextNode.nextSibling;
+			nodeToRemove.remove();
+		}
+	});
+
+	// Collect all direct children of #edition (textpartnumber spans and ab spans)
+	const children = edition.children('span.textpartnumber, span.ab').toArray();
+
+	// If there are no children, or all children are empty, remove the #edition element
+	if (children.length === 0) {
+		edition.remove();
+		return;
+	}
+
+	// Check if all children are empty (have no text content)
+	const allEmpty = children.every(child => jQuery(child).text().trim() === '');
+	if (allEmpty) {
+		edition.remove();
+		return;
+	}
+
+	// Create wrapper div
+	const wrapper = jQuery('<div></div>').addClass('edition-content');
+
+	// Process all children and add to wrapper
+	children.forEach(function(element) {
+		const $element = jQuery(element);
+		if ($element.hasClass('textpartnumber')) {
+			// Transform textpartnumber span to h3
+			const textContent = $element.text();
+			const id = $element.attr('id');
+			const h3 = jQuery('<h3></h3>').text(textContent).attr('id', id).addClass('textpartnumber-heading');
+			wrapper.append(h3);
+		} else {
+			// Detach and append ab span
+			wrapper.append($element.detach());
+		}
+	});
+
+	// Remove any remaining textpartnumber spans
+	edition.find('span.textpartnumber').remove();
+
+	// Insert wrapper at the beginning of #edition
+	edition.prepend(wrapper);
+}
+
+// Reorder text sections: move #history and related elements to be direct children of .text.row
+function reorderTextSections() {
+	const textRow = jQuery('.text.row');
+	if (!textRow.length) return;
+
+	// Find sections
+	const history = jQuery('#history');
+	const translations = jQuery('.translations');
+	const ld = jQuery('#ld');
+
+	// Move #history, its h2, and the copyright paragraph together
+	if (history.length) {
+		// Find the h2 that precedes #history
+		const historyH2 = history.prev('h2');
+
+		// Find the copyright paragraph that follows #history
+		const copyrightP = history.next('p').filter(':has(a[rel="license"])');
+
+		// Create a wrapper for all history-related content
+		const historyWrapper = jQuery('<div></div>').attr('id', 'history-section');
+
+		// Move elements into wrapper
+		if (historyH2.length) {
+			historyWrapper.append(historyH2.detach());
+		}
+		historyWrapper.append(history.detach());
+		if (copyrightP.length) {
+			historyWrapper.append(copyrightP.detach());
+		}
+
+		// Insert the wrapper in the correct position
+		// Order will be: transcription, translations, history-section, ld
+		if (translations.length) {
+			historyWrapper.insertAfter(translations);
+		} else {
+			// If no translations, insert before #ld or append to textRow
+			if (ld.length) {
+				historyWrapper.insertBefore(ld);
+			} else {
+				textRow.append(historyWrapper);
+			}
+		}
+	}
+}
+
+// Transform h2 headings to h3 in translation sections
+function transformTranslationHeadings() {
+	jQuery('.translation.data div h2').each(function() {
+		const $h2 = jQuery(this);
+		const text = $h2.text().trim().toLowerCase();
+
+		// Only transform h2s that contain "translation" or "bibliography"
+        if (text.includes('translation') || text.includes('bibliography')) {
+			const h3 = jQuery('<h3></h3>').html($h2.html());
+
+			// Copy any attributes
+			if ($h2.attr('id')) {
+				h3.attr('id', $h2.attr('id'));
+			}
+			if ($h2.attr('class')) {
+				h3.attr('class', $h2.attr('class'));
+			}
+
+			$h2.replaceWith(h3);
+		}
+	});
+}
+
+// hide hard-coded line numbers from screen readers
+function hideLineNumbersFromScreenReaders() {
+	jQuery('span.linenumber').attr('aria-hidden', 'true');
+}
+
+// replace (*) with *
+function transformApparatusLinks() {
+    jQuery('#edition span.ab a[href^="#to-app-"]').addClass('apparatus-link').html('<span aria-hidden="true">*</span>').attr('aria-label', 'Apparatus note');
+
+    // control apparatus link behavior
+    jQuery('.apparatus-link').on('click', function(e) {
+        e.preventDefault();
+        const href = jQuery(this).attr('href');
+        const targetId = href.substring(1); // Remove the #
+
+        jQuery('.apparatus-link.active').removeClass('active');
+        jQuery(this).addClass('active');
+        jQuery('.apparatus-entry.active').removeClass('active');
+
+        // Find and highlight the corresponding apparatus entry
+        const apparatusEntry = document.getElementById(targetId);
+        if (apparatusEntry) {
+            apparatusEntry.classList.add('active');
+
+            // Scroll apparatus entry into view within its container
+            apparatusEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
+}
+
+// apparatus content
+// - Wrap each entry in a div instead of using <br> separators
+// - Move anchor IDs from <a> tags to wrapper divs
+// - Remove the "^" link text
+// - Make line numbers clickable to highlight words in transcription
+function transformApparatusContent() {
+    return new Promise((resolve) => {
+        const apparatus = document.querySelector('#apparatus');
+        if (!apparatus) {
+            resolve();
+            return;
+        }
+
+    let html = apparatus.innerHTML;
+    const heading = '<h3>Apparatus</h3>';
+    html = html.replace('<h3>Apparatus</h3>', '').replace(/^<br>/, '');
+
+    // Split by <br> to get individual entries
+    const entries = html.split('<br>').filter(entry => entry.trim().length > 0);
+
+    // Parse each entry by breaking down its structure
+    const parsedEntries = [];
+
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i].trim();
+        if (!entry) continue;
+
+        // Create a temporary DOM element to parse the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = entry;
+
+        // Find the anchor tag
+        const anchor = tempDiv.querySelector('a');
+        if (!anchor) continue;
+
+        const anchorId = anchor.getAttribute('id');
+        const href = anchor.getAttribute('href');
+        const backLink = href ? href.substring(1) : ''; // Remove # from "#from-app-xxx"
+
+        // Get the text content after the anchor (this contains line number and content)
+        // Remove the anchor element and get remaining text
+        anchor.remove();
+        const remainingContent = tempDiv.innerHTML.trim();
+
+        // Parse the line number
+        // Formats supported: "r.6. ", "7-8. ", "ii.3. ", "FrA.2. ", "Fr2.1. ", "r.ii.12. "
+        // Pattern: optional prefix (can have multiple dot-separated parts), then number/range, period, space
+        const lineNumMatch = remainingContent.match(/^((?:[a-z0-9]+\.)+)?(\d+(?:-\d+)?)\.\s+/i);
+
+        if (!lineNumMatch) continue;
+
+        const prefix = lineNumMatch[1] ? lineNumMatch[1].slice(0, -1) : ''; // Remove trailing period
+        const lineNumberStr = lineNumMatch[2]; // e.g., "6" or "7-8"
+        const lineNumber = parseInt(lineNumberStr.split('-')[0]); // First number for aria-label
+
+        // Get the content after the line number
+        const content = remainingContent.substring(lineNumMatch[0].length);
+
+        // Build display number
+        const displayNumber = prefix ? `${prefix}.${lineNumberStr}:` : `${lineNumberStr}:`;
+
+        parsedEntries.push({
+            anchorId,
+            lineNumber,
+            displayNumber,
+            content,
+            backLink
+        });
+    }
+
+    // Build new HTML
+    let newHtml = heading + '\n';
+
+    // Check if there's a hash in the URL that we need to match
+    const hash = window.location.hash;
+    const targetIdFromHash = hash ? hash.substring(1) : null; // Remove the #
+
+    for (let entry of parsedEntries) {
+        // Extract content from data-bs-original-title or title attribute if present
+        let mainContent = entry.content;
+        let detailContent = '';
+
+        // Check if the first span has data-bs-original-title or title attribute
+        const tooltipMatch = entry.content.match(/<span[^>]*(?:data-bs-original-title|title)="([^"]*)"[^>]*>/);
+
+        if (tooltipMatch) {
+            const tooltipText = tooltipMatch[1]; // Content from data-bs-original-title or title
+
+            // Set the detail content from the tooltip
+            detailContent = `<span class="apparatus-detail">${tooltipText}</span>`;
+        }
+
+        // Check if this entry matches the hash in the URL
+        const activeClass = (targetIdFromHash && entry.anchorId === targetIdFromHash) ? ' active' : '';
+
+        newHtml += `<div aria-label="Line ${entry.lineNumber}" class="apparatus-entry${activeClass}" id="${entry.anchorId}" data-back-link="#${entry.backLink}">
+            <a href="#${entry.backLink}" class="apparatus-line-number" aria-label="Go to text">${entry.displayNumber}</a>
+            <span class="apparatus-content">${mainContent}</span>
+            ${detailContent}
+        </div>\n`;
+    }
+
+    // Update the apparatus HTML
+    apparatus.innerHTML = newHtml;
+
+    // Set max-height based on viewport and ab span height
+    setApparatusMaxHeight();
+
+    // Add click handlers to line numbers to highlight corresponding words
+    const lineNumbers = apparatus.querySelectorAll('.apparatus-line-number');
+
+    lineNumbers.forEach(lineNum => {
+        lineNum.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            const targetId = href.substring(1); // Remove the #
+
+            // Update URL with to-app- version of the link (change from-app- to to-app-)
+            const apparatusEntryId = this.closest('.apparatus-entry').id;
+            if (apparatusEntryId) {
+                history.replaceState(null, '', '#' + apparatusEntryId);
+            }
+
+            // Remove active class from all apparatus entries
+            document.querySelectorAll('.apparatus-entry.active').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Add active class to the clicked entry's parent
+            this.closest('.apparatus-entry').classList.add('active');
+
+            // Remove active class from all apparatus links in transcription
+            document.querySelectorAll('.apparatus-link.active').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Find the target element in the transcription and add active class
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.classList.add('active');
+
+                // Remove previous highlights
+                document.querySelectorAll('.apparatus-highlight').forEach(el => {
+                    el.classList.remove('apparatus-highlight');
+                });
+
+                // Highlight the target word
+                targetElement.classList.add('apparatus-highlight');
+
+                // Scroll to it
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Set focus to the target element for keyboard navigation
+                // If it's not naturally focusable, make it focusable
+                if (!targetElement.hasAttribute('tabindex')) {
+                    targetElement.setAttribute('tabindex', '-1');
+                }
+                targetElement.focus();
+            }
+        });
+    });
+
+        // Set apparatus section max-height to match the transcription height
+        // const edition = document.querySelector('#edition');
+        // const transcription = edition.querySelector('span.ab');
+        // if (transcription) {
+        //     const transcriptionHeight = transcription.offsetHeight;
+        //     apparatus.style.maxHeight = transcriptionHeight + 'px';
+        // }
+
+        // Resolve the promise after DOM updates
+        resolve();
+    });
+}
+
+// Wrap each line in a span with line number class and add hover effect
+function addLineNumberHoverEffect() {
+
+    const edition = document.querySelector('#edition');
+    if (!edition) {
+        return;
+    }
+
+    // Handle multiple span.ab sections
+    const transcriptions = edition.querySelectorAll('span.ab');
+    if (!transcriptions || transcriptions.length === 0) {
+        return;
+    }
+
+    transcriptions.forEach(transcription => {
+        // Get the HTML content
+        let html = transcription.innerHTML;
+
+        // Get all line breaks with id="alN" or id="aN-lN" format
+        const lineBreakPattern = /<br\s+id="a([^"]+)"[^>]*>/g;
+        const lineBreaks = [];
+        let match;
+
+        while ((match = lineBreakPattern.exec(html)) !== null) {
+            const idPart = match[1];
+            // Extract line number from formats like "l1", "i-l1", "ii-l1", "v-l35", etc.
+            const lineNumMatch = idPart.match(/l(\d+)$/);
+            const lineNumber = lineNumMatch ? parseInt(lineNumMatch[1]) : 1;
+
+            lineBreaks.push({
+                fullMatch: match[0],
+                lineNumber: lineNumber,
+                index: match.index
+            });
+        }
+
+        // If there are no line breaks, skip this transcription (leave it as-is)
+        if (lineBreaks.length === 0) {
+            return;
+        }
+
+        // Helper function to check if line should skip line numbering
+        const shouldSkipLineNumber = (content) => {
+            // Skip if line contains the dash separator pattern
+            if (content.includes('-- -- -- -- -- -- -- -- -- --')) {
+                return true;
+            }
+            // Skip if line number contains 'bis' (e.g., "20bis")
+            if (content.includes('bis')) {
+                return true;
+            }
+            // Skip if line contains "lines missing" or "line missing" pattern (e.g., "[ca.26 lines missing]" or "[2 lines missing]")
+            if (content.includes('lines missing') || content.includes('line missing')) {
+                return true;
+            }
+            return false;
+        };
+
+        // Helper function to track and close/reopen open tags across line breaks
+        const getOpenTags = (htmlContent) => {
+            const tags = [];
+            const tagPattern = /<(\/?)([\w-]+)([^>]*)>/g;
+            let tagMatch;
+
+            while ((tagMatch = tagPattern.exec(htmlContent)) !== null) {
+                const isClosing = tagMatch[1] === '/';
+                const tagName = tagMatch[2];
+                const attributes = tagMatch[3];
+
+                if (isClosing) {
+                    // Remove the last occurrence of this tag from the stack
+                    for (let i = tags.length - 1; i >= 0; i--) {
+                        if (tags[i].name === tagName) {
+                            tags.splice(i, 1);
+                            break;
+                        }
+                    }
+                } else if (tagName !== 'br' && tagName !== 'a') {
+                    // Add opening tag to stack (skip br and a tags)
+                    tags.push({ name: tagName, attributes: attributes });
+                }
+            }
+
+            return tags;
+        };
+
+        const closeOpenTags = (openTags) => {
+            return openTags.map(tag => `</${tag.name}>`).reverse().join('');
+        };
+
+        const reopenTags = (openTags) => {
+            return openTags.map(tag => `<${tag.name}${tag.attributes}>`).join('');
+        };
+
+        // Build new HTML with wrapped lines
+        let newHtml = '';
+        let currentPos = 0;
+        let currentLineNumber = 1;
+
+        // Wrap line 1
+        const firstBreakPos = lineBreaks[0].index;
+        const line1Content = html.substring(0, firstBreakPos);
+        const noDashClass = shouldSkipLineNumber(line1Content) ? ' no-line-number' : '';
+        const multipleOf5Class = (currentLineNumber % 5 === 0) ? ' multiple-of-5' : '';
+
+        // Track open tags at end of line 1
+        const openTags1 = getOpenTags(line1Content);
+        const closingTags1 = closeOpenTags(openTags1);
+
+        newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${line1Content}${closingTags1}</span>`;
+
+        // Skip the <br> tag itself
+        currentPos = lineBreaks[0].index + lineBreaks[0].fullMatch.length;
+        currentLineNumber = lineBreaks[0].lineNumber;
+
+        // Wrap remaining lines
+        for (let i = 0; i < lineBreaks.length; i++) {
+            const nextBreak = lineBreaks[i + 1];
+            const lineContent = nextBreak
+                ? html.substring(currentPos, nextBreak.index)
+                : html.substring(currentPos);
+
+            if (lineContent.trim()) {
+                // Reopen any tags that were open at the end of the previous line
+                const openTagsAtLineStart = (i === 0) ? openTags1 : getOpenTags(html.substring(0, currentPos));
+                const reopenedTags = reopenTags(openTagsAtLineStart);
+
+                // Track open tags at end of current line
+                const openTagsAtLineEnd = getOpenTags(html.substring(0, nextBreak ? nextBreak.index : html.length));
+                const closingTags = closeOpenTags(openTagsAtLineEnd);
+
+                // Check if line should skip line numbering
+                const noDashClass = shouldSkipLineNumber(lineContent) ? ' no-line-number' : '';
+                const multipleOf5Class = (currentLineNumber % 5 === 0) ? ' multiple-of-5' : '';
+
+                newHtml += `<span class="text-line line-${currentLineNumber}${noDashClass}${multipleOf5Class}" data-line="${currentLineNumber}" aria-label="Line ${currentLineNumber}">${reopenedTags}${lineContent}${closingTags}</span>`;
+            }
+
+            if (nextBreak) {
+                // Skip the <br> tag itself
+                currentPos = nextBreak.index + nextBreak.fullMatch.length;
+                currentLineNumber = nextBreak.lineNumber;
+            }
+        }
+
+        // Update the transcription HTML
+        transcription.innerHTML = newHtml;
+    });
+}
+
+// Set apparatus max-height based on viewport and ab span height
+function setApparatusMaxHeight() {
+    const apparatus = document.querySelector('#apparatus');
+    if (!apparatus) return;
+
+    const edition = document.querySelector('#edition');
+    if (!edition) return;
+
+    // Get all ab spans and find the tallest one
+    const abSpans = edition.querySelectorAll('span.ab');
+    if (!abSpans || abSpans.length === 0) return;
+
+    // Find the maximum height among all ab spans
+    let maxAbHeight = 0;
+    abSpans.forEach(abSpan => {
+        const height = abSpan.offsetHeight;
+        if (height > maxAbHeight) {
+            maxAbHeight = height;
+        }
+    });
+
+    // Get viewport height minus some padding (accounting for sticky top offset)
+    const viewportHeight = window.innerHeight;
+    const apparatusTopOffset = apparatus.getBoundingClientRect().top;
+    const maxViewportHeight = viewportHeight - apparatusTopOffset - 32; // 32px for bottom padding
+
+    // Use the smaller of the two (viewport height or tallest ab span)
+    const maxHeight = Math.min(maxViewportHeight, maxAbHeight);
+
+    // Set the max-height
+    apparatus.style.maxHeight = `${maxHeight}px`;
+}
+
+// apparatus links
+function handleApparatusHashOnLoad() {
+    const hash = window.location.hash;
+
+    // Only proceed if there's a hash that starts with #to-app-
+    if (!hash || !hash.startsWith('#to-app-')) {
+        return;
+    }
+
+    const targetId = hash.substring(1); // Remove the #
+
+    // Find the apparatus entry with this ID (should already have active class)
+    const apparatusEntry = document.getElementById(targetId);
+
+    if (apparatusEntry) {
+        // Scroll apparatus entry into view
+        apparatusEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Find the backlink (from-app-xxx) to activate in transcription
+        const backLink = apparatusEntry.getAttribute('data-back-link');
+        if (backLink) {
+            const transcriptionElement = document.querySelector(backLink);
+            if (transcriptionElement) {
+                transcriptionElement.classList.add('active');
+
+                // Scroll the transcription element into view as well
+                transcriptionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    } 
+
+    // Find the corresponding link in the transcription
+    // The link will have href="#to-app-xxx"
+    const correspondingLink = document.querySelector(`a.apparatus-link[href="${hash}"]`);
+    if (correspondingLink) {
+        // Add active class to the link
+        correspondingLink.classList.add('active');
+    }
+}
