@@ -22,7 +22,7 @@
     </xsl:choose>
     </xsl:variable>
     <div class="metadata">
-      <div class="{$md-collection} data">
+      <div id="{$md-collection}-data" class="{$md-collection} data">
         <xsl:choose>
           <xsl:when test="$md-collection = 'dclp'">
             <h2>

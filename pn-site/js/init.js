@@ -1,26 +1,4 @@
 function init() {
-    //mute: initjQueryMigrate();
-    jQuery("div#hd h1").on('click', () => { window.location = "/" });
-    jQuery("li.dialog").each(function(i) {
-        jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
-        jQuery(this).hide();
-    });
-    jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").on({
-      mouseenter: function() {
-          jQuery(this).css('background-color', '#F8F6F4');
-      },
-      mouseleave: function() {
-          jQuery(this).css('background-color', 'initial'); //set it back to its initial state
-      }
-    });
-    jQuery("div.controls input").each(function() {
-        if (!this.checked) {
-            jQuery("." + this.name).css('display', 'none');
-        }
-    });
-    if (jQuery(".translation").length == 0 && jQuery(".image").length == 0) {
-        jQuery(".transcription").css('width', '98.8%');
-    }
     if (jQuery("#image").length > 0) {
         initImage();
     }
@@ -64,15 +42,18 @@ function init() {
 		getAlert();
 		getCampaign();
 		initBootstrapTooltips();
-		initMetadataTextSliders();
 		initLineNumberVisibility();
 		initApparatusDetailsToggle();
 		replaceNbspInGaps();
+		initBootstrapScrollSpy();
+		initSidebar();
+		initBackToTop();
 
 		// Initialize transformation for /current/ and /editions/ pages
 		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
 
 					// Add resize listener to recalculate apparatus max-height
+					/*
 					let resizeTimer;
 					window.addEventListener('resize', () => {
 							clearTimeout(resizeTimer);
@@ -80,6 +61,7 @@ function init() {
 									setApparatusMaxHeight();
 							}, 250);
 					});
+					*/
 
 					// Fade in the #edition element
 					const editions = document.querySelectorAll('#edition');
@@ -591,16 +573,19 @@ function initBootstrapTooltips() {
   });
 }
 
-function initMetadataTextSliders() {
-	$("#controls input").on("click", (e) => {
-    const target = e.currentTarget;
-    if (target.checked) {
-      $("." + target.name).show();
-    } else {
-      $("." + target.name).hide();
-    }
-  });
+function initBootstrapScrollSpy() {
+	console.log("Initializing Bootstrap ScrollSpy");
+	// Initialize Bootstrap ScrollSpy for the record page navigation
+	const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+		target: '#controls',
+		smoothScroll: false, // Let CSS scroll-margin-top handle smooth scrolling and offset
+		rootMargin: '0px 0px -25%',
+		// Bootstrap bug fix, see:
+		// https://github.com/twbs/bootstrap/pull/41016
+		threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+	});
 }
+
 
 /**
  * Allows for line number display on hover of text lines
@@ -677,6 +662,35 @@ window.addEventListener('hashchange', function() {
     highlightHash();
 });
 
+// Initialize sticky navigation observer so we can add "stuck"
+// class when nav is stuck to top of viewport
+document.addEventListener("DOMContentLoaded", () => {
+  const stickyElements = document.querySelectorAll(".sticky-top");
+
+  stickyElements.forEach((el) => {
+    const sentinel = document.createElement("div");
+    sentinel.className = "sticky-sentinel";
+    el.parentNode.insertBefore(sentinel, el);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.boundingClientRect.top < 0) {
+          el.classList.add("stuck");
+        } else {
+          el.classList.remove("stuck");
+        }
+      },
+      {
+        //threshold: [0],
+        //rootMargin: `0px 0px 0px 0px`
+      }
+    );
+
+    observer.observe(sentinel);
+  });
+});
+
+
 
 /******************************************/
 /** Apparatus / Transcription UI scripts **/
@@ -723,18 +737,23 @@ function replaceNbspInGaps() {
 /**
  * Initialize the details toggle for apparatus
  * Shows/hides detailed apparatus explanations with fade effect
+ * Uses event delegation to work regardless of where apparatus content is moved
  */
 function initApparatusDetailsToggle() {
-    const toggle = document.getElementById('detailsToggle');
+    // Remove any existing event listener to prevent duplicates
+    document.removeEventListener('change', handleDetailsToggle);
 
-    if (!toggle) {
-        return;
-    }
+    // Add event listener to document with delegation
+    document.addEventListener('change', handleDetailsToggle);
+}
 
-    toggle.addEventListener('change', function() {
+function handleDetailsToggle(event) {
+    // Check if the changed element is our details toggle
+    if (event.target.id === 'detailsToggle') {
+        const toggle = event.target;
         const details = document.querySelectorAll('.apparatus-detail');
 
-        if (this.checked) {
+        if (toggle.checked) {
             // Toggle ON: Show details with fade in
             details.forEach(detail => {
                 detail.classList.remove('visually-hidden');
@@ -749,6 +768,137 @@ function initApparatusDetailsToggle() {
                 });
             });
         }
-    });
+    }
 }
 
+
+function initSidebar() {
+	const sidebarSelect = document.getElementById('sidebar-content-select');
+	const sidebar = document.getElementById('sidebar');
+	const apparatus = document.getElementById('apparatus');
+	const apparatusUnder = document.getElementById('apparatus-under');
+
+	if (!sidebarSelect || !sidebar) {
+		return; // Required elements don't exist
+	}
+
+	// Store original apparatus content for moving between locations
+	let originalApparatusContent = apparatus ? apparatus.innerHTML : '';
+
+	function updateSidebarContent(selectedValue) {
+		if (!sidebar) return;
+
+		// Show sidebar by default (will be hidden for 'no-sidebar')
+		sidebar.style.display = '';
+
+		if (selectedValue === 'no-sidebar') {
+			// Hide sidebar and move apparatus content below
+			sidebar.style.display = 'none';
+			if (apparatus && apparatusUnder) {
+				apparatusUnder.innerHTML = originalApparatusContent;
+				apparatusUnder.style.display = '';
+			}
+		} else if (selectedValue === 'apparatus') {
+			// Show apparatus in sidebar
+			if (apparatus && apparatusUnder) {
+				apparatus.innerHTML = originalApparatusContent;
+				apparatusUnder.innerHTML = '';
+				apparatusUnder.style.display = 'none';
+			}
+			sidebar.innerHTML = apparatus ? apparatus.outerHTML : '';
+		} else if (selectedValue === 'commentary') {
+			// Show commentary in sidebar
+			const commentaryElement = document.getElementById('commentary');
+			if (commentaryElement) {
+				sidebar.innerHTML = commentaryElement.outerHTML;
+				// Hide apparatus below when showing commentary
+				if (apparatusUnder) {
+					apparatusUnder.innerHTML = '';
+					apparatusUnder.style.display = 'none';
+				}
+			}
+		} else {
+			// Show translation content in sidebar (e.g., "11853-2")
+			const translationElement = document.getElementById(`translation-${selectedValue}`);
+			if (translationElement) {
+				sidebar.innerHTML = translationElement.outerHTML;
+				// Hide apparatus below when showing translation
+				if (apparatusUnder) {
+					apparatusUnder.innerHTML = '';
+					apparatusUnder.style.display = 'none';
+				}
+			}
+		}
+	}
+
+	// Handle select change
+	sidebarSelect.addEventListener('change', function() {
+		updateSidebarContent(this.value);
+
+		// Scroll to the #text element
+		const textElement = document.getElementById('text');
+		if (textElement) {
+			textElement.scrollIntoView({ behavior: 'smooth' });
+		}
+	});
+
+	// Initialize with current selection
+	updateSidebarContent(sidebarSelect.value);
+}
+
+
+/**
+ * Initialize the back-to-top button functionality
+ * Shows/hides buttons based on scroll position and handles smooth scroll to top
+ * Works with any element that has the .back-to-top class
+ */
+function initBackToTop() {
+    const backToTopButtons = document.querySelectorAll('.btn-back-to-top');
+
+    if (backToTopButtons.length === 0) {
+        return; // No back-to-top buttons exist on this page
+    }
+
+    // Show/hide buttons based on scroll position
+    function toggleBackToTopButtons() {
+        const shouldShow = window.pageYOffset > 300; // Show after scrolling 300px
+
+        backToTopButtons.forEach(button => {
+            // Skip buttons with 'in-controls-nav' class - they should always be visible
+            if (button.classList.contains('in-controls-nav')) {
+                return;
+            }
+
+            if (shouldShow) {
+                button.classList.add('show');
+            } else {
+                button.classList.remove('show');
+            }
+        });
+    }
+
+    // Scroll to top when button is clicked
+    function scrollToTop() {
+        // Hide any visible Bootstrap tooltips before scrolling
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(trigger => {
+            const tooltip = bootstrap.Tooltip.getInstance(trigger);
+            if (tooltip) tooltip.hide();
+        });
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Add event listeners to all back-to-top buttons
+    backToTopButtons.forEach(button => {
+        button.addEventListener('click', scrollToTop);
+    });
+
+    // Add scroll listener
+    window.addEventListener('scroll', toggleBackToTopButtons);
+
+    // Initial check in case page is already scrolled
+    toggleBackToTopButtons();
+}
