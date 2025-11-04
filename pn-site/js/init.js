@@ -1,26 +1,4 @@
 function init() {
-    //mute: initjQueryMigrate();
-    jQuery("div#hd h1").on('click', () => { window.location = "/" });
-    jQuery("li.dialog").each(function(i) {
-        jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
-        jQuery(this).hide();
-    });
-    jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").on({
-      mouseenter: function() {
-          jQuery(this).css('background-color', '#F8F6F4');
-      },
-      mouseleave: function() {
-          jQuery(this).css('background-color', 'initial'); //set it back to its initial state
-      }
-    });
-    jQuery("div.controls input").each(function() {
-        if (!this.checked) {
-            jQuery("." + this.name).css('display', 'none');
-        }
-    });
-    if (jQuery(".translation").length == 0 && jQuery(".image").length == 0) {
-        jQuery(".transcription").css('width', '98.8%');
-    }
     if (jQuery("#image").length > 0) {
         initImage();
     }
@@ -64,15 +42,18 @@ function init() {
 		getAlert();
 		getCampaign();
 		initBootstrapTooltips();
-		initMetadataTextSliders();
 		initLineNumberVisibility();
 		initApparatusDetailsToggle();
 		replaceNbspInGaps();
+		initBootstrapScrollSpy();
+		initSidebar();
+		initBackToTop();
 
 		// Initialize transformation for /current/ and /editions/ pages
 		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
 
 					// Add resize listener to recalculate apparatus max-height
+					/*
 					let resizeTimer;
 					window.addEventListener('resize', () => {
 							clearTimeout(resizeTimer);
@@ -80,6 +61,7 @@ function init() {
 									setApparatusMaxHeight();
 							}, 250);
 					});
+					*/
 
 					// Fade in the #edition element
 					const editions = document.querySelectorAll('#edition');
@@ -591,16 +573,19 @@ function initBootstrapTooltips() {
   });
 }
 
-function initMetadataTextSliders() {
-	$("#controls input").on("click", (e) => {
-    const target = e.currentTarget;
-    if (target.checked) {
-      $("." + target.name).show();
-    } else {
-      $("." + target.name).hide();
-    }
-  });
+function initBootstrapScrollSpy() {
+	console.log("Initializing Bootstrap ScrollSpy");
+	// Initialize Bootstrap ScrollSpy for the record page navigation
+	const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+		target: '#controls',
+		smoothScroll: false, // Let CSS scroll-margin-top handle smooth scrolling and offset
+		rootMargin: '0px 0px -25%',
+		// Bootstrap bug fix, see:
+		// https://github.com/twbs/bootstrap/pull/41016
+		threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+	});
 }
+
 
 /**
  * Allows for line number display on hover of text lines
@@ -700,45 +685,22 @@ document.addEventListener("DOMContentLoaded", () => {
         //rootMargin: `0px 0px 0px 0px`
       }
     );
+<<<<<<< HEAD
   });
 });
+=======
+
+    observer.observe(sentinel);
+  });
+});
+
+
+>>>>>>> 1feba004 (Add sticky nav and sidebar chooser to top of record pages. Resolves PK-199.)
 
 /******************************************/
 /** Apparatus / Transcription UI scripts **/
 /******************************************/
 
-
-/**
- * Initialize the details toggle for apparatus
- * Shows/hides detailed apparatus explanations with fade effect
- */
-function initApparatusDetailsToggle() {
-    const toggle = document.getElementById('detailsToggle');
-
-    if (!toggle) {
-        return;
-    }
-
-    toggle.addEventListener('change', function() {
-        const details = document.querySelectorAll('.apparatus-detail');
-
-        if (this.checked) {
-            // Toggle ON: Show details with fade in
-            details.forEach(detail => {
-                detail.classList.remove('visually-hidden');
-                // Use jQuery for fade animation
-                jQuery(detail).hide().fadeIn(300);
-            });
-        } else {
-            // Toggle OFF: Hide details with fade out
-            details.forEach(detail => {
-                jQuery(detail).fadeOut(300, function() {
-                    detail.classList.add('visually-hidden');
-                });
-            });
-        }
-    });
-}
 
 /**
  * Initialize the details toggle for apparatus
@@ -777,6 +739,46 @@ function handleDetailsToggle(event) {
     }
 }
 
+<<<<<<< HEAD
+/**
+ * Initialize the details toggle for apparatus
+ * Shows/hides detailed apparatus explanations with fade effect
+ * Uses event delegation to work regardless of where apparatus content is moved
+ */
+function initApparatusDetailsToggle() {
+    // Remove any existing event listener to prevent duplicates
+    document.removeEventListener('change', handleDetailsToggle);
+
+    // Add event listener to document with delegation
+    document.addEventListener('change', handleDetailsToggle);
+}
+
+function handleDetailsToggle(event) {
+    // Check if the changed element is our details toggle
+    if (event.target.id === 'detailsToggle') {
+        const toggle = event.target;
+        const details = document.querySelectorAll('.apparatus-detail');
+
+        if (toggle.checked) {
+            // Toggle ON: Show details with fade in
+            details.forEach(detail => {
+                detail.classList.remove('visually-hidden');
+                // Use jQuery for fade animation
+                jQuery(detail).hide().fadeIn(300);
+            });
+        } else {
+            // Toggle OFF: Hide details with fade out
+            details.forEach(detail => {
+                jQuery(detail).fadeOut(300, function() {
+                    detail.classList.add('visually-hidden');
+                });
+            });
+        }
+    }
+}
+
+=======
+>>>>>>> 1feba004 (Add sticky nav and sidebar chooser to top of record pages. Resolves PK-199.)
 
 function initSidebar() {
 	const sidebarSelect = document.getElementById('sidebar-content-select');
@@ -907,4 +909,8 @@ function initBackToTop() {
 
     // Initial check in case page is already scrolled
     toggleBackToTopButtons();
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1feba004 (Add sticky nav and sidebar chooser to top of record pages. Resolves PK-199.)
