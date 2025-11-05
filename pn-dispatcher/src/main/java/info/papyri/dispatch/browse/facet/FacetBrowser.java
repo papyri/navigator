@@ -88,6 +88,8 @@ public class FacetBrowser extends HttpServlet {
 
   private static Logger logger = Logger.getLogger("pn-dispatch");
 
+  private static Http2SolrClient solrClient;
+
   @Override
   public void init(ServletConfig config) throws ServletException {
 
@@ -99,6 +101,16 @@ public class FacetBrowser extends HttpServlet {
     FACET_PATH = config.getInitParameter("facetBrowserPath");
     INSTRUCTIONS_PATH = config.getInitParameter("instructionsPath");
     SERVER_HOME = config.getInitParameter("serverHome");
+
+    if (solrClient == null) {
+      synchronized (FacetBrowser.class) { 
+        if (solrClient == null) {
+          solrClient = new Http2SolrClient.Builder(SOLR_URL + PN_SEARCH)
+                  .withConnectionTimeout(SOCKET_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS).build();
+        }
+      }
+    }
+
     try {
       FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
     } catch (MalformedURLException e) {
@@ -324,12 +336,8 @@ public class FacetBrowser extends HttpServlet {
    * @return The <code>QueryResponse</code> returned by the Solr server
    */
   private QueryResponse runFacetQuery(SolrQuery sq) {
-    Http2SolrClient solr = new Http2SolrClient.Builder(SOLR_URL + PN_SEARCH)
-            .withConnectionTimeout(SOCKET_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS).build();
     try {
-      //logger.info(sq.toString());
-      QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
-      return qr;
+      return solrClient.query(sq, SolrRequest.METHOD.POST);
     } catch (MalformedURLException murle) {
       logger.log(Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
       return null;
@@ -337,13 +345,9 @@ public class FacetBrowser extends HttpServlet {
       logger.log(Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
       return null;
     } catch (IOException ex) {
-        logger.log(Level.SEVERE, null, ex);
-        return null;
-    } finally {
-      solr.close();
+      logger.log(Level.SEVERE, null, ex);
+      return null;
     }
-
-
   }
 
   ArrayList<CustomApplicationException> collectFacetExceptions(ArrayList<Facet> facets) {
