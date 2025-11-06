@@ -321,7 +321,7 @@
                 </xsl:if>
                 <xsl:if test="$historical">
                   <div id="editthis" class="me-3">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
+                    <a href="/editor/publications/create_from_identifier/papyri.info/editions/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$hgv and not($current)">
