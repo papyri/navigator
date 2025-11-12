@@ -178,10 +178,10 @@ function buildSolrQueryString(){
  * Queries the Solr server
  */
 
-function querySolrServer(query, position, total, rows, querystring){
+function querySolrServer(query, position, total, rows, querystring) {
 
 	var that = this;
-	var serverUrl = "https://" + location.host + "/pn-search/select/";
+	var serverUrl = "/pn-search/select/";
 	jQuery.get(	serverUrl,
 			query,
 			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); },

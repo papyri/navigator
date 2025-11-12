@@ -146,6 +146,12 @@
     <xsl:variable name="current" select="$collection = 'current'"/>
     <xsl:variable name="historical" select="$collection = 'editions'"/>
     <xsl:variable name="image" select="count($imgs) gt 0"/>
+    <xsl:if test="$images">
+      <xsl:message>
+        Images: <xsl:value-of select="$images"/>
+        Image list: <xsl:value-of select="string-join($imgs, ', ')"/>
+      </xsl:message>
+    </xsl:if>
 
     <!-- start writing the output file -->
     <html lang="en">
@@ -190,7 +196,7 @@
         <!-- scripts -->
         <script src="{$jsbase}/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$image">
-          <script src="{$jsbase}/imageviewer.js" type="text/javascript" charset="utf-8"></script>
+          <script src="{$jsbase}/imageviewer.js" charset="utf-8" type="module"></script>
         </xsl:if>
         <script src="{$jsbase}/init.js" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$analytics='yes'">
@@ -485,11 +491,11 @@
               <div id="ld" class="data">
                 <h2>Linked Data</h2>
                 <p>
-                  <a href="{replace($selfUrl,'http://papyri.info','')}/rdf">RDF/XML</a> |
-                  <a href="{replace($selfUrl,'http://papyri.info','')}/turtle">Turtle</a> |
-                  <a href="{replace($selfUrl,'http://papyri.info','')}/n3">N-Triples</a> |
-                  <a href="{replace($selfUrl,'http://papyri.info','')}/json">JSON</a> |
-                  <a href="{replace($selfUrl,'http://papyri.info','')}/graph">Graph Visualization</a>
+                  <a href="{replace($selfUrl,'https://papyri.info','')}/rdf">RDF/XML</a> |
+                  <a href="{replace($selfUrl,'https://papyri.info','')}/turtle">Turtle</a> |
+                  <a href="{replace($selfUrl,'https://papyri.info','')}/n3">N-Triples</a> |
+                  <a href="{replace($selfUrl,'https://papyri.info','')}/json">JSON</a> |
+                  <a href="{replace($selfUrl,'https://papyri.info','')}/graph">Graph Visualization</a>
                 </p>
               </div>
             </div>
@@ -504,7 +510,7 @@
 
   <xsl:template name="images">
     <div id="image" class="image data">
-      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if> [<a href="{$selfUrl}/images" target="_blank">open in new window</a>]</h2>
+      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if> [<a href="{replace($selfUrl,'https://papyri.info','')}/images" target="_blank">open in new window</a>]</h2>
         <ul>
           <xsl:for-each select="$imgs">
             <li><a href="{.}" class="imagelink" alt="papyrus image"><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></a></li>
