@@ -317,21 +317,25 @@
 (defn batch-relation-query
   "Retrieves a set of triples where A `<dct:relation>` B when A is a child of the given URI."
   [url]
-  (format  "prefix dct: <http://purl.org/dc/terms/>
+  (let [collection (substring-before (substring-after url "https://papyri.info/") "/")]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a ?b
             from <https://papyri.info/graph>
-            where { <%s> dct:hasPart ?a .
+            where { <%1$s> dct:hasPart ?a .
                     ?a dct:relation ?b
-                    filter(!regex(str(?b),'/images$'))}" url))
+                    filter(!regex(str(?b),'/images$'))
+                    filter(!regex(str(?b),'/%2$s/'))}" url collection)))
 
 (defn relation-query
   "Returns URIs that are the object of `<dct:relation>`s where the given URI is the subject."
   [url]
-  (format  "prefix dct: <http://purl.org/dc/terms/>
-            select ?a
-            from <https://papyri.info/graph>
-            where { <%s> dct:relation ?a
-            filter(!regex(str(?a),'/images$'))}" url))
+  (let [collection (substring-before (substring-after url "https://papyri.info/") "/")]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
+              select ?a
+              from <https://papyri.info/graph>
+              where { <%1$s> dct:relation ?a
+              filter(!regex(str(?a),'/images$'))
+              filter(!regex(str(?a),'/%2$s/'))}" url collection)))
 
 (defn primary-query
   "For HGV, APIS, or translations, finds the DDbDP or DCLP relation"
@@ -570,7 +574,7 @@
   "Adds the given URL to the @html queue for processing, along with associated data."
   [url]
   (let [relations (execute-query (relation-query url))
-        primary (if (not (empty? (re-seq #"/(apis|hgv|hgvtrans)/" url)))
+        primary (if (not (empty? (re-seq #"/(apis|hgv|translations)/" url)))
                   (execute-query (primary-query url))
                   '())
         replaces (execute-query (replaces-query url))
@@ -1132,6 +1136,7 @@
   (queue-collections "https://papyri.info/editions/bifao/117" () ())
   (queue-collections "https://papyri.info/editions/p.kru" () ())
   (queue-collections "https://papyri.info/editions/pylon/7" () ())
+  (queue-collections "https://papyri.info/editions/basp" () ())
   (doseq [source (.toArray @html)] 
     (let [url (str (second (nth source 11)) "/source")] 
       (queue-sources url)))
