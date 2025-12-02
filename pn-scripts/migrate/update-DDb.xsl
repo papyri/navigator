@@ -10,7 +10,7 @@
   <xsl:mode on-no-match="shallow-copy"/>
   
   <xsl:param name="id"/>
-  <xsl:variable name="base">file:///Users/hac13/Development/APIS/idp.data</xsl:variable>
+  <xsl:param name="base"/>
   <xsl:variable name="HGV" select="tei:getHGV(/)"/>
   
   <xsl:template match="processing-instruction()">
@@ -56,8 +56,8 @@
     <xsl:for-each select="$root//tei:idno[@type='HGV']">
       <xsl:for-each select="tokenize(.)">
         <xsl:variable name="folder" select="ceiling(xs:int(replace(., '\D', '')) div 1000)"/>
-        <xsl:if test="doc-available(concat($base, '/HGV_meta_EpiDoc/HGV', $folder, '/', ., '.xml'))">
-          <xsl:copy-of select="doc(concat($base, '/HGV_meta_EpiDoc/HGV', $folder, '/', ., '.xml'))"/>
+        <xsl:if test="doc-available(concat('file://', $base, '/HGV_meta_EpiDoc/HGV', $folder, '/', ., '.xml'))">
+          <xsl:copy-of select="doc(concat('file://', $base, '/HGV_meta_EpiDoc/HGV', $folder, '/', ., '.xml'))"/>
         </xsl:if>
       </xsl:for-each>
     </xsl:for-each>

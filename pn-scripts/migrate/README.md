@@ -14,5 +14,6 @@ Creating the new structure involves `git move`ing DDbDP files to both the `DDbDP
 10. Switch back to `master`; create a `new_structure` (e.g.) branch and switch to it.
 11. Run `git merge new_curated` then `git merge new_static`. There will be a merge conflict. Run `git commit -a` anyway and save. There aren't any actual conflicting files, just conflicting state, but Git will be able to cope with two files having the same extended (pre-move) history.
 12. Run `translations.sh` and commit the result.
+13. Run `python3 apis-translations.py </path/to/APIS> </path/to/Translations>`. Commit the result.
 
 Dependencies: Assumes you have Saxon installed and available from the command line (the `translations.sh` script uses it). It's available via Homebrew.

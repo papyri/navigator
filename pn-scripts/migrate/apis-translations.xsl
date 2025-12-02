@@ -16,6 +16,11 @@
   <xsl:template match="teiHeader">
     <xsl:copy>
       <xsl:apply-templates/>
+      <profileDesc>
+        <langUsage>
+          <language ident="en">English</language>
+        </langUsage>
+      </profileDesc>
       <revisionDesc>
         <change when="{current-dateTime()}" who="https://papyri.info/editor/users/hcayless">Pull translation out of APIS record.</change>
       </revisionDesc>
