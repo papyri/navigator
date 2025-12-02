@@ -20,13 +20,18 @@
     
     <rdf:Description rdf:about="{$id}">
       <dct:identifier>papyri.info/current/{//tei:publicationStmt/tei:idno[@type = 'filename']}</dct:identifier>
+      <dct:isPartOf>
+        <rdf:Description rdf:about="https://papyri.info/current/group/{floor(number(//tei:publicationStmt/tei:idno[@type = 'filename']) div 1000)}">
+          <dct:isPartOf rdf:resource="https://papyri.info/current"/>
+        </rdf:Description>
+      </dct:isPartOf>
       <xsl:for-each select="//tei:body/tei:head/tei:ref[@target]">
         <dct:source rdf:resource="{@target}/source"/>
       </xsl:for-each>
       <dct:identifier>
         <xsl:value-of select="//tei:publicationStmt/tei:idno[@type = 'filename']/text()"/>
       </dct:identifier>
-      <dct:relation rdf:resource="https://papyri.info/ddbdp/{pi:makeURI//tei:publicationStmt/tei:idno[@type='ddb-hybrid']}/source"/>
+      <dct:relation rdf:resource="https://papyri.info/ddbdp/{pi:makeURI(//tei:publicationStmt/tei:idno[@type='ddb-hybrid'])}/source"/>
       <xsl:for-each select="//tei:idno[@type = 'HGV']">
         <xsl:for-each select="tokenize(., '\s')">
           <xsl:variable name="dir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>

@@ -353,7 +353,7 @@
                       "?i dc:isPartOf ?c . "
                       "?i dc:relation ?r1 . "
                       "?i dc:relation ?r2 . "
-                      "FILTER ( regex(str(?r1), \"^https://papyri.info/ddbdp\") || regex(str(?r1), \"^https://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
+                      "FILTER ( regex(str(?r1), \"^https://papyri.info/current\") || regex(str(?r1), \"^https://papyri.info/hgv\") || regex(str(?r1), \"^http://www.trismegistos.org\")) "
                       "FILTER  regex(str(?r2), \"^https://papyri.info/apis/[^/]+/images\")}")
           transitive-rels (str "PREFIX dc: <http://purl.org/dc/terms/> "
                                 "WITH <https://papyri.info/graph> "

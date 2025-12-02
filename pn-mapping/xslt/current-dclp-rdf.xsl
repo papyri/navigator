@@ -44,6 +44,12 @@
         </dct:identifier>
       </xsl:if>
      
+      <dct:isPartOf>
+        <rdf:Description rdf:about="https://papyri.info/current/group/{floor(number($tm) div 1000)}">
+          <dct:isPartOf rdf:resource="https://papyri.info/current"/>
+        </rdf:Description>
+      </dct:isPartOf>
+      
       <xsl:for-each select="$dclp">
         <xsl:variable name="dclpId" select="pi:makeURI(replace(., ';+', '/'))"/>
         <dct:source rdf:resource="https://{$domain}/editions/{$dclpId}/source"/>     

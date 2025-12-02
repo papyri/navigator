@@ -178,10 +178,10 @@ function buildSolrQueryString(){
  * Queries the Solr server
  */
 
-function querySolrServer(query, position, total, rows, querystring){
+function querySolrServer(query, position, total, rows, querystring) {
 
 	var that = this;
-	var serverUrl = "https://" + location.host + "/pn-search/select/";
+	var serverUrl = "/pn-search/select/";
 	jQuery.get(	serverUrl,
 			query,
 			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); },
@@ -679,7 +679,7 @@ function transformTextPartNumbers() {
 	});
 
 	// Collect all direct children of #edition (textpartnumber spans and ab spans)
-	const children = edition.children('span.textpartnumber, span.ab').toArray();
+	const children = edition.children('h3.textpartnumber, span.ab').toArray();
 
 	// If there are no children, or all children are empty, remove the #edition element
 	if (children.length === 0) {
@@ -700,20 +700,9 @@ function transformTextPartNumbers() {
 	// Process all children and add to wrapper
 	children.forEach(function(element) {
 		const $element = jQuery(element);
-		if ($element.hasClass('textpartnumber')) {
-			// Transform textpartnumber span to h3
-			const textContent = $element.text();
-			const id = $element.attr('id');
-			const h3 = jQuery('<h3></h3>').text(textContent).attr('id', id).addClass('textpartnumber-heading');
-			wrapper.append(h3);
-		} else {
 			// Detach and append ab span
 			wrapper.append($element.detach());
-		}
 	});
-
-	// Remove any remaining textpartnumber spans
-	edition.find('span.textpartnumber').remove();
 
 	// Insert wrapper at the beginning of #edition
 	edition.prepend(wrapper);
@@ -829,98 +818,6 @@ function transformApparatusContent() {
             resolve();
             return;
         }
-
-    let html = apparatus.innerHTML;
-    const heading = '<h3>Apparatus</h3>';
-    html = html.replace('<h3>Apparatus</h3>', '').replace(/^<br>/, '');
-
-    // Split by <br> to get individual entries
-    const entries = html.split('<br>').filter(entry => entry.trim().length > 0);
-
-    // Parse each entry by breaking down its structure
-    const parsedEntries = [];
-
-    for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i].trim();
-        if (!entry) continue;
-
-        // Create a temporary DOM element to parse the HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = entry;
-
-        // Find the anchor tag
-        const anchor = tempDiv.querySelector('a');
-        if (!anchor) continue;
-
-        const anchorId = anchor.getAttribute('id');
-        const href = anchor.getAttribute('href');
-        const backLink = href ? href.substring(1) : ''; // Remove # from "#from-app-xxx"
-
-        // Get the text content after the anchor (this contains line number and content)
-        // Remove the anchor element and get remaining text
-        anchor.remove();
-        const remainingContent = tempDiv.innerHTML.trim();
-
-        // Parse the line number
-        // Formats supported: "r.6. ", "7-8. ", "ii.3. ", "FrA.2. ", "Fr2.1. ", "r.ii.12. "
-        // Pattern: optional prefix (can have multiple dot-separated parts), then number/range, period, space
-        const lineNumMatch = remainingContent.match(/^((?:[a-z0-9]+\.)+)?(\d+(?:-\d+)?)\.\s+/i);
-
-        if (!lineNumMatch) continue;
-
-        const prefix = lineNumMatch[1] ? lineNumMatch[1].slice(0, -1) : ''; // Remove trailing period
-        const lineNumberStr = lineNumMatch[2]; // e.g., "6" or "7-8"
-        const lineNumber = parseInt(lineNumberStr.split('-')[0]); // First number for aria-label
-
-        // Get the content after the line number
-        const content = remainingContent.substring(lineNumMatch[0].length);
-
-        // Build display number
-        const displayNumber = prefix ? `${prefix}.${lineNumberStr}:` : `${lineNumberStr}:`;
-
-        parsedEntries.push({
-            anchorId,
-            lineNumber,
-            displayNumber,
-            content,
-            backLink
-        });
-    }
-
-    // Build new HTML
-    let newHtml = heading + '\n';
-
-    // Check if there's a hash in the URL that we need to match
-    const hash = window.location.hash;
-    const targetIdFromHash = hash ? hash.substring(1) : null; // Remove the #
-
-    for (let entry of parsedEntries) {
-        // Extract content from data-bs-original-title or title attribute if present
-        let mainContent = entry.content;
-        let detailContent = '';
-
-        // Check if the first span has data-bs-original-title or title attribute
-        const tooltipMatch = entry.content.match(/<span[^>]*(?:data-bs-original-title|title)="([^"]*)"[^>]*>/);
-
-        if (tooltipMatch) {
-            const tooltipText = tooltipMatch[1]; // Content from data-bs-original-title or title
-
-            // Set the detail content from the tooltip
-            detailContent = `<span class="apparatus-detail">${tooltipText}</span>`;
-        }
-
-        // Check if this entry matches the hash in the URL
-        const activeClass = (targetIdFromHash && entry.anchorId === targetIdFromHash) ? ' active' : '';
-
-        newHtml += `<div aria-label="Line ${entry.lineNumber}" class="apparatus-entry${activeClass}" id="${entry.anchorId}" data-back-link="#${entry.backLink}">
-            <a href="#${entry.backLink}" class="apparatus-line-number" aria-label="Go to text">${entry.displayNumber}</a>
-            <span class="apparatus-content">${mainContent}</span>
-            ${detailContent}
-        </div>\n`;
-    }
-
-    // Update the apparatus HTML
-    apparatus.innerHTML = newHtml;
 
     // Set max-height based on viewport and ab span height
     setApparatusMaxHeight();

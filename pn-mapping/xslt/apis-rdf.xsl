@@ -6,7 +6,7 @@
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" exclude-result-prefixes="xs tei" version="2.0">
   <xsl:output omit-xml-declaration="yes"/>
   <xsl:param name="root">/srv/data/papyri.info/idp.data</xsl:param>
-  <xsl:param name="DDB-root">/srv/data/papyri.info/idp.data/DDbDP</xsl:param>
+  <xsl:param name="DDB-root">/srv/data/papyri.info/idp.data/Historical</xsl:param>
 
   <xsl:template match="/tei:TEI">
     <xsl:if test="string-length(//tei:publicationStmt/tei:idno[@type = 'apisid']) gt 0">
@@ -49,7 +49,7 @@
             <xsl:variable name="ddb-doc" select="doc($ddb-doc-uri)"/>
             <dct:relation>
               <rdf:Description
-                rdf:about="https://papyri.info/ddbdp/{$ddb-doc//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/source">
+                rdf:about="https://papyri.info/editions/{$ddb-doc//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']/text()}/source">
                 <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
             </dct:relation>
