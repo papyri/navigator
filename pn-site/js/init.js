@@ -685,17 +685,12 @@ document.addEventListener("DOMContentLoaded", () => {
         //rootMargin: `0px 0px 0px 0px`
       }
     );
-<<<<<<< HEAD
-  });
-});
-=======
 
     observer.observe(sentinel);
   });
 });
 
 
->>>>>>> 1feba004 (Add sticky nav and sidebar chooser to top of record pages. Resolves PK-199.)
 
 /******************************************/
 /** Apparatus / Transcription UI scripts **/
@@ -739,46 +734,6 @@ function handleDetailsToggle(event) {
     }
 }
 
-<<<<<<< HEAD
-/**
- * Initialize the details toggle for apparatus
- * Shows/hides detailed apparatus explanations with fade effect
- * Uses event delegation to work regardless of where apparatus content is moved
- */
-function initApparatusDetailsToggle() {
-    // Remove any existing event listener to prevent duplicates
-    document.removeEventListener('change', handleDetailsToggle);
-
-    // Add event listener to document with delegation
-    document.addEventListener('change', handleDetailsToggle);
-}
-
-function handleDetailsToggle(event) {
-    // Check if the changed element is our details toggle
-    if (event.target.id === 'detailsToggle') {
-        const toggle = event.target;
-        const details = document.querySelectorAll('.apparatus-detail');
-
-        if (toggle.checked) {
-            // Toggle ON: Show details with fade in
-            details.forEach(detail => {
-                detail.classList.remove('visually-hidden');
-                // Use jQuery for fade animation
-                jQuery(detail).hide().fadeIn(300);
-            });
-        } else {
-            // Toggle OFF: Hide details with fade out
-            details.forEach(detail => {
-                jQuery(detail).fadeOut(300, function() {
-                    detail.classList.add('visually-hidden');
-                });
-            });
-        }
-    }
-}
-
-=======
->>>>>>> 1feba004 (Add sticky nav and sidebar chooser to top of record pages. Resolves PK-199.)
 
 function initSidebar() {
 	const sidebarSelect = document.getElementById('sidebar-content-select');
@@ -909,8 +864,4 @@ function initBackToTop() {
 
     // Initial check in case page is already scrolled
     toggleBackToTopButtons();
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 1feba004 (Add sticky nav and sidebar chooser to top of record pages. Resolves PK-199.)
