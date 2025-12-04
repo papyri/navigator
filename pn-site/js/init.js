@@ -186,6 +186,11 @@ function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 	addBackToFacetBrowse(htmlWrapper)
 	addNextRecordHTML(htmlWrapper, nextRecord, position, total, rows, querystring);
 
+	// Hide pagination if both previous and next are disabled
+	if(prevRecord == null && nextRecord == null){
+		htmlWrapper.addClass("d-none");
+	}
+
 	jQuery("#controls").before(pageNavWrapper);
 
 }
