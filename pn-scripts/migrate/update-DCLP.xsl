@@ -9,8 +9,6 @@
   
   <xsl:mode on-no-match="shallow-copy"/>
   
-  <xsl:variable name="base">file:///Users/hac13/Development/APIS/idp.data</xsl:variable>
-  
   <xsl:template match="processing-instruction()">
     <xsl:text>
 </xsl:text><xsl:copy-of select="."/><xsl:text>

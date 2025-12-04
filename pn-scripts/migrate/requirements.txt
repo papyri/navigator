@@ -1,3 +1,3 @@
 RapidFuzz==3.10.1
-saxonche==12.5.0
+saxonche==12.9.0
 thefuzz==0.22.1

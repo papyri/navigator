@@ -6,6 +6,7 @@ import argparse, os
 def main(argv=None):
   parser = argparse.ArgumentParser()
   parser.add_argument('source', help='source directory')
+  parser.add_argument('base', help='base directory', default='/Users/hac13/Development/APIS/idp.data')
   args = parser.parse_args()
 
   if not os.path.exists(args.source):
@@ -26,6 +27,7 @@ def main(argv=None):
           xslt.set_property('s', os.path.join(root, file))
           xslt.set_property('o', os.path.join(root, file))
           xslt.set_parameter('id', processor.make_string_value(os.path.basename(file).replace('.xml', '')))
+          xslt.set_parameter('base', processor.make_string_value(args.base))
           xslt.transform_to_file()
           xml = ET.parse(os.path.join(root, file))
           target_refs = xml.findall('.//tei:body/tei:head/tei:ref[@target]', namespaces)

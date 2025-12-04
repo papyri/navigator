@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Noto Sans Greek";
-  src: 
+  src:
     url("/fonts/NotoSans-Greek-Regular.woff2") format("woff2"),
     url("/fonts/NotoSans-Greek-Regular.woff") format("woff");
   font-weight: normal;
@@ -236,6 +236,41 @@ ul#results-pagination {
   }
 }
 
+/* ------------------------------ */
+/* Record Page                    */
+/* ------------------------------ */
+
+nav#controls {
+  background-color: var(--bs-light);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-bottom 0.3s ease;
+}
+
+nav#controls.stuck {
+  background-color: white;
+  border-bottom: 4px solid var(--bs-primary);
+  box-shadow: 0px 6px 4px -4px rgba(0, 0, 0, 0.2);
+}
+
+nav#controls.stuck .controls-section > a.active,
+nav#controls.stuck .controls-section:has(a.dropdown-item.active) > a {
+  border-bottom: 3px solid var(--bs-primary);
+}
+
+nav#controls:not(.stuck) svg {
+  /* rotate the svg 90 degrees */
+  transform: rotate(90deg);
+}
+
+/* Ensure smooth scrolling to anchors accounts for sticky header */
+
+
+#metadata, #text, #transcription, #translations {
+  scroll-margin-top: 85px !important;
+}
+
+#edition a {
+  scroll-margin-top: 85px !important;
+}
 
 /* ------------------------------ */
 /* Transcriptions & Translations  */
@@ -393,6 +428,8 @@ a {
 
   --icon-box-arrow-up-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5'/%3E%3Cpath fill-rule='evenodd' d='M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z'/%3E%3C/svg%3E");
 
+  --icon-layout-sidebar-reverse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-layout-sidebar-reverse' viewBox='0 0 16 16'%3E%3Cpath d='M16 3a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2zm-5-1v12H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm1 0h2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-2z'/%3E%3C/svg%3E");
+
   --icon-x-circle-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-x-circle-fill' viewBox='0 0 16 16'%3E%3Cpath d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z'/%3E%3C/svg%3E");
 }
 
@@ -422,6 +459,10 @@ a {
 
 .bi-external-link {
   mask: var(--icon-box-arrow-up-right);
+}
+
+.bi-layout-sidebar-reverse {
+  mask: var(--icon-layout-sidebar-reverse);
 }
 
 .bi-x-circle-fill {
@@ -504,6 +545,15 @@ body.author-browse .btn-group .btn {
   transition: opacity 0.3s ease-in;
 }
 
+/* Transcription content wrapper stacks fragments vertically */
+#edition #transcription-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
 #edition.ready {
   opacity: 1;
 }
@@ -520,7 +570,7 @@ body.author-browse .btn-group .btn {
   max-width: 100% !important;
 }
 
-.translations {
+#translations {
   order: 2;
   flex-basis: 100% !important;
   max-width: 100% !important;
@@ -545,10 +595,6 @@ body.author-browse .btn-group .btn {
   margin-top: 2em;
 }
 
-.translation.data {
-  margin-top: 3em;
-}
-
 .edition-content {
   flex: 1;
   min-width: 0;
@@ -557,21 +603,58 @@ body.author-browse .btn-group .btn {
 #edition span.ab {
   display: block;
   background-color: rgba(var(--bs-warning-rgb), 0.075);
+  padding: 1em;
+  letter-spacing: 0.205rem;
+  line-height: 2;
+}
 
-  padding: 3rem 3rem 3rem 6rem;
-  letter-spacing: 0.05rem;
-  line-height: 2.5;
-  margin-bottom: 1rem;
+@media (max-width: 768px) {
+  #edition span.ab {
+   max-width: 100vw;
+  }
+}
+
+@media (min-width: 769px) {
+  #edition span.ab {
+    padding: 1.5em;
+    letter-spacing: 0.05rem;
+    line-height: 2.5;
+    width: 100%;
+  }
 }
 
 #edition .linenumber,
 #edition .linenumberbroken {
-  width: 3rem;
-  float: left;
-  margin-left: -6rem;
+  width: 5.5em;
+  flex-shrink: 0;
   text-align: right;
+  padding-right: 2.5rem;
   letter-spacing: 0;
   color: #867100;
+  /* Ensure the column space is always reserved, even when visually-hidden */
+  visibility: visible !important;
+}
+
+#edition .linenumber.initially-hidden,
+#edition .linenumberbroken.initially-hidden {
+  /* Keep the space but make text invisible */
+  opacity: 0;
+  visibility: visible !important;
+}
+
+#edition .linecontent {
+  flex: 1;
+}
+
+#edition .linecontent .gap {
+  letter-spacing: .35em;
+  padding-left: .5em;
+}
+
+#edition .linecontent .gap.gap-text {
+  letter-spacing: 0.05rem;
+  padding-left: .5rem;
+  padding-right: .5rem;
 }
 
 #edition .linenumber-hover {
@@ -586,10 +669,12 @@ body.author-browse .btn-group .btn {
   background-color: rgba(0,0,0,0.025);
 }
 
-#edition #apparatus {
+#edition #sidebar,
+#edition #apparatus,
+#edition #translations {
   flex: 0 0 35%;
   position: sticky;
-  top: 1rem;
+  top: 90px; /* a bit higher than sticky top nav height */
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
 }
@@ -603,38 +688,23 @@ body.author-browse .btn-group .btn {
     min-width: 100%;
   }
 
+  #edition #sidebar,
   #edition #apparatus {
     flex: 1;
     position: static;
     max-height: none;
+    min-width: 100%;
   }
 }
 
-#edition span.text-line {
-  display: block;
-  position: relative;
+#edition div.text-line {
+  display: flex;
+  flex-direction: row;
   transition: background-color 0.2s ease;
-  margin-left: -5.5rem;
-  padding-left: 5.5rem;
-  margin-right: -2.5em;
-  padding-right: 1em;
 }
 
-#edition span.text-line:hover {
+#edition div.text-line:hover {
   background-color: rgba(0, 0, 0, 0.035);
-}
-
-/* Only show hover line number if it's NOT a multiple of 5 (those already have permanent line numbers) */
-/* and NOT a line that should be skipped (dashes, 'bis', 'lines missing', etc.) */
-#edition span.text-line:not(.no-line-number):not(.multiple-of-5):hover::before {
-  content: attr(data-line);
-  position: absolute;
-  left: 0;
-  width: 3rem;
-  text-align: right;
-  color: #867100;
-  opacity: 0.8;
-  padding-right: 0.5rem;
 }
 
 /* Apparatus entry styling */
@@ -697,7 +767,6 @@ a.apparatus-link.active {
   margin-top: 0.25rem;
   font-size: 0.9em;
   color: var(--bs-secondary);
-  font-style: italic;
   width: 100%;
 }
 
@@ -713,3 +782,71 @@ div#olimage {
   width: 35vw;
   height: 35vw;
 }
+/* ------------------- */
+/* Commentary/Notes    */
+/* ------------------- */
+
+#commentary ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+#commentary ul li a {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--bs-primary);
+  text-decoration: underline;
+}
+
+#commentary ul li p {
+  display: inline-block;
+}
+
+/* -------------- */
+/* Back to Top    */
+/* -------------- */
+.btn-back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(var(--bs-primary-rgb), 0.8);
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-back-to-top svg {
+  transition: all 0.3s ease;
+}
+
+.btn-back-to-top.in-controls-nav {
+  position: static;
+  width: 1.5rem;
+  height: 1.5rem;
+  box-shadow: none;
+}
+
+.btn-back-to-top:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.95);
+  transform: translateY(0);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn-back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
