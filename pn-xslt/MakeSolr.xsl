@@ -1480,11 +1480,12 @@
 
   <xsl:template name="app-link">
     <xsl:param name="location"/>
+    <xsl:param name="lineNumber"/>
   </xsl:template>
   
   <xsl:template name="lbrk-app">
     <xsl:text>
-</xsl:text>
+&#xD;</xsl:text>
   </xsl:template>
   
   <xsl:template name="ddbdp-app">
