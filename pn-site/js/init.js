@@ -690,8 +690,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-
 /******************************************/
 /** Apparatus / Transcription UI scripts **/
 /******************************************/

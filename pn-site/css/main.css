@@ -775,7 +775,6 @@ a.apparatus-link.active {
   background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity))
 }
 
-<<<<<<< HEAD
 /* ------------------ */
 /* Image viewer       */
 /* ------------------ */
@@ -783,7 +782,6 @@ div#olimage {
   width: 35vw;
   height: 35vw;
 }
-=======
 /* ------------------- */
 /* Commentary/Notes    */
 /* ------------------- */
@@ -852,4 +850,3 @@ div#olimage {
   transform: translateY(0);
 }
 
->>>>>>> 1feba004 (Add sticky nav and sidebar chooser to top of record pages. Resolves PK-199.)

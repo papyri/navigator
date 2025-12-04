@@ -1673,7 +1673,9 @@
     <xsl:apply-templates/>
   </xsl:template>
   
-  <!-- Override template in htm-teilb.xsl -->
+  <!-- Override template in htm-teilb.xsl 
+       Print <br> for all line breaks, including the first. Preserve @n attribute in @data-line.
+  -->
   <xsl:template match="t:lb">
     <xsl:param name="parm-edn-structure" tunnel="yes" required="no"/>
     <xsl:param name="parm-edition-type" tunnel="yes" required="no"/>
