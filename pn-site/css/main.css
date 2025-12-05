@@ -300,6 +300,11 @@ span.term {
   padding: 0.1rem 0.2rem;
 }
 
+sub.underdot {
+  font-size: 1em;
+  padding: 0 0.2em;
+}
+
 /* ------------- */
 /* Links         */
 /* ------------- */
@@ -644,11 +649,6 @@ body.author-browse .btn-group .btn {
 
 #edition .linecontent {
   flex: 1;
-}
-
-#edition .linecontent .gap {
-  letter-spacing: .35em;
-  padding-left: .5em;
 }
 
 #edition .linecontent .gap.gap-text {

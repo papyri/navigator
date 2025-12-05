@@ -44,7 +44,6 @@ function init() {
 		initBootstrapTooltips();
 		initLineNumberVisibility();
 		initApparatusDetailsToggle();
-		replaceNbspInGaps();
 		initBootstrapScrollSpy();
 		initSidebar();
 		initBackToTop();

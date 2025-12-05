@@ -1016,7 +1016,7 @@
         <xsl:variable name="restore">
           &lt;TEI xmlns="http://www.tei-c.org/ns/1.0"><xsl:value-of select="$join"/>&lt;/TEI>
         </xsl:variable>
-        <!--<xsl:message>Restore (<xsl:value-of select="ancestor::t:div[1]/@n"/> : l. <xsl:value-of select="preceding::t:lb[1]/@n"/>): <xsl:value-of select="$restore"/></xsl:message>-->
+        <!--<xsl:message>Restore (<xsl:value-of select="ancestor::t:div[1]/@n"/> : l. <xsl:value-of select="preceding::t:lb[1]/@n"/>): <xsl:copy-of select="$restore"/></xsl:message>-->
         <xsl:copy-of select="parse-xml-fragment($restore)/t:TEI/node()"/>
       </xsl:when>
       <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
@@ -1032,34 +1032,10 @@
     <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
     <xsl:param name="parm-edition-type" tunnel="yes" required="no"></xsl:param>
     <span class="ab">
-      <xsl:if test="$parm-leiden-style='iospe'">
-        <xsl:variable name="div-loc">
-          <xsl:for-each select="ancestor::t:div[@type='textpart']">
-            <xsl:value-of select="@n"/>
-            <xsl:text>-</xsl:text>
-          </xsl:for-each>
-        </xsl:variable>
-        <xsl:attribute name="id">
-          <xsl:value-of select="concat('div',$div-loc)"/>
-        </xsl:attribute>
-      </xsl:if>
       <xsl:apply-templates/>
       <!-- if next div or ab begins with lb[break=no], then add hyphen -->
-      <xsl:if test="following::t:lb[1][@break='no' or @type='inWord'] and not($parm-edition-type='diplomatic')">
+      <xsl:if test="following::t:lb[1][@break='no' or @type='inWord']">
         <xsl:text>-</xsl:text>
-      </xsl:if>
-      <!-- if final lb in ab is L2R or R2L, then print arrow here -->
-      <xsl:if test="not($parm-leiden-style=('ddbdp','dclp','sammelbuch'))
-        and descendant::t:lb[last()][@rend='left-to-right']">
-        <xsl:text>&#xa0;&#xa0;→</xsl:text>
-      </xsl:if>
-      <xsl:if test="not($parm-leiden-style=('ddbdp','dclp','sammelbuch'))
-        and descendant::t:lb[last()][@rend='right-to-left']">
-        <xsl:text>&#xa0;&#xa0;←</xsl:text>
-      </xsl:if>
-      <!-- in IOSPE, if followed by lg, include it here (and suppress in htm-teilgandl.xsl) -->
-      <xsl:if test="$parm-leiden-style='iospe' and following-sibling::t:*[1][self::t:lg]">
-        <xsl:apply-templates select="following-sibling::t:lg/*"/>
       </xsl:if>
     </span>
   </xsl:template>
@@ -1356,7 +1332,7 @@
             <xsl:call-template name="title-convert">
               <xsl:with-param name="apptype" select="$apptype"/>
               <xsl:with-param name="childtype" select="$childtype"/>
-              <xsl:with-param name="obf" select="normalize-space($titleagg)"/>
+              <xsl:with-param name="obf" select="$titleagg"/>
             </xsl:call-template>
           </xsl:variable>
           <span class="apparatus-content">
@@ -1424,6 +1400,65 @@
         </xsl:when>
       </xsl:choose>
     </div>
+  </xsl:template>
+  
+  <xsl:template name="parse-app-parts">
+    <xsl:param name="part" xml:space="preserve"/>
+    <xsl:choose>
+      <xsl:when test="not(*) and matches(normalize-space($part),'FNORD(\S)*')"><xsl:value-of select="normalize-space(replace(replace($part, 'FNORD(\S)*', ''), '\(\*\)', ''))"/></xsl:when>
+      <xsl:otherwise>
+        <xsl:for-each select="$part/node() | $part/text()">
+          <xsl:choose>
+            <xsl:when test="matches(normalize-space(.),'FNORD(\S)*')"><xsl:value-of select="normalize-space(replace(replace(., 'FNORD(\S)*', ''), '\(\*\)', ''))"/></xsl:when>
+            <xsl:when test="position() = last()">
+              <xsl:for-each select=".">
+                <xsl:choose>
+                  <xsl:when test="self::text()">
+                    <xsl:choose>
+                      <xsl:when test="position() = last()">
+                        <xsl:value-of select="replace(.,'\s+$','')"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:copy xml:space="preserve"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:when>
+                  <xsl:when test="name(.)=('span','sub')">
+                    <xsl:element name="{name(.)}">
+                      <xsl:copy-of select="@*"/>
+                      <xsl:call-template name="parse-app-parts">
+                        <xsl:with-param name="part" select="." xml:space="preserve"/>
+                      </xsl:call-template>
+                    </xsl:element>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:call-template name="parse-app-parts">
+                      <xsl:with-param name="part" select="." xml:space="preserve"/>
+                    </xsl:call-template>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="name(.)=('span','sub')">
+              <xsl:element name="{name(.)}">
+                <xsl:copy-of select="@*"/>
+                <xsl:call-template name="parse-app-parts">
+                  <xsl:with-param name="part" select="." xml:space="preserve"/>
+                </xsl:call-template>
+              </xsl:element>
+            </xsl:when>
+            <xsl:when test="self::text()">
+              <xsl:copy xml:space="preserve"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name="parse-app-parts">
+                <xsl:with-param name="part" select="." xml:space="preserve"/>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template name="resolvesubst">
@@ -1580,7 +1615,15 @@
         <xsl:text>-</xsl:text>
       </xsl:for-each>
     </xsl:variable>
-    <h3 id="{generate-id()}" class="textpartnumber textpartnumber-heading"><xsl:apply-templates select="t:head"/></h3>
+    <xsl:choose>
+      <xsl:when test="t:head">
+        <h3 id="{generate-id()}" class="textpartnumber textpartnumber-heading"><xsl:apply-templates select="t:head"/></h3>
+      </xsl:when>
+      <xsl:otherwise>
+        <h3 id="{generate-id()}" class="textpartnumber textpartnumber-heading"><xsl:value-of select="@n"/></h3>
+      </xsl:otherwise>
+    </xsl:choose>
+    
     
     <!-- Custodial events here -->
     <!-- first get the value of the columns @corresp -->
@@ -1951,6 +1994,219 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
+  
+  <!-- Override templates in teigap.xsl -->
+  
+  <xsl:function name="pi:dot-out">
+    <xsl:param name="quantity"/>
+    <sub class="underdot"><xsl:for-each select="1 to $quantity">.</xsl:for-each></sub>
+  </xsl:function>
+  
+  <!-- Prints gap content -->
+  <xsl:template name="extent-string-content">
+      <xsl:param name="parm-edition-type" tunnel="yes" required="no"/>
+      <xsl:param name="parm-leiden-style" tunnel="yes" required="no"/>
+      <xsl:param name="parm-edn-structure" tunnel="yes" required="no"/>
+      <xsl:variable name="cur-dot"><sub class="underdot">.</sub></xsl:variable>
+      <xsl:variable name="cur-max" as="xs:integer">8</xsl:variable>
+     
+      <!-- Precision of <gap> defined -->
+      <xsl:variable name="circa">
+         <xsl:choose>
+            <xsl:when
+               test="$parm-leiden-style = ('ddbdp','dclp','sammelbuch') and
+               (@precision='low' or (@unit='character' and number(@quantity) &gt; $cur-max))">
+               <xsl:text>ca.</xsl:text>
+            </xsl:when>
+            <xsl:when test="@precision='low' and not(starts-with($parm-leiden-style, 'edh'))">
+               <xsl:text>c. </xsl:text>
+            </xsl:when>
+         </xsl:choose>
+      </xsl:variable>
+
+      <xsl:choose>
+         <xsl:when test="@extent='unknown'">
+           <xsl:choose>
+             <!-- lines lost -->
+             <xsl:when test="@reason='lost' and @unit='line'">
+               <!--and (not(preceding-sibling::t:lb[2]) or not(following-sibling::*))-->
+               <xsl:text>-- -- -- -- -- -- -- -- -- --</xsl:text>
+             </xsl:when>
+             <!-- illegible vestiges -->
+             <xsl:when test="t:desc = 'vestiges' and @reason = 'illegible'">
+               <xsl:call-template name="tpl-vest">
+                 <xsl:with-param name="circa" select="$circa"/>
+               </xsl:call-template>
+             </xsl:when>
+             <!-- other reason illegible and lost/chars caught in the otherwise -->
+             <xsl:otherwise>
+               <xsl:text>&#x2066; -ca.?- &#x2069;</xsl:text>
+             </xsl:otherwise>
+           </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@quantity and @unit='character'">
+            <xsl:choose>
+               <xsl:when test="number(@quantity) &gt; $cur-max or (number(@quantity) &gt; 0 and @precision='low')"><!-- ++++++++++++++++++++++++++++++++++++++++++++ -->
+                 <xsl:copy-of select="$cur-dot"/>
+                 <xsl:text> </xsl:text>
+                 <xsl:value-of select="$circa"/>
+                 <xsl:value-of select="@quantity"/>
+                 <xsl:copy-of select="$cur-dot"/>
+               </xsl:when>
+               <xsl:when test="number(@quantity) &gt; $cur-max or (number(@quantity) &gt; 1 and @precision='low')">
+                 <xsl:choose>
+                   <xsl:when test="t:desc = 'vestiges' and @reason = 'illegible'">
+                     <xsl:call-template name="tpl-vest">
+                       <xsl:with-param name="circa" select="$circa"/>
+                     </xsl:call-template>
+                   </xsl:when>
+                   <xsl:otherwise>
+                     <xsl:text>- </xsl:text>
+                     <xsl:value-of select="$circa"/>
+                     <xsl:value-of select="@quantity"/>
+                     <xsl:text> -</xsl:text>
+                   </xsl:otherwise>
+                 </xsl:choose>
+               </xsl:when>
+
+               <xsl:when test="$cur-max &gt;= number(@quantity)">
+                  <xsl:choose>
+                     <xsl:when test="t:desc='vestiges' and @reason='illegible' and ($parm-leiden-style=('ddbdp','dclp','sammelbuch'))">
+                        <xsl:call-template name="tpl-vest">
+                           <xsl:with-param name="circa" select="$circa"/>
+                        </xsl:call-template>
+                     </xsl:when>
+                     <xsl:otherwise>
+                       <xsl:variable name="test" select="pi:dot-out(xs:integer(@quantity))"/>
+                       <xsl:copy-of select="pi:dot-out(xs:integer(@quantity))"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:when>
+
+               <xsl:otherwise>
+                  <xsl:choose>
+                     <xsl:when
+                        test="t:desc='vestiges' and @reason='illegible'">
+                        <xsl:call-template name="tpl-vest">
+                           <xsl:with-param name="circa" select="$circa"/>
+                        </xsl:call-template>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:text>&#x2066; - - - &#x2069;</xsl:text>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@atLeast and @atMost">
+            <!-- reason illegible and lost caught in the otherwise -->
+           <xsl:choose>
+             <xsl:when test="t:desc='vestiges' and @reason='illegible'">
+               <xsl:call-template name="tpl-vest">
+                 <xsl:with-param name="circa" select="$circa"/>
+               </xsl:call-template>
+             </xsl:when>
+             <xsl:when test="@unit='character'">
+               <xsl:text> -</xsl:text>
+               <xsl:value-of select="@atLeast"/>
+               <xsl:text>-</xsl:text>
+               <xsl:value-of select="@atMost"/>
+               <xsl:text>- </xsl:text>
+             </xsl:when>
+             <xsl:when test="@unit='line'">
+               <xsl:if test="@reason='illegible'">
+                 <xsl:text>Traces </xsl:text>
+               </xsl:if>
+               <xsl:value-of select="@atLeast"/>
+               <xsl:text>-</xsl:text>
+               <xsl:value-of select="@atMost"/>
+               <xsl:text> lines</xsl:text>
+               <xsl:if test="@reason='lost'">
+                 <xsl:text> missing</xsl:text>
+               </xsl:if>
+             </xsl:when>
+           </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@quantity and @unit='line'">
+           <xsl:choose>
+             <xsl:when test="desc = 'vestiges' and @reason = 'illegible'">
+               <xsl:call-template name="tpl-vest">
+                 <xsl:with-param name="circa" select="$circa"/>
+               </xsl:call-template>
+             </xsl:when>
+             <xsl:otherwise>
+               <xsl:choose>
+                 <xsl:when test="@reason='lost'">
+                   <xsl:value-of select="$circa"/>
+                   <xsl:value-of select="@quantity"/>
+                   <xsl:text> line</xsl:text>
+                   <xsl:if test="number(@quantity) &gt; 1">
+                     <xsl:text>s</xsl:text>
+                   </xsl:if>
+                   <xsl:text> missing</xsl:text>
+                 </xsl:when>
+                 <xsl:when test="@reason='illegible'">
+                   <xsl:text>Traces </xsl:text>
+                   <xsl:value-of select="$circa"/>
+                   <xsl:value-of select="@quantity"/>
+                   <xsl:text> line</xsl:text>
+                   <xsl:if test="number(@quantity) &gt; 1">
+                     <xsl:text>s</xsl:text>
+                   </xsl:if>
+                 </xsl:when>
+               </xsl:choose>
+             </xsl:otherwise>
+           </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@quantity and @unit='cm'">
+            <xsl:choose>
+               <xsl:when
+                  test="desc = 'vestiges' and @reason = 'illegible'">
+                  <xsl:call-template name="tpl-vest">
+                     <xsl:with-param name="circa" select="$circa"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:apply-templates/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:text> </xsl:text>
+                  <xsl:value-of select="$circa"/>
+                  <xsl:value-of select="@quantity"/>
+                  <xsl:text> cm </xsl:text>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:when>
+
+         <xsl:otherwise>
+            <xsl:choose>
+               <xsl:when
+                  test="desc = 'vestiges' and @reason = 'illegible'">
+                  <xsl:call-template name="tpl-vest">
+                     <xsl:with-param name="circa" select="$circa"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:when test="$parm-leiden-style = 'edh-itx'">
+                  <xsl:text>6</xsl:text>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:text> ? </xsl:text>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:apply-templates/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
 
   <xsl:template match="rdf:Description">
     <xsl:value-of select="@rdf:about"/>
