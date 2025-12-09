@@ -101,12 +101,12 @@ footer ul.about-links {
 h1, .h1 {
   color: var(--bs-primary);
   margin-bottom: 1.25rem;
-  a {
-    color: inherit;
-  }
+  font-size: 2.75rem; 
+  
   a:hover {
     color: var(--bs-link-hover-color);
     text-decoration-style: solid;
+    color: inherit;
   }
 }
 
@@ -235,6 +235,31 @@ ul#results-pagination {
     display: list-item !important;
   }
 }
+
+#canonical-uri {
+  text-align: right;
+  font-style: italic;
+}
+
+nav.breadcrumb {
+  --bs-breadcrumb-divider: ';';
+  margin-bottom: 1.5em;
+  padding-bottom: .5em;
+  border-bottom: 3px solid #800000;
+}
+
+nav.breadcrumb .breadcrumb-item+.breadcrumb-item {
+  padding-left: 0;
+}
+
+nav.breadcrumb li.breadcrumb-title {
+  padding-right: .5rem;
+}
+
+nav.breadcrumb li.breadcrumb-item a {
+  color: #800000;
+}
+
 
 /* ------------------------------ */
 /* Record Page                    */
@@ -605,7 +630,7 @@ body.author-browse .btn-group .btn {
   min-width: 0;
 }
 
-#edition span.ab {
+#edition span.ab:not(#translation *) {
   display: block;
   background-color: rgba(var(--bs-warning-rgb), 0.075);
   padding: 1em;
@@ -614,13 +639,13 @@ body.author-browse .btn-group .btn {
 }
 
 @media (max-width: 768px) {
-  #edition span.ab {
+  #edition span.ab:not(#translation *) {
    max-width: 100vw;
   }
 }
 
 @media (min-width: 769px) {
-  #edition span.ab {
+  #edition span.ab:not(#translation *) {
     padding: 1.5em;
     letter-spacing: 0.05rem;
     line-height: 2.5;
