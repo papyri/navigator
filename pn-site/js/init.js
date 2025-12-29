@@ -1,4 +1,10 @@
 function init() {
+    
+		// fix highlight bug in title (for searches)
+    if (document.title.includes('<mark')) {
+        document.title = document.title.replace(/<mark[^>]*>/g, '').replace(/<\/mark>/g, '');
+    }
+
     if (jQuery("#image").length > 0) {
         initImage();
     }
@@ -190,7 +196,12 @@ function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 		htmlWrapper.addClass("d-none");
 	}
 
-	jQuery("#controls").before(pageNavWrapper);
+	// Wrap pagination and canonical-uri in a wrapper div
+	var utilityWrapper = jQuery("<div class=\"utility-content-wrapper\"></div>");
+	var canonicalUri = jQuery("#canonical-uri");
+	canonicalUri.before(utilityWrapper);
+	utilityWrapper.append(pageNavWrapper);
+	utilityWrapper.append(canonicalUri);
 
 }
 
