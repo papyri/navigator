@@ -40,7 +40,7 @@ body {
 }
 
 .navbar[data-bs-theme="dark"] {
-  --bs-navbar-brand-font-size: 2rem;
+  --bs-navbar-brand-font-size: 1.75rem;
   --bs-navbar-color: rgba(255, 255, 255, 0.8);
   --bs-navbar-hover-color: rgba(255, 255, 255, 1);
   --bs-navbar-disabled-color: rgba(255, 255, 255, 1);
@@ -51,9 +51,40 @@ body {
   --bs-navbar-toggler-border-color: var(--bs-navbar-color);
 }
 
+#masthead-nav .navbar-logo {
+  width: 96px;
+  height: 32px;
+  background-size: cover;
+  background-image: url(/images/dul_logo.png);
+  margin-right: 0;
+  margin-top: 0;
+}
+
+#masthead-nav .papyri-logo {
+  margin-top: .25em;
+  padding-bottom: .125em;
+}
+
 .navbar-brand {
   font-family: var(--bs-font-serif);
   font-weight: 500;
+  font-size: 1.35rem;
+}
+
+@media (min-width: 576px) {
+  
+  #masthead-nav .navbar-logo {
+    width: 116px;
+    height: 38px;
+  }
+
+  #masthead-nav .papyri-logo {
+    margin-top: -.25em;
+  }
+
+  .navbar-brand {
+    font-size: 2rem;
+  }
 }
 
 .nav-category {
@@ -79,14 +110,54 @@ body {
   overflow: hidden;
 }
 
+/* Feedback row above footer */
+#feedback-row {
+  background-color: #111;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
+
+#feedback-row p {
+  text-align: center;
+  margin-bottom: 0;
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+#feedback-row p a {
+  color: #fff;
+}
+
 
 footer ul.about-links {
-  column-count: 1;
+  /* column-count: 1;
 
   @media (min-width: 992px) {
     column-count: 2;
     column-gap: 1.5rem;
-  }
+  } */
+  
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+footer ul.about-links li {
+  display: inline;
+  color: #999;
+}
+
+footer ul.about-links li:not(:last-child)::after {
+  content: " | ";
+  padding: 0 .5em 0 .5em;
+}
+
+
+
+
+footer .reading-devil {
+  filter: brightness(0) invert(1);
 }
 
 /* ------------- */
@@ -903,4 +974,126 @@ div#olimage {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+
+/* ------------------ */
+/* Homepage           */
+/* ------------------ */
+
+.hero-section {
+  background-color: var(--bs-light);
+  padding: 3rem 0;
+}
+
+.hero-content {
+  text-align: center;
+  position: relative;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+
+.hero-content img {
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+}
+
+.hero-content p {
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  padding: 1.5rem;
+
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+  z-index: 90;
+
+  color: #fff;
+  width: 100%;
+  left: 0;
+
+  min-height: 12.5em;
+  display: block;
+  align-content: end;
+
+  text-align: left;
+  font-family: 'Noto Sans';
+  font-weight: 300;
+  font-size: small;
+}
+
+@media (min-width: 768px) {
+  .hero-content p {
+    min-height: 20em;
+  }
+}
+
+.hero-content p a {
+  color: #fff;
+  text-decoration: underline;
+  padding-right: .25em;
+}
+
+.hero-actions {
+  position: absolute;
+  z-index: 100;
+}
+
+.hero-actions button {
+  border: 3px solid rgba(255,255,255,.5);
+  font-size: 1.5rem;
+  width: 13.5em;
+}
+
+.hero-actions button:hover {
+  border: 3px solid rgba(255,255,255,.75);
+}
+
+.intro-content a {
+  color: #800000;
+}
+
+.intro-content p {
+  font-size: 1.15rem;
+}
+
+.intro-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.intro-content li {
+  padding-bottom: .5em;
+}
+
+.intro-content p .papyriDotInfo {
+  color: maroon;
+  font-family: Georgia, serif;
+  font-size: 167%;
+}
+
+.intro-content .card {
+  border: none;
+  border-radius: 0;
+  padding: 1rem;
+}
+
+.intro-content h2 {
+  font-size: 1.4rem;
+  /* color: var(--bs-success); */
+  color: #676767;
+}
+
+.dul-branding {
+  border-top: 1px solid #d3d3d3;
+  padding-top: 2.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.dul-branding img {
+  max-width: 170px;
+  filter: invert(60%);
 }
