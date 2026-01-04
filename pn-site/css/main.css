@@ -102,6 +102,7 @@ h1, .h1 {
   color: var(--bs-primary);
   margin-bottom: 1.25rem;
   font-size: 2.75rem; 
+  padding-top: .5rem;
   
   a:hover {
     color: var(--bs-link-hover-color);
@@ -234,6 +235,18 @@ ul#results-pagination {
   li:not(.active):has(+ li:not(.active) + li:not(.active) + li.active) {
     display: list-item !important;
   }
+}
+
+.utility-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.utility-content-wrapper nav .pagination-sm {
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 #canonical-uri {
@@ -874,4 +887,3 @@ div#olimage {
   visibility: visible;
   transform: translateY(0);
 }
-
