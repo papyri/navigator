@@ -23,42 +23,46 @@
 </xsl:text>
   </xsl:template>
   
-  <xsl:template match="tei:body/tei:head">
-    <head>
-      <xsl:variable name="TMout">
-        <xsl:for-each select="//tei:idno[@type='TM']">
-          <xsl:for-each select="tokenize(normalize-space(.), ' ')">
-            <xsl:variable name="TM" select="tei:getTM(.)"/>
+  <xsl:template match="tei:body">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <head>
+        <xsl:variable name="TMout">
+          <xsl:for-each select="//tei:idno[@type='TM']">
+            <xsl:for-each select="tokenize(normalize-space(.), ' ')">
+              <xsl:variable name="TM" select="tei:getTM(.)"/>
               <xsl:if test="$TM instance of map(*) and map:contains($TM, 'publications')">
                 <xsl:for-each select="array:flatten($TM('publications'))" >
                   <ref n="{format-number(.('id'), '#')}"><title>{.('title')}</title><date>{.('date')}</date></ref>
                 </xsl:for-each>
               </xsl:if>
-          </xsl:for-each>
-        </xsl:for-each>
-      </xsl:variable>
-      <xsl:choose>
-        <xsl:when test="string-length(normalize-space($TMout)) = 0">
-          <xsl:for-each select="$HGV">
-            <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='principalEdition']//tei:bibl">
-              <ref>{normalize-space(.)}</ref>
-            </xsl:for-each>
-            <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='otherPublications']//tei:bibl">
-              <ref>{normalize-space(.)}</ref>
             </xsl:for-each>
           </xsl:for-each>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:copy-of select="$TMout"/>
-        </xsl:otherwise>
-      </xsl:choose>
-      <ref target="https://papyri.info/editions/{tei:makeURI(replace(//tei:idno[@type='ddb-hybrid'], ';+', '/'))}">{//tei:idno[@type='ddb-hybrid']}</ref>
-      <xsl:for-each select="tei:ref[@type='reprint-from']/@n">
-        <xsl:for-each select="tokenize(., '\|')">
-           <ref target="https://papyri.info/editions/{replace(.,';+', '/')}">{.}</ref>
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="string-length(normalize-space($TMout)) = 0">
+            <xsl:for-each select="$HGV">
+              <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='principalEdition']//tei:bibl">
+                <ref>{normalize-space(.)}</ref>
+              </xsl:for-each>
+              <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='otherPublications']//tei:bibl">
+                <ref>{normalize-space(.)}</ref>
+              </xsl:for-each>
+            </xsl:for-each>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:copy-of select="$TMout"/>
+          </xsl:otherwise>
+        </xsl:choose>
+        <ref target="https://papyri.info/editions/{tei:makeURI(replace(//tei:idno[@type='ddb-hybrid'], ';+', '/'))}">{//tei:idno[@type='ddb-hybrid']}</ref>
+        <xsl:for-each select=".//tei:ref[@type='reprint-from']/@n">
+          <xsl:for-each select="tokenize(., '\|')">
+            <ref target="https://papyri.info/editions/{replace(.,';+', '/')}">{.}</ref>
+          </xsl:for-each>
         </xsl:for-each>
-      </xsl:for-each>
-    </head>
+      </head>
+      <xsl:apply-templates select="*[not(self::tei:head)]"/>
+    </xsl:copy>    
   </xsl:template>
 
   <xsl:template match="tei:idno[@type='filename']">
@@ -68,9 +72,17 @@
   <xsl:template match="tei:div[@type='edition']//tei:div[@n]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:attribute name="xml:id">{@subtype}_{translate(@n, ',', '_')}</xsl:attribute>
+      <xsl:variable name="id">{@subtype}_{translate(@n, ',', '_')}</xsl:variable>
+      <xsl:choose>
+        <xsl:when test="matches($id, '^[a-zA-Z_][a-zA-Z0-9_\.\-]*$')">
+          <xsl:attribute name="xml:id">{$id}</xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="xml:id">{generate-id()}</xsl:attribute>
+        </xsl:otherwise>
+      </xsl:choose>
       <head><xsl:if test="@subtype">{upper-case(substring(@subtype, 1, 1))}{substring(@subtype, 2)} </xsl:if>{@n}</head>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="*[not(self::tei:head)]"/>
     </xsl:copy>
   </xsl:template>
   

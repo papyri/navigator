@@ -9,6 +9,8 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="3.0" exclude-result-prefixes="#all">
+  
+  <xsl:output expand-text="yes"/>
 
   <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="morelikethis-varsandparams.xsl"/>
@@ -88,6 +90,7 @@
   <xsl:param name="translations"/>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:param name="path">/srv/data/papyri.info/idp.data</xsl:param>
+  <xsl:param name="tmpath">/srv/data/papyri.info/TM</xsl:param>
   <!-- variables to assist in offline testing by controlling paths and behaviors in the output html -->
   <xsl:param name="cssbase">/css</xsl:param>
   <xsl:param name="jsbase">/js</xsl:param>
@@ -97,7 +100,7 @@
   <xsl:variable name="imgs" select="tokenize($images, '\s+')"/>
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
-  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:variable name="doc-id">
     <xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']"><xsl:value-of select="//t:idno[@type='apisid']"/></xsl:when>
@@ -424,11 +427,15 @@
                         </xsl:otherwise>
                       </xsl:choose>
                     </xsl:for-each>
-                    <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                    <!-- URLs of the form https://www.trismegistos.org/text/8767, but not http://www.trismegistos.org/ldab/text.php?quick=1466 -->
+                    <xsl:for-each select="$relations[contains(.,'trismegistos.org') and not(contains(., 'ldab'))]">
                       <xsl:sort select="." order="ascending"/>
-                      <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-                        <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
-                      </xsl:if>
+                      <xsl:try>
+                        <xsl:call-template name="tm-metadata">
+                          <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
+                        </xsl:call-template>
+                        <xsl:catch><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'json')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:catch>
+                      </xsl:try>
                     </xsl:for-each>
                     <xsl:for-each select="$relations[contains(., '/apis/')]">
                       <xsl:sort select="." order="ascending"/>
@@ -499,9 +506,12 @@
                   <xsl:apply-templates select="/t:TEI" mode="metadata"/>
                   <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
                     <xsl:sort select="." order="ascending"/>
-                    <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-                      <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
-                    </xsl:if>
+                    <xsl:try>
+                      <xsl:call-template name="tm-metadata">
+                        <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
+                      </xsl:call-template>
+                      <xsl:catch><xsl:message>{pi:get-filename(., 'json')} not available.</xsl:message></xsl:catch>
+                    </xsl:try>
                   </xsl:for-each>
                   <xsl:if test="$apis">
                     <xsl:for-each select="$relations[contains(., '/apis/')]">
@@ -535,9 +545,12 @@
               <xsl:if test="$collection = 'apis'">
                 <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
                   <xsl:sort select="." order="ascending"/>
-                  <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-                    <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
-                  </xsl:if>
+                  <xsl:try>
+                    <xsl:call-template name="tm-metadata">
+                      <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
+                    </xsl:call-template>
+                    <xsl:catch><xsl:message>{pi:get-filename(., 'json')} not available.</xsl:message></xsl:catch>
+                  </xsl:try>
                 </xsl:for-each>
                 <div class="metadata">
                   <xsl:apply-templates select="/t:TEI" mode="metadata"/>
@@ -855,12 +868,6 @@
   <xsl:template name="get-references">
     <xsl:choose>
       <xsl:when test="$collection = 'current'">
-        <!-- <xsl:apply-templates select="//t:body/t:head"/>
-        <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
-        <xsl:if test="count($relations[contains(., 'trismegistos/')]) gt 0"> = Trismegistos </xsl:if>
-        <xsl:for-each select="$relations[contains(., 'trismegistos/')]">
-          <a href="{.}">{replace(., 'https://www.trismegistos.org/text/', '')}</a>
-        </xsl:for-each> -->
         <xsl:variable name="type">
           <xsl:choose>
             <xsl:when test="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
@@ -871,27 +878,16 @@
         <xsl:value-of select="$type"/>
         <xsl:text> </xsl:text>
         <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
-
-
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
-
         <xsl:text>Historical Edition: </xsl:text>
-        <!-- Get the title text from the current edition's head that matches this page -->
-        <xsl:variable name="current-path" select="concat('/', $collection, '/', /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
-
-
-        <xsl:for-each select="$sources-for">
-          <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-            <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
-              <!-- <xsl:apply-templates select=".//t:body/t:head"/>
-              = <a href="/current/{.//t:fileDesc/t:publicationStmt/t:idno[@type='filename']}">Current Edition</a> -->
-
-              <xsl:value-of select=".//t:body/t:head/t:ref[replace(@target, 'https://papyri.info', '') = $current-path]"/>
-              
-            </xsl:for-each>
-          </xsl:if>
-        </xsl:for-each>
+        <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
+        <xsl:if test="doc-available($current-file)">
+          <xsl:variable name="current" select="doc($current-file)"/>
+          <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+          <xsl:variable name="ref" select="$current//t:body/t:head/t:ref[contains(@target, $filename)]"/>
+          <xsl:value-of select="$ref/t:title"/> <xsl:if test="not(contains($ref/t:title, $ref/t:date))"> (<xsl:value-of select="$ref/t:date"/>)</xsl:if>
+        </xsl:if>        
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>
@@ -954,115 +950,68 @@
             <xsl:otherwise>DDbDP</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="publication">
-          <xsl:for-each select="$relations[contains(., 'hgv/')][1]">
-            <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-              <xsl:value-of select="normalize-space(doc(pi:get-filename(., 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"/>
-            </xsl:if>
-          </xsl:for-each>
-        </xsl:variable>
         <nav aria-label="breadcrumb" class="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-title visually-hidden">Editions:</li>
-            <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"/>
-            <li class="breadcrumb-item active" aria-current="page"><xsl:if test="$publication != ''"><xsl:value-of select="$publication"/><span class="arrow">→</span></xsl:if><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></li>
+            <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
+            <li class="breadcrumb-item active" aria-current="page"> <span class="arrow"> → </span> <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></li>
           </ol>
         </nav>
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:variable name="historical-path" select="concat('/', $collection, '/', /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
-        <xsl:for-each select="$sources-for">
-          <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-            <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
-              <xsl:if test=".//t:body/t:head">
-                <xsl:variable name="current-edition-id" select=".//t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
-                <xsl:variable name="type">
-                  <xsl:choose>
-                    <xsl:when test=".//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
-                    <xsl:otherwise>DDbDP</xsl:otherwise>
-                  </xsl:choose>
-                </xsl:variable>
-                <xsl:variable name="hgv-id" select="tokenize(.//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='HGV'], ' ')[1]"/>
-                <xsl:variable name="hgv-url" select="concat('https://papyri.info/hgv/', $hgv-id, '/source')"/>
-                <xsl:variable name="publication">
-                  <xsl:if test="$hgv-id != '' and doc-available(pi:get-filename($hgv-url, 'xml'))">
-                    <xsl:value-of select="normalize-space(doc(pi:get-filename($hgv-url, 'xml'))//t:bibl[@type = 'publication' and @subtype='principal'])"/>
-                  </xsl:if>
-                </xsl:variable>
-                <nav aria-label="breadcrumb" class="breadcrumb">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-title visually-hidden">Editions:</li>
-                    <xsl:apply-templates select=".//t:body/t:head" mode="breadcrumb-editions">
-                      <xsl:with-param name="historical-path" select="$historical-path"/>
-                    </xsl:apply-templates>
-                    <li class="breadcrumb-item">
-                      <a href="/current/{$current-edition-id}"><xsl:if test="$publication != ''"><xsl:value-of select="$publication"/><span class="arrow">→</span></xsl:if><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></a>
-                    </li>
-                  </ol>
-                </nav>
-              </xsl:if>
-            </xsl:for-each>
-          </xsl:if>
-        </xsl:for-each>
+        <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
+        <xsl:choose>
+          <xsl:when test="doc-available($current-file)">
+            <xsl:variable name="current" select="doc($current-file)"/>
+            <xsl:variable name="current-edition-id" select="$current//t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+            <xsl:variable name="type">
+              <xsl:choose>
+                <xsl:when test="$current//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
+                <xsl:otherwise>DDbDP</xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <nav aria-label="breadcrumb" class="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-title visually-hidden">Editions:</li>
+                <xsl:apply-templates select="$current//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="$historical-path"/></xsl:apply-templates>
+                <li class="breadcrumb-item"> <span class="arrow"> → </span> <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></a></li>
+              </ol>
+            </nav>
+          </xsl:when>
+          <xsl:otherwise>
+            <!-- This is an error. There should always be a current edition for which this is the source. -->
+            <xsl:message>Error: <xsl:value-of select="$current-file"/> is unavailable from <xsl:value-of select="$historical-path"/>. Sources for: [<xsl:value-of select="$sources-for"/>]</xsl:message>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:when>
     </xsl:choose>
   </xsl:template>
 
   <!-- Process head element in breadcrumb mode -->
   <xsl:template match="t:body/t:head" mode="breadcrumb">
-    <xsl:apply-templates mode="breadcrumb"/>
+    <xsl:param name="active"/>
+    <xsl:for-each select="t:ref">
+        <xsl:choose>
+          <xsl:when test="@target and not(contains(@target, $active))">
+            <li class="breadcrumb-item">
+              <a href="{replace(@target, 'https://papyri.info', '')}"><xsl:value-of select="t:title"/></a>
+              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+            </li>
+          </xsl:when>
+          <xsl:when test="@target and contains(@target, $active)">
+            <li class="breadcrumb-item active" aria-current="page"><xsl:value-of select="t:title"/>
+              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+            </li>
+          </xsl:when>
+          <xsl:otherwise>
+            <li class="breadcrumb-item"><xsl:value-of select="t:title"/>
+              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+            </li>
+          </xsl:otherwise>
+        </xsl:choose>
+    </xsl:for-each>
   </xsl:template>
-
-  <!-- Process ref elements as breadcrumb items -->
-  <xsl:template match="t:ref" mode="breadcrumb">
-    <li class="breadcrumb-item">
-      <a href="{replace(@target, 'https://papyri.info', '')}">
-        <xsl:apply-templates/>
-      </a>
-    </li>
-  </xsl:template>
-
-  <!-- Suppress text nodes (like semicolons) in breadcrumb mode -->
-  <xsl:template match="text()" mode="breadcrumb">
-    <!-- Suppress punctuation between refs -->
-  </xsl:template>
-
-  <!-- Process head element in breadcrumb-editions mode -->
-  <xsl:template match="t:body/t:head" mode="breadcrumb-editions">
-    <xsl:param name="historical-path"/>
-    <xsl:apply-templates mode="breadcrumb-editions">
-      <xsl:with-param name="historical-path" select="$historical-path"/>
-    </xsl:apply-templates>
-  </xsl:template>
-
-  <!-- Process ref elements as breadcrumb items for editions (mark current as active) -->
-  <xsl:template match="t:ref" mode="breadcrumb-editions">
-    <xsl:param name="historical-path"/>
-    <xsl:variable name="ref-path" select="replace(@target, 'https://papyri.info', '')"/>
-    <xsl:choose>
-      <xsl:when test="$ref-path = $historical-path">
-        <!-- Current edition - mark as active -->
-        <li class="breadcrumb-item active" aria-current="page">
-          <xsl:apply-templates/>
-        </li>
-      </xsl:when>
-      <xsl:otherwise>
-        <!-- Other editions - show as links -->
-        <li class="breadcrumb-item">
-          <a href="{$ref-path}">
-            <xsl:apply-templates/>
-          </a>
-        </li>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- Suppress text nodes (like semicolons) in breadcrumb-editions mode -->
-  <xsl:template match="text()" mode="breadcrumb-editions">
-    <!-- Suppress punctuation between refs -->
-  </xsl:template>
-
-
 
   <!-- Apparatus munging
        The point of theses templates is to enable the capture of whole words in cases where 
@@ -1191,7 +1140,6 @@
   <!-- Override template in htm-tpl-apparatus.xsl -->
   <xsl:template name="tpl-apparatus">
     <xsl:if test="$has-apparatus">
-
       <div id="apparatus" lang="en" class="mt-3">
         <div class="d-flex align-items-center mb-3">
           <h2 class="mb-0">Apparatus</h2>
@@ -1552,6 +1500,69 @@
     </div>
   </xsl:template>
   
+  <xsl:template name="app-ed-mult-with-param">
+    <xsl:param name="check"/>
+    <xsl:if test="$check='fnord'">FNORD-SPLIT </xsl:if>
+    <xsl:choose>
+      <xsl:when test="string-length(.) = 0">om.</xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates>
+          <xsl:with-param name="location" select="'apparatus'" tunnel="yes"/>
+          <xsl:with-param name="check">fnord</xsl:with-param>
+        </xsl:apply-templates>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="$check='fnord'"> FNORD-SPLIT </xsl:if>
+    <xsl:if test="starts-with(@resp,'BL ')">
+      <xsl:if test="starts-with(substring-after(@resp,'BL '),'cf.')">
+        <xsl:text> cf.</xsl:text>
+      </xsl:if>
+      <xsl:text> BL</xsl:text>
+    </xsl:if>
+    <xsl:text> </xsl:text>
+    <xsl:choose>
+      <xsl:when test="starts-with(substring-after(@resp,'BL '),'cf.')">
+        <xsl:value-of select="substring-after(@resp,'cf.')"/>
+      </xsl:when>
+      <xsl:when test="starts-with(@resp,'BL ')">
+        <xsl:value-of select="substring-after(@resp,'BL ')"/>
+      </xsl:when>
+      <xsl:when test="starts-with(@resp,'PN ')">
+        <xsl:value-of select="substring-after(@resp,'PN ')"/>
+        <xsl:text> (via PN)</xsl:text>
+      </xsl:when>
+      <xsl:when test="string(@resp)">
+        <xsl:value-of select="@resp"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text> prev. ed.</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="position()!=last()">
+      <xsl:text> : </xsl:text>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="fnord-spliter">
+    <xsl:param name="line" />
+    <xsl:param name="delim" />
+    <xsl:param name="tail" /><xsl:choose>
+      <xsl:when test="$tail and not(contains($line, 'FNORD-SPLIT'))"><xsl:value-of select="$delim" /> <xsl:choose>
+          <xsl:when test="contains($line,'prev. ed.') and not(starts-with(normalize-space($line), 'prev. ed.'))">
+            previous edition gave <xsl:value-of select="normalize-space(substring-before($line, 'prev. ed.'))" /><xsl:value-of select="normalize-space(substring-after($line, 'prev. ed.'))" /></xsl:when>
+          <xsl:otherwise><xsl:value-of select="normalize-space($line)" /></xsl:otherwise>
+      </xsl:choose></xsl:when>
+      <xsl:otherwise><xsl:if test="contains($line, 'FNORD-SPLIT')">
+          <xsl:value-of select="$delim" /><xsl:text> </xsl:text><xsl:choose>
+            <xsl:when test="contains(normalize-space($line), '(corr')">
+              <xsl:value-of select="normalize-space(substring-after($line, 'FNORD-SPLIT'))"/> reports scribe wrote
+              <xsl:value-of select="normalize-space(substring-before(substring-after(substring-before(normalize-space($line), 'FNORD-SPLIT'), '(corr. ex'), ')'))"/>, then changed to
+              <xsl:value-of select="normalize-space(substring-before(substring-before(normalize-space($line), 'FNORD-SPLIT'), '(corr. ex'))"/>
+            </xsl:when>
+            <xsl:when test="contains($line, 'om.')"> omitted by <xsl:value-of select="normalize-space(substring-after($line, 'FNORD-SPLIT'))"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="normalize-space(substring-after($line, 'FNORD-SPLIT'))"/> gave <xsl:value-of select="normalize-space(substring-before($line, 'FNORD-SPLIT'))"/></xsl:otherwise></xsl:choose></xsl:if></xsl:otherwise>
+    </xsl:choose></xsl:template>
+  
   <xsl:template name="parse-app-parts">
     <xsl:param name="part" xml:space="preserve"/>
     <xsl:choose>
@@ -1559,7 +1570,7 @@
       <xsl:otherwise>
         <xsl:for-each select="$part/node() | $part/text()">
           <xsl:choose>
-            <xsl:when test="matches(normalize-space(.),'FNORD(\S)*')"><xsl:value-of select="normalize-space(replace(replace(., 'FNORD(\S)*', ''), '\(\*\)', ''))"/></xsl:when>
+            <xsl:when test="matches(normalize-space(.),'FNORD(\S)*')"><xsl:value-of select="replace(replace(., 'FNORD(\S)*', ''), '\(\*\)', '')"/></xsl:when>
             <xsl:when test="position() = last()">
               <xsl:for-each select=".">
                 <xsl:choose>

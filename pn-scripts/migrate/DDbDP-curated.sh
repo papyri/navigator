@@ -21,8 +21,10 @@ for d in `find . -type d`; do
             if [ -z "$REPRINT" ]; then
                 TM=`grep -e "<idno type=\"TM\">[^<]*</idno>" -o -m 1 $f | sed 's/<idno type="TM">//' | sed 's/<\/idno>//'`
                 HGV=`grep -e "<idno type=\"HGV\">[^<]*</idno>" -o -m 1 $f | sed 's/<idno type="HGV">//' | sed 's/<\/idno>//'`
+                # If there are multiple TM numbers, prefer the first one
                 if [[ "$TM" == *" "* ]]; then
                     ID=`echo $TM | sed -E 's/^([^ ]*) .*/\1/'`
+                # If there are multiple HGV numbers, prefer the TM one
                 elif [[ "$HGV" == *" "* ]]; then
                     ID=$TM
                 else

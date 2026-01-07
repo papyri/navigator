@@ -32,7 +32,7 @@
           <ref target="https://papyri.info/editions/{tei:makeURI(replace(., ';+', '/'))}">{.}</ref>
         </xsl:for-each>
       </head>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="*[not(self::tei:head)]"/>
     </xsl:copy>
   </xsl:template>
   

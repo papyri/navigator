@@ -65,7 +65,39 @@
           </xsl:otherwise>
         </xsl:choose>
       </dct:isPartOf>
-
+      
+      <xsl:choose>
+        <xsl:when test="//tei:idno[@type = 'HGV'][not(contains(., ' '))]">
+          <xsl:for-each select="//tei:idno[@type = 'HGV']">
+            <pi:source-for>
+              <rdf:Description rdf:about="https://{$domain}/current/{.}/source">
+                <dct:source rdf:resource="{$id}"/>
+              </rdf:Description>
+            </pi:source-for>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:for-each select="//tei:idno[lower-case(@type) = 'tm']">
+            <xsl:choose>
+              <xsl:when test="contains(., ' ')">
+                <pi:source-for>
+                  <rdf:Description rdf:about="https://{$domain}/current/{tokenize(., '\s')[1]}/source">
+                    <dct:source rdf:resource="{$id}"/>
+                  </rdf:Description>
+                </pi:source-for>
+              </xsl:when>
+              <xsl:otherwise>
+                <pi:source-for>
+                  <rdf:Description rdf:about="https://{$domain}/current/{.}/source">
+                    <dct:source rdf:resource="{$id}"/>
+                  </rdf:Description>
+                </pi:source-for>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </xsl:otherwise>
+      </xsl:choose>
+      
       <xsl:for-each select="//tei:idno[lower-case(@type)='tm']">
         <xsl:for-each select="tokenize(., '\s')">
           <dct:relation rdf:resource="https://www.trismegistos.org/text/{.}"/>

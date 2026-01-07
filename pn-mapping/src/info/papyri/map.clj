@@ -467,6 +467,30 @@
       (-insertInferences nil)
       (-insertPelagiosAnnotations nil))))
 
+(defn -loadTM
+  []
+  (let [connection (RDFConnectionFuseki/connect (str server "/data"))
+        model (ModelFactory/createDefaultModel)
+        root (str "PREFIX dct: <http://purl.org/dc/terms/> "
+                  "SELECT ?group "
+                  "FROM <https://papyri.info/graph>"
+                  "WHERE {"
+                  "  ?sub dct:isPartOf <https://papyri.info/current> ."
+                  "}")
+        answer (execute-query root)]
+    (while (.hasNext answer)
+      (let [ans (.next answer)
+            group (.toString (.getResource ans "group"))
+            query (str "PREFIX dct: <http://purl.org/dc/terms/> "
+                       "SELECT ?tm "
+                       "FROM <https://papyri.info/graph>"
+                       "WHERE {"
+                        "  ?tm dct:isPartOf <" group "> ."
+                        "}")]
+      )
+  )))
+
+
 (defn -main
   [& args]
   (if (> (count args) 0)

@@ -42,16 +42,9 @@ def main(argv=None):
                   compare_text = title.text
                 else:
                   compare_text = plain.text
-                if ratio < fuzz.token_set_ratio(ref.text, compare_text):
-                  ratio = fuzz.token_set_ratio(ref.text, compare_text)
+                if ratio < fuzz.token_sort_ratio(ref.text, compare_text):
+                  ratio = fuzz.token_sort_ratio(ref.text, compare_text)
                   found = plain
-                  try:
-                    head.remove(plain)
-                  except Exception:
-                    # This can happen if the document has multiple heads, which is an error,
-                    # or if the node was already removed (DCLP occasionally has multiple
-                    # dclp-hybrid refs, meaning a match could have already been removed).
-                    print('Could not remove node' + ' from ' + os.path.join(root, file))
             if found is not None:
               children = found.findall('*')
               if len(children) > 0:
@@ -60,6 +53,12 @@ def main(argv=None):
                   ref.append(child)
               else:
                 ref.text = found.text
+              found.set('remove', 'true')
+          for rem in head.findall(".//tei:ref[@remove='true']", namespaces):
+            try:
+              head.remove(rem)
+            except Exception:
+              print('Could not remove node' + rem.get('n', '') + ' from ' + os.path.join(root, file))
           xml.write(os.path.join(root, file), encoding='utf-8', xml_declaration=True)
           xslt2.set_property('s', os.path.join(root, file))
           xslt2.set_property('o', os.path.join(root, file))
