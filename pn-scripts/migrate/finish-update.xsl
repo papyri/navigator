@@ -28,6 +28,7 @@
     <xsl:element name="{local-name(.)}" namespace="http://www.tei-c.org/ns/1.0">
       <xsl:copy-of select="@*"/>
       <xsl:for-each select="tei:ref">
+        <xsl:sort select="tei:date"/>
         <xsl:if test="position() gt 1">; </xsl:if>
         <xsl:element name="ref" namespace="http://www.tei-c.org/ns/1.0">
           <xsl:copy-of select="@*"/>

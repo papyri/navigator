@@ -97,7 +97,12 @@ public class Reader extends HttpServlet {
           if (request.getParameter("q") != null) {
             sendWithHighlight(response, file, request.getParameter("q"));
           } else {
-            ServletUtils.send(response, file, buffer);
+            // Apply HTML post-processing to fix mis-nested line divs
+            if (response.getContentType() != null && response.getContentType().contains("text/html")) {
+              sendWithPostProcessing(response, file);
+            } else {
+              ServletUtils.send(response, file, buffer);
+            }
           }
         }
       }
@@ -127,9 +132,30 @@ public class Reader extends HttpServlet {
     if (f != null && f.exists()) {
       try {
         Pattern[] patterns = util.buildPatterns(q);
-        out.write(util.highlight(patterns, util.loadFile(f)));
+        String highlighted = util.highlight(patterns, util.loadFile(f));
+        // Apply HTML post-processing to fix mis-nested line divs
+        String processed = HtmlPostProcessor.process(highlighted);
+        out.write(processed);
       } catch (Exception e) {
         logger.log(Level.SEVERE, "Error while writing highligted file " + f.getAbsolutePath(), e);
+      } finally {
+        out.close();
+      }
+    } else {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+  }
+
+  private void sendWithPostProcessing(HttpServletResponse response, File f)
+    throws ServletException, IOException {
+    PrintWriter out = response.getWriter();
+    if (f != null && f.exists()) {
+      try {
+        String html = util.loadFile(f);
+        String processed = HtmlPostProcessor.process(html);
+        out.write(processed);
+      } catch (Exception e) {
+        logger.log(Level.SEVERE, "Error while post-processing file " + f.getAbsolutePath(), e);
       } finally {
         out.close();
       }

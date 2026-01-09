@@ -3,12 +3,16 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:dc="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:array="http://www.w3.org/2005/xpath-functions/array"
+  xmlns:map="http://www.w3.org/2005/xpath-functions/map"
   xmlns:pi="http://papyri.info/ns"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
-  version="2.0" exclude-result-prefixes="#all">
+  version="3.0" exclude-result-prefixes="#all">
+  
+  <xsl:output expand-text="yes"/>
 
   <xsl:import href="metadata-dclp.xsl"/>
   <xsl:import href="htm-teibibl.xsl"/>
@@ -22,7 +26,7 @@
     </xsl:choose>
     </xsl:variable>
     <div class="metadata">
-      <div class="{$md-collection} data">
+      <div id="{$md-collection}-data" class="{$md-collection} data">
         <xsl:choose>
           <xsl:when test="$md-collection = 'dclp'">
             <h2>
@@ -171,113 +175,43 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="text" mode="metadata">
-    <div class="metadata">
-      <div class="tm data">
-        <h2>Trismegistos: <xsl:value-of select="field[@n='0']"/> [<a href="http://www.trismegistos.org/text/{field[@n='0']}">source</a>]</h2>
-        <table class="table metadata">
-          <tbody>
-            <!-- Publications -->
-            <tr>
-              <th>Publications</th>
-              <td><xsl:for-each select="texref[starts-with(field[@n='15'], '1.')]">
-                <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
-                <xsl:value-of select="field[@n='14']"/> (<xsl:if test="editref"><xsl:for-each
-                  select="editref"><xsl:variable name="pos"
-                    select="count(preceding-sibling::editref) + 1"/><a
-                    href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
-                      select="$eds[$pos]"/></a><xsl:if test="position() != last()">
-                        <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; </xsl:if><xsl:value-of
-                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> +
- </xsl:text></xsl:if>
-              </xsl:for-each>
-                <xsl:for-each select="texref[not(starts-with(field[@n='15'], '1.'))]">
-                  <xsl:if test="position() = 1"><xsl:text> = </xsl:text></xsl:if>
-                <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
-                  <xsl:value-of select="field[@n='14']"/> (<xsl:if test="editref"><xsl:for-each
-                    select="editref"><xsl:variable name="pos"
-                      select="count(preceding-sibling::editref) + 1"/><a
-                        href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
-                          select="$eds[$pos]"/></a><xsl:if test="position() != last()">
-                            <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; </xsl:if><xsl:value-of
-                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> =
- </xsl:text></xsl:if>
-              </xsl:for-each></td>
-            </tr>
-            <!-- Inventory Number -->
-            <tr>
-              <th>Inv. no.</th>
-              <td><xsl:for-each select="collref[starts-with(field[@n='15'],'1.')]"><a
-                href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of select="field[@n='14']"/></a><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'1.')]">; </xsl:if></xsl:for-each>
-                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]"><xsl:if test="collref[starts-with(field[@n='15'],'1.')]">; </xsl:if>
-                  <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">. other inv.: </xsl:if>
-                  <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
-                    <a href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of
-                      select="field[@n='14']"/></a><xsl:if
-                        test="following-sibling::collref[starts-with(field[@n='15'],'2.')]">; </xsl:if>
-                  </xsl:for-each>
-                  <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">. formerly: </xsl:if>
-                  <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
-                    <a href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of select="field[@n='14']"/></a><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
-                  </xsl:for-each></xsl:if>
-              </td>
-            </tr>
-            <!-- Reuse -->
-            <xsl:if test="string-length(field[@n='13']) gt 0">
+  <xsl:template name="tm-metadata" expand-text="yes">
+    <xsl:param name="doc"/>
+    <xsl:if test="$doc instance of map(*) and map:contains($doc, 'publications')">
+      <div class="metadata">
+        <div class="tm data">
+          <h2>Trismegistos: {format-number($doc('id'), '#')} [<a href="https://www.trismegistos.org/text/{format-number($doc('id'), '#')}">source</a>]</h2>
+          <table class="table metadata">
+            <tbody>
+              <!-- Publications -->
               <tr>
-                <th>Reuse Type</th>
-                <td><xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
-                <xsl:for-each select="tokenize(field[@n='14'], ', ')">
-                  <a href="/trismegistos/{.}"><xsl:value-of select="."/></a><xsl:if test="position() != last()">, </xsl:if>
-                </xsl:for-each>
-                <xsl:value-of select="field[@n='57']"/></td>
+                <th>Publications</th>
+                <td><xsl:for-each select="array:flatten(map:get($doc, 'publications'))">
+                    {.('title')} (<xsl:for-each select="array:flatten(.('editors'))">{.('name')}<xsl:if test="position() ne last()"> / </xsl:if></xsl:for-each> {.('date')}
+                </xsl:for-each></td>
               </tr>
-            </xsl:if>
-            <!-- Date -->
-            <tr>
-              <th>Date</th>
-              <td><xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/></td>
-            </tr>
-            <!-- Language -->
-            <tr>
-              <th>Language</th>
-              <td><xsl:value-of select="field[@n='21']"/></td>
-            </tr>
-            <!-- Provenance -->
-            <tr>
-              <th>Provenance</th>
-              <td><xsl:for-each select="geotex">
-                <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of
-                  select="field[@n='22']"/><xsl:if test="field[@n='20'] != ''"> <xsl:value-of select="field[@n='20']"/></xsl:if></a><xsl:if test="following-sibling::geotex">; </xsl:if>
-              </xsl:for-each></td>
-            </tr>
-            <!-- Archive -->
-            <xsl:if test="archref">
+              <!-- Inventory Number -->
               <tr>
-                <th>Archive</th>
-                <td><a href="http://www.trismegistos.org/archive/{archref/field[@n='5']}"><xsl:value-of select="archref/field[@n='37']"/></a></td>
+                <th>Inv. No.</th>
+                <td><xsl:for-each select="array:flatten($doc('collection'))"><a href="https://www.trismegistos.org/collection/{.('id')}">{.('name')}</a><xsl:if test="position() ne last()">, </xsl:if></xsl:for-each></td>
               </tr>
-            </xsl:if>
-            <!-- People -->
-            <xsl:if test="personref">
+              <!-- Date -->
               <tr>
-                <th>People</th>
-                <td><a href="http://www.trismegistos.org/ref/ref_list.php?tex_id={field[@n='0']}">mentioned people</a></td>
+                <th>Date</th>
+                <td>{$doc('date')}</td>
               </tr>
-            </xsl:if>
-            <!-- Places -->
-            <xsl:if test="georef">
+              <!-- Provenance -->
               <tr>
-                <th>Places</th>
-                <td><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">mentioned places</a></td>
+                <th>Provenance</th>
+                <td><xsl:for-each select="array:flatten($doc('provenance'))"><a href="https://www.trismegistos.org/place/{.('id')}">{.('name')}</a> {.('found and written')}<xsl:if test="position() ne last()">; </xsl:if></xsl:for-each></td>
               </tr>
-            </xsl:if>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </xsl:if>
   </xsl:template>
-
+  
   <!-- Title -->
   <xsl:template match="t:title" mode="metadata">
     <tr>

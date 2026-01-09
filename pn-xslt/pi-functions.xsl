@@ -31,7 +31,8 @@
     <xsl:param name="url"/>
     <xsl:param name="format"/>
     <xsl:variable name="base"><xsl:choose>
-      <xsl:when test="$format = 'xml'"><xsl:value-of select="$path"/></xsl:when>
+      <xsl:when test="$format='xml'"><xsl:value-of select="$path"/></xsl:when>
+      <xsl:when test="$format = 'json'"><xsl:value-of select="$tmbase"/></xsl:when>
       <xsl:when test="$format = 'html'"><xsl:value-of select="$outbase"/></xsl:when>
     </xsl:choose>
     </xsl:variable>
@@ -109,8 +110,8 @@
         <xsl:sequence select="concat($base, '/DCLP/', $dir, '/', $tm, '.', $format)"/>
       </xsl:when>
       <!-- Like http://www.trismegistos.org/text/11999 -->
-      <xsl:when test="contains($url, 'trismegistos.org')">
-        <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'http://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'http://www.trismegistos.org/text/'), '.xml')"/>
+      <xsl:when test="contains($url, 'trismegistos')">
+        <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'https://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'https://www.trismegistos.org/text/'), '.json')"/>
       </xsl:when>
       <!-- Like https://papyri.info/biblio/54953/source -->
       <xsl:when test="contains($url, 'biblio/')">

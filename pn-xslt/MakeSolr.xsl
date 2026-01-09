@@ -62,7 +62,7 @@
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
-  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
   <xsl:variable name="current" select="$collection = 'current'"/>
@@ -74,6 +74,7 @@
   <xsl:include href="pi-functions.xsl"/>
 
   <xsl:template match="/">
+    <xsl:message>Relations: <xsl:value-of select="$related"/></xsl:message>
     <add>
       <doc>
         <field name="project">IDP</field>
@@ -1480,11 +1481,12 @@
 
   <xsl:template name="app-link">
     <xsl:param name="location"/>
+    <xsl:param name="lineNumber"/>
   </xsl:template>
   
   <xsl:template name="lbrk-app">
     <xsl:text>
-</xsl:text>
+&#xD;</xsl:text>
   </xsl:template>
   
   <xsl:template name="ddbdp-app">

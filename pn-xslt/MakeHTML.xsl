@@ -9,6 +9,8 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
   version="3.0" exclude-result-prefixes="#all">
+  
+  <xsl:output expand-text="yes"/>
 
   <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="morelikethis-varsandparams.xsl"/>
@@ -88,6 +90,7 @@
   <xsl:param name="translations"/>
   <xsl:param name="server">papyri.info</xsl:param>
   <xsl:param name="path">/srv/data/papyri.info/idp.data</xsl:param>
+  <xsl:param name="tmpath">/srv/data/papyri.info/TM</xsl:param>
   <!-- variables to assist in offline testing by controlling paths and behaviors in the output html -->
   <xsl:param name="cssbase">/css</xsl:param>
   <xsl:param name="jsbase">/js</xsl:param>
@@ -97,7 +100,7 @@
   <xsl:variable name="imgs" select="tokenize($images, '\s+')"/>
   <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
-  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:variable name="doc-id">
     <xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']"><xsl:value-of select="//t:idno[@type='apisid']"/></xsl:when>
@@ -106,6 +109,14 @@
   </xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
+
+  <!-- An apparatus is only created if one of the following is true -->
+  <xsl:variable name="has-apparatus" select=".//t:choice | .//t:subst | .//t:app | .//t:g[@type=('apostrophe','high-punctus','middot','low-punctus','diastole','hypodiastole')] | .//t:hi[@rend = ('diaeresis','grave','acute','asper','lenis','circumflex')] | .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']"/>
+
+  <xsl:variable name="has-commentary" select=".//t:div[@type='commentary']"/>
+
+  <xsl:variable name="translation-count" select="count(tokenize($translations, '\s+'))"/>
+  <xsl:variable name="translation-docs" select="pi:get-docs(tokenize($translations), 'xml')"/>
 
   <xsl:template name="collection-hierarchy">
     <xsl:param name="all-ancestors"></xsl:param>
@@ -238,114 +249,173 @@
         <main id="main" class="container-fluid p-0 flex-grow-1 bg-light d-flex flex-column">
           <div class="container-xl px-4 py-4 my-0 bg-white flex-grow-1">
             <div class="content">
+              <div id="canonical-uri" class="mb-3">
+                <span id="canonical-uri-label">Canonical URI: </span>
+                <span id="canonical-uri-value">
+                  <a href="{$selfUrl}">
+                    <xsl:value-of select="$selfUrl"/>
+                  </a>
+                </span>
+              </div>
+
               <h1>
                 <xsl:call-template name="get-references"/>
               </h1>
+              <xsl:call-template name="get-breadcrumb"/>
+
+              <!-- Is this needed? This H2 is meant to be populated by titledate.js but that script
+                   doesn't appear to be included in the template, resulting in an empty H2 tag.
               <xsl:if test="$hgv or $apis or $dclp">
                 <h2 id="titledate"></h2>
               </xsl:if>
-              <div id="controls" class="d-flex flex-wrap align-items-center bg-light p-3 mb-4">
+              -->
+
+
+              <nav id="controls" class="d-flex flex-wrap align-items-center justify-content-start p-3 mb-4 sticky-top">
+
+                <button class="btn-back-to-top in-controls-nav show me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Back to Top" aria-label="Back to Top">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                  </svg>
+                </button>
+
+                <!-- TODO: restore $tm here when it is fixed -->
+                <!-- <xsl:if test="$hgv or $apis or $tm or $dclp"> -->
                 <xsl:if test="$hgv or $apis or $dclp">
-                  <div id="metadatacontrols" class="me-3">
-                    <div class="dropdown">
-                      <div class="form-check form-switch d-inline-block">
-                        <input class="form-check-input" type="checkbox" name="metadata" id="mdt" checked="checked"/>
-                        <label class="form-check-label" for="mdt">metadata</label>
-                      </div>
-                      <button class="btn btn-sm btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Toggle metadata sections"></button>
-                      <div class="dropdown-menu p-2">
+                  <div id="metadatacontrols" class="controls-section me-3">
+                    <a href="#metadata" class="text-decoration-none fw-semibold text-black">Metadata</a>
+
+                    <!-- create dropdown only if multiple metadata -->
+                    <!-- sections exist. -->
+
+                    <!-- TODO: restore $tm here when it is fixed -->
+                    <!-- <xsl:if test="count(($hgv, $apis, $tm, $dclp)[.]) > 1"> -->
+                    <xsl:if test="count(($hgv, $apis, $dclp)[.]) > 1">
+                      <button class="btn btn-sm btn-light border-0 dropdown-toggle ms-1 py-0 px-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-label="Toggle metadata sections" aria-expanded="false"></button>
+                      <ul class="dropdown-menu">
                         <xsl:if test="$hgv">
-                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="hgv" id="hgvm" checked="checked"/>
-                            <label class="form-check-label" for="hgvm">HGV data</label>
-                          </div>
+                          <li>
+                            <a class="dropdown-item" href="#hgv-data">HGV data</a>
+                          </li>
                         </xsl:if>
+                        <!-- TODO: restore $tm here when it is fixed -->
+                        <!--
                         <xsl:if test="$tm">
-                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="tm" id="tmm" checked="checked"/>
-                            <label class="form-check-label" for="tmm">TM data</label>
-                          </div>
+                          <li>
+                            <a class="dropdown-item" href="#tm-data">TM data: <xsl:value-of select="$tm"/> </a>
+                          </li>
                         </xsl:if>
+                        -->
                         <xsl:if test="$apis">
-                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="apis" id="apism" checked="checked"/>
-                            <label class="form-check-label" for="apism">APIS catalog record</label>
-                          </div>
+                          <li>
+                            <a class="dropdown-item" href="#apis-data">APIS catalog record</a>
+                          </li>
                         </xsl:if>
                         <xsl:if test="$dclp">
-                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="dclp" id="dclpm" checked="checked"/>
-                            <label class="form-check-label" for="dclpm">DCLP data</label>
-                          </div>
+                          <li>
+                            <a class="dropdown-item" href="#dclp-data">DCLP data</a>
+                          </li>
                         </xsl:if>
-                      </div>
-                    </div>
+                      </ul>
+                    </xsl:if>
                   </div>
                 </xsl:if>
-                <xsl:if test="$ddbdp or $image or $translations or $dclp">
-                  <div id="textcontrols" class="me-3">
-                    <div class="dropdown">
-                      <div class="form-check form-switch d-inline-block">
-                        <input class="form-check-input" type="checkbox" name="text" id="txt" checked="checked"/>
-                        <label class="form-check-label" for="txt">text</label>
-                      </div>
-                      <button class="btn btn-sm btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Toggle text sections"></button>
-                      <div class="dropdown-menu p-2">
+
+                <xsl:if test="$ddbdp or $translations or $dclp">
+                  <div id="textcontrols" class="me-3 controls-section">
+                    <a href="#text" class="text-decoration-none fw-semibold text-black">Text</a>
+
+                    <!-- create dropdown only if multiple text -->
+                    <!-- sections exist. -->
+                    <xsl:if test="count(($ddbdp, $translations, $dclp, $image)[.]) > 1">
+                      <button class="btn btn-sm btn-light border-0 dropdown-toggle ms-1 py-0 px-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-label="Toggle text sections" aria-expanded="false"></button>
+                      <ul class="dropdown-menu">
                         <xsl:if test="$ddbdp or $dclp">
-                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="transcription" id="tcpt" checked="checked"/>
-                            <label class="form-check-label" for="tcpt">transcription</label>
-                          </div>
-                        </xsl:if>
-                        <xsl:if test="$image">
-                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="image" id="img" checked="checked"/>
-                            <label class="form-check-label" for="img">images</label>
-                          </div>
+                          <li>
+                            <a class="dropdown-item" href="#transcription">Transcription</a>
+                          </li>
                         </xsl:if>
                         <xsl:if test="$translations">
-                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="translation" id="tslt" checked="checked"/>
-                            <label class="form-check-label" for="tslt">translation</label>
-                          </div>
+                          <li>
+                            <a class="dropdown-item" href="#translations">
+                              <xsl:text>Translation</xsl:text>
+                              <xsl:if test="$translation-count &gt; 1">
+                                <xsl:text>s</xsl:text>
+                              </xsl:if>
+                            </a>
+                          </li>
                         </xsl:if>
-                      </div>
-                    </div>
+                        <xsl:if test="$image">
+                          <li>
+                            <a class="dropdown-item" href="#image">Images</a>
+                          </li>
+                        </xsl:if>
+                      </ul>
+                    </xsl:if>
                   </div>
                 </xsl:if>
+
                 <!-- todo: add dclp handling here, similar to what's below for other collections -->
                 <xsl:if test="$current">
                   <div id="editthis" class="me-3">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/current/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
+                    <a href="/editor/publications/create_from_identifier/papyri.info/current/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$historical">
                   <div id="editthis" class="me-3">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/editions/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
+                    <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$hgv and not($current)">
                   <div id="editthis" class="me-3">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
+                    <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$apis and not($dclp or $ddbdp or $hgv)">
                   <div id="editthis">
-                    <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow" class="btn btn-sm btn-outline-primary"><i class="bi bi-edit"></i> open in editor</a>
+                    <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
-                <div id="canonical-uri" class="me-3">
-                  <span id="canonical-uri-label">Canonical URI: </span>
-                  <span id="canonical-uri-value">
-                    <a href="{$selfUrl}">
-                      <xsl:value-of select="$selfUrl"/>
-                    </a>
-                  </span>
-                </div>
-              </div>
+
+                <!-- If we have at least one thing to display in the sidebar -->
+                <xsl:if test="number(boolean($has-apparatus)) + number(boolean($has-commentary)) + $translation-count > 0">
+                  <div id="sidebar-picker" class="ms-auto row d-none d-md-flex align-items-center">
+                    <div class="col-auto input-group">
+                      <label class="input-group-text" for="sidebar-content-select" data-bs-toggle="tooltip" data-bs-placement="left" title="Choose what to display in the transcription sidebar">
+                        <i class="fs-5 m-0 bi bi-layout-sidebar-reverse"></i>
+                      </label>
+                      <select id="sidebar-content-select" class="form-select" aria-label="Choose what to display in the transcription sidebar">
+                        <xsl:if test="$has-apparatus">
+                          <option selected="selected" value="apparatus">Apparatus</option>
+                        </xsl:if>
+
+                        <xsl:if test="$has-commentary">
+                          <option value="commentary">Commentary</option>
+                        </xsl:if>
+
+                        <xsl:for-each select="$translation-docs">
+                          <xsl:sort select="number(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '-'))"/>
+                          <option value="{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']}">
+                            <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/>
+                          Translation <xsl:text>(</xsl:text>
+                            <xsl:value-of select="/t:TEI/t:teiHeader//t:langUsage/t:language[@ident = //t:body/t:div/@xml:lang]"/>
+                            <xsl:text>)</xsl:text>
+                          </option>
+                        </xsl:for-each>
+                        <option value="no-sidebar">No sidebar</option>
+                      </select>
+                    </div>
+                  </div> <!-- /#sidebar-picker -->
+                </xsl:if>
+              </nav> <!-- /#controls -->
+
               <xsl:if test="$collection = 'current'">
                 <xsl:if test="$hgv or $apis or $tm or $dclp">
-                  <div class="metadata">
+                  <div id="metadata" class="metadata">
                     <xsl:for-each select="$relations[contains(., 'hgv/')]">
                       <xsl:sort select="." order="ascending"/>
                       <xsl:choose>
@@ -357,11 +427,15 @@
                         </xsl:otherwise>
                       </xsl:choose>
                     </xsl:for-each>
-                    <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+                    <!-- URLs of the form https://www.trismegistos.org/text/8767, but not http://www.trismegistos.org/ldab/text.php?quick=1466 -->
+                    <xsl:for-each select="$relations[contains(.,'trismegistos.org') and not(contains(., 'ldab'))]">
                       <xsl:sort select="." order="ascending"/>
-                      <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-                        <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
-                      </xsl:if>
+                      <xsl:try>
+                        <xsl:call-template name="tm-metadata">
+                          <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
+                        </xsl:call-template>
+                        <xsl:catch><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'json')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:catch>
+                      </xsl:try>
                     </xsl:for-each>
                     <xsl:for-each select="$relations[contains(., '/apis/')]">
                       <xsl:sort select="." order="ascending"/>
@@ -388,7 +462,7 @@
                     <xsl:call-template name="biblio"/>
                   </div>
                 </xsl:if>
-                <div class="text row">
+                <div id="text" class="text row">
                   <xsl:apply-templates select="/t:TEI" mode="text">
                     <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                     <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
@@ -408,7 +482,7 @@
                 </div>
               </xsl:if>
               <xsl:if test="$collection = 'editions'">
-                <div class="text">
+                <div id="text" class="text">
                   <xsl:apply-templates select="/t:TEI" mode="text">
                     <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
                     <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
@@ -432,9 +506,12 @@
                   <xsl:apply-templates select="/t:TEI" mode="metadata"/>
                   <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
                     <xsl:sort select="." order="ascending"/>
-                    <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-                      <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
-                    </xsl:if>
+                    <xsl:try>
+                      <xsl:call-template name="tm-metadata">
+                        <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
+                      </xsl:call-template>
+                      <xsl:catch><xsl:message>{pi:get-filename(., 'json')} not available.</xsl:message></xsl:catch>
+                    </xsl:try>
                   </xsl:for-each>
                   <xsl:if test="$apis">
                     <xsl:for-each select="$relations[contains(., '/apis/')]">
@@ -468,9 +545,12 @@
               <xsl:if test="$collection = 'apis'">
                 <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
                   <xsl:sort select="." order="ascending"/>
-                  <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-                    <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
-                  </xsl:if>
+                  <xsl:try>
+                    <xsl:call-template name="tm-metadata">
+                      <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
+                    </xsl:call-template>
+                    <xsl:catch><xsl:message>{pi:get-filename(., 'json')} not available.</xsl:message></xsl:catch>
+                  </xsl:try>
                 </xsl:for-each>
                 <div class="metadata">
                   <xsl:apply-templates select="/t:TEI" mode="metadata"/>
@@ -498,6 +578,17 @@
 
         <xi:include href="footer.xml"/>
 
+        <!-- Back to Top Button -->
+        <button class="btn-back-to-top"
+                data-bs-toggle="tooltip"
+                data-bs-placement="left"
+                title="Back to Top"
+                aria-label="Back to Top">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+          </svg>
+        </button>
+
       </body>
     </html>
   </xsl:template>
@@ -518,10 +609,15 @@
   </xsl:template>
 
   <xsl:template name="translations">
-    <div class="translations col-12 col-lg-6">
+    <div id="translations">
       <xsl:for-each select="pi:get-docs(tokenize($translations), 'xml')">
         <xsl:sort select="number(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '-'))"/>
         <div class="translation data">
+          <xsl:attribute name="id">
+            <xsl:text>translation-</xsl:text>
+            <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/>
+          </xsl:attribute>
+
           <h2><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="/t:TEI/t:teiHeader//t:langUsage/t:language[@ident = //t:body/t:div/@xml:lang]"/>)
             <a class="btn btn-link fw-semibold text-decoration-none" href="/translation/{/t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
           <div lang="{@xml:lang}">
@@ -559,26 +655,26 @@
         <xsl:otherwise>DDbDP</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <div class="transcription data col-12 col-lg-6">
-      <xsl:choose>
-        <xsl:when test="$type = 'DCLP'">
-          <h2>DCLP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source"><i class="bi bi-xml"></i>xml</a></h2>
-        </xsl:when>
-        <xsl:otherwise>
-          <h2>DDbDP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2></xsl:otherwise></xsl:choose>
+    <div id="transcription" class="transcription data">
       <xsl:variable name="text">
+        <xsl:apply-templates select=".//t:div[@type='edition']"/>
+      </xsl:variable>
+      <!-- Only show transcription header if there's actual content -->
+      <xsl:if test="normalize-space($text) != ''">
         <xsl:choose>
           <xsl:when test="$type = 'DCLP'">
-            <xsl:apply-templates select=".//t:div[@type='edition']"/>
+            <h2>DCLP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source"><i class="bi bi-xml"></i>xml</a></h2>
           </xsl:when>
-          <xsl:otherwise><xsl:apply-templates select=".//t:div[@type='edition']"/></xsl:otherwise>
+          <xsl:otherwise>
+            <h2>DDbDP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
+          </xsl:otherwise>
         </xsl:choose>
-      </xsl:variable>
-      <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
-      <xsl:apply-templates select="$text" mode="sqbrackets"/>
+        <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
+        <xsl:apply-templates select="$text" mode="sqbrackets"/>
+      </xsl:if>
 
-      <h2>History</h2>
       <div id="history" class="mb-4">
+        <h2>History</h2>
         <div class="accordion mb-2">
           <div class="accordion-item">
             <h3 class="accordion-header">
@@ -720,7 +816,7 @@
 
   <xsl:template name="biblio">
     <xsl:if test="$biblio-relations[1]">
-      <div id="bibliography">
+      <div class="bibliography">
         <h3>Citations</h3>
         <ul>
           <xsl:for-each select="$biblio-relations">
@@ -772,22 +868,26 @@
   <xsl:template name="get-references">
     <xsl:choose>
       <xsl:when test="$collection = 'current'">
-        <xsl:apply-templates select="//t:body/t:head"/>
-        <xsl:for-each select="$relations[contains(., 'apis/')]"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
-        <xsl:if test="count($relations[contains(., 'trismegistos/')]) gt 0"> = Trismegistos </xsl:if>
-        <xsl:for-each select="$relations[contains(., 'trismegistos/')]">
-          <a href="{.}">{replace(., 'https://www.trismegistos.org/text/', '')}</a>
-        </xsl:for-each>
+        <xsl:variable name="type">
+          <xsl:choose>
+            <xsl:when test="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
+            <xsl:otherwise>DDbDP</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:text>Current Edition: </xsl:text>
+        <xsl:value-of select="$type"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
-        <xsl:for-each select="$sources-for">
-          <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
-            <xsl:for-each select="doc(pi:get-filename(., 'xml'))">
-              <xsl:apply-templates select=".//t:body/t:head"/>
-              = <a href="/current/{.//t:fileDesc/t:publicationStmt/t:idno[@type='filename']}">Current Edition</a>
-            </xsl:for-each>
-          </xsl:if>
-        </xsl:for-each>
+        <xsl:text>Historical Edition: </xsl:text>
+        <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
+        <xsl:if test="doc-available($current-file)">
+          <xsl:variable name="current" select="doc($current-file)"/>
+          <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+          <xsl:variable name="ref" select="$current//t:body/t:head/t:ref[contains(@target, $filename)]"/>
+          <xsl:value-of select="$ref/t:title"/> <xsl:if test="not(contains($ref/t:title, $ref/t:date))"> (<xsl:value-of select="$ref/t:date"/>)</xsl:if>
+        </xsl:if>        
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>
@@ -838,6 +938,80 @@
 
   </xsl:template>
 
+
+  <!-- Generate breadcrumb navigation for edition links -->
+  <xsl:template name="get-breadcrumb">
+    <xsl:choose>
+      <xsl:when test="$collection = 'current' and //t:body/t:head">
+        <xsl:variable name="current-edition-id" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+        <xsl:variable name="type">
+          <xsl:choose>
+            <xsl:when test="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
+            <xsl:otherwise>DDbDP</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <nav aria-label="breadcrumb" class="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-title visually-hidden">Editions:</li>
+            <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
+            <li class="breadcrumb-item active" aria-current="page"> <span class="arrow"> → </span> <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></li>
+          </ol>
+        </nav>
+      </xsl:when>
+      <xsl:when test="$collection = 'editions'">
+        <xsl:variable name="historical-path" select="concat('/', $collection, '/', /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'])"/>
+        <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
+        <xsl:choose>
+          <xsl:when test="doc-available($current-file)">
+            <xsl:variable name="current" select="doc($current-file)"/>
+            <xsl:variable name="current-edition-id" select="$current//t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+            <xsl:variable name="type">
+              <xsl:choose>
+                <xsl:when test="$current//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
+                <xsl:otherwise>DDbDP</xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <nav aria-label="breadcrumb" class="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-title visually-hidden">Editions:</li>
+                <xsl:apply-templates select="$current//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="$historical-path"/></xsl:apply-templates>
+                <li class="breadcrumb-item"> <span class="arrow"> → </span> <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></a></li>
+              </ol>
+            </nav>
+          </xsl:when>
+          <xsl:otherwise>
+            <!-- This is an error. There should always be a current edition for which this is the source. -->
+            <xsl:message>Error: <xsl:value-of select="$current-file"/> is unavailable from <xsl:value-of select="$historical-path"/>. Sources for: [<xsl:value-of select="$sources-for"/>]</xsl:message>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Process head element in breadcrumb mode -->
+  <xsl:template match="t:body/t:head" mode="breadcrumb">
+    <xsl:param name="active"/>
+    <xsl:for-each select="t:ref">
+        <xsl:choose>
+          <xsl:when test="@target and not(contains(@target, $active))">
+            <li class="breadcrumb-item">
+              <a href="{replace(@target, 'https://papyri.info', '')}"><xsl:value-of select="t:title"/></a>
+              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+            </li>
+          </xsl:when>
+          <xsl:when test="@target and contains(@target, $active)">
+            <li class="breadcrumb-item active" aria-current="page"><xsl:value-of select="t:title"/>
+              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+            </li>
+          </xsl:when>
+          <xsl:otherwise>
+            <li class="breadcrumb-item"><xsl:value-of select="t:title"/>
+              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+            </li>
+          </xsl:otherwise>
+        </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
 
   <!-- Apparatus munging
        The point of theses templates is to enable the capture of whole words in cases where 
@@ -939,7 +1113,7 @@
         <xsl:variable name="restore">
           &lt;TEI xmlns="http://www.tei-c.org/ns/1.0"><xsl:value-of select="$join"/>&lt;/TEI>
         </xsl:variable>
-        <!--<xsl:message>Restore (<xsl:value-of select="ancestor::t:div[1]/@n"/> : l. <xsl:value-of select="preceding::t:lb[1]/@n"/>): <xsl:value-of select="$restore"/></xsl:message>-->
+        <!--<xsl:message>Restore (<xsl:value-of select="ancestor::t:div[1]/@n"/> : l. <xsl:value-of select="preceding::t:lb[1]/@n"/>): <xsl:copy-of select="$restore"/></xsl:message>-->
         <xsl:copy-of select="parse-xml-fragment($restore)/t:TEI/node()"/>
       </xsl:when>
       <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
@@ -955,47 +1129,27 @@
     <xsl:param name="parm-leiden-style" tunnel="yes" required="no"></xsl:param>
     <xsl:param name="parm-edition-type" tunnel="yes" required="no"></xsl:param>
     <span class="ab">
-      <xsl:if test="$parm-leiden-style='iospe'">
-        <xsl:variable name="div-loc">
-          <xsl:for-each select="ancestor::t:div[@type='textpart']">
-            <xsl:value-of select="@n"/>
-            <xsl:text>-</xsl:text>
-          </xsl:for-each>
-        </xsl:variable>
-        <xsl:attribute name="id">
-          <xsl:value-of select="concat('div',$div-loc)"/>
-        </xsl:attribute>
-      </xsl:if>
       <xsl:apply-templates/>
       <!-- if next div or ab begins with lb[break=no], then add hyphen -->
-      <xsl:if test="following::t:lb[1][@break='no' or @type='inWord'] and not($parm-edition-type='diplomatic')">
+      <xsl:if test="following::t:lb[1][@break='no' or @type='inWord']">
         <xsl:text>-</xsl:text>
-      </xsl:if>
-      <!-- if final lb in ab is L2R or R2L, then print arrow here -->
-      <xsl:if test="not($parm-leiden-style=('ddbdp','dclp','sammelbuch'))
-        and descendant::t:lb[last()][@rend='left-to-right']">
-        <xsl:text>&#xa0;&#xa0;→</xsl:text>
-      </xsl:if>
-      <xsl:if test="not($parm-leiden-style=('ddbdp','dclp','sammelbuch'))
-        and descendant::t:lb[last()][@rend='right-to-left']">
-        <xsl:text>&#xa0;&#xa0;←</xsl:text>
-      </xsl:if>
-      <!-- in IOSPE, if followed by lg, include it here (and suppress in htm-teilgandl.xsl) -->
-      <xsl:if test="$parm-leiden-style='iospe' and following-sibling::t:*[1][self::t:lg]">
-        <xsl:apply-templates select="following-sibling::t:lg/*"/>
       </xsl:if>
     </span>
   </xsl:template>
 
   <!-- Override template in htm-tpl-apparatus.xsl -->
   <xsl:template name="tpl-apparatus">
-    <!-- An apparatus is only created if one of the following is true -->
-    <xsl:if test=".//t:choice | .//t:subst | .//t:app |
-      .//t:hi[@rend = ('diaeresis','grave','acute','asper','lenis','circumflex')] |
-      .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']">
-
+    <xsl:if test="$has-apparatus">
       <div id="apparatus" lang="en" class="mt-3">
-        <h3>Apparatus</h3>
+        <div class="d-flex align-items-center mb-3">
+          <h2 class="mb-0">Apparatus</h2>
+          <!-- <div class="form-check form-switch ms-auto"> -->
+          <div class="form-check form-switch ms-auto" title="Toggle apparatus details">
+            <input class="form-check-input" type="checkbox" id="detailsToggle"/>
+            <!-- <label class="form-check-label" for="detailsToggle">details</label> -->
+            <label class="form-check-label" for="detailsToggle">Expand</label>
+          </div>
+        </div>
         <xsl:variable name="pass1">
           <xsl:apply-templates select="." mode="app-flatten"/>
         </xsl:variable>
@@ -1276,7 +1430,7 @@
             <xsl:call-template name="title-convert">
               <xsl:with-param name="apptype" select="$apptype"/>
               <xsl:with-param name="childtype" select="$childtype"/>
-              <xsl:with-param name="obf" select="normalize-space($titleagg)"/>
+              <xsl:with-param name="obf" select="$titleagg"/>
             </xsl:call-template>
           </xsl:variable>
           <span class="apparatus-content">
@@ -1344,6 +1498,128 @@
         </xsl:when>
       </xsl:choose>
     </div>
+  </xsl:template>
+  
+  <xsl:template name="app-ed-mult-with-param">
+    <xsl:param name="check"/>
+    <xsl:if test="$check='fnord'">FNORD-SPLIT </xsl:if>
+    <xsl:choose>
+      <xsl:when test="string-length(.) = 0">om.</xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates>
+          <xsl:with-param name="location" select="'apparatus'" tunnel="yes"/>
+          <xsl:with-param name="check">fnord</xsl:with-param>
+        </xsl:apply-templates>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="$check='fnord'"> FNORD-SPLIT </xsl:if>
+    <xsl:if test="starts-with(@resp,'BL ')">
+      <xsl:if test="starts-with(substring-after(@resp,'BL '),'cf.')">
+        <xsl:text> cf.</xsl:text>
+      </xsl:if>
+      <xsl:text> BL</xsl:text>
+    </xsl:if>
+    <xsl:text> </xsl:text>
+    <xsl:choose>
+      <xsl:when test="starts-with(substring-after(@resp,'BL '),'cf.')">
+        <xsl:value-of select="substring-after(@resp,'cf.')"/>
+      </xsl:when>
+      <xsl:when test="starts-with(@resp,'BL ')">
+        <xsl:value-of select="substring-after(@resp,'BL ')"/>
+      </xsl:when>
+      <xsl:when test="starts-with(@resp,'PN ')">
+        <xsl:value-of select="substring-after(@resp,'PN ')"/>
+        <xsl:text> (via PN)</xsl:text>
+      </xsl:when>
+      <xsl:when test="string(@resp)">
+        <xsl:value-of select="@resp"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text> prev. ed.</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="position()!=last()">
+      <xsl:text> : </xsl:text>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="fnord-spliter">
+    <xsl:param name="line" />
+    <xsl:param name="delim" />
+    <xsl:param name="tail" /><xsl:choose>
+      <xsl:when test="$tail and not(contains($line, 'FNORD-SPLIT'))"><xsl:value-of select="$delim" /> <xsl:choose>
+          <xsl:when test="contains($line,'prev. ed.') and not(starts-with(normalize-space($line), 'prev. ed.'))">
+            previous edition gave <xsl:value-of select="normalize-space(substring-before($line, 'prev. ed.'))" /><xsl:value-of select="normalize-space(substring-after($line, 'prev. ed.'))" /></xsl:when>
+          <xsl:otherwise><xsl:value-of select="normalize-space($line)" /></xsl:otherwise>
+      </xsl:choose></xsl:when>
+      <xsl:otherwise><xsl:if test="contains($line, 'FNORD-SPLIT')">
+          <xsl:value-of select="$delim" /><xsl:text> </xsl:text><xsl:choose>
+            <xsl:when test="contains(normalize-space($line), '(corr')">
+              <xsl:value-of select="normalize-space(substring-after($line, 'FNORD-SPLIT'))"/> reports scribe wrote
+              <xsl:value-of select="normalize-space(substring-before(substring-after(substring-before(normalize-space($line), 'FNORD-SPLIT'), '(corr. ex'), ')'))"/>, then changed to
+              <xsl:value-of select="normalize-space(substring-before(substring-before(normalize-space($line), 'FNORD-SPLIT'), '(corr. ex'))"/>
+            </xsl:when>
+            <xsl:when test="contains($line, 'om.')"> omitted by <xsl:value-of select="normalize-space(substring-after($line, 'FNORD-SPLIT'))"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="normalize-space(substring-after($line, 'FNORD-SPLIT'))"/> gave <xsl:value-of select="normalize-space(substring-before($line, 'FNORD-SPLIT'))"/></xsl:otherwise></xsl:choose></xsl:if></xsl:otherwise>
+    </xsl:choose></xsl:template>
+  
+  <xsl:template name="parse-app-parts">
+    <xsl:param name="part" xml:space="preserve"/>
+    <xsl:choose>
+      <xsl:when test="not(*) and matches(normalize-space($part),'FNORD(\S)*')"><xsl:value-of select="normalize-space(replace(replace($part, 'FNORD(\S)*', ''), '\(\*\)', ''))"/></xsl:when>
+      <xsl:otherwise>
+        <xsl:for-each select="$part/node() | $part/text()">
+          <xsl:choose>
+            <xsl:when test="matches(normalize-space(.),'FNORD(\S)*')"><xsl:value-of select="replace(replace(., 'FNORD(\S)*', ''), '\(\*\)', '')"/></xsl:when>
+            <xsl:when test="position() = last()">
+              <xsl:for-each select=".">
+                <xsl:choose>
+                  <xsl:when test="self::text()">
+                    <xsl:choose>
+                      <xsl:when test="position() = last()">
+                        <xsl:value-of select="replace(.,'\s+$','')"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:copy xml:space="preserve"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:when>
+                  <xsl:when test="name(.)=('span','sub')">
+                    <xsl:element name="{name(.)}">
+                      <xsl:copy-of select="@*"/>
+                      <xsl:call-template name="parse-app-parts">
+                        <xsl:with-param name="part" select="." xml:space="preserve"/>
+                      </xsl:call-template>
+                    </xsl:element>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:call-template name="parse-app-parts">
+                      <xsl:with-param name="part" select="." xml:space="preserve"/>
+                    </xsl:call-template>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="name(.)=('span','sub')">
+              <xsl:element name="{name(.)}">
+                <xsl:copy-of select="@*"/>
+                <xsl:call-template name="parse-app-parts">
+                  <xsl:with-param name="part" select="." xml:space="preserve"/>
+                </xsl:call-template>
+              </xsl:element>
+            </xsl:when>
+            <xsl:when test="self::text()">
+              <xsl:copy xml:space="preserve"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name="parse-app-parts">
+                <xsl:with-param name="part" select="." xml:space="preserve"/>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template name="resolvesubst">
@@ -1500,7 +1776,15 @@
         <xsl:text>-</xsl:text>
       </xsl:for-each>
     </xsl:variable>
-    <h3 id="{generate-id()}" class="textpartnumber textpartnumber-heading"><xsl:apply-templates select="t:head"/></h3>
+    <xsl:choose>
+      <xsl:when test="t:head">
+        <h3 id="{generate-id()}" class="textpartnumber textpartnumber-heading"><xsl:apply-templates select="t:head/node()"/></h3>
+      </xsl:when>
+      <xsl:otherwise>
+        <h3 id="{generate-id()}" class="textpartnumber textpartnumber-heading"><xsl:value-of select="@n"/></h3>
+      </xsl:otherwise>
+    </xsl:choose>
+    
     
     <!-- Custodial events here -->
     <!-- first get the value of the columns @corresp -->
@@ -1583,17 +1867,277 @@
   </xsl:template>
 
   <!-- Override EpiDoc templates in htm-teihead.xsl -->
+  <!-- Suppress t:head inside textpart divs - already handled in the textpart template above -->
+  <xsl:template match="t:div[@type='textpart']/t:head"/>
+
   <xsl:template match="t:div/t:head">
-      <xsl:apply-templates/>
+      <h3>
+         <xsl:apply-templates/>
+      </h3>
   </xsl:template>
 
   <xsl:template match="t:body/t:head">
     <xsl:apply-templates/>
   </xsl:template>
   
+  <!-- Override template in htm-teilb.xsl 
+       Print <br> for all line breaks, including the first. Preserve @n attribute in @data-line.
+  -->
+  <xsl:template match="t:lb">
+    <xsl:param name="parm-edn-structure" tunnel="yes" required="no"/>
+    <xsl:param name="parm-edition-type" tunnel="yes" required="no"/>
+    <xsl:param name="parm-leiden-style" tunnel="yes" required="no"/>
+    <xsl:param name="parm-line-inc" tunnel="yes" required="no"/>
+    <xsl:param name="parm-verse-lines" tunnel="yes" required="no"/>
+    <xsl:param name="location" tunnel="yes" required="no"/>
+    
+    <xsl:choose>
+      <xsl:when test="ancestor::t:lg and $parm-verse-lines = 'on'">
+        <xsl:apply-imports/>
+        <!-- use the particular templates in teilb.xsl -->
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="div-loc">
+          <xsl:for-each select="ancestor::t:div[@type = 'textpart']">
+            <xsl:value-of select="@n"/>
+            <xsl:text>-</xsl:text>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="line">
+          <xsl:if test="@n">
+            <xsl:value-of select="@n"/>
+          </xsl:if>
+        </xsl:variable>
+        <!-- print hyphen if break=no  -->
+        <xsl:if test="(@break='no' or @type='inWord')">
+          <xsl:choose>
+            <!--    *unless* the lb is first in its ancestor div  -->
+            <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1])"/>
+            <!-- TODO: The following two are in contention -->
+            <xsl:when test="($parm-leiden-style = 'ddbdp' and ((not(ancestor::*[name() = 'TEI'])) or $location='apparatus')) or ($parm-edn-structure='inslib' and ancestor::t:div[@type='apparatus'])" />                                      
+            <!--   *or unless* the second part of an app in ddbdp  -->
+            <xsl:when test="(ancestor::t:corr or ancestor::t:reg or ancestor::t:rdg or ancestor::t:del[parent::t:subst])"/>
+            <!--  *unless* previous line ends with space / g / supplied[reason=lost]  (if not MedCyprus project) -->
+            <!-- in which case the hyphen will be inserted before the space/g r final ']' of supplied
+                            (tested by EDF:f-wwrap in functions.xsl, which is called by teisupplied.xsl, teig.xsl and teispace.xsl) -->
+            <xsl:when
+              test="
+              (preceding-sibling::node()[1][local-name() = 'space' or
+              local-name() = 'g' or (local-name() = 'supplied' and @reason = 'lost') or
+              (normalize-space(.) = ''
+              and preceding-sibling::node()[1][local-name() = 'space' or
+              local-name() = 'g' or (local-name() = 'supplied' and @reason = 'lost')])])
+              and not($parm-leiden-style='medcyprus')"/>
+            <!-- *or unless* this break is accompanied by a paragraphos mark -->
+            <!-- in which case the hypen will be inserted before the paragraphos by code in htm-teimilestone.xsl -->
+            <xsl:when
+              test="preceding-sibling::node()[not(self::text() and normalize-space(self::text()) = '')][1]/self::t:milestone[@rend = 'paragraphos']"/>
+            <xsl:otherwise>
+              <xsl:text>-</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
+
+        <xsl:choose>
+          <xsl:when
+            test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch') 
+            and (ancestor::t:sic 
+            or ancestor::t:reg
+            or ancestor::t:rdg or ancestor::t:del[ancestor::t:choice])
+            or ancestor::t:del[@rend='corrected'][parent::t:subst]">
+            <xsl:choose>
+              <xsl:when test="@break='no' or @type='inWord'">
+                <xsl:text>|</xsl:text>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text> | </xsl:text>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:when
+            test="($parm-leiden-style = ('ddbdp','dclp') and ((not(ancestor::*[name() = 'TEI'])) or $location='apparatus')) or ($parm-edn-structure='inslib' and ancestor::t:div[@type='apparatus'])">
+            <xsl:choose>
+              <xsl:when test="@break = 'no' or @type = 'inWord'">
+                <xsl:text>|</xsl:text>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text> | </xsl:text>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <br id="a{$div-loc}l{$line}" data-line="{$line}"/>
+            <xsl:if test="@rend">
+              <span>
+                <xsl:if test="@rend">
+                  <xsl:attribute name="class">
+                    <xsl:value-of select="concat('lb ',@rend)"/>
+                  </xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                  <xsl:when test="@rend='inverse'">(inverse) </xsl:when>
+                  <xsl:when test="@rend='perpendicular'">(perpendicular) </xsl:when>
+                </xsl:choose>
+              </span>                     
+            </xsl:if>
+          </xsl:otherwise>
+        </xsl:choose>
+        <xsl:choose>
+          <xsl:when test="$location = 'apparatus'"/>
+          <xsl:when
+            test="not(number(@n)) and ($parm-leiden-style = ('ddbdp','dclp','sammelbuch','medcyprus'))">
+            <!--         non-numerical line-nos always printed in DDbDP and MedCyprus         -->
+            <xsl:call-template name="margin-num"/>
+          </xsl:when>
+          <xsl:when
+            test="
+            number(@n) and @n mod number($parm-line-inc) = 0 and not(@n = 0) and
+            not(following::t:*[1][local-name() = 'gap' or local-name() = 'space'][@unit = 'line'] and
+            ($parm-leiden-style = ('ddbdp','dclp','sammelbuch')))">
+            <!-- prints line-nos divisible by stated increment, unless zero
+                            and unless it is a gap line or vacat in DDbDP -->
+            <xsl:call-template name="margin-num"/>
+          </xsl:when>
+          <xsl:when
+            test="$parm-leiden-style = ('ddbdp','dclp') and preceding-sibling::t:*[1][local-name() = 'gap'][@unit = 'line']">
+            <!-- always print line-no after gap line in ddbdp -->
+            <xsl:call-template name="margin-num"/>
+          </xsl:when>
+          <xsl:when
+            test="$parm-leiden-style = ('ddbdp','dclp') and following::t:lb[1][ancestor::t:reg[following-sibling::t:orig[not(descendant::t:lb)]]]">
+            <!-- always print line-no when broken orig in line, in ddbdp -->
+            <xsl:call-template name="margin-num"/>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Override margin-num template from epidoc-xslt/htm-teilb.xsl
+       We handle line numbers in segment-transcription instead, so this outputs nothing -->
+  <xsl:template name="margin-num"/>
+
   <xsl:template match="t:hi[ancestor::t:w][@rend=('diaeresis','grave','acute','asper','lenis','circumflex')]">
     <xsl:call-template name="hirend_print"/>
+  </xsl:template>  
+  
+  <xsl:template match="node()" mode="flatten-transcription">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
   </xsl:template>
+  
+  <xsl:template match="*[br][not(@class='ab')]" mode="flatten-transcription">
+    <xsl:element name="{local-name(.)}">
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="node()[following-sibling::br]" mode="flatten-transcription"/>
+    </xsl:element>
+    <xsl:copy-of select="br"/>
+    <xsl:element name="{local-name(.)}">
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="node()[preceding-sibling::br]" mode="flatten-transcription"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="node()" mode="segment-transcription">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+
+
+
+
+  <xsl:template match="span[@class='ab']" mode="segment-transcription">
+    <!-- Output the ab span wrapper -->
+    <span class="ab">
+      <!-- Group content by line breaks -->
+      <xsl:for-each-group select="node()" group-starting-with="br[@id]">
+        <xsl:choose>
+          <!-- First group before any lb element -->
+          <xsl:when test="not(current-group()[1][self::br])">
+            <xsl:apply-templates select="current-group()"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:variable name="current-line" select="current-group()[1]/@data-line"/>
+            <div class="text-line">
+              <xsl:if test="$current-line">
+                <xsl:attribute name="data-line">
+                  <xsl:value-of select="$current-line"/>
+                </xsl:attribute>
+                <xsl:attribute name="aria-label">
+                  <xsl:text>Line </xsl:text>
+                  <xsl:value-of select="$current-line"/>
+                </xsl:attribute>
+              </xsl:if>
+              <!-- Add line number span for all lines -->
+              <xsl:if test="$current-line">
+                <span>
+                  <xsl:attribute name="class">
+                    <xsl:text>linenumber</xsl:text>
+                    <xsl:if test="not(number($current-line) and number($current-line) mod number($line-inc) = 0 and not($current-line = '0'))">
+                      <xsl:text> initially-hidden</xsl:text>
+                    </xsl:if>
+                  </xsl:attribute>
+                  <xsl:value-of select="$current-line"/>
+                </span>
+              </xsl:if>
+              <!-- Always wrap remaining content in linecontent span, even if empty -->
+              <xsl:choose>
+                <xsl:when test="count(current-group()) > 1">
+                  <!-- Normal case: wrap the remaining content -->
+                  <span class="linecontent">
+                    <xsl:apply-templates select="current-group()[position() > 1]" mode="segment-transcription"/>
+                  </span>
+                </xsl:when>
+                <xsl:otherwise>
+                  <!-- Edge case: no content after lb, create empty wrapper -->
+                  <span class="linecontent">
+                  </span>
+                </xsl:otherwise>
+              </xsl:choose>
+            </div>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each-group>
+    </span>
+  </xsl:template>
+
+
+
+
+
+  <!-- Override edition div template to wrap transcription content -->
+  <xsl:template match="t:div[@type = 'edition']" priority="2">
+    <xsl:param name="parm-internal-app-style" tunnel="yes" required="no"/>
+    <xsl:param name="parm-external-app-style" tunnel="yes" required="no"/>
+    
+    <!-- Only render the edition div if there's actual content (not just empty ab elements) -->
+    <xsl:if test="normalize-space(.) != ''">
+
+    <div id="edition" class="mb-3">
+      <!-- Found in htm-tpl-lang.xsl -->
+      <xsl:call-template name="attr-lang"/>
+
+      <!-- Wrap transcription content (headers and spans) in a container for flexbox -->
+      <div id="transcription-content">
+        <xsl:variable name="transcription"><xsl:apply-templates/></xsl:variable>
+        <xsl:variable name="flatten"><xsl:apply-templates select="$transcription" mode="flatten-transcription"/></xsl:variable>
+        <xsl:variable name="segment"><xsl:apply-templates select="$flatten" mode="segment-transcription"/></xsl:variable>
+        <xsl:copy-of select="$segment"/>
+      </div>
+
+      <div id="sidebar">
+        <xsl:call-template name="tpl-apparatus"/>
+      </div>
+    </div>
+    </xsl:if>
+    <!-- Placeholder to render apparatus when not in sidebar -->
+    <div id="apparatus-under" class="mb-3"></div>
+  </xsl:template>  
 
   <!-- Override template in htm-teiref.xsl -->
   <xsl:template match="t:ref">
@@ -1647,6 +2191,219 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
+  
+  <!-- Override templates in teigap.xsl -->
+  
+  <xsl:function name="pi:dot-out">
+    <xsl:param name="quantity"/>
+    <sub class="underdot"><xsl:for-each select="1 to $quantity">.</xsl:for-each></sub>
+  </xsl:function>
+  
+  <!-- Prints gap content -->
+  <xsl:template name="extent-string-content">
+      <xsl:param name="parm-edition-type" tunnel="yes" required="no"/>
+      <xsl:param name="parm-leiden-style" tunnel="yes" required="no"/>
+      <xsl:param name="parm-edn-structure" tunnel="yes" required="no"/>
+      <xsl:variable name="cur-dot"><sub class="underdot">.</sub></xsl:variable>
+      <xsl:variable name="cur-max" as="xs:integer">8</xsl:variable>
+     
+      <!-- Precision of <gap> defined -->
+      <xsl:variable name="circa">
+         <xsl:choose>
+            <xsl:when
+               test="$parm-leiden-style = ('ddbdp','dclp','sammelbuch') and
+               (@precision='low' or (@unit='character' and number(@quantity) &gt; $cur-max))">
+               <xsl:text>ca.</xsl:text>
+            </xsl:when>
+            <xsl:when test="@precision='low' and not(starts-with($parm-leiden-style, 'edh'))">
+               <xsl:text>c. </xsl:text>
+            </xsl:when>
+         </xsl:choose>
+      </xsl:variable>
+
+      <xsl:choose>
+         <xsl:when test="@extent='unknown'">
+           <xsl:choose>
+             <!-- lines lost -->
+             <xsl:when test="@reason='lost' and @unit='line'">
+               <!--and (not(preceding-sibling::t:lb[2]) or not(following-sibling::*))-->
+               <xsl:text>-- -- -- -- -- -- -- -- -- --</xsl:text>
+             </xsl:when>
+             <!-- illegible vestiges -->
+             <xsl:when test="t:desc = 'vestiges' and @reason = 'illegible'">
+               <xsl:call-template name="tpl-vest">
+                 <xsl:with-param name="circa" select="$circa"/>
+               </xsl:call-template>
+             </xsl:when>
+             <!-- other reason illegible and lost/chars caught in the otherwise -->
+             <xsl:otherwise>
+               <xsl:text>&#x2066; -ca.?- &#x2069;</xsl:text>
+             </xsl:otherwise>
+           </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@quantity and @unit='character'">
+            <xsl:choose>
+               <xsl:when test="number(@quantity) &gt; $cur-max or (number(@quantity) &gt; 0 and @precision='low')"><!-- ++++++++++++++++++++++++++++++++++++++++++++ -->
+                 <xsl:copy-of select="$cur-dot"/>
+                 <xsl:text> </xsl:text>
+                 <xsl:value-of select="$circa"/>
+                 <xsl:value-of select="@quantity"/>
+                 <xsl:copy-of select="$cur-dot"/>
+               </xsl:when>
+               <xsl:when test="number(@quantity) &gt; $cur-max or (number(@quantity) &gt; 1 and @precision='low')">
+                 <xsl:choose>
+                   <xsl:when test="t:desc = 'vestiges' and @reason = 'illegible'">
+                     <xsl:call-template name="tpl-vest">
+                       <xsl:with-param name="circa" select="$circa"/>
+                     </xsl:call-template>
+                   </xsl:when>
+                   <xsl:otherwise>
+                     <xsl:text>- </xsl:text>
+                     <xsl:value-of select="$circa"/>
+                     <xsl:value-of select="@quantity"/>
+                     <xsl:text> -</xsl:text>
+                   </xsl:otherwise>
+                 </xsl:choose>
+               </xsl:when>
+
+               <xsl:when test="$cur-max &gt;= number(@quantity)">
+                  <xsl:choose>
+                     <xsl:when test="t:desc='vestiges' and @reason='illegible' and ($parm-leiden-style=('ddbdp','dclp','sammelbuch'))">
+                        <xsl:call-template name="tpl-vest">
+                           <xsl:with-param name="circa" select="$circa"/>
+                        </xsl:call-template>
+                     </xsl:when>
+                     <xsl:otherwise>
+                       <xsl:variable name="test" select="pi:dot-out(xs:integer(@quantity))"/>
+                       <xsl:copy-of select="pi:dot-out(xs:integer(@quantity))"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:when>
+
+               <xsl:otherwise>
+                  <xsl:choose>
+                     <xsl:when
+                        test="t:desc='vestiges' and @reason='illegible'">
+                        <xsl:call-template name="tpl-vest">
+                           <xsl:with-param name="circa" select="$circa"/>
+                        </xsl:call-template>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:text>&#x2066; - - - &#x2069;</xsl:text>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@atLeast and @atMost">
+            <!-- reason illegible and lost caught in the otherwise -->
+           <xsl:choose>
+             <xsl:when test="t:desc='vestiges' and @reason='illegible'">
+               <xsl:call-template name="tpl-vest">
+                 <xsl:with-param name="circa" select="$circa"/>
+               </xsl:call-template>
+             </xsl:when>
+             <xsl:when test="@unit='character'">
+               <xsl:text> -</xsl:text>
+               <xsl:value-of select="@atLeast"/>
+               <xsl:text>-</xsl:text>
+               <xsl:value-of select="@atMost"/>
+               <xsl:text>- </xsl:text>
+             </xsl:when>
+             <xsl:when test="@unit='line'">
+               <xsl:if test="@reason='illegible'">
+                 <xsl:text>Traces </xsl:text>
+               </xsl:if>
+               <xsl:value-of select="@atLeast"/>
+               <xsl:text>-</xsl:text>
+               <xsl:value-of select="@atMost"/>
+               <xsl:text> lines</xsl:text>
+               <xsl:if test="@reason='lost'">
+                 <xsl:text> missing</xsl:text>
+               </xsl:if>
+             </xsl:when>
+           </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@quantity and @unit='line'">
+           <xsl:choose>
+             <xsl:when test="desc = 'vestiges' and @reason = 'illegible'">
+               <xsl:call-template name="tpl-vest">
+                 <xsl:with-param name="circa" select="$circa"/>
+               </xsl:call-template>
+             </xsl:when>
+             <xsl:otherwise>
+               <xsl:choose>
+                 <xsl:when test="@reason='lost'">
+                   <xsl:value-of select="$circa"/>
+                   <xsl:value-of select="@quantity"/>
+                   <xsl:text> line</xsl:text>
+                   <xsl:if test="number(@quantity) &gt; 1">
+                     <xsl:text>s</xsl:text>
+                   </xsl:if>
+                   <xsl:text> missing</xsl:text>
+                 </xsl:when>
+                 <xsl:when test="@reason='illegible'">
+                   <xsl:text>Traces </xsl:text>
+                   <xsl:value-of select="$circa"/>
+                   <xsl:value-of select="@quantity"/>
+                   <xsl:text> line</xsl:text>
+                   <xsl:if test="number(@quantity) &gt; 1">
+                     <xsl:text>s</xsl:text>
+                   </xsl:if>
+                 </xsl:when>
+               </xsl:choose>
+             </xsl:otherwise>
+           </xsl:choose>
+         </xsl:when>
+
+         <xsl:when test="@quantity and @unit='cm'">
+            <xsl:choose>
+               <xsl:when
+                  test="desc = 'vestiges' and @reason = 'illegible'">
+                  <xsl:call-template name="tpl-vest">
+                     <xsl:with-param name="circa" select="$circa"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:apply-templates/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:text> </xsl:text>
+                  <xsl:value-of select="$circa"/>
+                  <xsl:value-of select="@quantity"/>
+                  <xsl:text> cm </xsl:text>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:when>
+
+         <xsl:otherwise>
+            <xsl:choose>
+               <xsl:when
+                  test="desc = 'vestiges' and @reason = 'illegible'">
+                  <xsl:call-template name="tpl-vest">
+                     <xsl:with-param name="circa" select="$circa"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:when test="$parm-leiden-style = 'edh-itx'">
+                  <xsl:text>6</xsl:text>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:text> ? </xsl:text>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:copy-of select="$cur-dot"/>
+                  <xsl:apply-templates/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
 
   <xsl:template match="rdf:Description">
     <xsl:value-of select="@rdf:about"/>

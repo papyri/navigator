@@ -43,12 +43,14 @@ RUN mkdir -p /srv/data/papyri.info/idp.data/ && \
 RUN chgrp -R 0 /usr/local/tomcat/webapps/ && \
     chmod -R g=u /usr/local/tomcat/webapps/
 
-# Add git safe directories (more secure than writable .gitconfig)
-RUN git config --global --add safe.directory /srv/data/papyri.info/pn/docs && \
-    git config --global --add safe.directory /srv/data/papyri.info/idp.data && \
-    git config --global --add safe.directory /srv/data/papyri.info/pn/idp.html && \
+# Add git safe directories to config file
+RUN git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/pn/docs && \
+    git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/idp.data && \
+    git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/pn/idp.html && \
     # For indexing-jobs
-    git config --global --add safe.directory /srv/data/papyri.info/git/navigator/epidoc-xslt
+    git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/git/navigator/epidoc-xslt
+
+ENV GIT_CONFIG_GLOBAL=/srv/data/papyri.info/git/.gitconfig
 
 # Make Tomcat conf directory writable for OpenShift
 RUN chgrp -R 0 /usr/local/tomcat/conf/ && \
