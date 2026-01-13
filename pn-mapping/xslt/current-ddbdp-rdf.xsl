@@ -4,7 +4,7 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dct="http://purl.org/dc/terms/"
   xmlns:foaf="http://xmlns.com/foaf/0.1/"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:pi="http://papyri.info/ns/"
   exclude-result-prefixes="xs tei" 
   expand-text="yes"
   version="3.0">

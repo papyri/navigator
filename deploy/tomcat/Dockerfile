@@ -43,6 +43,10 @@ RUN mkdir -p /srv/data/papyri.info/idp.data/ && \
 RUN chgrp -R 0 /usr/local/tomcat/webapps/ && \
     chmod -R g=u /usr/local/tomcat/webapps/
 
+# Papyri git automation user
+RUN git config --file /srv/data/papyri.info/git/.gitconfig user.name "Papyri Automation" && \
+    git config --file /srv/data/papyri.info/git/.gitconfig user.email "automation@papyri.info"
+
 # Add git safe directories to config file
 RUN git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/pn/docs && \
     git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/idp.data && \
