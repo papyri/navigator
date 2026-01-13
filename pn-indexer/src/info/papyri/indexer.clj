@@ -928,11 +928,8 @@
   (dosync (ref-set html (ConcurrentLinkedQueue.)))
   (if (nil? (first args))
     (do
-      (println "Queueing Current DDbDP...")
-      (queue-collection (str filepath "/DDbDP"))
-      (println (str "Queued " (count @html) " documents."))
-      (println "Queueing Current DCLP...")
-      (queue-collection (str filepath "/DCLP"))
+      (println "Queueing Current")
+      (queue-collections "https://papyri.info/current" '() ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing Historical Editions...")
       (queue-collections "https://papyri.info/editions" '() ())
