@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:pi="http://papyri.info/ns/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:dct="http://purl.org/dc/terms/"
   xmlns:foaf="http://xmlns.com/foaf/0.1/"
@@ -69,6 +69,7 @@
       <xsl:choose>
         <xsl:when test="//tei:idno[@type = 'HGV'][not(contains(., ' '))]">
           <xsl:for-each select="//tei:idno[@type = 'HGV']">
+            <!-- We don't currently use source-for directly, but needed a reciprocal term for dc:source so we could do this: -->
             <pi:source-for>
               <rdf:Description rdf:about="https://{$domain}/current/{.}/source">
                 <dct:source rdf:resource="{$id}"/>
