@@ -510,7 +510,7 @@
                       <xsl:call-template name="tm-metadata">
                         <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
                       </xsl:call-template>
-                      <xsl:catch><xsl:message>{pi:get-filename(., 'json')} not available.</xsl:message></xsl:catch>
+                      <xsl:catch><xsl:message><xsl:value-of select="pi:get-filename(., 'json')"/> not available.</xsl:message></xsl:catch>
                     </xsl:try>
                   </xsl:for-each>
                   <xsl:if test="$apis">
@@ -549,7 +549,7 @@
                     <xsl:call-template name="tm-metadata">
                       <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
                     </xsl:call-template>
-                    <xsl:catch><xsl:message>{pi:get-filename(., 'json')} not available.</xsl:message></xsl:catch>
+                    <xsl:catch><xsl:message><xsl:value-of select="pi:get-filename(., 'json')"/> not available.</xsl:message></xsl:catch>
                   </xsl:try>
                 </xsl:for-each>
                 <div class="metadata">
@@ -881,13 +881,18 @@
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:text>Historical Edition: </xsl:text>
-        <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
-        <xsl:if test="doc-available($current-file)">
-          <xsl:variable name="current" select="doc($current-file)"/>
-          <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
-          <xsl:variable name="ref" select="$current//t:body/t:head/t:ref[contains(@target, $filename)]"/>
-          <xsl:value-of select="$ref/t:title"/> <xsl:if test="not(contains($ref/t:title, $ref/t:date))"> (<xsl:value-of select="$ref/t:date"/>)</xsl:if>
-        </xsl:if>        
+        <xsl:try>
+          <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
+          <xsl:if test="doc-available($current-file)">
+            <xsl:variable name="current" select="doc($current-file)"/>
+            <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+            <xsl:variable name="ref" select="$current//t:body/t:head/t:ref[contains(@target, $filename)]"/>
+            <xsl:value-of select="$ref/t:title"/> <xsl:if test="not(contains($ref/t:title, $ref/t:date))"> (<xsl:value-of select="$ref/t:date"/>)</xsl:if>
+          </xsl:if> 
+          <xsl:catch>
+            <xsl:message>ERROR: Can't find current file for <xsl:value-of select="/base-uri()"/>. Sources for: <xsl:value-of select="$sources-for"/>.</xsl:message>
+          </xsl:catch>
+        </xsl:try>
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>

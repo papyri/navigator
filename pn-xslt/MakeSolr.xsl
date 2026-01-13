@@ -74,7 +74,6 @@
   <xsl:include href="pi-functions.xsl"/>
 
   <xsl:template match="/">
-    <xsl:message>Relations: <xsl:value-of select="$related"/></xsl:message>
     <add>
       <doc>
         <field name="project">IDP</field>

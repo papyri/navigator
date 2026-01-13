@@ -25,6 +25,7 @@ for f in `grep -Rl -E "<idno type=\"TM\">\S+\s" $1/DDbDP`; do
     done
 done
 ls -R $1/DCLP | grep ".xml" | sed 's/[^0-9]*//g' >> tm_numbers.txt
+cat replacements.txt >> tm_numbers.txt
 sort -un tm_numbers.txt -o tm_numbers.txt
 
 # Build exclude list (files modified in last 2 weeks)

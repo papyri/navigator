@@ -185,6 +185,11 @@ a.facet-constraint .constraint-label {
   }
 }
 
+/* Highlights */
+mark.highlight {
+  padding: 0;
+}
+
 table#search-results-table {
   th {
     background-color: var(--bs-light);
