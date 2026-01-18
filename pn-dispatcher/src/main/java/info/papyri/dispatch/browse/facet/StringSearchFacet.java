@@ -793,8 +793,13 @@ public class StringSearchFacet extends Facet{
             paramNumber = matcher.group(1);
 
         }
-
-        SearchClause clause = searchClauses.get(Integer.valueOf(paramNumber)).get(0);
+        ArrayList clauses = searchClauses.get(Integer.valueOf(paramNumber));
+        SearchClause clause;
+        if(clauses != null){
+            clause = searchClauses.get(Integer.valueOf(paramNumber)).get(0);
+        } else {
+            return "";
+        }
 
         String searchType = clause.parseForSearchType().name();
         // user-defined searches use the name of the user-entered field as their

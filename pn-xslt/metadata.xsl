@@ -187,7 +187,7 @@
               <tr>
                 <th>Publications</th>
                 <td><xsl:for-each select="array:flatten(map:get($doc, 'publications'))">
-                    {.('title')} (<xsl:for-each select="array:flatten(.('editors'))">{.('name')}<xsl:if test="position() ne last()"> / </xsl:if></xsl:for-each> {.('date')}
+                    {.('title')} (<xsl:for-each select="array:flatten(.('editors'))[.('id') ne 0]">{.('name')}<xsl:if test="position() ne last()"> / </xsl:if></xsl:for-each>) {.('date')}<xsl:if test="position() ne last()">, </xsl:if>
                 </xsl:for-each></td>
               </tr>
               <!-- Inventory Number -->

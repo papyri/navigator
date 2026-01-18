@@ -638,9 +638,10 @@ public class FileUtils {
   }
 
   public String highlight(Pattern[] patterns, String t) {
-    List<String> exclusions = getExclusions(t);
-    String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
-
+    List<String> nonbreaking = getExclusions(t, excludeNonBreaking);
+    String text = t.toString().replaceAll(excludeNonBreaking, "ⓑⓑⓑ");
+    List<String> exclusions = getExclusions(t, exclude);
+    text = text.replaceAll(exclude, "ⓐⓐⓐ");
     int index = 0;
     for (Pattern pattern : patterns) {
       // If pattern is something dumb, like '.', skip it.
@@ -666,15 +667,36 @@ public class FileUtils {
     int i = 0;
     int start = 0;
     Matcher m = p.matcher(text);
-    StringBuilder result = new StringBuilder();
+    StringBuilder restore1 = new StringBuilder();
     while (m.find()) {
-      result.append(text.substring(start, m.start()));
-      result.append(exclusions.get(i));
+      restore1.append(text.substring(start, m.start()));
+      restore1.append(exclusions.get(i));
       start = m.end();
       i++;
     }
-    result.append(text.substring(start));
-    return result.toString().replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
+    restore1.append(text.substring(start));
+    text = restore1.toString();
+    p = Pattern.compile("ⓑⓑⓑ");
+    i = 0;
+    start = 0;
+    m = p.matcher(text);
+    StringBuilder restore2 = new StringBuilder();
+    while (m.find()) {
+      restore2.append(text.substring(start, m.start()));
+      restore2.append(exclusions.get(i));
+      start = m.end();
+      i++;
+    }
+    restore2.append(text.substring(start));
+    text = restore2.toString();
+    StringBuilder result = new StringBuilder();
+    for (String l : text.split("\n")) {
+      String line = l.replaceAll("Ⓐ+([^-Ⓑ]+-)", hlStart + "$1" + hlEnd);
+      line = line.replaceAll("(<span class=\"linecontent\">)([^ⒶⒷ]+)Ⓑ+", "$1" + hlStart + "$2" + hlEnd );
+      line = line.replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
+      result.append(line + "\n");
+    }
+    return result.toString();
   }
 
   public List<String> highlightMatches(String t, Pattern[] patterns) {
@@ -945,7 +967,9 @@ public class FileUtils {
           } else {
             term = qbit.trim();
           }
-
+          if(term.startsWith("(")) {
+            term = term.substring(1);
+          }
           try{
               term = URLDecoder.decode(term, "UTF-8");
           }catch(UnsupportedEncodingException uee){}
@@ -966,7 +990,6 @@ public class FileUtils {
 
       Pattern[] patt = new Pattern[patterns.size()];
       return patterns.toArray(patt);
-
   }
 
     /**
@@ -979,9 +1002,9 @@ public class FileUtils {
       return Normalizer.normalize(in, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     }
 
-  private List<String> getExclusions(String t) {
+  private List<String> getExclusions(String t, String pattern) {
     List<String> exclusions = new ArrayList<String>();
-    Pattern exPattern = Pattern.compile(exclude);
+    Pattern exPattern = Pattern.compile(pattern);
     Matcher exMatch = exPattern.matcher(t);
     while (exMatch.find()) {
       exclusions.add(t.substring(exMatch.start(), exMatch.end()));
@@ -1099,8 +1122,10 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ|Ⓜ[0-9a-z]+\\\\.ⓞ)*";
-  private static String exclude = "(<span\\s[^>]+>[^<]+</span>|<a\\s[^>]+>[^<]+</a>|<[^>]+>|&\\w+;)";
+  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⓑⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ|Ⓜ[0-9a-z]+\\\\.ⓞ)*";
+  private static final String excludeNonBreaking = "(\\s*<div[^>]*break=\"no[^>]+>)";
+  // Match spans containing line numbers, links, start and end tags, and entities.
+  private static String exclude = "(<span\\sclass=\"linenumber[^>]*>[^<]+<\\/span>|<a\\s[^>]+>[^<]+</a>|\\s+<div[^>]+>|<[^>]+>|&\\w+;|-.{0,3}\\n\\w+\\.\\s+)";
   private static String lineNum = "((\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNumInSupplied = "((?<![-])-\\](\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNum = "(-(\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";

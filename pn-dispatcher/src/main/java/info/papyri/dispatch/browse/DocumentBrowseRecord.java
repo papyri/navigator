@@ -839,7 +839,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
     if ("".equals(solrQueryString)) {
       return "";
     }
-    String sq = ("".equals(highlightString) ? "?" : "&") + solrQueryString;
+    String sq = ("".equals(highlightString) ? "?" : "&") + URLEncoder.encode(solrQueryString);
     sq += "&p=" + String.valueOf(position) + "&t=" + String.valueOf(total);
     return scrubURL(sq);
 

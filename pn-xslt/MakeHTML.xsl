@@ -890,7 +890,7 @@
             <xsl:value-of select="$ref/t:title"/> <xsl:if test="not(contains($ref/t:title, $ref/t:date))"> (<xsl:value-of select="$ref/t:date"/>)</xsl:if>
           </xsl:if> 
           <xsl:catch>
-            <xsl:message>ERROR: Can't find current file for <xsl:value-of select="/base-uri()"/>. Sources for: <xsl:value-of select="$sources-for"/>.</xsl:message>
+            <xsl:message>ERROR: Can't find current file for <xsl:value-of select="document-uri(/)"/>. Sources for: <xsl:value-of select="$sources-for"/>.</xsl:message>
           </xsl:catch>
         </xsl:try>
       </xsl:when>
@@ -1884,139 +1884,6 @@
   <xsl:template match="t:body/t:head">
     <xsl:apply-templates/>
   </xsl:template>
-  
-  <!-- Override template in htm-teilb.xsl 
-       Print <br> for all line breaks, including the first. Preserve @n attribute in @data-line.
-  -->
-  <xsl:template match="t:lb">
-    <xsl:param name="parm-edn-structure" tunnel="yes" required="no"/>
-    <xsl:param name="parm-edition-type" tunnel="yes" required="no"/>
-    <xsl:param name="parm-leiden-style" tunnel="yes" required="no"/>
-    <xsl:param name="parm-line-inc" tunnel="yes" required="no"/>
-    <xsl:param name="parm-verse-lines" tunnel="yes" required="no"/>
-    <xsl:param name="location" tunnel="yes" required="no"/>
-    
-    <xsl:choose>
-      <xsl:when test="ancestor::t:lg and $parm-verse-lines = 'on'">
-        <xsl:apply-imports/>
-        <!-- use the particular templates in teilb.xsl -->
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="div-loc">
-          <xsl:for-each select="ancestor::t:div[@type = 'textpart']">
-            <xsl:value-of select="@n"/>
-            <xsl:text>-</xsl:text>
-          </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="line">
-          <xsl:if test="@n">
-            <xsl:value-of select="@n"/>
-          </xsl:if>
-        </xsl:variable>
-        <!-- print hyphen if break=no  -->
-        <xsl:if test="(@break='no' or @type='inWord')">
-          <xsl:choose>
-            <!--    *unless* the lb is first in its ancestor div  -->
-            <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1])"/>
-            <!-- TODO: The following two are in contention -->
-            <xsl:when test="($parm-leiden-style = 'ddbdp' and ((not(ancestor::*[name() = 'TEI'])) or $location='apparatus')) or ($parm-edn-structure='inslib' and ancestor::t:div[@type='apparatus'])" />                                      
-            <!--   *or unless* the second part of an app in ddbdp  -->
-            <xsl:when test="(ancestor::t:corr or ancestor::t:reg or ancestor::t:rdg or ancestor::t:del[parent::t:subst])"/>
-            <!--  *unless* previous line ends with space / g / supplied[reason=lost]  (if not MedCyprus project) -->
-            <!-- in which case the hyphen will be inserted before the space/g r final ']' of supplied
-                            (tested by EDF:f-wwrap in functions.xsl, which is called by teisupplied.xsl, teig.xsl and teispace.xsl) -->
-            <xsl:when
-              test="
-              (preceding-sibling::node()[1][local-name() = 'space' or
-              local-name() = 'g' or (local-name() = 'supplied' and @reason = 'lost') or
-              (normalize-space(.) = ''
-              and preceding-sibling::node()[1][local-name() = 'space' or
-              local-name() = 'g' or (local-name() = 'supplied' and @reason = 'lost')])])
-              and not($parm-leiden-style='medcyprus')"/>
-            <!-- *or unless* this break is accompanied by a paragraphos mark -->
-            <!-- in which case the hypen will be inserted before the paragraphos by code in htm-teimilestone.xsl -->
-            <xsl:when
-              test="preceding-sibling::node()[not(self::text() and normalize-space(self::text()) = '')][1]/self::t:milestone[@rend = 'paragraphos']"/>
-            <xsl:otherwise>
-              <xsl:text>-</xsl:text>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:if>
-
-        <xsl:choose>
-          <xsl:when
-            test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch') 
-            and (ancestor::t:sic 
-            or ancestor::t:reg
-            or ancestor::t:rdg or ancestor::t:del[ancestor::t:choice])
-            or ancestor::t:del[@rend='corrected'][parent::t:subst]">
-            <xsl:choose>
-              <xsl:when test="@break='no' or @type='inWord'">
-                <xsl:text>|</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text> | </xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when
-            test="($parm-leiden-style = ('ddbdp','dclp') and ((not(ancestor::*[name() = 'TEI'])) or $location='apparatus')) or ($parm-edn-structure='inslib' and ancestor::t:div[@type='apparatus'])">
-            <xsl:choose>
-              <xsl:when test="@break = 'no' or @type = 'inWord'">
-                <xsl:text>|</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text> | </xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:otherwise>
-            <br id="a{$div-loc}l{$line}" data-line="{$line}"/>
-            <xsl:if test="@rend">
-              <span>
-                <xsl:if test="@rend">
-                  <xsl:attribute name="class">
-                    <xsl:value-of select="concat('lb ',@rend)"/>
-                  </xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                  <xsl:when test="@rend='inverse'">(inverse) </xsl:when>
-                  <xsl:when test="@rend='perpendicular'">(perpendicular) </xsl:when>
-                </xsl:choose>
-              </span>                     
-            </xsl:if>
-          </xsl:otherwise>
-        </xsl:choose>
-        <xsl:choose>
-          <xsl:when test="$location = 'apparatus'"/>
-          <xsl:when
-            test="not(number(@n)) and ($parm-leiden-style = ('ddbdp','dclp','sammelbuch','medcyprus'))">
-            <!--         non-numerical line-nos always printed in DDbDP and MedCyprus         -->
-            <xsl:call-template name="margin-num"/>
-          </xsl:when>
-          <xsl:when
-            test="
-            number(@n) and @n mod number($parm-line-inc) = 0 and not(@n = 0) and
-            not(following::t:*[1][local-name() = 'gap' or local-name() = 'space'][@unit = 'line'] and
-            ($parm-leiden-style = ('ddbdp','dclp','sammelbuch')))">
-            <!-- prints line-nos divisible by stated increment, unless zero
-                            and unless it is a gap line or vacat in DDbDP -->
-            <xsl:call-template name="margin-num"/>
-          </xsl:when>
-          <xsl:when
-            test="$parm-leiden-style = ('ddbdp','dclp') and preceding-sibling::t:*[1][local-name() = 'gap'][@unit = 'line']">
-            <!-- always print line-no after gap line in ddbdp -->
-            <xsl:call-template name="margin-num"/>
-          </xsl:when>
-          <xsl:when
-            test="$parm-leiden-style = ('ddbdp','dclp') and following::t:lb[1][ancestor::t:reg[following-sibling::t:orig[not(descendant::t:lb)]]]">
-            <!-- always print line-no when broken orig in line, in ddbdp -->
-            <xsl:call-template name="margin-num"/>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
 
   <!-- Override margin-num template from epidoc-xslt/htm-teilb.xsl
        We handle line numbers in segment-transcription instead, so this outputs nothing -->
@@ -2057,58 +1924,53 @@
 
 
   <xsl:template match="span[@class='ab']" mode="segment-transcription">
-    <!-- Output the ab span wrapper -->
-    <span class="ab">
-      <!-- Group content by line breaks -->
-      <xsl:for-each-group select="node()" group-starting-with="br[@id]">
-        <xsl:choose>
-          <!-- First group before any lb element -->
-          <xsl:when test="not(current-group()[1][self::br])">
-            <xsl:apply-templates select="current-group()"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:variable name="current-line" select="current-group()[1]/@data-line"/>
-            <div class="text-line">
-              <xsl:if test="$current-line">
-                <xsl:attribute name="data-line">
-                  <xsl:value-of select="$current-line"/>
+    <!-- Group content by line breaks -->
+    <xsl:for-each-group select="node()" group-starting-with="pn-lb">
+      <xsl:choose>
+        <!-- First group before any lb element -->
+        <xsl:when test="not(current-group()[1][self::pn-lb])">
+          <xsl:apply-templates select="current-group()"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="current-line" select="current-group()[1]/@data-line"/>
+          <div class="text-line" id="{current-group()[1]/@id}">
+            <xsl:for-each select="@*">
+              <xsl:copy-of select="."/>
+            </xsl:for-each>
+            <xsl:attribute name="aria-label">
+              <xsl:text>Line </xsl:text>
+              <xsl:value-of select="$current-line"/>
+            </xsl:attribute>
+            <!-- Add line number span for all lines -->
+            <xsl:if test="$current-line">
+              <span>
+                <xsl:attribute name="class">
+                  <xsl:text>linenumber</xsl:text>
+                  <xsl:if test="not(number($current-line) and number($current-line) mod number($line-inc) = 0 and not($current-line = '0'))">
+                    <xsl:text> initially-hidden</xsl:text>
+                  </xsl:if>
                 </xsl:attribute>
-                <xsl:attribute name="aria-label">
-                  <xsl:text>Line </xsl:text>
-                  <xsl:value-of select="$current-line"/>
-                </xsl:attribute>
-              </xsl:if>
-              <!-- Add line number span for all lines -->
-              <xsl:if test="$current-line">
-                <span>
-                  <xsl:attribute name="class">
-                    <xsl:text>linenumber</xsl:text>
-                    <xsl:if test="not(number($current-line) and number($current-line) mod number($line-inc) = 0 and not($current-line = '0'))">
-                      <xsl:text> initially-hidden</xsl:text>
-                    </xsl:if>
-                  </xsl:attribute>
-                  <xsl:value-of select="$current-line"/>
+                <xsl:value-of select="$current-line"/>
+              </span>
+            </xsl:if>
+            <!-- Always wrap remaining content in linecontent span, even if empty -->
+            <xsl:choose>
+              <xsl:when test="count(current-group()) > 1">
+                <!-- Normal case: wrap the remaining content -->
+                <span class="linecontent">
+                  <xsl:apply-templates select="current-group()[position() > 1]" mode="segment-transcription"/>
                 </span>
-              </xsl:if>
-              <!-- Always wrap remaining content in linecontent span, even if empty -->
-              <xsl:choose>
-                <xsl:when test="count(current-group()) > 1">
-                  <!-- Normal case: wrap the remaining content -->
-                  <span class="linecontent">
-                    <xsl:apply-templates select="current-group()[position() > 1]" mode="segment-transcription"/>
-                  </span>
-                </xsl:when>
-                <xsl:otherwise>
-                  <!-- Edge case: no content after lb, create empty wrapper -->
-                  <span class="linecontent">
-                  </span>
-                </xsl:otherwise>
-              </xsl:choose>
-            </div>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:for-each-group>
-    </span>
+              </xsl:when>
+              <xsl:otherwise>
+                <!-- Edge case: no content after lb, create empty wrapper -->
+                <span class="linecontent">
+                </span>
+              </xsl:otherwise>
+            </xsl:choose>
+          </div>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each-group>
   </xsl:template>
 
 
@@ -2409,6 +2271,26 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
+  
+  <!-- Override template in teilb.xsl -->
+  <xsl:template match="t:lb">
+    <xsl:variable name="div-loc">
+      <xsl:for-each select="ancestor::t:div[@type = 'textpart']">
+        <xsl:value-of select="@n"/>
+        <xsl:text>-</xsl:text>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:variable name="line">
+      <xsl:if test="@n">
+        <xsl:value-of select="@n"/>
+      </xsl:if>
+    </xsl:variable>
+    <pn-lb id="a{$div-loc}l{$line}" data-line="{$line}">
+      <xsl:for-each select="@*">
+        <xsl:attribute name="data-{local-name()}"><xsl:value-of select="."/></xsl:attribute>
+      </xsl:for-each>
+    </pn-lb>
+  </xsl:template>
 
   <xsl:template match="rdf:Description">
     <xsl:value-of select="@rdf:about"/>
