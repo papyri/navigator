@@ -728,7 +728,7 @@ public class IdentifierFacet extends Facet{
     @Override
     String getToolTipText(){
 
-        return "Locate documents by publication or collection information";
+        return "";
 
     }
 
@@ -902,6 +902,15 @@ public class IdentifierFacet extends Facet{
             html.append(cl);
             html.append(this.param.getLabel());
             html.append(lbe);
+
+            // tooltip
+            String tooltipText = (this.param == IdParam.SERIES)
+                ? "Locate documents by publication"
+                : "Locate documents by collection information";
+            html.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"" + tooltipText + "\">");
+            html.append("<span class=\"visually-hidden\">More Information</span>");
+            html.append("<span class=\"ms-1 bi bi-info-circle\"></span>");
+            html.append("</a>");
 
             // select open
             html.append(sls);
