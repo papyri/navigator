@@ -26,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -41,6 +43,8 @@ public class MDReader extends HttpServlet {
   private static final Parser PARSER = Parser.builder(OPTIONS).build();
   private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
   private static final Logger LOGGER = Logger.getLogger("pn-dispatch");
+  // Pattern to extract H1 heading from markdown (line starting with "# ")
+  private static final Pattern H1_PATTERN = Pattern.compile("^#\\s+(.+)$", Pattern.MULTILINE);
 
   @Override
   public void init(ServletConfig config) {
@@ -86,9 +90,19 @@ public class MDReader extends HttpServlet {
           while ((c = reader.read(ch)) > 0) {
             mdf.append(ch, 0, c);
           }
+          // Extract H1 heading from markdown for page title
+          String pageTitle = "Papyri.info"; // default fallback
+          Matcher h1Matcher = H1_PATTERN.matcher(mdf.toString());
+          if (h1Matcher.find()) {
+            pageTitle = h1Matcher.group(1).trim() + " | Papyri.info";
+          }
           reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
           String line;
           while ((line = reader.readLine()) != null) {
+            // Replace title tag content with extracted H1
+            if (line.contains("<title>") && line.contains("</title>")) {
+              line = line.replaceAll("<title>[^<]*</title>", "<title>" + pageTitle + "</title>");
+            }
             out.println(line);
             cacheOut.println(line);
             if (line.contains("<div class=\"markdown\">")) {
