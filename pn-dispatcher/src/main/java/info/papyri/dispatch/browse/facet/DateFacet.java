@@ -1115,6 +1115,12 @@ public class DateFacet extends Facet {
             Boolean onlyOneValue = valuesAndCounts.size() <= 1;
             String defaultSelected = onlyOneValue ? "" : "selected=\"true\"";
             html.append("<label class=\"form-label\" for=\"id-date-start\">Date On or After</label>");
+            html.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"");
+            html.append(getAfterWhichToolTipText());
+            html.append("\">");
+            html.append("<span class=\"visually-hidden\">More Information</span>");
+            html.append("<span class=\"ms-1 bi bi-info-circle\"></span>");
+            html.append("</a>");
             html.append("<select class=\"form-select\" name=\"");
             html.append(FacetParam.DATE_START.name());
             html.append("\" id=\"id-date-start\"");
@@ -1527,6 +1533,12 @@ public class DateFacet extends Facet {
             Boolean onlyOneValue = valuesAndCounts.size() <= 1;
             String defaultSelected = onlyOneValue  ? " selected=\"true\"" : "";
             html.append("<label class=\"form-label\" for=\"id-date-end\">Date Before</label>");
+            html.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"");
+            html.append(getBeforeWhichToolTipText());
+            html.append("\">");
+            html.append("<span class=\"visually-hidden\">More Information</span>");
+            html.append("<span class=\"ms-1 bi bi-info-circle\"></span>");
+            html.append("</a>");
             html.append("<select class=\"form-select\" name=\"");
             html.append(FacetParam.DATE_END.name());
             html.append("\" id=\"id-date-end\"");

@@ -119,7 +119,13 @@ public class HasImagesFacet extends Facet {
         html.append("<div class=\"facet-widget bg-light p-3 mb-3\" id=\"img-select\" title=\"");
         html.append(getToolTipText());
         html.append("\">");
-        html.append("<div class=\"form-label\">Only Records with Images From:</div>");
+        html.append("<div class=\"form-label d-inline-block\">Only Records with Images From:</div>");
+        html.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"");
+        html.append(getToolTipText());
+        html.append("\">");
+        html.append("<span class=\"visually-hidden\">More Information</span>");
+        html.append("<span class=\"ms-1 bi bi-info-circle\"></span>");
+        html.append("</a>");
 
         html.append("<div class=\"form-check form-check-inline\">");
         html.append(chbx);
