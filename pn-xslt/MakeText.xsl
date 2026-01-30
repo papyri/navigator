@@ -2,7 +2,7 @@
 <!-- $Id: start-txt.xsl 1510 2008-08-14 15:27:51Z zau $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
-                xmlns:pi="http://papyri.info/ns"
+                xmlns:pi="http://papyri.info/ns/"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="2.0" exclude-result-prefixes="">
   <xsl:import href="pi-global-varsandparams.xsl"/>

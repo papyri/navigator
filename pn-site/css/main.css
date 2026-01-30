@@ -709,6 +709,10 @@ body.author-browse .btn-group .btn {
   pointer-events: none;
 }
 
+#edition .text-line:has(+ .text-line[data-break="no"]) {
+  content: "-";
+}
+
 #edition .text-line:hover {
   background-color: rgba(0,0,0,0.025);
 }

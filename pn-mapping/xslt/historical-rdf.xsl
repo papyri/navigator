@@ -11,8 +11,15 @@
   exclude-result-prefixes="xs tei" version="3.0">
 
   <xsl:output omit-xml-declaration="yes" indent="yes" />
+  <xsl:import href="../../pn-xslt/pi-functions.xsl"/>
   <xsl:param name="root">/srv/data/papyri.info/idp.data</xsl:param> <!-- use idp.data root directory (the one in which you will find DDB_EpiDoc_XML, HGV_meta_EpiDoc etc.) -->
   <xsl:param name="domain" select="'papyri.info'"/> <!-- for the DCLP project overwrite with 'dclp.atlantides.org' -->
+  <xsl:param name="path" select="$root"/> <!-- pi-functions uses the variable name $path -->
+  
+  <xsl:variable name="resolve-uris" select="false()"/>
+  <xsl:variable name="tmbase"/>
+  <xsl:variable name="outbase"/>
+  <xsl:variable name="abbreviation-marker"/>
 
   <xsl:template match="/tei:TEI">
     <xsl:variable name="filename" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='filename'])"/>
@@ -31,14 +38,18 @@
       </dct:identifier>
       <xsl:for-each select="distinct-values(//tei:body/tei:head/tei:ref[@type='reprint-in']/@n)">
         <xsl:for-each select="tokenize(., '\|')">
-          <dct:hasVersion rdf:resource="https://{$domain}/editions/{replace(., ';', '/')}/source"/>
+          <xsl:variable name="url">https://{$domain}/editions/{replace(., ';', '/')}/source</xsl:variable>
+          <xsl:if test="doc-available(concat('file://', pi:get-filename($url, 'xml')))">
+            <dct:hasVersion rdf:resource="{$url}"/>
+          </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="//tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-from']">
         <xsl:for-each select="tokenize(@n, '\|')">
-          <xsl:if test="matches(., '^\d+$')">
-            <dct:versionOf rdf:resource="https://{$domain}/editions/{replace(., ';', '/')}/source"/>
+          <xsl:variable name="url">https://{$domain}/editions/{replace(., ';', '/')}/source</xsl:variable>
+          <xsl:if test="doc-available(concat('file://', pi:get-filename($url, 'xml')))">
+            <dct:versionOf rdf:resource="{$url}"/>
           </xsl:if>
         </xsl:for-each>
       </xsl:for-each>

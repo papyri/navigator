@@ -3,7 +3,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:dc="http://purl.org/dc/terms/" 
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:pi="http://papyri.info/ns/"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"

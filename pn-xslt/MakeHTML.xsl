@@ -3,7 +3,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:dc="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:pi="http://papyri.info/ns/"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -1061,9 +1061,9 @@
     t:g |
     t:lb[@break='no'] |
     t:add[ancestor::t:subst and not(ancestor::t:subst//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(ancestor::t:subst//*[(self::t:app | self::t:choice| self::t:foreign | self::t:num)])] |
-    t:add[not(ancestor::subst) and not(.//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(*[not(self::t:unclear | self::t:gap)])] |
+    t:add[not(ancestor::t:subst) and not(.//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(*[not(self::t:unclear | self::t:gap)])] |
     t:del[ancestor::t:subst and not(ancestor::t:subst//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(ancestor::t:subst//*[(self::t:app | self::t:choice| self::t:foreign | self::t:num)])] |
-    t:del[not(ancestor::subst) and not(.//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(*[not(self::t:unclear | self::t:gap)])] |
+    t:del[not(ancestor::t:subst) and not(.//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(*[not(self::t:unclear | self::t:gap)])] |
     t:subst[not(.//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(.//*[(self::t:app | self::t:choice | self::t:foreign | self::t:num)])] |
     t:certainty |
     t:gap |
@@ -1071,7 +1071,7 @@
     t:handShift |
     t:desc |
     t:supplied[not(.//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(.//*[(self::t:foreign | self::t:num)]) and ancestor::t:subst][not(@reason='omitted')]" 
-    mode="app-flatten">🦎<xsl:value-of select="local-name(.)"/>🦕<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="translate(., ',. ;', '🦋🐌🦕🐙')"/>"🦕</xsl:for-each>🦖<xsl:apply-templates mode="app-flatten"/>🦎/<xsl:value-of select="local-name(.)"/>🦖</xsl:template>
+    mode="app-flatten"><xsl:message>Name: <xsl:value-of select="local-name(.)"/>; Content: <xsl:copy-of select="node()"/></xsl:message>🦎<xsl:value-of select="local-name(.)"/>🦕<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="translate(., ',. ;', '🦋🐌🦕🐙')"/>"🦕</xsl:for-each>🦖<xsl:apply-templates mode="app-flatten"/>🦎/<xsl:value-of select="local-name(.)"/>🦖</xsl:template>
   
   <xsl:template match="text()[ancestor::t:expan or ancestor::t:hi or parent::t:desc]" mode="app-flatten"><xsl:value-of select="translate(., ',. &#x000A;&#x000D;' ,'🦋🐌🦕🐯🐯')"/></xsl:template>
   
