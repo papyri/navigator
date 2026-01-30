@@ -662,7 +662,7 @@ public class FacetBrowser extends HttpServlet {
 
     html.append(String.format("%,d", resultSize));
     html.append("</span>");
-    html.append(resultSize > 1 ? " hits" : " hit");
+    html.append(resultSize > 1 ? " results" : " result");
     html.append("</div>");
 
     html.append("</div><!-- closing #results-prefix -->");

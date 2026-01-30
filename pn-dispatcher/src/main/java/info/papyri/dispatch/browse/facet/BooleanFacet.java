@@ -102,6 +102,18 @@ abstract public class BooleanFacet extends Facet{
         html.append("\">");
         html.append(getDisplayName(null, null));
         html.append("</label>");
+
+        // tooltip
+        String tooltipText = getToolTipText();
+        if (tooltipText != null && !tooltipText.isEmpty()) {
+            html.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"");
+            html.append(tooltipText);
+            html.append("\">");
+            html.append("<span class=\"visually-hidden\">More Information</span>");
+            html.append("<span class=\"ms-1 bi bi-info-circle\"></span>");
+            html.append("</a>");
+        }
+
         html.append("<select");
         html.append(disabled);
         html.append(" name=\"");

@@ -19,7 +19,7 @@ public class AuthorFacet extends Facet {
 
     @Override
     String getToolTipText() {
-        return "Select documents by author/text group.";
+        return "Select documents by author/text group";
     }
     
 }
