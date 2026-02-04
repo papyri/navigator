@@ -9,13 +9,15 @@ Creating the new structure involves `git move`ing DDbDP files to both the `DDbDP
 3. Run `python3 updateddb.py </path/to/DDbDP>`. Commit the changes.
 4. Run the `DCLP-curated.sh` script in the `idp.data` repo root. Commit the changes.
 5. Run `python3 updatedclp.py </path/to/DCLP>`. Commit the changes.
+6. Run `python3 generate-current.py </path/to/idp.data>`. Git add the DDbDP folder to pick up the new files and commit the result.
 
 ## New Static
 
-6. Switch back to `master`; create a `new_static` (e.g.) branch and switch to it.
-7. Run `DDbDP-static.sh` in the `idp.data` repo root. Run `git add Historical`. Commit the changes.
-8. Run `DCLP-static.sh` in the `idp.data` repo root. Commit the changes.
-9. Run `python3 updatehistorical.py </path/to/Historical>`. Commit the changes.
+7. Switch back to `master`; create a `new_static` (e.g.) branch and switch to it.
+8. Run `DDbDP-static.sh` in the `idp.data` repo root. Run `git add Historical`. Commit the changes.
+9. Run `DCLP-static.sh` in the `idp.data` repo root. Commit the changes.
+10. Run `python3 updatehistorical.py </path/to/Historical>`. Commit the changes.
+11. Run `python3 generate-historical.py </path/to/idp.data>`. Git add the DDbDP folder to pick up the new files and commit the result.
 
 ## Merge
 
