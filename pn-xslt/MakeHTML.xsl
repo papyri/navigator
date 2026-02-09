@@ -1071,7 +1071,7 @@
     t:handShift |
     t:desc |
     t:supplied[not(.//text()[matches(., '(\s|\n|,|\.|;|;)')]) and not(.//*[(self::t:foreign | self::t:num)]) and ancestor::t:subst][not(@reason='omitted')]" 
-    mode="app-flatten"><xsl:message>Name: <xsl:value-of select="local-name(.)"/>; Content: <xsl:copy-of select="node()"/></xsl:message>🦎<xsl:value-of select="local-name(.)"/>🦕<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="translate(., ',. ;', '🦋🐌🦕🐙')"/>"🦕</xsl:for-each>🦖<xsl:apply-templates mode="app-flatten"/>🦎/<xsl:value-of select="local-name(.)"/>🦖</xsl:template>
+    mode="app-flatten">🦎<xsl:value-of select="local-name(.)"/>🦕<xsl:for-each select="@*"><xsl:value-of select="name(.)"/>="<xsl:value-of select="translate(., ',. ;', '🦋🐌🦕🐙')"/>"🦕</xsl:for-each>🦖<xsl:apply-templates mode="app-flatten"/>🦎/<xsl:value-of select="local-name(.)"/>🦖</xsl:template>
   
   <xsl:template match="text()[ancestor::t:expan or ancestor::t:hi or parent::t:desc]" mode="app-flatten"><xsl:value-of select="translate(., ',. &#x000A;&#x000D;' ,'🦋🐌🦕🐯🐯')"/></xsl:template>
   
