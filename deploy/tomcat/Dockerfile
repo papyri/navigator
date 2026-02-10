@@ -107,6 +107,6 @@ RUN cd /srv/data/papyri.info/git/navigator/pn-dispatcher && \
     mvn clean package && \
     mv target/dispatch.war /usr/local/tomcat/webapps/dispatch.war
 
-# RUN cd /srv/data/papyri.info/git/navigator/pn-sync && \
-#     mvn clean package && \
-#     mv target/sync.war /usr/local/tomcat/webapps/sync.war
+RUN cd /srv/data/papyri.info/git/navigator/pn-sync && \
+    mvn clean package && \
+    mv target/sync.war /usr/local/tomcat/webapps/sync.war

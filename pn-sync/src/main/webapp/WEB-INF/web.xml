@@ -19,6 +19,18 @@
           <param-name>mdDir</param-name>
           <param-value>/srv/data/papyri.info/pn/docs</param-value>
         </init-param>
+        <init-param>
+          <param-name>siteDocsGitBranch</param-name>
+          <param-value>master</param-value>
+        </init-param>
+        <init-param>
+          <param-name>idpDataGitBranch</param-name>
+          <param-value>master</param-value>
+        </init-param>
+        <init-param>
+          <param-name>postgresHost</param-name>
+          <param-value>localhost</param-value>
+        </init-param>
         <load-on-startup>0</load-on-startup>
      </servlet>
      <servlet-mapping>
