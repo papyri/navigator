@@ -38,6 +38,7 @@ public class MDReader extends HttpServlet {
 
   private static String DOCSHOME;
   private static String TEMPLATE;
+  private static String HOME_TEMPLATE;
   private static final DataHolder OPTIONS = new MutableDataSet().set(Parser.EXTENSIONS,
           Collections.singletonList(PNLinkExtension.create()));
   private static final Parser PARSER = Parser.builder(OPTIONS).build();
@@ -50,6 +51,11 @@ public class MDReader extends HttpServlet {
   public void init(ServletConfig config) {
     DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
+    HOME_TEMPLATE = config.getInitParameter("homeTemplate");
+    // Fall back to regular template if homeTemplate not specified
+    if (HOME_TEMPLATE == null || HOME_TEMPLATE.isEmpty()) {
+      HOME_TEMPLATE = TEMPLATE;
+    }
   }
 
   /**
@@ -71,12 +77,20 @@ public class MDReader extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
+    String requestedFile = request.getParameter("f");
     StringBuilder requestPath = new StringBuilder(DOCSHOME);
-    requestPath.append("/").append(request.getParameter("f")).append(".md");
+    requestPath.append("/").append(requestedFile).append(".md");
     File f = new File(requestPath.toString());
     File cf = new File(requestPath.toString().replaceAll("\\.md$", ".html"));
     File cfTmp = null;
     PrintWriter cacheOut = null;
+    // Use home template for index page, regular template otherwise
+    String templateToUse = "index".equals(requestedFile) ? HOME_TEMPLATE : TEMPLATE;
+    // Homepage: serve template directly without markdown processing
+    if ("index".equals(requestedFile)) {
+      ServletUtils.send(response, new File(HOME_TEMPLATE));
+      return;
+    }
     if (f.exists()) {
       if (f.lastModified() > cf.lastModified()) {
         PrintWriter out = response.getWriter();
@@ -96,7 +110,8 @@ public class MDReader extends HttpServlet {
           if (h1Matcher.find()) {
             pageTitle = h1Matcher.group(1).trim() + " | Papyri.info";
           }
-          reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
+          // reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
+          reader = new BufferedReader(new FileReader(new File(templateToUse)));
           String line;
           while ((line = reader.readLine()) != null) {
             // Replace title tag content with extracted H1
