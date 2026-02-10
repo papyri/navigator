@@ -52,7 +52,9 @@ RUN git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory 
     git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/idp.data && \
     git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/pn/idp.html && \
     # For indexing-jobs
-    git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/git/navigator/epidoc-xslt
+    git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/git/navigator/epidoc-xslt && \
+    # Canonical repo
+    git config --file /srv/data/papyri.info/git/.gitconfig --add safe.directory /srv/data/papyri.info/sosol/repo/canonical.git
 
 ENV GIT_CONFIG_GLOBAL=/srv/data/papyri.info/git/.gitconfig
 
