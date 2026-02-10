@@ -651,6 +651,10 @@ body.author-browse .btn-group .btn {
   margin-top: 2em;
 }
 
+#bibliography ul {
+  padding-left: 0;
+}
+
 .edition-content {
   flex: 1;
   min-width: 0;
