@@ -52,6 +52,7 @@ public class MDReader extends HttpServlet {
     DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
     HOME_TEMPLATE = config.getInitParameter("homeTemplate");
+    LOGGER.info("MDReader initialized with docs: " + DOCSHOME + ", template: " + TEMPLATE + ", homeTemplate: " + HOME_TEMPLATE);
     // Fall back to regular template if homeTemplate not specified
     if (HOME_TEMPLATE == null || HOME_TEMPLATE.isEmpty()) {
       HOME_TEMPLATE = TEMPLATE;
