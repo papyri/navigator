@@ -37,8 +37,39 @@ public class SyncServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    GitWrapper.init(config.getInitParameter("gitDir"), config.getServletContext().getInitParameter("dbUser"), config.getServletContext().getInitParameter("dbPass"));
-    publisher = new Publisher(config.getInitParameter("gitDir"));
+    
+    // Read from environment variables first, then fallback to context params
+    String postgresHost = System.getenv("POSTGRES_HOST") != null ? 
+      System.getenv("POSTGRES_HOST") : config.getInitParameter("postgresHost");
+    String dbUser = System.getenv("PN_DB_USER") != null ? 
+      System.getenv("PN_DB_USER") : config.getServletContext().getInitParameter("dbUser");
+    String dbPass = System.getenv("PN_DB_PASSWORD") != null ? 
+      System.getenv("PN_DB_PASSWORD") : config.getServletContext().getInitParameter("dbPass");
+    String gitDir = System.getenv("PN_GIT_DIR") != null ? 
+      System.getenv("PN_GIT_DIR") : config.getInitParameter("gitDir");
+    String pnMdDir = System.getenv("PN_MD_DIR") != null ? 
+      System.getenv("PN_MD_DIR") : config.getInitParameter("mdDir");
+    String ipdDataBranch = System.getenv("PN_IDP_DATA_GIT_BRANCH") != null ? 
+      System.getenv("PN_IDP_DATA_GIT_BRANCH") : config.getInitParameter("idpDataGitBranch");
+    String siteDocsGitBranch = System.getenv("PN_SITE_DOCS_GIT_BRANCH") != null ? 
+      System.getenv("PN_SITE_DOCS_GIT_BRANCH") : config.getInitParameter("siteDocsGitBranch");
+        
+    logger.info("Initializing SyncServlet with the following configuration:");
+    logger.info("Using postgresHost: " + postgresHost);
+    logger.info("Using dbUser: " + dbUser);
+    logger.info("Using gitDir: " + gitDir);
+    logger.info("Using mdDir: " + pnMdDir);
+    logger.info("Using ipdDataBranch: " + ipdDataBranch);
+    logger.info("Using siteDocsGitBranch: " + siteDocsGitBranch);
+    
+    GitWrapper.init(
+      postgresHost,
+      gitDir,
+      ipdDataBranch,
+      dbUser,
+      dbPass
+    );
+    publisher = new Publisher(gitDir);
     // Run at 5 minutes past the hour, and every half hour thereafter.
     Calendar cal = Calendar.getInstance();
     int start = cal.get(Calendar.MINUTE);
@@ -49,10 +80,10 @@ public class SyncServlet extends HttpServlet {
     }
     // check for updates to idp.data repo and sync them across Github and Canonical
     scheduler.scheduleWithFixedDelay(publisher, start, 30, MINUTES);
-    final File mdDir = new File(config.getInitParameter("mdDir"));
+    final File mdDir = new File(pnMdDir);
     // pull any changes to site-docs so they get published
     scheduler.scheduleWithFixedDelay(() -> {
-      ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", "master");
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", siteDocsGitBranch);
       pb.directory(mdDir);
       try {
         pb.start().waitFor();

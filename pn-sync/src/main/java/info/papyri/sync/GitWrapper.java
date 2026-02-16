@@ -33,9 +33,11 @@ public class GitWrapper {
   private static final String SPARQLSERVER = "http://localhost:8090";
   private static final Logger logger = Logger.getLogger("pn-sync");
   
-  public static GitWrapper init (String gitDir, String dbUser, String dbPass) {
+  public static GitWrapper init (String postgresHost, String gitDir, String gitBranch, String dbUser, String dbPass) {
     git = new GitWrapper();
     git.gitDir = new File(gitDir);
+    git.postgresHost = postgresHost;
+    git.gitBranch = gitBranch;
     git.dbUser = dbUser;
     git.dbPass = dbPass;
     try {
@@ -55,6 +57,8 @@ public class GitWrapper {
   }
 
   private File gitDir;
+  private String postgresHost;
+  private String gitBranch;
   /*
    * success==false means that the repos could not be synchronized for some
    * reason, perhaps a conflict, and that human intervention is called for.
@@ -71,9 +75,9 @@ public class GitWrapper {
   public static void executeSync() {
     try {
       git.pull("canonical");
-      git.pull("github");
+      git.pull("origin");
       git.push("canonical");
-      git.push("github");
+      git.push("origin");
     } catch (Exception e) {
       if (git.success) {
         git.success = false;
@@ -93,7 +97,7 @@ public class GitWrapper {
     String result = null;
     Class.forName("org.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:postgresql://localhost/pn?"
+            "jdbc:postgresql://" + git.postgresHost + "/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       ResultSet rs = st.executeQuery("SELECT hash FROM sync_history ORDER BY date DESC LIMIT 2");
@@ -113,7 +117,7 @@ public class GitWrapper {
     String result = null;
     Class.forName("org.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:postgresql://localhost/pn?"
+            "jdbc:postgresql://" + git.postgresHost + "/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       ResultSet rs = st.executeQuery("SELECT hash FROM sync_history WHERE date = (SELECT MAX(date) FROM sync_history)");
@@ -128,7 +132,7 @@ public class GitWrapper {
   private void storeHead() throws Exception {
     Class.forName("org.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:postgresql://localhost/pn?"
+            "jdbc:postgresql://" + git.postgresHost + "/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       Statement st = connect.createStatement();
       st.executeUpdate("INSERT INTO sync_history (hash, date) VALUES ('" + git.head + "', NOW())");
@@ -157,7 +161,7 @@ public class GitWrapper {
     logger.info("Starting pull on " + repo + ".");
     Process p;
     try {
-      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, "master");
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, git.gitBranch);
       pb.directory(git.gitDir);
       pb.redirectError(new File("/dev/null"));
       p = pb.start();
@@ -233,7 +237,7 @@ public class GitWrapper {
   public static List<String> getDiffsSince(String date) throws Exception {
     Class.forName("org.postgresql.Driver");
     try (Connection connect = DriverManager.getConnection(
-            "jdbc:postgresql://localhost/pn?"
+            "jdbc:postgresql://"+ git.postgresHost + "/pn?"
                     + "user=" + git.dbUser + "&password=" + git.dbPass)) {
       PreparedStatement st = connect.prepareStatement("SELECT hash FROM sync_history WHERE date > ? ORDER BY date LIMIT 1");
       st.setDate(1, Date.valueOf(date));
