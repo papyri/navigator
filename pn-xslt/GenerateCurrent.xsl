@@ -51,7 +51,7 @@
         <teiHeader>
           <fileDesc>
             <titleStmt>
-              <title>{translate($id, ';', '.')}</title>
+              <title>{replace($id, ';+', '.')}</title>
             </titleStmt>
             <publicationStmt>
               <authority>Duke Collaboratory for Classics Computing (DC3)</authority>
@@ -85,7 +85,7 @@
         <text>
           <body>
             <head xml:lang="en">
-              <ref target="https://papyri.info/editions/{translate($id, ';', '/')}">{translate($id, ';', '.')}</ref>
+              <ref target="https://papyri.info/editions/{replace($id, ';+', '/')}">{replace($id, ';+', '.')}</ref>
             </head>
             <div xml:lang="grc" type="edition" xml:space="preserve">
               <note type="ignore">This text has not been added to papyri.info yet.</note>

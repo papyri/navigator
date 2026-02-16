@@ -18,7 +18,7 @@
     <xsl:variable name="context" select="/"/>
     <xsl:for-each select="//t:idno[@type='ddb-hybrid']">
       <xsl:for-each select="tokenize(., ' ')">
-        <xsl:variable name="filename" select="concat('file://', $base, '/Historical/', translate(., ';', '/'), '.xml')"/>
+        <xsl:variable name="filename" select="concat('file://', $base, '/Historical/', translate(., ';,', '/-'), '.xml')"/>
         <xsl:if test="not(doc-available($filename))">
           <xsl:call-template name="document">
             <xsl:with-param name="id" select="."/>
@@ -55,11 +55,11 @@
         <teiHeader>
           <fileDesc>
             <titleStmt>
-              <title>{translate($id, ';', '/')}</title>
+              <title>{replace($id, ';+', '/')}</title>
             </titleStmt>
             <publicationStmt>
               <authority>Duke Collaboratory for Classics Computing (DC3)</authority>
-              <idno type="filename">{translate($id, ';', '/')}<idno type="TM">{replace($context//t:idno[@type='TM'], '[a-z]+', '')}</idno></idno>
+              <idno type="filename">{replace($id, ';+', '/')}<idno type="TM">{replace($context//t:idno[@type='TM'], '[a-z]+', '')}</idno></idno>
               <xsl:choose>
                 <xsl:when test="$type = 'ddb'"><idno type="ddb-hybrid">{$id}</idno></xsl:when>
                 <xsl:otherwise><idno type="dclp-hybrid">{$id}</idno></xsl:otherwise>

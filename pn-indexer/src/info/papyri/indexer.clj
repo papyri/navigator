@@ -538,10 +538,10 @@
   [url]
   (format "prefix bibo: <http://purl.org/ontology/bibo/>
            prefix dct: <http://purl.org/dc/terms/>
-           select ?a ?b
+           select ?source ?translation
            from <https://papyri.info/graph>
-           where { <%s> dct:hasPart ?a .
-                   ?a bibo:translationOf ?b }" url))
+           where { <%s> dct:hasPart ?source .
+                   ?translation bibo:translationOf ?source }" url))
 
 ;; ## Jena functions
 

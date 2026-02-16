@@ -434,7 +434,7 @@
                         <xsl:call-template name="tm-metadata">
                           <xsl:with-param name="doc" select="json-doc(pi:get-filename(., 'json'))"/>
                         </xsl:call-template>
-                        <xsl:catch><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'json')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:catch>
+                        <xsl:catch><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'json')"/> not available; <xsl:value-of select="."/>. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:catch>
                       </xsl:try>
                     </xsl:for-each>
                     <xsl:for-each select="$relations[contains(., '/apis/')]">
@@ -765,7 +765,7 @@
   </xsl:template>
 
   <xsl:template match="t:revisionDesc" mode="history">
-    <xsl:variable name="file-uri" select="ceiling(number(//t:idno[@type='TM'] div 1000))"/>
+    <xsl:variable name="file-uri" select="ceiling(number(//t:idno[@type='TM']) div 1000)"/>
     <div id="history" class="text">
       <div id="history-headers">
         <h3><span id="edit-history">Editorial History</span>;
