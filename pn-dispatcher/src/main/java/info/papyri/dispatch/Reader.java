@@ -76,19 +76,19 @@ public class Reader extends HttpServlet {
           response.setContentType("application/xml;charset=UTF-8");
           file = util.getXmlFile(collection, item.replace("/source", ""));
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item, "Xml");
+            file = resolveFile("https://papyri.info/" + collection + "/" + item, "Xml");
           }
         } else if (page.endsWith("text")) {
           response.setContentType("text/plain;charset=UTF-8");
           file = util.getTextFile(collection, item.replace("/text", ""));
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Text");
+            file = resolveFile("https://papyri.info/" + collection + "/" + item + "/source", "Text");
           }
         } else {
           response.setContentType("text/html;charset=UTF-8");
           file = util.getHtmlFile(collection, item);
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Html");
+            file = resolveFile("https://papyri.info/" + collection + "/" + item + "/source", "Html");
           }
         }
         if (file == null) {

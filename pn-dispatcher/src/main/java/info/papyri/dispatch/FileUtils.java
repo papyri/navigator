@@ -304,7 +304,7 @@ public class FileUtils {
           .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
           .append("/")
           .append(item)
-          .append(".xml").toString();
+          .append(".xml");
       logger.log(Level.INFO,"DDbDP Path: " + ddbPath.toString());
       if (Files.exists(Path.of(ddbPath.toString()))) {
         return ddbPath.toString();
@@ -314,7 +314,7 @@ public class FileUtils {
             .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
             .append("/")
             .append(item)
-            .append(".xml").toString();
+            .append(".xml");
         logger.log(Level.INFO,"DCLP Path: " + dclpPath.toString());
         if (Files.exists(Path.of(dclpPath.toString()))) {
           return dclpPath.toString();
@@ -335,7 +335,7 @@ public class FileUtils {
                   .append(parts[0])
                   .append(".")
                   .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+"))
-                  .append(".xml").toString();
+                  .append(".xml");
         } else {
           pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
@@ -359,21 +359,30 @@ public class FileUtils {
                 .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
-                .append(".xml").toString();
+                .append(".xml");
       }
       return pathname.toString();
     } else if ("hgvtrans".equals(collection)) {
       pathname.append("HGV_trans_EpiDoc/")
-              .append(item)
-              .append(".xml").toString();
+          .append(item)
+          .append(".xml");
+      return pathname.toString();
+    } else if ("translation".equals(collection)) {
+      if (item.matches("\\d+[a-z]*-\\d+")) {
+        pathname.append("Translations/")
+            .append((int) Math.floor(Double.parseDouble(substringBefore(item, "-").replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".xml");
+      }
       return pathname.toString();
     } else if ("dclp".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
         pathname.append("DCLP/")
-                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
-                .append(".xml").toString();
+                .append(".xml");
       }
       return pathname.toString();
     } else if ("apis".equals(collection)) {
@@ -385,7 +394,7 @@ public class FileUtils {
                 .append(parts[0])
                 .append(".apis.")
                 .append(parts[2])
-                .append(".xml").toString();
+                .append(".xml");
       }
       return pathname.toString();
     }  else if ("biblio".equals(collection)) {
@@ -393,7 +402,7 @@ public class FileUtils {
               .append((int)Math.ceil(Double.parseDouble(item) / 1000))
               .append("/")
               .append(item)
-              .append(".xml").toString();
+              .append(".xml");
       return pathname.toString();
     }
     return null;
