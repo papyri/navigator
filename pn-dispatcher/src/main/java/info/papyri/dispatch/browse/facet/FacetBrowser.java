@@ -100,7 +100,9 @@ public class FacetBrowser extends HttpServlet {
     PN_SEARCH = config.getInitParameter("pnSearchPath");
     FACET_PATH = config.getInitParameter("facetBrowserPath");
     INSTRUCTIONS_PATH = config.getInitParameter("instructionsPath");
-    SERVER_HOME = config.getInitParameter("serverHome");
+    // Use environment variable SERVER_HOME first, fallback to web.xml serverHome param
+    SERVER_HOME = System.getenv("SERVER_HOME") != null
+      ? System.getenv("SERVER_HOME") : config.getInitParameter("serverHome");
 
     if (solrClient == null) {
       synchronized (FacetBrowser.class) { 
