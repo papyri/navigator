@@ -621,7 +621,7 @@
           <h2><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="/t:TEI/t:teiHeader//t:langUsage/t:language[@ident = //t:body/t:div/@xml:lang]"/>)
             <a class="btn btn-link fw-semibold text-decoration-none" href="/translation/{/t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
           <div lang="{@xml:lang}">
-            <xsl:apply-templates>
+            <xsl:apply-templates select="//t:div[@type = 'translation']">
               <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
             </xsl:apply-templates>
           </div>
@@ -1764,6 +1764,20 @@
   
   <!-- Skip empty bibliography divs (can occur in new translations) -->
   <xsl:template match="t:div[@type='bibliography' and not(.//t:bibl[normalize-space(.)])]"/>
+  
+  <!-- Override templates in htm-teidiv -->
+  <xsl:template match="t:div[@type = 'translation']">
+    <div id="translation-{generate-id()}">
+      <xsl:apply-templates/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="t:div[@type = 'translation']//t:div[@type = 'textpart']">
+    <xsl:if test="@n">
+      <h3 class="textpartnumber-heading"><xsl:value-of select="upper-case(substring(@subtype, 1, 1))"/><xsl:value-of select="substring(@subtype, 2)"/><xsl:text> </xsl:text><xsl:value-of select="@n"/></h3>
+    </xsl:if>
+    <xsl:apply-templates/>
+  </xsl:template>
   
   <!-- Override template in htm-teidivedition -->
   <xsl:template match="t:div[@type='edition']//t:div[@type='textpart']" priority="1">
