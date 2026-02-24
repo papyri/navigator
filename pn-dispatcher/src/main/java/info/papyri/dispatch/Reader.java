@@ -129,7 +129,7 @@ public class Reader extends HttpServlet {
         Pattern[] patterns = util.buildPatterns(q);
         out.write(util.highlight(patterns, util.loadFile(f)));
       } catch (Exception e) {
-        logger.log(Level.SEVERE, "Error while writing highligted file " + f.getAbsolutePath(), e);
+        logger.log(Level.SEVERE, "Error while writing highlighted file " + f.getAbsolutePath(), e);
       } finally {
         out.close();
       }

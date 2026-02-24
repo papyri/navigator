@@ -649,7 +649,7 @@ public class FileUtils {
   public String highlight(Pattern[] patterns, String t) {
     List<String> nonbreaking = getExclusions(t, excludeNonBreaking);
     String text = t.toString().replaceAll(excludeNonBreaking, "ⓑⓑⓑ");
-    List<String> exclusions = getExclusions(t, exclude);
+    List<String> exclusions = getExclusions(text, exclude);
     text = text.replaceAll(exclude, "ⓐⓐⓐ");
     int index = 0;
     for (Pattern pattern : patterns) {
@@ -660,13 +660,13 @@ public class FileUtils {
       StringBuilder hl = new StringBuilder();
       Matcher m = pattern.matcher(text);
       while (m.find()) {
-        hl.append(text.substring(index, m.start()));
+        hl.append(text, index, m.start());
         hl.append(hlStartMark);
-        hl.append(text.substring(m.start(), m.end()));
+        hl.append(text, m.start(), m.end());
         hl.append(hlEndMark);
         index = m.end();
       }
-      if (hl.length() > 0) {
+      if (!hl.isEmpty()) {
         hl.append(text.substring(index));
         text = hl.toString();
         index = 0;
@@ -678,7 +678,7 @@ public class FileUtils {
     Matcher m = p.matcher(text);
     StringBuilder restore1 = new StringBuilder();
     while (m.find()) {
-      restore1.append(text.substring(start, m.start()));
+      restore1.append(text, start, m.start());
       restore1.append(exclusions.get(i));
       start = m.end();
       i++;
@@ -691,8 +691,8 @@ public class FileUtils {
     m = p.matcher(text);
     StringBuilder restore2 = new StringBuilder();
     while (m.find()) {
-      restore2.append(text.substring(start, m.start()));
-      restore2.append(exclusions.get(i));
+      restore2.append(text, start, m.start());
+      restore2.append(nonbreaking.get(i));
       start = m.end();
       i++;
     }
@@ -1134,7 +1134,7 @@ public class FileUtils {
   private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⓑⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ|Ⓜ[0-9a-z]+\\\\.ⓞ)*";
   private static final String excludeNonBreaking = "(\\s*<div[^>]*break=\"no[^>]+>)";
   // Match spans containing line numbers, links, start and end tags, and entities.
-  private static String exclude = "(<span\\sclass=\"linenumber[^>]*>[^<]+<\\/span>|<a\\s[^>]+>[^<]+</a>|\\s+<div[^>]+>|<[^>]+>|&\\w+;|-.{0,3}\\n\\w+\\.\\s+)";
+  private static String exclude = "(<span\\sclass=\"linenumber[^>]*>[^<]+<\\/span>|<a\\s[^>]+>[^<]+</a>|\\s+<div+>|<[^>]+>|&\\w+;|-.{0,3}\\n\\w+\\.\\s+)";
   private static String lineNum = "((\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNumInSupplied = "((?<![-])-\\](\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNum = "(-(\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";

@@ -82,7 +82,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
             String seriesRepresentation = (unicodeLabel == null || unicodeLabel.equals("")) ? series : unicodeLabel;
             String displayString = seriesRepresentation + (volume == null ? "" : " " + volume);
             displayString = displayString;
-            String html = "<li><a href='" + href + "'>" + displayString + "</li>";
+            String html = "<li><a href=\"" + href + "\">" + displayString + "</a></li>";
             return html;
             
             
