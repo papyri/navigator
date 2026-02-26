@@ -83,7 +83,7 @@
         <xsl:if test="$collection = 'editions'">
           <field name="collection">editions</field>
         </xsl:if>
-        <xsl:if test="$ddbdp = true()">
+        <xsl:if test="$ddbdp = true() and $collection = 'current'">
           <field name="collection">ddbdp</field>
         </xsl:if>
         <xsl:if test="$hgv = true()">
@@ -92,7 +92,7 @@
         <xsl:if test="$apis = true()">
           <field name="collection">apis</field>
         </xsl:if>
-        <xsl:if test="$dclp = true()">
+        <xsl:if test="$dclp = true() and $collection = 'current'">
           <field name="collection">dclp</field>
         </xsl:if>
         <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
