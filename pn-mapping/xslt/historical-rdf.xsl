@@ -24,6 +24,7 @@
   <xsl:template match="/tei:TEI">
     <xsl:variable name="filename" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='filename'])"/>
     <xsl:variable name="ldab" select="normalize-space(//tei:publicationStmt/tei:idno[lower-case(@type)='ldab'])"/>
+    <xsl:variable name="hgv" select="//tei:publicationStmt/tei:idno[lower-case(@type)='hgv']/tokenize(., ' ')"/>
     <xsl:variable name="dclp-hybrid"
       select="//tei:publicationStmt/tei:idno[lower-case(@type)='dclp-hybrid'][1]"/>
     <xsl:variable name="ddbdp-hybrid" select="//tei:publicationStmt/tei:idno[@type = 'ddb-hybrid']"/>
@@ -79,7 +80,7 @@
       
       <xsl:choose>
         <xsl:when test="//tei:idno[@type = 'HGV'][not(contains(., ' '))]">
-          <xsl:for-each select="//tei:idno[@type = 'HGV']">
+          <xsl:for-each select="//tei:idno[@type = 'HGV' and string-length(normalize-space(.)) gt 0]">
             <!-- We don't currently use source-for directly, but needed a reciprocal term for dc:source so we could do this: -->
             <pi:source-for>
               <rdf:Description rdf:about="https://{$domain}/current/{.}/source">
@@ -128,6 +129,12 @@
       
       <xsl:for-each select="$ddbdp-hybrid">
         <dct:relation rdf:resource="https://{$domain}/ddbdp/{pi:makeUnicodeSafeUri(.)}/source"/>
+      </xsl:for-each>
+
+      <xsl:for-each select="$hgv">
+        <xsl:if test="string-length(normalize-space(.)) gt 0">
+          <dct:relation rdf:resource="https://{$domain}/hgv/{.}/source"/>
+        </xsl:if>
       </xsl:for-each>
       
       <foaf:page>

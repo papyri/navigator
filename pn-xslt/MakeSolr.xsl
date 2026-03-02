@@ -79,25 +79,25 @@
         <field name="project">IDP</field>
         <xsl:if test="$collection = 'current'">
           <field name="collection">current</field>
+          <xsl:if test="$dclp = true()">
+            <field name="collection">dclp</field>
+          </xsl:if>
+          <xsl:if test="$ddbdp = true()">
+            <field name="collection">ddbdp</field>
+          </xsl:if>
+          <xsl:if test="$hgv = true()">
+            <field name="collection">hgv</field>
+          </xsl:if>
+          <xsl:if test="$apis = true()">
+            <field name="collection">apis</field>
+          </xsl:if>
         </xsl:if>
         <xsl:if test="$collection = 'editions'">
           <field name="collection">editions</field>
-        </xsl:if>
-        <xsl:if test="$ddbdp = true() and $collection = 'current'">
-          <field name="collection">ddbdp</field>
-        </xsl:if>
-        <xsl:if test="$hgv = true()">
-          <field name="collection">hgv</field>
-        </xsl:if>
-        <xsl:if test="$apis = true()">
-          <field name="collection">apis</field>
-        </xsl:if>
-        <xsl:if test="$dclp = true() and $collection = 'current'">
-          <field name="collection">dclp</field>
-        </xsl:if>
+        </xsl:if>        
         <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
-          <xsl:when test="$collection = 'current' and $ddbdp">
+          <xsl:when test="$ddbdp">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="idnos">
               <xsl:with-param name="idnos" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type != 'HGV']"/>
@@ -170,7 +170,7 @@
                 contains(., 'dclp/') or contains(., '/apis/')], 'xml') union /"/>        
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$collection = 'current' and $dclp">
+          <xsl:when test="$dclp">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="idnos">
               <xsl:with-param name="idnos" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[not(@type = ('dclp', 'filename', 'herc-fr'))]"/>
@@ -224,7 +224,7 @@
               <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml') union /"/>        
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$collection = 'hgv'">
+          <xsl:when test="$hgv">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'TM']">
@@ -260,7 +260,7 @@
                 contains(., '/apis/')], 'xml') union /"></xsl:with-param>
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$collection = 'apis'">
+          <xsl:when test="$apis">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="facetfields">
               <xsl:with-param name="docs" select="/"/>
@@ -287,29 +287,6 @@
               </field>
             </xsl:for-each>
             <xsl:call-template name="images"/>
-            <xsl:call-template name="revision-history">
-              <xsl:with-param name="docs" select="/"></xsl:with-param>
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:when test="$collection = 'editions'">
-            <field name="id"><xsl:value-of select="$id"/></field>
-            <xsl:for-each select="$relations">
-              <field name="identifier">
-                <xsl:value-of select="."/>
-              </field>
-            </xsl:for-each>
-            <xsl:call-template name="languages"/>
-            <xsl:call-template name="facetfields">
-              <xsl:with-param name="docs" select="/"/>
-              <xsl:with-param name="alterity">self</xsl:with-param>
-            </xsl:call-template>
-            <xsl:call-template name="text"><xsl:with-param name="docs" select="/"/></xsl:call-template>
-            <xsl:call-template name="images"/>
-            <xsl:call-template name="translation">
-              <xsl:with-param name="docs"
-                select="pi:get-docs(tokenize($translations, ' '), 'xml')"
-              />
-            </xsl:call-template>
             <xsl:call-template name="revision-history">
               <xsl:with-param name="docs" select="/"></xsl:with-param>
             </xsl:call-template>
