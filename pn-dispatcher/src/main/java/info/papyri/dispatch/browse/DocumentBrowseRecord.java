@@ -39,6 +39,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
   private final String language;
   private final String translationLanguages;
   private final ArrayList<String> imagePaths;
+  private final Boolean isCurrent;
   private final Boolean hasIllustration;
   private final String highlightString;
   private String solrQueryString;
@@ -52,7 +53,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
   private static final IdComparator documentComparator = new IdComparator();
   private static final Logger logger = Logger.getLogger("pn-dispatch");
 
-  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts) {
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts, Boolean isCurrent) {
     //TODO: this should be configurable
     util = new FileUtils("/srv/data/papyri.info/idp.data/", "/srv/data/papyri.info/pn/idp.html/");
     this.preferredId = tidyPreferredId(prefId);
@@ -64,6 +65,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
     this.language = tidyAncientLanguageCodes(lang);
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
+    this.isCurrent = isCurrent;
     this.hasIllustration = illus;
     this.testClause = sts.size() > 0 ? sts.get(0) : null;
     this.tempRegex = "";
@@ -449,6 +451,13 @@ public class DocumentBrowseRecord extends BrowseRecord {
     anchor.append("<a href='");
     anchor.append(generateLink());
     anchor.append("'>");
+    anchor.append("<img src=\"/images/");
+    if (isCurrent) {
+      anchor.append("current.svg\" \" alt=\"current document\"");
+    } else {
+      anchor.append("historical.svg\" alt=\"historical document\"");
+    }
+    anchor.append("width=\"16\" height=\"16\"> ");
     anchor.append(getDisplayId());
     anchor.append("</a>");
     StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier fw-semibold\" title=\"");

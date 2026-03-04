@@ -53,6 +53,7 @@ function init() {
 		initBootstrapScrollSpy();
 		initSidebar();
 		initBackToTop();
+    setCollection();
 
 		// Initialize transformation for /current/ and /editions/ pages
 		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
@@ -420,6 +421,25 @@ function getCookie(name) {
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
     }
     return null;
+}
+
+function setCollection() {
+  const params = new URLSearchParams(window.location.search);
+  const collection = params.get("COLLECTION");
+  if (collection && document.querySelector("#target-collection-current")) {
+    switch (collection) {
+      case "current":
+        document.querySelector("#target-collection-current").checked = true;
+        break;
+      case "editions":
+        document.querySelector("#target-collection-historical").checked = true;
+        break;
+      default:
+        document.querySelector("#target-collection-all").checked = true;
+    }
+  } else if (document.querySelector("#target-collection-current")) {
+    document.querySelector("#target-collection-current").checked = true;
+  }
 }
 
 /**

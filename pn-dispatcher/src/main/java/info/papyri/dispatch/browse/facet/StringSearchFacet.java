@@ -432,9 +432,17 @@ public class StringSearchFacet extends Facet{
         html.append("\" id=\"translation-label\">Translations</label>");
         html.append("  </div>");
 
-        html.append("  <div class=\"form-check form-switch\">");
-        html.append("    <input class=\"form-check-input target\" type=\"checkbox\" name=\"COLLECTION\" value=\"current\" id=\"target-collection\"/>");
-        html.append("    <label for=\"target-collection\" id=\"collection-label\">Current Editions</label>");
+        html.append("  <div class=\"form-check form-check-inline\">");
+        html.append("    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"current\" id=\"target-collection-current\"/>");
+        html.append("    <label for=\"target-collection-current\" id=\"collection-label\">Current Editions</label>");
+        html.append("  </div>");
+        html.append("  <div class=\"form-check form-check-inline\">");
+        html.append("    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"editions\" id=\"target-collection-historical\"/>");
+        html.append("    <label for=\"target-collection-historical\" id=\"collection-label\">Historical</label>");
+        html.append("  </div>");
+        html.append("  <div class=\"form-check form-check-inline\">");
+        html.append("    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"all\" id=\"target-collection-all\"/>");
+        html.append("    <label for=\"target-collection-all\" id=\"collection-label\">All</label>");
         html.append("  </div>");
         html.append("</div><!-- closing .stringsearch-section -->");
         html.append(generateHiddenFields());

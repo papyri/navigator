@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jakarta.servlet.ServletConfig;
@@ -89,6 +90,8 @@ public class FacetBrowser extends HttpServlet {
   private static Logger logger = Logger.getLogger("pn-dispatch");
 
   private static Http2SolrClient solrClient;
+
+  private static Predicate<? super Object> isCurrentCollection = s -> s.equals("current");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -437,7 +440,8 @@ public class FacetBrowser extends HttpServlet {
         Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
         ArrayList<String> allIds = getAllSortedIds(doc);
         String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-        DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchClauses);
+        Boolean isCurrent = doc.getFieldValues("collection").stream().anyMatch(isCurrentCollection);
+        DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchClauses, isCurrent);
         setLinearBrowseData(solrQuery, queryResponse, counter, record);
         records.add(record);
         counter++;
@@ -891,7 +895,7 @@ public class FacetBrowser extends HttpServlet {
    * @param facets
    * @param resultSize
    * @return The HTML used for pagination display, as a <code>String</code>
-   * @see #buildFullQueryString(java.util.EnumMap)
+   * @see #`buildFullQueryString(java.util.EnumMap)
    */
   private String doPagination(ArrayList<Facet> facets, long resultSize, int docsPerPage, int page) {
 
@@ -1010,7 +1014,7 @@ public class FacetBrowser extends HttpServlet {
    * the <code>Facet</code> and submitted by the user.
    * @param facetValue The value to be 'removed'
    * @return A filtered querystring.
-   * @see Facet#getAsFilteredQueryString(java.lang.String)
+   * @see Facet#`getAsFilteredQueryString(java.lang.String)
    */
   private String buildFilteredQueryString(ArrayList<Facet> facets, Facet relFacet, String facetParam, String facetValue, int docsPerPage) {
 

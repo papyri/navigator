@@ -362,19 +362,21 @@
                       <i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
+                <!--
                 <xsl:if test="$historical">
                   <div id="editthis" class="me-3">
                     <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
+                -->
                 <xsl:if test="$hgv and not($current)">
                   <div id="editthis" class="me-3">
                     <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-edit"></i> open in editor</a>
                   </div>
                 </xsl:if>
-                <xsl:if test="$apis and not($dclp or $ddbdp or $hgv)">
+                <xsl:if test="$apis and not($current or $dclp or $ddbdp or $hgv)">
                   <div id="editthis">
                     <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-edit"></i> open in editor</a>
@@ -659,19 +661,16 @@
       <xsl:variable name="text">
         <xsl:apply-templates select=".//t:div[@type='edition']"/>
       </xsl:variable>
-      <!-- Only show transcription header if there's actual content -->
-      <xsl:if test="normalize-space($text) != ''">
-        <xsl:choose>
-          <xsl:when test="$type = 'DCLP'">
-            <h2>DCLP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source"><i class="bi bi-xml"></i>xml</a></h2>
-          </xsl:when>
-          <xsl:otherwise>
-            <h2>DDbDP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
-          </xsl:otherwise>
-        </xsl:choose>
+      <xsl:choose>
+        <xsl:when test="$type = 'DCLP'">
+          <h2>DCLP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source"><i class="bi bi-xml"></i>xml</a></h2>
+        </xsl:when>
+        <xsl:otherwise>
+          <h2>DDbDP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
+        </xsl:otherwise>
+      </xsl:choose>
         <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
         <xsl:apply-templates select="$text" mode="sqbrackets"/>
-      </xsl:if>
 
       <div id="history" class="mb-4">
         <h2>History</h2>

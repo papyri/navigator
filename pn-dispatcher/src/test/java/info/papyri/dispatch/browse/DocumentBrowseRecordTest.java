@@ -14,7 +14,7 @@ public class DocumentBrowseRecordTest extends TestCase {
     
     public DocumentBrowseRecordTest(String testName) {
         super(testName);
-        testInstance = new DocumentBrowseRecord("test", new ArrayList<String>(), null, new ArrayList<String>(), "", "", "", new ArrayList<String>(), "", false, new ArrayList<SearchClause>());
+        testInstance = new DocumentBrowseRecord("test", new ArrayList<String>(), null, new ArrayList<String>(), "", "", "", new ArrayList<String>(), "", false, new ArrayList<SearchClause>(), true);
     }
     
     @Override
