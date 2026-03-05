@@ -753,6 +753,8 @@ function initSidebar() {
 	const sidebar = document.getElementById('sidebar');
 	const apparatus = document.getElementById('apparatus');
 	const apparatusUnder = document.getElementById('apparatus-under');
+	const translationUnder = document.getElementById('translations');
+	// const commentaryUnder = document.getElementById('TBD');
 
 	if (!sidebarSelect || !sidebar) {
 		return; // Required elements don't exist
@@ -767,43 +769,96 @@ function initSidebar() {
 		// Show sidebar by default (will be hidden for 'no-sidebar')
 		sidebar.style.display = '';
 
-		if (selectedValue === 'no-sidebar') {
-			// Hide sidebar and move apparatus content below
-			sidebar.style.display = 'none';
-			if (apparatus && apparatusUnder) {
-				apparatusUnder.innerHTML = originalApparatusContent;
-				apparatusUnder.style.display = '';
-			}
-		} else if (selectedValue === 'apparatus') {
-			// Show apparatus in sidebar
-			if (apparatus && apparatusUnder) {
-				apparatus.innerHTML = originalApparatusContent;
-				apparatusUnder.innerHTML = '';
-				apparatusUnder.style.display = 'none';
-			}
-			sidebar.innerHTML = apparatus ? apparatus.outerHTML : '';
-		} else if (selectedValue === 'commentary') {
-			// Show commentary in sidebar
-			const commentaryElement = document.getElementById('commentary');
-			if (commentaryElement) {
-				sidebar.innerHTML = commentaryElement.outerHTML;
-				// Hide apparatus below when showing commentary
-				if (apparatusUnder) {
+		switch (selectedValue) {
+			
+			case 'no-sidebar':
+				// Hide sidebar and move apparatus content under
+				sidebar.style.display = 'none';
+				if (apparatus && apparatusUnder) {
+					apparatusUnder.innerHTML = originalApparatusContent;
+					apparatusUnder.style.display = '';
+				}
+
+				// Show commentary under
+				// if (commentaryUnder) {
+				// 	commentaryUnder.innerHTML = originalCommentaryContent;
+				// 	commentaryUnder.style.display = '';
+				// }
+				
+				// show translation under
+				if (translationUnder) {
+					translationUnder.style.display = '';
+				}
+				break;
+
+			case 'apparatus':
+				// Show apparatus in sidebar and hide it under
+				if (apparatus && apparatusUnder) {
+					apparatus.innerHTML = originalApparatusContent;
 					apparatusUnder.innerHTML = '';
 					apparatusUnder.style.display = 'none';
 				}
-			}
-		} else {
-			// Show translation content in sidebar (e.g., "11853-2")
-			const translationElement = document.getElementById(`translation-${selectedValue}`);
-			if (translationElement) {
-				sidebar.innerHTML = translationElement.outerHTML;
-				// Hide apparatus below when showing translation
-				if (apparatusUnder) {
-					apparatusUnder.innerHTML = '';
-					apparatusUnder.style.display = 'none';
+
+				// Show commentary under
+				// if (commentaryUnder) {
+				// 	commentaryUnder.innerHTML = originalCommentaryContent;
+				// 	commentaryUnder.style.display = '';
+				// }
+				
+				// show translation under
+				if (translationUnder) {
+					translationUnder.style.display = '';
 				}
-			}
+				sidebar.innerHTML = apparatus ? apparatus.outerHTML : '';
+				break;
+
+			case 'commentary':
+				// Show commentary in sidebar
+				const commentaryElement = document.getElementById('commentary');
+				if (commentaryElement) {
+					sidebar.innerHTML = commentaryElement.outerHTML;
+					
+					// Show apparatus under
+					if (apparatusUnder) {
+						apparatusUnder.innerHTML = originalApparatusContent;
+						apparatusUnder.style.display = '';
+					}
+
+					// hide commentary under
+					// if (commentaryUnder) {
+					// 	commentaryUnder.style.display = 'none';
+					// }
+
+					// show translation under
+					if (translationUnder) {
+						translationUnder.style.display = '';
+					}
+				}
+				break;
+
+			default:
+				// Show translation content in sidebar (e.g., "11853-2")
+				const translationElement = document.getElementById(`translation-${selectedValue}`);
+				if (translationElement) {
+					sidebar.innerHTML = translationElement.outerHTML;
+					// Show apparatus under
+					if (apparatusUnder) {
+						apparatusUnder.innerHTML = originalApparatusContent;
+						apparatusUnder.style.display = '';
+					}
+
+					// Show commentary under
+					// if (commentaryUnder) {
+					// 	commentaryUnder.innerHTML = originalCommentaryContent;
+					// 	commentaryUnder.style.display = '';
+					// }
+
+					// hide translation under
+					if (translationUnder) {
+						translationUnder.style.display = 'none';
+					}
+				}
+				break;
 		}
 	}
 
