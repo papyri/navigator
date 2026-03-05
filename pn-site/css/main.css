@@ -731,7 +731,7 @@ body.author-browse .btn-group .btn {
   min-width: 0;
 }
 
-#edition span.ab:not(#translation *) {
+#edition span.ab:not([id^="translation"] *) {
   display: block;
   background-color: rgba(var(--bs-warning-rgb), 0.075);
   padding: 1em;
@@ -740,13 +740,13 @@ body.author-browse .btn-group .btn {
 }
 
 @media (max-width: 768px) {
-  #edition span.ab:not(#translation *) {
+  #edition span.ab:not([id^="translation"] *) {
    max-width: 100vw;
   }
 }
 
 @media (min-width: 769px) {
-  #edition span.ab:not(#translation *) {
+  #edition span.ab:not([id^="translation"] *) {
     padding: 1.5em;
     letter-spacing: 0.05rem;
     line-height: 2.5;
