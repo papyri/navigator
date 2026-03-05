@@ -448,16 +448,19 @@ public class DocumentBrowseRecord extends BrowseRecord {
   @Override
   public String getHTML() {
     StringBuilder anchor = new StringBuilder();
+    if (isCurrent) {
+      anchor.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"Current document\">");
+      anchor.append("<img src=\"/images/");
+      anchor.append("current.svg\" alt=\"current document\" ");
+    } else {
+      anchor.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"Historical document\">");
+      anchor.append("<img src=\"/images/");
+      anchor.append("historical.svg\" alt=\"historical document\"");
+    }
+    anchor.append("width=\"16\" height=\"16\"></a> ");
     anchor.append("<a href='");
     anchor.append(generateLink());
     anchor.append("'>");
-    anchor.append("<img src=\"/images/");
-    if (isCurrent) {
-      anchor.append("current.svg\" \" alt=\"current document\"");
-    } else {
-      anchor.append("historical.svg\" alt=\"historical document\"");
-    }
-    anchor.append("width=\"16\" height=\"16\"> ");
     anchor.append(getDisplayId());
     anchor.append("</a>");
     StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier fw-semibold\" title=\"");
