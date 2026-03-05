@@ -77,6 +77,7 @@
     <add>
       <doc>
         <field name="project">IDP</field>
+        <field name="collection">all</field>
         <xsl:if test="$collection = 'current'">
           <field name="collection">current</field>
           <xsl:if test="$dclp = true()">

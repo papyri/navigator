@@ -67,7 +67,7 @@ $(document).ready(
 		var hic = info.papyri.thill.stringsearch;
 
 		// "import"
-		hic.SEARCH_STRING_STACK = info.papyri.thill.guidesearch.SEARCH_STACK;
+		hic["SEARCH_STRING_STACK"] = info.papyri.thill.guidesearch.SEARCH_STACK;
 
 		// first, we make a copy of the entire text-search control block
 		// for easy repetition when users want to add controls

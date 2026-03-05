@@ -185,7 +185,8 @@ public class IdentifierFacet extends Facet{
 
             } else {
                 // If this is a DDbDP or DCLP collection, short-circuit the query building process
-                if (searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("current")
+                if (searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("all")
+                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("current")
                     || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("editions")
                     || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("dclp")
                     || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("ddbdp")

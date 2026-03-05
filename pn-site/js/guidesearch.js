@@ -213,10 +213,13 @@ $(document).ready(
              params["target"] = Array.from(document.querySelectorAll("input[name='target']:checked")).map(el => el.value);
 
           }
-          if (document.querySelector("#target-collection").checked) {
+
+          if (document.querySelector("#target-collection-current").checked) {
             params["COLLECTION"] = "current";
-          } else {
+          } else if (document.querySelector("#target-collection-historical").checked) {
             params["COLLECTION"] = "editions";
+          } else if (document.querySelector("#target-collection-all").checked) {
+            params["COLLECTION"] = "all";
           }
         }
         // image filter elements
@@ -540,10 +543,16 @@ $(document).ready(
     const params = new URLSearchParams(window.location.search);
     if (params.has("COLLECTION")) {
       if (params.get("COLLECTION") === "current") {
-        document.querySelector("#target-collection").checked = true;
+        document.querySelector("#target-collection-current").checked = true;
+      }
+      else if (params.get("COLLECTION") === "editions") {
+        document.querySelector("#target-collection-historical").checked = true;
+      }
+       else if (params.get("COLLECTION") === "all") {
+        document.querySelector("#target-collection-all").checked = true;
       }
     } else {
-      document.querySelector("#target-collection").checked = true;
+      document.querySelector("#target-collection-current").checked = true;
     }
 
     if($.cookie(hic.HIDE_REVEAL_COOKIE) == 0 && hic.isSubsequentPage()){
