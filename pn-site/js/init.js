@@ -116,10 +116,11 @@ function getPath() {
  */
 function addLinearBrowseControls(){
 
-	var position = jQuery(document).getUrlParam("p");
-	var total = jQuery(document).getUrlParam("t");
-	var rows = jQuery(document).getUrlParam("rows");
-	var qs = buildSolrQueryString();
+	const position = jQuery(document).getUrlParam("p");
+	const total = jQuery(document).getUrlParam("t");
+  const urlParams = new URLSearchParams(decodeURIComponent(window.location.search));
+	const rows = urlParams.get("rows")
+	let qs = buildSolrQueryString();
 	if(qs == "") return false;
 	querySolrServer(qs, position, total, rows, qs);
 
@@ -136,12 +137,13 @@ function addLinearBrowseControls(){
 
 function buildSolrQueryString(){
 
-	var querystring = window.location.search;
+	var querystring = decodeURIComponent(window.location.search);
 	if(!querystring.match(/fq=/)) return "";
 	// get rid of values not used by Solr: t, d, and q (which is used only for highlighting)
 	querystring = querystring.replace(/[&?]t=\d+/, "");
 	querystring = querystring.replace(/[&?]p=\d+/, "");
-	var highlightstring = jQuery(document).getUrlParam("q");
+	const urlParams = new URLSearchParams(decodeURIComponent(window.location.search));
+	const highlightstring = urlParams.get("q");
 	// but *some* value for q is required, so the 'select all' wildcard (*:*) is given
 	if(highlightstring == null || highlightstring == ""){
 
