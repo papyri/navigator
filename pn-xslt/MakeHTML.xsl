@@ -1937,6 +1937,8 @@
 
 
   <xsl:template match="span[@class='ab']" mode="segment-transcription">
+    <span>
+      <xsl:copy-of select="@*"/>
     <!-- Group content by line breaks -->
     <xsl:for-each-group select="node()" group-starting-with="pn-lb">
       <xsl:choose>
@@ -1984,6 +1986,7 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>
+    </span>
   </xsl:template>
 
 
