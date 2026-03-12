@@ -403,9 +403,9 @@ public class StringSearchFacet extends Facet{
 
 
         // search target control
-        html.append("<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label\">");
+        html.append("<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label1\">");
 
-        html.append("  <div class=\"h6 mb-2\" id=\"search-in-label\">Search In</div>");
+        html.append("  <div class=\"h6 mb-2\" id=\"search-in-label1\">Search within:</div>");
         html.append("  <div class=\"form-check form-check-inline\">");
         html.append("    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"");
         html.append(SearchTarget.TEXT.name().toLowerCase());
@@ -432,6 +432,11 @@ public class StringSearchFacet extends Facet{
         html.append("\" id=\"translation-label\">Translations</label>");
         html.append("  </div>");
 
+        html.append("</div><!-- closing .stringsearch-section -->");
+
+
+        html.append("<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label2\">");
+        html.append("  <div class=\"h6 mb-2\" id=\"search-in-label2\">Edition:</div>");
         html.append("  <div class=\"form-check form-check-inline\">");
         html.append("    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"current\" id=\"target-collection-current\"/>");
         html.append("    <label for=\"target-collection-current\" id=\"collection-label\">Current Editions</label>");
