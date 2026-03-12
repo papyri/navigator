@@ -25,11 +25,13 @@ for f in `grep -Rl -E "<idno type=\"TM\">\S+\s" $1/DDbDP`; do
     done
 done
 ls -R $1/DCLP | grep ".xml" | sed 's/[^0-9]*//g' >> tm_numbers.txt
-cat replacements.txt >> tm_numbers.txt
+if [ -f replacements.txt ]; then
+    cat replacements.txt >> tm_numbers.txt
+fi
 sort -un tm_numbers.txt -o tm_numbers.txt
 
 # Build exclude list (files modified in last 2 weeks)
-find . -name "*.json" -cmin -400160 | sed 's/.*\/\([0-9]*\).json$/\1/g' | sort -un > exclude.txt
+find . -name "*.json" -ctime -14 | sed 's/.*\/\([0-9]*\).json$/\1/g' | sort -un > exclude.txt
 sort -un exclude.txt -o exclude.txt
 # Get the list of TM numbers that haven't been updated in 2 weeks
 comm -23 tm_numbers.txt exclude.txt > process_tm.txt
