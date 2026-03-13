@@ -338,8 +338,7 @@ public class StringSearchFacet extends Facet{
 
     @Override
     public String generateWidget() {
-
-
+      
       // search options control
       // search target control
 
@@ -382,49 +381,54 @@ public class StringSearchFacet extends Facet{
           "  </div>" +
           "</div><!-- closing .stringsearch-section -->" +
 
+        // search target control
+        "<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label1\">" +
+        "  <div class=\"h6 mb-2\" id=\"search-in-label1\">Search within:</div>" +
+        "  <div class=\"form-check form-check-inline\">" +
+        "    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"" +
+        SearchTarget.TEXT.name().toLowerCase() +
+        "\" id=\"target-text\" checked/>" +
+        "    <label class=\"form-check-label\" for=\"target-" +
+        SearchTarget.TEXT.name().toLowerCase() +
+        "\" id=\"text-label\">Text</label>" +
+        "  </div>" +
+        "  <div class=\"form-check form-check-inline\">" +
+        "    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"" +
+        SearchTarget.METADATA.name().toLowerCase() +
+        "\" id=\"target-metadata\"/>" +
+        "    <label class=\"form-check-label\" for=\"target-" +
+        SearchTarget.METADATA.name().toLowerCase() +
+        "\" id=\"metadata-label\">Metadata</label>" +
+        "  </div>" +
+        "  <div class=\"form-check form-check-inline\">" +
+        "    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"" +
+        SearchTarget.TRANSLATION.name().toLowerCase() +
+        "\" value=\"on\" id=\"target-translation\"/>" +
+        "    <label class=\"form-check-label\" for=\"target-" +
+        SearchTarget.TRANSLATION.name().toLowerCase() +
+        "\" id=\"translation-label\">Translations</label>" +
+        "  </div>" +
 
-          // search target control
-          "<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label\">" +
-          "  <div class=\"h6 mb-2\" id=\"search-in-label\">Search In</div>" +
-          "  <div class=\"form-check form-check-inline\">" +
-          "    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"" +
-          SearchTarget.TEXT.name().toLowerCase() +
-          "\" id=\"target-text\" checked/>" +
-          "    <label class=\"form-check-label\" for=\"target-" +
-          SearchTarget.TEXT.name().toLowerCase() +
-          "\" id=\"text-label\">Text</label>" +
-          "  </div>" +
-          "  <div class=\"form-check form-check-inline\">" +
-          "    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"" +
-          SearchTarget.METADATA.name().toLowerCase() +
-          "\" id=\"target-metadata\"/>" +
-          "    <label class=\"form-check-label\" for=\"target-" +
-          SearchTarget.METADATA.name().toLowerCase() +
-          "\" id=\"metadata-label\">Metadata</label>" +
-          "  </div>" +
-          "  <div class=\"form-check form-check-inline\">" +
-          "    <input class=\"form-check-input target\" type=\"radio\" name=\"target\" value=\"" +
-          SearchTarget.TRANSLATION.name().toLowerCase() +
-          "\" value=\"on\" id=\"target-translation\"/>" +
-          "    <label class=\"form-check-label\" for=\"target-" +
-          SearchTarget.TRANSLATION.name().toLowerCase() +
-          "\" id=\"translation-label\">Translations</label>" +
-          "  </div>" +
-          "  <div class=\"form-check form-check-inline\">" +
-          "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"current\" id=\"target-collection-current\"/>" +
-          "    <label for=\"target-collection-current\" id=\"collection-label\">Current Editions</label>" +
-          "  </div>" +
-          "  <div class=\"form-check form-check-inline\">" +
-          "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"editions\" id=\"target-collection-historical\"/>" +
-          "    <label for=\"target-collection-historical\" id=\"collection-label\">Historical</label>" +
-          "  </div>" +
-          "  <div class=\"form-check form-check-inline\">" +
-          "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"all\" id=\"target-collection-all\"/>" +
-          "    <label for=\"target-collection-all\" id=\"collection-label\">All</label>" +
-          "  </div>" +
-          "</div><!-- closing .stringsearch-section -->" +
-          generateHiddenFields() +
-          "</div><!-- closing .facet-widget -->";
+        "</div><!-- closing .stringsearch-section -->" +
+
+        "<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label2\">" +
+        "  <div class=\"h6 mb-2\" id=\"search-in-label2\">Edition:</div>" +
+        "  <div class=\"form-check form-check-inline\">" +
+        "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"current\" id=\"target-collection-current\"/>" +
+        "    <label for=\"target-collection-current\" id=\"collection-label\">Current Editions</label>" +
+        "  </div>" +
+        "  <div class=\"form-check form-check-inline\">" +
+        "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"editions\" id=\"target-collection-historical\"/>" +
+        "    <label for=\"target-collection-historical\" id=\"collection-label\">Historical</label>" +
+        "  </div>" +
+        "  <div class=\"form-check form-check-inline\">" +
+        "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"all\" id=\"target-collection-all\"/>" +
+        "    <label for=\"target-collection-all\" id=\"collection-label\">All</label>" +
+        "  </div>" +
+        "</div><!-- closing .stringsearch-section -->" +
+        generateHiddenFields() +
+
+        "</div><!-- closing .facet-widget -->";
 
     }
 
