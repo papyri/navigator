@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,8 +30,6 @@ import java.util.regex.Pattern;
 public class Reader extends HttpServlet {
   private static final String GRAPH = "https://papyri.info/graph";
   private String sparqlServer;
-  private String xmlPath = "";
-  private String htmlPath = "";
   private FileUtils util;
   private SolrUtils solrutil;
   private final byte[] buffer = new byte[8192];
@@ -39,8 +38,8 @@ public class Reader extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    xmlPath = config.getInitParameter("xmlPath");
-    htmlPath = config.getInitParameter("htmlPath");
+    String xmlPath = config.getInitParameter("xmlPath");
+    String htmlPath = config.getInitParameter("htmlPath");
     util = new FileUtils(xmlPath, htmlPath);
     solrutil = new SolrUtils(config);
     sparqlServer = config.getInitParameter("sparqlUrl");
@@ -65,7 +64,7 @@ public class Reader extends HttpServlet {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         } else if (page.contains("hgvmeta")) {
-          response.setHeader("Location", page.replaceAll("^[/a-z]+/HGV\\d+/([0-9]+[a-z]*).html$", "http://papyri.info/hgv/$1"));
+          response.setHeader("Location", page.replaceAll("^[/a-z]+/HGV\\d+/([0-9]+[a-z]*).html$", "https://papyri.info/hgv/$1"));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         }
       } else if (page.contains("/")) {
@@ -108,18 +107,16 @@ public class Reader extends HttpServlet {
 
 
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
-    throws ServletException, IOException {
+    throws IOException {
     PrintWriter out = response.getWriter();
-    q = URLDecoder.decode(q,"UTF-8");
+    q = URLDecoder.decode(q, StandardCharsets.UTF_8);
     if (q.contains("transcription_l")) {
       try {
-        StringBuilder query = new StringBuilder();
-        query.append(FileUtils.substringBefore(q, "transcription_l", false));
-        query.append("transcription_ia:(");
-        query.append(solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
-        query.append(")");
-        query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
-        q = query.toString();
+        q = FileUtils.substringBefore(q, "transcription_l", false) +
+            "transcription_ia:(" +
+            solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)) +
+            ")" +
+            FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false);
       } catch (Exception e) {
         logger.log(Level.SEVERE, "Error expanding lemmas.", e);
       }
@@ -149,9 +146,9 @@ public class Reader extends HttpServlet {
     sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
     sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
-    sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv|dclp)\") }");
+    sparql.append("filter regex(str(?related), \"^https://papyri.info/(ddbdp|hgv|dclp)\") }");
     try {
-      URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&format=json");
+      URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), StandardCharsets.UTF_8) + "&format=json");
       HttpURLConnection http = (HttpURLConnection)m.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();
@@ -161,8 +158,9 @@ public class Reader extends HttpServlet {
       while (i.hasNext()) {
         uri = FileUtils.substringBefore(i.next().path("related").path("value").asText(), "/source");
         if (uri.contains("ddbdp/") || uri.contains("hgv/") || uri.contains("dclp/")) {
-          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
+          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, StandardCharsets.UTF_8));
         }
+        assert result != null;
         if (result.exists()) {
           break;
         }

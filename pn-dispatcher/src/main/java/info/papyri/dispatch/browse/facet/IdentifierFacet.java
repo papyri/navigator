@@ -21,6 +21,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * <code>Facet</code> for selecting texts based on DDbDP/HGV series, APIS collection,
@@ -167,8 +168,7 @@ public class IdentifierFacet extends Facet{
         }
 
         if (collectionSet && seriesSet) {
-            solrQuery = buildStandardFieldQuery(solrQuery);
-            return solrQuery;
+            return buildStandardFieldQuery(solrQuery);
         }
 
         if(seriesSet){
@@ -339,24 +339,30 @@ public class IdentifierFacet extends Facet{
 
         if(idnoConfig.hasConstraint()){
 
-            ArrayList<SolrField> idFields = new ArrayList<>(Arrays.asList(SolrField.apis_full_identifier, SolrField.apis_inventory, SolrField.apis_publication_id, SolrField.ddbdp_full_identifier, SolrField.hgv_full_identifier, SolrField.dclp_full_identifier));
-            StringBuilder idnoConstraint = new StringBuilder("(");
-            Iterator<SolrField> iit = idFields.iterator();
-            while(iit.hasNext()){
-
-                idnoConstraint.append(iit.next().name());
-                idnoConstraint.append(":");
-                idnoConstraint.append(idnoConfig.getConstraint());
-                if(iit.hasNext()) idnoConstraint.append(" OR ");
-
-            }
-            idnoConstraint.append(")");
+            StringBuilder idnoConstraint = getIdnoConstraint(idnoConfig);
             solrQuery.addFilterQuery(idnoConstraint.toString());
-
 
         }
         return solrQuery;
 
+    }
+
+    private static @NotNull StringBuilder getIdnoConstraint(SearchConfiguration idnoConfig) {
+        ArrayList<SolrField> idFields = new ArrayList<>(Arrays.asList(SolrField.apis_full_identifier,
+            SolrField.apis_inventory, SolrField.apis_publication_id, SolrField.ddbdp_full_identifier,
+            SolrField.hgv_full_identifier, SolrField.dclp_full_identifier));
+        StringBuilder idnoConstraint = new StringBuilder("(");
+        Iterator<SolrField> iit = idFields.iterator();
+        while(iit.hasNext()){
+
+            idnoConstraint.append(iit.next().name());
+            idnoConstraint.append(":");
+            idnoConstraint.append(idnoConfig.getConstraint());
+            if(iit.hasNext()) idnoConstraint.append(" OR ");
+
+        }
+        idnoConstraint.append(")");
+        return idnoConstraint;
     }
 
     /**

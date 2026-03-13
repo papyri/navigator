@@ -2,7 +2,6 @@ package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
-import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchTerm;
 import info.papyri.dispatch.browse.facet.customexceptions.MalformedProximitySearchException;
 import info.papyri.dispatch.browse.facet.customexceptions.MismatchedBracketException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
@@ -691,7 +690,7 @@ public class StringSearchFacetTest extends TestCase {
         
         String test1 = "(?<!ths";
         String result1 = "(?<!t°?h°?s°?";
-        assertEquals(result1, testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, false, true).excludeAbbreviationMarks("(?<!", test1));
+        assertEquals(result1, testInstance.new SearchTerm("dummy", StringSearchFacet.SearchTarget.TEXT, true, false, true).excludeAbbreviationMarks(test1));
 
         } catch (Exception e){
             
