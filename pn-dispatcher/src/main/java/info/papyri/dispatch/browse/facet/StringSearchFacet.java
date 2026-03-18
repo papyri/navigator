@@ -343,12 +343,14 @@ public class StringSearchFacet extends Facet{
       // search target control
 
       return "<div class=\"facet-widget\" id=\"text-search-widget\">" + "<div class=\"stringsearch-top-controls\">" +
-          "  <div class=\"d-flex bg-light p-3 mb-3 align-items-center facet-stringsearch-wrapper\">" +
-          "    <div class=\"flex-grow-1\">" +
+          "  <div class=\"d-flex flex-wrap bg-light p-3 mb-3 align-items-center facet-stringsearch-wrapper\">" +
+          "    <div class=\"flex-grow-1 input-group\">" +
           "      <input id=\"keyword-search\" type=\"text\" class=\"form-control keyword\" aria-label=\"keyword search\" name=\"" +
           formName.name() +
           "\" maxlength=\"250\"/>" +
+          "      <input type=\"submit\" value=\"Search\" id=\"search-btn\" class=\"btn btn-primary\" role=\"button\" aria-disabled=\"false\">" +
           "    </div>" +
+          "    <div id=\"search-help-text\" class=\"form-text\"" + (searchClauses.isEmpty() ? " style=\"display:none\"" : "") + ">Add additional search term(s)</div>" +
           "    <div class=\"d-none flex-shrink-1 d-flex prx\">" +
           "      <span class=\"within mx-2 form-text\">within</span>" +
           "      <input type=\"text\" class=\"form-control form-control-sm w-auto prxcount\" name=\"prxcount\" size=\"2\" maxlength=\"2\" aria-label=\"number of words or characters between terms\" disabled=\"disabled\"/>" +
@@ -411,20 +413,27 @@ public class StringSearchFacet extends Facet{
 
         "</div><!-- closing .stringsearch-section -->" +
 
-        "<div class=\"stringsearch-section bg-light p-3 mb-3\" role=\"radiogroup\" aria-labelledby=\"search-in-label2\">" +
-        "  <div class=\"h6 mb-2\" id=\"search-in-label2\">Edition:</div>" +
+        "<div id=\"edition-section\" role=\"radiogroup\" aria-labelledby=\"edition-search\">" +
+        "<label class=\"form-label\" id=\"edition-search\">Edition</label>" +
+        "<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"Choose which Edition to search" +
+        "\">" +
+        "<span class=\"visually-hidden\">More Information</span>" +
+        "<span class=\"ms-1 bi bi-info-circle\"></span>" +
+        "</a>" +
+        "<div class=\"wrapper mb-3\" id=\"edition-wrapper\">" +
         "  <div class=\"form-check form-check-inline\">" +
         "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"current\" id=\"target-collection-current\"/>" +
-        "    <label for=\"target-collection-current\" id=\"collection-label\">Current Editions</label>" +
+        "    <label for=\"target-collection-current\" id=\"collection-label\">Current Editions <img src=\"/images/current.svg\" alt=\"current document\" width=\"16\" height=\"16\"></label>" +
         "  </div>" +
         "  <div class=\"form-check form-check-inline\">" +
         "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"editions\" id=\"target-collection-historical\"/>" +
-        "    <label for=\"target-collection-historical\" id=\"collection-label\">Historical</label>" +
+        "    <label for=\"target-collection-historical\" id=\"collection-label\">Historical <img src=\"/images/historical.svg\" alt=\"historical document\" width=\"16\" height=\"16\"></label>" +
         "  </div>" +
         "  <div class=\"form-check form-check-inline\">" +
         "    <input class=\"form-check-input target\" type=\"radio\" name=\"COLLECTION\" value=\"all\" id=\"target-collection-all\"/>" +
         "    <label for=\"target-collection-all\" id=\"collection-label\">All</label>" +
         "  </div>" +
+        "</div><!-- closing .wrapper -->" +
         "</div><!-- closing .stringsearch-section -->" +
         generateHiddenFields() +
 

@@ -251,22 +251,23 @@ $(document).ready(
         hiddens.forEach(hidden => {
 
           // the hidden collection field should be overridden by settings in the
-          // control itself
+          // control itself (radio buttons or select)
           if(hidden.getAttribute("name") == "COLLECTION"){
 
-            const coll = document.querySelector("select[name='COLLECTION']");
-            if(coll.value != "default" && coll.value != "current"){
-
-              params["COLLECTION"] = coll.value;
-
-            } else{
-
-              params[hidden.getAttribute("name")] = hidden.getAttribute("value");
-
+            const checkedRadio = document.querySelector("input[name='COLLECTION']:checked");
+            if(checkedRadio){
+              params["COLLECTION"] = checkedRadio.value;
+            } else {
+              const coll = document.querySelector("select[name='COLLECTION']");
+              if(coll && coll.value != "default" && coll.value != "current"){
+                params["COLLECTION"] = coll.value;
+              } else {
+                params[hidden.getAttribute("name")] = hidden.getAttribute("value");
+              }
             }
 
           } else {
-            if (hidden.getAttribute("value") != "default" && hidden.getAttribute("value") != ""){
+            if (hidden.getAttribute("value") != "default" && hidden.getAttribute("value") != "" && hidden.getAttribute("value") != "n.a."){
               params[hidden.getAttribute("name")] = hidden.getAttribute("value");
             }
           }
@@ -317,7 +318,13 @@ $(document).ready(
         const datefield = date_wrapper.querySelector("select");
         let selected_date = datefield.value;
 
-        if(selected_date == "") return;
+        if(selected_date == "" || selected_date.toLowerCase() == "unknown") return;
+
+        // Only include dates that were explicitly set by the user (already in the URL),
+        // not auto-selected values from the facet
+        const currentUrlParams = new URLSearchParams(window.location.search);
+        const dateParamName = date_wrapper_name.match("start") ? "DATE_START_TEXT" : "DATE_END_TEXT";
+        if(!currentUrlParams.has(dateParamName)) return;
         selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");  // trim count
         const era_finder = new RegExp(/\s*(B?CE)$/);
         let era = "";
@@ -328,15 +335,10 @@ $(document).ready(
           selected_date = selected_date.replace(era, "").replace(/^\s*/, "").replace(/\s*$/, "");
 
         }
-        else if(selected_date.toLowerCase() != "unknown"){
+        else {
 
           selected_date = selected_date.replace(/\D/g, "");
           era = date_wrapper.querySelector("input[type=radio]:checked").value;
-
-        }
-        else if(selected_date.toLowerCase() == "unknown"){
-
-          selected_date = "n.a.";
 
         }
         if(selected_date.match(/^\s*$/)) return;
@@ -553,6 +555,13 @@ $(document).ready(
       }
     } else {
       document.querySelector("#target-collection-current").checked = true;
+    }
+
+    // Auto-submit when edition radio buttons change, but only after initial search
+    if (params.toString()) {
+      $("input[name='COLLECTION']").on("change", function(){
+        hic.tidyQueryString();
+      });
     }
 
     if($.cookie(hic.HIDE_REVEAL_COOKIE) == 0 && hic.isSubsequentPage()){
