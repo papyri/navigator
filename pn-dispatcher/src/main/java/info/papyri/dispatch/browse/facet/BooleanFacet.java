@@ -4,7 +4,7 @@ import info.papyri.dispatch.browse.SolrField;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;

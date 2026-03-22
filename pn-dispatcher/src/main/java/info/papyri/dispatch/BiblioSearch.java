@@ -24,8 +24,8 @@ import jakarta.servlet.ServletConfig;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.common.SolrDocument;
@@ -86,7 +86,7 @@ public class BiblioSearch extends HttpServlet {
         if (line.contains("<!-- Results -->") && ("".equals(q) || q == null)) {
           out.println("<div class=\"alert alert-warning\">Please enter query terms to return results.</div>");
         } else if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
-          SolrClient solr = new Http2SolrClient.Builder(solrUrl + BiblioSearch)
+          SolrClient solr = new HttpJdkSolrClient.Builder(solrUrl + BiblioSearch)
                   .withConnectionTimeout(5, TimeUnit.SECONDS)
                   .build();
           int rows = 30;
@@ -180,7 +180,7 @@ public class BiblioSearch extends HttpServlet {
 
       String q = request.getParameter("q");
       String line = "";
-      SolrClient solr = new Http2SolrClient.Builder(solrUrl + BiblioSearch)
+      SolrClient solr = new HttpJdkSolrClient.Builder(solrUrl + BiblioSearch)
           .withConnectionTimeout(5, TimeUnit.SECONDS)
           .build();
       int rows = 30;

@@ -700,7 +700,7 @@ public class FileUtils {
     text = restore2.toString();
     StringBuilder result = new StringBuilder();
     for (String l : text.split("\n")) {
-      String line = l.replaceAll("Ⓐ+([^-Ⓑ]+-)", hlStart + "$1" + hlEnd);
+      String line = l.replaceAll("Ⓐ+([^-Ⓑ]+-)", hlStart + "$1" + hlEnd); // Problem here?
       line = line.replaceAll("(<span class=\"linecontent\">)([^ⒶⒷ]+)Ⓑ+", "$1" + hlStart + "$2" + hlEnd );
       line = line.replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
       result.append(line + "\n");

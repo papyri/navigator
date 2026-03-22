@@ -1931,10 +1931,6 @@
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
   </xsl:template>
-  
-
-
-
 
   <xsl:template match="span[@class='ab']" mode="segment-transcription">
     <span>

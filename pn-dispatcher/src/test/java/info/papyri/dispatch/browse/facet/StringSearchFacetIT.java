@@ -17,8 +17,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.descriptor.JspConfigDescriptor;
 
 import junit.framework.TestCase;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.SolrQuery;
 
 /**
  *

@@ -32,10 +32,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import java.util.logging.Level;
@@ -89,7 +89,7 @@ public class FacetBrowser extends HttpServlet {
 
   private static Logger logger = Logger.getLogger("pn-dispatch");
 
-  private static Http2SolrClient solrClient;
+  private static HttpJdkSolrClient solrClient;
 
   private static Predicate<? super Object> isCurrentCollection = s -> s.equals("current");
 
@@ -110,7 +110,7 @@ public class FacetBrowser extends HttpServlet {
     if (solrClient == null) {
       synchronized (FacetBrowser.class) { 
         if (solrClient == null) {
-          solrClient = new Http2SolrClient.Builder(SOLR_URL + PN_SEARCH)
+          solrClient = new HttpJdkSolrClient.Builder(SOLR_URL + PN_SEARCH)
                   .withConnectionTimeout(SOCKET_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS).build();
         }
       }
@@ -301,7 +301,6 @@ public class FacetBrowser extends HttpServlet {
    * @param pageNumber
    * @param facets
    * @return The <code>SolrQuery</code>
-   * @see Facet#buildQueryContribution(org.apache.solr.client.solrj.SolrQuery)
    */
   SolrQuery buildFacetQuery(int pageNumber, ArrayList<Facet> facets, int docsPerPage) {
 

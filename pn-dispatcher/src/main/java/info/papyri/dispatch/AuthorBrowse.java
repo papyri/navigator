@@ -6,10 +6,10 @@ package info.papyri.dispatch;
 
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
@@ -68,7 +68,7 @@ public class AuthorBrowse extends HttpServlet {
       //selecting one is a search on author_str:"<selected author>" gets back author_work facets
       //filter those for the current author and display, selecting one gives you
     response.setContentType("text/html;charset=UTF-8");
-    SolrClient solr = new Http2SolrClient.Builder(solrUrl).withConnectionTimeout(5, TimeUnit.SECONDS).build();
+    SolrClient solr = new HttpJdkSolrClient.Builder(solrUrl).withConnectionTimeout(5, TimeUnit.SECONDS).build();
     SolrQuery sq = new SolrQuery();
     sq.add("q", "*:*");
     sq.addFacetField("author_work");

@@ -3,6 +3,8 @@ package info.papyri.dispatch.browse;
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.facet.IdentifierFacet;
 
+import java.lang.annotation.Target;
+
 /**
      * <code>DocumentCollectionBrowseRecord</code>s are records of all information necessary to identify a <i>collection</i>
      * of documents.
@@ -49,7 +51,6 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
          * 
          * @param collection
          * @param series
-         * @param isParent 
          */
         public DocumentCollectionBrowseRecord(String collection, String series, Boolean isDocumentParent){
             
@@ -87,8 +88,13 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
             
             
         }
-        
-        /**
+
+        @Override
+        public String toString() {
+            return (unicodeLabel == null || unicodeLabel.equals("")) ? series : unicodeLabel + (volume == null ? "" : " " + volume);
+        }
+
+    /**
          * Assembles the anchor tag to the next level down in the hierarchy
          * 
          * @return An anchor tag

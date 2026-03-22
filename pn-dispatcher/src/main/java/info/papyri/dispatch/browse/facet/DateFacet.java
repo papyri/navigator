@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -656,10 +656,6 @@ public class DateFacet extends Facet {
 
             };
         }
-
-        /**
-         * @see Facet#buildQueryContribution(org.apache.solr.client.solrj.SolrQuery)
-         */
 
         abstract SolrQuery buildQueryContribution(SolrQuery solrQuery);
 

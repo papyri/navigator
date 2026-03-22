@@ -24,10 +24,10 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
 import org.apache.abdera.model.Person;
 import org.apache.abdera.writer.Writer;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -79,10 +79,10 @@ public class AtomFeedServlet extends HttpServlet{
     
     /**
      * Because of the expense of creating the Abdera instance, it is instantiated as a singleton.
-     * 
-     * 
-     * @see https://cwiki.apache.org/confluence/display/ABDERA/Creating+and+Consuming+Atom+Documents#CreatingandConsumingAtomDocuments-InstantiatingAbdera
-     * @return 
+     *
+     *
+     * @see <a href="https://cwiki.apache.org/confluence/display/ABDERA/Creating+and+Consuming+Atom+Documents#CreatingandConsumingAtomDocuments-InstantiatingAbdera">...</a>
+     * @return
      */
     
     public static synchronized Abdera getAbderaInstance() {
@@ -107,7 +107,7 @@ public class AtomFeedServlet extends HttpServlet{
             throws ServletException, IOException {
 
             request.setCharacterEncoding("UTF-8");        
-            response.setContentType("xml");
+            response.setContentType("application/xml");
             ServletOutputStream out = response.getOutputStream();
             int page = pullOutPageNumber(request);
             EnumMap<TimeParam, String> dateParams = pullOutDateParams(request);
@@ -309,7 +309,7 @@ public class AtomFeedServlet extends HttpServlet{
         
         try{
             
-            SolrClient solrServer = new Http2SolrClient.Builder(SOLR_URL + PN_SEARCH).build();
+            SolrClient solrServer = new HttpJdkSolrClient.Builder(SOLR_URL + PN_SEARCH).build();
             QueryResponse qr = solrServer.query(sq);
             SolrDocumentList sdl = qr.getResults();
             return sdl;
@@ -419,8 +419,7 @@ public class AtomFeedServlet extends HttpServlet{
       * Parses the passed <code>SolrDocumentList</code> into atom:entry elements.
       * 
       * @param feed
-      * @param entries 
-      */ 
+      */
      
     void addEntries(Feed feed, ArrayList<EmendationRecord> emendationRecords){
         

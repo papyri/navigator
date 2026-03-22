@@ -16,7 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.request.SolrQuery;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -492,6 +494,11 @@ public class DocumentBrowseRecord extends BrowseRecord {
 
   }
 
+  @Override
+  public String toString() {
+    return "";
+  }
+
   public String getDisplayId() {
 
     return preferredId;
@@ -821,7 +828,6 @@ public class DocumentBrowseRecord extends BrowseRecord {
     setSolrQueryString(sq);
     setPosition(position);
     setTotal(total);
-
 
   }
 
