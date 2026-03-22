@@ -222,6 +222,10 @@ pre code {
 /* Search Results    */
 /* ----------------- */
 
+a.facet-reset {
+  color: var(--bs-secondary);
+}
+
 #toggleIcon {
   transition: transform 0.3s ease;
 }
@@ -269,7 +273,6 @@ table#search-results-table {
     position: sticky;
     top: 0;
   }
-
 
 }
 
