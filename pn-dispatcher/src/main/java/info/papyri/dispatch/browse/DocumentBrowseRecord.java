@@ -449,11 +449,11 @@ public class DocumentBrowseRecord extends BrowseRecord {
   public String getHTML() {
     StringBuilder anchor = new StringBuilder();
     if (isCurrent) {
-      anchor.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"Current document\">");
+      anchor.append("<a href=\"#\" class=\"info current-document\" data-bs-toggle=\"tooltip\" data-bs-title=\"Current document\">");
       anchor.append("<img src=\"/images/");
       anchor.append("current.svg\" alt=\"current document\" ");
     } else {
-      anchor.append("<a href=\"#\" class=\"info\" data-bs-toggle=\"tooltip\" data-bs-title=\"Historical document\">");
+      anchor.append("<a href=\"#\" class=\"info historical-document\" data-bs-toggle=\"tooltip\" data-bs-title=\"Historical document\">");
       anchor.append("<img src=\"/images/");
       anchor.append("historical.svg\" alt=\"historical document\"");
     }

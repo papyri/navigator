@@ -1,53 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   width="300px"
-   height="300px"
-   viewBox="0 0 300 300"
-   version="1.1"
-   id="svg1"
-   sodipodi:docname="historical.svg"
-   inkscape:version="1.3 (0e150ed, 2023-07-21)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview1"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.78666667"
-     inkscape:cx="150"
-     inkscape:cy="150"
-     inkscape:window-width="1312"
-     inkscape:window-height="689"
-     inkscape:window-x="2129"
-     inkscape:window-y="299"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg1" />
-  <defs
-     id="defs1" />
-  <ellipse
-     style="fill:none;stroke:#000000;stroke-width:15;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
-     id="path1"
-     cx="150.76511"
-     cy="150.76511"
-     rx="136.59285"
-     ry="136.59286" />
-  <text
-     xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:233.333px;font-family:'Gill Sans';-inkscape-font-specification:'Gill Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.32292;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
-     x="66.889824"
-     y="229.86414"
-     id="text1"><tspan
-       id="tspan1"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:233.333px;font-family:'Gill Sans';-inkscape-font-specification:'Gill Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke-width:1.32292"
-       x="66.889824"
-       y="229.86414">H</tspan></text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64">
+  <!-- Generator: Adobe Illustrator 30.1.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 136)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #ffd960;
+      }
+    </style>
+  </defs>
+  <circle class="st0" cx="32" cy="32" r="30.33"/>
+  <path d="M32,1.67v1.67c3.96,0,7.73.8,11.16,2.25,5.14,2.17,9.52,5.81,12.61,10.39,3.09,4.58,4.89,10.08,4.9,16.03,0,3.96-.8,7.73-2.25,11.16-2.17,5.14-5.81,9.52-10.39,12.61-4.58,3.09-10.08,4.89-16.03,4.9-3.96,0-7.73-.8-11.16-2.25-5.14-2.17-9.52-5.81-12.61-10.39-3.09-4.58-4.89-10.08-4.9-16.03,0-3.96.8-7.73,2.25-11.16,2.17-5.14,5.81-9.52,10.39-12.61,4.58-3.09,10.08-4.89,16.03-4.9v-1.67s0-1.67,0-1.67c-4.41,0-8.63.9-12.46,2.52-5.74,2.43-10.63,6.49-14.08,11.59C2.02,19.21,0,25.38,0,32c0,4.41.9,8.63,2.52,12.46,2.43,5.74,6.49,10.63,11.59,14.08,5.11,3.45,11.27,5.47,17.89,5.47,4.41,0,8.63-.9,12.46-2.52,5.74-2.43,10.63-6.49,14.08-11.59,3.45-5.11,5.47-11.27,5.47-17.89,0-4.41-.9-8.63-2.52-12.46-2.43-5.74-6.49-10.63-11.59-14.08C44.79,2.02,38.62,0,32,0v1.67Z"/>
+  <polygon points="22.83 14.22 22.83 29.1 41.17 29.1 41.17 14.22 48 14.22 48 49.57 41.17 49.57 41.17 34.64 22.83 34.64 22.83 49.57 16 49.57 16 14.22 22.83 14.22"/>
+  <polygon points="22.83 14.22 22.68 14.22 22.68 29.1 22.83 29.24 41.17 29.24 41.32 29.1 41.32 14.37 47.86 14.37 47.86 49.42 41.32 49.42 41.32 34.64 41.17 34.49 22.83 34.49 22.68 34.64 22.68 49.42 16.14 49.42 16.14 14.37 22.83 14.37 22.83 14.22 22.68 14.22 22.83 14.22 22.83 14.07 16 14.07 15.85 14.22 15.85 49.57 16 49.71 22.83 49.71 22.97 49.57 22.97 34.79 41.03 34.79 41.03 49.57 41.17 49.71 48 49.71 48.15 49.57 48.15 14.22 48 14.07 41.17 14.07 41.03 14.22 41.03 28.95 22.97 28.95 22.97 14.22 22.83 14.07 22.83 14.22"/>
 </svg>

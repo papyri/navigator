@@ -643,12 +643,14 @@ public class IdentifierFacet extends Facet{
 
             SearchConfiguration sc = searchConfigurations.get(ip);
 
-            if(!filterParam.equals(ip.name()) && sc.hasConstraint()){
-
-                    queryString.append("&");
-                    queryString.append(ip.name()).append("=");
-                    queryString.append(sc.getConstraint());
-
+            if(filterParam.equals(ip.name()) && ip == IdParam.COLLECTION){
+                // Removing a COLLECTION constraint defaults to "all"
+                queryString.append("&");
+                queryString.append(ip.name()).append("=all");
+            } else if(!filterParam.equals(ip.name()) && sc.hasConstraint()){
+                queryString.append("&");
+                queryString.append(ip.name()).append("=");
+                queryString.append(sc.getConstraint());
             }
 
         }

@@ -541,16 +541,18 @@ public class FacetBrowser extends HttpServlet {
   private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, Boolean hasConstraints, StringBuilder html, Map<String, String[]> submittedParams) {
 
     html.append("<div id=\"facet-widgets-wrapper\">");
+
     String heading = hasConstraints ? "Refine Search" : "Search";
+    html.append("<div class=\"d-flex justify-content-between align-items-center\">");
     html.append("<h2 class=\"h4\">");
     html.append(heading);
     html.append("</h2>");
 
-    html.append("<div class=\"mb-2\">");
+    html.append("<div class=\"mb-2 new-search\">");
     html.append("  <a href=\"");
     html.append(FacetBrowser.FACET_PATH);
-    html.append("\" id=\"reset-all\" class=\"btn btn-link\" aria-disabled=\"false\">New Search</a>");
-    html.append("  <input type=\"submit\" value=\"Search\" id=\"search-btn\" class=\"btn btn-primary\" role=\"button\" aria-disabled=\"false\"/>");
+    html.append("\" id=\"reset-all\" class=\"btn btn-link\" aria-disabled=\"false\">Start Over</a>");
+    html.append("</div>");
     html.append("</div>");
 
     try {
@@ -605,7 +607,7 @@ public class FacetBrowser extends HttpServlet {
     html.append("<div class=\"mb-2\">");
     html.append("  <a href=\"");
     html.append(FacetBrowser.FACET_PATH);
-    html.append("\" id=\"reset-all-bottom\" class=\"btn btn-link\" aria-disabled=\"false\">New Search</a>");
+    html.append("\" id=\"reset-all-bottom\" class=\"btn btn-link\" aria-disabled=\"false\">Start Over</a>");
     html.append("  <input type=\"submit\" value=\"Search\" id=\"search-btn-bottom\" class=\"btn btn-primary\" role=\"button\" aria-disabled=\"false\"/>");
     html.append("</div>");
 
