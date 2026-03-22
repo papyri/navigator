@@ -1361,13 +1361,13 @@ public class DateFacet extends Facet {
         @Override
         Count getFirstUsefulValue(){
 
-            if("Unknown".equals(this.getCurrentValue())) return this.valuesAndCounts.get(0);
+            if("Unknown".equals(this.getCurrentValue())) return this.valuesAndCounts.isEmpty() ? null : this.valuesAndCounts.get(0);
 
             try{
 
                 int earliestDate = Integer.parseInt(earliestStrictDate.getName());
                 int currentDate = Integer.parseInt(this.getCurrentValue());
-                if(earliestDate < currentDate) return this.valuesAndCounts.get(0);
+                if(earliestDate < currentDate) return this.valuesAndCounts.isEmpty() ? null : this.valuesAndCounts.get(0);
 
 
             }
@@ -1767,6 +1767,7 @@ public class DateFacet extends Facet {
 
             if("Unknown".equals(getCurrentValue()) || "Unknown".equals(getOtherTerminus().getCurrentValue())){
 
+                if(getOtherTerminus().getValuesAndCounts().isEmpty()) return null;
                 long unknownCount = getOtherTerminus().getValuesAndCounts().get(0).getCount();
                 return new Count(new FacetField(SolrField.unknown_date_flag.name()), "Unknown", unknownCount);
 

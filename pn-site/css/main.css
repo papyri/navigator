@@ -235,6 +235,17 @@ a.facet-reset {
   margin-bottom: 0.25rem;
 }
 
+
+#facet-widgets-wrapper .new-search {
+  margin-right: 6em;
+}
+
+@media (min-width: 992px) {
+  #facet-widgets-wrapper .new-search {
+    margin-right: .75em;
+  }
+}
+
 .facet-widget.bg-light {
   /* ensure color contrast a11y is sufficient for */
   /* disabled checkbox labels on bg-light background */
@@ -260,6 +271,12 @@ a.facet-constraint .constraint-label {
   }
 }
 
+#edition-section {
+  margin-top: 1.5em;
+  padding-top: 1.5em;
+  border-top: 1px solid #e3e3e3;
+}
+
 /* Highlights */
 mark.highlight {
   background-color: rgba(255, 230, 0, 0.7);
@@ -273,7 +290,6 @@ table#search-results-table {
     position: sticky;
     top: 0;
   }
-
 }
 
 /* Border between result record rows but not their associated text */
