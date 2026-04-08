@@ -1,16 +1,14 @@
 package info.papyri.dispatch.browse.facet;
 
-import info.papyri.dispatch.browse.facet.FacetBrowser;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import info.papyri.dispatch.browse.facet.customexceptions.InternalQueryException;
 import info.papyri.dispatch.browse.facet.customexceptions.StringSearchParsingException;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 import jakarta.servlet.*;
@@ -28,16 +26,15 @@ public class StringSearchFacetIT extends TestCase {
     private StringSearchFacet testInstance;    
 
     StringSearchFacet.SearchTarget t = StringSearchFacet.SearchTarget.TEXT;
-    private FacetBrowser fb;
 
-    @Override
+  @Override
     protected void setUp() throws Exception {
         super.setUp();
         ServletConfig mock = new ServletConfig() {
 
           @Override
           public String getServletName() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
           }
 
           @Override
@@ -46,22 +43,22 @@ public class StringSearchFacetIT extends TestCase {
 
               @Override
               public ServletContext getContext(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public String getContextPath() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public int getMajorVersion() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public int getMinorVersion() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
                 @Override
@@ -76,62 +73,62 @@ public class StringSearchFacetIT extends TestCase {
 
                 @Override
               public String getMimeType(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public Set<String> getResourcePaths(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
-              public URL getResource(String string) throws MalformedURLException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+              public URL getResource(String string) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public InputStream getResourceAsStream(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public RequestDispatcher getRequestDispatcher(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public RequestDispatcher getNamedDispatcher(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public void log(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public void log(String string, Throwable thrwbl) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public String getRealPath(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public String getServerInfo() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public String getInitParameter(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public Enumeration<String> getInitParameterNames() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
                 @Override
@@ -141,27 +138,27 @@ public class StringSearchFacetIT extends TestCase {
 
                 @Override
               public Object getAttribute(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public Enumeration<String> getAttributeNames() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public void setAttribute(String string, Object o) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public void removeAttribute(String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
               @Override
               public String getServletContextName() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet."); //To change the body of generated methods, choose Tools | Templates.
               }
 
                 @Override
@@ -185,7 +182,7 @@ public class StringSearchFacetIT extends TestCase {
                 }
 
                 @Override
-                public <T extends Servlet> T createServlet(Class<T> aClass) throws ServletException {
+                public <T extends Servlet> T createServlet(Class<T> aClass) {
                     return null;
                 }
 
@@ -215,7 +212,7 @@ public class StringSearchFacetIT extends TestCase {
                 }
 
                 @Override
-                public <T extends Filter> T createFilter(Class<T> aClass) throws ServletException {
+                public <T extends Filter> T createFilter(Class<T> aClass) {
                     return null;
                 }
 
@@ -265,7 +262,7 @@ public class StringSearchFacetIT extends TestCase {
                 }
 
                 @Override
-                public <T extends EventListener> T createListener(Class<T> aClass) throws ServletException {
+                public <T extends EventListener> T createListener(Class<T> aClass) {
                     return null;
                 }
 
@@ -324,7 +321,7 @@ public class StringSearchFacetIT extends TestCase {
 
           @Override
           public String getInitParameter(String string) {
-            String config = Thread.currentThread().getContextClassLoader().getResource("servletconfig.properties").getPath();
+            String config = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("servletconfig.properties")).getPath();
             Properties servletConfig = new Properties();
             try {
               servletConfig.load(new FileInputStream(config));
@@ -340,7 +337,7 @@ public class StringSearchFacetIT extends TestCase {
           }
           
         };
-        fb = new FacetBrowser();
+    FacetBrowser fb = new FacetBrowser();
         fb.init(mock);
         testInstance = new StringSearchFacet();    
 
@@ -359,7 +356,7 @@ public class StringSearchFacetIT extends TestCase {
 
         try{
 
-            // single term without antecedent receives default role  
+            // a single term without an antecedent receives the default role
             StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm("kai", t, caps, marks, true);
             assertEquals(1, term1.getClauseRoles().size());
             assertEquals(StringSearchFacet.ClauseRole.DEFAULT, term1.getClauseRoles().get(0));
@@ -375,7 +372,7 @@ public class StringSearchFacetIT extends TestCase {
             assertEquals(StringSearchFacet.ClauseRole.DEFAULT, kaiClause.getClauseRoles().get(0));
             assertEquals(StringSearchFacet.ClauseRole.AND, oukClause.getClauseRoles().get(0));
 
-            // term with OR antecedent or postcedent receives OR role
+            // term with OR antecedent or postcedent receives an OR role
             StringSearchFacet.SubClause term3 = testInstance.new SubClause("kai OR ouk", t, caps, marks);
             ArrayList<StringSearchFacet.ClauseRole> roles3 = term3.getSubordinateClauseRoles();            
             assertEquals(2, roles3.size()); 
@@ -449,126 +446,126 @@ public class StringSearchFacetIT extends TestCase {
             // single-word substring search, no caps
             String test1 = "ΚάΙ";
             StringSearchFacet.SearchTerm clause1 = testInstance.new SearchTerm(test1, t, true, false, true);
-            assertEquals("fq=transcription_ngram_ic:(κάι)", URLDecoder.decode(clause1.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ngram_ic:(κάι)", URLDecoder.decode(clause1.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
                         
             // user-defined, caps and marks set
             String test2 = "HGV:και";
             StringSearchFacet.SearchTerm clause2 = testInstance.new SearchTerm(test2, StringSearchFacet.SearchTarget.USER_DEFINED, true, true, true);
-            assertEquals("fq=(hgv_metadata:και)", URLDecoder.decode(clause2.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=(hgv_metadata:και)", URLDecoder.decode(clause2.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             // substring search, caps and marks
             String test3 = "ΚΆΙ";
             StringSearchFacet.SearchTerm clause3 = testInstance.new SearchTerm(test3, t, true, true, true);
-            assertEquals("fq=transcription_ngram_ia:(και)", URLDecoder.decode(clause3.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ngram_ia:(και)", URLDecoder.decode(clause3.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             // phrase search on text field, no marks
             String test4 = "\"κάι οὐκ\"";
             StringSearchFacet.SearchTerm clause4 = testInstance.new SearchTerm(test4, t, false, true, true);
-            assertEquals("fq=transcription_id:(\"και ουκ\")", URLDecoder.decode(clause4.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_id:(\"και ουκ\")", URLDecoder.decode(clause4.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             // quote-delimited with substring markers, no caps or marks
             String test5 = "\"#κάι# #οὐ\"";
             StringSearchFacet.SearchTerm clause5 = testInstance.new SearchTerm(test5, t, true, true, true);
-            assertEquals("fq=transcription_ngram_ia:(\"#και# #ου\")", URLDecoder.decode(clause5.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ngram_ia:(\"#και# #ου\")", URLDecoder.decode(clause5.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             // regex, no marks
             String test6 = "REGEX κ.ι\\s";
             StringSearchFacet.SubClause clause6 = testInstance.new SubClause(test6, t, false, true);
-            assertEquals("fq=untokenized_id:/@κ.ι @/", URLDecoder.decode(clause6.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_id:/@κ.ι @/", URLDecoder.decode(clause6.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             // proximity, words unit, no caps
             String test7 = "(ΚἈΙ? THEN ΟΎΚ)~8words";
             StringSearchFacet.SubClause clause7 = testInstance.new SubClause(test7, t, true, false);
-            assertEquals("fq={!surround cache=false}transcription_ic:(κἀι? 8w ούκ)", URLDecoder.decode(clause7.buildQuery(new SolrQuery()).toString(), "UTF-8"));  
+            assertEquals("fq={!surround cache=false}transcription_ic:(κἀι? 8w ούκ)", URLDecoder.decode(clause7.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
-            // proximity, chars unit, no caps or marks
+            // proximity, char unit, no caps or marks
             String test8 = "(ΚἈ? NEAR ΟΎΚ)~8chars";
             StringSearchFacet.SubClause clause8 = testInstance.new SubClause(test8, t, true, true);
-            assertEquals("fq=untokenized_ia:/@(ουκ.{1,8}κα.|κα..{1,8}ουκ)@/", URLDecoder.decode(clause8.buildQuery(new SolrQuery()).toString() ,"UTF-8"));
+            assertEquals("fq=untokenized_ia:/@(ουκ.{1,8}κα.|κα..{1,8}ουκ)@/", URLDecoder.decode(clause8.buildQuery(new SolrQuery()).toString() , StandardCharsets.UTF_8));
   
             // lexical 
             String test9 = "LEX λύω";
             StringSearchFacet.SubClause clause9 = testInstance.new SubClause(test9, StringSearchFacet.SearchTarget.TEXT, false, false);
             Pattern lemmaOutput = Pattern.compile("fq=transcription_ia:(\\((\\s*\\S+\\s+OR\\s+)+\\S+\\s*\\))");
             try {
-              assertTrue(lemmaOutput.matcher(URLDecoder.decode(clause9.buildQuery(new SolrQuery()).toString(), "UTF-8")).matches());
+              assertTrue(lemmaOutput.matcher(URLDecoder.decode(clause9.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8)).matches());
             } catch (InternalQueryException e) {
-              // Test fails because server isn't running;
+              // Test fails because the server isn't running;
               System.out.println("Can't test lemma search because we don't have a server running.");
             }
               
             // proximity with leading wildcards
             String test10 = "(*ιοσ* THEN λογ*)~2words";
             StringSearchFacet.SubClause clause10 = testInstance.new SubClause(test10, t, true, true);
-            assertEquals("fq=untokenized_ia:/@ιοσ@ (@ ){0,2}λογ@/", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@ιοσ@ (@ ){0,2}λογ@/", URLDecoder.decode(clause10.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             String test11 = "(?ιοσ* THEN *λογ?)~5words";
             StringSearchFacet.SubClause clause11 = testInstance.new SubClause(test11, t, true, true);
-            assertEquals("fq=untokenized_ia:/@.ιοσ@ (@ ){0,5}@λογ.@/", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@.ιοσ@ (@ ){0,5}@λογ.@/", URLDecoder.decode(clause11.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
            
             String test12 = "(?ιοσ* NEAR *λογ?)~5words";
             StringSearchFacet.SubClause clause12 = testInstance.new SubClause(test12, t, true, true);
-            assertEquals("fq=untokenized_ia:/@(.ιοσ@ (@ ){0,5}@λογ.|@λογ. (@ ){0,5}.ιοσ@)@/", URLDecoder.decode(clause12.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@(.ιοσ@ (@ ){0,5}@λογ.|@λογ. (@ ){0,5}.ιοσ@)@/", URLDecoder.decode(clause12.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
                 
             // metadata search
             StringSearchFacet.SearchTerm clause13 = testInstance.new SearchTerm(test3, StringSearchFacet.SearchTarget.METADATA, false, false, true);
-            assertEquals("fq=metadata:(κάι)", URLDecoder.decode(clause13.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=metadata:(κάι)", URLDecoder.decode(clause13.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
   
             // simplified negative lookahead/behind
             String test14 = "[-kai]sar"; 
             StringSearchFacet.SearchTerm clause14 = testInstance.new SearchTerm(test14, StringSearchFacet.SearchTarget.TEXT, true, true, true);
-            assertEquals("fq=untokenized_ia:/@([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar@/", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar@/", URLDecoder.decode(clause14.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             String test15 = "[-kai]sar#";
             StringSearchFacet.SearchTerm clause15 = testInstance.new SearchTerm(test15, StringSearchFacet.SearchTarget.TEXT, true, true, true);
-            assertEquals("fq=untokenized_ia:/@([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar @/", URLDecoder.decode(clause15.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar @/", URLDecoder.decode(clause15.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             String test16 = "kai[-sar]";
             StringSearchFacet.SearchTerm clause16 = testInstance.new SearchTerm(test16, t, true, true, true);
-            assertEquals("fq=untokenized_ia:/@kai([^s][^a][^r]|s[^a][^r]|[^s]a[^r]|sa[^r]|[^s][^a]r|s[^a]r|[^s]ar)@/", URLDecoder.decode(clause16.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@kai([^s][^a][^r]|s[^a][^r]|[^s]a[^r]|sa[^r]|[^s][^a]r|s[^a]r|[^s]ar)@/", URLDecoder.decode(clause16.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
            
             String test17 = "( ou[-k] NEAR [-kai]sar )~5chars";
             StringSearchFacet.SubClause clause17 = testInstance.new SubClause(test17, t, true, true);
-            assertEquals("fq=untokenized_ia:/@(([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar.{1,5}ou([^k])|ou([^k]).{1,5}([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar)@/", URLDecoder.decode(clause17.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@(([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar.{1,5}ou([^k])|ou([^k]).{1,5}([^k][^a][^i]|k[^a][^i]|[^k]a[^i]|ka[^i]|[^k][^a]i|k[^a]i|[^k]ai)sar)@/", URLDecoder.decode(clause17.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
               
             String test18 = "(*sar THEN ou[-k])~15words";
             StringSearchFacet.SubClause clause18 = testInstance.new SubClause(test18, t, true, true);
-            assertEquals("fq=untokenized_ia:/@sar (@ ){0,15}ou([^k])@/", URLDecoder.decode(clause18.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@sar (@ ){0,15}ou([^k])@/", URLDecoder.decode(clause18.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
            
             String test19 = "[-#]tou[-#]";
             StringSearchFacet.SearchTerm clause19 = testInstance.new SearchTerm(test19, t, true, true, true);
-            assertEquals("fq=untokenized_ia:/@([^ ])tou([^ ])@/", URLDecoder.decode(clause19.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@([^ ])tou([^ ])@/", URLDecoder.decode(clause19.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             String test20 = "καισ[-αρ]";
             StringSearchFacet.SearchTerm clause20 = testInstance.new SearchTerm(test20, t, true, true, true);
-            assertEquals("fq=untokenized_ia:/@καισ([^α][^ρ]|α[^ρ]|[^α]ρ)@/", URLDecoder.decode(clause20.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@καισ([^α][^ρ]|α[^ρ]|[^α]ρ)@/", URLDecoder.decode(clause20.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
           
             
             // simplified syntax when part of regex needs to pass through unchanged
             String test25 = "REGEX hyphen[-_]test";
             StringSearchFacet.SubClause clause25 = testInstance.new SubClause(test25, t, true, true);
-            assertEquals("fq=untokenized_ia:/@hyphen[-_]test@/", URLDecoder.decode(clause25.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=untokenized_ia:/@hyphen[-_]test@/", URLDecoder.decode(clause25.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
              
             // OR tests
             // standard
             String test26 = "kai OR ouk";
             StringSearchFacet.SubClause clause26 = testInstance.new SubClause(test26, t, true, true);
-            assertEquals("fq=transcription_ngram_ia:(kai OR ouk)", URLDecoder.decode(clause26.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ngram_ia:(kai OR ouk)", URLDecoder.decode(clause26.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             // with quotation marks
             String test27 = "\"kai ouk\" OR \"ouk kai\"";
             StringSearchFacet.SubClause clause27 = testInstance.new SubClause(test27, t, true, true);
-            assertEquals("fq=transcription_ia:(\"kai ouk\" OR \"ouk kai\")", URLDecoder.decode(clause27.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals("fq=transcription_ia:(\"kai ouk\" OR \"ouk kai\")", URLDecoder.decode(clause27.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             String test28 = "str[-a] OR str[-b]";
             String result28 = "fq=untokenized_ia:/@(str([^a])|str([^b]))@/";
             StringSearchFacet.SubClause clause28 = testInstance.new SubClause(test28, t, true, true);
-            assertEquals(result28, URLDecoder.decode(clause28.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+            assertEquals(result28, URLDecoder.decode(clause28.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
             
             String test29 = "kai OR str[-b]";
             String result29 = "fq=untokenized_ia:/@(kai|str([^b]))@/";
             StringSearchFacet.SubClause clause29 = testInstance.new SubClause(test29, t, true, true);
-             assertEquals(result29, URLDecoder.decode(clause29.buildQuery(new SolrQuery()).toString(), "UTF-8"));
+             assertEquals(result29, URLDecoder.decode(clause29.buildQuery(new SolrQuery()).toString(), StandardCharsets.UTF_8));
                     
             
         }
@@ -576,13 +573,7 @@ public class StringSearchFacetIT extends TestCase {
             
               fail("Integration test on StringSearchFacet.buildQuery erroneously threw custom exception " + cae.getMessage());
             
-        }
-        catch(UnsupportedEncodingException uee){
-        
-            fail("Integration test on StringSearchFacet.buildQuery threw encoding exception  " + uee.getMessage());
-     
-        }
-        catch(Exception e){
+        } catch(Exception e){
             
             fail("Exception erroneously thrown on buildQuery test: " + e.getMessage());
             
@@ -601,14 +592,14 @@ public class StringSearchFacetIT extends TestCase {
             ArrayList<StringSearchFacet.SearchClause> proxAndClauses = andSubClause.doRegexTransform(andClauses);
             assertEquals(andClauses, proxAndClauses);
 
-            // if proximity search but with words as unit, return unchanged
+            // if proximity searches but with words as a unit, return unchanged
             String wordProxClause = "kai 5w ouk";
             StringSearchFacet.SubClause wordSubClause = testInstance.new SubClause(wordProxClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> wordClauses = wordSubClause.getClauseComponents();
             ArrayList<StringSearchFacet.SearchClause> proxWordClauses = wordSubClause.doRegexTransform(wordClauses);
             assertEquals(wordClauses, proxWordClauses);
 
-            // if THEN search with chars as unit, return appropriate regex
+            // if THEN search with chars as a unit, return the appropriate regex
             String thenClause = "kai 5wc ouk";
             StringSearchFacet.SubClause thenSubClause = testInstance.new SubClause(thenClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> thenClauses = thenSubClause.getClauseComponents();
@@ -618,7 +609,7 @@ public class StringSearchFacetIT extends TestCase {
             assertTrue(proxThenClauses.get(0).getClauseRoles().contains(StringSearchFacet.ClauseRole.REGEX));
             assertEquals("/@kai.{1,5}ouk@/", proxThenClauses.get(0).buildTransformedString());
 
-            // if NEAR search with chars as unit, return appropriate regex
+            // if NEAR search with chars as a unit, return the appropriate regex
             String nearClause = "kai 5nc ouk";
             StringSearchFacet.SubClause nearSubClause = testInstance.new SubClause(nearClause, t, true, true);
             ArrayList<StringSearchFacet.SearchClause> nearClauses = nearSubClause.getClauseComponents();
@@ -642,7 +633,7 @@ public class StringSearchFacetIT extends TestCase {
 
         } catch(Exception e){
             
-            fail("Exception erroneosly thrown on doProxTransform test: " + e.getMessage());
+            fail("Exception erroneously thrown on doProxTransform test: " + e.getMessage());
             
             
         }
@@ -697,7 +688,7 @@ public class StringSearchFacetIT extends TestCase {
                 
         try{
 
-            // sanity-check: no transformation req'd returns as same
+            // sanity-check: no transformation req'd returns as the same
             String origString1 = "κάι";
             StringSearchFacet.SearchTerm term1 = testInstance.new SearchTerm(origString1, t, false, false, true);
             assertEquals(origString1, term1.buildTransformedString());
@@ -741,7 +732,7 @@ public class StringSearchFacetIT extends TestCase {
               System.out.println("Can't test lemma search because we don't have a server running.");
             }
             
-            // metadata as target causes automatic lower-casing
+            // metadata as a target causes automatic lower-casing
             String origString8 = "Caesar Augustus";
             StringSearchFacet.SubClause term8 = testInstance.new SubClause(origString8, StringSearchFacet.SearchTarget.METADATA, false, false);
             assertEquals(origString8.toLowerCase(), term8.buildTransformedString());
@@ -760,7 +751,7 @@ public class StringSearchFacetIT extends TestCase {
             StringSearchFacet.SubClause term11 = testInstance.new SubClause(origString11, t, true, true);
             assertEquals("#kai# #tou", term11.buildTransformedString());
             
-            // character-proximity searches transformed into appropriate regex
+            // character-proximity searches transformed into the appropriate regex
             String origString13 = "(kai 10wc ouk)";
             StringSearchFacet.SubClause term13 = testInstance.new SubClause(origString13, t, true, true);
             assertEquals("/@(kai.{1,10}ouk)@/", term13.buildTransformedString());  
