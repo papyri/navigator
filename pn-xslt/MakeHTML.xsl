@@ -113,7 +113,7 @@
   <!-- An apparatus is only created if one of the following is true -->
   <xsl:variable name="has-apparatus" select=".//t:choice | .//t:subst | .//t:app | .//t:g[@type=('apostrophe','high-punctus','middot','low-punctus','diastole','hypodiastole')] | .//t:hi[@rend = ('diaeresis','grave','acute','asper','lenis','circumflex')] | .//t:del[@rend='slashes' or @rend='cross-strokes'] | .//t:milestone[@rend = 'box']"/>
 
-  <xsl:variable name="has-commentary" select=".//t:div[@type='commentary']"/>
+  <xsl:variable name="has-commentary" select=".//t:div[@type='commentary'][@subtype='linebyline']"/>
 
   <xsl:variable name="translation-count" select="count(tokenize($translations, '\s+'))"/>
   <xsl:variable name="translation-docs" select="pi:get-docs(tokenize($translations), 'xml')"/>
@@ -669,8 +669,11 @@
           <h2>DDbDP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
         </xsl:otherwise>
       </xsl:choose>
-        <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
-        <xsl:apply-templates select="$text" mode="sqbrackets"/>
+      
+      <xsl:apply-templates select=".//t:div[@type='commentary'][@subtype='frontmatter']"/>
+      <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
+      <xsl:apply-templates select="$text" mode="sqbrackets"/>
+      <xsl:apply-templates select=".//t:div[@type='commentary'][@subtype='linebyline']"/>
 
       <div id="history" class="mb-4">
         <h2>History</h2>
@@ -1765,6 +1768,56 @@
   <xsl:template match="t:div[@type='bibliography' and not(.//t:bibl[normalize-space(.)])]"/>
   
   <!-- Override templates in htm-teidiv -->
+  
+  <xsl:template match="t:div">
+    <!-- div[@type = 'edition']" and div[@type='textpart'] can be found in htm-teidivedition.xsl -->
+    <div>
+      <xsl:choose>
+        <xsl:when test="parent::t:body and @type and @subtype">
+          <xsl:if test="@type='comentary' and @subtype='linebyline'">
+            <xsl:attribute name="id">
+              <xsl:value-of select="@type"/>
+            </xsl:attribute>
+          </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="id">
+            <xsl:value-of select="@type"/>
+          </xsl:attribute>
+        </xsl:otherwise>
+      </xsl:choose>
+      
+      <!-- Temporary headings so we know what is where -->
+      <xsl:if test="not(t:head)">
+        <xsl:choose>
+          <xsl:when test="@type='commentary' and @subtype='frontmatter'"><h3>Introduction</h3></xsl:when>
+          <xsl:when test="@type='commentary' and @subtype='linebyline'"><h3>Notes</h3></xsl:when>
+          <xsl:when test="@type = 'translation'">
+            <h2>
+              <xsl:value-of select="/t:TEI/t:teiHeader/t:profileDesc/t:langUsage/t:language[@ident = current()/@xml:lang]"/>
+              <xsl:text> </xsl:text>
+              <xsl:value-of select="@type"/>
+            </h2>
+          </xsl:when>
+          <xsl:otherwise>
+            <h2>
+              <xsl:value-of select="@type"/>
+              <xsl:if test="string(@subtype)">
+                <xsl:text>: </xsl:text>
+                <xsl:value-of select="@subtype"/>
+              </xsl:if>
+            </h2>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:if>
+      
+      <!-- Body of the div -->
+      <xsl:apply-templates/>
+      
+    </div>
+    
+  </xsl:template>
+  
   <xsl:template match="t:div[@type = 'translation']">
     <div id="translation-{generate-id()}">
       <xsl:apply-templates/>
@@ -1777,6 +1830,8 @@
     </xsl:if>
     <xsl:apply-templates/>
   </xsl:template>
+  
+  <!-- Need to make sure commentary template gets called. PK-302 -->
   
   <!-- Override template in htm-teidivedition -->
   <xsl:template match="t:div[@type='edition']//t:div[@type='textpart']" priority="1">
@@ -1802,7 +1857,6 @@
         <h3 id="{generate-id()}" class="textpartnumber textpartnumber-heading"><xsl:value-of select="@n"/></h3>
       </xsl:otherwise>
     </xsl:choose>
-    
     
     <!-- Custodial events here -->
     <!-- first get the value of the columns @corresp -->
