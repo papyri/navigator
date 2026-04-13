@@ -320,11 +320,12 @@ $(document).ready(
 
         if(selected_date == "" || selected_date.toLowerCase() == "unknown") return;
 
-        // Only include dates that were explicitly set by the user (already in the URL),
-        // not auto-selected values from the facet
+        // Only include dates that were explicitly set by the user (either just picked
+        // this submission, or already present in the URL from a prior submission),
+        // not auto-selected single values from the facet.
         const currentUrlParams = new URLSearchParams(window.location.search);
         const dateParamName = date_wrapper_name.match("start") ? "DATE_START_TEXT" : "DATE_END_TEXT";
-        if(!currentUrlParams.has(dateParamName)) return;
+        if(datefield.dataset.userSet !== "true" && !currentUrlParams.has(dateParamName)) return;
         selected_date = selected_date.replace(/\s*\(\d+\)\s*/g, "");  // trim count
         const era_finder = new RegExp(/\s*(B?CE)$/);
         let era = "";
@@ -480,6 +481,7 @@ $(document).ready(
       const eraRadioName = isStartDate ? "after-era" : "before-era";
 
       setEraFromDateValue(selectElement.value, eraRadioName);
+      selectElement.dataset.userSet = "true";
 
       $("form[name='facets']").trigger("submit");
     });
