@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:22.04
 
 # Install Git
 ENV DEBIAN_FRONTEND=noninteractive
