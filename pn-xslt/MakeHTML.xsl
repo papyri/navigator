@@ -230,16 +230,31 @@
         <header id="masthead" class="bg-primary text-white position-relative">
           <nav id="masthead-nav" class="navbar flex-wrap navbar-expand-md" data-bs-theme="dark" aria-label="Masthead &amp; user account navigation">
             <div class="container-xl px-4">
-              <div class="d-flex justify-content-between align-items-center w-100">
-                <a href="/" class="navbar-brand">Papyri.info</a>
-                <div class="d-flex align-items-center">
-                  <div id="login">
-                    <a href="/editor/user/signin" class="btn btn-link text-decoration-none d-none d-sm-inline">Sign In</a>
+              <div class="d-flex w-100 mt-2 mb-2 justify-content-between align-items-center">
+                  
+                <div class="col-11 col-md-6 d-flex logos">
+                  <a href="https://library.duke.edu">
+                    <div class="navbar-logo mt-1 me-3 me-md-4">
+                      <span class="visually-hidden">Duke University Libraries</span>
+                    </div>
+                  </a>
+                  <div class="papyri-logo me-auto">
+                    <a href="/" class="navbar-brand">Papyri.info</a>
                   </div>
+                </div>
+
+                <div class="col-1 col-md-1 d-flex justify-content-end toggle">
                   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                   </button>
                 </div>
+                
+                <div class="d-none d-md-block col-md-5 signin">
+                  <div id="login" class="d-flex justify-content-end">
+                    <a href="/editor/user/signin" class="btn btn-link text-decoration-none d-none d-sm-inline">Sign In</a>
+                  </div>
+                </div>
+                
               </div>
             </div>
           </nav>
@@ -359,27 +374,27 @@
                 <xsl:if test="$current">
                   <div id="editthis" class="me-3">
                     <a href="/editor/publications/create_from_identifier/papyri.info/current/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
-                      <i class="bi bi-edit"></i> open in editor</a>
+                      <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
                 </xsl:if>
                 <!--
                 <xsl:if test="$historical">
                   <div id="editthis" class="me-3">
                     <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
-                      <i class="bi bi-edit"></i> open in editor</a>
+                      <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
                 </xsl:if>
                 -->
                 <xsl:if test="$hgv and not($current)">
                   <div id="editthis" class="me-3">
                     <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
-                      <i class="bi bi-edit"></i> open in editor</a>
+                      <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
                 </xsl:if>
                 <xsl:if test="$apis and not($current or $dclp or $ddbdp or $hgv)">
                   <div id="editthis">
                     <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
-                      <i class="bi bi-edit"></i> open in editor</a>
+                      <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
                 </xsl:if>
 
@@ -417,7 +432,7 @@
 
               <xsl:if test="$collection = 'current'">
                 <xsl:if test="$hgv or $apis or $tm or $dclp">
-                  <div id="metadata" class="metadata">
+                  <div id="metadata" class="metadata mb-5">
                     <xsl:for-each select="$relations[contains(., 'hgv/')]">
                       <xsl:sort select="." order="ascending"/>
                       <xsl:choose>
@@ -564,7 +579,7 @@
                   </xsl:if>
                 </div>
               </xsl:if>
-              <div id="ld" class="data">
+              <div id="ld" class="data mb-5">
                 <h2>Linked Data</h2>
                 <p>
                   <a href="{replace($selfUrl,'https://papyri.info','')}/rdf">RDF/XML</a> |
@@ -596,8 +611,8 @@
   </xsl:template>
 
   <xsl:template name="images">
-    <div id="image" class="image data">
-      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if> [<a href="{replace($selfUrl,'https://papyri.info','')}/images" target="_blank">open in new window</a>]</h2>
+    <div id="image" class="image data mb-5">
+      <h2>Image<xsl:if test="count($imgs) &gt; 1">s</xsl:if> <a href="{replace($selfUrl,'https://papyri.info','')}/images" target="_blank"><i class="fs-5 ms-2 bi bi-external-link"><span class="visually-hidden">open in new window</span></i></a></h2>
         <ul>
           <xsl:for-each select="$imgs">
             <li><a href="{.}" class="imagelink" alt="papyrus image"><xsl:value-of select="substring-after(substring-after(.,'images/'),'/')"/></a></li>
@@ -611,7 +626,7 @@
   </xsl:template>
 
   <xsl:template name="translations">
-    <div id="translations">
+    <div id="translations" class="mb-5">
       <xsl:for-each select="pi:get-docs(tokenize($translations), 'xml')">
         <xsl:sort select="number(substring-after(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '-'))"/>
         <div class="translation data">
@@ -675,7 +690,7 @@
       <xsl:apply-templates select="$text" mode="sqbrackets"/>
       <xsl:apply-templates select=".//t:div[@type='commentary'][@subtype='linebyline']"/>
 
-      <div id="history" class="mb-4">
+      <div id="history" class="mb-5">
         <h2>History</h2>
         <div class="accordion mb-2">
           <div class="accordion-item">
@@ -768,7 +783,7 @@
 
   <xsl:template match="t:revisionDesc" mode="history">
     <xsl:variable name="file-uri" select="ceiling(number(//t:idno[@type='TM']) div 1000)"/>
-    <div id="history" class="text">
+    <div id="history" class="text mb-5">
       <div id="history-headers">
         <h3><span id="edit-history">Editorial History</span>;
           <span id="all-history">All History</span>;
@@ -1147,7 +1162,7 @@
   <!-- Override template in htm-tpl-apparatus.xsl -->
   <xsl:template name="tpl-apparatus">
     <xsl:if test="$has-apparatus">
-      <div id="apparatus" lang="en" class="mt-3">
+      <div id="apparatus" lang="en" class="mt-3 mb-5">
         <div class="d-flex align-items-center mb-3">
           <h2 class="mb-0">Apparatus</h2>
           <!-- <div class="form-check form-switch ms-auto"> -->
@@ -1819,7 +1834,7 @@
   </xsl:template>
   
   <xsl:template match="t:div[@type = 'translation']">
-    <div id="translation-{generate-id()}">
+    <div id="translation-{generate-id()}" class="mb-3">
       <xsl:apply-templates/>
     </div>
   </xsl:template>
@@ -2051,7 +2066,7 @@
     <!-- Only render the edition div if there's actual content (not just empty ab elements) -->
     <xsl:if test="normalize-space(.) != ''">
 
-    <div id="edition" class="mb-3">
+    <div id="edition" class="mb-5">
       <!-- Found in htm-tpl-lang.xsl -->
       <xsl:call-template name="attr-lang"/>
 
@@ -2069,7 +2084,7 @@
     </div>
     </xsl:if>
     <!-- Placeholder to render apparatus when not in sidebar -->
-    <div id="apparatus-under" class="mb-3"></div>
+    <div id="apparatus-under" class="mb-5"></div>
   </xsl:template>  
 
   <!-- Override template in htm-teiref.xsl -->

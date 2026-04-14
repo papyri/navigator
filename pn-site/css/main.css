@@ -384,7 +384,7 @@ nav.breadcrumb li.breadcrumb-item a {
 
 #previous-values {
   /* fix spacing issue */
-  margin-top: 3px;
+  /* margin-top: 3px; */
 }
 
 
@@ -945,10 +945,22 @@ a.apparatus-link.active {
 /* ------------------ */
 /* Image viewer       */
 /* ------------------ */
+
 div#olimage {
-  width: 35vw;
-  height: 35vw;
+  width: 100%;
+  height: 100vw;
+  background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity));
+  padding: .25em;
+  border: 2px solid #eee;
+  margin-bottom: 1em;
 }
+
+@media (min-width: 768px) {
+  div#olimage {
+    height: 50vw;
+  }
+}
+
 /* ------------------- */
 /* Commentary/Notes    */
 /* ------------------- */
@@ -998,12 +1010,21 @@ div#olimage {
   transition: all 0.3s ease;
 }
 
-.btn-back-to-top.in-controls-nav {
+/* .btn-back-to-top.in-controls-nav {
   position: static;
   width: 1.5rem;
   height: 1.5rem;
   box-shadow: none;
-}
+} */
+
+.btn-back-to-top.in-controls-nav {
+    position: static;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    flex-shrink: 0;
+    box-shadow: none;
+  }
 
 .btn-back-to-top:hover {
   background-color: rgba(var(--bs-primary-rgb), 0.95);

@@ -1,20 +1,17 @@
 <nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search &amp; browse navigation">
   <div class="container-xl px-4">
     <div id="mainNavbar" class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
-        <li class="nav-item">
-          <a class="nav-link disabled nav-category ps-md-0" href="#" tabindex="-1">Browse</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/browse/editions/">Editions</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/browse/apis/">APIS</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/authors">Authors</a>
-        </li>
 
+      <!-- hide for wider viewports -->
+      <div id="login" class="d-md-none mt-3 mb-3">
+        <a href="/editor/user/signin" class="text-decoration-none">Sign In</a>
+      </div>
+
+      <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
+        <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" aria-hidden="true" tabindex="-1">Browse:</a></li>
+        <li class="nav-item"><a class="nav-link" href="/browse/editions/"><span class="visually-hidden">Browse</span>Editions</a></li>
+        <li class="nav-item"><a class="nav-link" href="/browse/apis/"><span class="visually-hidden">Browse</span>APIS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/authors"><span class="visually-hidden">Browse</span> Authors</a></li>
         <li class="nav-item position-relative">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" role="button">TM Number</a>
 
@@ -27,17 +24,11 @@
             </form>
           </div>
         </li>
+        <li class="nav-item"><a class="nav-link" href="/docs/checklist"><span class="visually-hidden">Browse</span> Checklist</a></li>
 
-        <li class="nav-item">
-          <a class="nav-link disabled nav-category ms-md-5 mt-3 mt-md-0" href="#" tabindex="-1">Search</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/search">Data</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/bibliosearch">Bibliography</a>
-        </li>
-
+        <li class="nav-item"><a class="nav-link disabled nav-category ms-lg-4 ms-xl-5 mt-3 mt-md-0" aria-hidden="true" href="#" tabindex="-1">Search:</a></li>
+        <li class="nav-item"><a class="nav-link" href="/search"><span class="visually-hidden">Search</span> Data</a></li>
+        <li class="nav-item"><a class="nav-link" href="/bibliosearch"><span class="visually-hidden">Search</span> Bibliography</a></li>
       </ul>
     </div>
   </div>
