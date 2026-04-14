@@ -91,7 +91,7 @@ public class GitWrapperTest {
   
   @Test
   public void testFileNameWithPageNumberToURI() {
-    String id = "http://papyri.info/ddbdp/upz;1;pg604,8b/source";
+    String id = "http://papyri.info/ddbdp/upz;1;pg604-8b/source";
     String file = "/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/upz/upz.1/upz.1.pg604-8b.xml";
     String result = GitWrapper.filenameToUri(file,true, "https://papyri.info/sparql");
     assertEquals(id, result);
