@@ -540,8 +540,8 @@ public class FacetBrowser extends HttpServlet {
   private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, Boolean hasConstraints, StringBuilder html, Map<String, String[]> submittedParams) {
 
     html.append("<div id=\"facet-widgets-wrapper\">");
-
-    String heading = hasConstraints ? "Refine Search" : "Search";
+ 
+    String heading = hasConstraints ? "Refine <span class=\"d-none d-sm-inline\">Search</span>" : "Search";
     html.append("<div class=\"d-flex justify-content-between align-items-center\">");
     html.append("<h2 class=\"h4\">");
     html.append(heading);
@@ -550,7 +550,7 @@ public class FacetBrowser extends HttpServlet {
     html.append("<div class=\"mb-2 new-search\">");
     html.append("  <a href=\"");
     html.append(FacetBrowser.FACET_PATH);
-    html.append("\" id=\"reset-all\" class=\"btn btn-link\" aria-disabled=\"false\">Start Over</a>");
+    html.append("\" id=\"reset-all\" role=\"button\" class=\"btn btn-outline-primary btn-sm\" aria-disabled=\"false\">Start Over</a>");
     html.append("</div>");
     html.append("</div>");
 
@@ -603,10 +603,10 @@ public class FacetBrowser extends HttpServlet {
 
     }
 
-    html.append("<div class=\"mb-2\">");
+    html.append("<div class=\"mb-2 text-end\">");
     html.append("  <a href=\"");
     html.append(FacetBrowser.FACET_PATH);
-    html.append("\" id=\"reset-all-bottom\" class=\"btn btn-link\" aria-disabled=\"false\">Start Over</a>");
+    html.append("\" id=\"reset-all-bottom\" class=\"btn btn-outline-primary\" role=\"button\" aria-disabled=\"false\">Start Over</a>");
     html.append("  <input type=\"submit\" value=\"Search\" id=\"search-btn-bottom\" class=\"btn btn-primary\" role=\"button\" aria-disabled=\"false\"/>");
     html.append("</div>");
 
@@ -779,7 +779,7 @@ public class FacetBrowser extends HttpServlet {
             values.append(FACET_PATH);
             values.append("".equals(queryString) ? "" : "?");
             values.append(queryString);
-            values.append("' class='badge rounded-pill bg-light text-dark fs-6 text-decoration-none py-2 me-2 mb-2 facet-constraint constraint-");
+            values.append("' class='badge rounded-pill bg-light text-dark fs-6 text-decoration-none py-2 me-2 mb-2 facet-constraint mw-100 text-truncate constraint-");
             values.append(param.toLowerCase());
             values.append("' aria-label='");
             values.append(accessibleLabel);
@@ -807,7 +807,7 @@ public class FacetBrowser extends HttpServlet {
       String valueString = values.toString();
       if (valueString.length() > 0) {
 
-        previousHTMLValues.append("<span class='prev-constraint-wrapper' id='prev-constraint-");
+        previousHTMLValues.append("<span class='prev-constraint-wrapper d-inline-block mw-100' id='prev-constraint-");
         previousHTMLValues.append(facet.getCSSSelector());
         previousHTMLValues.append("'>");
         previousHTMLValues.append(values);

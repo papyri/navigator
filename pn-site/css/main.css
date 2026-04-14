@@ -237,12 +237,25 @@ a.facet-reset {
 
 
 #facet-widgets-wrapper .new-search {
-  margin-right: 6em;
+  margin-right: 7.35em;
+}
+
+#toggleNavButton {
+  margin-top: 0 !important;
+  margin-right: 1.75em !important;
 }
 
 @media (min-width: 992px) {
   #facet-widgets-wrapper .new-search {
-    margin-right: .75em;
+    margin-right: 2.5em;
+  }
+  #toggleNavButton {
+    margin-top: 1px !important;
+    margin-right: 1.75em !important;
+    padding-top: 4px;
+  }
+  #toggleNavButton.collapsed {
+    margin-right: .75em !important;
   }
 }
 
@@ -367,6 +380,11 @@ nav.breadcrumb li.breadcrumb-title {
 
 nav.breadcrumb li.breadcrumb-item a {
   color: #800000;
+}
+
+#previous-values {
+  /* fix spacing issue */
+  margin-top: 3px;
 }
 
 

@@ -66,7 +66,7 @@
           
           <div class="d-flex align-items-center">
             <div id="login">
-              <a href="/editor/user/signin" class="btn btn-link text-decoration-none">Sign In</a>
+              <a href="/editor/user/signin" class="btn btn-link text-decoration-none d-none d-sm-inline">Sign In</a>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -79,6 +79,12 @@
     <nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search & browse navigation">
       <div class="container-xl px-4">
         <div id="mainNavbar" class="collapse navbar-collapse">
+
+          <!-- hide for wider viewports -->
+          <div id="login" class="d-md-none mt-3 mb-3">
+            <a href="/editor/user/signin" class="text-decoration-none">Sign In</a>
+          </div>
+
           <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
             <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" aria-hidden="true" tabindex="-1">Browse:</a></li>
             <li class="nav-item"><a class="nav-link" href="/browse/editions/"><span class="visually-hidden">Browse</span>Editions</a></li>
