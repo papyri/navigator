@@ -832,6 +832,14 @@ body.author-browse .btn-group .btn {
   content: "-";
 }
 
+#edition .text-line[data-rend="indent"] span.linecontent {
+  padding-left: 2em;
+}
+
+#edition .text-line[data-rend="outdent"] span.linecontent {
+  margin-left: -2em;
+}
+
 #edition .text-line:hover {
   background-color: rgba(0,0,0,0.025);
 }
@@ -1010,13 +1018,6 @@ div#olimage {
   transition: all 0.3s ease;
 }
 
-/* .btn-back-to-top.in-controls-nav {
-  position: static;
-  width: 1.5rem;
-  height: 1.5rem;
-  box-shadow: none;
-} */
-
 .btn-back-to-top.in-controls-nav {
     position: static;
     width: 1.5rem;
@@ -1143,7 +1144,6 @@ div#olimage {
 
 .intro-content h2 {
   font-size: 1.4rem;
-  /* color: var(--bs-success); */
   color: #676767;
 }
 
