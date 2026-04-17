@@ -12,7 +12,7 @@ import java.util.Set;
 import jakarta.servlet.ServletConfig;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
 import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -32,7 +32,7 @@ public class SolrUtils {
   }
   
   public String expandLemmas(String query) throws MalformedURLException, IOException, SolrServerException {
-    SolrClient solr = new HttpJdkSolrClient.Builder(solrUrl + morphSearch).build();
+    SolrClient solr = new HttpJettySolrClient.Builder(solrUrl + morphSearch).build();
     StringBuilder exp = new StringBuilder();
     SolrQuery sq = new SolrQuery();
     String[] lemmas = query.split("\\s+");

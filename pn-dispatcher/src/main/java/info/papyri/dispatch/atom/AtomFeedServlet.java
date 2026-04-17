@@ -24,7 +24,7 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
 import org.apache.abdera.model.Person;
 import org.apache.abdera.writer.Writer;
-import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.SolrQuery;
@@ -309,7 +309,7 @@ public class AtomFeedServlet extends HttpServlet{
         
         try{
             
-            SolrClient solrServer = new HttpJdkSolrClient.Builder(SOLR_URL + PN_SEARCH).build();
+            SolrClient solrServer = new HttpJettySolrClient.Builder(SOLR_URL + PN_SEARCH).build();
             QueryResponse qr = solrServer.query(sq);
             SolrDocumentList sdl = qr.getResults();
             return sdl;
