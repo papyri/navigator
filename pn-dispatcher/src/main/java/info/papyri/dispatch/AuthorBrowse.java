@@ -44,7 +44,7 @@ public class AuthorBrowse extends HttpServlet {
   @Override
   public void init(ServletConfig config) {
     TEMPLATE = config.getInitParameter("template");
-    solrUrl = config.getInitParameter("solrUrl");
+    solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
     logger.info("Template: " + TEMPLATE);
     logger.info("Solr URL: " + solrUrl);
   }

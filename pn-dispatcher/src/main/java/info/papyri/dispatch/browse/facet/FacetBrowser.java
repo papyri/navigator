@@ -97,7 +97,7 @@ public class FacetBrowser extends HttpServlet {
   public void init(ServletConfig config) throws ServletException {
 
     super.init(config);
-    SOLR_URL = config.getInitParameter("solrUrl");
+    SOLR_URL = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
     SOLR_UTIL = new SolrUtils(config);
     home = config.getInitParameter("home");
     PN_SEARCH = config.getInitParameter("pnSearchPath");

@@ -96,7 +96,7 @@ public class AtomFeedServlet extends HttpServlet{
     public void init(ServletConfig config) throws ServletException{
         
         super.init(config);
-        SOLR_URL = config.getInitParameter("solrUrl");
+        SOLR_URL = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
         PN_SEARCH = config.getInitParameter("pnSearchPath");
         abdera = getAbderaInstance();
  

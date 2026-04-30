@@ -28,7 +28,7 @@ public class SolrUtils {
   private static String morphSearch = "morph-search/";
   
   public SolrUtils(ServletConfig config) {
-    solrUrl = config.getInitParameter("solrUrl");
+    solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
   }
   
   public String expandLemmas(String query) throws MalformedURLException, IOException, SolrServerException {
