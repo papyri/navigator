@@ -39,12 +39,14 @@ public class AuthorBrowse extends HttpServlet {
 
   private static String TEMPLATE;
   private static String solrUrl;
+  static String PN_SEARCH;
   private static Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) {
     TEMPLATE = config.getInitParameter("template");
     solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
+    PN_SEARCH = config.getInitParameter("pnSearchPath");
     logger.info("Template: " + TEMPLATE);
     logger.info("Solr URL: " + solrUrl);
   }
@@ -68,7 +70,7 @@ public class AuthorBrowse extends HttpServlet {
       //selecting one is a search on author_str:"<selected author>" gets back author_work facets
       //filter those for the current author and display, selecting one gives you
     response.setContentType("text/html;charset=UTF-8");
-    SolrClient solr = new HttpJettySolrClient.Builder(solrUrl).withConnectionTimeout(5, TimeUnit.SECONDS).build();
+    SolrClient solr = new HttpJettySolrClient.Builder(solrUrl + PN_SEARCH).withConnectionTimeout(5, TimeUnit.SECONDS).build();
     SolrQuery sq = new SolrQuery();
     sq.add("q", "*:*");
     sq.addFacetField("author_work");
