@@ -39,7 +39,7 @@ public class AuthorBrowse extends HttpServlet {
 
   private static String TEMPLATE;
   private static String solrUrl;
-  static String PN_SEARCH;
+  private static String PN_SEARCH;
   private static Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
