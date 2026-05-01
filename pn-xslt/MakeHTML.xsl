@@ -976,7 +976,15 @@
           <ol class="breadcrumb">
             <li class="breadcrumb-title visually-hidden">Editions:</li>
             <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
-            <li class="breadcrumb-item active" aria-current="page"> <span class="arrow"> → </span> <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></li>
+            <li class="breadcrumb-item active" aria-current="page">
+              <xsl:if test="//t:body/t:head/t:ref"><span class="breadcrumb-divider">; </span></xsl:if>
+              <span class="arrow"> → </span> <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/>
+            </li>
+            <li class="breadcrumb-copy">
+              <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
+                <i class="bi bi-copy"></i>
+              </button>
+            </li>
           </ol>
         </nav>
       </xsl:when>
@@ -997,7 +1005,15 @@
               <ol class="breadcrumb">
                 <li class="breadcrumb-title visually-hidden">Editions:</li>
                 <xsl:apply-templates select="$current//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="$historical-path"/></xsl:apply-templates>
-                <li class="breadcrumb-item"> <span class="arrow"> → </span> <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></a></li>
+                <li class="breadcrumb-item">
+                  <xsl:if test="$current//t:body/t:head/t:ref"><span class="breadcrumb-divider">; </span></xsl:if>
+                  <span class="arrow"> → </span> <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></a>
+                </li>
+                <li class="breadcrumb-copy">
+                  <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
+                    <i class="bi bi-copy"></i>
+                  </button>
+                </li>
               </ol>
             </nav>
           </xsl:when>
@@ -1017,17 +1033,22 @@
         <xsl:choose>
           <xsl:when test="@target and not(contains(@target, $active))">
             <li class="breadcrumb-item">
+              <xsl:if test="position() &gt; 1"><span class="breadcrumb-divider">; </span></xsl:if>
               <a href="{replace(@target, 'https://papyri.info', '')}"><xsl:value-of select="t:title"/></a>
               <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
             </li>
           </xsl:when>
           <xsl:when test="@target and contains(@target, $active)">
-            <li class="breadcrumb-item active" aria-current="page"><xsl:value-of select="t:title"/>
+            <li class="breadcrumb-item active" aria-current="page">
+              <xsl:if test="position() &gt; 1"><span class="breadcrumb-divider">; </span></xsl:if>
+              <xsl:value-of select="t:title"/>
               <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
             </li>
           </xsl:when>
           <xsl:otherwise>
-            <li class="breadcrumb-item"><xsl:value-of select="t:title"/>
+            <li class="breadcrumb-item">
+              <xsl:if test="position() &gt; 1"><span class="breadcrumb-divider">; </span></xsl:if>
+              <xsl:value-of select="t:title"/>
               <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
             </li>
           </xsl:otherwise>
