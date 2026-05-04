@@ -149,7 +149,11 @@
         <servlet-class>info.papyri.dispatch.AuthorBrowse</servlet-class>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8983/solr/pn-search</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>pnSearchPath</param-name>
+            <param-value>pn-search</param-value>
         </init-param>
         <init-param>
             <param-name>template</param-name>

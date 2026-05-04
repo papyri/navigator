@@ -25,7 +25,7 @@
       <xsl:otherwise>hgv</xsl:otherwise>
     </xsl:choose>
     </xsl:variable>
-    <div class="metadata">
+    <div class="metadata mb-3">
       <div id="{$md-collection}-data" class="{$md-collection} data">
         <xsl:choose>
           <xsl:when test="$md-collection = 'dclp'">
