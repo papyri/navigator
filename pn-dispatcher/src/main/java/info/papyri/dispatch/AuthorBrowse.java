@@ -9,7 +9,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
@@ -39,12 +39,14 @@ public class AuthorBrowse extends HttpServlet {
 
   private static String TEMPLATE;
   private static String solrUrl;
+  private static String PN_SEARCH;
   private static Logger logger = Logger.getLogger("pn-dispatch");
 
   @Override
   public void init(ServletConfig config) {
     TEMPLATE = config.getInitParameter("template");
-    solrUrl = config.getInitParameter("solrUrl");
+    solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
+    PN_SEARCH = config.getInitParameter("pnSearchPath");
     logger.info("Template: " + TEMPLATE);
     logger.info("Solr URL: " + solrUrl);
   }
@@ -68,7 +70,7 @@ public class AuthorBrowse extends HttpServlet {
       //selecting one is a search on author_str:"<selected author>" gets back author_work facets
       //filter those for the current author and display, selecting one gives you
     response.setContentType("text/html;charset=UTF-8");
-    SolrClient solr = new HttpJdkSolrClient.Builder(solrUrl).withConnectionTimeout(5, TimeUnit.SECONDS).build();
+    SolrClient solr = new HttpJettySolrClient.Builder(solrUrl + PN_SEARCH).withConnectionTimeout(5, TimeUnit.SECONDS).build();
     SolrQuery sq = new SolrQuery();
     sq.add("q", "*:*");
     sq.addFacetField("author_work");
