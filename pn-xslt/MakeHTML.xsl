@@ -879,7 +879,7 @@
         <xsl:text>Current Edition: </xsl:text>
         <xsl:value-of select="$type"/>
         <xsl:text> </xsl:text>
-        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> (<xsl:value-of select="/t:TEI/t:text//t:body/t:head/t:ref[@type='main']/t:title"/>)
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:text>Historical Edition: </xsl:text>
