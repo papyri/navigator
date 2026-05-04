@@ -694,6 +694,49 @@ document.addEventListener('DOMContentLoaded', function() {
     highlightHash();
 });
 
+// Wire up breadcrumb copy buttons
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.breadcrumb-copy-btn').forEach(function(btn) {
+        const originalTitle = btn.getAttribute('title') || 'Copy citation';
+        let tooltip = bootstrap.Tooltip.getOrCreateInstance(btn);
+
+				btn.addEventListener('click', function () {
+					const ol = btn.closest('nav.breadcrumb')?.querySelector('ol.breadcrumb');
+					if (!ol) return;
+					const clone = ol.cloneNode(true);
+					clone.querySelectorAll('.visually-hidden, .breadcrumb-copy').forEach(function (n) { n.remove(); });
+					const text = clone.textContent.replace(/\s+/g, ' ').trim();
+
+					navigator.clipboard.writeText(text).then(function () {
+						const existingTipId = btn.getAttribute('aria-describedby');
+						if (existingTipId) document.getElementById(existingTipId)?.remove();
+						tooltip.dispose();
+
+						const icon = btn.querySelector('i');
+						if (icon) icon.classList.replace('bi-copy', 'bi-check-lg');
+
+						btn.setAttribute('title', 'Copied!');
+
+						setTimeout(function () {
+							tooltip = new bootstrap.Tooltip(btn);
+							tooltip.show();
+
+							setTimeout(function () {
+								tooltip.hide();
+								setTimeout(function () {
+									tooltip.dispose();
+									btn.setAttribute('title', originalTitle);
+									tooltip = new bootstrap.Tooltip(btn);
+									if (icon) icon.classList.replace('bi-check-lg', 'bi-copy');
+								}, 200);
+							}, 1500);
+						}, 50);
+					});
+				});
+
+    });
+});
+
 // Listen for hash changes and update highlighting
 window.addEventListener('hashchange', function() {
     highlightHash();
