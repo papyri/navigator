@@ -324,6 +324,9 @@ public class CollectionBrowser extends HttpServlet {
                     return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], "http://purl.org/ontology/bibo/Book".equals(type));
                 case 6:
                     return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], uriBits[sIndex + 3]);
+                case 7:
+                    // URI form: editions/series/number/source
+                    return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], uriBits[sIndex + 3]);
             }
         }
         if("ddbdp".equals(collection) || "dclp".equals(collection)){
