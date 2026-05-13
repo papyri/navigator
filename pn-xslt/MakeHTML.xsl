@@ -1810,10 +1810,11 @@
     <div>
       <xsl:choose>
         <xsl:when test="parent::t:body and @type and @subtype">
-          <xsl:if test="@type='comentary' and @subtype='linebyline'">
+          <xsl:if test="@type='commentary' and @subtype='linebyline'">
             <xsl:attribute name="id">
               <xsl:value-of select="@type"/>
             </xsl:attribute>
+            <xsl:attribute name="class">mb-5</xsl:attribute>
           </xsl:if>
         </xsl:when>
         <xsl:otherwise>
@@ -1827,7 +1828,7 @@
       <xsl:if test="not(t:head)">
         <xsl:choose>
           <xsl:when test="@type='commentary' and @subtype='frontmatter'"><h3>Introduction</h3></xsl:when>
-          <xsl:when test="@type='commentary' and @subtype='linebyline'"><h3>Notes</h3></xsl:when>
+          <xsl:when test="@type='commentary' and @subtype='linebyline'"><h2>Commentary</h2></xsl:when>
           <xsl:when test="@type = 'translation'">
             <h2>
               <xsl:value-of select="/t:TEI/t:teiHeader/t:profileDesc/t:langUsage/t:language[@ident = current()/@xml:lang]"/>
@@ -2034,6 +2035,7 @@
         </xsl:when>
         <xsl:otherwise>
           <xsl:variable name="current-line" select="current-group()[1]/@data-line"/>
+          <xsl:variable name="current-xml-id" select="current-group()[1]/@data-id"/>
           <div class="text-line" id="{current-group()[1]/@id}">
             <xsl:for-each select="@*">
               <xsl:copy-of select="."/>
@@ -2042,6 +2044,9 @@
               <xsl:text>Line </xsl:text>
               <xsl:value-of select="$current-line"/>
             </xsl:attribute>
+            <xsl:if test="$current-xml-id">
+              <a id="{$current-xml-id}"><xsl:comment>0</xsl:comment></a>
+            </xsl:if>
             <!-- Add line number span for all lines -->
             <xsl:if test="$current-line">
               <span>
