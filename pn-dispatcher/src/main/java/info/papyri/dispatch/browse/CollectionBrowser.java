@@ -325,8 +325,10 @@ public class CollectionBrowser extends HttpServlet {
                 case 6:
                     return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], uriBits[sIndex + 3]);
                 case 7:
-                    // URI form: editions/series/number/source
-                    return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], uriBits[sIndex + 3]);
+                    // URI form: editions/series/number/source — link directly to the document page
+                    return DocumentCollectionBrowseRecord.withDirectHref(
+                        collection, uriBits[sIndex + 2], uriBits[sIndex + 3],
+                        "/" + collection + "/" + uriBits[sIndex + 2] + "/" + uriBits[sIndex + 3]);
             }
         }
         if("ddbdp".equals(collection) || "dclp".equals(collection)){
