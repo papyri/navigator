@@ -897,7 +897,8 @@ body.author-browse .btn-group .btn {
   transition: background-color 0.2s ease;
 }
 
-#edition div.text-line:hover {
+#edition div.text-line:hover,
+#edition div.text-line.active {
   background-color: rgba(0, 0, 0, 0.035);
 }
 
@@ -931,7 +932,7 @@ a.apparatus-link.active {
   text-align: right;
   margin-right: 0.5rem;
   margin-left: 0.25rem;
-  min-width: 3rem;
+  min-width: 4rem;
   line-height: 1.2;
   flex-shrink: 0;
 }
