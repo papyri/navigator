@@ -436,8 +436,11 @@ function setCollection() {
       case "editions":
         document.querySelector("#target-collection-historical").checked = true;
         break;
-      default:
+      case "all":
         document.querySelector("#target-collection-all").checked = true;
+        break;
+      // leave radios alone — the value lives in the disabled COLLECTION <select> 
+			// and the hidden input, and tidyQueryString will pick it up from there.
     }
   } else if (document.querySelector("#target-collection-current")) {
     document.querySelector("#target-collection-current").checked = true;

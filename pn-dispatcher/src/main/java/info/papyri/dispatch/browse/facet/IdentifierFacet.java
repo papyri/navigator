@@ -184,14 +184,19 @@ public class IdentifierFacet extends Facet{
                 solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
 
             } else {
+                String c = searchConfigurations.get(IdParam.COLLECTION).getConstraint();
+                // "all" isn't a real value in the Solr `collection` field, so we add no
+                // filter here — letting the rest of the query match all docs.
+                if (c.equals("all")) {
+                    return solrQuery;
+                }
                 // If this is a DDbDP or DCLP collection, short-circuit the query building process
-                if (searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("all")
-                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("current")
-                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("editions")
-                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("dclp")
-                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("ddbdp")
-                    || searchConfigurations.get(IdParam.COLLECTION).getConstraint().equals("hgv")  ) {
-                    solrQuery.addFilterQuery(SolrField.collection.name() + ":" + searchConfigurations.get(IdParam.COLLECTION).getConstraint());
+                if (c.equals("current")
+                    || c.equals("editions")
+                    || c.equals("dclp")
+                    || c.equals("ddbdp")
+                    || c.equals("hgv")  ) {
+                    solrQuery.addFilterQuery(SolrField.collection.name() + ":" + c);
                     return solrQuery;
                 }
 
@@ -278,6 +283,9 @@ public class IdentifierFacet extends Facet{
         SearchConfiguration idnoConfig = searchConfigurations.get(IdParam.IDNO);
 
         switch(collectionConfig.getConstraint()) {
+            case("all"):
+                // no collection filter needed.
+                break;
             case("current"):
                 solrQuery.addFilterQuery(SolrField.collection.name() + ":current");
                 break;
@@ -542,7 +550,13 @@ public class IdentifierFacet extends Facet{
 
             if(ip.name().equals(facetParam)){
 
-                return new ArrayList<>(Collections.singletonList(searchConfigurations.get(ip).getConstraint()));
+                String constraint = searchConfigurations.get(ip).getConstraint();
+                // 'COLLECTION=all' comes from the Editions radio button ("All") and doesn't actually
+                // filter anything. Skip rendering it as a "Filtered by" as it's confusing to users
+                if(ip == IdParam.COLLECTION && "all".equals(constraint)){
+                    return new ArrayList<>();
+                }
+                return new ArrayList<>(Collections.singletonList(constraint));
 
             }
 
@@ -1252,7 +1266,11 @@ public class IdentifierFacet extends Facet{
                 openTag += "\">";
                 String stringValue = openTag + displayName + "</option>";
 
-                if((!this.hasConstraint() || key.equals(this.getConstraint()))
+                // "all" is not a real collection value, so treat it as "no constraint" here.
+                // Keep all options in the dropdown so the users can still pick one.
+                boolean treatAsUnconstrained = !this.hasConstraint() || "all".equals(this.getConstraint());
+                if(treatAsUnconstrained
+                        || key.equals(this.getConstraint())
                         || this.getConstraint().equals(apisOnlyHTMLValue)){
 
                     stringifiedValues.set(stringifiedValues.indexOf(key), stringValue);
@@ -1278,7 +1296,8 @@ public class IdentifierFacet extends Facet{
         public Boolean isDisabled(){
 
             if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return true;
-            if(this.hasConstraint() && !apisOnly) return true;
+            // "all" doesn't actually constrain the collection, so leave the dropdown enabled.
+            if(this.hasConstraint() && !apisOnly && !"all".equals(this.getConstraint())) return true;
             return idValues.size() < 2;
 
         }
