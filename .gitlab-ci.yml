@@ -21,7 +21,6 @@ variables:
 stages:
   - build
   - test
-  - deploy
   - release
   - deploy-okd
 
@@ -60,16 +59,6 @@ integration-tests:
   # Might be annoying to have this run on every commit, but it is useful to have
   when: manual
 
-deploy-dev:
-  tags:
-    - deploy
-  stage: deploy
-  script:
-    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-navigator-dev-deploy-playbook.service
-    - sudo /usr/bin/journalctl -u papyri-navigator-dev-deploy-playbook --since "${CURRENT_TIME}"
-  when: manual
-
 release:
   stage: release
   extends: .docker-job
@@ -90,4 +79,4 @@ deploy-okd:
   when: manual
   script:
     - echo "Triggering downstream deployment pipeline in dul-its/dul-papyri"
-    - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=main "https://gitlab.oit.duke.edu/api/v4/projects/dul-its%2Fdul-papyri/trigger/pipeline"
+    - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=main --form "variables[BUMP_TARGET]=navigator" "https://gitlab.oit.duke.edu/api/v4/projects/dul-its%2Fdul-papyri/trigger/pipeline"
