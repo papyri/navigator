@@ -14,18 +14,22 @@ public class DispatchErrbitConfigProvider implements ServletContextListener {
   private static final Logger log = Logger.getLogger(DispatchErrbitConfigProvider.class.getName());
   private static volatile Notifier notifier;
   private static final String MESSAGE_KEY_STRING = "message";
+  private static final String LEVEL_KEY_STRING = "level";
 
-  public static void report(Throwable throwable) {
+  public static void report(Throwable throwable, Level level) {
     if (notifier != null)
       notifier.report(throwable);
+    log.log(level, null, throwable);
   }
 
-  public static void report(Throwable throwable, String message) {
+  public static void report(Throwable throwable, Level level, String message) {
     if (notifier != null) {
       Notice notice = new Notice(throwable);
       notice.setParam(MESSAGE_KEY_STRING, message);
+      notice.setParam(LEVEL_KEY_STRING, level.getName());
       notifier.send(notice);
     }
+    log.log(level, message, throwable);
   }
 
   @Override

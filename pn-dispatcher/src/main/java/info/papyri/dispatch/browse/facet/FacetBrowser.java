@@ -345,16 +345,13 @@ public class FacetBrowser extends HttpServlet {
     try {
       return solrClient.query(sq, SolrRequest.METHOD.POST);
     } catch (MalformedURLException murle) {
-      logger.log(Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
-      DispatchErrbitConfigProvider.report(murle, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage());
+      DispatchErrbitConfigProvider.report(murle, Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage());
       return null;
     } catch (SolrServerException sse) {
-      logger.log(Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
-      DispatchErrbitConfigProvider.report(sse, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage());
+      DispatchErrbitConfigProvider.report(sse, Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage());
       return null;
     } catch (IOException ex) {
-      logger.log(Level.SEVERE, null, ex);
-      DispatchErrbitConfigProvider.report(ex);
+      DispatchErrbitConfigProvider.report(ex, Level.SEVERE);
       return null;
     }
   }
@@ -451,8 +448,7 @@ public class FacetBrowser extends HttpServlet {
         counter++;
 
       } catch (MalformedURLException mue) {
-        logger.log(Level.SEVERE, "Malformed URL in retrieveRecords: " + mue.getMessage(), mue);
-        DispatchErrbitConfigProvider.report(mue, "Malformed URL in retrieveRecords: " + mue.getMessage());
+        DispatchErrbitConfigProvider.report(mue, Level.SEVERE, "Malformed URL in retrieveRecords: " + mue.getMessage());
       }
     }
 

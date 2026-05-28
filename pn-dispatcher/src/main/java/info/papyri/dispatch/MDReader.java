@@ -131,8 +131,7 @@ public class MDReader extends HttpServlet {
             }
           }
         } catch (IOException e) {
-          LOGGER.log(Level.SEVERE, "Unable to process MarkDown.", e);
-          DispatchErrbitConfigProvider.report(e, "Unable to process MarkDown.");
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Unable to process MarkDown.");
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
           out.close();

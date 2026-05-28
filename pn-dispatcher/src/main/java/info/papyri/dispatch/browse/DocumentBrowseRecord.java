@@ -748,8 +748,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
 
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
-      logger.log(Level.SEVERE, "Highlightling failure for " + url.toExternalForm(), e);
-      DispatchErrbitConfigProvider.report(e, "Highlightling failure for " + url.toExternalForm());
+      DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Highlightling failure for " + url.toExternalForm());
     }
     return html.toString();
 

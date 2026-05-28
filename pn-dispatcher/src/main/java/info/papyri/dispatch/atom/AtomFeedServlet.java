@@ -326,8 +326,7 @@ public class AtomFeedServlet extends HttpServlet{
             return buildErrorDocumentList("SolrServerException: " + sse.getMessage());
             
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            DispatchErrbitConfigProvider.report(ex);
+            DispatchErrbitConfigProvider.report(ex, Level.SEVERE);
             return buildErrorDocumentList("IOException: " + ex.getMessage());
         }
           

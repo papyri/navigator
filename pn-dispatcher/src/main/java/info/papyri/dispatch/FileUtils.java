@@ -459,16 +459,14 @@ public class FileUtils {
         t.append(buffer, 0, size);
       }
     } catch (Exception e) {
-      logger.log(Level.SEVERE, "Failed to read " + f.getAbsolutePath(), e);
-      DispatchErrbitConfigProvider.report(e, "Failed to read " + f.getAbsolutePath());
+      DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Failed to read " + f.getAbsolutePath());
     } finally {
       try {
         if (reader != null) {
           reader.close();
         }
       } catch (IOException e) {
-        logger.log(Level.SEVERE, e.getLocalizedMessage(), e);
-        DispatchErrbitConfigProvider.report(e, e.getLocalizedMessage());
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, e.getLocalizedMessage());
       }
     }
     return t.toString();

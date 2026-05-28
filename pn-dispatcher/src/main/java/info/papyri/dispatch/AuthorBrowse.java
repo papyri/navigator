@@ -83,8 +83,7 @@ public class AuthorBrowse extends HttpServlet {
         QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
         authors = qr.getFacetField("author_work").getValues();
     } catch (SolrServerException sse) {
-        logger.log(Level.SEVERE, "Unable to execute query.", sse);
-        DispatchErrbitConfigProvider.report(sse, "Unable to execute query.");
+        DispatchErrbitConfigProvider.report(sse, Level.SEVERE, "Unable to execute query.");
         authors = new ArrayList<>();
     }
 

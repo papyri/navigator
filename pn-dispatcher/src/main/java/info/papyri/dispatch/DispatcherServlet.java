@@ -156,8 +156,7 @@ public class DispatcherServlet extends HttpServlet {
             response.sendError(http.getResponseCode());
           }
         } catch (SocketTimeoutException e) {
-          logger.log(Level.SEVERE, "Socket timeout during numbers server request.", e);
-          DispatchErrbitConfigProvider.report(e, "Socket timeout during numbers server request.");
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Socket timeout during numbers server request.");
         } finally {
           if (out != null) {
             out.close();
@@ -520,8 +519,7 @@ public class DispatcherServlet extends HttpServlet {
         String result = URLEncoder.encode(in, "UTF-8");
         return result.replaceAll("\\+", "%2B");
       } catch (Exception e) {
-        logger.log(Level.WARNING, "Error encoding '" + in + "'", e);
-        DispatchErrbitConfigProvider.report(e, "Error encoding '" + in + "'");
+        DispatchErrbitConfigProvider.report(e, Level.WARNING, "Error encoding '" + in + "'");
         return in;
       }
     }

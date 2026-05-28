@@ -216,8 +216,7 @@ public class CollectionBrowser extends HttpServlet {
             
         } 
         catch(Exception e){
-            logger.log(Level.SEVERE, "Query failed: " + SPARQL_URL +"; " + sparqlQuery, e);
-            DispatchErrbitConfigProvider.report(e, "Query failed: " + SPARQL_URL +"; " + sparqlQuery);
+            DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Query failed: " + SPARQL_URL +"; " + sparqlQuery);
             return null;
             
         }

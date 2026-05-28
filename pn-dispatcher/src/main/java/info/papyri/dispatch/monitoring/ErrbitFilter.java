@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class ErrbitFilter implements Filter {
 
@@ -20,7 +21,7 @@ public class ErrbitFilter implements Filter {
     try {
       chain.doFilter(request, response);
     } catch (IOException | ServletException | RuntimeException e) {
-      DispatchErrbitConfigProvider.report(e);
+      DispatchErrbitConfigProvider.report(e, Level.SEVERE);
       throw e;
     }
   }
