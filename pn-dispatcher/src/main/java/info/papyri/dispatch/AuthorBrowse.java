@@ -11,6 +11,9 @@ import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
 import org.apache.solr.client.solrj.response.FacetField.Count;
+
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 import jakarta.servlet.ServletConfig;
@@ -81,6 +84,7 @@ public class AuthorBrowse extends HttpServlet {
         authors = qr.getFacetField("author_work").getValues();
     } catch (SolrServerException sse) {
         logger.log(Level.SEVERE, "Unable to execute query.", sse);
+        DispatchErrbitConfigProvider.report(sse, "Unable to execute query.");
         authors = new ArrayList<>();
     }
 

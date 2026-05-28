@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
+
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -457,6 +460,7 @@ public class FileUtils {
       }
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to read " + f.getAbsolutePath(), e);
+      DispatchErrbitConfigProvider.report(e, "Failed to read " + f.getAbsolutePath());
     } finally {
       try {
         if (reader != null) {
@@ -464,6 +468,7 @@ public class FileUtils {
         }
       } catch (IOException e) {
         logger.log(Level.SEVERE, e.getLocalizedMessage(), e);
+        DispatchErrbitConfigProvider.report(e, e.getLocalizedMessage());
       }
     }
     return t.toString();

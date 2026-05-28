@@ -1,6 +1,8 @@
 package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -215,6 +217,7 @@ public class CollectionBrowser extends HttpServlet {
         } 
         catch(Exception e){
             logger.log(Level.SEVERE, "Query failed: " + SPARQL_URL +"; " + sparqlQuery, e);
+            DispatchErrbitConfigProvider.report(e, "Query failed: " + SPARQL_URL +"; " + sparqlQuery);
             return null;
             
         }

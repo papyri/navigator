@@ -3,6 +3,7 @@ package info.papyri.dispatch;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -119,6 +120,7 @@ public class Reader extends HttpServlet {
             FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false);
       } catch (Exception e) {
         logger.log(Level.SEVERE, "Error expanding lemmas.", e);
+        DispatchErrbitConfigProvider.report(e, "Error expanding lemmas.");
       }
     }
     if (f != null && f.exists()) {
@@ -127,6 +129,7 @@ public class Reader extends HttpServlet {
         out.write(util.highlight(patterns, util.loadFile(f)));
       } catch (Exception e) {
         logger.log(Level.SEVERE, "Error while writing highlighted file " + f.getAbsolutePath(), e);
+        DispatchErrbitConfigProvider.report(e, "Error while writing highlighted file " + f.getAbsolutePath());
       } finally {
         out.close();
       }
@@ -168,6 +171,7 @@ public class Reader extends HttpServlet {
       
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Unable to resolve file using query; " + sparql, e);
+      DispatchErrbitConfigProvider.report(e, "Unable to resolve file using query; " + sparql);
       return null;
     }
     return result;

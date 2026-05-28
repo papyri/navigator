@@ -19,6 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 /**
  *
  * @author hcayless
@@ -155,6 +157,7 @@ public class DispatcherServlet extends HttpServlet {
           }
         } catch (SocketTimeoutException e) {
           logger.log(Level.SEVERE, "Socket timeout during numbers server request.", e);
+          DispatchErrbitConfigProvider.report(e, "Socket timeout during numbers server request.");
         } finally {
           if (out != null) {
             out.close();
@@ -518,6 +521,7 @@ public class DispatcherServlet extends HttpServlet {
         return result.replaceAll("\\+", "%2B");
       } catch (Exception e) {
         logger.log(Level.WARNING, "Error encoding '" + in + "'", e);
+        DispatchErrbitConfigProvider.report(e, "Error encoding '" + in + "'");
         return in;
       }
     }
