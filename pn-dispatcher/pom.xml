@@ -76,6 +76,11 @@
       <version>2.21.1</version>
     </dependency>
     <dependency>
+      <groupId>io.airbrake</groupId>
+      <artifactId>javabrake</artifactId>
+      <version>0.3.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
       <version>10.0.0</version>
