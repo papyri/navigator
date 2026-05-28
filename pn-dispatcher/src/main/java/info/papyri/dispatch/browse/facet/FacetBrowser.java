@@ -1247,7 +1247,9 @@ public class FacetBrowser extends HttpServlet {
 
     SolrQuery newQuery = new SolrQuery();
 
-    String[] filterQueries = bigQuery.getFilterQueries();
+    // SolrJ returns null (not an empty array) when there are no filter queries 
+    // that have been added — e.g. queries that match all documents.
+    String[] filterQueries = bigQuery.getFilterQueries() != null ? bigQuery.getFilterQueries() : new String[0];
     List<SolrQuery.SortClause> sortFields = bigQuery.getSorts();
 
     try {

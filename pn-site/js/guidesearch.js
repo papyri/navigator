@@ -214,13 +214,17 @@ $(document).ready(
 
           }
 
-          if (document.querySelector("#target-collection-current").checked) {
-            params["COLLECTION"] = "current";
-          } else if (document.querySelector("#target-collection-historical").checked) {
-            params["COLLECTION"] = "editions";
-          } else if (document.querySelector("#target-collection-all").checked) {
-            params["COLLECTION"] = "all";
-          }
+        }
+
+        // Always capture the Editions(current/historical/all), even when
+        // there's no text search. URL param is set on initial submit so it 
+        // persists when other filters (series, etc.) are cleared.
+        if (document.querySelector("#target-collection-current")?.checked) {
+          params["COLLECTION"] = "current";
+        } else if (document.querySelector("#target-collection-historical")?.checked) {
+          params["COLLECTION"] = "editions";
+        } else if (document.querySelector("#target-collection-all")?.checked) {
+          params["COLLECTION"] = "all";
         }
         // image filter elements
         const internals = document.querySelector("input[name='INT']");
