@@ -377,25 +377,29 @@
                       <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
                 </xsl:if>
-                <!--
                 <xsl:if test="$historical">
+                <!--
                   <div id="editthis" class="me-3">
                     <a href="/editor/publications/create_from_identifier/papyri.info/historical/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
-                </xsl:if>
                 -->
+                </xsl:if>
                 <xsl:if test="$hgv and not($current)">
+                <!--
                   <div id="editthis" class="me-3">
                     <a href="/editor/publications/create_from_identifier/papyri.info/hgv/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
+                -->
                 </xsl:if>
                 <xsl:if test="$apis and not($current or $dclp or $ddbdp or $hgv)">
+                <!--
                   <div id="editthis">
                     <a href="/editor/publications/create_from_identifier/papyri.info/apis/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
+                -->
                 </xsl:if>
 
                 <!-- If we have at least one thing to display in the sidebar -->
