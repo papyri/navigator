@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javax.xml.transform.stream.StreamSource;
 
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -60,7 +61,7 @@ public class XSLTService extends HttpServlet {
           XsltExecutable xslt = compiler.compile(new StreamSource(new File(config.getInitParameter(name))));
           xslts.put(name, xslt);
         } catch (SaxonApiException e) {
-          LOGGER.log(Level.SEVERE, "Failed to compile "+name+".", e);
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Failed to compile "+name+".");
         }
       }
     }
@@ -90,7 +91,7 @@ public class XSLTService extends HttpServlet {
           xslt.setDestination(processor.newSerializer(out));
           xslt.transform();
         } catch (Exception e) {
-          LOGGER.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.");
         } finally {
           out.close();
         }
@@ -129,7 +130,7 @@ public class XSLTService extends HttpServlet {
         xslt.setDestination(processor.newSerializer(out));
         xslt.transform();
       } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.");
       } finally {
         out.close();
       }
