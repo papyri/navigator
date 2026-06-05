@@ -1052,8 +1052,10 @@
           <xsl:otherwise>
             <li class="breadcrumb-item">
               <xsl:if test="position() &gt; 1"><span class="breadcrumb-divider">; </span></xsl:if>
-              <xsl:value-of select="t:title"/>
-              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+              <span class="unlinked-item" data-bs-toggle="tooltip" data-bs-placement="top" title="A link to this edition is not yet available">
+                <xsl:value-of select="t:title"/>
+                <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
+              </span>
             </li>
           </xsl:otherwise>
         </xsl:choose>
