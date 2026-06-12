@@ -54,6 +54,7 @@ function init() {
 		initSidebar();
 		initBackToTop();
     setCollection();
+    initConstraintBadges();
 
 		// Initialize transformation for /current/ and /editions/ pages
 		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
@@ -445,6 +446,25 @@ function setCollection() {
   } else if (document.querySelector("#target-collection-current")) {
     document.querySelector("#target-collection-current").checked = true;
   }
+}
+
+/**
+ * Fade in applied filter badges on load
+ */
+function initConstraintBadges() {
+  document.querySelectorAll(".facet-constraint").forEach(badge => {
+    if (badge.classList.contains("constraint-collection")) {
+      const label = badge.querySelector(".constraint-label");
+      if (label && label.textContent.trim() === "editions") {
+        label.textContent = "historical";
+        ["aria-label", "title"].forEach(attr => {
+          const val = badge.getAttribute(attr);
+          if (val) badge.setAttribute(attr, val.replace("editions", "historical"));
+        });
+      }
+    }
+    badge.classList.add("ready");
+  });
 }
 
 /**

@@ -267,6 +267,16 @@ a.facet-reset {
   }
 }
 
+/* hide these initially (faded in via JS) */
+a.facet-constraint {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+a.facet-constraint.ready {
+  opacity: 1;
+}
+
 a.facet-constraint:hover,
 a.facet-constraint:focus {
   .bi {
