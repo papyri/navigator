@@ -102,7 +102,7 @@
               <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" role="button">TM Number</a>
 
               <div class="bg-primary rounded-bottom p-2 mt-0 border-0 collapse position-absolute dropdown-menu" data-bs-theme="light" id="tmSearch">
-                <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value; return false;">
+                <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value + '?COLLECTION=all&amp;TRANSC=&amp;DOCS_PER_PAGE=15'; return false;">
                   <div class="input-group">
                     <input id="tmid" type="text" class="form-control bg-white" placeholder="" aria-label="TM Number"/>
                     <button class="btn btn-light" type="submit" id="tmgo">Go</button>
