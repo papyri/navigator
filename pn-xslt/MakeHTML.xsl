@@ -2387,6 +2387,10 @@
   
   <!-- Override template in teilb.xsl -->
   <xsl:template match="t:lb">
+    <xsl:param name="parm-edn-structure" tunnel="yes" required="no"/>
+    <xsl:param name="parm-edition-type" tunnel="yes" required="no"/>
+    <xsl:param name="parm-leiden-style" tunnel="yes" required="no"/>
+    <xsl:param name="location" tunnel="yes" required="no"/>
     <xsl:variable name="div-loc">
       <xsl:for-each select="ancestor::t:div[@type = 'textpart']">
         <xsl:value-of select="@n"/>
@@ -2398,6 +2402,74 @@
         <xsl:value-of select="@n"/>
       </xsl:if>
     </xsl:variable>
+    <!-- print hyphen if break=no (ported from epidoc-xslt/htm-teilb.xsl). The
+         hyphen is emitted just before the <pn-lb> marker so that the
+         group-starting-with="pn-lb" grouping in segment-transcription places it
+         at the end of the *previous* line. -->
+    <xsl:if test="(@break='no' or @type='inWord')">
+      <xsl:choose>
+        <!--    edh web  -->
+        <xsl:when test="$parm-leiden-style=('edh-itx','edh-names')">
+          <xsl:variable name="cur_anc" select="generate-id(ancestor::node()[local-name()='lg' or local-name()='ab'])"/>
+          <xsl:if
+            test="preceding::t:lb[1][generate-id(ancestor::node()[local-name()='lg' or local-name()='ab'])=$cur_anc]">
+            <xsl:choose>
+              <xsl:when test="$parm-leiden-style='edh-names'
+                and not(@break='no' or ancestor::t:w | ancestor::t:name | ancestor::t:placeName | ancestor::t:geogName)">
+                <xsl:text> </xsl:text>
+              </xsl:when>
+              <xsl:when test="$parm-leiden-style=('edh-names')"/>
+              <xsl:when test="@break='no' or ancestor::t:w | ancestor::t:name | ancestor::t:placeName | ancestor::t:geogName">
+                <xsl:text>/</xsl:text>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text> / </xsl:text>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:if>
+        </xsl:when>
+        <xsl:when test="$parm-leiden-style='eagletxt'">
+          <xsl:variable name="cur_anc" select="generate-id(ancestor::node()[local-name()='lg' or local-name()='ab'])"/>
+          <xsl:if
+            test="preceding::t:lb[1][generate-id(ancestor::node()[local-name()='lg' or local-name()='ab'])=$cur_anc]">
+            <xsl:choose>
+              <xsl:when test="not(@break='no' or ancestor::t:w | ancestor::t:name | ancestor::t:placeName | ancestor::t:geogName)">
+                <xsl:text> / </xsl:text>
+              </xsl:when>
+              <xsl:when test="@break='no' or ancestor::t:w | ancestor::t:name | ancestor::t:placeName | ancestor::t:geogName">
+                <xsl:text>/</xsl:text>
+              </xsl:when>
+            </xsl:choose>
+          </xsl:if>
+        </xsl:when>
+        <!--    *unless* diplomatic edition  -->
+        <xsl:when test="$parm-edition-type='diplomatic'"/>
+        <!--    *or unless* the lb is first in its ancestor div  -->
+        <xsl:when test="generate-id(self::t:lb) = generate-id(ancestor::t:div[1]/t:*[child::t:lb][1]/t:lb[1])"/>
+        <xsl:when test="($parm-leiden-style = 'ddbdp' and ((not(ancestor::*[name() = 'TEI'])) or $location='apparatus')) or ($parm-edn-structure='inslib' and ancestor::t:div[@type='apparatus'])" />
+        <!--   *or unless* the second part of an app in ddbdp  -->
+        <xsl:when test="($parm-leiden-style = 'ddbdp' or $parm-leiden-style = 'sammelbuch') and
+          (ancestor::t:corr or ancestor::t:reg or ancestor::t:rdg or ancestor::t:del[parent::t:subst])"/>
+        <!--  *unless* previous line ends with space / g / supplied[reason=lost]  (if not MedCyprus project) -->
+        <!-- in which case the hyphen will be inserted before the space/g r final ']' of supplied
+            (tested by EDF:f-wwrap in functions.xsl, which is called by teisupplied.xsl, teig.xsl and teispace.xsl) -->
+        <xsl:when
+          test="
+          (preceding-sibling::node()[1][local-name() = 'space' or
+          local-name() = 'g' or (local-name() = 'supplied' and @reason = 'lost') or
+          (normalize-space(.) = ''
+          and preceding-sibling::node()[1][local-name() = 'space' or
+          local-name() = 'g' or (local-name() = 'supplied' and @reason = 'lost')])])
+          and not($parm-leiden-style='medcyprus')"/>
+        <!-- *or unless* this break is accompanied by a paragraphos mark -->
+        <!-- in which case the hypen will be inserted before the paragraphos by code in htm-teimilestone.xsl -->
+        <xsl:when
+          test="preceding-sibling::node()[not(self::text() and normalize-space(self::text()) = '')][1]/self::t:milestone[@rend = 'paragraphos']"/>
+        <xsl:otherwise>
+          <xsl:text>-</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
     <pn-lb id="a{$div-loc}l{$line}" data-line="{$line}">
       <xsl:for-each select="@*">
         <xsl:attribute name="data-{local-name()}"><xsl:value-of select="."/></xsl:attribute>
