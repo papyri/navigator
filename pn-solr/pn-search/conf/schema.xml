@@ -117,6 +117,7 @@
   <field name="metadata" type="lctext" multiValued="true" indexed="true" stored="false"/>
   <field name="nome" type="string" multiValued="true" indexed="true" stored="false"/>
   <field name="place" type="lctext" multiValued="true" indexed="true" stored="false"/>
+  <field name="placename" type="string" multiValued="true" indexed="true" stored="false"/>
   <field name="place_edit_date" type="pdates" multiValued="false" indexed="true" stored="true"/>
   <field name="place_editor" type="string" multiValued="false" indexed="true" stored="true"/>
   <field name="project" type="string" default="papyri.info" multiValued="false" indexed="true" stored="false"/>

@@ -176,6 +176,17 @@ public class FacetBrowser extends HttpServlet {
     SolrQuery solrQuery = buildFacetQuery(page, facets, docsPerPage);
     solrQuery.add("project", "IDP");
 
+    /* Scope the query to a single collection so that facet counts and the result
+     * total both reflect distinct texts rather than the raw document count.
+     */
+    String collectionScope = request.getParameter("COLLECTION");
+    if (collectionScope == null || !Arrays.asList("all", "current", "editions", "ddbdp", "hgv", "apis", "dclp").contains(collectionScope)) {
+      collectionScope = "current";
+    }
+    if (!"all".equals(collectionScope)) {
+      solrQuery.addFilterQuery("collection:" + collectionScope);
+    }
+
     ArrayList<CustomApplicationException> exceptionLog = collectFacetExceptions(facets);
 
     /* Query the Solr server */
@@ -234,6 +245,7 @@ public class FacetBrowser extends HttpServlet {
     facets.add(new StringSearchFacet());
     facets.add(new IdentifierFacet());
     facets.add(new PlaceFacet());
+    facets.add(new PlaceNameFacet());
     facets.add(new NomeFacet());
     facets.add(new DateFacet());
     facets.add(new LanguageFacet());
@@ -583,6 +595,8 @@ public class FacetBrowser extends HttpServlet {
       html.append(workFacet.generateWidget());
       Facet placeFacet = findFacet(facets, PlaceFacet.class);
       html.append(placeFacet.generateWidget());
+      Facet placeNameFacet = findFacet(facets, PlaceNameFacet.class);
+      html.append(placeNameFacet.generateWidget());
       Facet nomeFacet = findFacet(facets, NomeFacet.class);
       html.append(nomeFacet.generateWidget());
       Facet dateFacet = findFacet(facets, DateFacet.class);
