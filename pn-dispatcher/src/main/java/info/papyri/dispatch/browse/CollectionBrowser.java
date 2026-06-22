@@ -1,6 +1,8 @@
 package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -214,7 +216,7 @@ public class CollectionBrowser extends HttpServlet {
             
         } 
         catch(Exception e){
-            logger.log(Level.SEVERE, "Query failed: " + SPARQL_URL +"; " + sparqlQuery, e);
+            DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Query failed: " + SPARQL_URL +"; " + sparqlQuery);
             return null;
             
         }
@@ -324,6 +326,11 @@ public class CollectionBrowser extends HttpServlet {
                     return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], "http://purl.org/ontology/bibo/Book".equals(type));
                 case 6:
                     return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], uriBits[sIndex + 3]);
+                case 7:
+                    // URI form: editions/series/number/source — link directly to the document page
+                    return DocumentCollectionBrowseRecord.withDirectHref(
+                        collection, uriBits[sIndex + 2], uriBits[sIndex + 3],
+                        "/" + collection + "/" + uriBits[sIndex + 2] + "/" + uriBits[sIndex + 3]);
             }
         }
         if("ddbdp".equals(collection) || "dclp".equals(collection)){

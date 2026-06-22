@@ -8,6 +8,8 @@ import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import info.papyri.dispatch.browse.facet.customexceptions.FacetNotFoundException;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -343,13 +345,13 @@ public class FacetBrowser extends HttpServlet {
     try {
       return solrClient.query(sq, SolrRequest.METHOD.POST);
     } catch (MalformedURLException murle) {
-      logger.log(Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
+      DispatchErrbitConfigProvider.report(murle, Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage());
       return null;
     } catch (SolrServerException sse) {
-      logger.log(Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
+      DispatchErrbitConfigProvider.report(sse, Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage());
       return null;
     } catch (IOException ex) {
-      logger.log(Level.SEVERE, null, ex);
+      DispatchErrbitConfigProvider.report(ex, Level.SEVERE);
       return null;
     }
   }
@@ -446,7 +448,7 @@ public class FacetBrowser extends HttpServlet {
         counter++;
 
       } catch (MalformedURLException mue) {
-        logger.log(Level.SEVERE, "Malformed URL in retrieveRecords: " + mue.getMessage(), mue);
+        DispatchErrbitConfigProvider.report(mue, Level.SEVERE, "Malformed URL in retrieveRecords: " + mue.getMessage());
       }
     }
 
@@ -1247,7 +1249,9 @@ public class FacetBrowser extends HttpServlet {
 
     SolrQuery newQuery = new SolrQuery();
 
-    String[] filterQueries = bigQuery.getFilterQueries();
+    // SolrJ returns null (not an empty array) when there are no filter queries 
+    // that have been added — e.g. queries that match all documents.
+    String[] filterQueries = bigQuery.getFilterQueries() != null ? bigQuery.getFilterQueries() : new String[0];
     List<SolrQuery.SortClause> sortFields = bigQuery.getSorts();
 
     try {

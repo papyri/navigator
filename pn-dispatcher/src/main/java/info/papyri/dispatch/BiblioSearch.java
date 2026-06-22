@@ -52,7 +52,7 @@ public class BiblioSearch extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    solrUrl = config.getInitParameter("solrUrl");
+    solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     home = config.getInitParameter("home");

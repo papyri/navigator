@@ -232,6 +232,17 @@
         <servlet-name>DTSServlet</servlet-name>
         <servlet-class>info.papyri.dispatch.DTSServlet</servlet-class>
     </servlet>
+    <listener>
+        <listener-class>info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider</listener-class>
+    </listener>
+    <filter>
+        <filter-name>Errbit Filter</filter-name>
+        <filter-class>info.papyri.dispatch.monitoring.ErrbitFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Errbit Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
         <url-pattern>/browse/*</url-pattern>

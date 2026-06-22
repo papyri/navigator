@@ -6,6 +6,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import info.papyri.dispatch.markdown.PNLinkExtension;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,7 +131,7 @@ public class MDReader extends HttpServlet {
             }
           }
         } catch (IOException e) {
-          LOGGER.log(Level.SEVERE, "Unable to process MarkDown.", e);
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Unable to process MarkDown.");
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
           out.close();

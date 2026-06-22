@@ -23,6 +23,21 @@ import java.lang.annotation.Target;
         /* True if the immediate children of this record are documents; false if they are other collections */
         private Boolean isDocumentParent;
         private String unicodeLabel;
+        private String directHref = null;
+
+        /**
+         * Factory method for when we want to link directly to the document page
+         * @param collection
+         * @param series
+         * @param volume
+         * @param href
+         * @return
+         */
+        public static DocumentCollectionBrowseRecord withDirectHref(String collection, String series, String volume, String href) {
+            DocumentCollectionBrowseRecord r = new DocumentCollectionBrowseRecord(collection, series, volume);
+            r.directHref = href;
+            return r;
+        }
     
         /**
          * Constructor for cases in which the volume is known
@@ -102,7 +117,7 @@ import java.lang.annotation.Target;
         
 
         public String assembleLink(){
-                       
+            if (directHref != null) return directHref;
             if(!this.isDocumentParent) return assembleLinkToCollection();
             return assembleLinkToFacetedBrowse();
             

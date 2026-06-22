@@ -267,6 +267,16 @@ a.facet-reset {
   }
 }
 
+/* hide these initially (faded in via JS) */
+a.facet-constraint {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+a.facet-constraint.ready {
+  opacity: 1;
+}
+
 a.facet-constraint:hover,
 a.facet-constraint:focus {
   .bi {
@@ -370,6 +380,20 @@ nav.breadcrumb {
   border-bottom: 3px solid #800000;
 }
 
+nav.breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+  display: none;
+}
+
+nav.breadcrumb .breadcrumb-item .breadcrumb-divider {
+  display: inline-block;
+  margin-left: .5em;
+  margin-right: .5em;
+}
+
+nav.breadcrumb .breadcrumb-item:nth-last-child(2) .breadcrumb-divider {
+  margin-right: 0;
+}
+
 nav.breadcrumb .breadcrumb-item+.breadcrumb-item {
   padding-left: 0;
 }
@@ -380,6 +404,16 @@ nav.breadcrumb li.breadcrumb-title {
 
 nav.breadcrumb li.breadcrumb-item a {
   color: #800000;
+}
+
+nav.breadcrumb li.breadcrumb-item span.unlinked-item {
+  font-style: italic;
+}
+
+nav.breadcrumb li.breadcrumb-item span.unlinked-item:hover {
+  font-style: italic;
+  color: #800000;
+  cursor: pointer;
 }
 
 #previous-values {
@@ -644,6 +678,10 @@ a {
   mask: var(--icon-bi-check-lg);
 }
 
+li.breadcrumb-copy {
+  margin-left: .5em;
+}
+
 li.breadcrumb-copy button {
   cursor: pointer;
 }
@@ -897,7 +935,8 @@ body.author-browse .btn-group .btn {
   transition: background-color 0.2s ease;
 }
 
-#edition div.text-line:hover {
+#edition div.text-line:hover,
+#edition div.text-line.active {
   background-color: rgba(0, 0, 0, 0.035);
 }
 
@@ -931,7 +970,7 @@ a.apparatus-link.active {
   text-align: right;
   margin-right: 0.5rem;
   margin-left: 0.25rem;
-  min-width: 3rem;
+  min-width: 4rem;
   line-height: 1.2;
   flex-shrink: 0;
 }

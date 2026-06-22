@@ -54,6 +54,7 @@ function init() {
 		initSidebar();
 		initBackToTop();
     setCollection();
+    initConstraintBadges();
 
 		// Initialize transformation for /current/ and /editions/ pages
 		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
@@ -436,12 +437,34 @@ function setCollection() {
       case "editions":
         document.querySelector("#target-collection-historical").checked = true;
         break;
-      default:
+      case "all":
         document.querySelector("#target-collection-all").checked = true;
+        break;
+      // leave radios alone — the value lives in the disabled COLLECTION <select> 
+			// and the hidden input, and tidyQueryString will pick it up from there.
     }
   } else if (document.querySelector("#target-collection-current")) {
     document.querySelector("#target-collection-current").checked = true;
   }
+}
+
+/**
+ * Fade in applied filter badges on load
+ */
+function initConstraintBadges() {
+  document.querySelectorAll(".facet-constraint").forEach(badge => {
+    if (badge.classList.contains("constraint-collection")) {
+      const label = badge.querySelector(".constraint-label");
+      if (label && label.textContent.trim() === "editions") {
+        label.textContent = "historical";
+        ["aria-label", "title"].forEach(attr => {
+          const val = badge.getAttribute(attr);
+          if (val) badge.setAttribute(attr, val.replace("editions", "historical"));
+        });
+      }
+    }
+    badge.classList.add("ready");
+  });
 }
 
 /**
@@ -666,24 +689,33 @@ function highlightHash() {
     // If there's a hash, find the element within transcription and highlight it
     if (hash && hash.length > 1) {
         const elementId = hash.substring(1);
-        const targetElement = transcriptionContainer.querySelector('#' + elementId);
 
-        if (targetElement) {
-            targetElement.classList.add('active');
-        }
+        if (elementId.startsWith('div')) {
+            // Commentary-style anchors target the text-line via its data-id
+            const lineElement = transcriptionContainer.querySelector('[data-id="' + elementId + '"]');
+            if (lineElement) {
+                lineElement.classList.add('active');
+            }
+        } else {
+            const targetElement = transcriptionContainer.querySelector('#' + elementId);
 
-        // Also highlight the corresponding to/from element
-        let correspondingId = null;
-        if (elementId.startsWith('to-app-')) {
-            correspondingId = elementId.replace('to-app-', 'from-app-');
-        } else if (elementId.startsWith('from-app-')) {
-            correspondingId = elementId.replace('from-app-', 'to-app-');
-        }
+            if (targetElement) {
+                targetElement.classList.add('active');
+            }
 
-        if (correspondingId) {
-            const correspondingElement = transcriptionContainer.querySelector('#' + correspondingId);
-            if (correspondingElement) {
-                correspondingElement.classList.add('active');
+            // Also highlight the corresponding to/from element
+            let correspondingId = null;
+            if (elementId.startsWith('to-app-')) {
+                correspondingId = elementId.replace('to-app-', 'from-app-');
+            } else if (elementId.startsWith('from-app-')) {
+                correspondingId = elementId.replace('from-app-', 'to-app-');
+            }
+
+            if (correspondingId) {
+                const correspondingElement = transcriptionContainer.querySelector('#' + correspondingId);
+                if (correspondingElement) {
+                    correspondingElement.classList.add('active');
+                }
             }
         }
     }
@@ -819,7 +851,7 @@ function initSidebar() {
 	const apparatus = document.getElementById('apparatus');
 	const apparatusUnder = document.getElementById('apparatus-under');
 	const translationUnder = document.getElementById('translations');
-	// const commentaryUnder = document.getElementById('TBD');
+	const commentaryUnder = document.getElementById('commentary');
 
 	if (!sidebarSelect || !sidebar) {
 		return; // Required elements don't exist
@@ -845,10 +877,9 @@ function initSidebar() {
 				}
 
 				// Show commentary under
-				// if (commentaryUnder) {
-				// 	commentaryUnder.innerHTML = originalCommentaryContent;
-				// 	commentaryUnder.style.display = '';
-				// }
+				if (commentaryUnder) {
+					commentaryUnder.style.display = '';
+				}
 				
 				// show translation under
 				if (translationUnder) {
@@ -865,15 +896,15 @@ function initSidebar() {
 				}
 
 				// Show commentary under
-				// if (commentaryUnder) {
-				// 	commentaryUnder.innerHTML = originalCommentaryContent;
-				// 	commentaryUnder.style.display = '';
-				// }
+				if (commentaryUnder) {
+					commentaryUnder.style.display = '';
+				}
 				
 				// show translation under
 				if (translationUnder) {
 					translationUnder.style.display = '';
 				}
+
 				sidebar.innerHTML = apparatus ? apparatus.outerHTML : '';
 				break;
 
@@ -890,9 +921,9 @@ function initSidebar() {
 					}
 
 					// hide commentary under
-					// if (commentaryUnder) {
-					// 	commentaryUnder.style.display = 'none';
-					// }
+					if (commentaryUnder) {
+						commentaryUnder.style.display = 'none';
+					}
 
 					// show translation under
 					if (translationUnder) {
@@ -913,10 +944,9 @@ function initSidebar() {
 					}
 
 					// Show commentary under
-					// if (commentaryUnder) {
-					// 	commentaryUnder.innerHTML = originalCommentaryContent;
-					// 	commentaryUnder.style.display = '';
-					// }
+					if (commentaryUnder) {
+						commentaryUnder.style.display = '';
+					}
 
 					// hide translation under
 					if (translationUnder) {

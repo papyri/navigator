@@ -32,6 +32,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 /**
  * Servlet that accepts date parameters BEFORE, AFTER, and ON, returning an atom feed
  * of all papyri.info documents edited within the span specified.
@@ -324,7 +326,7 @@ public class AtomFeedServlet extends HttpServlet{
             return buildErrorDocumentList("SolrServerException: " + sse.getMessage());
             
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            DispatchErrbitConfigProvider.report(ex, Level.SEVERE);
             return buildErrorDocumentList("IOException: " + ex.getMessage());
         }
           

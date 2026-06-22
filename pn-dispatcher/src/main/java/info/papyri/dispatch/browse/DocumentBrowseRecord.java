@@ -5,6 +5,8 @@ import info.papyri.dispatch.LanguageCode;
 import info.papyri.dispatch.browse.facet.StringSearchFacet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -746,7 +748,7 @@ public class DocumentBrowseRecord extends BrowseRecord {
 
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
-      logger.log(Level.SEVERE, "Highlightling failure for " + url.toExternalForm(), e);
+      DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Highlightling failure for " + url.toExternalForm());
     }
     return html.toString();
 
