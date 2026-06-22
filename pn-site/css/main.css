@@ -830,7 +830,7 @@ body.author-browse .btn-group .btn {
   background-color: rgba(var(--bs-warning-rgb), 0.075);
   padding: 1em;
   letter-spacing: 0.205rem;
-  line-height: 2;
+  line-height: 1.75;
 }
 
 @media (max-width: 768px) {
@@ -843,7 +843,7 @@ body.author-browse .btn-group .btn {
   #edition span.ab:not([id^="translation"] *) {
     padding: 1.5em;
     letter-spacing: 0.05rem;
-    line-height: 2.5;
+    line-height: 1.75;
     width: 100%;
   }
 }
