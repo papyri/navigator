@@ -895,10 +895,16 @@
             <xsl:otherwise>DDbDP</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
+        <xsl:variable name="base-edition">
+          <xsl:choose>
+            <xsl:when test="$type = 'DDbDP'"><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='ddb-hybrid'], ';;?', '/'))]/t:title"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='dclp-hybrid'], ';;?', '/'))]/t:title"/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
         <xsl:text>Current Edition: </xsl:text>
         <xsl:value-of select="$type"/>
         <xsl:text> </xsl:text>
-        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> (<xsl:value-of select="/t:TEI/t:text//t:body/t:head/t:ref[@type='main']/t:title"/>)
+        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> (<xsl:value-of select="$base-edition"/>)
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:text>Historical Edition: </xsl:text>
@@ -976,13 +982,18 @@
             <xsl:otherwise>DDbDP</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
+        <xsl:variable name="base-edition">
+          <xsl:choose>
+            <xsl:when test="$type = 'DDbDP'"><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='ddb-hybrid'], ';;?', '/'))]/t:title"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='dclp-hybrid'], ';;?', '/'))]/t:title"/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
         <nav aria-label="breadcrumb" class="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-title visually-hidden">Editions:</li>
             <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
             <li class="breadcrumb-item active" aria-current="page">
-              <xsl:if test="//t:body/t:head/t:ref"><span class="breadcrumb-divider">; </span></xsl:if>
-              <span class="arrow"> → </span> <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/>
+              <span class="arrow"> → </span> <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (<xsl:value-of select="$base-edition"/>)
             </li>
             <li class="breadcrumb-copy">
               <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
