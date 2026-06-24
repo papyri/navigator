@@ -244,7 +244,6 @@ public class FacetBrowser extends HttpServlet {
 
     facets.add(new StringSearchFacet());
     facets.add(new IdentifierFacet());
-    facets.add(new PlaceFacet());
     facets.add(new PlaceNameFacet());
     facets.add(new NomeFacet());
     facets.add(new DateFacet());
@@ -593,8 +592,6 @@ public class FacetBrowser extends HttpServlet {
       html.append(authorFacet.generateWidget());
       Facet workFacet = findFacet(facets, WorkFacet.class);
       html.append(workFacet.generateWidget());
-      Facet placeFacet = findFacet(facets, PlaceFacet.class);
-      html.append(placeFacet.generateWidget());
       Facet placeNameFacet = findFacet(facets, PlaceNameFacet.class);
       html.append(placeNameFacet.generateWidget());
       Facet nomeFacet = findFacet(facets, NomeFacet.class);
