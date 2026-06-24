@@ -494,6 +494,12 @@ public class IdentifierFacet extends Facet{
         ArrayList<String> volumes = components.get(volumeIndex);
         ArrayList<String> idnos = components.get(idnoIndex);
 
+        // Accounts for Collection filter being used before Series
+        String collectionConstraint = searchConfigurations.get(IdParam.COLLECTION).getConstraint();
+        boolean filterSeriesToCollection = "ddbdp".equals(collectionConstraint)
+            || "hgv".equals(collectionConstraint)
+            || "dclp".equals(collectionConstraint);
+
         for(int i = 0; i < series.size(); i++){
 
             String seriesName = series.get(i);
@@ -510,7 +516,7 @@ public class IdentifierFacet extends Facet{
                 tempColls.add(seriesName);
 
             }
-            else{
+            else if(!filterSeriesToCollection || collectionConstraint.equals(collection)){
 
                 tempSeries.add(collection + ";" + seriesName);
             }
