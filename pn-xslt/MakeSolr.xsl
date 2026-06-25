@@ -1329,6 +1329,11 @@
         <xsl:value-of select="normalize-space(.)"/>
       </field>
     </xsl:for-each>
+    <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance//t:placeName[not(@subtype)]">
+      <field name="placename">
+        <xsl:value-of select="normalize-space(.)"/>
+      </field>
+    </xsl:for-each>
   </xsl:template>
 
   <xsl:template name="date">
