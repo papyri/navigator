@@ -390,9 +390,9 @@ nav.breadcrumb .breadcrumb-item .breadcrumb-divider {
   margin-right: .5em;
 }
 
-nav.breadcrumb .breadcrumb-item:nth-last-child(2) .breadcrumb-divider {
+/* nav.breadcrumb .breadcrumb-item:nth-last-child(2) .breadcrumb-divider {
   margin-right: 0;
-}
+} */
 
 nav.breadcrumb .breadcrumb-item+.breadcrumb-item {
   padding-left: 0;
@@ -414,6 +414,11 @@ nav.breadcrumb li.breadcrumb-item span.unlinked-item:hover {
   font-style: italic;
   color: #800000;
   cursor: pointer;
+}
+
+nav.breadcrumb li.breadcrumb-item.active {
+  font-weight: bold;
+  color: #222;
 }
 
 #previous-values {

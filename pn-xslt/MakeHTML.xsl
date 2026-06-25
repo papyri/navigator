@@ -990,10 +990,11 @@
         </xsl:variable>
         <nav aria-label="breadcrumb" class="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-title visually-hidden">Editions:</li>
+            <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are faithful representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
             <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
             <li class="breadcrumb-item active" aria-current="page">
-              <span class="arrow"> → </span> <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (<xsl:value-of select="$base-edition"/>)
+              <span class="breadcrumb-divider">; </span>
+              <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (<xsl:value-of select="$base-edition"/>)
             </li>
             <li class="breadcrumb-copy">
               <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
@@ -1018,11 +1019,11 @@
             </xsl:variable>
             <nav aria-label="breadcrumb" class="breadcrumb">
               <ol class="breadcrumb">
-                <li class="breadcrumb-title visually-hidden">Editions:</li>
+                <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are faithful representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
                 <xsl:apply-templates select="$current//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="$historical-path"/></xsl:apply-templates>
                 <li class="breadcrumb-item">
                   <xsl:if test="$current//t:body/t:head/t:ref"><span class="breadcrumb-divider">; </span></xsl:if>
-                  <span class="arrow"> → </span> <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/></a>
+                  <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (Current)</a>
                 </li>
                 <li class="breadcrumb-copy">
                   <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
