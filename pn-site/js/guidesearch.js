@@ -42,7 +42,6 @@ $(document).ready(
 
     new TomSelect("#id-author", baseTomSelectConfig);
     new TomSelect("#id-work", baseTomSelectConfig);
-    new TomSelect("#id-place", baseTomSelectConfig);
     new TomSelect("#id-placename", baseTomSelectConfig);
     new TomSelect("#id-nome", baseTomSelectConfig);
     new TomSelect("#id-transc", baseTomSelectConfig);
