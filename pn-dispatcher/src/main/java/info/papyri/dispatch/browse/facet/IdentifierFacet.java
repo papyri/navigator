@@ -157,18 +157,13 @@ public class IdentifierFacet extends Facet{
         if(noConstraints) return solrQuery;
 
         Boolean seriesSet = searchConfigurations.get(IdParam.SERIES).hasConstraint();
-        Boolean collectionSet = searchConfigurations.get(IdParam.COLLECTION).hasConstraint();
         String qpref = getLeadingField().name() + ":";
-        if(!seriesSet && !collectionSet){
+        if(!seriesSet){
 
             String specifierClause = this.getIdnoOrVolumeOnlySpecifierClause();
             solrQuery.addFilterQuery(qpref + specifierClause);
             return solrQuery;
 
-        }
-
-        if (collectionSet && seriesSet) {
-            return buildStandardFieldQuery(solrQuery);
         }
 
         if(seriesSet){
@@ -177,33 +172,10 @@ public class IdentifierFacet extends Facet{
             solrQuery.addFilterQuery(qpref + seriesSpecifierClause);
 
         }
-        if(collectionSet){
 
-            if(apisOnlyHTMLValue.equals(searchConfigurations.get(IdParam.COLLECTION).getConstraint())){
+        if(apisOnlyHTMLValue.equals(searchConfigurations.get(IdParam.COLLECTION).getConstraint())){
 
-                solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
-
-            } else {
-                String c = searchConfigurations.get(IdParam.COLLECTION).getConstraint();
-                // "all" isn't a real value in the Solr `collection` field, so we add no
-                // filter here — letting the rest of the query match all docs.
-                if (c.equals("all")) {
-                    return solrQuery;
-                }
-                // If this is a DDbDP or DCLP collection, short-circuit the query building process
-                if (c.equals("current")
-                    || c.equals("editions")
-                    || c.equals("dclp")
-                    || c.equals("ddbdp")
-                    || c.equals("hgv")  ) {
-                    solrQuery.addFilterQuery(SolrField.collection.name() + ":" + c);
-                    return solrQuery;
-                }
-
-                String collSpecifierClause = getCollectionSpecifierClause();
-                solrQuery.addFilterQuery(qpref + collSpecifierClause);
-
-            }
+            solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
 
         }
 
@@ -313,19 +285,7 @@ public class IdentifierFacet extends Facet{
         }
 
 
-      String seriesConstraint = "(" +
-          SolrField.ddbdp_series.name() +
-          ":" +
-          series +
-          " OR " +
-          SolrField.hgv_series.name() +
-          ":" +
-          series +
-          " OR " +
-          SolrField.dclp_series.name() +
-          ":" +
-          series +
-          ")";
+        String seriesConstraint = SolrField.series.name() + ":" + series;
         solrQuery.addFilterQuery(seriesConstraint);
 
         if(volumeConfig.hasConstraint()){
@@ -981,9 +941,7 @@ public class IdentifierFacet extends Facet{
 
             if(!anyConstraintSet()){
 
-                facetFields.add(SolrField.dclp_series);
-                facetFields.add(SolrField.hgv_series);
-                facetFields.add(SolrField.ddbdp_series);
+                facetFields.add(SolrField.series);
                 return facetFields;
             }
 
@@ -1022,8 +980,6 @@ public class IdentifierFacet extends Facet{
 
                 if(ff != null){
 
-                    String collectionPrefix = facetField.equals(SolrField.dclp_series) ? "dclp" : (facetField.equals(SolrField.ddbdp_series) ? "ddbdp" : "hgv");
-
                     List<Count> facetCounts = ff.getValues();
 
                     for(Count count : facetCounts){
@@ -1032,8 +988,6 @@ public class IdentifierFacet extends Facet{
                         long number = count.getCount();
 
                         if(name != null && !name.isEmpty() && !"0".equals(name) && !"null".equals(name)  && number != 0){
-
-                            name = collectionPrefix + ";" + name;
 
                             if(idValues.containsKey(name)){
 
@@ -1054,7 +1008,7 @@ public class IdentifierFacet extends Facet{
 
                 }           // closing ff null check
 
-            }               // closing loop through facet fiels
+            }               // closing loop through facet fields
 
 
             for(String name : rawValues){
@@ -1098,13 +1052,10 @@ public class IdentifierFacet extends Facet{
                 String extendedName = itr.next();
                 String number = String.valueOf(idValues.get(extendedName));
                 String[] nameBits = extendedName.split(";");
-                String collection = nameBits[0].toUpperCase() + ": ";
-                String name = nameBits[1];
+                String name = nameBits[0];
                 String displayName = name.replace("_", " ");
-                displayName = collection + displayName + " (" + number + ")";
-                String openTag = "<option value=\"" +
-                  nameBits[0] + ":" + name +
-                  "\">";
+                displayName = displayName + " (" + number + ")";
+                String openTag = "<option value=\"" + name +"\">";
                 String stringValue = openTag + displayName + "</option>";
 
                 // Convert constraint format (dclp:bgu) to internal format (dclp;bgu) for comparison
