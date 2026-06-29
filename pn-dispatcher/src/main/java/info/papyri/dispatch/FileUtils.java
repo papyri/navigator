@@ -652,8 +652,6 @@ public class FileUtils {
   public String highlight(Pattern[] patterns, String t) {
     List<String> nonbreaking = getExclusions(t, excludeNonBreaking);
     String text = t.toString().replaceAll(excludeNonBreaking, "ⓑⓑⓑ");
-    String head = text.substring(0, text.indexOf("<body"));
-    text = text.substring(text.indexOf("<body"));
     List<String> exclusions = getExclusions(text, exclude);
     text = text.replaceAll(exclude, "ⓐⓐⓐ");
     int index = 0;
@@ -704,7 +702,6 @@ public class FileUtils {
     restore2.append(text.substring(start));
     text = restore2.toString();
     StringBuilder result = new StringBuilder();
-    result.append(head);
     for (String l : text.split("\n")) {
       String line = l.replaceAll("Ⓐ+([^-Ⓑ]+-)", hlStart + "$1" + hlEnd); // Problem here?
       line = line.replaceAll("(<span class=\"linecontent\">)([^ⒶⒷ]+)Ⓑ+", "$1" + hlStart + "$2" + hlEnd );
@@ -716,7 +713,9 @@ public class FileUtils {
 
   public List<String> highlightMatches(String t, Pattern[] patterns) {
     String highlightedText = highlight(patterns, t);
-    return getNMatches(highlightedText, 3);
+    List<String> result = getNMatches(highlightedText, 3);
+    logger.log(Level.INFO, "Found " + result.size() + " matches in text");
+    return result;
   }
 
   /**
