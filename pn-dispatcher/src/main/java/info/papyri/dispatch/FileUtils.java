@@ -652,6 +652,13 @@ public class FileUtils {
   public String highlight(Pattern[] patterns, String t) {
     List<String> nonbreaking = getExclusions(t, excludeNonBreaking);
     String text = t.toString().replaceAll(excludeNonBreaking, "ⓑⓑⓑ");
+    boolean html = false;
+    String head = "";
+    if (text.contains("<body")) {
+      html = true;
+      head = text.substring(0, text.indexOf("<body"));
+      text = text.substring(text.indexOf("<body"));
+    }
     List<String> exclusions = getExclusions(text, exclude);
     text = text.replaceAll(exclude, "ⓐⓐⓐ");
     int index = 0;
@@ -701,6 +708,9 @@ public class FileUtils {
     }
     restore2.append(text.substring(start));
     text = restore2.toString();
+    if (html) {
+      text = head + text;
+    }
     StringBuilder result = new StringBuilder();
     for (String l : text.split("\n")) {
       String line = l.replaceAll("Ⓐ+([^-Ⓑ]+-)", hlStart + "$1" + hlEnd); // Problem here?
