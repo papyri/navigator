@@ -298,7 +298,7 @@
                 <!-- <xsl:if test="$hgv or $apis or $tm or $dclp"> -->
                 <xsl:if test="$hgv or $apis or $dclp">
                   <div id="metadatacontrols" class="controls-section me-3">
-                    <a href="#metadata" class="text-decoration-none fw-semibold text-black">Metadata</a>
+                    <a href="#metadata" class="text-decoration-none fw-semibold btn btn-light"><span class="visually-hidden">Skip to </span>Metadata</a>
 
                     <!-- create dropdown only if multiple metadata -->
                     <!-- sections exist. -->
@@ -338,7 +338,7 @@
 
                 <xsl:if test="$ddbdp or $translations or $dclp">
                   <div id="textcontrols" class="me-3 controls-section">
-                    <a href="#text" class="text-decoration-none fw-semibold text-black">Text</a>
+                    <a href="#text" class="text-decoration-none fw-semibold btn btn-light"><span class="visually-hidden">Skip to </span>Text</a>
 
                     <!-- create dropdown only if multiple text -->
                     <!-- sections exist. -->
@@ -437,6 +437,14 @@
               <xsl:if test="$collection = 'current'">
                 <xsl:if test="$hgv or $apis or $tm or $dclp">
                   <div id="metadata" class="metadata mb-5">
+                    <xsl:if test="count($relations[contains(., 'hgv/')]) + count($relations[contains(., '/apis/')]) + count($relations[contains(., 'dclp/')]) gt 1">
+                      <div class="text-end">
+                        <button type="button" id="metadata-collapse-all" class="btn btn-outline-secondary btn-sm mb-4 metadata-toggle-all" aria-expanded="true">
+                          <i class="bi bi-chevron-up" aria-hidden="true"></i>
+                          <span class="metadata-toggle-all-label">Collapse all metadata</span>
+                        </button>
+                      </div>
+                    </xsl:if>
                     <xsl:for-each select="$relations[contains(., 'hgv/')]">
                       <xsl:sort select="." order="ascending"/>
                       <xsl:choose>
@@ -990,7 +998,7 @@
         </xsl:variable>
         <nav aria-label="breadcrumb" class="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are faithful representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
+            <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are close representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
             <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
             <li class="breadcrumb-item active" aria-current="page">
               <span class="breadcrumb-divider">; </span>

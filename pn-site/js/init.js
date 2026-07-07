@@ -55,6 +55,8 @@ function init() {
 		initBackToTop();
     setCollection();
     initConstraintBadges();
+    initMetadataCollapseAll();
+    initMetadataAnchorExpand();
 
 		// Initialize transformation for /current/ and /editions/ pages
 		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
@@ -618,9 +620,43 @@ async function getMessage(url) {
 	return doc.querySelector("div.markdown");
 }
 
+function initMetadataCollapseAll() {
+	// Collapse/expand every metadata table regardless of individual state
+	const btn = document.getElementById('metadata-collapse-all');
+	if (!btn) return;
+	const label = btn.querySelector('.metadata-toggle-all-label');
+	btn.addEventListener('click', function() {
+		const expand = btn.classList.contains('collapsed');
+		document.querySelectorAll('.metadata-collapse').forEach(function(el) {
+			const collapse = bootstrap.Collapse.getOrCreateInstance(el, { toggle: false });
+			if (expand) {
+				collapse.show();
+			} else {
+				collapse.hide();
+			}
+		});
+		btn.classList.toggle('collapsed', !expand);
+		btn.setAttribute('aria-expanded', String(expand));
+		label.textContent = expand ? 'Collapse all metadata' : 'Expand all metadata';
+	});
+}
+
+function initMetadataAnchorExpand() {
+	// Expand collapsed metadata tables when jumping to them from the controls nav
+	document.querySelectorAll('#metadatacontrols a[href^="#"]').forEach(function(link) {
+		link.addEventListener('click', function() {
+			const target = document.querySelector(link.getAttribute('href'));
+			if (!target) return;
+			target.querySelectorAll('.metadata-collapse').forEach(function(el) {
+				bootstrap.Collapse.getOrCreateInstance(el, { toggle: false }).show();
+			});
+		});
+	});
+}
+
 function initBootstrapTooltips() {
 	// Initialize tooltips for both standard elements and span elements within transcriptions
-	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"], .transcription span[title]');
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"], .transcription span[title], .metadata-toggle[data-bs-title]');
 	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
 	// Add tooltips for translation terms with glosses
