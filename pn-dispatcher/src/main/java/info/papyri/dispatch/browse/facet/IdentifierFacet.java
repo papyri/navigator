@@ -1191,12 +1191,16 @@ public class IdentifierFacet extends Facet{
 
             stringifiedValues.sort((rawFirst, rawSecond) -> {
 
-              if ("ddbdp".equals(rawFirst)) return -1;
-              if ("ddbdp".equals(rawSecond)) return 1;
+              if ("all".equals(rawFirst)) return -1;
+              if ("all".equals(rawSecond)) return 1;
               if ("dclp".equals(rawFirst)) return -1;
               if ("dclp".equals(rawSecond)) return 1;
+              if ("ddbdp".equals(rawFirst)) return -1;
+              if ("ddbdp".equals(rawSecond)) return 1;
               if ("hgv".equals(rawFirst)) return -1;
               if ("hgv".equals(rawSecond)) return 1;
+              if ("apis".equals(rawFirst)) return -1;
+              if ("apis".equals(rawSecond)) return 1;
               return rawFirst.compareToIgnoreCase(rawSecond);
 
             });
