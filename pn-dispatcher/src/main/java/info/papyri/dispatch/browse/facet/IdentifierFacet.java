@@ -1052,15 +1052,25 @@ public class IdentifierFacet extends Facet{
                 String extendedName = itr.next();
                 String number = String.valueOf(idValues.get(extendedName));
                 String[] nameBits = extendedName.split(";");
-                String name = nameBits[0];
-                String displayName = name.replace("_", " ");
-                displayName = displayName + " (" + number + ")";
+                // extendedName is NOT the raw Solr series_led_path ("aegyptus;97;49_1;ddbdp").
+                // dispersePathData reassembles it as "collection_type;series" e.g. "ddbdp;aegyptus".
+                // Use just the series name so buildQueryClause produces series_led_path:aegyptus;*;*;*.
+                final String name;
+                final String displayName;
+                if (nameBits.length >= 2) {
+                    name = nameBits[1];
+                    displayName = nameBits[1].replace("_", " ") + " (" + number + ")";
+                } else {
+                    name = nameBits[0];
+                    displayName = name.replace("_", " ") + " (" + number + ")";
+                }
                 String openTag = "<option value=\"" + name +"\">";
                 String stringValue = openTag + displayName + "</option>";
 
-                // Convert constraint format (dclp:bgu) to internal format (dclp;bgu) for comparison
-                String constraintAsInternal = this.hasConstraint() ? this.getConstraint().replace(":", ";") : "";
-                if(!this.hasConstraint() || extendedName.equals(constraintAsInternal)){
+                // When a series is already selected, keep only the matching option.
+                // Compare the series name segment of extendedName against the constraint directly.
+                final String seriesName = nameBits.length >= 2 ? nameBits[1] : extendedName;
+                if(!this.hasConstraint() || seriesName.equals(this.getConstraint())){
                     stringifiedValues.set(stringifiedValues.indexOf(extendedName), stringValue);
                 } else {
                     itr.remove();
