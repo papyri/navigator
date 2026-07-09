@@ -463,9 +463,11 @@ table#search-results-table {
   }
 }
 
+#search-results-table tbody tr.result-text td.kwic {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
 
-
-/* Border between result record rows but not their associated text */
 tr.result-record {
   border-top: var(--bs-border-width) solid var(--bs-border-color);
 }
