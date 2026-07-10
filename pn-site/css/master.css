@@ -1071,3 +1071,18 @@ div#alert div.markdown {
   margin-right: auto;
   width: 75vw;
 }
+
+/* homepage banner styles */
+div#banner {
+  background-color: #f8edc3;
+  padding: 1em;
+  margin-top: 2em;
+  margin-right: .5em;
+  margin-left: .5em;
+  margin-bottom: 1.5em;
+  border: 1px solid #e5daaf;
+}
+div#banner h2 {
+  margin-left: 1em;
+  padding-left: 0;
+}
