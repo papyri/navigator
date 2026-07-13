@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -506,6 +507,13 @@ public class IdentifierFacet extends Facet{
 
         }
         return relevantCollections;
+
+    }
+
+    private static String normalizeSeriesConstraint(String value){
+
+        if(value == null) return "";
+        return value.trim().toLowerCase().replaceAll("\\.+$", "");
 
     }
 
@@ -1034,6 +1042,7 @@ public class IdentifierFacet extends Facet{
         public ArrayList<String> getIdValuesAsHTML(){
 
             ArrayList<String> stringifiedValues = new ArrayList<>(idValues.keySet());
+            HashSet<String> seenOptionValues = new HashSet<>();
 
             stringifiedValues.sort((rawFirst, rawSecond) -> {
 
@@ -1047,6 +1056,8 @@ public class IdentifierFacet extends Facet{
 
             });
 
+            final String normalizedConstraint = normalizeSeriesConstraint(this.getConstraint());
+
             for(Iterator<String> itr = stringifiedValues.iterator(); itr.hasNext();){
 
                 String extendedName = itr.next();
@@ -1058,19 +1069,24 @@ public class IdentifierFacet extends Facet{
                 final String name;
                 final String displayName;
                 if (nameBits.length >= 2) {
-                    name = nameBits[1];
-                    displayName = nameBits[1].replace("_", " ") + " (" + number + ")";
+                    name = normalizeSeriesConstraint(nameBits[1]);
+                    displayName = name.replace("_", " ") + " (" + number + ")";
                 } else {
-                    name = nameBits[0];
+                    name = normalizeSeriesConstraint(nameBits[0]);
                     displayName = name.replace("_", " ") + " (" + number + ")";
                 }
                 String openTag = "<option value=\"" + name +"\">";
                 String stringValue = openTag + displayName + "</option>";
 
+                // Keep only the first option for each normalized series value.
+                if(!seenOptionValues.add(name)){
+                    itr.remove();
+                    continue;
+                }
+
                 // When a series is already selected, keep only the matching option.
-                // Compare the series name segment of extendedName against the constraint directly.
-                final String seriesName = nameBits.length >= 2 ? nameBits[1] : extendedName;
-                if(!this.hasConstraint() || seriesName.equals(this.getConstraint())){
+                // Compare normalized series value against normalized constraint.
+                if(!this.hasConstraint() || name.equals(normalizedConstraint)){
                     stringifiedValues.set(stringifiedValues.indexOf(extendedName), stringValue);
                 } else {
                     itr.remove();
