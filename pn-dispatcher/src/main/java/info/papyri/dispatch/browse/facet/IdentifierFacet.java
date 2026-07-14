@@ -513,7 +513,7 @@ public class IdentifierFacet extends Facet{
     private static String normalizeSeriesConstraint(String value){
 
         if(value == null) return "";
-        return value.trim().toLowerCase().replaceAll("\\.+$", "");
+        return value.trim().toLowerCase().replaceAll("\\._", ".").replaceAll("\\.+$", "");
 
     }
 
