@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+     xml:lang="en"
+     xmlns:sch="http://purl.oclc.org/dsdl/schematron" 
+     xmlns:tei="http://www.tei-c.org/ns/1.0" >
+  <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title>Papyri.info EpiDoc Customization</title>
+            <author>Hugh Cayless</author>
+         </titleStmt>
+         <publicationStmt>
+            <publisher>Duke Collaboratory for Classics Computing (DC3), Duke Univesity Libraries</publisher>
+         </publicationStmt>
+         <sourceDesc>
+            <p>born digital</p>
+         </sourceDesc>
+      </fileDesc>
+     <encodingDesc>
+        <constraintDecl scheme="schematron" queryBinding="xpath31">
+           <sch:ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+           <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
+        </constraintDecl>
+     </encodingDesc>
+  </teiHeader>
+  <text>
+      <body>
+         <head>Papyri.info EpiDoc Customization</head>
+         <p>This customization adds extra validation for id references.</p>
+         <schemaSpec ident="papyri.info" docLang="en" prefix="tei_" start="TEI" xml:lang="en" source="tei-epidoc-9.7.compiled.xml" defaultExceptions="http://www.tei-c.org/ns/1.0 teix:egXML">
+            <desc>EpiDoc customization for use in Papyri.info.</desc>
+            <!-- Modules -->
+            <moduleRef key="tei"/>
+            <moduleRef key="core"/>
+            <moduleRef key="header"/>
+            <moduleRef key="textstructure"/>
+            <moduleRef key="transcr"/>
+            <moduleRef key="verse"/>
+            <moduleRef key="analysis"/>
+            <moduleRef key="certainty"/>
+            <moduleRef key="gaiji"/>
+            <moduleRef key="linking"/>
+            <moduleRef key="msdescription"/>
+            <moduleRef key="namesdates"/>
+            <moduleRef key="textcrit"/>
+            <moduleRef key="figures"/>
+            <moduleRef key="dictionaries"/>
+            
+            <!-- DDb-Hybrid constraints -->
+            <constraintSpec xml:lang="en" ident="ddb-hybrid-idno" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type='ddb-hybrid']">
+                     <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DDb-Hybrid idnos must be in the form series or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
+                     <sch:assert test="doc-available(concat('https://papyri.info/ddbdp/', ., '/source'))" role="WARN">The DDbDP document https://papyri.info/ddbdp/<sch:value-of select="."/> is not available.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- DCLP-Hybrid constraints -->
+            <constraintSpec xml:lang="en" ident="dclp-hybrid-idno" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type='dclp-hybrid']">
+                     <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DCLP-Hybrid idnos must be in the form eries or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
+                     <sch:assert test="doc-available(concat('https://papyri.info/dclp/', ., '/source'))" role="WARN">The DCLP document https://papyri.info/dclp/<sch:value-of select="."/> is not available.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- Collection constraints -->
+            <!-- Documents must have one of the following idno types: apis, dclp-hybrid, ddb-hybrid -->
+            <constraintSpec xml:lang="en" ident="idno-types" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:publicationStmt">
+                     <sch:assert test="tei:idno[@type='dclp-hybrid'] or tei:idno[@type='ddb-hybrid'] or tei:idno[@type='apisid']">Documents must have one of the following idno types: apisid, dclp-hybrid, or ddb-hybrid.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- filename constraints
+                 Filenames should either be in "HGV-form", that is numbers followed optionally by letters, or, e.g. 'bgu/1/1', i.e. series title or volume title, optional volume number, and item or page number.
+            -->
+            <constraintSpec xml:lang="en" ident="filename-idno" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type='filename']">
+                     <sch:assert test="matches(., '^([.a-z0-9]+/[a-zA-Z0-9]*/?[a-zA-Z0-9_]+|[1-9][0-9]*[a-z]*)$')">Filename idnos must be either in the form series/volume/number or volume/number, with only ASCII letters, numbers, dots, and underscores permitted (for historical texts) or they must be numbers, optionally followed by one or more lowercase ASCII letters (for current texts).</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- HGV idnos are always integers optionally followed by letters. -->
+            <constraintSpec xml:lang="en" ident="HGV-idno" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type='HGV']">
+                     <sch:assert test="matches(., '^[1-9][0-9]*[a-z]*$')">HGV idnos must be integers expressed in ASCII numerals, optionally followed by one or more lowercase ASCII letters.</sch:assert>
+                     <sch:assert test="doc-available(concat('https://papyri.info/hgv/', ., '/source'))" role="WARN">The HGV document https://papyri.info/hgv/<sch:value-of select="."/> is not available.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- TM and LDAB idnos are always integers -->
+            <constraintSpec xml:lang="en" ident="TM-LDAB-idno" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type=('LDAB', 'TM')]">
+                     <sch:assert test="matches(., '^[1-9][0-9]*$')">TM and LDAB idnos must be integers expressed in ASCII numerals.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- Lemma Header targets must be valid URLs -->
+            <constraintSpec xml:lang="en" ident="lemma-ref-targets" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:body/tei:head/tei:ref[@target]">
+                     <sch:report test="matches(@target, '[^:]//')">Missing path component</sch:report>
+                     <sch:assert test="matches(@target, '^(?:[a-zA-Z0-9]|[-._~]|[:/?#\[\]@]|[!\$()*+,;=])+$')">Illegal URL character.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- All documents should have a TM idno -->
+            <constraintSpec xml:lang="en" ident="TM-required" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:publicationStmt">
+                     <sch:assert test="tei:idno[@type='TM']" role="WARN">There should be a TM idno for each document.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- All DDbDP documents must have an HGV idno -->
+            <constraintSpec xml:lang="en" ident="HGV-required-for-DDb" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:publicationStmt">
+                     <sch:assert test="if (tei:idno[@type='ddb-hybrid']) then tei:idno[@type='HGV'] else true()">There must be an HGV idno for each DDbDP document.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+                        
+         </schemaSpec>
+      </body>
+  </text>
+</TEI>
