@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -506,6 +507,13 @@ public class IdentifierFacet extends Facet{
 
         }
         return relevantCollections;
+
+    }
+
+    private static String normalizeSeriesConstraint(String value){
+
+        if(value == null) return "";
+        return value.trim().toLowerCase().replaceAll("_", ".").replaceAll("\\.{2,}", ".").replaceAll("\\.+$", "");
 
     }
 
@@ -1034,6 +1042,7 @@ public class IdentifierFacet extends Facet{
         public ArrayList<String> getIdValuesAsHTML(){
 
             ArrayList<String> stringifiedValues = new ArrayList<>(idValues.keySet());
+            HashSet<String> seenOptionValues = new HashSet<>();
 
             stringifiedValues.sort((rawFirst, rawSecond) -> {
 
@@ -1047,20 +1056,37 @@ public class IdentifierFacet extends Facet{
 
             });
 
+            final String normalizedConstraint = normalizeSeriesConstraint(this.getConstraint());
+
             for(Iterator<String> itr = stringifiedValues.iterator(); itr.hasNext();){
 
                 String extendedName = itr.next();
                 String number = String.valueOf(idValues.get(extendedName));
                 String[] nameBits = extendedName.split(";");
-                String name = nameBits[0];
-                String displayName = name.replace("_", " ");
-                displayName = displayName + " (" + number + ")";
+                // extendedName is NOT the raw Solr series_led_path ("aegyptus;97;49_1;ddbdp").
+                // dispersePathData reassembles it as "collection_type;series" e.g. "ddbdp;aegyptus".
+                // Use just the series name so buildQueryClause produces series_led_path:aegyptus;*;*;*.
+                final String name;
+                final String displayName;
+                if (nameBits.length >= 2) {
+                    name = normalizeSeriesConstraint(nameBits[1]);
+                    displayName = name.replace("_", " ") + " (" + number + ")";
+                } else {
+                    name = normalizeSeriesConstraint(nameBits[0]);
+                    displayName = name.replace("_", " ") + " (" + number + ")";
+                }
                 String openTag = "<option value=\"" + name +"\">";
                 String stringValue = openTag + displayName + "</option>";
 
-                // Convert constraint format (dclp:bgu) to internal format (dclp;bgu) for comparison
-                String constraintAsInternal = this.hasConstraint() ? this.getConstraint().replace(":", ";") : "";
-                if(!this.hasConstraint() || extendedName.equals(constraintAsInternal)){
+                // Keep only the first option for each normalized series value.
+                if(!seenOptionValues.add(name)){
+                    itr.remove();
+                    continue;
+                }
+
+                // When a series is already selected, keep only the matching option.
+                // Compare normalized series value against normalized constraint.
+                if(!this.hasConstraint() || name.equals(normalizedConstraint)){
                     stringifiedValues.set(stringifiedValues.indexOf(extendedName), stringValue);
                 } else {
                     itr.remove();
