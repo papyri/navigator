@@ -25,6 +25,7 @@
       <xsl:otherwise>hgv</xsl:otherwise>
     </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="table-id" select="concat($md-collection, '-metadata-', generate-id())"/>
     <div class="metadata mb-3">
       <div id="{$md-collection}-data" class="{$md-collection} data">
         <xsl:choose>
@@ -42,19 +43,29 @@
                   DCLP/LDAB Data <a class="btn btn-link fw-semibold text-decoration-none" href="https://github.com/papyri/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new"><i class="bi bi-xml"></i>xml</a>
                 </xsl:otherwise>
               </xsl:choose>
+              <xsl:call-template name="metadata-collapse-toggle">
+                <xsl:with-param name="table-id" select="$table-id"/>
+              </xsl:call-template>
             </h2>
           </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
               HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}"><i class="bi bi-external-link"></i>source</a> <a class="btn btn-link fw-semibold text-decoration-none" href="/hgv/{//t:idno[@type='filename']}/source" target="_new"><i class="bi bi-xml"></i>xml</a>
+              <xsl:call-template name="metadata-collapse-toggle">
+                <xsl:with-param name="table-id" select="$table-id"/>
+              </xsl:call-template>
             </h2>
           </xsl:when>
           <xsl:otherwise>
             <h2>
               Catalog Record: <xsl:value-of select="//t:idno[@type='apisid']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="/apis/{//t:idno[@type='apisid']}/source"><i class="bi bi-xml"></i>xml</a>
+              <xsl:call-template name="metadata-collapse-toggle">
+                <xsl:with-param name="table-id" select="$table-id"/>
+              </xsl:call-template>
             </h2>
           </xsl:otherwise>
         </xsl:choose>
+        <div id="{$table-id}" class="metadata-collapse collapse show">
         <table class="table metadata mb-5">
           <tbody>
             <xsl:choose>
@@ -171,8 +182,18 @@
             </xsl:choose>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
+  </xsl:template>
+
+  <!-- Control for collapsing/expanding a single metadata table -->
+  <xsl:template name="metadata-collapse-toggle">
+    <xsl:param name="table-id"/>
+    <button type="button" class="btn btn-link metadata-toggle" data-bs-toggle="collapse" data-bs-target="#{$table-id}" data-bs-title="Toggle metadata display" aria-expanded="true" aria-controls="{$table-id}">
+      <i class="bi bi-chevron-up" aria-hidden="true"></i>
+      <span class="visually-hidden">Toggle metadata table</span>
+    </button>
   </xsl:template>
 
   <xsl:template name="tm-metadata" expand-text="yes">

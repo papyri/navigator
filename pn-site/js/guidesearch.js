@@ -27,8 +27,10 @@ $(document).ready(
     };
 
     new TomSelect("#id-collection", Object.assign({}, baseTomSelectConfig, {
+      // Preserve the server-supplied option order ("all" options first,
+      // APIS last among them) rather than re-sorting alphabetically.
       sortField: {
-        field: "text",
+        field: "$order",
         direction: "asc"
       }
     }));
