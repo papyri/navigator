@@ -35,4 +35,6 @@
     </sourceDesc>
   </xsl:template>
   
+  <xsl:template match="div[type='edition']"></xsl:template>
+  
 </xsl:stylesheet>

@@ -24,11 +24,10 @@ def main(argv=None):
   with open('tm_checklist.csv', newline='') as tm:
     reader = csv.DictReader(tm, fieldnames=['DDb', 'Checklist', 'TM', 'replace', 'regex', 'notes'])
     for row in reader:
-      if row['replace'] == 'TRUE':
-        if index.get(row['TM'][0:4]) is None:
-          index[row['TM'][0:4]] = [row]
-        else:
-          index[row['TM'][0:4]].append(row)
+      if index.get(row['TM'][0:4]) is None:
+        index[row['TM'][0:4]] = [row]
+      else:
+        index[row['TM'][0:4]].append(row)
 
   source = os.path.abspath(os.path.join(args.source, 'DDbDP'))
   if os.path.isdir(source):
@@ -55,11 +54,12 @@ def main(argv=None):
                 title = plain.find('tei:title', namespaces)
                 if title is not None:
                   compare_text = get_replacement(title.text)
-                else:
-                  compare_text = plain.text
-                if ratio < fuzz.token_sort_ratio(ref.text, compare_text):
-                  ratio = fuzz.token_sort_ratio(ref.text, compare_text)
-                  found = plain.get('n', None)
+                  if compare_text is None:
+                    plain.set('remove', 'true')
+                    continue
+                  if ratio < fuzz.token_sort_ratio(ref.text, compare_text):
+                    ratio = fuzz.token_sort_ratio(ref.text, compare_text)
+                    found = plain.get('n', None)
             if found is not None:
               found_ref = head.find(".//tei:ref[@n='" + found + "']", namespaces)
               found_ref.set('remove', 'true')
@@ -84,7 +84,9 @@ def main(argv=None):
           xslt2.transform_to_file()
 
 def get_replacement(title):
-  key = title[0:4]
+  if title.startswith('Année épigraphique'): # Let Ae refs pass through
+    return title
+  key = title[0:4].strip()
   if index.get(key) is not None:
     for item in index[key]:
       if item['regex'] == 'TRUE':
@@ -96,7 +98,7 @@ def get_replacement(title):
             return item['Checklist'] + title[found.end():]
       elif title.startswith(item['TM']):
         return item['Checklist'] + title[len(item['TM']):]
-  return title
+  return None
 
 if __name__ == '__main__':
   main()

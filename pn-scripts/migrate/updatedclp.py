@@ -78,7 +78,9 @@ def main(argv=None):
           xslt2.transform_to_file()
 
 def get_replacement(title):
-  key = title[0:4]
+  if title.startswith('Année épigraphique'): # Let Ae refs pass through
+    return title
+  key = title[0:4].strip()
   if index.get(key) is not None:
     for item in index[key]:
       if item['regex'] == 'TRUE':
@@ -90,7 +92,7 @@ def get_replacement(title):
             return item['Checklist'] + title[found.end():]
       elif title.startswith(item['TM']):
         return item['Checklist'] + title[len(item['TM']):]
-  return title
+  return None
 
 if __name__ == '__main__':
   main()

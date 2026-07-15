@@ -61,7 +61,7 @@
                 <xsl:otherwise><idno type="dclp-hybrid">{$id}</idno></xsl:otherwise>
               </xsl:choose>
               <idno type="HGV">{$context//t:idno[@type='filename']}</idno>
-              <idno type="TM">{replace($context//t:idno[@type='TM'], '[a-z]+', '')}</idno>
+              <idno type="TM">{$context//t:idno[@type='TM']}</idno>
               <availability>
                 <p>© Duke Databank of Documentary Papyri. This work is licensed under a
                   <ref type="license" target="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</ref>.
@@ -88,7 +88,7 @@
               <ref target="https://papyri.info/editions/{replace($id, ';+', '/')}">{replace($id, ';+', '.')}</ref>
             </head>
             <div xml:lang="grc" type="edition" xml:space="preserve">
-              <note type="ignore">This text has not been added to papyri.info yet.</note>
+              <note xml:lang="en">This text has not been added to papyri.info yet.</note>
               <ab/>
             </div>
           </body>
