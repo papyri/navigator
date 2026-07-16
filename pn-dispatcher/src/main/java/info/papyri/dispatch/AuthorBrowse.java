@@ -16,12 +16,12 @@ import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -30,7 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -100,7 +99,13 @@ public class AuthorBrowse extends HttpServlet {
           boolean closeAccordionItem = false;
           boolean closeAuthor = false;
           boolean worksOpen = false;
-          Collections.sort(authors, (Comparator<Count>) (o1, o2) -> ((Count)o1).getName().trim().compareTo(((Count)o2).getName().trim()));
+          Collections.sort(authors, new Comparator() {
+              @Override
+              public int compare(Object o1, Object o2) {
+                  return ((Count)o1).getName().trim().compareTo(((Count)o2).getName().trim());
+              }
+              
+          });
           for (Count author : authors) {
               String name = author.getName();
 

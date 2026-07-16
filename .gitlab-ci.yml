@@ -1,5 +1,6 @@
 include:
   - project: devops/ci-config
+    ref: main
     file:
       - /templates/audit-jobs.gitlab-ci.yml
       - /templates/container-flexible.gitlab-ci.yml

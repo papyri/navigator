@@ -19,8 +19,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
-import java.util.concurrent.TimeUnit;
-import jakarta.servlet.ServletConfig;
+import javax.servlet.ServletConfig;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;

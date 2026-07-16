@@ -9,7 +9,7 @@ import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.servlet.ServletConfig;
+import javax.servlet.ServletConfig;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;

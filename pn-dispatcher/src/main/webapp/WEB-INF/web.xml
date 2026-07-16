@@ -9,6 +9,26 @@
         </init-param>
     </servlet>
     <servlet>
+        <servlet-name>Search</servlet-name>
+        <servlet-class>info.papyri.dispatch.Search</servlet-class>
+        <init-param>
+            <param-name>home</param-name>
+            <param-value>/srv/data/papyri.info/pn/home</param-value>
+        </init-param>
+        <init-param>
+            <param-name>solrUrl</param-name>
+            <param-value>http://localhost:8983/solr/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>xmlPath</param-name>
+            <param-value>/srv/data/papyri.info/idp.data/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>htmlPath</param-name>
+            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
         <servlet-name>Reader</servlet-name>
         <servlet-class>info.papyri.dispatch.Reader</servlet-class>
         <init-param>
@@ -286,10 +306,6 @@
     <servlet-mapping>
         <servlet-name>XSLTService</servlet-name>
         <url-pattern>/epidocinator</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DTSServlet</servlet-name>
-        <url-pattern>/dts</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

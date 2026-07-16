@@ -743,8 +743,7 @@ public class DateFacet extends Facet {
          * @see Terminus#calculateLooseWidgetValues(long)
          *
          */
-
-        @SuppressWarnings("unchecked")
+        
         void calculateWidgetValues(QueryResponse qr) {
 
             addUnknownCount(qr);

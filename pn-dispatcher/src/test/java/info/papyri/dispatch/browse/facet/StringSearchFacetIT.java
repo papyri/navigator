@@ -11,8 +11,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
-import jakarta.servlet.*;
-import jakarta.servlet.descriptor.JspConfigDescriptor;
+import javax.servlet.*;
+import javax.servlet.descriptor.JspConfigDescriptor;
 
 import junit.framework.TestCase;
 import org.apache.solr.client.solrj.request.SolrQuery;
@@ -332,7 +332,7 @@ public class StringSearchFacetIT extends TestCase {
           }
 
           @Override
-          public Enumeration<String> getInitParameterNames() {
+          public Enumeration getInitParameterNames() {
             return null;
           }
           

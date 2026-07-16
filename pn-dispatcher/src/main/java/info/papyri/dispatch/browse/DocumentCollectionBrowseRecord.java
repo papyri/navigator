@@ -180,7 +180,7 @@ import java.lang.annotation.Target;
         public String getVolume(){ return (volume == null) ? "" : volume; }
 
         @Override
-        public int compareTo(BrowseRecord o) {
+        public int compareTo(Object o) {
             
             DocumentCollectionBrowseRecord comparandum = (DocumentCollectionBrowseRecord)o;
             
