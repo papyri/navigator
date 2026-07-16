@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:t="http://www.tei-c.org/ns/1.0"
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:pi="http://papyri.info/ns/"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
   exclude-result-prefixes="t"
   version="2.0">
@@ -10,7 +10,7 @@
 
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
-  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
   
   <xsl:template match="/">

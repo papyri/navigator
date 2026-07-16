@@ -3,6 +3,8 @@ package info.papyri.dispatch.browse;
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.browse.facet.IdentifierFacet;
 
+import java.lang.annotation.Target;
+
 /**
      * <code>DocumentCollectionBrowseRecord</code>s are records of all information necessary to identify a <i>collection</i>
      * of documents.
@@ -21,6 +23,21 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         /* True if the immediate children of this record are documents; false if they are other collections */
         private Boolean isDocumentParent;
         private String unicodeLabel;
+        private String directHref = null;
+
+        /**
+         * Factory method for when we want to link directly to the document page
+         * @param collection
+         * @param series
+         * @param volume
+         * @param href
+         * @return
+         */
+        public static DocumentCollectionBrowseRecord withDirectHref(String collection, String series, String volume, String href) {
+            DocumentCollectionBrowseRecord r = new DocumentCollectionBrowseRecord(collection, series, volume);
+            r.directHref = href;
+            return r;
+        }
     
         /**
          * Constructor for cases in which the volume is known
@@ -49,7 +66,6 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
          * 
          * @param collection
          * @param series
-         * @param isParent 
          */
         public DocumentCollectionBrowseRecord(String collection, String series, Boolean isDocumentParent){
             
@@ -82,13 +98,18 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
             String seriesRepresentation = (unicodeLabel == null || unicodeLabel.equals("")) ? series : unicodeLabel;
             String displayString = seriesRepresentation + (volume == null ? "" : " " + volume);
             displayString = displayString;
-            String html = "<li><a href='" + href + "'>" + displayString + "</li>";
+            String html = "<li><a href=\"" + href + "\">" + displayString + "</a></li>";
             return html;
             
             
         }
-        
-        /**
+
+        @Override
+        public String toString() {
+            return (unicodeLabel == null || unicodeLabel.equals("")) ? series : unicodeLabel + (volume == null ? "" : " " + volume);
+        }
+
+    /**
          * Assembles the anchor tag to the next level down in the hierarchy
          * 
          * @return An anchor tag
@@ -96,7 +117,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         
 
         public String assembleLink(){
-                       
+            if (directHref != null) return directHref;
             if(!this.isDocumentParent) return assembleLinkToCollection();
             return assembleLinkToFacetedBrowse();
             
@@ -121,7 +142,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         private String assembleLinkToFacetedBrowse(){
             String href = CollectionBrowser.FACET_SERVLET;
             href += "?";
-            if (collection.equals("ddbdp") || collection.equals("dclp")) {
+            if (collection.equals("editions")) {
                 href += "&" + IdentifierFacet.IdParam.COLLECTION.name() + "=" + collection + "&";
             }
             String collParam = IdentifierFacet.IdParam.SERIES.name();
@@ -159,7 +180,7 @@ import info.papyri.dispatch.browse.facet.IdentifierFacet;
         public String getVolume(){ return (volume == null) ? "" : volume; }
 
         @Override
-        public int compareTo(Object o) {
+        public int compareTo(BrowseRecord o) {
             
             DocumentCollectionBrowseRecord comparandum = (DocumentCollectionBrowseRecord)o;
             

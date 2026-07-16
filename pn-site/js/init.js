@@ -1,52 +1,22 @@
 function init() {
-    //mute: initjQueryMigrate();
-    jQuery("div#hd h1").on('click', () => { window.location = "/" });
-    jQuery("li.dialog").each(function(i) {
-        jQuery(this).after("<li><a href=\"#\" onclick=\"javascript:jQuery('#" + this.id + "c').dialog({height:100,modal:true})\">" + this.title + "</a></li>");
-        jQuery(this).hide();
-    });
-    jQuery("ul.nav li").not(".dialog").not(jQuery("#footer ul.nav li")).not(".current").has("a").on({
-      mouseenter: function() {
-          jQuery(this).css('background-color', '#F8F6F4');
-      },
-      mouseleave: function() {
-          jQuery(this).css('background-color', 'initial'); //set it back to its initial state
-      }
-    });
-    jQuery("div.controls input").each(function() {
-        if (!this.checked) {
-            jQuery("." + this.name).css('display', 'none');
-        }
-    });
-    if (jQuery(".translation").length == 0 && jQuery(".image").length == 0) {
-        jQuery(".transcription").css('width', '98.8%');
+    
+		// fix highlight bug in title (for searches)
+    if (document.title.includes('<mark')) {
+        document.title = document.title.replace(/<mark[^>]*>/g, '').replace(/<\/mark>/g, '');
     }
+
     if (jQuery("#image").length > 0) {
         initImage();
     }
     alignRTL();
-    jQuery("#tmgo").button();
-    jQuery("span.term").each( function (i, elt) {
-        const htmlContent = $(elt).find("span.gloss").html();
-        if (htmlContent) {
-          $(elt).attr('title', htmlContent);
-          $(elt).tooltip({
-            content: htmlContent,
-            position: {
-              my: "center bottom",
-              at: "center top",
-            },
-            classes: { 'ui-tooltip': 'tooltip-dul-custom' },
-          });
-        }
-    });
+
     jQuery.ajax({
       type: "GET",
       url: "/editor/user/info",
       dataType: "json",
       success: function(data, status, xhr) {
         if (data.user) {
-         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\">home</a> | " + data.user.name + " | <a href=\"/editor/user/signout\">sign out</a>");
+         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\" class=\"btn btn-link btn-sm text-decoration-none\">home</a><a href=\"/editor/users/edit\" class=\"btn btn-link btn-sm text-decoration-none\">" + data.user.name + "</a><a href=\"/editor/user/signout\" class=\"btn btn-link btn-sm text-decoration-none\">sign out</a>");
         }
       },
       error: function (data, status, xhr) {
@@ -77,6 +47,38 @@ function init() {
     addLinearBrowseControls();
 		getAlert();
 		getCampaign();
+		initBootstrapTooltips();
+		initLineNumberVisibility();
+		initApparatusDetailsToggle();
+		initBootstrapScrollSpy();
+		initSidebar();
+		initBackToTop();
+    setCollection();
+    initConstraintBadges();
+    initMetadataCollapseAll();
+    initMetadataAnchorExpand();
+
+		// Initialize transformation for /current/ and /editions/ pages
+		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
+
+					// Add resize listener to recalculate apparatus max-height
+					/*
+					let resizeTimer;
+					window.addEventListener('resize', () => {
+							clearTimeout(resizeTimer);
+							resizeTimer = setTimeout(() => {
+									setApparatusMaxHeight();
+							}, 250);
+					});
+					*/
+
+					// Fade in the #edition element
+					const editions = document.querySelectorAll('#edition');
+					if (editions) {
+							editions.forEach(edition => edition.classList.add('ready'));
+					}
+		}
+
 }
 
 function initjQueryMigrate() {
@@ -117,10 +119,11 @@ function getPath() {
  */
 function addLinearBrowseControls(){
 
-	var position = jQuery(document).getUrlParam("p");
-	var total = jQuery(document).getUrlParam("t");
-	var rows = jQuery(document).getUrlParam("rows");
-	var qs = buildSolrQueryString();
+	const position = jQuery(document).getUrlParam("p");
+	const total = jQuery(document).getUrlParam("t");
+  const urlParams = new URLSearchParams(decodeURIComponent(window.location.search));
+	const rows = urlParams.get("rows")
+	let qs = buildSolrQueryString();
 	if(qs == "") return false;
 	querySolrServer(qs, position, total, rows, qs);
 
@@ -137,12 +140,13 @@ function addLinearBrowseControls(){
 
 function buildSolrQueryString(){
 
-	var querystring = window.location.search;
+	var querystring = decodeURIComponent(window.location.search);
 	if(!querystring.match(/fq=/)) return "";
 	// get rid of values not used by Solr: t, d, and q (which is used only for highlighting)
 	querystring = querystring.replace(/[&?]t=\d+/, "");
 	querystring = querystring.replace(/[&?]p=\d+/, "");
-	var highlightstring = jQuery(document).getUrlParam("q");
+	const urlParams = new URLSearchParams(decodeURIComponent(window.location.search));
+	const highlightstring = urlParams.get("q");
 	// but *some* value for q is required, so the 'select all' wildcard (*:*) is given
 	if(highlightstring == null || highlightstring == ""){
 
@@ -162,10 +166,10 @@ function buildSolrQueryString(){
  * Queries the Solr server
  */
 
-function querySolrServer(query, position, total, rows, querystring){
+function querySolrServer(query, position, total, rows, querystring) {
 
 	var that = this;
-	var serverUrl = "https://" + location.host + "/pn-search/select/";
+	var serverUrl = "/pn-search/select/";
 	jQuery.get(	serverUrl,
 			query,
 			function(data){ that.addLinearBrowseHTML(data, position, total, rows, querystring); },
@@ -184,40 +188,50 @@ function addLinearBrowseHTML(xmldoc, position, total, rows, querystring){
 	var xml = jQuery(xmldoc);
 	var prevRecord = (position == 0 && rows == 2) ? null : xml.find("doc")[0];
 	var nextRecord = (position == total && rows == 2) ? null : xml.find("doc")[xml.find("doc").length - 1];
-	var htmlWrapper = jQuery("<div id=\"linear-browse-wrapper\"></div>");
+
+	var pageNavWrapper = jQuery("<nav aria-label=\"Page navigation\"></nav>");
+	var htmlWrapper = jQuery("<ul class=\"pagination pagination-sm\"></ul>");
+	pageNavWrapper.append(htmlWrapper);
+
 	addPrevRecordHTML(htmlWrapper, prevRecord, position, total, rows, querystring);
 	addBackToFacetBrowse(htmlWrapper)
 	addNextRecordHTML(htmlWrapper, nextRecord, position, total, rows, querystring);
-	var spacer = jQuery("<div style='height: 1px; width: 100%; clear: both;'></div>");
-	jQuery("#controls").before(htmlWrapper);
+
+	// Hide pagination if both previous and next are disabled
+	if(prevRecord == null && nextRecord == null){
+		htmlWrapper.addClass("d-none");
+	}
+
+	// Wrap pagination and canonical-uri in a wrapper div
+	var utilityWrapper = jQuery("<div class=\"utility-content-wrapper\"></div>");
+	var canonicalUri = jQuery("#canonical-uri");
+	canonicalUri.before(utilityWrapper);
+	utilityWrapper.append(pageNavWrapper);
+	utilityWrapper.append(canonicalUri);
 
 }
 
 function addPrevRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = jQuery("<div id=\"linear-previous-record\"></div>");
-	var msg = "<< Previous record";
+	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
+	var msg = "« Previous record"; // using raw unicode here for compatibility with link.text()
+
+	var link = jQuery("<a class=\"page-link\"></a>");
+	link.text(msg);
+	var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
+	var title = jQuery(jQuery(record).children()[1]).text();
+	var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
+	link.attr("title", title);
+	link.attr("href", href);
+
 	if(record == null){
-
-		var deadlink = jQuery("<span class='deadlink'></span>");
-		deadlink.text(msg);
-		arrowWrapper.append(deadlink);
-
+		arrowWrapper.addClass("disabled");
+		link.addClass("disabled");
+		link.attr("href", "#");
 	}
-	else{
 
-		var link = jQuery("<a></a>");
-		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
-		var title = jQuery(jQuery(record).children()[1]).text();
-		var href = id + "?" + buildSolrQueryLinkString("prev", querystring, position, total, rows);
-		link.attr("title", title);
-		link.attr("href", href);
-		arrowWrapper.append(link);
-
-	}
+	arrowWrapper.append(link);
 	wrapper.append(arrowWrapper);
-
 }
 
 function addBackToFacetBrowse(wrapper){
@@ -229,38 +243,36 @@ function addBackToFacetBrowse(wrapper){
 	var searchstring = getCookie("lbpersist");
 	if(searchstring == null) return;
 	var prevpageURL = window.location.protocol + "//" + window.location.host + "/search" + searchstring;
-	var linkwrapper = jQuery("<div id='linear-back'></div>");
-	var link = jQuery("<a href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");
-	linkwrapper.append(link);
-	wrapper.append(linkwrapper);
+
+	var linkWrapper = jQuery("<li class='page-item'></li>");
+	var link = jQuery("<a class='page-link' href='" + prevpageURL + "' title='Back to search page'>Back to search results</a>");
+	linkWrapper.append(link);
+	wrapper.append(linkWrapper);
 }
 
 function addNextRecordHTML(wrapper, record, position, total, rows, querystring){
 
-	var arrowWrapper = jQuery("<div id=\"linear-next-record\"></div>");
-	var msg = "Next record >>"
+	var arrowWrapper = jQuery("<li class=\"page-item\"></li>");
+	var msg = "Next record »"; // using raw unicode here for compatibility with link.text()
+
+	var link = jQuery("<a class=\"page-link\"></a>");
+	link.text(msg);
+	var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
+	var title = jQuery(jQuery(record).children()[1]).text();
+	var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
+	link.attr("title", title);
+	link.attr("href", href);
+
 	if(record == null){
-
-		var deadlink = jQuery("<span class='deadlink'></span>");
-		deadlink.text(msg);
-		arrowWrapper.append(deadlink);
-
+		arrowWrapper.addClass("disabled");
+		link.addClass("disabled");
+		link.attr("href", "#");
 	}
-	else{
 
-		var link = jQuery("<a></a>");
-		link.text(msg);
-		var id = jQuery(jQuery(record).children()[0]).text().substring("https://papyri.info".length);
-		var title = jQuery(jQuery(record).children()[1]).text();
-		var href = id + "?" + buildSolrQueryLinkString("next", querystring, position, total, rows);
-		link.attr("title", title);
-		link.attr("href", href);
-		arrowWrapper.append(link);
-
-	}
+	arrowWrapper.append(link);
 	wrapper.append(arrowWrapper);
-
 }
+
 /**
  * Alters the query string used by the presently-displayed page so that it is suitable for use
  * by the next or previous record in the result set.
@@ -416,6 +428,47 @@ function getCookie(name) {
     return null;
 }
 
+function setCollection() {
+  const params = new URLSearchParams(window.location.search);
+  const collection = params.get("COLLECTION");
+  if (collection && document.querySelector("#target-collection-current")) {
+    switch (collection) {
+      case "current":
+        document.querySelector("#target-collection-current").checked = true;
+        break;
+      case "editions":
+        document.querySelector("#target-collection-historical").checked = true;
+        break;
+      case "all":
+        document.querySelector("#target-collection-all").checked = true;
+        break;
+      // leave radios alone — the value lives in the disabled COLLECTION <select> 
+			// and the hidden input, and tidyQueryString will pick it up from there.
+    }
+  } else if (document.querySelector("#target-collection-current")) {
+    document.querySelector("#target-collection-current").checked = true;
+  }
+}
+
+/**
+ * Fade in applied filter badges on load
+ */
+function initConstraintBadges() {
+  document.querySelectorAll(".facet-constraint").forEach(badge => {
+    if (badge.classList.contains("constraint-collection")) {
+      const label = badge.querySelector(".constraint-label");
+      if (label && label.textContent.trim() === "editions") {
+        label.textContent = "historical";
+        ["aria-label", "title"].forEach(attr => {
+          const val = badge.getAttribute(attr);
+          if (val) badge.setAttribute(attr, val.replace("editions", "historical"));
+        });
+      }
+    }
+    badge.classList.add("ready");
+  });
+}
+
 /**
  *  Pad
  */
@@ -504,7 +557,7 @@ function getCampaign() {
 			});
 	}
 }
-	
+
 function hideCampaign(duration) {
 	const day = 86400000;
 	window.localStorage.setItem("Hide-papyriCampaign", (Date.now() + (duration * day)).toString());
@@ -523,7 +576,7 @@ function canShowCampaign() {
 	}
 	return true;
 }
-		
+
 function getAlert() {
 	getMessage("/docs/alert")
 		.then(message => {
@@ -545,7 +598,7 @@ function hideAlert() {
 	alert.parentElement.removeChild(alert);
 	return false;
 }
-	
+
 function canShowAlert(alert) {
 	let oldAlert = window.localStorage.getItem("papyri.info-lastAlert");
 	if (oldAlert) {
@@ -554,7 +607,7 @@ function canShowAlert(alert) {
 		return true;
 	}
 }
-	
+
 async function getMessage(url) {
 	const parser = new DOMParser();
 	let response = await fetch(url);
@@ -566,4 +619,448 @@ async function getMessage(url) {
 	let doc = parser.parseFromString(body, "text/html");
 	return doc.querySelector("div.markdown");
 }
-	
+
+function initMetadataCollapseAll() {
+	// Collapse/expand every metadata table regardless of individual state
+	const btn = document.getElementById('metadata-collapse-all');
+	if (!btn) return;
+	const label = btn.querySelector('.metadata-toggle-all-label');
+	btn.addEventListener('click', function() {
+		const expand = btn.classList.contains('collapsed');
+		document.querySelectorAll('.metadata-collapse').forEach(function(el) {
+			const collapse = bootstrap.Collapse.getOrCreateInstance(el, { toggle: false });
+			if (expand) {
+				collapse.show();
+			} else {
+				collapse.hide();
+			}
+		});
+		btn.classList.toggle('collapsed', !expand);
+		btn.setAttribute('aria-expanded', String(expand));
+		label.textContent = expand ? 'Collapse all metadata' : 'Expand all metadata';
+	});
+}
+
+function initMetadataAnchorExpand() {
+	// Expand collapsed metadata tables when jumping to them from the controls nav
+	document.querySelectorAll('#metadatacontrols a[href^="#"]').forEach(function(link) {
+		link.addEventListener('click', function() {
+			const target = document.querySelector(link.getAttribute('href'));
+			if (!target) return;
+			target.querySelectorAll('.metadata-collapse').forEach(function(el) {
+				bootstrap.Collapse.getOrCreateInstance(el, { toggle: false }).show();
+			});
+		});
+	});
+}
+
+function initBootstrapTooltips() {
+	// Initialize tooltips for both standard elements and span elements within transcriptions
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"], .transcription span[title], .metadata-toggle[data-bs-title]');
+	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+	// Add tooltips for translation terms with glosses
+	jQuery(".translation span.term").each( function (i, elt) {
+		const htmlContent = $(elt).find("span.gloss").html();
+		if (htmlContent) {
+			$(elt).attr('title', htmlContent);
+			$(elt).tooltip({html: true});
+		}
+  });
+}
+
+function initBootstrapScrollSpy() {
+	console.log("Initializing Bootstrap ScrollSpy");
+	// Initialize Bootstrap ScrollSpy for the record page navigation
+	const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+		target: '#controls',
+		smoothScroll: false, // Let CSS scroll-margin-top handle smooth scrolling and offset
+		rootMargin: '0px 0px -25%',
+		// Bootstrap bug fix, see:
+		// https://github.com/twbs/bootstrap/pull/41016
+		threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+	});
+}
+
+
+/**
+ * Allows for line number display on hover of text lines
+ */
+
+function initLineNumberVisibility() {
+	// Select all line number spans with initially-hidden class inside #edition
+	const lineNumberSpans = document.querySelectorAll('#edition span.linenumber.initially-hidden');
+
+	lineNumberSpans.forEach(span => {
+		// Get the parent text-line div
+		const textLineDiv = span.closest('.text-line');
+		if (!textLineDiv) return;
+
+		// Mouse events on the text-line div
+		textLineDiv.addEventListener('mouseenter', () => {
+			span.classList.remove('initially-hidden');
+		});
+
+		textLineDiv.addEventListener('mouseleave', () => {
+			span.classList.add('initially-hidden');
+		});
+
+	});
+}
+
+function highlightHash() {
+    // Only work within .transcription elements if they exist
+    const transcriptionContainer = document.querySelector('.transcription');
+    if (!transcriptionContainer) {
+        return;
+    }
+
+    // Remove existing highlights only within transcription
+    transcriptionContainer.querySelectorAll('.active').forEach(element => {
+        element.classList.remove('active');
+    });
+
+    const hash = window.location.hash;
+
+    // If there's a hash, find the element within transcription and highlight it
+    if (hash && hash.length > 1) {
+        const elementId = hash.substring(1);
+
+        if (elementId.startsWith('div')) {
+            // Commentary-style anchors target the text-line via its data-id
+            const lineElement = transcriptionContainer.querySelector('[data-id="' + elementId + '"]');
+            if (lineElement) {
+                lineElement.classList.add('active');
+            }
+        } else {
+            const targetElement = transcriptionContainer.querySelector('#' + elementId);
+
+            if (targetElement) {
+                targetElement.classList.add('active');
+            }
+
+            // Also highlight the corresponding to/from element
+            let correspondingId = null;
+            if (elementId.startsWith('to-app-')) {
+                correspondingId = elementId.replace('to-app-', 'from-app-');
+            } else if (elementId.startsWith('from-app-')) {
+                correspondingId = elementId.replace('from-app-', 'to-app-');
+            }
+
+            if (correspondingId) {
+                const correspondingElement = transcriptionContainer.querySelector('#' + correspondingId);
+                if (correspondingElement) {
+                    correspondingElement.classList.add('active');
+                }
+            }
+        }
+    }
+}
+
+// Initialize hash highlighting on page load
+document.addEventListener('DOMContentLoaded', function() {
+    highlightHash();
+});
+
+// Wire up breadcrumb copy buttons
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.breadcrumb-copy-btn').forEach(function(btn) {
+        const originalTitle = btn.getAttribute('title') || 'Copy citation';
+        let tooltip = bootstrap.Tooltip.getOrCreateInstance(btn);
+
+				btn.addEventListener('click', function () {
+					const ol = btn.closest('nav.breadcrumb')?.querySelector('ol.breadcrumb');
+					if (!ol) return;
+					const clone = ol.cloneNode(true);
+					clone.querySelectorAll('.visually-hidden, .breadcrumb-copy').forEach(function (n) { n.remove(); });
+					const text = clone.textContent.replace(/\s+/g, ' ').trim();
+
+					navigator.clipboard.writeText(text).then(function () {
+						const existingTipId = btn.getAttribute('aria-describedby');
+						if (existingTipId) document.getElementById(existingTipId)?.remove();
+						tooltip.dispose();
+
+						const icon = btn.querySelector('i');
+						if (icon) icon.classList.replace('bi-copy', 'bi-check-lg');
+
+						btn.setAttribute('title', 'Copied!');
+
+						setTimeout(function () {
+							tooltip = new bootstrap.Tooltip(btn);
+							tooltip.show();
+
+							setTimeout(function () {
+								tooltip.hide();
+								setTimeout(function () {
+									tooltip.dispose();
+									btn.setAttribute('title', originalTitle);
+									tooltip = new bootstrap.Tooltip(btn);
+									if (icon) icon.classList.replace('bi-check-lg', 'bi-copy');
+								}, 200);
+							}, 1500);
+						}, 50);
+					});
+				});
+
+    });
+});
+
+// Listen for hash changes and update highlighting
+window.addEventListener('hashchange', function() {
+    highlightHash();
+});
+
+// Initialize sticky navigation observer so we can add "stuck"
+// class when nav is stuck to top of viewport
+document.addEventListener("DOMContentLoaded", () => {
+  const stickyElements = document.querySelectorAll(".sticky-top");
+
+  stickyElements.forEach((el) => {
+    const sentinel = document.createElement("div");
+    sentinel.className = "sticky-sentinel";
+    el.parentNode.insertBefore(sentinel, el);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.boundingClientRect.top < 0) {
+          el.classList.add("stuck");
+        } else {
+          el.classList.remove("stuck");
+        }
+      },
+      {
+        //threshold: [0],
+        //rootMargin: `0px 0px 0px 0px`
+      }
+    );
+
+    observer.observe(sentinel);
+  });
+});
+
+/******************************************/
+/** Apparatus / Transcription UI scripts **/
+/******************************************/
+
+
+/**
+ * Initialize the details toggle for apparatus
+ * Shows/hides detailed apparatus explanations with fade effect
+ * Uses event delegation to work regardless of where apparatus content is moved
+ */
+function initApparatusDetailsToggle() {
+    // Remove any existing event listener to prevent duplicates
+    document.removeEventListener('change', handleDetailsToggle);
+
+    // Add event listener to document with delegation
+    document.addEventListener('change', handleDetailsToggle);
+}
+
+function handleDetailsToggle(event) {
+    // Check if the changed element is our details toggle
+    if (event.target.id === 'detailsToggle') {
+        const toggle = event.target;
+        const details = document.querySelectorAll('.apparatus-detail');
+
+        if (toggle.checked) {
+            // Toggle ON: Show details with fade in
+            details.forEach(detail => {
+                detail.classList.remove('visually-hidden');
+                // Use jQuery for fade animation
+                jQuery(detail).hide().fadeIn(300);
+            });
+        } else {
+            // Toggle OFF: Hide details with fade out
+            details.forEach(detail => {
+                jQuery(detail).fadeOut(300, function() {
+                    detail.classList.add('visually-hidden');
+                });
+            });
+        }
+    }
+}
+
+
+function initSidebar() {
+	const sidebarSelect = document.getElementById('sidebar-content-select');
+	const sidebar = document.getElementById('sidebar');
+	const apparatus = document.getElementById('apparatus');
+	const apparatusUnder = document.getElementById('apparatus-under');
+	const translationUnder = document.getElementById('translations');
+	const commentaryUnder = document.getElementById('commentary');
+
+	if (!sidebarSelect || !sidebar) {
+		return; // Required elements don't exist
+	}
+
+	// Store original apparatus content for moving between locations
+	let originalApparatusContent = apparatus ? apparatus.innerHTML : '';
+
+	function updateSidebarContent(selectedValue) {
+		if (!sidebar) return;
+
+		// Show sidebar by default (will be hidden for 'no-sidebar')
+		sidebar.style.display = '';
+
+		switch (selectedValue) {
+			
+			case 'no-sidebar':
+				// Hide sidebar and move apparatus content under
+				sidebar.style.display = 'none';
+				if (apparatus && apparatusUnder) {
+					apparatusUnder.innerHTML = originalApparatusContent;
+					apparatusUnder.style.display = '';
+				}
+
+				// Show commentary under
+				if (commentaryUnder) {
+					commentaryUnder.style.display = '';
+				}
+				
+				// show translation under
+				if (translationUnder) {
+					translationUnder.style.display = '';
+				}
+				break;
+
+			case 'apparatus':
+				// Show apparatus in sidebar and hide it under
+				if (apparatus && apparatusUnder) {
+					apparatus.innerHTML = originalApparatusContent;
+					apparatusUnder.innerHTML = '';
+					apparatusUnder.style.display = 'none';
+				}
+
+				// Show commentary under
+				if (commentaryUnder) {
+					commentaryUnder.style.display = '';
+				}
+				
+				// show translation under
+				if (translationUnder) {
+					translationUnder.style.display = '';
+				}
+
+				sidebar.innerHTML = apparatus ? apparatus.outerHTML : '';
+				break;
+
+			case 'commentary':
+				// Show commentary in sidebar
+				const commentaryElement = document.getElementById('commentary');
+				if (commentaryElement) {
+					sidebar.innerHTML = commentaryElement.outerHTML;
+					
+					// Show apparatus under
+					if (apparatusUnder) {
+						apparatusUnder.innerHTML = originalApparatusContent;
+						apparatusUnder.style.display = '';
+					}
+
+					// hide commentary under
+					if (commentaryUnder) {
+						commentaryUnder.style.display = 'none';
+					}
+
+					// show translation under
+					if (translationUnder) {
+						translationUnder.style.display = '';
+					}
+				}
+				break;
+
+			default:
+				// Show translation content in sidebar (e.g., "11853-2")
+				const translationElement = document.getElementById(`translation-${selectedValue}`);
+				if (translationElement) {
+					sidebar.innerHTML = translationElement.outerHTML;
+					// Show apparatus under
+					if (apparatusUnder) {
+						apparatusUnder.innerHTML = originalApparatusContent;
+						apparatusUnder.style.display = '';
+					}
+
+					// Show commentary under
+					if (commentaryUnder) {
+						commentaryUnder.style.display = '';
+					}
+
+					// hide translation under
+					if (translationUnder) {
+						translationUnder.style.display = 'none';
+					}
+				}
+				break;
+		}
+	}
+
+	// Handle select change
+	sidebarSelect.addEventListener('change', function() {
+		updateSidebarContent(this.value);
+
+		// Scroll to the #text element
+		const textElement = document.getElementById('text');
+		if (textElement) {
+			textElement.scrollIntoView({ behavior: 'smooth' });
+		}
+	});
+
+	// Initialize with current selection
+	updateSidebarContent(sidebarSelect.value);
+}
+
+
+/**
+ * Initialize the back-to-top button functionality
+ * Shows/hides buttons based on scroll position and handles smooth scroll to top
+ * Works with any element that has the .back-to-top class
+ */
+function initBackToTop() {
+    const backToTopButtons = document.querySelectorAll('.btn-back-to-top');
+
+    if (backToTopButtons.length === 0) {
+        return; // No back-to-top buttons exist on this page
+    }
+
+    // Show/hide buttons based on scroll position
+    function toggleBackToTopButtons() {
+        const shouldShow = window.pageYOffset > 300; // Show after scrolling 300px
+
+        backToTopButtons.forEach(button => {
+            // Skip buttons with 'in-controls-nav' class - they should always be visible
+            if (button.classList.contains('in-controls-nav')) {
+                return;
+            }
+
+            if (shouldShow) {
+                button.classList.add('show');
+            } else {
+                button.classList.remove('show');
+            }
+        });
+    }
+
+    // Scroll to top when button is clicked
+    function scrollToTop() {
+        // Hide any visible Bootstrap tooltips before scrolling
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(trigger => {
+            const tooltip = bootstrap.Tooltip.getInstance(trigger);
+            if (tooltip) tooltip.hide();
+        });
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Add event listeners to all back-to-top buttons
+    backToTopButtons.forEach(button => {
+        button.addEventListener('click', scrollToTop);
+    });
+
+    // Add scroll listener
+    window.addEventListener('scroll', toggleBackToTopButtons);
+
+    // Initial check in case page is already scrolled
+    toggleBackToTopButtons();
+}

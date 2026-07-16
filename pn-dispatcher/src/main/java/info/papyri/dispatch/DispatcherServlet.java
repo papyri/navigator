@@ -10,14 +10,16 @@ import java.net.URLEncoder;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 
 /**
  *
@@ -26,8 +28,7 @@ import java.util.logging.Logger;
 @WebServlet(name="DispatcherServlet", urlPatterns={"/dispatch"})
 public class DispatcherServlet extends HttpServlet {
 
-  private static String graph = "http://papyri.info/graph";
-  private static String path = "/pi/query";
+  private static String graph = "https://papyri.info/graph";
   private String sparqlServer;
   private static Logger logger = Logger.getLogger("pn-dispatch");
   private enum Method {
@@ -95,6 +96,12 @@ public class DispatcherServlet extends HttpServlet {
             domain = query.toString();
             query.delete(0, query.length());
           }
+          if ("current".equals(domain)) {
+            params.put("query", current(query.toString()));
+          }
+          if ("editions".equals(domain)) {
+            params.put("query", editions(query.toString()));
+          }
           if ("ddbdp".equals(domain)) {
             params.put("query", ddbdp(query.toString()));
           }
@@ -117,7 +124,7 @@ public class DispatcherServlet extends HttpServlet {
         BufferedOutputStream out = null;
         HttpURLConnection http = null;
         try {
-          URL m = new URL(sparqlServer + path + "?" + readParams(params));
+          URL m = new URL(sparqlServer + "?" + readParams(params));
           http = (HttpURLConnection)m.openConnection();
           if ("rdfxml".equals(format)) {
             http.addRequestProperty("Accept", "application/rdf+xml");
@@ -149,7 +156,7 @@ public class DispatcherServlet extends HttpServlet {
             response.sendError(http.getResponseCode());
           }
         } catch (SocketTimeoutException e) {
-          logger.log(Level.SEVERE, "Socket timeout during numbers server request.", e);
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Socket timeout during numbers server request.");
         } finally {
           if (out != null) {
             out.close();
@@ -232,33 +239,33 @@ public class DispatcherServlet extends HttpServlet {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
       if ("".equals(in) || in == null) {
-        out.append("construct{<http://papyri.info/ddbdp> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/ddbdp> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/ddbdp> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://papyri.info/ddbdp> }} ")
+        out.append("construct{<https://papyri.info/ddbdp> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/ddbdp> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/ddbdp> ?Predicate ?Object } ")
+           .append("union { ?s2 ?p2 <https://papyri.info/ddbdp> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       String[] parts = in.split(";");
       if (parts.length == 1) {
-        out.append("construct{<http://papyri.info/ddbdp/").append(parts[0]).append("> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0]).append("> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/ddbdp/").append(parts[0]).append("> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0]).append("> }} ")
+        out.append("construct{<https://papyri.info/ddbdp/").append(parts[0]).append("> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/ddbdp/").append(parts[0]).append("> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/ddbdp/").append(parts[0]).append("> ?Predicate ?Object } ")
+           .append("union { ?s2 ?p2 <https://papyri.info/ddbdp/").append(parts[0]).append("> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (parts.length == 2) {
-        out.append("construct{<http://papyri.info/ddbdp/").append(parts[0])
+        out.append("construct{<https://papyri.info/ddbdp/").append(parts[0])
            .append(";").append(parts[1]).append("> ?Predicate ?Object . ")
-           .append("?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0])
+           .append("?s2 ?p2 <https://papyri.info/ddbdp/").append(parts[0])
            .append(";").append(parts[1]).append("> } ")   
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/ddbdp/")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/ddbdp/")
            .append(parts[0]).append(";").append(parts[1]).append("> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://papyri.info/ddbdp/")
+           .append("union { ?s2 ?p2 <https://papyri.info/ddbdp/")
            .append(parts[0]).append(";").append(parts[1]).append("> }} ")
            .append("order by ?Object");
         return out.toString();
@@ -275,27 +282,27 @@ public class DispatcherServlet extends HttpServlet {
               part.append("/");
             }
           }
-          out.append("construct{<http://papyri.info/ddbdp/").append(parts[0])
+          out.append("construct{<https://papyri.info/ddbdp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(part).append("> ?Predicate ?Object . ")
-             .append("          ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0])
+             .append("          ?s2 ?p2 <https://papyri.info/ddbdp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(part).append("> } ")   
-             .append("from <http://papyri.info/graph> ")
-             .append("where {{ <http://papyri.info/ddbdp/")
+             .append("from <https://papyri.info/graph> ")
+             .append("where {{ <https://papyri.info/ddbdp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(part).append("> ?Predicate ?Object } ")
-             .append("union { ?s2 ?p2 <http://papyri.info/ddbdp/")
+             .append("union { ?s2 ?p2 <https://papyri.info/ddbdp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(part).append("> }} ")
              .append("order by ?Object");
           return out.toString();
         } else {
           parts[2] = encode(parts[2]);
-          out.append("construct{<http://papyri.info/ddbdp/").append(parts[0])
+          out.append("construct{<https://papyri.info/ddbdp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object . ")
-             .append("          ?s2 ?p2 <http://papyri.info/ddbdp/").append(parts[0])
+             .append("          ?s2 ?p2 <https://papyri.info/ddbdp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(parts[2]).append("> } ")   
-             .append("from <http://papyri.info/graph> ")
-             .append("where {{ <http://papyri.info/ddbdp/")
+             .append("from <https://papyri.info/graph> ")
+             .append("where {{ <https://papyri.info/ddbdp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object } ")
-             .append("union { ?s2 ?p2 <http://papyri.info/ddbdp/")
+             .append("union { ?s2 ?p2 <https://papyri.info/ddbdp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> }} ")
              .append("order by ?Object");
           return out.toString(); 
@@ -309,28 +316,28 @@ public class DispatcherServlet extends HttpServlet {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
       if ("".equals(in) || in == null) {
-        out.append("construct{<http://papyri.info/apis> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/apis> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/apis> ?Predicate ?Object} ")
-           .append("union { ?s2 ?p2 <http://papyri.info/apis> }} ")
+        out.append("construct{<https://papyri.info/apis> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/apis> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/apis> ?Predicate ?Object} ")
+           .append("union { ?s2 ?p2 <https://papyri.info/apis> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (!in.contains(".")) {
-        out.append("construct{<http://papyri.info/apis/").append(in).append("> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/apis/").append(in).append("> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/apis/").append(in).append("> ?Predicate ?Object} ")
-           .append("union { ?s2 ?p2 <http://papyri.info/apis/").append(in).append("> }} ")
+        out.append("construct{<https://papyri.info/apis/").append(in).append("> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/apis/").append(in).append("> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/apis/").append(in).append("> ?Predicate ?Object} ")
+           .append("union { ?s2 ?p2 <https://papyri.info/apis/").append(in).append("> }} ")
            .append("order by ?Object");
         return out.toString();
       }
-      out.append("construct{<http://papyri.info/apis/").append(in).append("> ?Predicate ?Object . ")
-         .append("          ?s2 ?p2 <http://papyri.info/apis/").append(in).append("> } ")
-         .append("from <http://papyri.info/graph> ")
-         .append("where {{ <http://papyri.info/apis/").append(in).append("> ?Predicate ?Object} ")
-         .append("union { ?s2 ?p2 <http://papyri.info/apis/").append(in).append("> }} ")
+      out.append("construct{<https://papyri.info/apis/").append(in).append("> ?Predicate ?Object . ")
+         .append("          ?s2 ?p2 <https://papyri.info/apis/").append(in).append("> } ")
+         .append("from <https://papyri.info/graph> ")
+         .append("where {{ <https://papyri.info/apis/").append(in).append("> ?Predicate ?Object} ")
+         .append("union { ?s2 ?p2 <https://papyri.info/apis/").append(in).append("> }} ")
          .append("order by ?Object");
       return out.toString();
     }
@@ -339,29 +346,62 @@ public class DispatcherServlet extends HttpServlet {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
       if ("".equals(in) || in == null) {
-        out.append("construct{<http://papyri.info/hgv> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/hgv> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/hgv> ?Predicate ?Object} ")
-           .append("union { ?s2 ?p2 <http://papyri.info/hgv> }} ")
+        out.append("construct{<https://papyri.info/hgv> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/hgv> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/hgv> ?Predicate ?Object} ")
+           .append("union { ?s2 ?p2 <https://papyri.info/hgv> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (in.matches("\\d+[a-z]*")) {
-        out.append("construct{<http://papyri.info/hgv/").append(in).append("> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/hgv/").append(in).append("> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/hgv/").append(in).append("> ?Predicate ?Object} ")
-           .append("union { ?s2 ?p2 <http://papyri.info/hgv/").append(in).append("> }} ")
+        out.append("construct{<https://papyri.info/hgv/").append(in).append("> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/hgv/").append(in).append("> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/hgv/").append(in).append("> ?Predicate ?Object} ")
+           .append("union { ?s2 ?p2 <https://papyri.info/hgv/").append(in).append("> }} ")
            .append("order by ?Object");
         return out.toString();
       }
-      out.append("construct{<http://papyri.info/hgv/").append(in).append("> ?Predicate ?Object . ")
-         .append("          ?s2 ?p2 <http://papyri.info/hgv/").append(in).append("> } ")
-         .append("from <http://papyri.info/graph> ")
-         .append("where {{ <http://papyri.info/hgv/").append(in).append("> ?Predicate ?Object} ")
-         .append("union { ?s2 ?p2 <http://papyri.info/hgv/").append(in).append("> }} ")
+      out.append("construct{<https://papyri.info/hgv/").append(in).append("> ?Predicate ?Object . ")
+         .append("          ?s2 ?p2 <https://papyri.info/hgv/").append(in).append("> } ")
+         .append("from <https://papyri.info/graph> ")
+         .append("where {{ <https://papyri.info/hgv/").append(in).append("> ?Predicate ?Object} ")
+         .append("union { ?s2 ?p2 <https://papyri.info/hgv/").append(in).append("> }} ")
          .append("order by ?Object");
+      return out.toString();
+    }
+
+    protected String current(String in) {
+      StringBuilder out = new StringBuilder();
+      appendPrefixes(out);
+      out.append("construct{<https://papyri.info/current/").append(in).append("> ?Predicate ?Object . ")
+          .append("          ?s2 ?p2 <https://papyri.info/current/").append(in).append("> } ")
+          .append("from <https://papyri.info/graph> ")
+          .append("where {{ <https://papyri.info/current/").append(in).append("> ?Predicate ?Object} ")
+          .append("union { ?s2 ?p2 <https://papyri.info/current/").append(in).append("> }} ")
+          .append("order by ?Object");
+      return out.toString();
+    }
+
+    protected String editions(String in) {
+      StringBuilder out = new StringBuilder();
+      appendPrefixes(out);
+      if ("".equals(in) || in == null) {
+        out.append("construct{<https://papyri.info/editions> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/editions> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/editions> ?Predicate ?Object} ")
+           .append("union { ?s2 ?p2 <https://papyri.info/editions> }} ")
+           .append("order by ?Object");
+        return out.toString();
+      }
+      out.append("construct{<https://papyri.info/editions/").append(in).append("> ?Predicate ?Object . ")
+          .append("          ?s2 ?p2 <https://papyri.info/editions/").append(in).append("> } ")
+          .append("from <https://papyri.info/graph> ")
+          .append("where {{ <https://papyri.info/editions/").append(in).append("> ?Predicate ?Object} ")
+          .append("union { ?s2 ?p2 <https://papyri.info/editions/").append(in).append("> }} ")
+          .append("order by ?Object");
       return out.toString();
     }
 
@@ -369,42 +409,42 @@ public class DispatcherServlet extends HttpServlet {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
       if ("".equals(in) || in == null) {
-        out.append("construct{<http://papyri.info/dclp> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/dclp> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/dclp> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://papyri.info/dclp> }} ")
+        out.append("construct{<https://papyri.info/dclp> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/dclp> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/dclp> ?Predicate ?Object } ")
+           .append("union { ?s2 ?p2 <https://papyri.info/dclp> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (in.matches("^\\d+$")) { // TM-No.
-        out.append("construct{<http://papyri.info/dclp/").append(in).append("> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(in).append("> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/dclp/").append(in).append("/source> ?Predicate ?Object} ") // cl: extra /source
-           .append("union { ?s2 ?p2 <http://papyri.info/dclp/").append(in).append("/source> }} ") // cl: extra /source
+        out.append("construct{<https://papyri.info/dclp/").append(in).append("> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/dclp/").append(in).append("> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/dclp/").append(in).append("/source> ?Predicate ?Object} ") // cl: extra /source
+           .append("union { ?s2 ?p2 <https://papyri.info/dclp/").append(in).append("/source> }} ") // cl: extra /source
            .append("order by ?Object");
         return out.toString();
       }
       String[] parts = in.split(";");
       if (parts.length == 1) { // Series
-        out.append("construct{<http://papyri.info/dclp/").append(parts[0]).append("> ?Predicate ?Object . ")
-           .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0]).append("> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/dclp/").append(parts[0]).append("> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0]).append("> }} ")
+        out.append("construct{<https://papyri.info/dclp/").append(parts[0]).append("> ?Predicate ?Object . ")
+           .append("          ?s2 ?p2 <https://papyri.info/dclp/").append(parts[0]).append("> } ")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/dclp/").append(parts[0]).append("> ?Predicate ?Object } ")
+           .append("union { ?s2 ?p2 <https://papyri.info/dclp/").append(parts[0]).append("> }} ")
            .append("order by ?Object");
         return out.toString();
       }
       if (parts.length == 2) { // Volume
-        out.append("construct{<http://papyri.info/dclp/").append(parts[0])
+        out.append("construct{<https://papyri.info/dclp/").append(parts[0])
            .append(";").append(parts[1]).append("> ?Predicate ?Object . ")
-           .append("?s2 ?p2 <http://papyri.info/dclp/").append(parts[0])
+           .append("?s2 ?p2 <https://papyri.info/dclp/").append(parts[0])
            .append(";").append(parts[1]).append("> } ")
-           .append("from <http://papyri.info/graph> ")
-           .append("where {{ <http://papyri.info/dclp/")
+           .append("from <https://papyri.info/graph> ")
+           .append("where {{ <https://papyri.info/dclp/")
            .append(parts[0]).append(";").append(parts[1]).append("> ?Predicate ?Object } ")
-           .append("union { ?s2 ?p2 <http://papyri.info/dclp/")
+           .append("union { ?s2 ?p2 <https://papyri.info/dclp/")
            .append(parts[0]).append(";").append(parts[1]).append("> }} ")
            .append("order by ?Object");
         return out.toString();
@@ -421,27 +461,27 @@ public class DispatcherServlet extends HttpServlet {
               part.append("/");
             }
           }
-          out.append("construct{<http://papyri.info/dclp/").append(parts[0])
+          out.append("construct{<https://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(part).append("> ?Predicate ?Object . ")
-             .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0])
+             .append("          ?s2 ?p2 <https://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(part).append("> } ")
-             .append("from <http://papyri.info/graph> ")
-             .append("where {{ <http://papyri.info/dclp/")
+             .append("from <https://papyri.info/graph> ")
+             .append("where {{ <https://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(part).append("> ?Predicate ?Object } ")
-             .append("union { ?s2 ?p2 <http://papyri.info/dclp/")
+             .append("union { ?s2 ?p2 <https://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(part).append("> }} ")
              .append("order by ?Object");
           return out.toString();
         } else { // Document
           parts[2] = encode(parts[2]);
-          out.append("construct{<http://papyri.info/dclp/").append(parts[0])
+          out.append("construct{<https://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object . ")
-             .append("          ?s2 ?p2 <http://papyri.info/dclp/").append(parts[0])
+             .append("          ?s2 ?p2 <https://papyri.info/dclp/").append(parts[0])
              .append(";").append(parts[1]).append(";").append(parts[2]).append("> } ")
-             .append("from <http://papyri.info/graph> ")
-             .append("where {{ <http://papyri.info/dclp/")
+             .append("from <https://papyri.info/graph> ")
+             .append("where {{ <https://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> ?Predicate ?Object } ")
-             .append("union { ?s2 ?p2 <http://papyri.info/dclp/")
+             .append("union { ?s2 ?p2 <https://papyri.info/dclp/")
              .append(parts[0]).append(";").append(parts[1]).append(";").append(parts[2]).append("> }} ")
              .append("order by ?Object");
           return out.toString();
@@ -453,11 +493,11 @@ public class DispatcherServlet extends HttpServlet {
     protected String query(String domain, String in) {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
-      out.append("construct{<http://papyri.info/").append(domain).append("/").append(in).append("> ?Predicate ?Object . ")
-          .append("          ?s2 ?p2 <http://papyri.info/").append(domain).append("/").append(in).append("> } ")
-          .append("from <http://papyri.info/graph> ")
-          .append("where {{ <http://papyri.info/").append(domain).append("/").append(in).append("> ?Predicate ?Object} ")
-          .append("union { ?s2 ?p2 <http://papyri.info/").append(domain).append("/").append(in).append("> }} ")
+      out.append("construct{<https://papyri.info/").append(domain).append("/").append(in).append("> ?Predicate ?Object . ")
+          .append("          ?s2 ?p2 <https://papyri.info/").append(domain).append("/").append(in).append("> } ")
+          .append("from <https://papyri.info/graph> ")
+          .append("where {{ <https://papyri.info/").append(domain).append("/").append(in).append("> ?Predicate ?Object} ")
+          .append("union { ?s2 ?p2 <https://papyri.info/").append(domain).append("/").append(in).append("> }} ")
           .append("order by ?Object");
       return out.toString();
     }
@@ -465,11 +505,11 @@ public class DispatcherServlet extends HttpServlet {
     protected String annotation(String in) {
       StringBuilder out = new StringBuilder();
       appendPrefixes(out);
-      out.append("construct{<http://papyri.info/").append(in).append("> ?Predicate ?Object . ")
-          .append("          ?s2 ?p2 <http://papyri.info/").append(in).append("> } ")
-          .append("from <http://papyri.info/graph> ")
-          .append("where {{ <http://papyri.info/").append(in).append("> ?Predicate ?Object} ")
-          .append("union { ?s2 ?p2 <http://papyri.info/").append(in).append("> }} ")
+      out.append("construct{<https://papyri.info/").append(in).append("> ?Predicate ?Object . ")
+          .append("          ?s2 ?p2 <https://papyri.info/").append(in).append("> } ")
+          .append("from <https://papyri.info/graph> ")
+          .append("where {{ <https://papyri.info/").append(in).append("> ?Predicate ?Object} ")
+          .append("union { ?s2 ?p2 <https://papyri.info/").append(in).append("> }} ")
           .append("order by ?Object");
       return out.toString();
     }
@@ -479,7 +519,7 @@ public class DispatcherServlet extends HttpServlet {
         String result = URLEncoder.encode(in, "UTF-8");
         return result.replaceAll("\\+", "%2B");
       } catch (Exception e) {
-        logger.log(Level.WARNING, "Error encoding '" + in + "'", e);
+        DispatchErrbitConfigProvider.report(e, Level.WARNING, "Error encoding '" + in + "'");
         return in;
       }
     }

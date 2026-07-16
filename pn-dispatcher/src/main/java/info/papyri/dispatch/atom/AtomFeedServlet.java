@@ -12,25 +12,27 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
 import org.apache.abdera.model.Person;
 import org.apache.abdera.writer.Writer;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 
 /**
  * Servlet that accepts date parameters BEFORE, AFTER, and ON, returning an atom feed
@@ -79,10 +81,10 @@ public class AtomFeedServlet extends HttpServlet{
     
     /**
      * Because of the expense of creating the Abdera instance, it is instantiated as a singleton.
-     * 
-     * 
-     * @see https://cwiki.apache.org/confluence/display/ABDERA/Creating+and+Consuming+Atom+Documents#CreatingandConsumingAtomDocuments-InstantiatingAbdera
-     * @return 
+     *
+     *
+     * @see <a href="https://cwiki.apache.org/confluence/display/ABDERA/Creating+and+Consuming+Atom+Documents#CreatingandConsumingAtomDocuments-InstantiatingAbdera">...</a>
+     * @return
      */
     
     public static synchronized Abdera getAbderaInstance() {
@@ -96,7 +98,7 @@ public class AtomFeedServlet extends HttpServlet{
     public void init(ServletConfig config) throws ServletException{
         
         super.init(config);
-        SOLR_URL = config.getInitParameter("solrUrl");
+        SOLR_URL = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
         PN_SEARCH = config.getInitParameter("pnSearchPath");
         abdera = getAbderaInstance();
  
@@ -107,7 +109,7 @@ public class AtomFeedServlet extends HttpServlet{
             throws ServletException, IOException {
 
             request.setCharacterEncoding("UTF-8");        
-            response.setContentType("xml");
+            response.setContentType("application/xml");
             ServletOutputStream out = response.getOutputStream();
             int page = pullOutPageNumber(request);
             EnumMap<TimeParam, String> dateParams = pullOutDateParams(request);
@@ -309,7 +311,7 @@ public class AtomFeedServlet extends HttpServlet{
         
         try{
             
-            SolrClient solrServer = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH).build();
+            SolrClient solrServer = new HttpJettySolrClient.Builder(SOLR_URL + PN_SEARCH).build();
             QueryResponse qr = solrServer.query(sq);
             SolrDocumentList sdl = qr.getResults();
             return sdl;
@@ -324,7 +326,7 @@ public class AtomFeedServlet extends HttpServlet{
             return buildErrorDocumentList("SolrServerException: " + sse.getMessage());
             
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            DispatchErrbitConfigProvider.report(ex, Level.SEVERE);
             return buildErrorDocumentList("IOException: " + ex.getMessage());
         }
           
@@ -419,8 +421,7 @@ public class AtomFeedServlet extends HttpServlet{
       * Parses the passed <code>SolrDocumentList</code> into atom:entry elements.
       * 
       * @param feed
-      * @param entries 
-      */ 
+      */
      
     void addEntries(Feed feed, ArrayList<EmendationRecord> emendationRecords){
         

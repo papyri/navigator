@@ -6,27 +6,33 @@ package info.papyri.dispatch;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
-import javax.servlet.ServletConfig;
+import java.util.concurrent.TimeUnit;
+import jakarta.servlet.ServletConfig;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  *
@@ -46,7 +52,7 @@ public class BiblioSearch extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    solrUrl = config.getInitParameter("solrUrl");
+    solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
     xmlPath = config.getInitParameter("xmlPath");
     htmlPath = config.getInitParameter("htmlPath");
     home = config.getInitParameter("home");
@@ -60,7 +66,7 @@ public class BiblioSearch extends HttpServlet {
 
   }
 
-  /** 
+  /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
    * @param request servlet request
    * @param response servlet response
@@ -77,9 +83,11 @@ public class BiblioSearch extends HttpServlet {
       reader = new BufferedReader(new InputStreamReader(searchURL.openStream()));
       String line = "";
       while ((line = reader.readLine()) != null) {
-        if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
-          SolrClient solr = new HttpSolrClient.Builder(solrUrl + BiblioSearch)
-                  .withConnectionTimeout(5000)
+        if (line.contains("<!-- Results -->") && ("".equals(q) || q == null)) {
+          out.println("<div class=\"alert alert-warning\">Please enter query terms to return results.</div>");
+        } else if (line.contains("<!-- Results -->") && !("".equals(q) || q == null)) {
+          SolrClient solr = new HttpJettySolrClient.Builder(solrUrl + BiblioSearch)
+                  .withConnectionTimeout(5, TimeUnit.SECONDS)
                   .build();
           int rows = 30;
           try {
@@ -101,15 +109,15 @@ public class BiblioSearch extends HttpServlet {
             req.setMethod(METHOD.POST);
             QueryResponse rs = req.process(solr);
             SolrDocumentList docs = rs.getResults();
-            out.println("<p>" + docs.getNumFound() + " hits on \"" + q.toString() + "\".</p>");
-            out.println("<table>");
+            out.println("<p><span class=\"fs-4 fw-semibold\">" + String.format("%,d", docs.getNumFound()) + "</span> hits for " + "<a href=\"/bibliosearch\" class=\"badge rounded-pill bg-light text-dark fs-6 text-decoration-none py-2 me-2 mb-2 facet-constraint constraint-series\" aria-label=\"Remove filter\"><span class=\"constraint-label fw-semibold\">" + q.toString() + "</span> <i class=\"bi bi-x-circle-fill\"></i></a></p>");
+            out.println("<div id=\"biblio-results\" class=\"mb-4\">");
             String uq = q;
             try {
               uq = URLEncoder.encode(q, "UTF-8");
             } catch (Exception e) {
             }
             for (SolrDocument doc : docs) {
-              StringBuilder row = new StringBuilder("<tr class=\"result-record\"><td>");
+              StringBuilder row = new StringBuilder("<div class=\"result-record mb-3\">");
               row.append("<a href=\"");
               row.append("/biblio/");
               row.append(((String) doc.getFieldValue("id")));
@@ -118,27 +126,24 @@ public class BiblioSearch extends HttpServlet {
               row.append("\">");
               row.append(doc.getFieldValue("display"));
               row.append("</a>");
-              row.append("</td>");
-              row.append("</tr>");
+              row.append("</div>");
               out.print(row);
             }
-            out.println("</table>");
+            out.println("</div>");
             if (docs.getNumFound() > rows) {
-              out.println("<div id=\"pagination\">");
+              out.println("<div class='pagination-wrapper d-flex justify-content-between border-top pt-4 mb-4'><ul id='pagination' class='pagination flex-wrap'>");
               int pages = (int) Math.ceil((double) docs.getNumFound() / (double) rows);
               int p = 0;
               while (p < pages) {
+                StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
                 if ((p * rows) == start) {
-                  out.print("<div class=\"page current\">");
-                  out.print((p + 1) + " ");
-                  out.print("</div>");
+                  out.print("<li class='page-item active'><a class='page-link' href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></li>");
                 } else {
-                  StringBuilder plink = new StringBuilder(uq + "&start=" + p * rows + "&rows=" + rows);
-                  out.print("<div class=\"page\"><a href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></div>");
+                  out.print("<li class='page-item'><a class='page-link' href=\"/bibliosearch?q=" + plink + "\">" + (p + 1) + "</a></li>");
                 }
                 p++;
               }
-              out.println("</div>");
+              out.println("</ul></div>");
             }
           } catch (SolrServerException e) {
             out.println("<p>Unable to execute query.  Please try again.</p>");
@@ -156,8 +161,94 @@ public class BiblioSearch extends HttpServlet {
     }
   }
 
+  /**
+   * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  protected void processJSONRequest(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    response.setContentType("application/json;charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    BufferedReader reader = null;
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      ObjectNode root = mapper.createObjectNode();
+      ArrayNode results = mapper.createArrayNode();
+
+      String q = request.getParameter("q");
+      String line = "";
+      SolrClient solr = new HttpJettySolrClient.Builder(solrUrl + BiblioSearch)
+          .withConnectionTimeout(5, TimeUnit.SECONDS)
+          .build();
+      int rows = 30;
+      try {
+        rows = Integer.parseInt(request.getParameter("rows"));
+      } catch (Exception e) {
+      }
+      int start = 0;
+      try {
+        start = Integer.parseInt(request.getParameter("start"));
+      } catch (Exception e) {
+      }
+      SolrQuery sq = new SolrQuery();
+      try {
+        sq.setQuery(q.toLowerCase());
+        sq.setStart(start);
+        sq.setRows(rows);
+        sq.addSort("date", SolrQuery.ORDER.asc);
+        sq.addSort("sort", SolrQuery.ORDER.asc);
+        QueryRequest req = new QueryRequest(sq);
+        req.setMethod(METHOD.POST);
+        QueryResponse rs = req.process(solr);
+        SolrDocumentList docs = rs.getResults();
+        String uq = q;
+        try {
+          uq = URLEncoder.encode(q, "UTF-8");
+        } catch (Exception e) {
+        }
+        for (SolrDocument doc : docs) {
+          ObjectNode node = mapper.createObjectNode();
+          node.put("id", (String)doc.getFieldValue("id"));
+          node.put("display", (String)doc.getFieldValue("display"));
+          results.add(node);
+        }
+        root.set("results", results);
+        if (docs.getNumFound() > rows) {
+          ObjectNode pagination = mapper.createObjectNode();
+          int pages = (int) Math.ceil((double) docs.getNumFound() / (double) rows);
+          int p = 0;
+          ArrayNode pageLinks = mapper.createArrayNode();
+          while (p < pages) {
+            if ((p * rows) == start) {
+              pagination.put("current", p + 1);
+            }
+            String plink = new String("/bibliosearch?q=" + uq + "&start=" + p * rows + "&rows=" + rows);
+            pageLinks.add(plink);
+            p++;
+          }
+          pagination.set("pages", pageLinks);
+          root.set("pagination", pagination);
+        }
+        root.put("numFound", docs.getNumFound());
+        out.println(mapper.writeValueAsString(root));
+      } catch (SolrServerException e) {
+        out.println("{\"error\": \"Unable to execute query.  Please try again.\"}");
+        throw new ServletException(e);
+      } finally {
+        solr.close();
+      }
+    } catch (Exception e) {
+      out.println("{\"error\": \"Unable to execute query.  Please try again.\"}");
+    } finally {
+      out.close();
+    }
+  }
+
   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-  /** 
+  /**
    * Handles the HTTP <code>GET</code> method.
    * @param request servlet request
    * @param response servlet response
@@ -167,10 +258,14 @@ public class BiblioSearch extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
-    processRequest(request, response);
+    if ((request.getHeader("Accept") != null) && request.getHeader("Accept").equals("application/json")) {
+      processJSONRequest(request, response);
+    } else {
+      processRequest(request, response);
+    }
   }
 
-  /** 
+  /**
    * Handles the HTTP <code>POST</code> method.
    * @param request servlet request
    * @param response servlet response
@@ -180,10 +275,14 @@ public class BiblioSearch extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
-    processRequest(request, response);
+    if ((request.getHeader("Accept") != null) && request.getHeader("Accept").equals("application/json")) {
+      processJSONRequest(request, response);
+    } else {
+      processRequest(request, response);
+    }
   }
 
-  /** 
+  /**
    * Returns a short description of the servlet.
    * @return a String containing servlet description
    */

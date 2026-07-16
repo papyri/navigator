@@ -5,27 +5,7 @@
         <servlet-class>info.papyri.dispatch.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>sparqlUrl</param-name>
-            <param-value>http://localhost:8090</param-value>
-        </init-param>
-    </servlet>
-    <servlet>
-        <servlet-name>Search</servlet-name>
-        <servlet-class>info.papyri.dispatch.Search</servlet-class>
-        <init-param>
-            <param-name>home</param-name>
-            <param-value>/srv/data/papyri.info/pn/home</param-value>
-        </init-param>
-        <init-param>
-            <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8983/solr/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>xmlPath</param-name>
-            <param-value>/srv/data/papyri.info/idp.data/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>htmlPath</param-name>
-            <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
+            <param-value>http://localhost:8090/pi/query</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -41,7 +21,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
-            <param-value>http://localhost:8090</param-value>
+            <param-value>http://localhost:8090/pi/query</param-value>
         </init-param>
         <init-param>
             <param-name>solrUrl</param-name>
@@ -58,6 +38,10 @@
         <init-param>
             <param-name>template</param-name>
             <param-value>/srv/data/papyri.info/git/navigator/pn-site/template.html</param-value>
+        </init-param>
+        <init-param>
+            <param-name>homeTemplate</param-name>
+            <param-value>/srv/data/papyri.info/git/navigator/pn-site/home-template.html</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -105,7 +89,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlUrl</param-name>
-            <param-value>http://localhost:8090</param-value>
+            <param-value>http://localhost:8090/pi/query</param-value>
         </init-param>
         <init-param>
             <param-name>htmlPath</param-name>
@@ -113,7 +97,7 @@
         </init-param>
         <init-param>
             <param-name>sparqlGraph</param-name>
-            <param-value>http://papyri.info/graph</param-value>
+            <param-value>https://papyri.info/graph</param-value>
         </init-param>
         <init-param>
             <param-name>browseServletPath</param-name>
@@ -165,7 +149,11 @@
         <servlet-class>info.papyri.dispatch.AuthorBrowse</servlet-class>
         <init-param>
             <param-name>solrUrl</param-name>
-            <param-value>http://localhost:8983/solr/pn-search</param-value>
+            <param-value>http://localhost:8983/solr/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>pnSearchPath</param-name>
+            <param-value>pn-search</param-value>
         </init-param>
         <init-param>
             <param-name>template</param-name>
@@ -240,6 +228,21 @@
             <param-value>/srv/data/papyri.info/pn/idp.html/</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>DTSServlet</servlet-name>
+        <servlet-class>info.papyri.dispatch.DTSServlet</servlet-class>
+    </servlet>
+    <listener>
+        <listener-class>info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider</listener-class>
+    </listener>
+    <filter>
+        <filter-name>Errbit Filter</filter-name>
+        <filter-class>info.papyri.dispatch.monitoring.ErrbitFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Errbit Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <servlet-mapping>
         <servlet-name>CollectionBrowser</servlet-name>
         <url-pattern>/browse/*</url-pattern>
@@ -283,6 +286,10 @@
     <servlet-mapping>
         <servlet-name>XSLTService</servlet-name>
         <url-pattern>/epidocinator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DTSServlet</servlet-name>
+        <url-pattern>/dts</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

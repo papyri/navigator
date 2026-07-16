@@ -50,10 +50,10 @@
     (net.sf.saxon.s9api Destination Processor QName SAXDestination Serializer XdmAtomicValue XsltCompiler XsltExecutable)
     (net.sf.saxon.lib AugmentedSource ParseOptions)
     (org.apache.solr.client.solrj SolrClient SolrQuery)
-    (org.apache.solr.client.solrj.impl ConcurrentUpdateSolrClient ConcurrentUpdateSolrClient$Builder BinaryRequestWriter HttpSolrClient HttpSolrClient$Builder)
+    (org.apache.solr.client.solrj.impl ConcurrentUpdateHttp2SolrClient ConcurrentUpdateHttp2SolrClient$Builder BinaryRequestWriter Http2SolrClient Http2SolrClient$Builder)
     (org.apache.solr.client.solrj.request RequestWriter)
     (org.apache.solr.common SolrInputDocument)
-    (org.apache.jena.query QueryExecutionFactory)
+    (org.apache.jena.sparql.exec.http QueryExecutionHTTP)
     (org.xml.sax InputSource)
     (org.xml.sax.helpers DefaultHandler)))
 
@@ -62,9 +62,9 @@
 (def tmpath "/srv/data/papyri.info/TM")
 (def xsltpath "/srv/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/srv/data/papyri.info/pn/idp.html")
-(def solrurl "http://localhost:8983/solr/")
+(def solrurl (if (System/getenv "SOLR_URL") (System/getenv "SOLR_URL") "http://localhost:8983/solr/"))
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
-(def server "http://localhost:8090/pi")
+(def server (if (System/getenv "NS_URL") (System/getenv "NS_URL") "http://localhost:8090/pi"))
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
@@ -94,7 +94,7 @@
   "A document handler for Solr that handles the conversion of a SOLR XML
   document into a Java object representing an add document and then when
   the document has been read to its end, adds that document to the
-  `ConcurrentUpdateSolrClient` stored in the @solr ref."
+  `ConcurrentUpdateHttp2SolrClient` stored in the @solr ref."
   []
   (SAXDestination.
     (let [current (StringBuilder.)
@@ -121,8 +121,8 @@
   "A document handler that behaves much like `dochandler` above, but
   works for bibliographic records."
   []
-     (SAXDestination.
-      (let [current (StringBuilder.)
+  (SAXDestination.
+    (let [current (StringBuilder.)
 	    chars  (StringBuilder.)
 	    solrdoc (SolrInputDocument. (make-array String 0))]
 	(proxy [DefaultHandler] []
@@ -193,6 +193,10 @@
   [num]
   (substring-before (str (Math/ceil num)) "."))
 
+(defn floor
+  [num]
+  (substring-before (str (Math/floor num)) "."))
+
 (defn encode-url
   "Wrapper for the `java.net.URLEncoder.encode()` method."
   [url]
@@ -206,62 +210,50 @@
 (defn get-filename
   "Resolves the filename of the local XML file associated with the given URL."
   [url]
-  (let [result (try (if (.contains url "ddbdp/")
-    (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
-      (if (= (second identifier) "")
-        (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-       (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")
-        (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier)
-       "/" (first identifier) "." (second identifier) "."
-       (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")))
-    (if (.contains url "hgv/")
-      (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
-            id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-        (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
-      (if (.contains url "dclp/")
-        (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
-            id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str filepath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".xml"))
-        (when (.contains url "apis/")
-          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-            (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))
-    (catch Exception e
-      (when-not (nil? e)
-        (println (str (.getMessage e) " processing " url ".")
-        (.printStackTrace e)))))]
-    (if (and result (.exists (File. result)))
-      result
-      (println (str result " does not exist.")))))
+  (let [result 
+    (try 
+      (if (.contains url "current/")
+        (let [identifier (substring-before (substring-after url "https://papyri.info/current/") "/source")
+              id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))
+              dir (floor (/ id-int 1000))]  
+          (if (.exists (File. (str filepath "/DDbDP/" dir "/" identifier ".xml")))
+            (str filepath "/DDbDP/" dir "/" identifier ".xml")
+            (str filepath "/DCLP/" dir "/" identifier ".xml")))
+        (if (.contains url "editions/")
+          (let [identifier (decode-url (substring-before (substring-after url "https://papyri.info/editions/") "/source"))]
+            (str filepath "/Historical/" identifier ".xml"))
+          (if (.contains url "ddbdp/")
+            (let [identifier (.split (substring-before (substring-after url "https://papyri.info/ddbdp/") "/source") ";")]
+              (if (= (second identifier) "")
+                (str filepath "/Historical/" (first identifier) "/" (.replace 
+                  (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")
+                (str filepath "/DDB_EpiDoc_XML/" (first identifier) "/" (second identifier)
+              "/" (.replace (.replace (decode-url (last identifier)) "," "-") "/" "_") ".xml")))
+            (if (.contains url "hgv/")
+              (let [identifier (substring-before (substring-after url "https://papyri.info/hgv/") "/source")
+                    id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+                (str filepath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".xml"))
+              (if (.contains url "dclp/")
+                (let [identifier (substring-before (substring-after url "https://papyri.info/dclp/") "/source")
+                    id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
+                    (str filepath "/DCLP/" (floor (/ id-int 1000)) "/" identifier ".xml"))
+                (when (.contains url "apis/")
+                  (let [identifier (.split (substring-before (substring-after url "https://papyri.info/apis/") "/source") "\\.")]
+                    (str filepath "/APIS/" (first identifier) "/xml/" (first identifier) "." (second identifier) "." (last identifier) ".xml"))))))))
+        (catch Exception e
+          (when-not (nil? e)
+            (println (str (.getMessage e) " processing " url ".")
+            (.printStackTrace e)))))]
+        (if (and result (.exists (File. result)))
+          result
+          (throw (Exception. (str result " does not exist, processing " url "."))))))
 
 (defn get-txt-filename
   "Resolves the filename of the local text file associated with the given URL."
   [url]
   (try (if (.startsWith url "file:")
     (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".txt") "/xml/" "/")
-    (if (.contains url "ddbdp")
-      (let [url (decode-url url)]
-        (when (.endsWith url "/source")
-          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
-            (if (= (second identifier) "")
-              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-             (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")
-              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier)
-             "/" (first identifier) "." (second identifier) "."
-             (.replace (.replace (last identifier) "," "-") "/" "_") ".txt")))))
-      (if (.contains url "/hgv/")
-        (when (.endsWith url "/source")
-          (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
-                id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".txt")))
-        (if (.contains url "/dclp/")
-          (when (.endsWith url "/source")
-            (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
-                id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-              (str htpath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".txt")))
-        (when (.contains url "/apis")
-          (if (.endsWith url "/source")
-            (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-              (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".txt"))))))))
+    (.replace (.replace (get-filename url) filepath htpath) ".xml" ".txt"))
        (catch Exception e
          (when-not (nil? e)
            (println (str (.getMessage e) " processing " url ".")
@@ -273,45 +265,7 @@
   [url]
   (try (if (.startsWith url "file:")
     (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".html") "/xml/" "/")
-    (if (.contains url "ddbdp")
-      (let [url (decode-url url)]
-        (if (.endsWith url "/source")
-          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/ddbdp/") "/source") ";")]
-            (if (= (second identifier) "")
-              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "."
-                (.replace (.replace (last identifier) "," "-") "/" "_") ".html")
-              (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier)
-                "/" (first identifier) "." (second identifier) "."
-                (.replace (.replace (last identifier) "," "-") "/" "_") ".html")))
-          (if (= url "http://papyri.info/ddbdp")
-            (str htpath "/DDB_EpiDoc_XML/index.html")
-            (if (.contains url ";")
-              (let [identifier (.split (substring-after url "http://papyri.info/ddbdp/") ";")]
-                (str htpath "/DDB_EpiDoc_XML/" (first identifier) "/" (first identifier) "." (second identifier) "/index.html"))
-              (str htpath "/DDB_EpiDoc_XML/" (substring-after url "http://papyri.info/ddbdp/") "/index.html")))))
-    (if (.contains url "/hgv/")
-      (if (.endsWith url "/source")
-        (let [identifier (substring-before (substring-after url "http://papyri.info/hgv/") "/source")
-              id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-          (str htpath "/HGV_meta_EpiDoc/HGV" (ceil (/ id-int 1000)) "/" identifier ".html"))
-        (if (= url "http://papyri.info/hgv")
-          (str htpath "/HGV_meta_EpiDoc/index.html")
-          (str htpath "/HGV_meta_EpiDoc/" (substring-after url "http://papyri.info/hgv/") "/index.html")))
-      (if (.contains url "/dclp/")
-        (if (.endsWith url "/source")
-          (let [identifier (substring-before (substring-after url "http://papyri.info/dclp/") "/source")
-              id-int (Integer/parseInt (.replaceAll identifier "[a-z]" ""))]
-            (str htpath "/DCLP/" (ceil (/ id-int 1000)) "/" identifier ".html"))
-          (if (= url "http://papyri.info/dclp")
-            (str htpath "/DCLP/index.html")
-            (str htpath "/DCLP/" (substring-after url "http://papyri.info/dclp/") "/index.html")))
-      (when (.contains url "/apis")
-        (if (.endsWith url "/source")
-          (let [identifier (.split (substring-before (substring-after url "http://papyri.info/apis/") "/source") "\\.")]
-            (str htpath "/APIS/" (first identifier) "/" (first identifier) "." (second identifier) "." (last identifier) ".html"))
-            (if (= url "http://papyri.info/apis")
-              (str htpath "/APIS/index.html")
-              (str htpath "/APIS/" (substring-after url "http://papyri.info/apis/") "/index.html"))))))))
+    (.replace (.replace (get-filename url) filepath htpath) ".xml" ".html"))
     (catch Exception e
        (when-not (nil? e)
          (println (str (.getMessage e) " processing " url ".")
@@ -346,16 +300,15 @@
   [url]
   (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a
-            from <http://papyri.info/graph>
-            where { <%s> dct:hasPart ?a
-            filter not exists {?a dct:isReplacedBy ?b }}" url ))
+            from <https://papyri.info/graph>
+            where { <%s> dct:hasPart ?a }" url ))
 
 (defn is-part-of-query
   "Returns a flattened list of parent, child, grandchild URIs."
 	[url]
 	(format "prefix dct: <http://purl.org/dc/terms/>
 			select ?p ?gp ?ggp
-			from <http://papyri.info/graph>
+			from <https://papyri.info/graph>
 			where{ <%s> dct:isPartOf ?p .
 				   ?p dct:isPartOf ?gp .
 				   optional { ?gp dct:isPartOf ?ggp }
@@ -364,57 +317,78 @@
 (defn batch-relation-query
   "Retrieves a set of triples where A `<dct:relation>` B when A is a child of the given URI."
   [url]
-  (format  "prefix dct: <http://purl.org/dc/terms/>
+  (let [collection (substring-before (substring-after url "https://papyri.info/") "/")]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a ?b
-            from <http://papyri.info/graph>
-            where { <%s> dct:hasPart ?a .
+            from <https://papyri.info/graph>
+            where { <%1$s> dct:hasPart ?a .
                     ?a dct:relation ?b
-                    filter(!regex(str(?b),'/images$'))}" url))
+                    filter(!regex(str(?b),'/images$'))
+                    filter(!regex(str(?b),'/%2$s/'))}" url collection)))
 
 (defn relation-query
   "Returns URIs that are the object of `<dct:relation>`s where the given URI is the subject."
   [url]
-  (format  "prefix dct: <http://purl.org/dc/terms/>
-            select ?a
-            from <http://papyri.info/graph>
-            where { <%s> dct:relation ?a
-            filter(!regex(str(?a),'/images$'))}" url))
+  (let [collection (substring-before (substring-after url "https://papyri.info/") "/")]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
+              select ?a
+              from <https://papyri.info/graph>
+              where { <%1$s> dct:relation ?a
+              filter(!regex(str(?a),'/images$'))
+              filter(!regex(str(?a),'/%2$s/'))}" url collection)))
 
 (defn primary-query
   "For HGV, APIS, or translations, finds the DDbDP or DCLP relation"
   [url]
   (format "prefix dct: <http://purl.org/dc/terms/>
            select ?a
-           from <http://papyri.info/graph>
+           from <https://papyri.info/graph>
            where { <%s> dct:relation ?a
-           filter(regex(str(?a),'/(ddbdp|dclp)/'))}" url))
+           filter(regex(str(?a),'/current/'))}" url))
 
 (defn batch-replaces-query
   "Gets the set of triples where A `<dct:replaces>` B for a given collection."
   [url]
   (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a ?b
-            from <http://papyri.info/graph>
+            from <https://papyri.info/graph>
             where { <%s> dct:hasPart ?a .
                     ?a dct:replaces ?b .
                     ?b dct:isReplacedBy ?a }" url))
 
-(defn batch-hgv-source-query
-  "Gets the set of triples where A `<dct:source` B for a given collection."
+(defn batch-source-query
+  "Gets the set of triples where A `<dct:source>` B for a given collection."
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?b
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:hasPart ?a .
                       ?a dct:source ?b }" url))
 
-(defn hgv-source-query
+(defn source-query
   "Returns A where the given URI `<dct:source>` A."
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:source ?a  }" url))
+
+(defn batch-source-for-query
+  "Returns a set of triples where A `<dct:source>` B for a given collection."
+  [url]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
+              select ?b ?a
+              from <https://papyri.info/graph>
+              where { <%s> dct:hasPart ?b .
+                      ?a dct:source ?b }" url))
+
+(defn source-for-query
+  "Returns A where the given A `<dct:source>` URL."
+	[url]
+    (format  "prefix dct: <http://purl.org/dc/terms/>
+              select ?a
+              from <https://papyri.info/graph>
+              where { ?a dct:source <%s>  }" url))
 
 (defn batch-other-source-query
   "Gets `dct:source`s for items in a given collection where there are
@@ -422,7 +396,7 @@
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?b
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:hasPart ?a .
                     ?a dct:relation ?hgv .
                     ?hgv dct:source ?b }" url))
@@ -432,7 +406,7 @@
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:relation ?hgv .
                       ?hgv dct:source ?a }" url))
 
@@ -443,7 +417,7 @@
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?c
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:hasPart ?a .
                     ?a dct:source ?b .
                     ?b dct:bibliographicCitation ?c }" url))
@@ -453,7 +427,7 @@
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:source ?b .
                       ?b dct:bibliographicCitation ?a }" url))
 
@@ -463,7 +437,7 @@
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a ?c
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:hasPart ?a .
                       ?a dct:relation ?hgv .
                       ?hgv dct:source ?b .
@@ -475,7 +449,7 @@
 	[url]
     (format  "prefix dct: <http://purl.org/dc/terms/>
               select ?a
-              from <http://papyri.info/graph>
+              from <https://papyri.info/graph>
               where { <%s> dct:relation ?hgv .
                       ?hgv dct:source ?b .
                       ?b dct:bibliographicCitation ?a }" url))
@@ -485,7 +459,7 @@
   (format "prefix cito: <http://purl.org/spar/cito/>
            prefix dct: <http://purl.org/dc/terms/>
            select ?a ?c
-           from <http://papyri.info/graph>
+           from <https://papyri.info/graph>
            where {<%s> dct:hasPart ?a .
                   ?a dct:source ?b .
                   ?b cito:isCitedBy ?c }" url))
@@ -496,7 +470,7 @@
   (let [uri (.replace url "/source" "/work")]
     (format "prefix cito: <http://purl.org/spar/cito/>
              select ?a
-             from <http://papyri.info/graph>
+             from <https://papyri.info/graph>
              where {<%s> cito:isCitedBy ?a }" uri)))
 
 (defn replaces-query
@@ -504,7 +478,7 @@
   [url]
   (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a
-            from <http://papyri.info/graph>
+            from <https://papyri.info/graph>
             where { <%s> dct:replaces ?a }" url))
 
 (defn batch-is-replaced-by-query
@@ -512,7 +486,7 @@
   [url]
   (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a ?b
-            from <http://papyri.info/graph>
+            from <https://papyri.info/graph>
             where { <%s> dct:hasPart ?a .
                     ?a dct:isReplacedBy ?b }" url))
 
@@ -521,7 +495,7 @@
   [url]
   (format  "prefix dct: <http://purl.org/dc/terms/>
             select ?a
-            from <http://papyri.info/graph>
+            from <https://papyri.info/graph>
             where { <%s> dct:isReplacedBy ?a }" url))
 
 (defn batch-images-query
@@ -530,7 +504,7 @@
            prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
            prefix olo: <http://purl.org/ontology/olo/core#>
            select ?a ?image
-           from <http://papyri.info/graph>
+           from <https://papyri.info/graph>
            where { <%s> dct:hasPart ?a .
                    ?a dct:relation ?i .
                    ?i rdf:type olo:OrderedList .
@@ -545,11 +519,29 @@
   (let [uri (.replace url "/source" "/images")]
     (format "prefix olo: <http://purl.org/ontology/olo/core#>
              select ?image
-             from <http://papyri.info/graph>
+             from <https://papyri.info/graph>
              where { <%1$s> olo:slot ?slot .
                       ?slot olo:item ?image .
                       ?slot olo:index ?i }
                       order by ?i" uri )))
+
+(defn translations-query
+  "Returns a set of translations for the given URL."
+  [url]
+  (format "prefix bibo: <http://purl.org/ontology/bibo/>
+            select ?a
+            from <https://papyri.info/graph>
+            where { ?a bibo:translationOf <%s> }" url))
+
+(defn batch-translations-query
+  "Returns a set of translations for the given collection."
+  [url]
+  (format "prefix bibo: <http://purl.org/ontology/bibo/>
+           prefix dct: <http://purl.org/dc/terms/>
+           select ?source ?translation
+           from <https://papyri.info/graph>
+           where { <%s> dct:hasPart ?source .
+                   ?translation bibo:translationOf ?source }" url))
 
 ;; ## Jena functions
 
@@ -565,7 +557,7 @@
   "Executes the query provided and returns a vector of vectors containing the results"
   [query]
   (try
-    (with-open [exec (QueryExecutionFactory/sparqlService (str server "/query") query)]
+    (with-open [exec (QueryExecutionHTTP/service (str server "/query") query)]
       (let [answer (.execSelect exec)]
         (loop [result []]
           (if (.hasNext answer)
@@ -582,19 +574,19 @@
   "Adds the given URL to the @html queue for processing, along with associated data."
   [url]
   (let [relations (execute-query (relation-query url))
-        primary (if (not (empty? (re-seq #"/(apis|hgv|hgvtrans)/" url)))
+        primary (if (not (empty? (re-seq #"/(apis|hgv|translations)/" url)))
                   (execute-query (primary-query url))
                   '())
         replaces (execute-query (replaces-query url))
         is-replaced-by (execute-query (is-replaced-by-query url))
         is-part-of (execute-query (is-part-of-query url))
-        source (if (empty? (re-seq #"/hgv/" url))
-       		   	  (execute-query (other-source-query url))
-       		   	  (execute-query (hgv-source-query url)))
+        source (execute-query (source-query url))
+        source-for (execute-query (source-for-query url))
         citation (if (empty? (re-seq #"/hgv" url))
        			  (execute-query (other-citation-query url))
        			  (execute-query (hgv-citation-query url)))
         biblio (execute-query (cited-by-query url))
+        translations (execute-query (translations-query url))
         images (flatten (conj '() (execute-query (images-query url))
                      (filter
                        (fn [x] (> (count x) 0))
@@ -604,17 +596,23 @@
       ;; If doc is being replaced, don't publish it, but make sure to publish its replacement.
       ;; This might be redundant, but we can't be sure.
       (if (not (first is-replaced-by))
-        (.add @html (list (str "file:" (get-filename url))
-                          (list "collection" (substring-before (substring-after url "http://papyri.info/") "/"))
+        (try
+          (.add @html (list (str "file:" (get-filename url))
+                          (list "collection" (substring-before (substring-after url "https://papyri.info/") "/"))
                           (list "related" (apply str (interpose " " (for [x relations] (first x)))))
                           (list "replaces" (apply str (interpose " " (for [x replaces] (first x)))))
                           (list "isPartOf" (apply str (interpose " " (first is-part-of))))
                           (list "sources" (apply str (interpose " " (for [x source](first x)))))
+                          (list "sources-for" (apply str (interpose " " (for [x source-for] (first x)))))
                           (list "images" (apply str (interpose " " images)))
                           (list "citationForm" (apply str (interpose " " (for [x citation](first x)))))
                           (list "biblio" (apply str (interpose " " (for [x biblio] (first x)))))
+                          (list "translations" (apply str (interpose " " (for [x translations] (first x)))))
                           (list "selfUrl" (substring-before url "/source"))
                           (list "server" nserver)))
+            (catch Exception e
+              (println (str (.getMessage e) " processing " url "."))
+              (.printStackTrace e)))
         (queue-item (first (last is-replaced-by))))
       (queue-item (first (last primary))))))
 
@@ -627,14 +625,15 @@
         relations (execute-query (batch-relation-query url))
         replaces (execute-query (batch-replaces-query url))
         is-replaced-by (execute-query (batch-is-replaced-by-query url))
-        all-sources (if (empty? (re-seq #"/hgv/" url))
-                      (execute-query (batch-other-source-query url))
-        			        (execute-query (batch-hgv-source-query url)))
+        all-sources (execute-query (batch-source-query url))
+        all-sources-for (execute-query (batch-source-for-query url))
         all-citations (if (empty? (re-seq #"/hgv/" url))
                         (execute-query (batch-other-citation-query url))
                         (execute-query (batch-hgv-citation-query url)))
         all-biblio (execute-query (batch-cited-by-query url))
-        all-images (execute-query (batch-images-query url))]
+        all-images (execute-query (batch-images-query url))
+        all-translations (execute-query (batch-translations-query url))
+        ]
     (doseq [item items]
       (let  [related (if (empty? relations) ()
                        (filter (fn [x] (= (first x) (last item))) relations))
@@ -642,6 +641,8 @@
                             (filter (fn [x] (= (first x) (last item))) replaces))
              sources (if (empty? all-sources) ()
                        (filter (fn [x] (= (first x) (last item))) all-sources))
+             sources-for (if (empty? all-sources-for) ()
+                            (filter (fn [x] (= (first x) (last item))) all-sources-for))
              citations (if (empty? all-citations) ()
                          (filter (fn [x] (= (first x) (last item))) all-citations))
              biblio (if (empty? all-biblio) ()
@@ -649,25 +650,32 @@
              reprint-in (if (empty? is-replaced-by) ()
                           (filter (fn [x] (= (first x) (last item))) is-replaced-by))
              exclusion (some (set (for [x (filter
-                                            (fn [s] (and (.startsWith (last s) "http://papyri.info")
+                                            (fn [s] (and (.startsWith (last s) "https://papyri.info")
                                                          (not (.contains (.toString (last s)) "/images/"))))
                                             related)]
-                                    (substring-before (substring-after (last x) "http://papyri.info/") "/")))
+                                    (substring-before (substring-after (last x) "https://papyri.info/") "/")))
                              exclude)
              images (if (empty? all-images) () (filter (fn [x] (= (first x) (last item))) all-images))
+             translations (if (empty? all-translations) ()
+                            (filter (fn [x] (= (first x) (last item))) all-translations))
             ]
         (if (nil? exclusion)
-          ( .add @html (list (str "file:" (get-filename (last item)))
-                             (list "collection" (substring-before (substring-after (last item) "http://papyri.info/") "/"))
+          (try (.add @html (list (str "file:" (get-filename (last item)))
+                             (list "collection" (substring-before (substring-after (last item) "https://papyri.info/") "/"))
                              (list "related" (apply str (interpose " " (for [x related] (last x)))))
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x)))))
                              (list "isPartOf" (apply str (interpose " " all-urls)))
                              (list "sources" (apply str (interpose " " (for [x sources] (last x)))))
+                             (list "sources-for" (apply str (interpose " " (for [x sources-for] (last x)))))
                              (list "images" (apply str (interpose " " (for [x images] (last x)))))
                              (list "citationForm" (apply str (interpose ", " (for [x citations] (last x)))))
                              (list "biblio" (apply str (interpose " " (for [x biblio] (last x)))))
+                             (list "translations" (apply str (interpose " " (for [x translations] (last x)))))
                              (list "selfUrl" (substring-before (last item) "/source"))
                              (list "server" nserver)))
+            (catch Exception e
+              (println (str (.getMessage e) " processing " (last item) "."))
+              (.printStackTrace e)))
           (do (.add @links (list (get-html-filename
                                    (.toString
                                      (last
@@ -685,9 +693,8 @@
 
 (defn queue-collections
   "Adds URLs to the HTML transform and indexing queues for processing.  Takes a URL, like
-  `http://papyri.info/ddbdp`, a set of collections to exclude and recurses down to the item level."
+  `https://papyri.info/ddbdp`, a set of collections to exclude and recurses down to the item level."
   [url exclude prev-urls]
-  ;; TODO: generate symlinks for relations
   ;; queue for HTML generation
    (let [all-urls (cons url prev-urls)
          items (execute-query (has-part-query url))]
@@ -697,6 +704,25 @@
         (doseq [item items]
           (queue-collections (last item) exclude all-urls))))))
 
+(defn queue-collection
+  "Queues a collection for processing based on a directory path."
+  [dir]
+  (doseq [file (filter #(.isFile %) (file-seq (io/file dir)))]
+    (let [url (str "https://papyri.info/current/" (.replace (.getName file) ".xml" "/source"))]
+        (queue-item url))))
+
+(defn queue-sources
+  "Queues a set of sources for processing based on an editions URL."
+  [url]
+  (doseq [source-for (execute-query (source-for-query url))]
+    (let [source-for-url (first source-for)]
+      (when-not (st/blank? source-for-url)
+        (queue-item source-for-url)
+        (doseq [source (execute-query (source-query source-for-url))]
+          (let [source-url (first source)]
+            (when-not (and (st/blank? source-url) (= url source-url))
+              (queue-item source-url))))))))
+
 ;; ## File generation and indexing functions
 
 (defn delete-html
@@ -704,22 +730,24 @@
  [files]
  (when (> (count files) 0)
    (doseq [file (.split files "\\s")]
+    (if (.matches file "https://papyri.info/(current|editions|hgv|apis)/.*")
      (let [fname (get-html-filename file)]
-     (when-not (nil? fname)
-       (let [f (File. fname)]
-         (when (.exists f)
-           (.delete f))))))))
+      (when-not (nil? fname)
+        (let [f (File. fname)]
+          (when (.exists f)
+            (.delete f)))))))))
 
 (defn delete-text
   "Get rid of any old/stale versions of related files"
   [files]
   (when (> (count files) 0)
     (doseq [file (.split files "\\s")]
-      (let [fname (get-txt-filename file)]
-      (when-not (nil? fname)
-        (let [f (File. fname)]
-          (when (.exists f)
-            (.delete f))))))))
+      (if (.matches file "https://papyri.info/(current|editions|hgv|apis)/.*")
+        (let [fname (get-txt-filename file)]
+          (when-not (nil? fname)
+            (let [f (File. fname)]
+              (when (.exists f)
+                (.delete f)))))))))
 
 (def re-start-end-quotes #"(^\"|\"$)")
 (def re-delimiter #"\",\"")
@@ -743,116 +771,10 @@
       (st/split line re-delimiter))
     '()))
 
-(defn write-tm-xml
-  [out name, fields, fieldnums, fns]
-  (.write out (str "<" name ">\n"))
-  (doseq [field fieldnums]
-    (.write out (str "  <field n=\"" field "\">" (nth fields field) "</field>\n")))
-    (doseq [f fns]
-      (f))
-  (.write out (str "</" name ">\n")))
-
-(defn tm-file
-  [n, name]
-  (File. (str tmpath "/dump/files/" (int (Math/floor (/ (Integer. n) 1000))) "/" n "-" name ".clj")))
-
-
-(defn process-tm-file
-  [f, n]
-  (with-open [rdr (io/reader (str tmpath "/dump/" f ".csv"))]
-    (let [lseq (line-seq rdr)
-          outfile (ref nil)
-          record (ref nil)]
-      (doseq [line lseq]
-        (let [fields (unwrap-and-escape line)]
-          (when-not (st/blank? (nth fields n))
-            (let [of (tm-file (st/trim (nth fields n)) f)]
-              (when (and (not (nil? @record)) (not= @outfile of)) ;; if we're on a new record, flush the old one
-                (with-open [out (io/writer @outfile)]
-                    (binding [*out* out
-                              *print-dup* true]
-                      (prn @record)
-                      (dosync (ref-set record nil)))))
-              (if-not (.exists of)
-                (do ;; we're almost always creating a new file, so don't bother with expensive transactional stuff
-                  (.mkdirs (.getParentFile of))
-                  (with-open [out (io/writer of)]
-                    (binding [*out* out
-                              *print-dup* true]
-                      (if-not (nil? fields)
-                        (prn (vector fields))))))
-                (do ;; if the file exists, we might already have it loaded from the last row, so don't re-read it
-                  (if-not (= @outfile of)
-                    (dosync
-                      (ref-set outfile of)
-                      (ref-set record (let [r (with-open [f (PushbackReader. (FileReader. @outfile))] (read f))]
-                                                (into [] (concat r (vector fields))))))
-                    (dosync
-                      (ref-set record (into [] (concat @record (vector fields))))))))))))
-      (when-not (or (nil? @outfile) (nil? @record))
-        (with-open [out (io/writer @outfile)]
-          (binding [*out* out
-                    *print-dup* true]
-            (prn @record)))))))
-
-(defn map-tm-functions
-  ([out name, fieldnums, rels]
-    (for [values rels]
-      (partial write-tm-xml out name values fieldnums [])))
-  ([out, name, fieldnums, rels, fns]
-    (for [values rels]
-      (partial write-tm-xml out name values fieldnums fns))))
-
-(defn preprocess-tm
-  "Converts TM data into XML for inclusion in the PN."
-  []
-  (process-tm-file "dates" 1)
-  (process-tm-file "texref" 1)
-  (process-tm-file "editref" 0)
-  (process-tm-file "geotex" 1)
-  (process-tm-file "georef" 5)
-  (process-tm-file "ref" 7)
-  (process-tm-file "archref" 6)
-  (process-tm-file "collref" 2)
-  (let [rdr (io/reader (str tmpath "/dump/tex.csv"))
-        lseq (line-seq rdr)]
-    (doseq [line lseq]
-      (let [fields (unwrap-and-escape line)
-            outfile (File. (str tmpath "/files/" (int (Math/floor (/ (Integer. (nth fields 0)) 1000))) "/" (nth fields 0) ".xml"))]
-        (.mkdirs (.getParentFile outfile))
-        (with-open [out (io/writer outfile)]
-          (let [datefile (tm-file (nth fields 0) "dates")
-                dates (when (.exists datefile) (with-open [f (PushbackReader. (FileReader. datefile))] (read f)))
-                texreffile (tm-file (nth fields 0) "texref")
-                texrefs (when (.exists texreffile) (with-open [f (PushbackReader. (FileReader. texreffile))] (read f)))
-                editreffile (tm-file (nth (nth texrefs 0) 0) "editref") ;; needs to be changed to texref
-                editrefs (when (.exists editreffile) (with-open [f (PushbackReader. (FileReader. editreffile))] (read f)))
-                geotexfile (tm-file (nth fields 0) "geotex")
-                geotex (when (.exists geotexfile) (with-open [f (PushbackReader. (FileReader. geotexfile))] (read f)))
-                georeffile (tm-file (nth fields 0) "georef")
-                georefs (when (.exists georeffile) (with-open [f (PushbackReader. (FileReader. georeffile))] (read f)))
-                personreffile (tm-file (nth fields 0) "ref")
-                personrefs (when (.exists personreffile) (with-open [f (PushbackReader. (FileReader. personreffile))] (read f)))
-                archreffile (tm-file (nth fields 0) "archref")
-                archrefs (when (.exists archreffile) (with-open [f (PushbackReader. (FileReader. archreffile))] (read f)))
-                collreffile (tm-file (nth fields 0) "collref")
-                collrefs (when (.exists collreffile) (with-open [f (PushbackReader. (FileReader. collreffile))] (read f)))
-                fns (concat
-                      (map-tm-functions out "date" [2 3 4 9 14] dates)
-                      (map-tm-functions out "texref" [1 2 3 4 5 14 15 19 21] texrefs
-                        (map-tm-functions out "editref" [0 1] editrefs))
-                      (map-tm-functions out "geotex" [2 20 22] geotex)
-                      (map-tm-functions out "georef" [0 7 25 35 36 37 38] georefs)
-                      (map-tm-functions out "personref" [0 132 53 54 55 56 151] personrefs)
-                      (map-tm-functions out "archref" [5 37] archrefs)
-                      (map-tm-functions out "collref" [1 14 15] collrefs)
-                      )]
-          (write-tm-xml out "text" fields [0 6 8 13 14 21 46 57 81 82 89] fns)))))))
-
 (defn generate-html
   "Builds the HTML files for the PN."
   []
-    (let [pool (Executors/newFixedThreadPool nthreads)
+    (let [pool (Executors/newFixedThreadPool 1)
     tasks (map (fn [x]
          (fn []
            (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
@@ -862,10 +784,11 @@
               (delete-html (last (nth x 3)))
               (let [processor (Processor. false)
                     out (.newSerializer processor)])
-              (transform (if (.startsWith (first x) "http")
-                (str (.replace (first x) "papyri.info" nserver) "/rdf")
-                (first x))
-                (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9))
+              (transform 
+                (if (.startsWith (first x) "http")
+                  (str (.replace (first x) "papyri.info" nserver) "/rdf")
+                  (first x))
+                (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9) (nth x 10) (nth x 11) (nth x 12)) 
                 (.newSerializer processor (FileOutputStream. (File. (get-html-filename (first x))))) @htmltemplates)
              (catch Exception e
                (.printStackTrace e)
@@ -889,9 +812,8 @@
         (delete-text (last (nth x 2)))
         (delete-text (last (nth x 3)))
         (transform (if (.startsWith (first x) "http")
-        							   ((println "File is " + (first x))
-                                       (str (.replace (first x) "papyri.info" nserver) "/rdf"))
-                                       (first x))
+        							   (str (.replace (first x) "papyri.info" nserver) "/rdf")
+                         (first x))
         (list (second x) (nth x 2) (nth x 3) (nth x 4))
         (.newSerializer processor (FileOutputStream. (File. (get-txt-filename (first x))))) @texttemplates)
         (catch Exception e
@@ -911,12 +833,11 @@
        (for [word @words]
    (.write out (str word "\n")))))
 
-(defn commit-and-optimize
+(defn commit
   "Runs an asynchronous commit and then optimize on the named Solr index."
   [index]
-  (let [solr (.build (.withSocketTimeout (HttpSolrClient$Builder. (str solrurl index "/")) 3600000))]
+  (let [solr (.build (.connectionTimeout (Http2SolrClient$Builder. (str solrurl index)) 3600000))]
     (.commit solr false false )
-    ;;(.optimize solr false false)
     (.close solr)))
 
 (defn load-morphs
@@ -950,17 +871,20 @@
   NOTE: hard code file paths."
   []
   (binding [*current* nil
-      *doc* nil
-	    *index* 0]
+            *doc* nil
+	          *index* 0]
     (dosync (ref-set solr 
-      (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "morph-search/"))]
+      (let [c (.build (Http2SolrClient$Builder.))
+            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "morph-search/") c)]
+        (.setRequestWriter c (BinaryRequestWriter.))
         (-> cb (.withQueueSize 5000) 
           (.withThreadCount nthreads)
-          (.build))))
-	    (.setRequestWriter @solr (BinaryRequestWriter.)))
+          (.build)))))
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/greek.morph.unicode.xml")
     (load-morphs "/srv/data/papyri.info/git/navigator/pn-lemmas/latin.morph.xml")
-    (commit-and-optimize "morph-search")))
+    (commit "morph-search")
+    (.close @solr)
+    (System/exit 0)))
 
 (defn -loadBiblio
   "Loads bibliographic data into the biblio-search Solr index."
@@ -968,11 +892,12 @@
   (init-templates (str xsltpath "/Biblio2Solr.xsl") nthreads "info.papyri.indexer/bibsolrtemplates")
   (init-templates (str xsltpath "/Biblio2HTML.xsl") nthreads "info.papyri.indexer/bibhtmltemplates")
   (dosync (ref-set solrbiblio 
-    (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "biblio-search/"))]
+    (let [c (.build (Http2SolrClient$Builder.))
+          cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "biblio-search/") c)]
+      (.setRequestWriter c (BinaryRequestWriter.))
       (-> cb (.withQueueSize 1000) 
         (.withThreadCount nthreads)
-        (.build))))
-    (.setRequestWriter @solrbiblio (BinaryRequestWriter.)))
+        (.build)))))
 
   ;; Generate and Index bibliography
   (println "Generating and indexing bibliography...")
@@ -993,25 +918,27 @@
     (doto pool
       (.shutdown)))
 
-  (println "Optimizing index...")
-  (commit-and-optimize "biblio-search"))
+  (println "Committing index...")
+  (commit "biblio-search")
+  (.close @solrbiblio)
+  (System/exit 0))
 
 (defn queue-docs
   [args]
   (dosync (ref-set html (ConcurrentLinkedQueue.)))
   (if (nil? (first args))
     (do
-      (println "Queueing DDbDP...")
-      (queue-collections "http://papyri.info/ddbdp" () ())
+      (println "Queueing Current")
+      (queue-collections "https://papyri.info/current" '() ())
       (println (str "Queued " (count @html) " documents."))
-      (println "Queueing DCLP...")
-      (queue-collections "http://papyri.info/dclp" '("ddbdp") ())
+      (println "Queueing Historical Editions...")
+      (queue-collections "https://papyri.info/editions" '() ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing HGV...")
-      (queue-collections "http://papyri.info/hgv" '("ddbdp", "dclp") ())
+      (queue-collections "https://papyri.info/hgv" '("ddbdp", "dclp", "editions", "current") ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
-      (queue-collections "http://papyri.info/apis" '("ddbdp", "dclp", "hgv") ())
+      (queue-collections "https://papyri.info/apis" '("ddbdp", "dclp", "hgv", "editions", "current") ())
       (println (str "Queued " (count @html) " documents.")))
     (doseq [arg args] (queue-item arg))))
 
@@ -1056,38 +983,69 @@
 (defn -index
   "Runs the main PN indexing process."
   []
-  (dosync (ref-set solr
-    (let [cb (ConcurrentUpdateSolrClient$Builder. (str solrurl "pn-search/"))]
-      (-> cb (.withQueueSize 50) 
-        (.withThreadCount 1)
-        (.build))))
-	  (.setRequestWriter @solr (BinaryRequestWriter.)))
+  (System/setProperty "solr.cloud.client.stallTime" "1000000") ;; 1000 seconds
+  (let [c (.build (Http2SolrClient$Builder.))]
+    (dosync (ref-set solr
+      (let [c (.build (Http2SolrClient$Builder.))
+            cb (ConcurrentUpdateHttp2SolrClient$Builder. (str solrurl "pn-search") c true)]
+        (.setRequestWriter c (BinaryRequestWriter.))
+        (-> cb (.withQueueSize 100) 
+          (.withThreadCount nthreads)
+          (.build))
+          )))
+    (.blockUntilFinished @solr)
+    ;; Index docs queued in @text
+    (let [pool (Executors/newFixedThreadPool nthreads)
+          tasks
+        (map (fn [x]
+            (fn []
+        (when (not (.startsWith (first x) "http"))
+          (transform (first x)
+                (list (second x) (nth x 2) (nth x 7) (nth x 10)) ;; collection, related, images, translations
+                (dochandler) @solrtemplates)))) @text)]
+      (doseq [^Future future (.invokeAll pool tasks)]
+        (.get future))
+      (println "Finished indexing " (count @text) " documents.")
+      (doto pool
+        (.shutdown))))
 
-  ;; Index docs queued in @text
-  (println "Indexing text...")
-  (let [pool (Executors/newFixedThreadPool 1)
-        tasks
-    	(map (fn [x]
-  	       (fn []
-  		 (when (not (.startsWith (first x) "http"))
-  		   (transform (first x)
-  			      (list (second x) (nth x 2) (nth x 6))
-  			      (dochandler) @solrtemplates)))) @text)]
-    (doseq [^Future future (.invokeAll pool tasks)]
-      (.get future))
-    (doto pool
-      (.shutdown)))
+    (println "Committing...")
+    (commit "pn-search")
 
-  (println "Optimizing index...")
-  (commit-and-optimize "pn-search")
+    (dosync (ref-set html nil)
+      (ref-set text nil)
+      (ref-set solrtemplates nil))
+    (println "Done indexing.")
+    (.close @solr))
 
-  (dosync (ref-set html nil)
-    (ref-set text nil)
-    (ref-set solrtemplates nil))
-
-  ;;(print-words)
-  )
-
+(defn sample-data
+  [index]
+  (dosync (ref-set html (ConcurrentLinkedQueue.)))
+  (queue-collections "https://papyri.info/editions/aegyptus" () ())
+  (queue-collections "https://papyri.info/editions/p.mich" () ())
+  (queue-collections "https://papyri.info/editions/bgu/1" () ())
+  (queue-collections "https://papyri.info/editions/bifao/117" () ())
+  (queue-collections "https://papyri.info/editions/p.kru" () ())
+  (queue-collections "https://papyri.info/editions/pylon/7" () ())
+  (queue-collections "https://papyri.info/editions/basp" () ())
+  (doseq [source (.toArray @html)] 
+    (let [url (str (second (nth source 11)) "/source")] 
+      (queue-sources url)))
+  (init-templates (str xsltpath "/MakeHTML.xsl") nthreads "info.papyri.indexer/htmltemplates")
+  (init-templates (str xsltpath "/MakeSolr.xsl") nthreads "info.papyri.indexer/solrtemplates")
+  (init-templates (str xsltpath "/MakeText.xsl") nthreads "info.papyri.indexer/texttemplates")
+  (println "Generating HTML...")
+  (generate-html)
+  (println "Generating text...")
+  (generate-text)
+  (if index 
+    (do 
+      (println "Indexing sample data...")
+      (-index))
+    (println "Skipping indexing."))
+  (-index)
+  (println "Done.")
+  (System/exit 0))
 
 (defn -main [& args]
   (if (> (count args) 0)
@@ -1095,8 +1053,11 @@
       "load-lemmas" (-loadLemmas)
       "biblio" (-loadBiblio)
       "generate-pages" (-generatePages (rest args))
-      "process-tm" (preprocess-tm)
+      "sample" (sample-data true)
+      "sample-pages" (sample-data false)
       (do (-generatePages args)
-        (-index)))
+        (-index)
+        (System/exit 0)))
     (do (-generatePages args)
-      (-index))))
+      (-index)
+      (System/exit 0))))

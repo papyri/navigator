@@ -1,7 +1,6 @@
 package info.papyri.dispatch.browse.facet;
 
 import info.papyri.dispatch.FileUtils;
-import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.SolrUtils;
 import info.papyri.dispatch.browse.DocumentBrowseRecord;
 import info.papyri.dispatch.browse.IdComparator;
@@ -9,6 +8,8 @@ import info.papyri.dispatch.browse.SolrField;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
 import info.papyri.dispatch.browse.facet.customexceptions.CustomApplicationException;
 import info.papyri.dispatch.browse.facet.customexceptions.FacetNotFoundException;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,19 +19,25 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.solr.client.solrj.SolrQuery;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import java.util.logging.Level;
@@ -81,20 +88,36 @@ public class FacetBrowser extends HttpServlet {
    */
   static String INSTRUCTIONS_PATH;
   static int SOCKET_TIMEOUT = 20000;
-  
+
   private static Logger logger = Logger.getLogger("pn-dispatch");
+
+  private static HttpJettySolrClient solrClient;
+
+  private static Predicate<? super Object> isCurrentCollection = s -> s.equals("current");
 
   @Override
   public void init(ServletConfig config) throws ServletException {
 
     super.init(config);
-    SOLR_URL = config.getInitParameter("solrUrl");
+    SOLR_URL = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
     SOLR_UTIL = new SolrUtils(config);
     home = config.getInitParameter("home");
     PN_SEARCH = config.getInitParameter("pnSearchPath");
     FACET_PATH = config.getInitParameter("facetBrowserPath");
     INSTRUCTIONS_PATH = config.getInitParameter("instructionsPath");
-    SERVER_HOME = config.getInitParameter("serverHome");
+    // Use environment variable SERVER_HOME first, fallback to web.xml serverHome param
+    SERVER_HOME = System.getenv("SERVER_HOME") != null
+      ? System.getenv("SERVER_HOME") : config.getInitParameter("serverHome");
+
+    if (solrClient == null) {
+      synchronized (FacetBrowser.class) { 
+        if (solrClient == null) {
+          solrClient = new HttpJettySolrClient.Builder(SOLR_URL + PN_SEARCH)
+                  .withConnectionTimeout(SOCKET_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS).build();
+        }
+      }
+    }
+
     try {
       FACET_URL = new URL("file://" + home + "/" + "facetbrowse.html");
     } catch (MalformedURLException e) {
@@ -123,8 +146,8 @@ public class FacetBrowser extends HttpServlet {
     /* Make sure both the request and the response are properly encoded */
     response.setContentType("text/html;charset=UTF-8");
     request.setCharacterEncoding("UTF-8");
-    
-    if (request.getQueryString() != null && URLDecoder.decode(request.getQueryString(), "UTF-8").toLowerCase().contains("<script")) {
+
+    if (request.getQueryString() != null && URLDecoder.decode(request.getQueryString(), "UTF-8").toLowerCase().contains("><")) {
         response.sendError(400, "No XSS today, thank you.");
         return;
     }
@@ -141,17 +164,28 @@ public class FacetBrowser extends HttpServlet {
     Boolean constraintsPresent = parseRequestToFacets(request, facets);
 
     /* determine what page of results has been requested ('0' if no page requested and
-     * this is therefore the first page of results). 
-     * 
+     * this is therefore the first page of results).
+     *
      * Required for building the facet query.
      */
     int page = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 1;
 
-    /* Build the SolrQuery object to be used in querying Solr out of query parts contributed 
+    /* Build the SolrQuery object to be used in querying Solr out of query parts contributed
      * by each of the facets in turn.
      */
     SolrQuery solrQuery = buildFacetQuery(page, facets, docsPerPage);
     solrQuery.add("project", "IDP");
+
+    /* Scope the query to a single collection so that facet counts and the result
+     * total both reflect distinct texts rather than the raw document count.
+     */
+    String collectionScope = request.getParameter("COLLECTION");
+    if (collectionScope == null || !Arrays.asList("all", "current", "editions", "ddbdp", "hgv", "apis", "dclp").contains(collectionScope)) {
+      collectionScope = "current";
+    }
+    if (!"all".equals(collectionScope)) {
+      solrQuery.addFilterQuery("collection:" + collectionScope);
+    }
 
     ArrayList<CustomApplicationException> exceptionLog = collectFacetExceptions(facets);
 
@@ -168,9 +202,9 @@ public class FacetBrowser extends HttpServlet {
       queryResponse = new QueryResponse();
     }
 
-    /* Determine the number of results returned. 
-     * 
-     * Required for assembleHTML method 
+    /* Determine the number of results returned.
+     *
+     * Required for assembleHTML method
      */
     long resultSize = queryResponse.getResults() == null ? 0 : queryResponse.getResults().getNumFound();
 
@@ -189,15 +223,9 @@ public class FacetBrowser extends HttpServlet {
        of which represents one returned document. */
       ArrayList<DocumentBrowseRecord> returnedRecords = retrieveRecords(solrQuery, queryResponse, facets);
 
-      /* Generate the HTML necessary to display the facet widgets, the facet constraints, 
+      /* Generate the HTML necessary to display the facet widgets, the facet constraints,
        * the returned records, and pagination information */
-      Map<String, String[]> params = new HashMap<>();
-      request.getParameterMap().forEach((key, value) -> {
-        params.put(key, value);
-      });
-
-      params.replaceAll((key, value) -> ServletUtils.scrub(value));
-      String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, params, docsPerPage, exceptionLog, page);
+      String html = this.assembleHTML(facets, constraintsPresent, resultSize, returnedRecords, request.getParameterMap(), docsPerPage, exceptionLog, page);
 
       /* Inject the generated HTML */
       displayBrowseResult(response, html);
@@ -216,7 +244,7 @@ public class FacetBrowser extends HttpServlet {
 
     facets.add(new StringSearchFacet());
     facets.add(new IdentifierFacet());
-    facets.add(new PlaceFacet());
+    facets.add(new PlaceNameFacet());
     facets.add(new NomeFacet());
     facets.add(new DateFacet());
     facets.add(new LanguageFacet());
@@ -286,13 +314,12 @@ public class FacetBrowser extends HttpServlet {
    * @param pageNumber
    * @param facets
    * @return The <code>SolrQuery</code>
-   * @see Facet#buildQueryContribution(org.apache.solr.client.solrj.SolrQuery)
    */
   SolrQuery buildFacetQuery(int pageNumber, ArrayList<Facet> facets, int docsPerPage) {
 
     SolrQuery sq = new SolrQuery();
     sq.setFacetMissing(true);
-    sq.setFacetMinCount(1);         // we don't want to see zero-count values            
+    sq.setFacetMinCount(1);         // we don't want to see zero-count values
     sq.setRows(docsPerPage);
     sq.setStart((pageNumber - 1) * docsPerPage);
 
@@ -326,30 +353,18 @@ public class FacetBrowser extends HttpServlet {
    * @return The <code>QueryResponse</code> returned by the Solr server
    */
   private QueryResponse runFacetQuery(SolrQuery sq) {
-    HttpSolrClient solr = new HttpSolrClient.Builder(SOLR_URL + PN_SEARCH)
-            .withSocketTimeout(SOCKET_TIMEOUT).build();
     try {
-      //logger.info(sq.toString());
-      QueryResponse qr = solr.query(sq, SolrRequest.METHOD.POST);
-      return qr;
+      return solrClient.query(sq, SolrRequest.METHOD.POST);
     } catch (MalformedURLException murle) {
-      logger.log(Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage(), murle);
+      DispatchErrbitConfigProvider.report(murle, Level.SEVERE, "MalformedURLException at info.papyri.dispatch.browse.facet.FacetBrowser: " + murle.getMessage());
       return null;
     } catch (SolrServerException sse) {
-      logger.log(Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage(), sse);
+      DispatchErrbitConfigProvider.report(sse, Level.SEVERE, "SolrServerException at info.papyri.dispatch.browse.facet.FacetBrowser: " + sse.getMessage());
       return null;
     } catch (IOException ex) {
-        logger.log(Level.SEVERE, null, ex);
-        return null;
-    } finally {
-      try {
-        solr.close();
-      } catch (IOException ioe) {
-        logger.log(Level.WARNING, "Error closing Solr client.");
-      }
+      DispatchErrbitConfigProvider.report(ex, Level.SEVERE);
+      return null;
     }
-
-
   }
 
   ArrayList<CustomApplicationException> collectFacetExceptions(ArrayList<Facet> facets) {
@@ -424,26 +439,27 @@ public class FacetBrowser extends HttpServlet {
 
         URL url = new URL((String) doc.getFieldValue(SolrField.id.name()));                 // link to full record
         Boolean placeIsNull = doc.getFieldValue(SolrField.display_place.name()) == null;
-        String place = placeIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_place.name());   // i.e., provenance
+        String place = placeIsNull ? "---" : (String) doc.getFieldValue(SolrField.display_place.name());   // i.e., provenance
         Boolean dateIsNull = doc.getFieldValue(SolrField.display_date.name()) == null;
-        String date = dateIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.display_date.name());      // original language
+        String date = dateIsNull ? "---" : (String) doc.getFieldValue(SolrField.display_date.name());      // original language
         Boolean titleIsNull = doc.getFieldValue(SolrField.title.name()) == null;
         ArrayList<String> documentTitles = titleIsNull ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.title.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
         Boolean languageIsNull = doc.getFieldValue(SolrField.facet_language.name()) == null;
-        String language = languageIsNull ? "Not recorded" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
+        String language = languageIsNull ? "---" : (String) doc.getFieldValue(SolrField.facet_language.name()).toString().replaceAll("\\[", "").replaceAll("\\]", "");
         Boolean noTranslationLanguages = doc.getFieldValue(SolrField.translation_language.name()) == null;
         String translationLanguages = noTranslationLanguages ? "None" : (String) doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
         ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
         Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
         ArrayList<String> allIds = getAllSortedIds(doc);
         String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
-        DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchClauses);
+        Boolean isCurrent = doc.getFieldValues("collection").stream().anyMatch(isCurrentCollection);
+        DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchClauses, isCurrent);
         setLinearBrowseData(solrQuery, queryResponse, counter, record);
         records.add(record);
         counter++;
 
       } catch (MalformedURLException mue) {
-        logger.log(Level.SEVERE, "Malformed URL in retrieveRecords: " + mue.getMessage(), mue);
+        DispatchErrbitConfigProvider.report(mue, Level.SEVERE, "Malformed URL in retrieveRecords: " + mue.getMessage());
       }
     }
 
@@ -490,19 +506,35 @@ public class FacetBrowser extends HttpServlet {
   private String assembleHTML(ArrayList<Facet> facets, Boolean constraintsPresent, long resultsSize, ArrayList<DocumentBrowseRecord> returnedRecords, Map<String, String[]> submittedParams, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog, int page) {
 
     StringBuilder html = new StringBuilder();
-    html.append("<form name=\"facets\" method=\"get\" action=\"");
+
+    html.append("<form id=\"facets\" name=\"facets\" method=\"get\" action=\"");
     html.append(FACET_PATH);
     html.append("\"> ");
-    html.append("<div id=\"facet-wrapper\">");
-    assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
-    html.append("<div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
+    html.append("<div class=\"row g-5\">");
+    html.append("  <section id=\"content\" class=\"col order-last\" aria-label=\"search results\">");
+
+    html.append("    <div id=\"vals-and-records-wrapper\" class=\"vals-and-records-min\">");
     if (constraintsPresent) {
       assemblePreviousValuesHTML(facets, html, submittedParams, docsPerPage);
     }
     assembleRecordsHTML(facets, returnedRecords, constraintsPresent, resultsSize, html, docsPerPage, exceptionLog, page);
-    html.append("</div><!-- closing #vals-and-records-wrapper -->");
-    html.append("</div><!-- closing #facet-wrapper -->");
+    html.append("    </div><!-- closing #vals-and-records-wrapper -->");
+
+    html.append("  </section>");
+    html.append("  <section id=\"sidebar\" class=\"page-sidebar col-lg-4 order-first border-end border-1 position-relative\" aria-label=\"limit your search\">");
+    html.append("    <button id=\"toggleNavButton\" class=\"btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-2\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#sidebarContent\" aria-expanded=\"true\" aria-label=\"Hide Filters\" aria-controls=\"sidebarContent\">");
+    html.append("      <span id=\"toggleNavLabel\" class=\"d-inline-block d-lg-none\">Hide Filters</span><span id=\"toggleIcon\" class=\"d-inline-block\"><i class=\"bi bi-chevron-left m-0\"></i></span>");
+    html.append("    </button>");
+
+    html.append("    <div id=\"sidebarContent\" class=\"collapse collapse-horizontal show\">");
+    html.append("        <div id=\"facet-wrapper\">");
+    assembleWidgetHTML(facets, constraintsPresent, html, submittedParams);
+    html.append("        </div><!-- closing #facet-wrapper -->");
+    html.append("    </div>");
+    html.append("  </section>");
+    html.append("</div>");
     html.append("</form>");
+
     return html.toString();
 
   }
@@ -520,19 +552,20 @@ public class FacetBrowser extends HttpServlet {
    */
   private StringBuilder assembleWidgetHTML(ArrayList<Facet> facets, Boolean hasConstraints, StringBuilder html, Map<String, String[]> submittedParams) {
 
-    html.append("<div id=\"facet-widgets-wrapper\" class=\"search search-open\">");
-    html.append("<div id=\"search-toggle\" class=\"toggle-open\"><div id=\"search-toggle-pointer\">&lt;&lt;</div><!-- closing #pointer --></div><!-- closing #toggler -->");
-    String heading = hasConstraints ? "Refine Search" : "Search";
-    html.append("<h2>");
+    html.append("<div id=\"facet-widgets-wrapper\">");
+ 
+    String heading = hasConstraints ? "Refine <span class=\"d-none d-sm-inline\">Search</span>" : "Search";
+    html.append("<div class=\"d-flex justify-content-between align-items-center\">");
+    html.append("<h2 class=\"h4\">");
     html.append(heading);
     html.append("</h2>");
-    html.append("<div id=\"search-reset-wrapper\">");
-    html.append("<a href=\"");
-    html.append(FacetBrowser.FACET_PATH);
-    html.append("\" id=\"reset-all\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" aria-disabled=\"false\">New Search</a>");
-    html.append("<input type=\"submit\" value=\"Search\" id=\"search\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
-    html.append("</div>");
 
+    html.append("<div class=\"mb-2 new-search\">");
+    html.append("  <a href=\"");
+    html.append(FacetBrowser.FACET_PATH);
+    html.append("\" id=\"reset-all\" role=\"button\" class=\"btn btn-outline-primary btn-sm\" aria-disabled=\"false\">Start Over</a>");
+    html.append("</div>");
+    html.append("</div>");
 
     try {
 
@@ -559,8 +592,8 @@ public class FacetBrowser extends HttpServlet {
       html.append(authorFacet.generateWidget());
       Facet workFacet = findFacet(facets, WorkFacet.class);
       html.append(workFacet.generateWidget());
-      Facet placeFacet = findFacet(facets, PlaceFacet.class);
-      html.append(placeFacet.generateWidget());
+      Facet placeNameFacet = findFacet(facets, PlaceNameFacet.class);
+      html.append(placeNameFacet.generateWidget());
       Facet nomeFacet = findFacet(facets, NomeFacet.class);
       html.append(nomeFacet.generateWidget());
       Facet dateFacet = findFacet(facets, DateFacet.class);
@@ -569,11 +602,10 @@ public class FacetBrowser extends HttpServlet {
       html.append(langFacet.generateWidget());
       Facet translFacet = findFacet(facets, TranslationFacet.class);
       html.append(translFacet.generateWidget());
-      Facet imgFacet = findFacet(facets, HasImagesFacet.class);
-      html.append(imgFacet.generateWidget());
       Facet transcFacet = findFacet(facets, HasTranscriptionFacet.class);
       html.append(transcFacet.generateWidget());
-
+      Facet imgFacet = findFacet(facets, HasImagesFacet.class);
+      html.append(imgFacet.generateWidget());
 
 
     } catch (FacetNotFoundException fnfe) {
@@ -583,6 +615,13 @@ public class FacetBrowser extends HttpServlet {
       html.append(" -->");
 
     }
+
+    html.append("<div class=\"mb-2 text-end\">");
+    html.append("  <a href=\"");
+    html.append(FacetBrowser.FACET_PATH);
+    html.append("\" id=\"reset-all-bottom\" class=\"btn btn-outline-primary\" role=\"button\" aria-disabled=\"false\">Start Over</a>");
+    html.append("  <input type=\"submit\" value=\"Search\" id=\"search-btn-bottom\" class=\"btn btn-primary\" role=\"button\" aria-disabled=\"false\"/>");
+    html.append("</div>");
 
     html.append("</div><!-- closing #facet-widgets-wrapper -->");
     return html;
@@ -608,29 +647,51 @@ public class FacetBrowser extends HttpServlet {
    */
   private StringBuilder assembleRecordsHTML(ArrayList<Facet> facets, ArrayList<DocumentBrowseRecord> returnedRecords, Boolean constraintsPresent, long resultSize, StringBuilder html, int docsPerPage, ArrayList<CustomApplicationException> exceptionLog, int page) {
 
+    html.append("<h1 class=\"visually-hidden\">Search</h1>");
+
     html.append("<div id=\"facet-records-wrapper\">");
     html.append("<div id=\"results-prefix-wrapper\">");
-    int topMargin = resultSize == 0 || !constraintsPresent ? 30 : 10;
-    html.append("<div id=\"results-prefix\" style=\"margin-top:");
-    html.append(String.valueOf(topMargin));
-    html.append("px\">");
-    html.append("<div id=\"docs-per-page\">");
-    html.append("<label for=\"");
+
+    html.append("<div id=\"results-prefix\" class=\"d-flex justify-content-between\">");
+
+    html.append("  <div id=\"docs-per-page\" class=\"row order-2 g-1 align-items-center justify-content-end mb-2\">");
+    html.append("    <div class=\"col-auto\">");
+    html.append("      <label for=\"");
     html.append(FacetParam.DOCS_PER_PAGE.name());
-    html.append("\">Records per page</label>");
-    html.append("<input type=\"text\" name=\"");
+    html.append("\" class=\"col-form-label form-control-sm\">Records per page</label>");
+    html.append("    </div>");
+    html.append("    <div class=\"col-auto\">");
+    html.append("      <div class=\"input-group input-group-sm\">");
+    html.append("        <input type=\"text\" name=\"");
     html.append(FacetParam.DOCS_PER_PAGE.name());
     html.append("\" value=\"");
     html.append(String.valueOf(docsPerPage));
     html.append("\" id=\"");
     html.append(FacetParam.DOCS_PER_PAGE.name());
-    html.append("\" maxlength=\"3\"></input>");
-    html.append("<input type=\"submit\" value=\"Go\" id=\"img-go\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" role=\"button\" aria-disabled=\"false\"/>");
-    html.append("</div><!-- closing #docs-per-page -->");
+    html.append("\" class=\"form-control bg-white\" maxlength=\"3\" aria-label=\"Records per page\" style=\"width: 3rem;\"/>");
+    html.append("        <button class=\"btn btn-light\" type=\"submit\" id=\"img-go\">Go</button>");
+    html.append("      </div>");
+    html.append("    </div>");
+    html.append("  </div><!-- closing #docs-per-page -->");
+
+    html.append("<div class=\"order-1");
+    if (resultSize == 0 || !constraintsPresent) {
+      html.append(" invisible");
+    }
+    html.append("\"><span class=\"fs-4 fw-semibold\">");
+
+    html.append(String.format("%,d", resultSize));
+    html.append("</span>");
+    html.append(resultSize > 1 ? " results" : " result");
+    html.append("</div>");
+
+    html.append("</div><!-- closing #results-prefix -->");
+    html.append("</div><!-- closing #results-prefix-wrapper -->");
+
     if (!constraintsPresent && exceptionLog.size() == 0) {
 
-      html.append("<div id=\"opening-info\"><h2>Please select values from the left-hand column to return results</h2></div>");
-      html.append("<noscript><div id=\"js-warning\"><p>You appear to have Javascript turned off in your browser.</p><p>Unfortunately, this site depends on Javascript in order to display correctly.</p><p>Please enable Javascript before searching.</p></div></noscript>");
+      html.append("<div class=\"alert alert-warning\">Please select values from the left-hand column to return results</div>");
+      html.append("<noscript><div class=\"alert alert-warning\" id=\"js-warning\"><p>You appear to have Javascript turned off in your browser.</p><p>Unfortunately, this site depends on Javascript in order to display correctly.</p><p>Please enable Javascript before searching.</p></div></noscript>");
       html.append(getInstructions());
     } else if (exceptionLog.size() > 0) {
 
@@ -643,21 +704,23 @@ public class FacetBrowser extends HttpServlet {
       html.append("<h2>0 documents found matching criteria set.</h2>");
       html.append("<p>To determine why this is, try setting or removing criteria one at a time to see how this affects the results returned.</p>");
 
-    } else {
-
-      html.append("<p>");
-      html.append(String.valueOf(resultSize));
-      html.append(resultSize > 1 ? " hits." : " hit");
-      html.append("</p>");
-
     }
-    html.append("</div><!-- closing #results-prefix -->");
-    html.append("</div><!-- closing #results-prefix-wrapper -->");
 
     if (constraintsPresent && resultSize > 0) {
-
-      html.append("<table>");
-      html.append("<tr class=\"tablehead\"><td>Identifier</td><td>Title</td><td>Location</td><td>Date</td><td>Languages</td><td>Translations</td><td>Images</td></tr>");
+      html.append("<div class=\"table-responsive-sm\">");
+      html.append("<table id=\"search-results-table\" class=\"table table-borderless\">");
+      html.append("  <thead>");
+      html.append("    <tr>");
+      html.append("      <th scope=\"col\"><span class=\"d-none d-xxl-inline\">Identifier</span><span class=\"d-inline d-xxl-none\" title=\"Identifier\">ID</span></th>");
+      html.append("      <th scope=\"col\">Title</th>");
+      html.append("      <th scope=\"col\">Location</th>");
+      html.append("      <th scope=\"col\">Date</th>");
+      html.append("      <th scope=\"col\">Language</th>");
+      html.append("      <th scope=\"col\">Translation</th>");
+      html.append("      <th scope=\"col\">Images</th>");
+      html.append("    </tr>");
+      html.append("  </thead>");
+      html.append("  <tbody>");
       Iterator<DocumentBrowseRecord> rit = returnedRecords.iterator();
 
       while (rit.hasNext()) {
@@ -666,7 +729,9 @@ public class FacetBrowser extends HttpServlet {
         html.append(dbr.getHTML());
 
       }
+      html.append("  </tbody>");
       html.append("</table>");
+      html.append("</div><!-- closing .table-responsive-sm -->");
       html.append(doPagination(facets, resultSize, docsPerPage, page));
 
     }
@@ -694,6 +759,7 @@ public class FacetBrowser extends HttpServlet {
 
 
     StringBuilder previousHTMLValues = new StringBuilder("<div id=\"previous-values\">");
+    previousHTMLValues.append("  <h2 class='h4'>Filtered by</h2>");
     Iterator<Facet> fit = facets.iterator();
 
     while (fit.hasNext()) {
@@ -719,26 +785,32 @@ public class FacetBrowser extends HttpServlet {
             String facetValue = fvit.next();
             String displayName = facet.getDisplayName(param, facetValue);
             String displayFacetValue = facet.getDisplayValue(facetValue);
+            String accessibleLabel = "Remove filter " + displayName + ": " + displayFacetValue.replaceAll("<[^>]*>", " ");
             String queryString = this.buildFilteredQueryString(facets, facet, param, facetValue, docsPerPage);
-            values.append("<div class='facet-constraint constraint-");
-            values.append(param.toLowerCase());
-            values.append("'>");
-            values.append("<div class='constraint-label'>");
-            values.append(displayName);
-            if (!"".equals(displayName)) {
-              values.append("<span class='semicolon'>:</span> ");
-            }
-            values.append(displayFacetValue);
-            values.append("</div><!-- closing .constraint-label -->");
-            values.append("<div class='constraint-closer'>");
+
             values.append("<a href='");
             values.append(FACET_PATH);
             values.append("".equals(queryString) ? "" : "?");
             values.append(queryString);
-            values.append("' title ='Remove facet value'>X</a>");
-            values.append("</div><!-- closing .constraint-closer -->");
-            values.append("<div class='spacer'></div>");
-            values.append("</div><!-- closing .facet-constraint -->");
+            values.append("' class='badge rounded-pill bg-light text-dark fs-6 text-decoration-none py-2 me-2 mb-2 facet-constraint mw-100 text-truncate constraint-");
+            values.append(param.toLowerCase());
+            values.append("' aria-label='");
+            values.append(accessibleLabel);
+            values.append("' title='");
+            values.append(accessibleLabel);
+            values.append("'>");
+
+            values.append(displayName);
+            if (!"".equals(displayFacetValue)) {
+              values.append("  <span class='semicolon'>:</span> ");
+            }
+
+            values.append("  <span class='constraint-label fw-semibold'>");
+            values.append(displayFacetValue);
+            values.append("  </span><!-- closing .constraint-label -->");
+
+            values.append("  <i class=\"bi bi-x-circle-fill\"></i>");
+            values.append("</a><!-- closing .facet-constraint -->");
           }
 
         }
@@ -748,11 +820,11 @@ public class FacetBrowser extends HttpServlet {
       String valueString = values.toString();
       if (valueString.length() > 0) {
 
-        previousHTMLValues.append("<div class='prev-constraint-wrapper' id='prev-constraint-");
-        previousHTMLValues.append(facet.getCSSSelectorID());
+        previousHTMLValues.append("<span class='prev-constraint-wrapper d-inline-block mw-100' id='prev-constraint-");
+        previousHTMLValues.append(facet.getCSSSelector());
         previousHTMLValues.append("'>");
         previousHTMLValues.append(values);
-        previousHTMLValues.append("</div><!-- closing .prev-constraint-wrapper -->");
+        previousHTMLValues.append("</span><!-- closing .prev-constraint-wrapper -->");
 
 
       }
@@ -837,7 +909,7 @@ public class FacetBrowser extends HttpServlet {
    * @param facets
    * @param resultSize
    * @return The HTML used for pagination display, as a <code>String</code>
-   * @see #buildFullQueryString(java.util.EnumMap)
+   * @see #`buildFullQueryString(java.util.EnumMap)
    */
   private String doPagination(ArrayList<Facet> facets, long resultSize, int docsPerPage, int page) {
 
@@ -851,22 +923,16 @@ public class FacetBrowser extends HttpServlet {
 
     String fullQueryString = buildFullQueryString(facets, docsPerPage);
 
-    double widthEach = 8;
-    double totalWidth = widthEach * numPages;
-    totalWidth = totalWidth > 100 ? 100 : totalWidth;
-
-    StringBuilder html = new StringBuilder("<div id='pagination' style='width:");
-    html.append(String.valueOf(totalWidth));
-    html.append("%'>");
+    StringBuilder html = new StringBuilder("<div class='pagination-wrapper d-flex justify-content-between border-top pt-4'><ul id='results-pagination' class='pagination flex-wrap'>");
 
     for (long i = 1; i <= numPages; i++) {
 
-      html.append("<div class=\"page");
+      html.append("<li class=\"page-item");
       if (i == page) {
-        html.append(" currentpage");
+        html.append(" active");
       }
       html.append("\">");
-      html.append("<a href='");
+      html.append("<a class=\"page-link\" href='");
       html.append(FACET_PATH);
       html.append("?");
       html.append(fullQueryString);
@@ -875,12 +941,25 @@ public class FacetBrowser extends HttpServlet {
       html.append("'>");
       html.append(String.valueOf(i));
       html.append("</a>");
-      html.append("</div><!-- closing .page -->");
+      html.append("</li><!-- closing .page-item -->");
 
     }
 
-    html.append("<div class='spacer'></div><!-- closing .spacer -->");
-    html.append("</div><!-- closing #pagination -->");
+    html.append("</ul><!-- closing .pagination -->");
+
+    html.append("<div id=\"jump-to-page\" class=\"d-flex flex-wrap align-items-top justify-content-end flex-shrink-0 mb-2\">");
+    html.append("  <div class=\"col-auto\">");
+    html.append("    <label for=\"page-jump\" class=\"col-form-label form-control-sm\">Jump to page</label>");
+    html.append("  </div>");
+    html.append("  <div class=\"col-auto\">");
+    html.append("    <div class=\"input-group input-group-sm\">");
+    html.append("      <input type=\"text\" name=\"page-jump\" value=\"\" id=\"page-jump\" class=\"form-control bg-white\" pattern=\"^\\d+$\" min=\"1\" max=\"" + numPages + "\" placeholder=\"" + page + "\" aria-label=\"Jump to page\" style=\"width: 3rem;\">");
+    html.append("      <button class=\"btn btn-light\" type=\"button\" id=\"page-jump-go\">Go</button>");
+    html.append("    </div>");
+    html.append("  </div>");
+    html.append("</div>");
+    html.append("</div><!-- closing .pagination-wrapper -->");
+
     return html.toString();
 
   }
@@ -902,7 +981,7 @@ public class FacetBrowser extends HttpServlet {
     while (fit.hasNext()) {
 
       Facet facet = fit.next();
-      String queryString = ServletUtils.scrub(facet.getAsQueryString());
+      String queryString = facet.getAsQueryString();
       if (!"".equals(queryString)) {
         queryStrings.add(queryString);
       }
@@ -949,7 +1028,7 @@ public class FacetBrowser extends HttpServlet {
    * the <code>Facet</code> and submitted by the user.
    * @param facetValue The value to be 'removed'
    * @return A filtered querystring.
-   * @see Facet#getAsFilteredQueryString(java.lang.String)
+   * @see Facet#`getAsFilteredQueryString(java.lang.String)
    */
   private String buildFilteredQueryString(ArrayList<Facet> facets, Facet relFacet, String facetParam, String facetValue, int docsPerPage) {
 
@@ -1181,7 +1260,9 @@ public class FacetBrowser extends HttpServlet {
 
     SolrQuery newQuery = new SolrQuery();
 
-    String[] filterQueries = bigQuery.getFilterQueries();
+    // SolrJ returns null (not an empty array) when there are no filter queries 
+    // that have been added — e.g. queries that match all documents.
+    String[] filterQueries = bigQuery.getFilterQueries() != null ? bigQuery.getFilterQueries() : new String[0];
     List<SolrQuery.SortClause> sortFields = bigQuery.getSorts();
 
     try {

@@ -1,0 +1,3 @@
+[submodule "pn-xslt/schxslt"]
+	path = pn-xslt/schxslt
+	url = https://codeberg.org/SchXslt/schxslt2.git

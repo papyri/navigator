@@ -8,9 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -22,16 +22,7 @@ public class ServletUtils {
    * Cleans out any embedded markup in the input string.
    */
   public static String scrub(String in) {
-    return in.replaceAll("<[^>]+>", "")
-        .replaceAll("[;<>'\"]", "");
-  }
-
-  public static String[] scrub(String[] in) {
-    String[] out = new String[in.length];
-    for (int i = 0; i < in.length; i++) {
-      out[i] = scrub(in[i]);
-    }
-    return out;
+    return in.replaceAll("<[^>]+>", "");
   }
 
   public static void send(HttpServletResponse response, File f)

@@ -9,11 +9,11 @@ import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.jetty.HttpJettySolrClient;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
@@ -28,11 +28,11 @@ public class SolrUtils {
   private static String morphSearch = "morph-search/";
   
   public SolrUtils(ServletConfig config) {
-    solrUrl = config.getInitParameter("solrUrl");
+    solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
   }
   
   public String expandLemmas(String query) throws MalformedURLException, IOException, SolrServerException {
-    SolrClient solr = new HttpSolrClient.Builder(solrUrl + morphSearch).build();
+    SolrClient solr = new HttpJettySolrClient.Builder(solrUrl + morphSearch).build();
     StringBuilder exp = new StringBuilder();
     SolrQuery sq = new SolrQuery();
     String[] lemmas = query.split("\\s+");

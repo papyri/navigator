@@ -3,7 +3,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:dc="http://purl.org/dc/terms/" 
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:pi="http://papyri.info/ns/"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -71,7 +71,7 @@
   <xsl:include href="../epidoc-xslt/htm-tpl-structure.xsl"/>
   <xsl:include href="metadata.xsl"/>
   <xsl:key name="lang-codes" match="//pi:lang-codes-to-expansions" use="@code"></xsl:key>
-  <xsl:param name="collection"/>
+  <xsl:param name="collection" required="yes"/>
   <xsl:param name="related"/>
   <xsl:param name="replaces"/>
   <xsl:param name="isReplacedBy"/>
@@ -83,7 +83,7 @@
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
   <xsl:variable name="path">/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/data/papyri.info/pn/idp.html</xsl:variable>
-  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:variable name="doc-id">
     <xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']"><xsl:value-of select="//t:idno[@type='apisid']"/></xsl:when>
@@ -124,6 +124,7 @@
   
   <xsl:template match="/">
     <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+    <xsl:variable name="dclp" select="$collection = 'dclp'"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, 'apis') and pi:get-docs($relations[contains(., 'apis')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
@@ -157,6 +158,7 @@
               <h2>DDbDP transcription: <xsl:value-of select="//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> [<a href="/ddbdp/{//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']}/source">xml</a>]</h2>
               <xsl:apply-templates select="/t:TEI">
                 <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+                <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
                 <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
                 <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
                 <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
@@ -236,6 +238,53 @@
             </xsl:if>
           </div>
         </xsl:if>
+      <xsl:if test="$collection = 'dclp'">
+        <div class="metadata">
+          <xsl:apply-templates select="/t:TEI" mode="metadata"/>
+          <xsl:if test="$hgv or $apis">
+            <xsl:for-each select="$relations[contains(., 'hgv/')]">
+              <xsl:sort select="." order="ascending"/>
+              <xsl:choose>
+                <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                  <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each>
+            <xsl:for-each select="$relations[contains(.,'trismegistos.org')]">
+              <xsl:sort select="." order="ascending"/>
+              <xsl:if test="doc-available(pi:get-filename(., 'xml'))">
+                <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/text" mode="metadata"/>
+              </xsl:if>
+            </xsl:for-each>
+            <xsl:for-each select="$relations[contains(., '/apis/')]">
+              <xsl:sort select="." order="ascending"/>
+              <xsl:choose>
+                <xsl:when test="doc-available(pi:get-filename(., 'xml'))">
+                  <xsl:apply-templates select="doc(pi:get-filename(., 'xml'))/t:TEI" mode="metadata"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:message>Error: <xsl:value-of select="pi:get-filename(., 'xml')"/> not available. Error in <xsl:value-of select="$doc-id"/>.</xsl:message></xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each>
+          </xsl:if>
+        </div>
+        <div class="text">
+          <xsl:if test="//t:div[@type='edition']//*">
+            <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='frontmatter']"/>
+            <xsl:apply-templates select="/t:TEI" mode="text">
+              <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
+              <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
+              <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
+              <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
+              <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
+              <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
+              <xsl:with-param name="parm-line-inc" select="$line-inc" tunnel="yes" as="xs:double"/>
+              <xsl:with-param name="parm-verse-lines" select="$verse-lines" tunnel="yes"/>
+            </xsl:apply-templates>
+            <xsl:apply-templates select="//t:div[@type='commentary'][@subtype='linebyline']"/>
+          </xsl:if>
+        </div>
+      </xsl:if>
         <xsl:if test="$collection = 'hgv'">
           <div class="metadata">
             <xsl:apply-templates select="/t:TEI" mode="metadata"/>

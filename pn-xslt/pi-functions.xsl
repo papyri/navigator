@@ -3,10 +3,13 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
   xmlns:dc="http://purl.org/dc/terms/" 
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-  xmlns:pi="http://papyri.info/ns"
-  xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:t="http://www.tei-c.org/ns/1.0"
+  xmlns:pi="http://papyri.info/ns/"
+  xmlns:tei="http://www.tei-c.org/ns/1.0" 
+  xmlns:t="http://www.tei-c.org/ns/1.0"
+  xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   exclude-result-prefixes="xs"
-  xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" version="2.0">
+  expand-text="yes"
+  version="3.0">
   
   <xsl:function name="pi:get-docs">
     <xsl:param name="urls"/>
@@ -28,11 +31,28 @@
     <xsl:param name="url"/>
     <xsl:param name="format"/>
     <xsl:variable name="base"><xsl:choose>
-      <xsl:when test="$format = 'xml'"><xsl:value-of select="$path"/></xsl:when>
+      <xsl:when test="$format='xml'"><xsl:value-of select="$path"/></xsl:when>
+      <xsl:when test="$format = 'json'"><xsl:value-of select="$tmbase"/></xsl:when>
       <xsl:when test="$format = 'html'"><xsl:value-of select="$outbase"/></xsl:when>
     </xsl:choose>
     </xsl:variable>
     <xsl:choose>
+      <xsl:when test="contains($url, 'editions')">
+        <xsl:variable name="id" select="pi:decode-uri-segment(substring-before(substring-after($url, 'papyri.info/editions/'), '/source'))"/>
+        <xsl:text>{$base}/Historical/{$id}.{$format}</xsl:text>
+      </xsl:when>
+      <xsl:when test="contains($url, 'current')">
+        <xsl:variable name="id" select="substring-before(substring-after($url, 'papyri.info/current/'), '/')"/>
+        <xsl:variable name="dir" select="floor(number(replace($id, '[a-z]', '')) div 1000)"/>
+        <xsl:choose>
+          <xsl:when test="doc-available(concat($base, '/DDbDP/', $dir, '/', $id, '.', $format ))">
+            <xsl:text>{$base}/DDbDP/{$dir}/{$id}.{$format}</xsl:text>
+          </xsl:when>
+          <xsl:when test="doc-available(concat($base, '/DCLP/', $dir, '/', $id, '.', $format))">
+            <xsl:text>{$base}/DCLP/{$dir}/{$id}.{$format}</xsl:text>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:when>
       <xsl:when test="contains($url, 'ddbdp')">
         <xsl:choose>
           <xsl:when test="matches($url, '^https?://papyri.info/ddbdp$')"><xsl:sequence select="concat($base, '/DDB_EpiDoc_XML/index.html')"/></xsl:when>
@@ -67,8 +87,10 @@
         </xsl:variable>
         <xsl:sequence select="concat($base, '/HGV_meta_EpiDoc/HGV', $dir, '/', replace(substring-after($url, 'papyri.info/hgv/'), '/source', ''), '.', $format)"/>
       </xsl:when>
-      <xsl:when test="contains($url, 'hgvtrans')">
-        <xsl:sequence select="concat($base, '/HGV_trans_EpiDoc/', substring-before(substring-after($url, 'papyri.info/hgvtrans/'), '/'), '.', $format)"/>
+      <xsl:when test="contains($url, 'translation')">
+        <xsl:variable name="id" select="replace($url, '^.+translation/(\d+-\d+)(/source)?$', '$1')"/>
+        <xsl:variable name="dir" select="floor(number(substring-before($id, '-')) div 1000)"/>
+        <xsl:sequence select="concat($base, '/Translations/', $dir, '/', $id, '.', $format)"/>
       </xsl:when>
       <xsl:when test="contains($url, 'apis')">
         <xsl:variable name="id" select="tokenize(replace(substring-after($url, 'papyri.info/apis/'), '/source', ''), '\.')"/>
@@ -84,12 +106,12 @@
       </xsl:when>
       <xsl:when test="contains($url, 'dclp/')">
         <xsl:variable name="tm" select="replace($url, '^.+dclp/(\d+)(/source)?$', '$1')"/>
-        <xsl:variable name="dir" select="ceiling(number($tm) div 1000)"/>
+        <xsl:variable name="dir" select="floor(number($tm) div 1000)"/>
         <xsl:sequence select="concat($base, '/DCLP/', $dir, '/', $tm, '.', $format)"/>
       </xsl:when>
       <!-- Like http://www.trismegistos.org/text/11999 -->
-      <xsl:when test="contains($url, 'trismegistos.org')">
-        <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'http://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'http://www.trismegistos.org/text/'), '.xml')"/>
+      <xsl:when test="contains($url, 'trismegistos')">
+        <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'https://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'https://www.trismegistos.org/text/'), '.json')"/>
       </xsl:when>
       <!-- Like https://papyri.info/biblio/54953/source -->
       <xsl:when test="contains($url, 'biblio/')">
@@ -385,6 +407,12 @@
       </xsl:when>
       <xsl:when test="$collection='dclp'">
         <xsl:sequence select="concat('https://papyri.info/dclp/', $pub-stmt/t:idno[@type = 'dclp'])"></xsl:sequence>
+      </xsl:when>
+      <xsl:when test="$collection = 'editions'">
+        <xsl:sequence select="concat('https://papyri.info/editions/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
+      </xsl:when>
+      <xsl:when test="$collection = 'current'">
+        <xsl:sequence select="concat('https://papyri.info/current/', $pub-stmt/t:idno[@type = 'filename'])"></xsl:sequence>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="concat('https://papyri.info/apis/', $pub-stmt/t:idno[@type = 'apisid'])"></xsl:sequence>

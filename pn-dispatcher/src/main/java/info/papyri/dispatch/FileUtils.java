@@ -3,11 +3,16 @@ package info.papyri.dispatch;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.antlr.runtime.*;
+
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,9 +32,9 @@ public class FileUtils {
     this.xmlPath = xmlPath;
     this.htmlPath = htmlPath;
   }
-  
+
   /*
-   * Constructor for cases where only XML file resolution will be needed. 
+   * Constructor for cases where only XML file resolution will be needed.
    * NOTE: methods dealing with HTML files will throw a NullPointerException
    * @param xmlPath the root path where the XML sources are to be found
    */
@@ -38,8 +43,8 @@ public class FileUtils {
   }
 
   private final char[] buffer = new char[8192];
-  private static Logger logger = Logger.getLogger("pn-dispatch");
-  
+  private static final Logger logger = Logger.getLogger("pn-dispatch");
+
   /**
    * Returns the HTML <code>java.io.File</code> for the given collection
    * and item.
@@ -50,7 +55,33 @@ public class FileUtils {
   public File getHtmlFile(String collection, String item) {
     StringBuilder pathname = new StringBuilder();
     pathname.append(htmlPath);
-    if ("ddbdp".equals(collection)) {
+    if ("editions".equals(collection)) {
+      return new File(pathname.append("Historical/")
+          .append(item)
+          .append(".html").toString());
+    } else if ("current".equals(collection)) {
+      StringBuilder ddbPath = new StringBuilder().append(htmlPath);
+      ddbPath.append("DDbDP/")
+          .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+          .append("/")
+          .append(item)
+          .append(".html").toString();
+      if (Files.exists(Path.of(ddbPath.toString()))) {
+        return new File(ddbPath.toString());
+      } else {
+        StringBuilder dclpPath = new StringBuilder().append(htmlPath);
+        dclpPath.append("DCLP/")
+            .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".html").toString();
+        if (Files.exists(Path.of(dclpPath.toString()))) {
+          return new File(dclpPath.toString());
+        } else {
+          logger.log(Level.WARNING, "No HTML file found for " + item + " in either DDB or DCLP.");
+        }
+      }
+    } else if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
         if (parts.length == 2) {
@@ -162,6 +193,33 @@ public class FileUtils {
   public File getTextFile(String collection, String item) {
     StringBuilder pathname = new StringBuilder();
     pathname.append(htmlPath);
+    if ("editions".equals(collection)) {
+      return new File(pathname.append("Historical/")
+          .append(item)
+          .append(".txt").toString());
+    } else if ("current".equals(collection)) {
+      StringBuilder ddbPath = new StringBuilder().append(htmlPath);
+      ddbPath.append("DDbDP/")
+          .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+          .append("/")
+          .append(item)
+          .append(".txt").toString();
+      if (Files.exists(Path.of(ddbPath.toString()))) {
+        return new File(ddbPath.toString());
+      } else {
+        StringBuilder dclpPath = new StringBuilder().append(htmlPath);
+        dclpPath.append("DCLP/")
+            .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".txt").toString();
+        if (Files.exists(Path.of(dclpPath.toString()))) {
+          return new File(dclpPath.toString());
+        } else {
+          logger.log(Level.WARNING, "No text file found for " + item + " in either DDB or DCLP.");
+        }
+      }
+    }
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
@@ -230,14 +288,44 @@ public class FileUtils {
   public File getXmlFile(String collection, String item) {
     return new File(getXmlFilePath(collection, item));
   }
-  
+
   public String getXmlFilePathFromId(String id) {
      return this.getXmlFilePath(substringBefore(id.replaceFirst("^https?://papyri.info/", ""), "/"), substringAfter(id.replaceFirst("^https?://papyri.info/", ""), "/"));
   }
-  
+
   public String getXmlFilePath(String collection, String item) {
+    logger.log(Level.INFO, "Resolving XML file for " + collection + "/" + item);
     StringBuilder pathname = new StringBuilder();
     pathname.append(xmlPath);
+    if ("editions".equals(collection)) {
+      return pathname.append("Historical/")
+          .append(item)
+          .append(".xml").toString();
+    } else if ("current".equals(collection)) {
+      StringBuilder ddbPath = new StringBuilder().append(xmlPath);
+      ddbPath.append("DDbDP/")
+          .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+          .append("/")
+          .append(item)
+          .append(".xml");
+      logger.log(Level.INFO,"DDbDP Path: " + ddbPath.toString());
+      if (Files.exists(Path.of(ddbPath.toString()))) {
+        return ddbPath.toString();
+      } else {
+        StringBuilder dclpPath = new StringBuilder().append(htmlPath);
+        dclpPath.append("DCLP/")
+            .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".xml");
+        logger.log(Level.INFO,"DCLP Path: " + dclpPath.toString());
+        if (Files.exists(Path.of(dclpPath.toString()))) {
+          return dclpPath.toString();
+        } else {
+          logger.log(Level.WARNING, "No XML file found for " + item + " in either DDB or DCLP.");
+        }
+      }
+    }
     if ("ddbdp".equals(collection)) {
       if (item.contains(";")) {
         String[] parts = item.split(";");
@@ -250,7 +338,7 @@ public class FileUtils {
                   .append(parts[0])
                   .append(".")
                   .append(parts[2].replaceAll(",", "-").replaceAll("/", "_").replace(" ", "+"))
-                  .append(".xml").toString();
+                  .append(".xml");
         } else {
           pathname.append("DDB_EpiDoc_XML/")
                   .append(parts[0])
@@ -274,21 +362,30 @@ public class FileUtils {
                 .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
-                .append(".xml").toString();
+                .append(".xml");
       }
       return pathname.toString();
     } else if ("hgvtrans".equals(collection)) {
       pathname.append("HGV_trans_EpiDoc/")
-              .append(item)
-              .append(".xml").toString();
+          .append(item)
+          .append(".xml");
+      return pathname.toString();
+    } else if ("translation".equals(collection)) {
+      if (item.matches("\\d+[a-z]*-\\d+")) {
+        pathname.append("Translations/")
+            .append((int) Math.floor(Double.parseDouble(substringBefore(item, "-").replaceAll("[a-z]", "")) / 1000))
+            .append("/")
+            .append(item)
+            .append(".xml");
+      }
       return pathname.toString();
     } else if ("dclp".equals(collection)) {
       if (item.matches("\\d+[a-z]*")) {
         pathname.append("DCLP/")
-                .append((int) Math.ceil(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
+                .append((int) Math.floor(Double.parseDouble(item.replaceAll("[a-z]", "")) / 1000))
                 .append("/")
                 .append(item)
-                .append(".xml").toString();
+                .append(".xml");
       }
       return pathname.toString();
     } else if ("apis".equals(collection)) {
@@ -300,7 +397,7 @@ public class FileUtils {
                 .append(parts[0])
                 .append(".apis.")
                 .append(parts[2])
-                .append(".xml").toString();
+                .append(".xml");
       }
       return pathname.toString();
     }  else if ("biblio".equals(collection)) {
@@ -308,7 +405,7 @@ public class FileUtils {
               .append((int)Math.ceil(Double.parseDouble(item) / 1000))
               .append("/")
               .append(item)
-              .append(".xml").toString();
+              .append(".xml");
       return pathname.toString();
     }
     return null;
@@ -362,14 +459,14 @@ public class FileUtils {
         t.append(buffer, 0, size);
       }
     } catch (Exception e) {
-      logger.log(Level.SEVERE, "Failed to read " + f.getAbsolutePath(), e);
+      DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Failed to read " + f.getAbsolutePath());
     } finally {
       try {
         if (reader != null) {
           reader.close();
         }
       } catch (IOException e) {
-        logger.log(Level.SEVERE, e.getLocalizedMessage(), e);
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, e.getLocalizedMessage());
       }
     }
     return t.toString();
@@ -471,7 +568,6 @@ public class FileUtils {
           next = 10;
         }
         String foo = text.substring(i+1, i + next);
-        boolean bar = foo.matches("^\\d(\\w|,|/)*\\.\\s{2}.*");
         if (i < text.length() - 1 && text.substring(i+1, i + next).matches("^\\d(\\w|,|/)*\\.\\s{2}.*")) {
           while (text.charAt(i) != '.') {
             i++;
@@ -552,10 +648,19 @@ public class FileUtils {
     result.append(originalText.substring(start));
     return Normalizer.normalize(result, Normalizer.Form.NFC);
   }
-  
+
   public String highlight(Pattern[] patterns, String t) {
-    List<String> exclusions = getExclusions(t);
-    String text = t.toString().replaceAll(exclude, "ⓐⓐⓐ\n");
+    List<String> nonbreaking = getExclusions(t, excludeNonBreaking);
+    String text = t.toString().replaceAll(excludeNonBreaking, "ⓑⓑⓑ");
+    boolean html = false;
+    String head = "";
+    if (text.contains("<body")) {
+      html = true;
+      head = text.substring(0, text.indexOf("<body"));
+      text = text.substring(text.indexOf("<body"));
+    }
+    List<String> exclusions = getExclusions(text, exclude);
+    text = text.replaceAll(exclude, "ⓐⓐⓐ");
     int index = 0;
     for (Pattern pattern : patterns) {
       // If pattern is something dumb, like '.', skip it.
@@ -565,13 +670,13 @@ public class FileUtils {
       StringBuilder hl = new StringBuilder();
       Matcher m = pattern.matcher(text);
       while (m.find()) {
-        hl.append(text.substring(index, m.start()));
+        hl.append(text, index, m.start());
         hl.append(hlStartMark);
-        hl.append(text.substring(m.start(), m.end()));
+        hl.append(text, m.start(), m.end());
         hl.append(hlEndMark);
         index = m.end();
       }
-      if (hl.length() > 0) {
+      if (!hl.isEmpty()) {
         hl.append(text.substring(index));
         text = hl.toString();
         index = 0;
@@ -581,27 +686,53 @@ public class FileUtils {
     int i = 0;
     int start = 0;
     Matcher m = p.matcher(text);
-    StringBuilder result = new StringBuilder();
+    StringBuilder restore1 = new StringBuilder();
     while (m.find()) {
-      result.append(text.substring(start, m.start()));
-      result.append(exclusions.get(i));
+      restore1.append(text, start, m.start());
+      restore1.append(exclusions.get(i));
       start = m.end();
       i++;
     }
-    result.append(text.substring(start));
-    return result.toString().replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
+    restore1.append(text.substring(start));
+    text = restore1.toString();
+    p = Pattern.compile("ⓑⓑⓑ");
+    i = 0;
+    start = 0;
+    m = p.matcher(text);
+    StringBuilder restore2 = new StringBuilder();
+    while (m.find()) {
+      restore2.append(text, start, m.start());
+      restore2.append(nonbreaking.get(i));
+      start = m.end();
+      i++;
+    }
+    restore2.append(text.substring(start));
+    text = restore2.toString();
+    if (html) {
+      text = head + text;
+    }
+    StringBuilder result = new StringBuilder();
+    for (String l : text.split("\n")) {
+      String line = l.replaceAll("Ⓐ+([^-Ⓑ]+-)", hlStart + "$1" + hlEnd); // Problem here?
+      line = line.replaceAll("(<span class=\"linecontent\">)([^ⒶⒷ]+)Ⓑ+", "$1" + hlStart + "$2" + hlEnd );
+      line = line.replaceAll("Ⓐ+", hlStart).replaceAll("Ⓑ+", hlEnd);
+      result.append(line + "\n");
+    }
+    return result.toString();
   }
 
   public List<String> highlightMatches(String t, Pattern[] patterns) {
     String highlightedText = highlight(patterns, t);
-    return getNMatches(highlightedText, 3);
+    List<String> result = getNMatches(highlightedText, 3);
+    logger.log(Level.INFO, "Found " + result.size() + " matches in text");
+    return result;
   }
-    
+
   /**
    * Finds matches in a text file and returns the top 3 matches with HTML
    * highlighting applied and with context surrounding the highlighted text.
+   * @param query the query to search for
    * @param t the text
-   * @param patterns the Regex patterns to match
    * @return A <code>java.util.List</code> containing the top 3 matches plus
    * context
    */
@@ -642,13 +773,13 @@ public class FileUtils {
           hitline = line + " | " + lines[i + 1];
         }
       }
-      if (hitline.length() > 60) {
-        start = hitline.indexOf(hlStart) - 10;
+      if (hitline.length() > 150) {
+        start = hitline.indexOf(hlStart) - 30;
         if (start >= 0) {
           hitline = hitline.substring(start);
           hitline = '…' + hitline.substring(hitline.indexOf(" ") + 1);
         }
-        int end = hitline.lastIndexOf(' ', hitline.lastIndexOf(hlEnd) + 12);
+        int end = hitline.lastIndexOf(' ', hitline.lastIndexOf(hlEnd) + 30);
         if (end < hitline.length()) {
           hitline = hitline.substring(0, end);
         }
@@ -657,7 +788,7 @@ public class FileUtils {
     }
     return hits;
   }
-  
+
     public Pattern[] getPatterns(String query) {
       String q = query.replace("*", "£").replace("?", "¥");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "")
@@ -712,38 +843,38 @@ public class FileUtils {
     }
     return patterns;
   }
-   
+
   public Pattern[] getSubstringHighlightPatterns(String query){
       List<String> tokens = getTokensFromQuery(query);
       Pattern[] patterns = new Pattern[tokens.size()];
       for(int i = 0; i < tokens.size(); i++){
-          
+
           String token = tokens.get(i);
           token = substituteForSubstringPatternMatch(token);
-          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);  
-          
+          patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);
+
       }
-      
+
       return patterns;
   }
-  
+
   public Pattern[] getPhraseHighlightPatterns(String query){
       List<String> tokens = getTokensFromQuery(query);
       Pattern[] patterns = new Pattern[tokens.size()];
       for(int i = 0; i < tokens.size(); i++){
-      
+
           String token = tokens.get(i);
           token = substituteForPhrasePatternMatch(token);
           patterns[i] = Pattern.compile(token, Pattern.CASE_INSENSITIVE | Pattern.UNIX_LINES | Pattern.UNICODE_CASE);
-      
-          
+
+
       }
-      
+
       return patterns;
   }
-  
 
-    
+
+
    public List<String> getTokensFromQuery(String query){
       String q = query.replace("*", "£").replace("?", "¥");
       ANTLRStringStream a = new ANTLRStringStream(q.replaceAll("[\\\\/]", "").replaceAll("\"([^\"]+)\"~\\d+", "$1"));
@@ -754,14 +885,14 @@ public class FileUtils {
       try {
         qp.query();
         find = qp.getStrings();
-      } catch (RecognitionException e) { }      
-       
-      return find; 
-       
+      } catch (RecognitionException e) { }
+
+      return find;
+
    }
-    
+
    public String substituteDiacritics(String rawString){
-        
+
         String transformedString = rawString
                 .replace("α", "(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)")
                 .replace("ε", "(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)")
@@ -770,13 +901,13 @@ public class FileUtils {
                 .replace("ο", "(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)")
                 .replace("υ", "(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)")
                 .replace("ω", "(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)")
-                .replace("ρ", "(ρ|ῥ)");                  
+                .replace("ρ", "(ρ|ῥ)");
         return transformedString;
-        
+
     }
-   
+
    public String stripOutDiacritcs(String rawString){
-       
+
         String transformedString = rawString
                 .replace("(α|ἀ|ἁ|ἂ|ἃ|ἄ|ἅ|ἆ|ἇ|ὰ|ά|ᾀ|ᾁ|ᾂ|ᾃ|ᾄ|ᾅ|ᾆ|ᾇ|ᾲ|ᾳ|ᾴ|ᾶ|ᾷ)", "α")
                 .replace("(ε|ἐ|ἑ|ἒ|ἓ|ἔ|ἕ|έ|ὲ)", "ε")
@@ -785,13 +916,13 @@ public class FileUtils {
                 .replace("(ο|ὸ|ό|ὀ|ὁ|ὂ|ὃ|ὄ|ὅ)", "ο")
                 .replace("(υ|ύ|ὺ|ὐ|ὑ|ὒ|ὓ|ὔ|ὕ|ὖ|ὗ|ῢ|ΰ|ῦ|ῧ)", "υ")
                 .replace("(ω|ώ|ὼ|ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῲ|ῳ|ῴ|ῶ|ῷ)", "ω")
-                .replace("(ρ|ῥ)", "ρ");                  
+                .replace("(ρ|ῥ)", "ρ");
         return transformedString;
-       
+
    }
-   
+
    public String substituteForSubstringPatternMatch(String rawString){
-       
+
        String transformedString = rawString;
        transformedString = transformedString.toLowerCase()
                 .replaceAll("([^ #])", sigla + "$1" + sigla)
@@ -805,11 +936,11 @@ public class FileUtils {
        transformedString = substituteDiacritics(transformedString);
        transformedString = swapInSigla(transformedString);
        return transformedString;
-       
+
    }
-   
+
    public String substituteForPhrasePatternMatch(String rawString){
-       
+
        String transformedString = rawString;
        transformedString = transformedString.toLowerCase()
                 .replaceAll("(\\S)", sigla + "$1" + sigla)
@@ -824,65 +955,65 @@ public class FileUtils {
        transformedString = swapInSigla(transformedString);
        transformedString = "(^|(?<=[\\s]))" + transformedString + "((?=[\\s])|$)";
        return transformedString;
-       
+
    }
-   
+
    public String substituteWildcards(String rawString){
-       
+
       String transformedString = rawString.replaceAll("£", ".*");
       transformedString = transformedString.replaceAll("¥", ".");
       return transformedString;
-       
+
    }
-   
+
    public String swapInSigla(String rawString){
-        
+
        return rawString.replaceAll("(σ|ς)", "(σ|ς)" + sigla);
-       
+
    }
-   
+
    public String stripOutSigla(String rawString){
-       
+
        return rawString.replaceAll(sigla, "");
-       
+
    }
-   
+
     Pattern[] buildPatterns(String q){
       ArrayList<Pattern> patterns = new ArrayList<Pattern>();
       String[] qbits = q.split("\\)");
       for(int i = 0; i < qbits.length; i++){
-                    
+
           String qbit = qbits[i];
-          String term = qbit.substring(qbit.indexOf(":") + 2);
+          String term;
+          int colonIndex = qbit.indexOf(":");
+          if (colonIndex >= 0) {
+            term = qbit.substring(colonIndex + 1).trim();
+          } else {
+            term = qbit.trim();
+          }
+          if(term.startsWith("(")) {
+            term = term.substring(1);
+          }
           try{
-              
               term = URLDecoder.decode(term, "UTF-8");
-              
           }catch(UnsupportedEncodingException uee){}
 
           if(qbit.contains("PHRASE:")){
-              
               patterns.addAll(Arrays.asList(getPhraseHighlightPatterns(term)));
-              
           }
-             
-         
           else if(qbit.contains("SUBSTRING")) {
-              
                patterns.addAll(Arrays.asList(getSubstringHighlightPatterns(term)));
-              
           }
           else{
-              
-              patterns.add(Pattern.compile(term));
-              
+              if (term != null && !term.trim().isEmpty()) {
+                patterns.add(Pattern.compile(term, Pattern.CASE_INSENSITIVE));
+              }
           }
-          
+
       }
-      
+
       Pattern[] patt = new Pattern[patterns.size()];
       return patterns.toArray(patt);
-      
   }
 
     /**
@@ -895,9 +1026,9 @@ public class FileUtils {
       return Normalizer.normalize(in, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     }
 
-  private List<String> getExclusions(String t) {
+  private List<String> getExclusions(String t, String pattern) {
     List<String> exclusions = new ArrayList<String>();
-    Pattern exPattern = Pattern.compile(exclude);
+    Pattern exPattern = Pattern.compile(pattern);
     Matcher exMatch = exPattern.matcher(t);
     while (exMatch.find()) {
       exclusions.add(t.substring(exMatch.start(), exMatch.end()));
@@ -925,7 +1056,7 @@ public class FileUtils {
       if (returnInput) return in; else return "";
     }
   }
-  
+
   /**
    * Given an input string and a string to find within it, returns the
    * beginning of the input string before the first occurrence of the
@@ -950,7 +1081,7 @@ public class FileUtils {
       if (returnInput) return in; else return "";
     }
   }
-  
+
   public static String interpose(Collection<String> coll, String sep) {
     StringBuilder result = new StringBuilder();
     for (Iterator<String> i = coll.iterator(); i.hasNext();) {
@@ -1015,14 +1146,16 @@ public class FileUtils {
 
   private String xmlPath;
   private String htmlPath;
-  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ|Ⓜ[0-9a-z]+\\\\.ⓞ)*";
-  private static String exclude = "(<span\\s[^>]+>[^<]+</span>|<a\\s[^>]+>[^<]+</a>|<[^>]+>|&\\w+;)";
+  private static String sigla = "([-’ʼ\\\\[\\\\]()\u0323〚〛\\\\\\\\/\"|?*ⓐⓑⒶⒷ.]|&gt;|&lt;|ca\\.|ⓝ[0-9a-z]+\\\\.ⓜ|Ⓝ[0-9a-z]+\\\\.ⓜ|Ⓜ[0-9a-z]+\\\\.ⓞ)*";
+  private static final String excludeNonBreaking = "(\\s*<div[^>]*break=\"no[^>]+>)";
+  // Match spans containing line numbers, links, start and end tags, and entities.
+  private static String exclude = "(<span\\sclass=\"linenumber[^>]*>[^<]+<\\/span>|<a\\s[^>]+>[^<]+</a>|\\s+<div+>|<[^>]+>|&\\w+;|-.{0,3}\\n\\w+\\.\\s+)";
   private static String lineNum = "((\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNumInSupplied = "((?<![-])-\\](\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
   private static String hyphenatedLineNum = "(-(\\s)*(\\r|\\n)+([0-9]+\\.\\S*)\\s*)";
-  private static String hlStart = "<span class=\"highlight\">";
+  private static String hlStart = "<mark class=\"highlight\">";
   private static String hlStartMark = "Ⓐ";
-  private static String hlEnd = "</span>";
+  private static String hlEnd = "</mark>";
   private static String hlEndMark = "Ⓑ";
   private static List<String> bustedRegexes = Arrays.asList(".","\\s",".*",".+",".?");
 }

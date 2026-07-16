@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:t="http://www.tei-c.org/ns/1.0" 
+  xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:pi="http://papyri.info/ns/"
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   exclude-result-prefixes="#all"
   version="2.0">
-    
+
   <xsl:variable name="values-issues" select="('issues', 'issue', 'volume', 'v', 'vols', 'vol', 'vv')"/>
   <xsl:variable name="values-pages" select="('pp', 'pages', 'page')"/>
   <xsl:variable name="values-numbers" select="('no', 'nos', 'num', 'number', 'numbers', 'n', 'nn')"/>
-  
-  
+
+
   <xsl:template match="t:bibl">
     <xsl:if test="t:seg[@type='original' and @resp='#BP']">
       <div class="biblio"> <!-- class="bp-cite" -->
-        <h4>Original BP record</h4>
+        <h2>Original BP record</h2>
         <p><xsl:apply-templates select="t:seg[@type='original' and @subtype='index']"/>
           <xsl:apply-templates select="t:seg[@type='original' and @subtype='indexBis']"/>
           <xsl:apply-templates select="t:seg[@type='original' and @subtype='titre']"/>
@@ -29,12 +29,12 @@
       </div>
     </xsl:if>
     <div class="biblio">
-      <h4>Citation</h4>
+      <h2>Citation</h2>
       <p><xsl:call-template name="buildCitation"/><xsl:text> [</xsl:text><a href="{t:idno[@type='pi']}/source">xml</a><xsl:text>] [</xsl:text><a class="button" id="editbibl" href="/editor/publications/create_from_identifier/papyri.info/biblio/{t:idno[@type='pi']}">edit</a> <xsl:text>]</xsl:text></p>
     </div>
     <xsl:if test="count(t:relatedItem[@type='mentions']/t:bibl) &gt; 0">
       <div class="biblio">
-        <h4>Mentioned Texts</h4>
+        <h2>Mentioned Texts</h2>
         <p>
           <xsl:call-template name="relatedArticle">
             <xsl:with-param name="relatedArticle" select="t:relatedItem[@type='mentions']/t:bibl" />
@@ -91,14 +91,14 @@
         <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
       </xsl:choose><xsl:if test="(position() != last()) and (count(../t:author) > 2)"><xsl:text>, </xsl:text></xsl:if></xsl:for-each>
   </xsl:template>
-  
+
   <xsl:template name="articleTitle">
     <xsl:choose>
       <xsl:when test="t:title[@level='a']"><xsl:value-of select="t:title[@level='a']"/></xsl:when>
       <xsl:when test="@type='review'">Review of <xsl:for-each select="t:relatedItem[@type='reviews']"><xsl:for-each select="pi:get-docs(concat(.//t:ptr/@target, '/source'), 'xml')/t:bibl"><a href="/biblio/{t:idno[@type='pi']}/"><xsl:call-template name="buildCitation"/></a></xsl:for-each></xsl:for-each><xsl:text>, </xsl:text></xsl:when>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template  match="t:bibl" mode="mainTitle">
     <xsl:if test="t:title[@level='m']"><xsl:text> in </xsl:text><xsl:call-template name="editor"/></xsl:if><i><a href="/biblio/{t:idno[@type='pi']}/"><xsl:choose>
       <xsl:when test="t:title[@level='m']"><xsl:value-of select="t:title[@level='m']"/></xsl:when>
@@ -113,14 +113,14 @@
       </xsl:when>
     </xsl:choose></a></i>
   </xsl:template>
-  
+
   <xsl:template name="editor">
     <xsl:for-each select="t:editor">
       <xsl:sort select="number(@n)"/>
       <xsl:if test="position() > 1 and position() = last()"><xsl:text> and </xsl:text></xsl:if><xsl:value-of select="."/><xsl:if test="count(../t:editor) > 2 and position() != last()">, </xsl:if>
     </xsl:for-each><xsl:if test="t:editor"> ed<xsl:if test="count(t:editor) > 1">s</xsl:if>.</xsl:if>
   </xsl:template>
-  
+
   <xsl:template name="pubInfo">
     <xsl:param name="main"/>
     <xsl:choose>
@@ -172,11 +172,11 @@
       <xsl:when test="t:pubPlace or t:date">(<xsl:if test="t:pubPlace"><xsl:value-of select="t:pubPlace"/><xsl:text> </xsl:text></xsl:if><xsl:value-of select="t:date"/>)</xsl:when>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template name="pages">
     <xsl:value-of select="t:biblScope[@type=$values-pages or @unit=$values-pages]"/>
   </xsl:template>
-  
+
   <xsl:template match="t:seg[@type='original']">
     <xsl:choose>
       <xsl:when test="@subtype='index'">Index: <xsl:value-of select="."/><br/></xsl:when>
@@ -188,11 +188,11 @@
       <xsl:when test="@subtype='nom'"/>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template match="t:note[@resp='#BP']">
     Résumé: <xsl:value-of select="."/><br/>
   </xsl:template>
-  
+
   <xsl:template match="t:ptr">
     <a href="{@target}"><xsl:value-of select="@target"/></a>
   </xsl:template>
@@ -200,8 +200,7 @@
   <xsl:template name="bpId">
     <xsl:choose>
       <xsl:when test="string(//t:idno[@type='bp'])">
-        <xsl:variable name="bpIdno" select="//t:idno[@type='bp']"/>
-        No: <a href="{concat('https://bibpap.be/BP_enl/?n=',$bpIdno)}"><xsl:value-of select="$bpIdno"/></a><br/>
+        No: <xsl:value-of select="//t:idno[@type='bp']"/><br/>
       </xsl:when>
       <xsl:when test="string(//t:idno[@type='bp_old'])">
         Ancien No: <xsl:value-of select="//t:idno[@type='bp_old']"/><br/>
@@ -211,9 +210,9 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
   <!-- related articles (TEI:relatedItem of @type »mentions«) -->
-  
+
   <xsl:template name="relatedArticle">
     <xsl:param name="relatedArticle" />
 
@@ -247,9 +246,9 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
-    
+
   </xsl:template>
-  
+
   <xsl:template name="relatedArticleRecord">
     <xsl:param name="series" />
     <xsl:param name="volume" />
@@ -283,7 +282,7 @@
     </xsl:choose>
 
   </xsl:template>
-  
+
   <xsl:function name="pi:checkFile">
     <xsl:param name="id" />
     <xsl:variable name="link">
@@ -297,5 +296,5 @@
       <xsl:value-of select="$link" />
     </xsl:if>
   </xsl:function>
-  
+
 </xsl:stylesheet>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Papyri.info</title>
   <style type="text/css" media="screen">
@@ -36,46 +37,55 @@
     <div id="bd">
       <div id="olimage" style="height:90%"></div>
       <div id="select">
-      <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value);setDownloadLink(this.options[this.selectedIndex].value);" size="1">
-      </select>
-      <span id="download"></span>
+        <select name="images" id="images" onchange="loadImage(this.options[this.selectedIndex].value);setDownloadLink(this.options[this.selectedIndex].value);" size="1">
+        </select>
+        <span id="download"></span>
+      </div>
     </div>
-    <script src="/js/imageviewer.js"></script>
     <script>
-      let query = "https://papyri.info/sparql?query="
+      async function loadImageViewer() {
+        try {
+          const viewerModule = await import('/js/imageviewer.js');
+          let query = "/sparql?query="
           + encodeURIComponent("prefix dc: <http://purl.org/dc/terms/> "
           + "prefix rdf: <http://www.w3.org/2000/01/rdf-schema#>"
           + "prefix olo: <http://purl.org/ontology/olo/core#>"
           + "select ?o ?l "
-          + "from <http://papyri.info/graph> "
-          + "where { <http://papyri.info" + getPath() + "> dc:relation ?imgs . "
+          + "from <https://papyri.info/graph> "
+          + "where { <https://papyri.info" + window.getPath() + "> dc:relation ?imgs . "
           + "        ?imgs olo:slot ?slot . "
           + "        ?slot olo:item ?o ."
           + "        ?slot olo:index ?i ."
           + "        optional {?o rdf:label ?l} } order by ?i")
           + "&format=json";
 
-      let imageURL = "";
+        let imageURL = "";
 
-      fetch(query)
-        .then(response => response.json())
-        .then(function(data) {
-          if (data.results.bindings.length > 0) {
-            data.results.bindings.forEach( function(row, i) {
-                var val = imageInfo(row.o.value);
-                if (i == 0) {
-                  setDownloadLink(val);
-                  imageURL = val;
-                }
-                if (row.l) {
-                  document.querySelector("#images").innerHTML += '<option value="'+ val + '">' + row.l.value +'</option>';
-                } else {
-                  document.querySelector("#images").innerHTML += '<option value="'+ val + '">' + val.substring(27).replace(/\.jp2\/info\.json/, "") +'</option>';
-                }
-            });
-          }
-          loadImage(imageURL);
-        });
+        fetch(query)
+          .then(response => response.json())
+          .then(function(data) {
+            if (data.results.bindings.length > 0) {
+              data.results.bindings.forEach( function(row, i) {
+                  var val = imageInfo(row.o.value);
+                  if (i == 0) {
+                    setDownloadLink(val);
+                    imageURL = val;
+                  }
+                  if (row.l) {
+                    document.querySelector("#images").innerHTML += '<option value="'+ val + '">' + row.l.value +'</option>';
+                  } else {
+                    document.querySelector("#images").innerHTML += '<option value="'+ val + '">' + val.substring(27).replace(/\.jp2\/info\.json/, "") +'</option>';
+                  }
+              });
+            }
+            loadImage(imageURL);
+          });
+        } catch (error) {
+          console.error("Error loading image viewer module:", error);
+        }
+      }
+      loadImageViewer();
+      
     </script>
   </body>
 </html>

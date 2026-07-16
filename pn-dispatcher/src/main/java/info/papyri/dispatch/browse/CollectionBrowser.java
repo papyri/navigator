@@ -1,6 +1,8 @@
 package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,14 +17,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -65,6 +69,7 @@ public class CollectionBrowser extends HttpServlet {
      * note that the ArrayList<String>(Arrays.asList ... construct is simply for ease of declaring literals
      */
     static ArrayList<SolrField> ORG_HIERARCHY = new ArrayList<>(Arrays.asList(SolrField.collection, SolrField.series, SolrField.volume));
+    static Logger logger = Logger.getLogger(CollectionBrowser.class.getName());
 
     @Override
     public void init(ServletConfig config) throws ServletException{
@@ -178,10 +183,10 @@ public class CollectionBrowser extends HttpServlet {
             
         }
         
-        queryBuilder.append("WHERE { <http://papyri.info/");
+        queryBuilder.append("WHERE { <https://papyri.info/");
         queryBuilder.append(subj);
         queryBuilder.append("> dcterms:hasPart ?child . ");
-        queryBuilder.append("OPTIONAL {<http://papyri.info/");
+        queryBuilder.append("OPTIONAL {<https://papyri.info/");
         queryBuilder.append(subj);
         queryBuilder.append("> dcterms:bibliographicCitation ?parent . } ");
         queryBuilder.append("OPTIONAL { ?child dcterms:bibliographicCitation ?label . } ");
@@ -202,7 +207,7 @@ public class CollectionBrowser extends HttpServlet {
         
         try{
               
-          URL sparq = new URL("http://localhost:8090/pi/query?query=" + URLEncoder.encode(sparqlQuery, StandardCharsets.UTF_8) + "&output=json");
+          URL sparq = new URL(SPARQL_URL + "?query=" + URLEncoder.encode(sparqlQuery, StandardCharsets.UTF_8) + "&output=json");
           HttpURLConnection http = (HttpURLConnection)sparq.openConnection();
           http.setConnectTimeout(2000);
           ObjectMapper o = new ObjectMapper();
@@ -211,9 +216,8 @@ public class CollectionBrowser extends HttpServlet {
             
         } 
         catch(Exception e){
-            
-            e.printStackTrace();
-            return null;  
+            DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Query failed: " + SPARQL_URL +"; " + sparqlQuery);
+            return null;
             
         }
           
@@ -225,9 +229,9 @@ public class CollectionBrowser extends HttpServlet {
      * 
      * @param pathParts A <code>LinkedHashMap</code> correlating the passed request params to the relevant levels
      * of the collection hierarchy
-     * @param resultNode The root JsonNode returned by Mulgara
+     * @param resultNode The root JsonNode returned by Fuseki
      * @return An ArrayList of <code>BrowseRecord</code> objects
-     * @see #processRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
+     * @see #processRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse)
      * @see BrowseRecord
      * @see DocumentCollectionBrowseRecord
      * 
@@ -286,7 +290,7 @@ public class CollectionBrowser extends HttpServlet {
     }
     
     /**
-     * Parses the URI identifiers returned by Mulgara into a <code>DocumentCollectionBrowseRecord</code> 
+     * Parses the URI identifiers returned by Jena into a <code>DocumentCollectionBrowseRecord</code>
      * 
      * Note the conceptualisation at work here: the page currently in the process of being displayed is viewed as
      * being the 'parent'; the document collections being displayed <i>on</i> that page are the "children"; and any
@@ -305,7 +309,7 @@ public class CollectionBrowser extends HttpServlet {
      */
     
     DocumentCollectionBrowseRecord parseUriToCollectionRecord(EnumMap<SolrField, String> pathParts, String child, String type, String label, String parentLabel){
-        
+
         String[] uriBits = child.split("/");
         int sIndex = 2;
         String collection = uriBits[sIndex + 1];
@@ -316,9 +320,21 @@ public class CollectionBrowser extends HttpServlet {
             return new DocumentCollectionBrowseRecord(collection, series, true);
             
         }
-        String otherInfo = uriBits[sIndex + 2];
+        if ("editions".equals(collection)) {
+            switch (uriBits.length) {
+                case 5:
+                    return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], "http://purl.org/ontology/bibo/Book".equals(type));
+                case 6:
+                    return new DocumentCollectionBrowseRecord(collection, uriBits[sIndex + 2], uriBits[sIndex + 3]);
+                case 7:
+                    // URI form: editions/series/number/source — link directly to the document page
+                    return DocumentCollectionBrowseRecord.withDirectHref(
+                        collection, uriBits[sIndex + 2], uriBits[sIndex + 3],
+                        "/" + collection + "/" + uriBits[sIndex + 2] + "/" + uriBits[sIndex + 3]);
+            }
+        }
         if("ddbdp".equals(collection) || "dclp".equals(collection)){
-            
+            String otherInfo = uriBits[sIndex + 2];
             String delimiter = ";";
             if(otherInfo.indexOf(delimiter) == -1) return new DocumentCollectionBrowseRecord(collection, otherInfo, "http://purl.org/ontology/bibo/Book".equals(type));
             String[] infoBits = otherInfo.split(delimiter);
@@ -424,34 +440,17 @@ public class CollectionBrowser extends HttpServlet {
      */
     
     private StringBuilder buildCollectionsHTML(StringBuilder html, ArrayList<DocumentCollectionBrowseRecord> records){
-       
-        int numColumns = records.size() > 20 ? 5 : 1;
-        int initTotalPerColumn = (int) Math.floor(records.size() / numColumns);
-        int modulus = records.size() - initTotalPerColumn;
-        
-        for(int currentColumn = 0; currentColumn < numColumns; currentColumn++){
-            
-           html.append("<ul class=\"collections-column\">");
 
-           int totalThisColumn = initTotalPerColumn;
-            
-           if(currentColumn < modulus) totalThisColumn++;
-           
-           if(totalThisColumn > records.size()) totalThisColumn = records.size();
-            
-           for(int i = 0; i < totalThisColumn; i++){
-            
-                html.append(records.remove(0).getHTML());
-               
-            
-            }
-           
-           html.append("</ul>");
-            
+        html.append("<ul class=\"collections-list\">");
+
+        for(DocumentCollectionBrowseRecord record : records){
+            html.append(record.getHTML());
         }
-        
+
+        html.append("</ul>");
+
         return html;
-        
+
     } 
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -49,6 +49,7 @@ public enum SolrField {
         latest_date,        
         metadata,
         nome,
+        placename,
         series,
         series_led_path,
         title,

@@ -2,7 +2,7 @@
 <!-- $Id: start-txt.xsl 1510 2008-08-14 15:27:51Z zau $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:t="http://www.tei-c.org/ns/1.0"
-                xmlns:pi="http://papyri.info/ns"
+                xmlns:pi="http://papyri.info/ns/"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="2.0" exclude-result-prefixes="">
   <xsl:import href="pi-global-varsandparams.xsl"/>
@@ -58,25 +58,25 @@
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
-  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:param name="line-inc">1</xsl:param>
   <xsl:variable name="resolve-uris" select="false()"/>
 
   <xsl:template match="/">
-    <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+    <xsl:variable name="ddbdp" select="contains($related, 'ddbdp/')"/>
     <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
     <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
-    <xsl:variable name="dclp" select="$collection = 'dclp'"/>
+    <xsl:variable name="dclp" select="contains($related, 'dclp/')"/>
     <xsl:variable name="translation" select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation']) or //t:div[@type = 'translation']"/>
     <xsl:variable name="docs" select="pi:get-docs($relations, 'xml')"/>
     
     <xsl:choose>
-      <xsl:when test="$collection = 'ddbdp'">
+      <xsl:when test="$collection = 'current'">
         <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
         <xsl:apply-templates select="$docs//text" mode="metadata"/>
         <xsl:variable name="text">
           <xsl:apply-templates>
-            <xsl:with-param name="parm-internal-app-style" select="$apparatus-style" tunnel="yes"/>
+            <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>
             <xsl:with-param name="parm-edn-structure" select="$edn-structure" tunnel="yes"/>
             <xsl:with-param name="parm-edition-type" select="$edition-type" tunnel="yes"/>
             <xsl:with-param name="parm-hgv-gloss" select="$hgv-gloss" tunnel="yes"/>
@@ -87,9 +87,7 @@
         </xsl:variable>
         <xsl:apply-templates select="$text" mode="sqbrackets"/>
       </xsl:when>
-      <xsl:when test="$collection = 'dclp'">
-        <xsl:apply-templates select="$docs//t:TEI" mode="metadata"/>
-        <xsl:apply-templates select="$docs//text" mode="metadata"/>
+      <xsl:when test="$collection = 'editions'">
         <xsl:variable name="text">
           <xsl:apply-templates>
             <xsl:with-param name="parm-apparatus-style" select="$apparatus-style" tunnel="yes"/>

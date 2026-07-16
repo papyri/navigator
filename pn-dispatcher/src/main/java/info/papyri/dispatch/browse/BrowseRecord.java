@@ -11,7 +11,7 @@ package info.papyri.dispatch.browse;
      * 
      */
     
-    public abstract class BrowseRecord implements Comparable{
+    public abstract class BrowseRecord implements Comparable<BrowseRecord> {
         
         /**
          * Returns an html representation of the Record.
@@ -23,6 +23,12 @@ package info.papyri.dispatch.browse;
          */
         abstract public String getHTML();
         
-
+        /**
+         * Returns a string representation of the record, for use in debugging and testing.
+         *
+         * @return a string representation of the record
+         */
+        @Override
+        abstract public String toString();
         
     }

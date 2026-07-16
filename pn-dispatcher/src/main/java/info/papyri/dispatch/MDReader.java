@@ -6,6 +6,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import info.papyri.dispatch.markdown.PNLinkExtension;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,17 +17,18 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -37,16 +39,25 @@ public class MDReader extends HttpServlet {
 
   private static String DOCSHOME;
   private static String TEMPLATE;
+  private static String HOME_TEMPLATE;
   private static final DataHolder OPTIONS = new MutableDataSet().set(Parser.EXTENSIONS,
           Collections.singletonList(PNLinkExtension.create()));
   private static final Parser PARSER = Parser.builder(OPTIONS).build();
   private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
   private static final Logger LOGGER = Logger.getLogger("pn-dispatch");
+  // Pattern to extract H1 heading from markdown (line starting with "# ")
+  private static final Pattern H1_PATTERN = Pattern.compile("^#\\s+(.+)$", Pattern.MULTILINE);
 
   @Override
   public void init(ServletConfig config) {
     DOCSHOME = config.getInitParameter("docs");
     TEMPLATE = config.getInitParameter("template");
+    HOME_TEMPLATE = config.getInitParameter("homeTemplate");
+    LOGGER.info("MDReader initialized with docs: " + DOCSHOME + ", template: " + TEMPLATE + ", homeTemplate: " + HOME_TEMPLATE);
+    // Fall back to regular template if homeTemplate not specified
+    if (HOME_TEMPLATE == null || HOME_TEMPLATE.isEmpty()) {
+      HOME_TEMPLATE = TEMPLATE;
+    }
   }
 
   /**
@@ -68,12 +79,20 @@ public class MDReader extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
+    String requestedFile = request.getParameter("f");
     StringBuilder requestPath = new StringBuilder(DOCSHOME);
-    requestPath.append("/").append(request.getParameter("f")).append(".md");
+    requestPath.append("/").append(requestedFile).append(".md");
     File f = new File(requestPath.toString());
     File cf = new File(requestPath.toString().replaceAll("\\.md$", ".html"));
     File cfTmp = null;
     PrintWriter cacheOut = null;
+    // Use home template for index page, regular template otherwise
+    String templateToUse = "index".equals(requestedFile) ? HOME_TEMPLATE : TEMPLATE;
+    // Homepage: serve template directly without markdown processing
+    if ("index".equals(requestedFile)) {
+      ServletUtils.send(response, new File(HOME_TEMPLATE));
+      return;
+    }
     if (f.exists()) {
       if (f.lastModified() > cf.lastModified()) {
         PrintWriter out = response.getWriter();
@@ -87,9 +106,20 @@ public class MDReader extends HttpServlet {
           while ((c = reader.read(ch)) > 0) {
             mdf.append(ch, 0, c);
           }
-          reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
+          // Extract H1 heading from markdown for page title
+          String pageTitle = "Papyri.info"; // default fallback
+          Matcher h1Matcher = H1_PATTERN.matcher(mdf.toString());
+          if (h1Matcher.find()) {
+            pageTitle = h1Matcher.group(1).trim() + " | Papyri.info";
+          }
+          // reader = new BufferedReader(new FileReader(new File(TEMPLATE)));
+          reader = new BufferedReader(new FileReader(new File(templateToUse)));
           String line;
           while ((line = reader.readLine()) != null) {
+            // Replace title tag content with extracted H1
+            if (line.contains("<title>") && line.contains("</title>")) {
+              line = line.replaceAll("<title>[^<]*</title>", "<title>" + pageTitle + "</title>");
+            }
             out.println(line);
             cacheOut.println(line);
             if (line.contains("<div class=\"markdown\">")) {
@@ -101,7 +131,7 @@ public class MDReader extends HttpServlet {
             }
           }
         } catch (IOException e) {
-          LOGGER.log(Level.SEVERE, "Unable to process MarkDown.", e);
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Unable to process MarkDown.");
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
           out.close();

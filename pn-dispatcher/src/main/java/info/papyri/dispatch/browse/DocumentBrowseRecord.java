@@ -2,10 +2,11 @@ package info.papyri.dispatch.browse;
 
 import info.papyri.dispatch.FileUtils;
 import info.papyri.dispatch.LanguageCode;
-import info.papyri.dispatch.ServletUtils;
 import info.papyri.dispatch.browse.facet.StringSearchFacet;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.ClauseRole;
 import info.papyri.dispatch.browse.facet.StringSearchFacet.SearchClause;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,7 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.request.SolrQuery;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +32,7 @@ import java.util.logging.Logger;
  *
  * @author thill
  */
-public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
+public class DocumentBrowseRecord extends BrowseRecord {
 
   private ArrayList<String> itemIds = new ArrayList<String>();
   private final String preferredId;
@@ -40,6 +43,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private final String language;
   private final String translationLanguages;
   private final ArrayList<String> imagePaths;
+  private final Boolean isCurrent;
   private final Boolean hasIllustration;
   private final String highlightString;
   private String solrQueryString;
@@ -53,7 +57,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   private static final IdComparator documentComparator = new IdComparator();
   private static final Logger logger = Logger.getLogger("pn-dispatch");
 
-  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts) {
+  public DocumentBrowseRecord(String prefId, ArrayList<String> ids, URL url, ArrayList<String> titles, String place, String date, String lang, ArrayList<String> imgPaths, String trans, Boolean illus, ArrayList<SearchClause> sts, Boolean isCurrent) {
     //TODO: this should be configurable
     util = new FileUtils("/srv/data/papyri.info/idp.data/", "/srv/data/papyri.info/pn/idp.html/");
     this.preferredId = tidyPreferredId(prefId);
@@ -65,6 +69,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     this.language = tidyAncientLanguageCodes(lang);
     this.translationLanguages = tidyModernLanguageCodes(trans);
     this.imagePaths = imgPaths;
+    this.isCurrent = isCurrent;
     this.hasIllustration = illus;
     this.testClause = sts.size() > 0 ? sts.get(0) : null;
     this.tempRegex = "";
@@ -447,38 +452,53 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
   @Override
   public String getHTML() {
     StringBuilder anchor = new StringBuilder();
+    if (isCurrent) {
+      anchor.append("<a href=\"#\" class=\"info current-document\" data-bs-toggle=\"tooltip\" data-bs-title=\"Current document\">");
+      anchor.append("<img src=\"/images/");
+      anchor.append("current.svg\" alt=\"current document\" ");
+    } else {
+      anchor.append("<a href=\"#\" class=\"info historical-document\" data-bs-toggle=\"tooltip\" data-bs-title=\"Historical document\">");
+      anchor.append("<img src=\"/images/");
+      anchor.append("historical.svg\" alt=\"historical document\"");
+    }
+    anchor.append("width=\"16\" height=\"16\"></a> ");
     anchor.append("<a href='");
     anchor.append(generateLink());
     anchor.append("'>");
     anchor.append(getDisplayId());
     anchor.append("</a>");
-    StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier\" title=\"");
+    StringBuilder html = new StringBuilder("<tr class=\"result-record\"><td class=\"identifier fw-semibold\" title=\"");
     html.append(getAlternativeIds());
     html.append("\">");
     html.append(anchor.toString());
     html.append("</td>");
-    html.append("<td class=\"doc-title\">");
+    html.append("<td class=\"doc-title\"><span class=\"visual-label\" aria-hidden=\"true\">Title: </span>");
     html.append(this.getTitleHTML());
     html.append("</td>");
-    html.append("<td class=\"display-place\">");
+    html.append("<td class=\"display-place\"><span class=\"visual-label\" aria-hidden=\"true\">Location: </span>");
     html.append(place);
     html.append("</td>");
-    html.append("<td class=\"display-date\">");
+    html.append("<td class=\"display-date\"><span class=\"visual-label\" aria-hidden=\"true\">Date: </span>");
     html.append(date);
     html.append("</td>");
-    html.append("<td class=\"language\">");
+    html.append("<td class=\"language\"><span class=\"visual-label\" aria-hidden=\"true\">Language: </span>");
     html.append(language);
     html.append("</td>");
-    html.append("<td class=\"has-translation\">");
+    html.append("<td class=\"has-translation\"><span class=\"visual-label\" aria-hidden=\"true\">Translation: </span>");
     html.append(translationLanguages);
     html.append("</td>");
-    html.append("<td class=\"has-images\">");
+    html.append("<td class=\"has-images\"><span class=\"visual-label\" aria-hidden=\"true\">Images: </span>");
     html.append(getImageHTML());
     html.append("</td>");
     html.append("</tr>");
     html.append(this.getKWIC());
     return html.toString();
 
+  }
+
+  @Override
+  public String toString() {
+    return "";
   }
 
   public String getDisplayId() {
@@ -677,7 +697,7 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
    * @return
    */
   @Override
-  public int compareTo(Object o) {
+  public int compareTo(BrowseRecord o) {
 
     DocumentBrowseRecord comparandum = (DocumentBrowseRecord) o;
     String thisId = this.getDisplayId() != null ? this.getDisplayId() : "";
@@ -703,16 +723,32 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     try {
 
       List<String> kwix = util.highlightMatches(util.loadTextFromId(url.toExternalForm()), highlightTerms);
-      html.append("<tr class=\"result-text\"><td class=\"kwic\" colspan=\"7\">");
-      for (String kwic : kwix) {
-        html.append(kwic.replaceAll("\\s*ⓐ\\s*", "")); // TODO: why is this character sneaking through when the user does a regex word-boundary (\b) search?
-        html.append("<br/>\n");
 
+      // Only render the row if there's actual KWIC content
+      if (kwix != null && !kwix.isEmpty()) {
+        boolean hasContent = false;
+        StringBuilder kwicContent = new StringBuilder();
+
+        for (String kwic : kwix) {
+          String cleanedKwic = kwic.replaceAll("\\s*ⓐ\\s*", ""); // TODO: why is this character sneaking through when the user does a regex word-boundary (\b) search?
+          if (!cleanedKwic.trim().isEmpty()) {
+            hasContent = true;
+            kwicContent.append(cleanedKwic);
+            kwicContent.append("<br/>\n");
+          }
+        }
+
+        // Only add the table row if we have actual content
+        if (hasContent) {
+          html.append("<tr class=\"result-text\"><td class=\"kwic small pb-4\" colspan=\"7\">");
+          html.append(kwicContent.toString());
+          html.append("</td></tr>");
+        }
       }
-      html.append("</td></tr>");
+
     } catch (Exception e) {
       // TODO: Need to do something sensible here with regard to highlighting
-      logger.log(Level.SEVERE, "Highlightling failure for " + url.toExternalForm(), e);
+      DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Highlightling failure for " + url.toExternalForm());
     }
     return html.toString();
 
@@ -795,7 +831,6 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     setPosition(position);
     setTotal(total);
 
-
   }
 
   private void setSolrQueryString(SolrQuery sq) {
@@ -824,18 +859,18 @@ public class DocumentBrowseRecord extends BrowseRecord implements Comparable {
     if ("".equals(solrQueryString)) {
       return "";
     }
-    String sq = ("".equals(highlightString) ? "?" : "&") + solrQueryString;
+    String sq = ("".equals(highlightString) ? "?" : "&") + URLEncoder.encode(solrQueryString, java.nio.charset.StandardCharsets.UTF_8);
     sq += "&p=" + String.valueOf(position) + "&t=" + String.valueOf(total);
     return scrubURL(sq);
 
   }
-  
+
   private String scrubURL(String url) {
-      return ServletUtils.scrub(url.replace("{", "%7B")
+      return url.replace("{", "%7B")
               .replace("}", "%7D")
               .replace("[", "%5B")
               .replace("]", "%5D")
-              .replace("|", "%7C"));
+              .replace("|", "%7C");
   }
 
   private void setPosition(long p) {

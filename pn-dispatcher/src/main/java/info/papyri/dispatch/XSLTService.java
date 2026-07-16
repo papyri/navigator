@@ -6,26 +6,23 @@ package info.papyri.dispatch;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.xml.transform.stream.StreamSource;
 
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
@@ -64,7 +61,7 @@ public class XSLTService extends HttpServlet {
           XsltExecutable xslt = compiler.compile(new StreamSource(new File(config.getInitParameter(name))));
           xslts.put(name, xslt);
         } catch (SaxonApiException e) {
-          LOGGER.log(Level.SEVERE, "Failed to compile "+name+".", e);
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Failed to compile "+name+".");
         }
       }
     }
@@ -94,7 +91,7 @@ public class XSLTService extends HttpServlet {
           xslt.setDestination(processor.newSerializer(out));
           xslt.transform();
         } catch (Exception e) {
-          LOGGER.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
+          DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.");
         } finally {
           out.close();
         }
@@ -133,7 +130,7 @@ public class XSLTService extends HttpServlet {
         xslt.setDestination(processor.newSerializer(out));
         xslt.transform();
       } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.", e);
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Transformation "+request.getParameter("xsl")+" failed.");
       } finally {
         out.close();
       }

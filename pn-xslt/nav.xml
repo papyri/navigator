@@ -1,32 +1,35 @@
-<div class="nav">
-  <!-- left nav -->
-  <form method="get" accept-charset="utf-8">
-    <ul class="nav">
-      <li>Browse: </li>
-      <li>
-        <a href="/browse/ddbdp/">DDbDP</a>
-      </li>
-      <li>
-        <a href="/browse/hgv/">HGV</a>
-      </li>
-      <li>
-        <a href="/browse/apis/">APIS</a>
-      </li>
-      <li>
-        <a href="/browse/dclp/">DCLP</a>
-      </li>
-      <li>
-        <a href="/authors">Authors</a>
-      </li>
-      <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').prop('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
-      </li>
-      <li>or Search:</li>
-      <li>
-        <a href="/search">Data</a>
-      </li>
-      <li>
-        <a href="/bibliosearch">Bibliography</a>
-      </li>
-    </ul>
-  </form>
-</div>
+<nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search &amp; browse navigation">
+  <div class="container-xl px-4">
+    <div id="mainNavbar" class="collapse navbar-collapse">
+
+      <!-- hide for wider viewports -->
+      <div id="login" class="d-md-none mt-3 mb-3">
+        <a href="/editor/user/signin" class="text-decoration-none">Sign In</a>
+      </div>
+
+      <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
+        <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" aria-hidden="true" tabindex="-1">Browse:</a></li>
+        <li class="nav-item"><a class="nav-link" href="/browse/editions/"><span class="visually-hidden">Browse</span>Editions</a></li>
+        <li class="nav-item"><a class="nav-link" href="/browse/apis/"><span class="visually-hidden">Browse</span>APIS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/authors"><span class="visually-hidden">Browse</span> Authors</a></li>
+        <li class="nav-item position-relative">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" role="button">TM Number</a>
+
+          <div class="bg-primary rounded-bottom p-2 mt-0 border-0 collapse position-absolute dropdown-menu" data-bs-theme="light" id="tmSearch">
+            <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value + '?COLLECTION=all&amp;TRANSC=&amp;DOCS_PER_PAGE=15'; return false;">
+              <div class="input-group">
+                <input id="tmid" type="text" class="form-control bg-white" placeholder="" aria-label="TM Number"/>
+                <button class="btn btn-light" type="submit" id="tmgo">Go</button>
+              </div>
+            </form>
+          </div>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/docs/checklist"><span class="visually-hidden">Browse</span> Checklist</a></li>
+
+        <li class="nav-item"><a class="nav-link disabled nav-category ms-lg-4 ms-xl-5 mt-3 mt-md-0" aria-hidden="true" href="#" tabindex="-1">Search:</a></li>
+        <li class="nav-item"><a class="nav-link" href="/search"><span class="visually-hidden">Search</span> Data</a></li>
+        <li class="nav-item"><a class="nav-link" href="/bibliosearch"><span class="visually-hidden">Search</span> Bibliography</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:dc="http://purl.org/dc/terms/" 
-  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-  xmlns:pi="http://papyri.info/ns"
+  xmlns:dc="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:array="http://www.w3.org/2005/xpath-functions/array"
+  xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+  xmlns:pi="http://papyri.info/ns/"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:t="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:sl="http://www.w3.org/2005/sparql-results#"
-  version="2.0" exclude-result-prefixes="#all">
+  version="3.0" exclude-result-prefixes="#all">
   
+  <xsl:output expand-text="yes"/>
+
   <xsl:import href="metadata-dclp.xsl"/>
   <xsl:import href="htm-teibibl.xsl"/>
   <xsl:output method="html"/>
-  
+
   <xsl:template match="t:TEI" mode="metadata">
     <xsl:variable name="md-collection"><xsl:choose>
       <xsl:when test="//t:idno[@type='apisid']">apis</xsl:when>
@@ -21,8 +25,9 @@
       <xsl:otherwise>hgv</xsl:otherwise>
     </xsl:choose>
     </xsl:variable>
-    <div class="metadata">
-      <div class="{$md-collection} data">
+    <xsl:variable name="table-id" select="concat($md-collection, '-metadata-', generate-id())"/>
+    <div class="metadata mb-3">
+      <div id="{$md-collection}-data" class="{$md-collection} data">
         <xsl:choose>
           <xsl:when test="$md-collection = 'dclp'">
             <h2>
@@ -30,28 +35,38 @@
                 <xsl:when test="string-length(descendant::t:idno[@type='TM'])!=6">
                   <xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,3)"/>
                   <xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
-                  DCLP/LDAB Data [<a class="xml" href="https://github.com/papyri/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+                  DCLP/LDAB Data <a class="btn btn-link fw-semibold text-decoration-none" href="https://github.com/papyri/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new"><i class="bi bi-xml"></i>xml</a>
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,4)"/>
                   <xsl:variable name="file-uri" select="number($file-uri1) + 1"/>
-                  DCLP/LDAB Data [<a class="xml" href="https://github.com/papyri/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new">xml</a>]
+                  DCLP/LDAB Data <a class="btn btn-link fw-semibold text-decoration-none" href="https://github.com/papyri/idp.data/blob/master/DCLP/{$file-uri}/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}.xml" target="_new"><i class="bi bi-xml"></i>xml</a>
                 </xsl:otherwise>
               </xsl:choose>
+              <xsl:call-template name="metadata-collapse-toggle">
+                <xsl:with-param name="table-id" select="$table-id"/>
+              </xsl:call-template>
             </h2>
           </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
-              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> [<a href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}">source</a>] [<a class="xml" href="/hgv/{//t:idno[@type='filename']}/source" target="_new">xml</a>]
+              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}"><i class="bi bi-external-link"></i>source</a> <a class="btn btn-link fw-semibold text-decoration-none" href="/hgv/{//t:idno[@type='filename']}/source" target="_new"><i class="bi bi-xml"></i>xml</a>
+              <xsl:call-template name="metadata-collapse-toggle">
+                <xsl:with-param name="table-id" select="$table-id"/>
+              </xsl:call-template>
             </h2>
           </xsl:when>
           <xsl:otherwise>
             <h2>
-              Catalog Record: <xsl:value-of select="//t:idno[@type='apisid']"/> [<a href="/apis/{//t:idno[@type='apisid']}/source">xml</a>] 
+              Catalog Record: <xsl:value-of select="//t:idno[@type='apisid']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="/apis/{//t:idno[@type='apisid']}/source"><i class="bi bi-xml"></i>xml</a>
+              <xsl:call-template name="metadata-collapse-toggle">
+                <xsl:with-param name="table-id" select="$table-id"/>
+              </xsl:call-template>
             </h2>
           </xsl:otherwise>
         </xsl:choose>
-        <table class="metadata">
+        <div id="{$table-id}" class="metadata-collapse collapse show">
+        <table class="table metadata mb-5">
           <tbody>
             <xsl:choose>
               <xsl:when test="$md-collection = 'dclp'">
@@ -143,9 +158,9 @@
                   mode="metadata"/>
                 <!-- Images -->
                 <xsl:apply-templates select="t:text/t:body/t:div[@type = 'figure']" mode="metadata"/>
-                
+
                 <!-- Intellectual Property and License -->
-                <!-- What follows is a dirty hack. XML files should instead declare licenses and copyright and the stylesheets should 
+                <!-- What follows is a dirty hack. XML files should instead declare licenses and copyright and the stylesheets should
                   report those declarations. See how this is done in metadata-dclp.xsl -->
                 <xsl:choose>
                   <xsl:when test="$md-collection = 'hgv'">
@@ -159,125 +174,65 @@
                     <tr>
                       <th class="rowheader">License</th>
                       <td><a rel="license" href="https://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://licensebuttons.net/l/by-nc/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.</td>
-                    </tr>                  
+                    </tr>
                   </xsl:otherwise>
                 </xsl:choose>
-                
+
               </xsl:otherwise>
             </xsl:choose>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
+  </xsl:template>
+
+  <!-- Control for collapsing/expanding a single metadata table -->
+  <xsl:template name="metadata-collapse-toggle">
+    <xsl:param name="table-id"/>
+    <button type="button" class="btn btn-link metadata-toggle" data-bs-toggle="collapse" data-bs-target="#{$table-id}" data-bs-title="Toggle metadata display" aria-expanded="true" aria-controls="{$table-id}">
+      <i class="bi bi-chevron-up" aria-hidden="true"></i>
+      <span class="visually-hidden">Toggle metadata table</span>
+    </button>
+  </xsl:template>
+
+  <xsl:template name="tm-metadata" expand-text="yes">
+    <xsl:param name="doc"/>
+    <xsl:if test="$doc instance of map(*) and map:contains($doc, 'publications')">
+      <div class="metadata">
+        <div class="tm data">
+          <h2>Trismegistos: {format-number($doc('id'), '#')} [<a href="https://www.trismegistos.org/text/{format-number($doc('id'), '#')}">source</a>]</h2>
+          <table class="table metadata">
+            <tbody>
+              <!-- Publications -->
+              <tr>
+                <th>Publications</th>
+                <td><xsl:for-each select="array:flatten(map:get($doc, 'publications'))">
+                    {.('title')} (<xsl:for-each select="array:flatten(.('editors'))[.('id') ne 0]">{.('name')}<xsl:if test="position() ne last()"> / </xsl:if></xsl:for-each>) {.('date')}<xsl:if test="position() ne last()">, </xsl:if>
+                </xsl:for-each></td>
+              </tr>
+              <!-- Inventory Number -->
+              <tr>
+                <th>Inv. No.</th>
+                <td><xsl:for-each select="array:flatten($doc('collection'))"><a href="https://www.trismegistos.org/collection/{.('id')}">{.('name')}</a><xsl:if test="position() ne last()">, </xsl:if></xsl:for-each></td>
+              </tr>
+              <!-- Date -->
+              <tr>
+                <th>Date</th>
+                <td>{$doc('date')}</td>
+              </tr>
+              <!-- Provenance -->
+              <tr>
+                <th>Provenance</th>
+                <td><xsl:for-each select="array:flatten($doc('provenance'))"><a href="https://www.trismegistos.org/place/{.('id')}">{.('name')}</a> {.('found and written')}<xsl:if test="position() ne last()">; </xsl:if></xsl:for-each></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </xsl:if>
   </xsl:template>
   
-  <xsl:template match="text" mode="metadata">
-    <div class="metadata">
-      <div class="tm data">
-        <h2>Trismegistos: <xsl:value-of select="field[@n='0']"/> [<a href="http://www.trismegistos.org/text/{field[@n='0']}">source</a>]</h2>
-        <table class="metadata">
-          <tbody>
-            <!-- Publications -->
-            <tr>
-              <th>Publications</th>
-              <td><xsl:for-each select="texref[starts-with(field[@n='15'], '1.')]">
-                <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
-                <xsl:value-of select="field[@n='14']"/> (<xsl:if test="editref"><xsl:for-each
-                  select="editref"><xsl:variable name="pos"
-                    select="count(preceding-sibling::editref) + 1"/><a
-                    href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
-                      select="$eds[$pos]"/></a><xsl:if test="position() != last()">
-                        <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; </xsl:if><xsl:value-of
-                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> +
- </xsl:text></xsl:if>
-              </xsl:for-each>
-                <xsl:for-each select="texref[not(starts-with(field[@n='15'], '1.'))]">
-                  <xsl:if test="position() = 1"><xsl:text> = </xsl:text></xsl:if>
-                <xsl:variable name="eds" select="tokenize(field[@n='19'], ' / ')"/>
-                  <xsl:value-of select="field[@n='14']"/> (<xsl:if test="editref"><xsl:for-each
-                    select="editref"><xsl:variable name="pos"
-                      select="count(preceding-sibling::editref) + 1"/><a
-                        href="http://www.trismegistos.org/editor/{field[@n='1']}"><xsl:value-of
-                          select="$eds[$pos]"/></a><xsl:if test="position() != last()">
-                            <xsl:text> / </xsl:text></xsl:if></xsl:for-each>; </xsl:if><xsl:value-of
-                          select="field[@n='21']"/>)<xsl:if test="position() != last()"><xsl:text> =
- </xsl:text></xsl:if>
-              </xsl:for-each></td>
-            </tr>
-            <!-- Inventory Number -->
-            <tr>
-              <th>Inv. no.</th>
-              <td><xsl:for-each select="collref[starts-with(field[@n='15'],'1.')]"><a
-                href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of select="field[@n='14']"/></a><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'1.')]">; </xsl:if></xsl:for-each>
-                <xsl:if test="collref[not(starts-with(field[@n='15'],'1.'))]"><xsl:if test="collref[starts-with(field[@n='15'],'1.')]">; </xsl:if>
-                  <xsl:if test="collref[starts-with(field[@n='15'],'2.')]">. other inv.: </xsl:if>
-                  <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
-                    <a href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of
-                      select="field[@n='14']"/></a><xsl:if
-                        test="following-sibling::collref[starts-with(field[@n='15'],'2.')]">; </xsl:if>
-                  </xsl:for-each>
-                  <xsl:if test="collref[starts-with(field[@n='15'],'3.')]">. formerly: </xsl:if>
-                  <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
-                    <a href="http://www.trismegistos.org/collection/{field[@n='1']}"><xsl:value-of select="field[@n='14']"/></a><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]">; </xsl:if>
-                  </xsl:for-each></xsl:if>
-              </td>
-            </tr>
-            <!-- Reuse -->
-            <xsl:if test="string-length(field[@n='13']) gt 0">
-              <tr>
-                <th>Reuse Type</th>
-                <td><xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
-                <xsl:for-each select="tokenize(field[@n='14'], ', ')">
-                  <a href="/trismegistos/{.}"><xsl:value-of select="."/></a><xsl:if test="position() != last()">, </xsl:if>
-                </xsl:for-each>
-                <xsl:value-of select="field[@n='57']"/></td>
-              </tr>
-            </xsl:if>
-            <!-- Date -->
-            <tr>
-              <th>Date</th>
-              <td><xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/></td>
-            </tr>
-            <!-- Language -->
-            <tr>
-              <th>Language</th>
-              <td><xsl:value-of select="field[@n='21']"/></td>
-            </tr>
-            <!-- Provenance -->
-            <tr>
-              <th>Provenance</th>
-              <td><xsl:for-each select="geotex">
-                <a href="http://www.trismegistos.org/place/{field[@n='2']}"><xsl:value-of
-                  select="field[@n='22']"/><xsl:if test="field[@n='20'] != ''"> <xsl:value-of select="field[@n='20']"/></xsl:if></a><xsl:if test="following-sibling::geotex">; </xsl:if>
-              </xsl:for-each></td>
-            </tr>
-            <!-- Archive -->
-            <xsl:if test="archref">
-              <tr>
-                <th>Archive</th>
-                <td><a href="http://www.trismegistos.org/archive/{archref/field[@n='5']}"><xsl:value-of select="archref/field[@n='37']"/></a></td>
-              </tr>
-            </xsl:if>
-            <!-- People -->
-            <xsl:if test="personref">
-              <tr>
-                <th>People</th>
-                <td><a href="http://www.trismegistos.org/ref/ref_list.php?tex_id={field[@n='0']}">mentioned people</a></td>
-              </tr>
-            </xsl:if>
-            <!-- Places -->
-            <xsl:if test="georef">
-              <tr>
-                <th>Places</th>
-                <td><a href="http://www.trismegistos.org/geo/georef_list.php?tex_id={field[@n='0']}">mentioned places</a></td>
-              </tr>
-            </xsl:if>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </xsl:template>
-    
   <!-- Title -->
   <xsl:template match="t:title" mode="metadata">
     <tr>
@@ -285,7 +240,7 @@
       <td><xsl:if test="not(starts-with(., 'kein'))"><xsl:attribute name="class">mdtitle</xsl:attribute></xsl:if><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Author -->
   <xsl:template match="t:author" mode="metadata">
     <tr>
@@ -293,7 +248,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Summary -->
   <xsl:template match="t:summary" mode="metadata">
     <tr>
@@ -301,7 +256,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Publications -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='principalEdition']" mode="metadata">
     <xsl:variable name="pubcount" select="count(../t:div[@type = 'bibliography' and @subtype = 'otherPublications']//t:bibl) + 1"/>
@@ -323,6 +278,7 @@
             <xsl:variable name="volume-name">
               <xsl:value-of select=".//t:biblScope[@type='volume']"></xsl:value-of>
             </xsl:variable>
+            <br/>
             <a href="{concat($facet-root, $series-param, '=', $series-name, '&amp;', $volume-param, '=', $volume-name)}" title="More in series {$series-name}, vol. {$volume-name}" target="_blank" rel="nofollow">More in series <xsl:value-of select="$series-name"/>, vol. <xsl:value-of select="$volume-name"/></a>
           </xsl:if>
             </div>
@@ -335,7 +291,7 @@
       </tr>
     </xsl:for-each>
   </xsl:template>
-  
+
   <!-- Ancient author and work -->
   <xsl:template
     match="t:div[@type = 'bibliography' and @subtype = 'ancientEdition']/t:listBibl"
@@ -360,7 +316,7 @@
       </td>
     </tr>
   </xsl:template>
-  
+
   <!-- Ancient author and work text -->
   <xsl:template match="t:bibl" mode="metadata">
     <xsl:choose>
@@ -379,7 +335,7 @@
       <xsl:if test="./following-sibling::t:biblScope">.</xsl:if>
     </xsl:for-each>
   </xsl:template>
-  
+
   <!-- overview keyword handling -->
   <xsl:template match="t:term[@type='overview']" mode="metadata">
     <tr>
@@ -389,8 +345,8 @@
       </td>
     </tr>
   </xsl:template>
-  
-  
+
+
   <!-- APIS Citations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='citations']" mode="metadata">
     <tr>
@@ -407,9 +363,9 @@
       </tr>
     </xsl:for-each>
   </xsl:template>
-  
+
   <xsl:template match="t:note[parent::t:bibl]"><xsl:text> </xsl:text>[<xsl:apply-templates/>]</xsl:template>
-  
+
   <!-- Commentary -->
   <xsl:template match="t:div[@type = 'commentary'][@subtype != 'mentionedDates']" mode="metadata">
     <tr>
@@ -417,7 +373,7 @@
       <td><xsl:value-of select="t:p"/></td>
     </tr>
   </xsl:template>
-  
+
   <xsl:template match="t:div[@type = 'commentary'][@subtype = 'mentionedDates']" mode="metadata">
     <tr>
       <th>Mentioned Dates</th>
@@ -426,7 +382,7 @@
       </xsl:for-each></ul></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Print Illustrations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='illustrations']" mode="metadata">
     <tr>
@@ -434,7 +390,7 @@
       <td><xsl:for-each select=".//t:bibl"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Inv. Id -->
   <xsl:template match="t:msIdentifier/t:idno" mode="metadata">
     <tr>
@@ -442,7 +398,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Physical Desc. -->
   <xsl:template match="t:physDesc/t:p" mode="metadata">
     <tr>
@@ -450,7 +406,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Support/Dimensions -->
   <xsl:template match="t:support" mode="metadata">
     <xsl:if test="parent::t:supportDesc/@material">
@@ -464,7 +420,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Condition -->
   <xsl:template match="t:ab[@type='conservation']" mode="metadata">
     <tr>
@@ -472,7 +428,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Preservation -->
   <xsl:template match="t:ab[@type='preservation']" mode="metadata">
     <tr>
@@ -480,7 +436,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Lines -->
   <xsl:template match="t:ab[@type='lines']" mode="metadata">
     <tr>
@@ -488,7 +444,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Recto/Verso -->
   <xsl:template match="t:ab[@type='recto-verso']" mode="metadata">
     <tr>
@@ -496,7 +452,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Hands -->
   <xsl:template match="t:handDesc/t:p" mode="metadata">
     <tr>
@@ -504,7 +460,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Post-Concordance BL Entries -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='corrections']" mode="metadata">
     <tr>
@@ -515,7 +471,7 @@
       </td>
     </tr>
   </xsl:template>
-  
+
   <!-- Translations -->
   <xsl:template match="t:div[@type = 'bibliography' and @subtype='translations']" mode="metadata">
     <tr>
@@ -525,7 +481,7 @@
       </td>
     </tr>
   </xsl:template>
-  
+
   <!-- Provenance -->
   <xsl:template match="t:origPlace|t:p" mode="metadata">
     <tr>
@@ -537,7 +493,7 @@
             <xsl:if test="t:geogName[@type='nome']"><xsl:value-of select="t:geogName[@type='nome']"/><xsl:if test="t:geogName[@type='ancientRegion']">, </xsl:if></xsl:if>
             <xsl:value-of select="t:geogName[@type='ancientRegion']"/></xsl:otherwise>
         </xsl:choose>
-          <!-- more-like-this output -->        
+          <!-- more-like-this output -->
           <xsl:if test="//t:origin/(t:origPlace|t:p/t:placeName[@type='ancientFindspot'])">
             <xsl:variable name="provenance-value">
               <xsl:value-of select="normalize-space(string-join(/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/(t:origPlace|t:p[t:placeName/@type='ancientFindspot']), ' '))"></xsl:value-of>
@@ -547,25 +503,25 @@
       </td>
     </tr>
   </xsl:template>
-  
+
   <xsl:template match="t:provenance" mode="metadata">
     <tr>
       <th class="rowheader">Provenance</th>
       <td><xsl:value-of select="t:p"/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Commented out until HGV XML makes sense
   <xsl:template match="t:origPlace/t:placeName">
     <xsl:choose>
-      <xsl:when test="t:placeName"> 
+      <xsl:when test="t:placeName">
         <xsl:apply-templates select="t:placeName[@type"></xsl:apply-templates>
-      </xsl:when> 
+      </xsl:when>
       <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
     </xsl:choose>
     </xsl:template>
   -->
-  
+
   <!-- Material -->
   <xsl:template match="t:material" mode="metadata">
     <tr>
@@ -573,7 +529,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Language -->
   <xsl:template match="t:textLang" mode="metadata">
     <tr>
@@ -592,14 +548,14 @@
                   <xsl:variable name="expansion"><xsl:value-of select="key('lang-codes', $ident)"></xsl:value-of></xsl:variable>
                   <a href="{concat($facet-root, $language-param, '=', $ident)}" title="More texts in {$expansion}" target="_blank" rel="nofollow">More texts in <xsl:value-of select="$expansion"></xsl:value-of></a>
                 </xsl:if>
-              </xsl:if>             
+              </xsl:if>
             </xsl:for-each>
           </div>
         </xsl:if>
       </td>
     </tr>
   </xsl:template>
-  
+
   <!-- Date -->
   <xsl:template match="t:origDate" mode="metadata">
     <tr>
@@ -617,7 +573,7 @@
                 <xsl:value-of select="pi:trim-date-to-year(./@notBefore)"></xsl:value-of>
               </xsl:when>
               <xsl:otherwise>no start date</xsl:otherwise>
-            </xsl:choose> 
+            </xsl:choose>
           </xsl:variable>
          <xsl:variable name="temp-date-end">
            <xsl:choose>
@@ -708,7 +664,7 @@
       </td>
     </tr>
   </xsl:template>
-  
+
   <xsl:function name="pi:trim-date-to-year">
     <xsl:param name="raw-date"/>
     <xsl:variable name="cooked-date">
@@ -722,11 +678,11 @@
       <xsl:choose>
         <xsl:when test="substring($cooked-date, 1, 1) eq '0'"><xsl:value-of select="substring($cooked-date, 2)"/></xsl:when>
         <xsl:otherwise><xsl:value-of select="$cooked-date"/></xsl:otherwise>
-      </xsl:choose>    
+      </xsl:choose>
     </xsl:variable>
     <xsl:sequence select="number($trimmed-date)"/>
   </xsl:function>
-  
+
   <xsl:function name="pi:get-era">
     <xsl:param name="raw-year"/>
     <xsl:variable name="era">
@@ -737,8 +693,8 @@
     </xsl:variable>
     <xsl:sequence select="$era"/>
   </xsl:function>
-  
-  <!-- Custodial Events --> 
+
+  <!-- Custodial Events -->
   <!-- Now display at the top of each column - see htm-teidivedition.xsl -->
   <!--<xsl:template match="t:custodialHist" mode="metadata">
     <tr>
@@ -748,10 +704,10 @@
 
           <xsl:for-each select="t:custEvent">
             <xsl:variable name="context-node" select="../../../../t:msIdentifier/t:idno/t:idno"/>
-            
-            <!-\- capture the HTML serialization of the details we want to emit into a variable -\-> 
+
+            <!-\- capture the HTML serialization of the details we want to emit into a variable -\->
             <xsl:variable name="interior">
-                
+
               <!-\- type of event -\->
               <xsl:if test="@type">
                 <xsl:variable name="type-display" select="concat(upper-case(substring(@type, 1, 1)), substring(@type, 2))"/>
@@ -765,7 +721,7 @@
                 </xsl:choose>
                 <xsl:text> by </xsl:text>
               </xsl:if>
-              
+
               <!-\- responsible individual -\->
               <xsl:choose>
                 <xsl:when test="t:forename or t:surname">
@@ -779,7 +735,7 @@
                   [unidentified responsible individual]
                 </xsl:otherwise>
               </xsl:choose>
-              
+
               <!-\- dates -\->
               <xsl:text> (</xsl:text>
               <xsl:choose>
@@ -804,7 +760,7 @@
                 </xsl:otherwise>
               </xsl:choose>
               <xsl:text>)</xsl:text>
-              
+
               <!-\- corresponding fragments -\->
               <xsl:if test="@corresp">
                 <xsl:text>: </xsl:text>
@@ -824,12 +780,12 @@
                         <xsl:text>; </xsl:text>
                       </xsl:otherwise>
                     </xsl:choose>
-                    
+
                   </xsl:if>
                 </xsl:for-each>
-              </xsl:if>                
+              </xsl:if>
             </xsl:variable>
-            
+
             <!-\- now emit the content we stored in the variable, wrapping it in a link if appropriate -\->
             <li>
               <xsl:choose>
@@ -841,7 +797,7 @@
                 </xsl:otherwise>
               </xsl:choose>
             </li>
-            
+
           </xsl:for-each>
 
         </ul>
@@ -849,9 +805,9 @@
 
     </tr>
   </xsl:template>-->
-  
- 
-  
+
+
+
   <!-- Notes -->
   <xsl:template match="t:msItemStruct/t:note" mode="metadata">
     <tr>
@@ -859,7 +815,7 @@
       <td><xsl:value-of select="."/></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Subjects -->
   <xsl:template match="t:keywords" mode="metadata">
     <tr>
@@ -867,7 +823,7 @@
       <td><xsl:for-each select="t:term"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Place Stored (Ancient) -->
   <xsl:template match="t:provenance[@type= 'stored']/t:p" mode="metadata">
     <tr>
@@ -883,10 +839,10 @@
 				<xsl:variable name='reference' select="@ref"/>
 				<xsl:choose>
 					<xsl:when test="starts-with($reference,'http')">
-						<a href='{$reference}'><xsl:value-of select="."/></a>,&#xA0; 
+						<a href='{$reference}'><xsl:value-of select="."/></a>,&#xA0;
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="."/>,&#xA0; 
+						<xsl:value-of select="."/>,&#xA0;
 					</xsl:otherwise>
 				</xsl:choose>
 				</xsl:otherwise>
@@ -908,8 +864,8 @@
       </td>
     </tr>
   </xsl:template>
-  
-  
+
+
   <!-- Associated Names -->
   <xsl:template match="t:origin" mode="metadata">
     <tr>
@@ -917,7 +873,7 @@
       <td><xsl:for-each select="t:persName[@type = 'asn']"><xsl:value-of select="normalize-space(.)"/><xsl:if test="position() != last()">; </xsl:if></xsl:for-each></td>
     </tr>
   </xsl:template>
-  
+
   <!-- Images -->
   <xsl:template match="t:div[@type = 'figure']" mode="metadata">
     <xsl:for-each select=".//t:figure[not(contains(@url, 'wwwapp.cc.columbia.edu'))]">
@@ -930,9 +886,9 @@
       </a></td>
     </tr>
     </xsl:for-each>
-    
+
   </xsl:template>
-  
+
   <!-- Intellectual Property: Licensing and Copyright -->
   <xsl:template match="t:availability" mode="metadata">
     <tr>
@@ -1017,7 +973,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
 
 </xsl:stylesheet>
 

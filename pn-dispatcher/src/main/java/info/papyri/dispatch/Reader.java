@@ -3,12 +3,13 @@ package info.papyri.dispatch;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import info.papyri.dispatch.monitoring.DispatchErrbitConfigProvider;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,11 +29,8 @@ import java.util.regex.Pattern;
  */
 @WebServlet(name = "Reader", urlPatterns = {"/reader"})
 public class Reader extends HttpServlet {
-  private static final String GRAPH = "http://papyri.info/graph";
-  private static final String PATH = "/pi/query";
+  private static final String GRAPH = "https://papyri.info/graph";
   private String sparqlServer;
-  private String xmlPath = "";
-  private String htmlPath = "";
   private FileUtils util;
   private SolrUtils solrutil;
   private final byte[] buffer = new byte[8192];
@@ -40,8 +39,8 @@ public class Reader extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    xmlPath = config.getInitParameter("xmlPath");
-    htmlPath = config.getInitParameter("htmlPath");
+    String xmlPath = config.getInitParameter("xmlPath");
+    String htmlPath = config.getInitParameter("htmlPath");
     util = new FileUtils(xmlPath, htmlPath);
     solrutil = new SolrUtils(config);
     sparqlServer = config.getInitParameter("sparqlUrl");
@@ -66,7 +65,7 @@ public class Reader extends HttpServlet {
           response.setHeader("Location", FileUtils.rewriteOldUrl(page));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         } else if (page.contains("hgvmeta")) {
-          response.setHeader("Location", page.replaceAll("^[/a-z]+/HGV\\d+/([0-9]+[a-z]*).html$", "http://papyri.info/hgv/$1"));
+          response.setHeader("Location", page.replaceAll("^[/a-z]+/HGV\\d+/([0-9]+[a-z]*).html$", "https://papyri.info/hgv/$1"));
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         }
       } else if (page.contains("/")) {
@@ -77,19 +76,19 @@ public class Reader extends HttpServlet {
           response.setContentType("application/xml;charset=UTF-8");
           file = util.getXmlFile(collection, item.replace("/source", ""));
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Xml");
+            file = resolveFile("https://papyri.info/" + collection + "/" + item, "Xml");
           }
         } else if (page.endsWith("text")) {
           response.setContentType("text/plain;charset=UTF-8");
           file = util.getTextFile(collection, item.replace("/text", ""));
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Text");
+            file = resolveFile("https://papyri.info/" + collection + "/" + item + "/source", "Text");
           }
         } else {
           response.setContentType("text/html;charset=UTF-8");
           file = util.getHtmlFile(collection, item);
           if (file != null && !file.exists()) { //use triple store to resolve to source file
-            file = resolveFile("http://papyri.info/" + collection + "/" + item + "/source", "Html");
+            file = resolveFile("https://papyri.info/" + collection + "/" + item + "/source", "Html");
           }
         }
         if (file == null) {
@@ -109,20 +108,18 @@ public class Reader extends HttpServlet {
 
 
   private void sendWithHighlight(HttpServletResponse response, File f, String q)
-    throws ServletException, IOException {
+    throws IOException {
     PrintWriter out = response.getWriter();
-    q = URLDecoder.decode(q,"UTF-8");
+    q = URLDecoder.decode(q, StandardCharsets.UTF_8);
     if (q.contains("transcription_l")) {
       try {
-        StringBuilder query = new StringBuilder();
-        query.append(FileUtils.substringBefore(q, "transcription_l", false));
-        query.append("transcription_ia:(");
-        query.append(solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)));
-        query.append(")");
-        query.append(FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false));
-        q = query.toString();
+        q = FileUtils.substringBefore(q, "transcription_l", false) +
+            "transcription_ia:(" +
+            solrutil.expandLemmas(FileUtils.substringBefore(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false)) +
+            ")" +
+            FileUtils.substringAfter(FileUtils.substringAfter(q, "transcription_l:(", false), ")", false);
       } catch (Exception e) {
-        logger.log(Level.SEVERE, "Error expanding lemmas.", e);
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Error expanding lemmas.");
       }
     }
     if (f != null && f.exists()) {
@@ -130,7 +127,7 @@ public class Reader extends HttpServlet {
         Pattern[] patterns = util.buildPatterns(q);
         out.write(util.highlight(patterns, util.loadFile(f)));
       } catch (Exception e) {
-        logger.log(Level.SEVERE, "Error while writing highligted file " + f.getAbsolutePath(), e);
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Error while writing highlighted file " + f.getAbsolutePath());
       } finally {
         out.close();
       }
@@ -150,9 +147,9 @@ public class Reader extends HttpServlet {
     sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
     sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
-    sparql.append("filter regex(str(?related), \"^http://papyri.info/(ddbdp|hgv|dclp)\") }");
+    sparql.append("filter regex(str(?related), \"^https://papyri.info/(ddbdp|hgv|dclp)\") }");
     try {
-      URL m = new URL(sparqlServer + PATH + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&format=json");
+      URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), StandardCharsets.UTF_8) + "&format=json");
       HttpURLConnection http = (HttpURLConnection)m.openConnection();
       http.setConnectTimeout(2000);
       ObjectMapper o = new ObjectMapper();
@@ -162,15 +159,16 @@ public class Reader extends HttpServlet {
       while (i.hasNext()) {
         uri = FileUtils.substringBefore(i.next().path("related").path("value").asText(), "/source");
         if (uri.contains("ddbdp/") || uri.contains("hgv/") || uri.contains("dclp/")) {
-          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, "UTF-8"));
+          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, StandardCharsets.UTF_8));
         }
+        assert result != null;
         if (result.exists()) {
           break;
         }
       }
       
     } catch (Exception e) {
-      logger.log(Level.SEVERE, "Unable to resolve file using query; " + sparql, e);
+      DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Unable to resolve file using query; " + sparql);
       return null;
     }
     return result;

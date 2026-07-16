@@ -26,7 +26,7 @@
     </xsl:variable>
 
     <xsl:variable name="id">
-      <xsl:text>http://</xsl:text>
+      <xsl:text>https://</xsl:text>
       <xsl:value-of select="$domain"/>
       <xsl:text>/dclp/</xsl:text>
       <xsl:value-of select="$tm"/> <!-- since the dclp-hybrid number cannot be relied upon, use DCLP number resp. TM number like HGV does -->
@@ -55,8 +55,8 @@
           <xsl:value-of select="$dclpId"/>
         </dct:identifier>
         <dct:source>
-          <rdf:Description rdf:about="http://{$domain}/dclp/{$dclpId}/work">
-            <dct:source rdf:resource="http://{$domain}/dclp/{$dclpId}/original" />
+          <rdf:Description rdf:about="https://{$domain}/dclp/{$dclpId}/work">
+            <dct:source rdf:resource="https://{$domain}/dclp/{$dclpId}/original" />
           </rdf:Description>
         </dct:source>
       </xsl:for-each>
@@ -67,7 +67,7 @@
       <xsl:for-each select="distinct-values(//tei:text/tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-in']/@n)">
         <xsl:for-each select="tokenize(., '\|')">
           <xsl:if test="matches(., '^\d+$')">
-            <dct:isReplacedBy rdf:resource="http://{$domain}/dclp/{.}/source"/>
+            <dct:isReplacedBy rdf:resource="https://{$domain}/dclp/{.}/source"/>
           </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
@@ -75,7 +75,7 @@
       <xsl:for-each select="//tei:body/tei:head[@xml:lang='en']/tei:ref[@type='reprint-from']">
         <xsl:for-each select="tokenize(@n, '\|')">
           <xsl:if test="matches(., '^\d+$')">
-            <dct:replaces rdf:resource="http://{$domain}/dclp/{.}/source"/>
+            <dct:replaces rdf:resource="https://{$domain}/dclp/{.}/source"/>
           </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
@@ -88,18 +88,18 @@
             <dct:isPartOf>
               <xsl:choose>
                 <xsl:when test="$ddb-seq[2] = ''">
-                  <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]}">
+                  <rdf:Description rdf:about="https://{$domain}/dclp/{$ddb-seq[1]}">
                     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
-                    <dct:isPartOf rdf:resource="http://{$domain}/dclp"/>
+                    <dct:isPartOf rdf:resource="https://{$domain}/dclp"/>
                   </rdf:Description>
                 </xsl:when>
                 <xsl:otherwise>
-                  <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]};{$ddb-seq[2]}">
+                  <rdf:Description rdf:about="https://{$domain}/dclp/{$ddb-seq[1]};{$ddb-seq[2]}">
                     <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
                     <dct:isPartOf>
-                      <rdf:Description rdf:about="http://{$domain}/dclp/{$ddb-seq[1]}">
+                      <rdf:Description rdf:about="https://{$domain}/dclp/{$ddb-seq[1]}">
                         <rdf:type rdf:resource="http://purl.org/ontology/bibo/Series"/>
-                        <dct:isPartOf rdf:resource="http://{$domain}/dclp"/>
+                        <dct:isPartOf rdf:resource="https://{$domain}/dclp"/>
                       </rdf:Description>
                     </dct:isPartOf>
                   </rdf:Description>

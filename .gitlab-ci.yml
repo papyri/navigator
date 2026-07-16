@@ -1,6 +1,5 @@
 include:
   - project: devops/ci-config
-    ref: main
     file:
       - /templates/audit-jobs.gitlab-ci.yml
       - /templates/container-flexible.gitlab-ci.yml
@@ -12,22 +11,40 @@ variables:
   COMMIT_MESSAGE: "Update submodule to latest commit"
   DOWNSTREAM_PROJECT: "papyri/papyri-docker"
   DOWNSTREAM_BRANCH: "master"
-
+  build_tag: $CI_REGISTRY_IMAGE/builds:$CI_COMMIT_SHORT_SHA
+  release_tag: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  apache_build_tag: $CI_REGISTRY_IMAGE/builds/apache:$CI_COMMIT_SHORT_SHA
+  tomcat_build_tag: $CI_REGISTRY_IMAGE/builds/tomcat:$CI_COMMIT_SHORT_SHA
+  apache_release_tag: $CI_REGISTRY_IMAGE/apache:$CI_COMMIT_REF_NAME
+  tomcat_release_tag: $CI_REGISTRY_IMAGE/tomcat:$CI_COMMIT_REF_NAME
 
 stages:
   - build
   - test
-  - publish
-  - deploy
-  - tasks
+  - release
+  - deploy-okd
 
 .job:
   except:
     variables:
       - $CI_SKIP_JOB_STAGE == $CI_JOB_STAGE
 
+.docker-job:
+  before_script:
+    - docker version
+    # Docker registry authn is required to pull
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
 build:
-  extends: .build
+  extends: .docker-job
+  stage: build
+  script:
+    - make
+    - docker push $build_tag
+    - docker push $apache_build_tag
+    - docker push $tomcat_build_tag
+  tags:
+    - build
 
 test:
   extends: .test
@@ -42,59 +59,24 @@ integration-tests:
   # Might be annoying to have this run on every commit, but it is useful to have
   when: manual
 
-update_submodules:
-  stage: publish
-  extends: .update_submodule
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"
-  
-publish:
-  extends: .job
-  tags:
-    - publish
-  stage: publish
+release:
+  stage: release
+  extends: .docker-job
   script:
-    - make publish
-  when: manual
+    - docker pull $apache_build_tag
+    - docker tag $apache_build_tag $apache_release_tag
+    - docker push $apache_release_tag
+    - docker pull $tomcat_build_tag
+    - docker tag $tomcat_build_tag $tomcat_release_tag
+    - docker push $tomcat_release_tag
+  tags:
+    - release
 
-deploy-prod-deb-12:
+deploy-okd:
+  stage: deploy-okd
   tags:
-    - deploy
-  stage: deploy
-  script:
-    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-navigator-deploy-playbook.service
-    - sudo /usr/bin/journalctl -u papyri-navigator-deploy-playbook --since "${CURRENT_TIME}"
+    - deploy-okd
   when: manual
-
-deploy-dev:
-  tags:
-    - deploy
-  stage: deploy
   script:
-    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-navigator-dev-deploy-playbook.service
-    - sudo /usr/bin/journalctl -u papyri-navigator-dev-deploy-playbook --since "${CURRENT_TIME}"
-  when: manual
-
-reindex-prod:
-  tags:
-    - tasks
-  stage: tasks
-  script:
-    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-navigator-indexing-playbook.service
-    - ./poll-for-indexing-completion.sh papyri-navigator-indexing-playbook
-    - sudo /usr/bin/journalctl -u papyri-navigator-indexing-playbook --since "${CURRENT_TIME}"
-  when: manual
-
-reindex-dev:
-  tags:
-    - tasks
-  stage: tasks
-  script:
-    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-navigator-indexing-dev-playbook.service
-    - ./poll-for-indexing-completion.sh papyri-navigator-indexing-dev-playbook
-    - sudo /usr/bin/journalctl -u papyri-navigator-indexing-dev-playbook --since "${CURRENT_TIME}"
-  when: manual
+    - echo "Triggering downstream deployment pipeline in dul-its/dul-papyri"
+    - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=main --form "variables[BUMP_TARGET]=navigator" "https://gitlab.oit.duke.edu/api/v4/projects/dul-its%2Fdul-papyri/trigger/pipeline"

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dc="http://purl.org/dc/terms/"
-  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:pi="http://papyri.info/ns"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:pi="http://papyri.info/ns/"
   xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:t="http://www.tei-c.org/ns/1.0"
   exclude-result-prefixes="xs dc rdf pi tei t xd" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
-  version="2.0">
+  expand-text="yes"
+  version="3.0">
 
   <xsl:import href="pi-global-varsandparams.xsl"/>
   <xsl:import href="../epidoc-xslt/functions.xsl"/>
@@ -57,39 +58,47 @@
   <xsl:param name="collection"/>
   <xsl:param name="related"/>
   <xsl:param name="images"/>
+  <xsl:param name="translations"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
-  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:variable name="line-inc">5</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
-  <xsl:variable name="ddbdp" select="$collection = 'ddbdp'"/>
+  <xsl:variable name="current" select="$collection = 'current'"/>
+  <xsl:variable name="historical" select="$collection = 'editions'"/>
+  <xsl:variable name="ddbdp" select="$collection = 'ddbdp' or contains($related, 'ddbdp/')"/>
   <xsl:variable name="hgv" select="$collection = 'hgv' or contains($related, 'hgv/')"/>
   <xsl:variable name="apis" select="$collection = 'apis' or contains($related, '/apis/')"/>
   <xsl:variable name="dclp" select="$collection = 'dclp' or contains($related, 'dclp/')"/>
   <xsl:include href="pi-functions.xsl"/>
 
   <xsl:template match="/">
-    <xsl:variable name="translation"
-      select="contains($related, 'hgvtrans') or (contains($related, '/apis/') and pi:get-docs($relations[contains(., '/apis/')], 'xml')//t:div[@type = 'translation'])"/>
     <add>
       <doc>
         <field name="project">IDP</field>
-        <xsl:if test="$ddbdp = true()">
-          <field name="collection">ddbdp</field>
+        <field name="collection">all</field>
+        <xsl:if test="$collection = 'current'">
+          <field name="collection">current</field>
+          <xsl:if test="$dclp = true()">
+            <field name="collection">dclp</field>
+          </xsl:if>
+          <xsl:if test="$ddbdp = true()">
+            <field name="collection">ddbdp</field>
+          </xsl:if>
+          <xsl:if test="$hgv = true()">
+            <field name="collection">hgv</field>
+          </xsl:if>
+          <xsl:if test="$apis = true()">
+            <field name="collection">apis</field>
+          </xsl:if>
         </xsl:if>
-        <xsl:if test="$hgv = true()">
-          <field name="collection">hgv</field>
-        </xsl:if>
-        <xsl:if test="$apis = true()">
-          <field name="collection">apis</field>
-        </xsl:if>
-        <xsl:if test="$dclp = true()">
-          <field name="collection">dclp</field>
-        </xsl:if>
+        <xsl:if test="$collection = 'editions'">
+          <field name="collection">editions</field>
+        </xsl:if>        
         <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
-          <xsl:when test="$collection = 'ddbdp'">
+          <xsl:when test="$ddbdp">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="idnos">
               <xsl:with-param name="idnos" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type != 'HGV']"/>
@@ -104,18 +113,6 @@
               <xsl:for-each select="tokenize(., ' ')">
                 <field name="identifier">http://papyri.info/hgv/<xsl:value-of select="."/></field>
               </xsl:for-each>
-            </xsl:for-each>
-            <xsl:variable name="languages"
-              select="distinct-values(//t:div[@type='edition']/descendant-or-self::*/@xml:lang)"/>
-            <xsl:for-each select="//t:langUsage/t:language">
-              <xsl:if test="index-of($languages, string(@ident))">
-                <field name="language">
-                  <xsl:value-of select="."/>
-                </field>
-                <field name="facet_language">
-                  <xsl:value-of select="string(@ident)"/>
-                </field>
-              </xsl:if>
             </xsl:for-each>
             <xsl:call-template name="text"><xsl:with-param name="docs" select="pi:get-docs($relations[contains(., '/dclp/')], 'xml') union /"/></xsl:call-template>
             <xsl:call-template name="languages"/>
@@ -156,7 +153,7 @@
                 </xsl:call-template>
                 <xsl:call-template name="translation">
                   <xsl:with-param name="docs"
-                    select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
+                    select="pi:get-docs(tokenize($translations, ' '), 'xml')"
                   />
                 </xsl:call-template>
               </xsl:when>
@@ -174,7 +171,7 @@
                 contains(., 'dclp/') or contains(., '/apis/')], 'xml') union /"/>        
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$collection = 'dclp'">
+          <xsl:when test="$dclp">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="idnos">
               <xsl:with-param name="idnos" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[not(@type = ('dclp', 'filename', 'herc-fr'))]"/>
@@ -216,7 +213,7 @@
             </xsl:call-template>
             <xsl:call-template name="translation">
               <xsl:with-param name="docs"
-                select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or contains(., '/hgvtrans/')], 'xml')"
+                select="pi:get-docs(tokenize($translations, ' '), 'xml')"
               />
             </xsl:call-template>
             <xsl:call-template name="images">
@@ -228,7 +225,7 @@
               <xsl:with-param name="docs" select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/')], 'xml') union /"/>        
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$collection = 'hgv'">
+          <xsl:when test="$hgv">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'TM']">
@@ -264,7 +261,7 @@
                 contains(., '/apis/')], 'xml') union /"></xsl:with-param>
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$collection = 'apis'">
+          <xsl:when test="$apis">
             <field name="id"><xsl:value-of select="$id"/></field>
             <xsl:call-template name="facetfields">
               <xsl:with-param name="docs" select="/"/>
@@ -277,7 +274,9 @@
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
             <xsl:call-template name="translation">
-              <xsl:with-param name="docs" select="/"/>
+              <xsl:with-param name="docs"
+                select="pi:get-docs(tokenize($translations, ' '), 'xml')"
+              />
             </xsl:call-template>
             <xsl:for-each
               select="/t:TEI/t:teiHeader/t:profileDesc/t:langUsage/t:language[@ident != 'en']">
@@ -582,7 +581,7 @@
       <!-- 2017-08-18 With DCLP, can't count on the following being a test for HGV any longer, as
         DCLP has principal editions too, so checking that we're not looking at a DCLP document. -->
       <xsl:when
-        test="not($docs[1]//t:idno[@type='dclp']) 
+        test="not($docs[1]//t:idno[@type='dclp']) and not($docs[1]//t:idno[@type='HGV'])
         and $docs[1]//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'][matches(.,'^\d+[a-z]*')]">
         <!-- IFF HGV document -->
         <xsl:variable name="hgv_identifiers">
@@ -1330,6 +1329,11 @@
         <xsl:value-of select="normalize-space(.)"/>
       </field>
     </xsl:for-each>
+    <xsl:for-each select="$docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:provenance//t:placeName[not(@subtype)]">
+      <field name="placename">
+        <xsl:value-of select="normalize-space(.)"/>
+      </field>
+    </xsl:for-each>
   </xsl:template>
 
   <xsl:template name="date">
@@ -1459,6 +1463,7 @@
 
   <xsl:template name="app-link">
     <xsl:param name="location"/>
+    <xsl:param name="lineNumber"/>
   </xsl:template>
   
   <xsl:template name="lbrk-app">

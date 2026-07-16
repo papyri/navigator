@@ -1,40 +1,61 @@
-<div id="ft">
-  <div id="footer">
-    <div id="footer-left-col">
-      <div id="secondary-nav">
-        <ul class="nav">
-          <li><a href="/" title="Project Home">Home</a></li>
-          <li><a href="/docs/help" title="Site help">Help</a></li>
-          <!-- following two links SoSOL only -->
-          <!-- <li><a href="">Leiden<sup>+</sup> Text Help</a></li> -->
-          <!-- <li><a href="">Leiden<sup>+</sup> Translation Help</a></li> -->
-          <!-- insert link for SoSOL admin email here -->
-          <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
-          <li><a href="/docs/resources" title="Papyrological tools and resources">Resources</a></li>
-          <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
-          <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
+<footer class="bg-dark py-5" data-bs-theme="dark">
+  <div class="container-xl px-4">
+    <div class="row">
+      <div class="col-6 col-md-3 mb-3">
+        <h2 class="h4">Links</h2>
+        <ul class="list-unstyled no-link-underline">
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/docs/help">Help</a>
+          </li>
+          <li>
+            <a href="/docs/resources">Resources</a>
+          </li>
+          <li>
+            <a href="/feedback.html">Feedback</a>
+          </li>
         </ul>
       </div>
-      <div class="spacer"></div>
-    </div>
-    <div id="footer-right-col">
-      <p>Produced by</p>
-      <p><a href="http://blogs.library.duke.edu/dcthree/">The Duke Collaboratory for Classics Computing</a> 
-        <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
-        Ancient World</a></p>
-      <div id="about-nav"> 
-        <h3 id="about-hdr">About:</h3>
-        <ul class="nav">
-          <li><a href="http://www.ulb.ac.be/philo/cpeg/bp.htm" title="Bibliographie Papyrologique Home">BP</a></li>
-          <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
-          <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
-            der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
-          <li><a href="/docs/ddbdp" title="Duke Databank of Documentary Papyri - Home">DDbDP</a></li>
-          <li><a href="/docs/apis" title="Advanced Papyrological Information System">APIS</a></li>
-          <li class="last-child"><a href="/docs/about">Papyri.info</a></li>    
+      <div class="col-6 col-md-3 mb-3">
+        <h2 class="h4">About</h2>
+        <ul class="list-unstyled about-links no-link-underline">
+          <li>
+            <a href="/docs/about">Papyri.info</a>
+          </li>
+          <li>
+            <a href="/docs/apis">APIS</a>
+          </li>
+          <li>
+            <a href="/docs/ddbdp">DDbDP</a>
+          </li>
+          <li>
+            <a href="https://aquila.zaw.uni-heidelberg.de/start">HGV</a>
+          </li>
+          <li>
+            <a href="http://www.trismegistos.org/">Trismegistos</a>
+          </li>
+          <li>
+            <a href="https://bibpap.be/">BP</a>
+          </li>
+          <li>
+            <a href="http://epidoc.sourceforge.net/">EpiDoc</a>
+          </li>
         </ul>
       </div>
+      <div class="d-none d-md-flex col-md-1 justify-content-center">
+        <div class="vr my-auto h-100 bg-light"></div>
+      </div>
+      <div class="d-md-none d-flex">
+        <hr class="border-light w-100"/>
+      </div>
+      <div class="col-12 col-md-5 mb-3">
+        <h2 class="h4 text-light">Produced by</h2>
+        <p class="text-light">The <a href="http://blogs.library.duke.edu/dcthree/">Duke Collaboratory for Classics Computing</a> &amp;<br/>
+the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.
+      </p>
     </div>
-    <div class="spacer"></div>
   </div>
 </div>
+</footer>
