@@ -11,3 +11,4 @@ nohup.out
 .lein-repl-history
 .project
 .settings/
+*.iml
