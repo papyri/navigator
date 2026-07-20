@@ -1,95 +1,93 @@
-DDb-hybrid (match),Checklist (replace-with),TM (replace),Replace?,Regex?,Notes
-actenstuecke,Actenstücke,Actenstücke,FALSE,FALSE
-aegyptus,Aegyptus,Aegyptus,FALSE,FALSE
-anagennesis,Anagennesis,Anagennesis,FALSE,FALSE
+DDb-hybrid (match),Checklist (replace-with),TM (replace),Replace?,Regex?
+actenstuecke,Actenstücke,Actenstücke,TRUE,FALSE
+aegyptus,Aegyptus,Aegyptus,TRUE,FALSE
+am.stud.pap;1,Am.Stud.Pap. 1,(Essays Bradford Welles \(American Studies in Papyrology 1\)|Essays in honor of C\. Bradford Welles 1),TRUE,TRUE
+am.stud.pap;36,Am.Stud.Pap. 36,"Cribiore, Writing, teachers, and students",TRUE,FALSE
+anagennesis,Anagennesis,Anagennesis,TRUE,FALSE
 analpap,AnalPap,Analecta Papyrologica,TRUE,FALSE
 ancsoc,AncSoc,Ancient Society,TRUE,FALSE
-p.testi.med,P.Testi Med.,"Andorlini (ed.), Testi medici su papiro. Atti del seminario di studio Firenze 2002",TRUE,FALSE
-p.edg,P.Edg. $1,"Annales du Service des antiquités de l'Égypte \(ASAE\) \d{2} \(\d{4}\), p\. [-0-9]+ \(Zenon (\d+)\)",TRUE,TRUE
-asae;26,ASAE 26,Annales du Service des antiquités de l'Égypte (ASAE) 26 (1926),TRUE,FALSE
 apf,APF,Archiv für Papyrusforschung (AfP),TRUE,FALSE
-arctos,Arctos,Arctos,FALSE,FALSE
+archiv.beih;1,ArchivBeih. 1,"Rostovtzeff, Studien zur Geschichte des römischen Kolonates",TRUE,FALSE
+arctos,Arctos,Arctos,TRUE,FALSE
+asae;26,ASAE 26,Annales du Service des antiquités de l'Égypte (ASAE) 26 (1926),TRUE,FALSE
+bacps,BACPS,Bulletin of the Center of Papyrological Studies (BACPS),TRUE,FALSE
+basp,BASP,Bulletin of the American Society of Papyrologists (BASP),TRUE,FALSE
+basp;22;275_2,"BASP, 22 (1985), pp. 271-277","Bulletin of the American Society of Papyrologists (BASP) 22 (1985), p. 273-277",TRUE,FALSE
+bgu,BGU,BGU,TRUE,FALSE
 bifao,BIFAO,Bulletin de l'Institut français d'archéologie orientale (BIFAO),TRUE,FALSE
 bsac,BSAC,Bulletin de la Société d'archéologie copte (BSAC),TRUE,FALSE
-basp,BASP,Bulletin of the American Society of Papyrologists (BASP),TRUE,FALSE
-bacps,BACPS,Bulletin of the Center of Papyrological Studies (BACPS),TRUE,FALSE
-bgu,BGU,BGU,TRUE,FALSE
+c.clerge,C.Clergé,C. Pap. Gr. Clergé,TRUE,FALSE
+c.epist.lat,C.Epist.Lat.,"Cugusi, Corpus epistularum Latinarum (CEL) 1",TRUE,FALSE
+c.erbstreit,C.Erbstreit,P. Erbstreit (2017),TRUE,FALSE
 c.etiq.mom,C.Étiq.Mom.,C. Étiq. Mom.,TRUE,FALSE
 c.gloss.biling,C.Gloss.Biling.,C. Gloss. Biling.,TRUE,FALSE
-c.clerge,C.Clergé,C. Pap. Gr. Clergé,TRUE,FALSE
+c.illum.pap,C.Illum.Pap.,"Horak, Illuminierte Papyri",TRUE,FALSE
+c.jud.syr.eg,C.Jud.Syr.Eg.,P. Conflict,TRUE,FALSE
+c.lat.text.pap,C.Lat.Text.Pap.,Corpus of Latin Texts on Papyrus (CLTP),TRUE,FALSE
+c.ord.ptol,C.Ord.Ptol.,C. Ord. Ptol.,TRUE,FALSE
 c.pap.gr,C.Pap.Gr.,C. Pap. Gr.,TRUE,FALSE
-cripel;1,CRIPEL 1,Cahier de rech. de l'Inst. de pap. et égypt. de Lille (CRIPEL) 1 (1973),TRUE,FALSE
-t.mom.louvre,T.Mom.Louvre,"Cahier de rech\. de l'Inst\. de pap\. et égypt\. de Lille \(CRIPEL\) 3 \(197\d\), p. \d+ no\. CEML",TRUE,TRUE
-pap.lup;11,Pap.Lup. 11,"Capasso (ed.), Dal restauro dei materiali (Pap. Lup. 11)",TRUE,FALSE
-pap.lup;2,Pap.Lup. 2,"Capasso (ed.), Papiri documentari greci (Pap. Lup. 2)",TRUE,FALSE
-pap.lup;6,Pap.Lup. 6,"Capasso (ed.), Ricerche di papirologia letteraria e documentaria (Pap. Lup. 6)",TRUE,FALSE
-o.sok.nes,O.Sok.Nes.,"Capasso / Davoli (ed.), Soknopaiou Nesos project II",TRUE,FALSE
-pap.lup;9,Pap.Lup. 9,"Capasso / Pernigotti (ed.), Studium atque urbanitas. Fs. Sergio Daris (Pap. Lup. 9) p.",TRUE,FALSE
-pap.flor;19,Pap.Flor. 19,"Capasso e.a. (ed.), Miscellanea papyrologica (Pap. Flor. 19)",TRUE,FALSE
+c.pap.hengstl,C.Pap.Hengstl,"Hengstl, Griechische Papyri",TRUE,FALSE
+c.pap.jud,C.Pap.Jud.,CPJ,TRUE,FALSE
 c.pap.lat,C.Pap.Lat.,"Cavenaile, Corpus papyrorum Latinarum (CPL)",TRUE,FALSE
-pap.flor;29,Pap.Flor. 29,"Chapa, Letters of condolence",TRUE,FALSE
-chla,Ch.L.A.,Chartae Latinae antiquiores (ChLA),TRUE,FALSE
-chiron,Chiron,Chiron,FALSE,FALSE
-chrest.mitt,Chrest.Mitt.,Chrest. Mitt.,FALSE,FALSE
-chrest.wilck,Chrest.Wilck.,Chrest. Wilck.,FALSE,FALSE
+c.ptol.sklav,C.Ptol.Sklav.,CPS,TRUE,FALSE
 cde,CdÉ,Chronique d'Égypte (CdE),TRUE,FALSE
-psi.com;11,PSI Com. 11,Comunicazioni dell' Istituto Papirologico G. Vitelli 11 (2013),TRUE,FALSE
+chiron,Chiron,Chiron,TRUE,FALSE
+chla,Ch.L.A.,Chartae Latinae antiquiores (ChLA),TRUE,FALSE
+chrest.mitt,Chrest.Mitt.,Chrest. Mitt.,TRUE,FALSE
+chrest.wilck,Chrest.Wilck.,Chrest. Wilck.,TRUE,FALSE
+cla,CLA,"Lowe, CLA",TRUE,FALSE
+cla.suppl,CLA.Suppl.,"Lowe, CLA Suppl.",TRUE,FALSE
 copt.congr;8,CoptCongr. 8,Copt. Congr. VIII (Paris 2004),TRUE,FALSE
 cpf,CPF,Corpus dei papiri filosofici (CPF),TRUE,FALSE
-c.lat.text.pap,C.Lat.Text.Pap.,Corpus of Latin Texts on Papyrus (CLTP),TRUE,FALSE
-c.pap.jud,C.Pap.Jud.,CPJ,TRUE,FALSE
-cpr,CPR,CPR,FALSE,FALSE
-c.ptol.sklav,C.Ptol.Sklav.,CPS,TRUE,FALSE
-am.stud.pap;36,Am.Stud.Pap. 36,"Cribiore, Writing, teachers, and students",TRUE,FALSE
-p.sarga,P.Sarga $1,"Crum / Bell, Wadi Sarga (12|16|19|96|128|166|176)",TRUE,TRUE,"all papyri bar one now in papyri.info. see sheet ""o/pSarga"": https://docs.google.com/spreadsheets/d/1TuXgV4vm_UYzhG80L_qpEkXdcHTXgvXKdPk8QghMJTc/edit?gid=1425819820#gid=1425819820"
-o.sarga,O.Sarga,"Crum / Bell, Wadi Sarga",TRUE,FALSE
-o.cair.monuments,O.Cair.Monuments,"Crum, Coptic monuments (CGC)",TRUE,FALSE
-c.epist.lat,C.Epist.Lat.,"Cugusi, Corpus epistularum Latinarum (CEL) 1",TRUE,FALSE,Are we transitioning to c.epist.lat;1?,,,no just c.epist.lat,has been done
+cpr,CPR,CPR,TRUE,FALSE
+cpr;35,CPR 35,P. Herm. Boul. (CPR 35),TRUE,FALSE
+crai,CRAI,Comptes rendus de l‘Academie des inscriptions et belles-lettres (CRAIBL),TRUE,FALSE
+cripel;1,CRIPEL 1,Cahier de rech. de l'Inst. de pap. et égypt. de Lille (CRIPEL) 1 (1973),TRUE,FALSE
+ddbdp,DDbDP ,Papyri.info (online) ddbdp;,TRUE,FALSE
+dem.congr;2,DemCongr. 2,"Vleeming (ed.), Aspects of Demotic lexicography",TRUE,FALSE
+dem.congr;4,DemCongr. 4,Life in a multi-cultural society,TRUE,FALSE
 doc.eser.rom,Doc.Eser.Rom.,"Daris, Documenti per la storia dell' esercito romano in Egitto",TRUE,FALSE
-pap.brux;34,Pap.Brux. 34,"Delattre / Heilporn (ed.), Thèbes (Pap. Brux. 34)",TRUE,FALSE
-evo,EVO,Egitto e Vicino Oriente (EVO),TRUE,FALSE
-enchoria,Enchoria,Enchoria,FALSE,FALSE
-am.stud.pap;1,Am.Stud.Pap. 1,(Essays Bradford Welles \(American Studies in Papyrology 1\)|Essays in honor of C\. Bradford Welles 1),TRUE,TRUE
 edp,ÉdP,Études de papyrologie,TRUE,FALSE
-rom.mil.rec,Rom.Mil.Rec.,"Fink, Roman military records",TRUE,FALSE
+enchoria,Enchoria,Enchoria,TRUE,FALSE
+evo,EVO,Egitto e Vicino Oriente (EVO),TRUE,FALSE
+feste,Feste,P. Feste,TRUE,FALSE
 gr.med.pap,Gr.Med.Pap.,Greek medical papyri (GMP),TRUE,FALSE
 grbs,GRBS,"Greek, Roman and Byzantine Studies",TRUE,FALSE
-p.lond.wasser,P.Lond.Wasser.,"Habermann, Zur Wasserversorgung einer Metropole",TRUE,FALSE
-c.pap.hengstl,C.Pap.Hengstl,"Hengstl, Griechische Papyri",TRUE,FALSE
-c.illum.pap,C.Illum.Pap.,"Horak, Illuminierte Papyri",TRUE,FALSE
-p.dura.lat,P.Dura Lat.,"Iovine, Latin military papyri of Dura-Europos",TRUE,FALSE
+hermes,Hermes,Hermes,TRUE,FALSE
+i.kanais,,,FALSE
+i.koptos.kosseir, I.Koptos Kosseir,I. Koptos à Kosseir,TRUE,FALSE
+i.pan.du.desert,I.Pan du désert,I. Pan du désert,TRUE,FALSE
 iej,IEJ,Israel Exploration Journal,TRUE,FALSE
-muench.beitr;114,Münch.Beitr. 114,"Johannsen, Das Privatrecht der griechischen Urkunen vom mittleren Euphrat",TRUE,FALSE
+iwnw,IWNW,,FALSE
 j.copt.stud,JCoptStud,Journal of Coptic Studies,TRUE,FALSE
 jea,JEA,Journal of Egyptian Archaeology (JEA),TRUE,FALSE
+jguaa,JGUAA,Journal of the General Union of Arab Archaeologists,TRUE,FALSE
 jjp,JJP,Journal of Juristic Papyrology (JJP),TRUE,FALSE
-muench.beitr;28,Münch.Beitr. 28,"Kapsomenakis, Voruntersuchungen zu einer Grammatik der Papyri der nachchristlichen Zeit",TRUE,FALSE
-kurzberichtegiessen;20,KurzberichteGiessen 20,"Kurzberichte aus den Giessener Papyrus-Sammlungen 20 (1965),",TRUE,FALSE,Checklist has volume numbers...
-pap.classics;2,Pap.Classics 2,"Lewis, Greeks in Ptolemaic Egypt",TRUE,FALSE
-pap.classics;1,Pap.Classics 1,"Lewis, Life in Egypt under Roman rule",TRUE,FALSE
-dem.congr;4,DemCongr. 4,Life in a multi-cultural society,TRUE,FALSE
-pap.colon;25,Pap.Colon. 25,"Maresch, Bronze und Silber (Pap. Colon. 25)",TRUE,FALSE
-p.marini,P.Marini,"Marini, I papiri diplomatici",TRUE,FALSE
+jra,JRA,Journal of Roman Archaeology (JRA),TRUE,FALSE
+jra.suppl;28,JRA.Suppl. 28,,FALSE
+jra.suppl;3,JRA.Suppl. 3,Literacy in the Roman world (JRA Suppl. 3),TRUE,FALSE
 jur.pap,Jur.Pap.,"Meyer, Juristische Papyri",TRUE,FALSE
-pap.flor;32,Pap.Flor. 32,"Mitthof, Annona militaris (Pap. Flor. 32)",TRUE,FALSE
-mizraim,Mizraim,Mizraim,FALSE,FALSE
-mper.ns,MPER N.S.,MPER N.S.,FALSE,FALSE
-mper,MPER,MPER,FALSE,FALSE
-stud.test.pap;3,Stud.Test.Pap. 3,"Naldini, Il cristianesimo 1",TRUE,FALSE
+kurzberichtegiessen;20,KurzberichteGiessen 20,"Kurzberichte aus den Giessener Papyrus-Sammlungen 20 (1965),",TRUE,FALSE
+mizraim,Mizraim,Mizraim,TRUE,FALSE
+mper,MPER,MPER,TRUE,FALSE
+mper.ns,MPER N.S.,MPER N.S.,TRUE,FALSE
+mper.ns;20,MPER N.S. 20,"Palme, Das Amt des Apaitetes",TRUE,FALSE
+muench.beitr;1,Münch.Beitr. 1,"von Druffel, Papyrologische Studien zum byzantinischen Urkundenwesen",TRUE,FALSE
+muench.beitr;114,Münch.Beitr. 114,"Johannsen, Das Privatrecht der griechischen Urkunen vom mittleren Euphrat",TRUE,FALSE
+muench.beitr;28,Münch.Beitr. 28,"Kapsomenakis, Voruntersuchungen zu einer Grammatik der Papyri der nachchristlichen Zeit",TRUE,FALSE
+muench.beitr;44,Münch.Beitr. 44,"Wolff, Das Justizwesen der Ptolemäer",TRUE,FALSE
 new.docs,NewDocs,New documents illustrating early christianity,TRUE,FALSE
-pestman.prim,"Pestman, Prim.",New papyrological primer,TRUE,FALSE,CList has second 1994 ed; TM has 1st 1990 ed
-p.amh.eg,P.Amh.Eg.,"Newberry, Amherst papyri",TRUE,FALSE
-o.abu.mina,O.Abu.Mina,O. Abu Mina,FALSE,FALSE
-o.oasis;;AinLabakha1,O.Oasis: AinLabakha 1,O. Ain Labakha (p. 82),TRUE,FALSE
+o.abraham,O.Abraham,"Krause, Apa Abraham von Hermonthis (unpubl. thesis)",TRUE,FALSE
+o.abu.mina,O.Abu.Mina,O. Abu Mina,TRUE,FALSE
 o.amst,O.Amst.,O. Amst.,TRUE,FALSE
 o.ashm,O.Ashm.,O. Ashm.,TRUE,FALSE
 o.ashm.copt,O.Ashm.Copt.,O. Ashm. Copt.,TRUE,FALSE
 o.ashm.shelt,O.Ashm.Shelt.,O. Ashm. Shelton,TRUE,FALSE
-o.oasis;;Bahria,O.Oasis: Bahria,O\. Bahria\s,TRUE,TRUE
 o.bankes,O.Bankes,O. Bankes,TRUE,FALSE
 o.bawit.fribourg,O.Bawit Fribourg,O. Bawit Fribourg,TRUE,FALSE
 o.bawit.ifao,O.Bawit IFAO,O. Bawit IFAO,TRUE,FALSE
 o.berenike,O.Berenike,O. Berenike,TRUE,FALSE
+o.berenike;4,O.Berenike 4,"Pylon 1 \(2022\) \[Ast\], § [-0-9]+ no\. O\. Berenike",TRUE,TRUE
 o.berl,O.Berl.,O. Berl.,TRUE,FALSE
 o.bir.shawish,O.Bir Shawish,O. Bir Shawish,TRUE,FALSE
 o.blemmyes,O.Blemmyes,O. Blemmyes,TRUE,FALSE
@@ -98,119 +96,143 @@ o.brit.mus.copt,O.Brit.Mus.Copt.,O. Brit. Mus. Copt.,TRUE,FALSE
 o.brux,O.Brux.,O. Brux.,TRUE,FALSE
 o.bu.njem,O.Bu Njem,O. Bu Njem,TRUE,FALSE
 o.buch,O.Buch.,O. Bucheum,TRUE,FALSE
-o.cair.cat,O.Cair.Cat.,O. Cairo Cat.,TRUE,FALSE
 o.cair,O.Cair.,O. Cairo,TRUE,FALSE
+o.cair.cat,O.Cair.Cat.,O. Cairo Cat.,TRUE,FALSE
+o.cair.monuments,O.Cair.Monuments,"Crum, Coptic monuments (CGC)",TRUE,FALSE
 o.camb,O.Camb.,O. Camb.,TRUE,FALSE
-o.oasis;;ChamsElDin,O.Oasis: ChamsElDin,O. Chams el-Din,TRUE,FALSE
 o.claud,O.Claud.,O. Claud.,TRUE,FALSE
 o.cret.chers,O.Chret.Chers.,O. Cret. Chers.,TRUE,FALSE
+o.crum,O.Crum,O. Crum,TRUE,FALSE
 o.crum.st,O.Crum ST,O. Crum ST,TRUE,FALSE
 o.crum.vc,O.Crum VC,O. Crum VC,TRUE,FALSE
 o.deiss,O.Deiss.,O. Deiss.,TRUE,FALSE
 o.did,O.Did.,O. Did.,TRUE,FALSE
 o.dime,O.Dime,O. Dime,TRUE,FALSE
-o.oasis;;Dor,O.Oasis: Dor,O. Dor ,TRUE,FALSE
 o.douch,O.Douch,O. Douch,TRUE,FALSE
 o.edfou,O.Edfou,O. Edfou,TRUE,FALSE
 o.edfou.ifao,O.Edfou IFAO,O. Edfou Copte,TRUE,FALSE
-p.eleph.wagner;1;,O.Eleph.Wagner,O. Eleph. DAIK,TRUE,FALSE
+o.eleph.wagner,O.Eleph.Wagner,O. Eleph. DAIK,TRUE,FALSE
 o.elkab,O.Elkab,O. Elkab,TRUE,FALSE
+o.erem,O.Erem.,APF 5,TRUE,FALSE
 o.fay,O.Fay.,O. Fay.,TRUE,FALSE
 o.florida,O.Florida,O. Florida,TRUE,FALSE
 o.frange,O.Frangé,O. Frangé,TRUE,FALSE
 o.heid,O.Heid.,O. Heid.,TRUE,FALSE
+o.hor,O.Hor,O. Hor,TRUE,FALSE
 o.joach,O.Joach.,O. Joachim,TRUE,FALSE
 o.kellis,O.Kellis,O. Kellis,TRUE,FALSE
 o.krok,O.Krok.,O. Krok.,TRUE,FALSE
-o.leid.dem,O.Leid.Dem.,O. Leiden Dem.,TRUE,FALSE
 o.leid,O.Leid.,O. Leiden Gr.,TRUE,FALSE
+o.leid.dem,O.Leid.Dem.,O. Leiden Dem.,TRUE,FALSE
 o.lips.copt,O.Lips.Copt.,O. Lips. Copt.,TRUE,FALSE
 o.louvre,O.Louvre,O. Louvre,TRUE,FALSE
 o.lund,O.Lund,O. Lund,TRUE,FALSE
 o.masada,O.Masada,O. Masada,TRUE,FALSE
 o.mattha,O.Mattha,O. Mattha,TRUE,FALSE
+o.medin.habu.copt,O.Medin.Habu Copt,O. Med. Habu Copt.,TRUE,FALSE
 o.medin.habu.dem,O.Medin.Habu Dem,O. Med. Habu Dem.,TRUE,FALSE
 o.medin.madi,O.Medin.Madi,O. Medinet Madi,TRUE,FALSE
 o.metrologie,O.Métrologie,O. Métrologie,TRUE,FALSE
-o.mich.copt.etmoulon,O.Mich.Copt.Etmoulon,O. Mich. Copt. Etmoulon,TRUE,FALSE
 o.mich,O.Mich.,O. Mich.,TRUE,FALSE
+o.mich.copt,O.Mich.Copt,O. Mich. Copt.,TRUE,FALSE
+o.mich.copt.etmoulon,O.Mich.Copt.Etmoulon,O. Mich. Copt. Etmoulon,TRUE,FALSE
 o.minor,O.Minor,O. Minor,TRUE,FALSE
+o.mon.epiph,P.Mon.Epiph.,P. Mon. Epiph.,TRUE,FALSE
+o.mon.phoib,O.Mon.Phoib.,O. Mon. Phoebammon,TRUE,FALSE
 o.muhs,O.Muhs,O. Muhs,TRUE,FALSE
+o.narm,O.Narm.,O. Narm. Gr.,TRUE,FALSE
 o.narm.dem,O.Narm.Dem,O. Narm. Dem.,TRUE,FALSE
-o.narm;1,O.Narm.,O. Narm. Gr.,TRUE,FALSE
 o.nyu,O.NYU,O. NYU,TRUE,FALSE
+o.oasis,O.Oasis,,FALSE
+o.oasis;;AinLabakha1,O.Oasis: AinLabakha 1,O. Ain Labakha (p. 82),TRUE,FALSE
+o.oasis;;Bahria,O.Oasis: Bahria,O\. Bahria\s,TRUE,TRUE
+o.oasis;;ChamsElDin,O.Oasis: ChamsElDin,O. Chams el-Din,TRUE,FALSE
+o.oasis;;Dor,O.Oasis: Dor,O. Dor ,TRUE,FALSE
+o.oasis;;sarm,O.Oasis:Sarm,O\. Sarm\.\s,TRUE,TRUE
 o.ont.mus,O.Ont.Mus.,O. Ont. Mus.,TRUE,FALSE
 o.oslo,O.Oslo,O. Oslo,TRUE,FALSE
 o.petr,O.Petr.,O. Petrie,TRUE,FALSE
 o.petr.mus,O.Petr.Mus.,O. Petrie Mus.,TRUE,FALSE
-o.oasis;;sarm,O.Oasis:Sarm,O\. Sarm\.\s,TRUE,TRUE
-o.stras.,O.Stras.,O. Strasb.,TRUE,FALSE
-o.theb.taxes,O.Theb.Taxes,O. Taxes,TRUE,FALSE
+o.sarga,O.Sarga,"Crum / Bell, Wadi Sarga",TRUE,FALSE
+o.sok.nes,O.Sok.Nes.,"Capasso / Davoli (ed.), Soknopaiou Nesos project II",TRUE,FALSE
+o.stras,O.Stras.,O. Strasb.,TRUE,FALSE
 o.tebt,O.Tebt.,O. Tebt.,TRUE,FALSE
 o.tebt.pad,O.Tebt.Pad.,O. Tebt. Pad.,TRUE,FALSE
 o.tempeleide,O.Tempeleide,O. Tempeleide,TRUE,FALSE
 o.theb,O.Theb.,O. Theb. Gr.,TRUE,FALSE
+o.theb.taxes,O.Theb.Taxes,O. Taxes,TRUE,FALSE
 o.trim,O.Trim.,O. Trim.,TRUE,FALSE
+o.vind.copt,O.Vind.Copt.,O. Vind. Copt.,TRUE,FALSE
+o.vleem,O.Vleem.,P. L. Bat. 26,TRUE,FALSE
+o.wadi.hamm,O.WadiHamm.,,FALSE
 o.wangstedt,O.Wångstedt,O. Wångstedt,TRUE,FALSE
 o.waqfa,O.Waqfa,O. Waqfa,TRUE,FALSE
 o.wilb,O.Wilb.,O. Wilb.,TRUE,FALSE
 o.wilck,O.Wilck.,O. Wilcken,TRUE,FALSE
 o.zurich,O.Zürich,O. Zürich,TRUE,FALSE
-p.bastianini,P.Bastianini,Omaggio a Guido Bastianini (Pap. Flor. 45),TRUE,FALSE
 p.aberd,P.Aberd.,P. Aberdeen,TRUE,FALSE
 p.abinn,P.Abinn.,P. Abinn.,TRUE,FALSE
 p.achm,P.Achm.,P. Achmim,TRUE,FALSE
-p.adl,P.Adl.,P.Adler,TRUE,FALSE
+p.adl,P.Adl.,P. Adler Gr.,TRUE,FALSE
 p.aeg.handschr,P.Äg.Handschrift.,P. Äg. Handschr.,TRUE,FALSE
-p.philammon,P.Philammon,P. Aktenbuch Ms.,TRUE,FALSE
-p.alex.giss,P.Alex.Giss.,P. Alex. Giss.,TRUE,FALSE
+p.aegyptus.cent,P.Aegyptus Cent.,Aegyptus 100,TRUE,FALSE
 p.alex,P.Alex.,P. Alex.,TRUE,FALSE
+p.alex.giss,P.Alex.Giss.,P. Alex. Giss.,TRUE,FALSE
 p.amh,P.Amh.,P. Amh. Gr.,TRUE,FALSE
+p.amh.eg,P.Amh.Eg.,"Newberry, Amherst papyri",TRUE,FALSE
 p.ammon,P.Ammon,P. Ammon,TRUE,FALSE
 p.amst,P.Amst.,P. Amst.,TRUE,FALSE
 p.anag,P.Anag.,P. Anag.,TRUE,FALSE
 p.ant,P.Ant.,P. Ant.,TRUE,FALSE
 p.aphrod.let.copt,P.Aphrod.Let.Copt.,P. Aphrod. Let. Copt.,TRUE,FALSE
 p.aphrod.lit.,P.Aphrod.Lit.,P. Aphrod. Lit.,TRUE,FALSE
+p.aphrod.reg;;col1_18,P.Aphrod.Reg.,"Zuckerman, Autour du registre fiscal d'Aphroditô p. 248-271",TRUE,FALSE
 p.apoll,P.Apoll.,P. Apoll.,TRUE,FALSE
 p.ashm,P.Ashm.,P. Ashm.,TRUE,FALSE
 p.assoc.,P.Assoc.,P. Assoc.,TRUE,FALSE
 p.athen,P.Athen.,P. Athen,TRUE,FALSE
 p.athen.xyla,P.Athen.Xyla,P. Athen. Xyla 1,TRUE,FALSE
+p.aust.herring,P.Aust.Herring,P. Trophitis,TRUE,FALSE
+p.bacch,P.Bacch.,P. Soknobraisis,TRUE,FALSE
 p.bad,P.Bad.,P. Baden,TRUE,FALSE
 p.bagnall,P.Bagnall,P. Bagnall,TRUE,FALSE
 p.bal,P.Bal.,P. Bala'izah,TRUE,FALSE
 p.bas,P.Bas.,P. Basel,TRUE,FALSE
+p.bastianini,P.Bastianini,Omaggio a Guido Bastianini (Pap. Flor. 45),TRUE,FALSE
+p.batav,P.Batav.,P. L. Bat. 19,TRUE,FALSE
 p.bawit.clackson,P.Bawit Clackson,P. Bawit Clackson,TRUE,FALSE
+p.beatty,P.Beatty,P. Beatty,TRUE,FALSE
 p.benaki,P.Benaki,P. Benaki,TRUE,FALSE
 p.berl.bibl,P.Berl.Bibl.,P. Berl. Bibl.,TRUE,FALSE
 p.berl.bork,P.Berl.Bork.,P. Berl. Bork. p. 47-68,TRUE,FALSE
 p.berl.brash,P.Berl.Brash.,P. Berl. Brashear,TRUE,FALSE
 p.berl.cohen,P.Berl.Cohen,P. Berl. Cohen,TRUE,FALSE
-p.berl.frisk,P.Berl.Frisk,P. Berl. Frisk,TRUE,FALSE
 p.berl.dem;2,P.Berl.Dem. 2,P. Berl. Kaufv.,TRUE,FALSE
+p.berl.frisk,P.Berl.Frisk,P. Berl. Frisk,TRUE,FALSE
 p.berl.leihg,P.Berl.Leihg.,P. Berl. Leihg.,TRUE,FALSE
 p.berl.moeller,P.Berl.Möller,P. Berl. Möller,TRUE,FALSE
+p.berl.monte,P.Berl.Monte,P. Berlin Monte,TRUE,FALSE
 p.berl.salmen,P.Berl.Salmen.,P. Berl. Salmenkivi,TRUE,FALSE
 p.berl.sarisch,P.Berl.Sarisch.,P. Berl. Sarischouli,TRUE,FALSE
 p.berl.schmidt,P.Berl.Schmidt,P. Berl. Schmidt,TRUE,FALSE
-p.berl.spieg.,P.Berl.Spieg.,P. Berl. Spieg.,TRUE,FALSE
+p.berl.spieg,P.Berl.Spieg.,P. Berl. Spieg.,TRUE,FALSE
 p.berl.thun,P.Berl.Thun.,P. Berl. Thunell,TRUE,FALSE
 p.berl.zill,P.Berl.Zill.,P. Berl. Zill.,TRUE,FALSE
-p.berl.monte,P.Berl.Monte,P. Berlin Monte,TRUE,FALSE
 p.bingen,P.Bingen,P. Bingen,TRUE,FALSE
-p.brit.mus;4,P.Brit.Mus.,P. BM Andrews,TRUE,FALSE
 p.bodl,P.Bodl.,P. Bodl.,TRUE,FALSE
+p.bodm,P.Bodm.,P. Bodmer,TRUE,FALSE
 p.bon,P.Bon.,P. Bon.,TRUE,FALSE
 p.bour,P.Bour.,P. Bouriant,TRUE,FALSE
 p.brem,P.Brem.,P. Brem.,TRUE,FALSE
-p.brookl.dem,P.Brookl.Dem.,P. Brooklyn Dem.,TRUE,FALSE
+p.brit.mus;4,P.Brit.Mus.,P. BM Andrews,TRUE,FALSE
 p.brookl.,P.Brookl.,P. Brooklyn Gr.,TRUE,FALSE
+p.brookl.dem,P.Brookl.Dem.,P. Brooklyn Dem.,TRUE,FALSE
 p.brookl.pierce,P.Brookl.Pierce,P. Brooklyn Pierce,TRUE,FALSE
+p.brux;1,P.Brux.,P. L. Bat. 5,TRUE,FALSE
+p.brux;2,P.Brux.,P. Brux. Gr.,TRUE,FALSE
 p.brux.bawit,P.Brux.Bawit,P. Brux. Bawit,TRUE,FALSE
-p.brux,P.Brux.,P. Brux. Gr.,TRUE,FALSE
 p.bub,P.Bub.,P. Bub.,TRUE,FALSE
-p.buergsch.,P.Bürgsch.,P. Bürgsch.,TRUE,FALSE
+p.buergsch,P.Bürgsch.,P. Bürgsch.,TRUE,FALSE
 p.cair,P.Cair.,P. Cairo,TRUE,FALSE
 p.cair.arab,P.Cair.Arab.,P. Cairo Arabic,TRUE,FALSE
 p.cair.cat,P.Cair.Cat.,P. Cairo Cat.,TRUE,FALSE
@@ -221,46 +243,56 @@ p.cair.masp,P.Cair.Masp.,P. Cairo Masp.,TRUE,FALSE
 p.cair.mich,P.Cair.Mich.,P. Cairo Mich.,TRUE,FALSE
 p.cair.preis,P.Cair.Preis.,P. Cairo Preis,TRUE,FALSE
 p.cair.preis.2ed,P.Cair.Preis.(2),P. Cairo Preis.(2),TRUE,FALSE
+p.cair.reggiani,P.Cair.Reggiani,"Reggiani, Greek papyri from the Fayum in the Cairo Egyptian Museum",TRUE,FALSE
 p.cair.salem,P.Cair.Salem,P. Cairo Salem,TRUE,FALSE
-p.cair.zen.,P.Cair.Zen.,P. Cairo Zen.,TRUE,FALSE
+p.cair.zen,P.Cair.Zen.,P. Cairo Zen.,TRUE,FALSE
 p.capasso,P.Capasso,P. Capasso,TRUE,FALSE
 p.charite,P.Charite,P. Charite,TRUE,FALSE
 p.chept,P.Chept.,P. Chept.,TRUE,FALSE
+p.chic.haw,P.Chic.Haw.,P. Hawara OI,TRUE,FALSE
+p.choach.survey,P.Choach.Survey,P. Survey,TRUE,FALSE
+p.chrest.nouvelle,P.Chrest.Nouvelle,P. Nouv. Chrest.,TRUE,FALSE
 p.chrest.revillout,P.Chrest.Revillout,P. Chrestomathie,TRUE,FALSE
-p.christ.musl.,P.Christ.Musl.,P. Christ. Musl.,TRUE,FALSE
+p.christ.musl,P.Christ.Musl.,P. Christ. Musl.,TRUE,FALSE
 p.christodote,P.Christodote,P. Christodote,TRUE,FALSE
 p.clackson,P.Clackson,P. Clackson,TRUE,FALSE
 p.clt,P.CLT,P. CLT,TRUE,FALSE
-p.col.teeter,P.Col.Teeter,P. Col. Teeter (Diss.),TRUE,FALSE
+p.col,P.Col.,P. Col.,TRUE,FALSE
 p.col;3,P.Col. 3,P. Col. Zen. 1,TRUE,FALSE
 p.col;4,P.Col. 4,P. Col. Zen. 2,TRUE,FALSE
-p.col,P.Col.,P. Col.,TRUE,FALSE
+p.col.teeter,P.Col.Teeter,P. Col. Teeter (Diss.),TRUE,FALSE
 p.coles,P.Coles,P. Coles,TRUE,FALSE
 p.coll.youtie,P.Coll.Youtie,P. Coll. Youtie,TRUE,FALSE
-c.jud.syr.eg,C.Jud.Syr.Eg.,P. Conflict,TRUE,FALSE
+p.congr.xv,P.Congr.XV,Pap. Congr. XV,TRUE,FALSE
 p.corn,P.Corn.,P. Cornell,TRUE,FALSE
 p.count,P.Count,P. Count.,TRUE,FALSE
 p.customs,P.Customs,P. Customs,TRUE,FALSE
 p.daris,P.Daris,P. Daris,TRUE,FALSE
+p.david,P.David,P. L. Bat. 17,TRUE,FALSE
 p.dime,P.Dime,P. Dime,TRUE,FALSE
 p.diog,P.Diog.,P. Diog.,TRUE,FALSE
+p.dion,P.Dion,P. L. Bat. 22,TRUE,FALSE
 p.diosk,P.Diosk.,P. Diosk.,TRUE,FALSE
 p.dryton,P.Dryton ,P. Dryton,TRUE,FALSE
 p.dubl,P.Dubl.,P. Dublin,TRUE,FALSE
 p.dura,P.Dura,P. Dura,TRUE,FALSE
+p.dura.lat,P.Dura Lat.,"Iovine, Latin military papyri of Dura-Europos",TRUE,FALSE
 p.edfou,P.Edfou,P. Edfou,TRUE,FALSE
+p.edg,P.Edg. $1,"Annales du Service des antiquités de l'Égypte \(ASAE\) \d{2} \(\d{4}\), p\. [-0-9]+ \(Zenon (\d+)\)",TRUE,TRUE
 p.ehevertr,P.Ehevertr.,P. Eheverträge,TRUE,FALSE
 p.eirene,P.Eirene,P. Eirene,TRUE,FALSE
-p.eleph.wagner;1,P.Eleph.Wagner,P. Eleph. DAIK,TRUE,FALSE
-p.eleph.dem,P.Eleph.Dem.,P. Eleph. Dem.,TRUE,FALSE
 p.eleph,P.Eleph.,P. Eleph. Gr.,TRUE,FALSE
+p.eleph.dem,P.Eleph.Dem.,P. Eleph. Dem.,TRUE,FALSE
+p.eleph.wagner,P.Eleph.Wagner,P. Eleph. DAIK,TRUE,FALSE
 p.enteux,P.Enteux.,P. Enteux.,TRUE,FALSE
 p.erasm,P.Erasm.,P. Erasm.,TRUE,FALSE
-c.erbstreit,C.Erbstreit,P. Erbstreit (2017) ,TRUE,FALSE
 p.erl,P.Erl.,P. Erl.,TRUE,FALSE
 p.erl.diosp,P.Erl.Diosp.,P. Erl. Diospolis,TRUE,FALSE
+p.euphrates,P.Euphrates,Journal des savants (2000),TRUE,FALSE
+p.fam.tebt,P.Fam.Tebt.,P. L. Bat. 6,TRUE,FALSE
+p.fam.theb,P.Fam.Theb.,P. Phil. Dem.,TRUE,FALSE
 p.fay,P.Fay.,P. Fay.,TRUE,FALSE
-feste,Feste,P. Feste,TRUE,FALSE
+p.fay.copt,P.Fay.Copt.,P. Fay. Copt.,TRUE,FALSE
 p.flor,P.Flor.,P. Flor.,TRUE,FALSE
 p.forshall,P.Forshall,P. Forshall,TRUE,FALSE
 p.fouad,P.Fouad,P. Fouad,TRUE,FALSE
@@ -272,10 +304,10 @@ p.gascou,P.Gascou,P. Gascou,TRUE,FALSE
 p.gen;1.2ed,P.Gen. 1 2nd ed.,P. Gen.(2) 1,TRUE,FALSE
 p.gen.,P.Gen.,P. Gen.,TRUE,FALSE
 p.genova,P.Genova,P. Genova,TRUE,FALSE
+p.giss,P.Giss.,P. Giss.,TRUE,FALSE
 p.giss.apoll,P.Giss.Apoll.,P. Giss. Apoll.,TRUE,FALSE
 p.giss.lit,P.Giss.Lit.,P. Giss. Lit.,TRUE,FALSE
 p.giss.univ,P.Giss.Univ.,P. Giss. Univ.,TRUE,FALSE
-p.giss,P.Giss.,P. Giss.,TRUE,FALSE
 p.got,P.Got.,P. Got.,TRUE,FALSE
 p.grad,P.Grad.,P. Grad.,TRUE,FALSE
 p.graux,P.Graux,P. Graux,TRUE,FALSE
@@ -284,35 +316,40 @@ p.gron,P.Gron.,P. Gron.,TRUE,FALSE
 p.gur,P.Gur.,P. Gurob,TRUE,FALSE
 p.hal,P.Hal.,P. Halle,TRUE,FALSE
 p.hamb,P.Hamb.,P. Hamb.,TRUE,FALSE
-p.harrauer,P.Harrauer,P. Harrauer,TRUE,FALSE
 p.harr,P.Harr.,P. Harris,TRUE,FALSE
+p.harrauer,P.Harrauer,P. Harrauer,TRUE,FALSE
 p.haun,P.Haun.,P. Haun.,TRUE,FALSE
-p.hausw.,P.Hausw.Manning,P. Hauswaldt Manning,TRUE,FALSE
+p.hausw,P.Hausw.Manning,P. Hauswaldt Manning,TRUE,FALSE
 p.hawara,P.Hawara,P. Hawara,TRUE,FALSE
-p.heid.arab,P.Heid.Arab.,P. Heid. Arab.,TRUE,FALSE
 p.heid,P.Heid.,P. Heid. Gr.,TRUE,FALSE
+p.heid.arab,P.Heid.Arab.,P. Heid. Arab.,TRUE,FALSE
 p.heid.kopt,P.Heid.Kopt.,P. Heid. Kopt.,TRUE,FALSE
 p.hels,P.Hels.,P. Hels.,TRUE,FALSE
 p.herakl.bank,P.Herakl.Bank,P. Herakl. Bank,TRUE,FALSE
+p.herc,P.Herc.,"Capasso, Manuale di papirologia ercolanese",TRUE,FALSE
 p.herm,P.Herm.,P. Herm.,TRUE,FALSE
-cpr;35,CPR 35,P. Herm. Boul. (CPR 35),TRUE,FALSE
 p.herm.landl,P.Herm.Landl.,P. Herm. Landl.,TRUE,FALSE
 p.hermias,P.Hermias,P. Hermias,TRUE,FALSE
-p.hermitage.copt.,P.Hermitage Copt.,P. Hermitage Copt.,TRUE,FALSE
+p.hermitage.copt,P.Hermitage Copt.,P. Hermitage Copt.,TRUE,FALSE
 p.hever,P.Hever,P. Hever (Discoveries in the Judaean desert 27),TRUE,FALSE
 p.hib,P.Hib.,P. Hibeh,TRUE,FALSE
 p.hombert,P.Hombert,P. Hombert,TRUE,FALSE
+p.hoogendijk,P.Hoogendijk,P. L. Bat. 37,TRUE,FALSE
 p.horak,P.Horak,P. Horak,TRUE,FALSE
 p.iand,P.Iand.,P. Iand.,TRUE,FALSE
+p.iand.inv.653,P.Iand.inv. 653,"Reekmans, A sixth century account of hay (Pap. Brux. 1) p. 41-74",TRUE,FALSE
 p.iand.zen,P.Iand.Zen.,P. Iand. Zen.,TRUE,FALSE
 p.ifao,P.IFAO,P. IFAO,TRUE,FALSE
 p.ital,P.Ital.,P. Ital.,TRUE,FALSE
 p.jena,P.Jena,P. Jena,TRUE,FALSE
 p.joerdens,P.Jördens,P. Jördens,TRUE,FALSE
+p.jud.des.misc,P.Jud.Des.Misc.,"Charlesworth e.a., Miscellaneous texts from the Judaean desert (Discoveries in the Judaean desert 38)",TRUE,FALSE
 p.kar.goodsp,P.Kar.Goodsp.,P. Kar. Goodspeed,TRUE,FALSE
-p.kellis;5,P.Kellis 5,P. Kellis Copt. 1,TRUE,FALSE
-p.kellis;7,P.Kellis 7,P. Kellis Copt. 2,TRUE,FALSE
 p.kellis,P.Kellis,P. Kellis,TRUE,FALSE
+p.kellis;5,P.Kellis 5,P. Kellis Copt. 1,TRUE,FALSE
+p.kellis;6,P.Kellis 6,P. Kellis 6,TRUE,FALSE
+p.kellis;7,P.Kellis 7,P. Kellis Copt. 2,TRUE,FALSE
+p.koeln,P.Köln,P. Köln Gr.,TRUE,FALSE
 p.koeln.aegypt,P.Köln Ägypt.,P. Köln Ägypt.,TRUE,FALSE
 p.koeln.land,P.Köln Land.,P. Köln Land.,TRUE,FALSE
 p.koeln.sarapion,P.Köln Sarapion,P. Köln Sarapion,TRUE,FALSE
@@ -321,43 +358,33 @@ p.kroll,P.Kroll,P. Kroll,TRUE,FALSE
 p.kron,P.Kron.,P. Kron.,TRUE,FALSE
 p.kru,P.KRU,P. KRU,TRUE,FALSE
 p.kynopolites,P.Kynopolites,P. Kynopolites,TRUE,FALSE
-p.vind.sijp;;,P.Vind.Sijp.,P. L. Bat. 11,TRUE,FALSE
-p.select;;,P.Select,P. L. Bat. 13,TRUE,FALSE
-p.david;;,P.David,P. L. Bat. 17,TRUE,FALSE
-p.batav;;,P.Batav.,P. L. Bat. 19,TRUE,FALSE
-p.zen.pestm;;,P.Zen.Pestm.,P. L. Bat. 20,TRUE,FALSE
-p.dion;;,P.Dion,P. L. Bat. 22,TRUE,FALSE
-p.leid.inst;1;,P.Leid.Inst. 1,P. L. Bat. 25,TRUE,FALSE
-o.vleem;;,O.Vleem.,P. L. Bat. 26,TRUE,FALSE
-p.worp;;,P.Worp,P. L. Bat. 33,TRUE,FALSE
-p.hoogendijk,P.Hoogendijk,P. L. Bat. 37,TRUE,FALSE
-p.leid.inst;2;,P.Leid.Inst. 2,P. L. Bat. 40,TRUE,FALSE
-p.van.minnen,P.Van Minnen,P. L. Bat. 42,TRUE,FALSE
-p.warr;;,P.Warr.,P. L. Bat. 1,TRUE,FALSE
-p.vind.bosw;;,P.Vind.Bosw.,P. L. Bat. 2,TRUE,FALSE
-p.oxf;;,P.Oxf.,P. L. Bat. 3,TRUE,FALSE
-p.brux;1,P.Brux.,P. L. Bat. 5,TRUE,FALSE
-p.fam.tebt;;,P.Fam.Tebt.,P. L. Bat. 6,TRUE,FALSE
-pap.lugd.bat,Pap.Lugd.Bat.,P. L. Bat.,TRUE,FALSE
 p.laur,P.Laur.,P. Laur.,TRUE,FALSE
 p.lecce,P.Lecce,P. Lecce,TRUE,FALSE
+p.lecce,P.Lecce,P. Lecce,TRUE,FALSE
 p.leeds.mus,P.Leeds Mus.,P. Leeds Mus.,TRUE,FALSE
-p.leid.dem,P.Leid.Dem.,P. Leiden Dem.,TRUE,FALSE
 p.leid.,P.Leid.,P. Leiden Gr.,TRUE,FALSE
+p.leid.dem,P.Leid.Dem.,P. Leiden Dem.,TRUE,FALSE
+p.leid.inst;1;,P.Leid.Inst. 1,P. L. Bat. 25,TRUE,FALSE
+p.leid.inst;2;,P.Leid.Inst. 2,P. L. Bat. 40,TRUE,FALSE
 p.leipz,P.Leipz.,P. Leipz.,TRUE,FALSE
 p.leit,P.Leit.,P. Leit.,TRUE,FALSE
 p.lesestuecke,P.Lesestücke,P. Lesestücke,TRUE,FALSE
 p.libbey,P.Libbey,P. Libbey,TRUE,FALSE
-p.lille.dem,P.Lille Dem.,P. Lille Dem.,TRUE,FALSE
 p.lille,P.Lille,P. Lille Gr.,TRUE,FALSE
+p.lille.dem,P.Lille Dem.,P. Lille Dem.,TRUE,FALSE
 p.lips,P.Lips. ,P. Lips.,TRUE,FALSE
+p.lit.var,P.Lit.Var.,P. Lit. Var.,TRUE,FALSE
+p.loeb,P.Loeb,P. Loeb,TRUE,FALSE
 p.lond,P.Lond.,P. Lond.,TRUE,FALSE
 p.lond.copt,P.Lond.Copt.,P. Lond. Copt.,TRUE,FALSE
 p.lond.herm,P.Lond.Herm.,P. Lond. Herm.,TRUE,FALSE
 p.lond.lit,P.Lond.Lit.,P. Lond. Lit.,TRUE,FALSE
-p.louvre.bawit,P.Louvre Bawit,P. Louvre Bawit,TRUE,FALSE
+p.lond.wasser,P.Lond.Wasser.,"Habermann, Zur Wasserversorgung einer Metropole",TRUE,FALSE
 p.louvre,P.Louvre,P. Louvre,TRUE,FALSE
+p.louvre.bawit,P.Louvre Bawit,P. Louvre Bawit,TRUE,FALSE
+p.louvre.hag,P.Louvre Hag.,P. Louvre Hag.,TRUE,FALSE
 p.lund,P.Lund,P. Lund,TRUE,FALSE
+p.marini,P.Marini,"Marini, I papiri diplomatici",TRUE,FALSE
 p.marini,P.Marini,P. Marini,TRUE,FALSE
 p.marm,P.Marm.,P. Marm.,TRUE,FALSE
 p.masada,P.Masada,P. Masada,TRUE,FALSE
@@ -367,13 +394,17 @@ p.mert,P.Mert.,P. Merton,TRUE,FALSE
 p.messeri,P.Messeri,P. Messeri,TRUE,FALSE
 p.meyer,P.Meyer,P. Meyer,TRUE,FALSE
 p.mich,P.Mich.,P. Mich.,TRUE,FALSE
+p.mich;1,P.Mich. 1,P. Mich. Zen.,TRUE,FALSE
 p.mich.aphrod,P.Mich.Aphrod.,P. Mich. Aphrod.,TRUE,FALSE
 p.mich.copt,P.Mich.Copt.,P. Mich. Copt.,TRUE,FALSE
 p.mich.mchl,P.Mich.Mchl,P. Mich. Michael,TRUE,FALSE
-p.mich;1,P.Mich. 1,P. Mich. Zen.,TRUE,FALSE
 p.michael,P.Michael,P. Michael. Gr.,TRUE,FALSE
-p.mil.vogl,P.Mil.Vogl.,P. Mil. Vogl.,TRUE,FALSE
 p.mil,P.Mil.,P. Mil.,TRUE,FALSE
+p.mil.congr.xiv,P.Mil.Congr.XIV,Aegyptus 54,TRUE,FALSE
+p.mil.congr.xix,P.Mil.Congr.XIX,Aegyptus 69,TRUE,FALSE
+p.mil.congr.xvii,P.Mil.Congr.XVII,Aegyptus 63,TRUE,FALSE
+p.mil.congr.xviii,P.Mil.Congr.XVIII,Aegyptus 66,TRUE,FALSE
+p.mil.vogl,P.Mil.Vogl.,P. Mil. Vogl.,TRUE,FALSE
 p.minutoli,P.Minutoli,P. Minutoli,TRUE,FALSE
 p.mon.apollo,P.Mon.Apollo,P. Mon. Apollo,TRUE,FALSE
 p.mon.epiph,P.Mon.Epiph.,P. Mon. Epiph.,TRUE,FALSE
@@ -387,164 +418,193 @@ p.narm.2006,P.Narm.,P. Narm. 2006,TRUE,FALSE
 p.nekr,P.Nekr.,P. Nekr.,TRUE,FALSE
 p.neph,P.Neph.,P. Neph.,TRUE,FALSE
 p.ness,P.Ness.,P. Ness.,TRUE,FALSE
-p.chrest.nouvelle,P.Chrest.Nouvelle,P. Nouv. Chrest.,TRUE,FALSE
 p.nyu,P.NYU,P. NYU,TRUE,FALSE
 p.oslo,P.Oslo,P. Oslo,TRUE,FALSE
+p.oxf,P.Oxf.,P. L. Bat. 3,TRUE,FALSE
 p.oxy,P.Oxy.,P. Oxy.,TRUE,FALSE
+p.oxy.astr,P.Oxy.Astr.,"Jones, Astronomical papyri from Oxyrhynchus",TRUE,FALSE
 p.oxy.census,P.Oxy.Census,P. Oxy. Census,TRUE,FALSE
+p.oxy.descr,P.Oxy.Descr.,"Bulletin of the American Society of Papyrologists (BASP) 31 (1994), p. 18-20",TRUE,FALSE
 p.oxy.hels,P.Oxy.Hels.,P. Oxy. Hels.,TRUE,FALSE
 p.oxyrhyncha,P.Oxyrhyncha,P. Oxyrhyncha,TRUE,FALSE
 p.palau.rib,P.PalauRib.,P. Palau Rib.,TRUE,FALSE
+p.palau.rib.lit,P.PalauRib.Lit.,P. Palau Rib. Lit.,TRUE,FALSE
 p.panop,P.Panop.,P. Panop.,TRUE,FALSE
 p.panop.beatty,P.Panop.Beatty,P. Panop. Beatty,TRUE,FALSE
 p.paramone,P.Paramone,P. Paramone,TRUE,FALSE
 p.paris,P.Paris,P. Paris,TRUE,FALSE
 p.petaus,P.Petaus,P. Petaus,TRUE,FALSE
-p.petra,P.Petra,P. Petra,TRUE,FALSE
 p.petr,P.Petr.,P. Petrie,TRUE,FALSE
+p.petr.2ed;1,P.Petr.²,P. Petrie(2),TRUE,FALSE
 p.petr.cahier,P.Petr.Cahier,P. Petrie Cahier,TRUE,FALSE
 p.petr.kleon,P.Petr.Kleon,P. Petrie Kleon,TRUE,FALSE
-p.petr.2ed;1,P.Petr.²,P. Petrie(2),TRUE,FALSE
+p.petra,P.Petra,P. Petra,TRUE,FALSE
 p.pher,P.Pher.,P. Pheretnuis,TRUE,FALSE
-p.fam.theb,P.Fam.Theb.,P. Phil. Dem.,TRUE,FALSE
 p.phil,P.Phil.,P. Phil. Gr.,TRUE,FALSE
+p.philammon,P.Philammon,P. Aktenbuch Ms.,TRUE,FALSE
 p.pintaudi,P.Pintaudi,P. Pintaudi,TRUE,FALSE
+p.pisalit,P.PisaLit.,P. Pisa Lit.,TRUE,FALSE
+p.pisentius,P.Pisentius,P. Pisentius,TRUE,FALSE
+p.poethke,P.Poethke,"Archiv für Papyrusforschung (AfP) 55 (2009), p. 185-192",TRUE,FALSE
 p.polit.jud,P.Polit.Jud.,P. Polit. Iud.,TRUE,FALSE
 p.pommersf,P.Pommersf.,P. Pommersf.,TRUE,FALSE
-p.prag.varcl,P.Prag.Varcl,P. Prag Varcl,TRUE,FALSE
 p.prag,P.Prag.,P. Prag,TRUE,FALSE
-p.princ.roll,P. Princ. Roll,P. Princ. Roll,TRUE,FALSE
+p.prag.varcl,P.Prag.Varcl,P. Prag Varcl,TRUE,FALSE
 p.princ,P. Princ,P. Princ,TRUE,FALSE
+p.princ.roll,P. Princ. Roll,P. Princ. Roll,TRUE,FALSE
 p.quseir,P. Quseir,P. Quseir,TRUE,FALSE
 p.rain.cent,P.Rain.Cent.,P. Rainer Cent.,TRUE,FALSE
 p.rain.unterricht,P.Rain.Unterricht,P. Rainer Unterricht (MPER N.S. 15),TRUE,FALSE
 p.rain.unterricht.kopt,P.Rain.Unterricht Kopt.,P. Rainer Unterricht Kopt. (MPER N.S. 18),TRUE,FALSE
 p.recueil,P.Recueil,P. Recueil,TRUE,FALSE
-p.rein;1;D,P.Rein. 1 Dem,P\. Reinach Dem\. 1\s,TRUE,TRUE
 p.rein,P.Rein.,P. Reinach Gr.,TRUE,FALSE
+p.rein;1;D,P.Rein. 1 Dem,P\. Reinach Dem\. 1\s,TRUE,TRUE
 p.rev,P.Rev,P. Rev. (1st ed.),TRUE,FALSE
 p.rev.2ed,P.Rev.(2),P. Rev. (1st ed.),TRUE,FALSE
 p.revillout.copt,P.Revillout Copt.,P. Revillout Copt.,TRUE,FALSE
 p.ross.georg,P.Ross.Georg.,P. Ross. Georg.,TRUE,FALSE
+p.ryl,P.Ryl.,P. Ryl. Gr.,TRUE,FALSE
 p.ryl.copt,P.Ryl.Copt.,P. Ryl. Copt.,TRUE,FALSE
 p.ryl.dem,P.Ryl.Dem.,P. Ryl. Dem.,TRUE,FALSE
-p.ryl,P.Ryl.,P. Ryl. Gr.,TRUE,FALSE
 p.sakaon,P.Sakaon,P. Sakaon,TRUE,FALSE
+p.saqqara.dem,P.Saqqara Dem.,P. Saqqara Dem.,TRUE,FALSE
 p.sarap,P.Sarap.,P. Sarap.,TRUE,FALSE
+p.sarga,P.Sarga $1,"Crum / Bell, Wadi Sarga (12|16|19|96|128|166|176)",TRUE,TRUE
 p.scholl,P.Scholl,P. Scholl,TRUE,FALSE
 p.schow,P.Schow,P. Schow,TRUE,FALSE
 p.schoyen,P.Schøyen,P. Schoyen,TRUE,FALSE
 p.schreibertrad,P.Schreibertrad.,P. Schreibertrad.,TRUE,FALSE
+p.schub,P.Schub.,P. Schubart,TRUE,FALSE
 p.schutzbriefe,P.Schutzbriefe,P. Schutzbriefe,TRUE,FALSE
 p.sel.warga,P.Sel.Warga,P. Sel. Warga,TRUE,FALSE
+p.select,P.Select,P. L. Bat. 13,TRUE,FALSE
 p.sijp,P.Sijp.,P. Sijpesteijn,TRUE,FALSE
-p.bacch,P.Bacch.,P. Soknobraisis,TRUE,FALSE
 p.sorb,P.Sorb.,P. Sorb.,TRUE,FALSE
 p.soter,P.Soter.,P. Soter.,TRUE,FALSE
+p.stras,P.Stras.,P. Strasb. Gr.,TRUE,FALSE
 p.stras.copt,P.Stras.Copt.,P. Strasb. Copt.,TRUE,FALSE
 p.stras.dem,P.Stras.Dem.,P. Strasb. Dem.,TRUE,FALSE
-p.stras.,P.Stras.,P. Strasb. Gr.,TRUE,FALSE
-p.choach.survey,P.Choach.Survey,P. Survey,TRUE,FALSE
 p.tarich,P.Tarich.,P. Tarich.,TRUE,FALSE
+p.tebt,P.Tebt.,P. Tebt.,TRUE,FALSE
 p.tebt;3.2,P.Tebt. 3.2,P. Tebt. 3,TRUE,FALSE
 p.tebt.pad,P.Tebt.Pad.,P. Tebt. Pad.,TRUE,FALSE
 p.tebt.pad.cat,P.Tebt.Pad.Cat.,P. Tebt. Pad. inv.,TRUE,FALSE
 p.tebt.quen,P.Tebt.Quen.,P. Tebt. Quenouille,TRUE,FALSE
 p.tebt.tait,P.Tebt.Tait,P. Tebt. Tait,TRUE,FALSE
 p.tebt.wall,P.Tebt.Wall,P. Tebt. Wall,TRUE,FALSE
-p.tebt,P.Tebt.,P. Tebt.,TRUE,FALSE
 p.testi.botti,P.Testi Botti,P. Testi Botti,TRUE,FALSE
+p.testi.med,P.Testi Med.,"Andorlini (ed.), Testi medici su papiro. Atti del seminario di studio Firenze 2002",TRUE,FALSE
 p.thead,P.Thead.,P. Thead.,TRUE,FALSE
 p.theon,P.Theon.,P. Theon.,TRUE,FALSE
 p.thmouis,P.Thmouis,P. Thmouis,TRUE,FALSE
 p.thomas,P.Thomas,P. Thomas,TRUE,FALSE
+p.tor,P.Tor.,P. Tor.,TRUE,FALSE
 p.tor.amen,P.Tor.Amen.,P. Tor. Amen.,TRUE,FALSE
 p.tor.botti,P.Tor.Botti,P. Tor. Botti,TRUE,FALSE
 p.tor.choach,P.Tor.Choach.,P. Tor. Choach.,TRUE,FALSE
-p.tor,P.Tor.,P. Tor.,TRUE,FALSE
 p.trier,P.Trier,P. Trier,TRUE,FALSE
-p.aust.herring,P.Aust.Herring,P. Trophitis,TRUE,FALSE
 p.turku,P.Turku,P. Turku,TRUE,FALSE
 p.turner,P.Turner,P. Turner,TRUE,FALSE
-p.ups.fird,P.Ups.Frid,P. Ups. Frid,TRUE,FALSE
+p.ups.frid,P.Ups.Frid,P. Ups. Frid,TRUE,FALSE
+p.van.minnen,P.Van Minnen,P. L. Bat. 42,TRUE,FALSE
 p.vars,P.Vars.,P. Vars.,TRUE,FALSE
 p.vat.aphrod,P.Vat.Aphrod.,P. Vat. Aphrod.,TRUE,FALSE
 p.verpfruendung,P.Verpfründung.,P. Verpfründungsurk.,TRUE,FALSE
 p.vet.aelii,P.Vet.Aelii,P. Vet. Aelii,TRUE,FALSE
+p.vind.bosw,P.Vind.Bosw.,P. L. Bat. 2,TRUE,FALSE
+p.vind.early.islamic,P.Vind.Early Islamic ,P. Vind. Early Islamic ,TRUE,FALSE
 p.vind.sal,P.Vind.Sal.,P. Vind. Sal.,TRUE,FALSE
+p.vind.sijp,P.Vind.Sijp.,P. L. Bat. 11,TRUE,FALSE
 p.vind.tand,P.Vind.Tand.,P. Vind. Tand.,TRUE,FALSE
 p.vind.worp,P.Vind.Worp,P. Vind. Worp,TRUE,FALSE
+p.warr,P.Warr.,P. L. Bat. 1,TRUE,FALSE
 p.wash.univ,P.Wash.Univ.,P. Wash. Univ.,TRUE,FALSE
 p.wisc,P.Wisc.,P. Wisc.,TRUE,FALSE
+p.worp,P.Worp,P. L. Bat. 33,TRUE,FALSE
 p.wuerzb,P.Würzb.,P. Würzb.,TRUE,FALSE
 p.yadin,P.Yadin,P. Yadin,TRUE,FALSE
-p.yale.copt,P.Yale Copt.,P. Yale Copt.,TRUE,FALSE
+p.yadin;1,P.Yadin 1,P. Yadin 1,TRUE,FALSE
 p.yale,P.Yale,P. Yale,TRUE,FALSE
+p.yale.copt,P.Yale Copt.,P. Yale Copt.,TRUE,FALSE
 p.zaki.aly,P.Zaki Aly ,P. Zaki Aly,TRUE,FALSE
 p.zauzich,P.Zauzich,P. Zauzich,TRUE,FALSE
 p.zen.dem,P.Zen.Dem.,P. Zen. Dem.,TRUE,FALSE
-mper.ns;20,MPER N.S. 20,"Palme, Das Amt des Apaitetes",TRUE,FALSE
+p.zen.pestm,P.Zen.Pestm.,P. L. Bat. 20,TRUE,FALSE
 pap.agon,Pap.Agon.,Pap. Agon.,TRUE,FALSE
+pap.brux;10,Pap.Brux. 10,"Wipszycka, Les ressources et les activités économiques des églises en Égypte",TRUE,FALSE
+pap.brux;3,Pap.Brux. 3,"Reekmans, La sitométrie dans les archives de Zénon",TRUE,FALSE
+pap.brux;34,Pap.Brux. 34,"Delattre / Heilporn (ed.), Thèbes (Pap. Brux. 34)",TRUE,FALSE
+pap.brux;8,Pap.Brux. 8,"Poethke, Epimerismos. Betrachtungen zur Zwangspacht",TRUE,FALSE
 pap.choix,Pap.Choix,Pap. Choix,TRUE,FALSE
+pap.classics;1,Pap.Classics 1,"Lewis, Life in Egypt under Roman rule",TRUE,FALSE
+pap.classics;2,Pap.Classics 2,"Lewis, Greeks in Ptolemaic Egypt",TRUE,FALSE
+pap.colon;25,Pap.Colon. 25,"Maresch, Bronze und Silber (Pap. Colon. 25)",TRUE,FALSE
+pap.colon;3,Pap.Colon. 3,"West, The Ptolemaic papyri of Homer",TRUE,FALSE
+pap.colon;31,Pap.Colon. 31,"Reiter, Die Nomarchen des Arsinoites (Pap. Colon. 31)",TRUE,FALSE
+pap.colon;40,Pap.Colon. 40,"Vega, Die Acta Alexandrinorum (Pap. Colon. 40)",TRUE,FALSE
+pap.colon;49,Pap.Colon. 49,"Qandeil, The office of the epimeletes (Pap. Colon. 49)",TRUE,FALSE
+pap.colon;50,Pap.Colon. 50,"Vega Navarette, Die papyrusbriefe zwischen Eltern und Kinder (Pap. Colon. 50)",TRUE,FALSE
 pap.congr,PapCongr.,Pap. Congr.,TRUE,FALSE
+pap.eleph.eng,Pap.Eleph.Eng.,"Porten, The Elephantine papyri in English",TRUE,FALSE
+pap.flor;19,Pap.Flor. 19,"Capasso e.a. (ed.), Miscellanea papyrologica (Pap. Flor. 19)",TRUE,FALSE
+pap.flor;29,Pap.Flor. 29,"Chapa, Letters of condolence",TRUE,FALSE
+pap.flor;32,Pap.Flor. 32,"Mitthof, Annona militaris (Pap. Flor. 32)",TRUE,FALSE
+pap.flor;7,Pap.Flor. 7,"Pintaudi (ed.), Miscellanea papyrologica (Pap. Flor. 7)",TRUE,FALSE
 pap.graec.mag.2ed,Pap.Graec.Mag.(2),Pap. Graec. Mag.(2),TRUE,FALSE
 pap.heid;1,Pap.Heid. 1,Pap. Heid.,TRUE,FALSE
 pap.leod;1,Pap.Leod. 1,Papyri Vergilianae,TRUE,FALSE
-ddbdp,DDbDP ,Papyri.info (online) ddbdp;,TRUE,FALSE
+pap.lugd.bat,Pap.Lugd.Bat.,P.\s?L.\s?Bat. ,TRUE,TRUE
 pap.lup,Pap.Lup.,Papyrologica Lupiensia,TRUE,FALSE
-pap.flor;7,Pap.Flor. 7,"Pintaudi (ed.), Miscellanea papyrologica (Pap. Flor. 7)",TRUE,FALSE
-pap.brux;8,Pap.Brux. 8,"Poethke, Epimerismos. Betrachtungen zur Zwangspacht",TRUE,FALSE
-pap.eleph.eng,Pap.Eleph.Eng.,"Porten, The Elephantine papyri in English",TRUE,FALSE
-pros.ptol;8,Pros.Ptol. 8,Prosopographia Ptolemaica VIII (Stud. Hell. 21),TRUE,FALSE
+pap.lup;11,Pap.Lup. 11,"Capasso (ed.), Dal restauro dei materiali (Pap. Lup. 11)",TRUE,FALSE
+pap.lup;2,Pap.Lup. 2,"Capasso (ed.), Papiri documentari greci (Pap. Lup. 2)",TRUE,FALSE
+pap.lup;6,Pap.Lup. 6,"Capasso (ed.), Ricerche di papirologia letteraria e documentaria (Pap. Lup. 6)",TRUE,FALSE
+pap.lup;9,Pap.Lup. 9,"Capasso / Pernigotti (ed.), Studium atque urbanitas. Fs. Sergio Daris (Pap. Lup. 9) p.",TRUE,FALSE
 pros.ptol;10,Pros.Ptol. 10,Prosopographia Ptolemaica X (Stud. Hell. 38),TRUE,FALSE
+pros.ptol;8,Pros.Ptol. 8,Prosopographia Ptolemaica VIII (Stud. Hell. 21),TRUE,FALSE
+psi,PSI,PSI,TRUE,FALSE
 psi;15estr,PSI 15 Estr. $1,PSI 15 (\d{4}) \(Estratto\),TRUE,TRUE
-psi.congr.xi,PSI Congr. 11,PSI Congr. 11,FALSE,FALSE
-psi.congr.xvii,PSI Congr. 17,PSI Congr. 17,FALSE,FALSE
-psi.congr.xx,PSI Congr. 20,PSI Congr. 20,FALSE,FALSE
-psi.congr.xxi,PSI Congr. 21,PSI Congr. 21,FALSE,FALSE
-psi.corr;1,PSI Corr. ,"PSI Corr. 1 (1977),",TRUE,FALSE
-psi.od,PSI Od.,PSI Od.,FALSE,FALSE
-psi,PSI,PSI,FALSE,FALSE
-o.berenike;4,O.Berenike 4,"Pylon 1 \(2022\) \[Ast\], § [-0-9]+ no\. O\. Berenike ",TRUE,TRUE
-pylon,Pylon,Pylon,FALSE,FALSE
-pap.colon;49,Pap.Colon. 49,"Qandeil, The office of the epimeletes (Pap. Colon. 49)",TRUE,FALSE
+psi.com,PSI Com.,Comunicazioni dell' Istituto Papirologico G. Vitelli,TRUE,FALSE
+psi.congr.xi,PSI Congr. 11,PSI Congr. 11,TRUE,FALSE
+psi.congr.xvii,PSI Congr. 17,PSI Congr. 17,TRUE,FALSE
+psi.congr.xx,PSI Congr. 20,PSI Congr. 20,TRUE,FALSE
+psi.congr.xxi,PSI Congr. 21,PSI Congr. 21,TRUE,FALSE
+psi.corr,PSI Corr.,"PSI Corr. 1 (1977),",TRUE,FALSE
+psi.od,PSI Od.,PSI Od.,TRUE,FALSE
+publ.sorb.pap,Publ.Sorb.Pap.,"van Haelst, Catalogue des papyrus littéraires juifs et chrétiens",TRUE,FALSE
+pylon,Pylon,Pylon,TRUE,FALSE
+reac,REAC,Ricerche di egittologia e di antichità copte (REAC),TRUE,FALSE
 rech.pap,Rech.Pap.,Recherches de papyrologie,TRUE,FALSE
 recueil.trav;15,Receuil Trav.,Recueil de travaux égyptiennes et assyriennes,TRUE,FALSE
-p.iand.inv.653,P.Iand.inv. 653,"Reekmans, A sixth century account of hay (Pap. Brux. 1) p. 41-74",TRUE,FALSE
-pap.brux;3,Pap.Brux. 3,"Reekmans, La sitométrie dans les archives de Zénon",TRUE,FALSE
-p.cair.reggiani,P.Cair.Reggiani,"Reggiani, Greek papyri from the Fayum in the Cairo Egyptian Museum",TRUE,FALSE
-pap.colon;31,Pap.Colon. 31,"Reiter, Die Nomarchen des Arsinoites (Pap. Colon. 31)",TRUE,FALSE
 rev.d.eg,Rev.d'Ég.,Revue d'Égyptologie (RdE),TRUE,FALSE
 rev.egyptologique,Rev.égyptologique,Revue égyptologique,TRUE,FALSE
-reac,REAC,Ricerche di egittologia e di antichità copte (REAC),TRUE,FALSE
-archiv.beih;1,ArchivBeih. 1,"Rostovtzeff, Studien zur Geschichte des römischen Kolonates",TRUE,FALSE
-sb,SB,SB,FALSE,FALSE
+rom.mil.rec,Rom.Mil.Rec.,"Fink, Roman military records",TRUE,FALSE
+sb,SB,SB,TRUE,FALSE
+sb.kopt,SB Kopt.,SB Kopt.,TRUE,FALSE
+seg,SEG,SEG,TRUE,FALSE
+short.texts;2,Short Texts II,Short Texts 2,TRUE,FALSE
+simblos,Simblos,Simblos,TRUE,FALSE
+sosol,SoSOL,,FALSE
+stud.pal,Stud.Pal.,Stud. Pal.,TRUE,FALSE
 stud.pal;3(2),Stud.Pal. III2,Stud. Pal.(2) 3.,TRUE,FALSE
-stud.pal,Stud.Pal.,Stud. Pal.,FALSE,FALSE
-studi;1,Studî,Studia della scuola papyrologica,TRUE,FALSE
 stud.pap,StudPap,Studia Papyrologica,TRUE,FALSE
+stud.test.pap;3,Stud.Test.Pap. 3,"Naldini, Il cristianesimo 1",TRUE,FALSE
+studi;1,Studî,Studia della scuola papyrologica,TRUE,FALSE
 suppl.mag,Suppl.Mag.,Suppl. Mag.,TRUE,FALSE
 symboslo,SymbOslo,Symbolae Osloenses,TRUE,FALSE
 t.alb,T.Alb.,T. Albertini,TRUE,FALSE
 t.bm.arlt,T.BM Arlt,T. BM Arlt,TRUE,FALSE
 t.moeller,T.Möller,T. Möller,TRUE,FALSE
+t.moeller,T.Möller,T. Möller,TRUE,FALSE
+t.mom.louvre,T.Mom.Louvre,"Cahier de rech\. de l'Inst\. de pap\. et égypt\. de Lille \(CRIPEL\) 3 \(197\d\), p. \d+ no\. CEML",TRUE,TRUE
 t.spiegelberg,T.Spiegelberg,T. Spiegelberg,TRUE,FALSE
 t.varie,T.Varie,T. Varie,TRUE,FALSE
 t.vindol,T.Vindol.,T. Vindol.,TRUE,FALSE
 t.vindon,T.Vindon.,T. Vindon.,TRUE,FALSE
 trav.mem,Trav.Mém.,Travaux et mémoires,TRUE,FALSE
-tyche,Tyche,Tyche,FALSE,FALSE
-upz,UPZ,UPZ,FALSE,FALSE
-publ.sorb.pap.,Publ.Sorb.Pap.,"van Haelst, Catalogue des papyrus littéraires juifs et chrétiens",TRUE,FALSE
-pap.colon;50,Pap.Colon. 50,"Vega Navarette, Die papyrusbriefe zwischen Eltern und Kinder (Pap. Colon. 50)",TRUE,FALSE
-pap.colon;40,Pap.Colon. 40,"Vega, Die Acta Alexandrinorum (Pap. Colon. 40)",TRUE,FALSE
+tyche,Tyche,Tyche,TRUE,FALSE
+upz,UPZ,UPZ,TRUE,FALSE
 vdi,VDI,Vestnik drevnej istorii,TRUE,FALSE
-dem.congr;2,DemCongr. 2,"Vleeming (ed.), Aspects of Demotic lexicography",TRUE,FALSE
-muench.beitr;1,Münch.Beitr. 1,"von Druffel, Papyrologische Studien zum byzantinischen Urkundenwesen",TRUE,FALSE
-pap.colon;3,Pap.Colon. 3,"West, The Ptolemaic papyri of Homer",TRUE,FALSE
-pap.brux;10,Pap.Brux. 10,"Wipszycka, Les ressources et les activités économiques des églises en Égypte",TRUE,FALSE
-muench.beitr;44,Münch.Beitr. 44,"Wolff, Das Justizwesen der Ptolemäer",TRUE,FALSE
-zrg,ZRG,Zeitschrift der Savigny-Stiftung für Rechtsgeschichte (Romanistische Abteilung) ,TRUE,FALSE
-zaes,ZÄS,Zeitschrift für Ägyptische Sprache und Altertumskunde (ZÄS),TRUE,FALSE,Assuming 'zaes',yes please,,,
+vig.chr,Vigiliae Christianae,Vigiliae Christianae,TRUE,FALSE
+zaes,ZÄS,Zeitschrift für Ägyptische Sprache und Altertumskunde (ZÄS),TRUE,FALSE
 zpe,ZPE,ZPE,TRUE,FALSE
-p.aphrod.reg;;col1_18,P.Aphrod.Reg.,"Zuckerman, Autour du registre fiscal d'Aphroditô p. 248-271",TRUE,FALSE
+zrg,ZRG,Zeitschrift der Savigny-Stiftung für Rechtsgeschichte (Romanistische Abteilung) ,TRUE,FALSE
