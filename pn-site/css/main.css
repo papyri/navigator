@@ -1281,6 +1281,29 @@ div#olimage {
 /* Homepage           */
 /* ------------------ */
 
+#announcement .announcement-content {
+  text-align: center;
+  position: relative;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  
+  background-color: #f8edc3;
+  border: 1px solid #e5daaf;
+}
+
+#announcement .announcement-content p {
+  padding: 1rem;
+  padding-bottom: 0;
+  color: rgb(60, 34, 23);
+}
+
+#announcement .announcement-content p a {
+  color: rgb(128, 0, 0);
+}
+
+
+
 .hero-section {
   background-color: var(--bs-light);
   padding: 3rem 0;

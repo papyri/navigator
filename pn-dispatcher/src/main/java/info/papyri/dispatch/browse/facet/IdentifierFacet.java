@@ -159,6 +159,24 @@ public class IdentifierFacet extends Facet{
 
         Boolean seriesSet = searchConfigurations.get(IdParam.SERIES).hasConstraint();
         String qpref = getLeadingField().name() + ":";
+
+        // The COLLECTION control submits either "apisonly" ("All APIS records"), a
+        // collection name whose scoping FacetBrowser handles (all/current/editions/
+        // ddbdp/hgv/dclp), or an APIS sub-collection name (e.g. "berkeley"). The APIS
+        // cases must be filtered here, whether or not a series is also set.
+        String collectionConstraint = searchConfigurations.get(IdParam.COLLECTION).getConstraint();
+        if(apisOnlyHTMLValue.equals(collectionConstraint)){
+
+            solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
+
+        }
+        else if(searchConfigurations.get(IdParam.COLLECTION).hasConstraint()
+                && !Arrays.asList("all", "current", "editions", "ddbdp", "hgv", "dclp").contains(collectionConstraint)){
+
+            solrQuery.addFilterQuery(SolrField.apis_series.name() + ":" + collectionConstraint);
+
+        }
+
         if(!seriesSet){
 
             String specifierClause = this.getIdnoOrVolumeOnlySpecifierClause();
@@ -171,12 +189,6 @@ public class IdentifierFacet extends Facet{
 
             String seriesSpecifierClause = getSeriesSpecifierClause();
             solrQuery.addFilterQuery(qpref + seriesSpecifierClause);
-
-        }
-
-        if(apisOnlyHTMLValue.equals(searchConfigurations.get(IdParam.COLLECTION).getConstraint())){
-
-            solrQuery.addFilterQuery(SolrField.collection.name() + ":apis");
 
         }
 
@@ -1256,9 +1268,11 @@ public class IdentifierFacet extends Facet{
                 // "all" is not a real collection value, so treat it as "no constraint" here.
                 // Keep all options in the dropdown so the users can still pick one.
                 boolean treatAsUnconstrained = !this.hasConstraint() || "all".equals(this.getConstraint());
+                // Match on the option's final value (name), not the raw facet key: the APIS
+                // collection facet key is "apis" but its option value is "apisonly", so
+                // "All APIS records" must match its own option and drop the rest.
                 if(treatAsUnconstrained
-                        || key.equals(this.getConstraint())
-                        || this.getConstraint().equals(apisOnlyHTMLValue)){
+                        || name.equals(this.getConstraint())){
 
                     stringifiedValues.set(stringifiedValues.indexOf(key), stringValue);
 
@@ -1284,7 +1298,7 @@ public class IdentifierFacet extends Facet{
 
             if(searchConfigurations.get(IdParam.VOLUME).hasConstraint()) return true;
             // "all" doesn't actually constrain the collection, so leave the dropdown enabled.
-            if(this.hasConstraint() && !apisOnly && !"all".equals(this.getConstraint())) return true;
+            if(this.hasConstraint() && !"all".equals(this.getConstraint())) return true;
             return idValues.size() < 2;
 
         }
