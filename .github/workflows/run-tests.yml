@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v5
       with:
-        java-version: '17'
-        distribution: 'adopt'
+        java-version: '25'
+        distribution: 'temurin'
         cache: 'maven'
     - name: Run pn-dispatcher tests
       run: cd pn-dispatcher && mvn test

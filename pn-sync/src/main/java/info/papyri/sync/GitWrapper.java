@@ -310,29 +310,34 @@ public class GitWrapper {
         result.delete(0, result.length());
       }
     } else {
+      if (file.contains("Historical")) {
+        result.append("https://papyri.info/editions/");
+        result.append(file.substring(file.lastIndexOf("Historical/") + 11, file.lastIndexOf(".")));
+        result.append("/source");
+      }
 
       if (file.contains("HGV_meta")) {
-        result.append("http://papyri.info/hgv/");
+        result.append("https://papyri.info/hgv/");
         result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/source");
       }
       if (file.contains("DCLP")) {
-        result.append("http://papyri.info/dclp/");
+        result.append("https://papyri.info/dclp/");
         result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/source");
       }
       if (file.contains("APIS")) {
-        result.append("http://papyri.info/apis/");
+        result.append("https://papyri.info/apis/");
         result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/source");
       }
       if (file.contains("Biblio")) {
-        result.append("http://papyri.info/biblio/");
+        result.append("https://papyri.info/biblio/");
         result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/ref");
       }
       if (file.contains("HGV_trans")) {
-        result.append("http://papyri.info/hgvtrans/");
+        result.append("https://papyri.info/hgvtrans/");
         result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
         result.append("/source");
       }
@@ -361,12 +366,11 @@ public class GitWrapper {
     StringBuilder sparql = new StringBuilder();
     sparql.append("prefix dct: <http://purl.org/dc/terms/> ")
           .append("select ?id ")
-          .append("from <http://papyri.info/graph> ")
+          .append("from <https://papyri.info/graph> ")
           .append("where { ?id dct:relation <")
           .append(id)
           .append("> ")
-          .append("filter regex(str(?id), \"^http://papyri.info/ddbdp/.*\") ")
-          .append("filter not exists {?id dct:isReplacedBy ?b} }");
+          .append("filter regex(str(?id), \"^https://papyri.info/current/.*\") }");
     try {
       URL m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
       JsonNode root = getJson(m);
@@ -381,7 +385,7 @@ public class GitWrapper {
                 .append("where { ?id dc:relation <")
                 .append(id)
                 .append("> ")
-                .append("filter regex(str(?id), \"^http://papyri.info/hgv/.*\") }");
+                .append("filter regex(str(?id), \"^https://papyri.info/hgv/.*\") }");
           m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
           root = getJson(m);
           if (root.path("results").path("bindings").size() > 0) {

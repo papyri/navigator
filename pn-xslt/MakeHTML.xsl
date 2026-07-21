@@ -1183,7 +1183,10 @@
           &lt;TEI xmlns="http://www.tei-c.org/ns/1.0"><xsl:value-of select="$join"/>&lt;/TEI>
         </xsl:variable>
         <!--<xsl:message>Restore (<xsl:value-of select="ancestor::t:div[1]/@n"/> : l. <xsl:value-of select="preceding::t:lb[1]/@n"/>): <xsl:copy-of select="$restore"/></xsl:message>-->
-        <xsl:copy-of select="parse-xml-fragment($restore)/t:TEI/node()"/>
+        <xsl:try>
+          <xsl:copy-of select="parse-xml-fragment($restore)/t:TEI/node()"/>
+          <xsl:catch><xsl:message>Restore (<xsl:value-of select="ancestor::t:div[1]/@n"/> : l. <xsl:value-of select="preceding::t:lb[1]/@n"/>): <xsl:copy-of select="$restore"/></xsl:message></xsl:catch>
+        </xsl:try>
       </xsl:when>
       <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
     </xsl:choose>
