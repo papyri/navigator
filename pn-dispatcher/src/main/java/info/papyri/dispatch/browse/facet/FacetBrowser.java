@@ -180,8 +180,13 @@ public class FacetBrowser extends HttpServlet {
      * total both reflect distinct texts rather than the raw document count.
      */
     String collectionScope = request.getParameter("COLLECTION");
-    if (collectionScope == null || !Arrays.asList("all", "current", "editions", "ddbdp", "hgv", "apis", "dclp").contains(collectionScope)) {
+    if (collectionScope == null || collectionScope.isEmpty()) {
       collectionScope = "current";
+    } else if (!Arrays.asList("all", "current", "editions", "ddbdp", "hgv", "apis", "dclp").contains(collectionScope)) {
+      // "apisonly" ("All APIS records") and APIS sub-collection names (e.g.
+      // "berkeley") both scope to the apis collection; IdentifierFacet adds the
+      // apis_series filter for sub-collections.
+      collectionScope = "apis";
     }
     if (!"all".equals(collectionScope)) {
       solrQuery.addFilterQuery("collection:" + collectionScope);
