@@ -187,8 +187,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&amp;family=Noto+Sans+Coptic&amp;family=Noto+Sans+Symbols:wght@400..700&amp;family=Noto+Sans:ital,wght@0,400..700;1,400..700&amp;family=Noto+Serif:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet" />
 
-        <link rel="stylesheet" href="{$cssbase}/theme-variables.css?v=20260721" type="text/css"/>
-        <link rel="stylesheet" href="{$cssbase}/main.css?v=20260721" type="text/css"/>
+        <link rel="stylesheet" href="{$cssbase}/theme-variables.css?v=202607210449" type="text/css"/>
+        <link rel="stylesheet" href="{$cssbase}/main.css?v=202607210449" type="text/css"/>
 
         <xsl:if test="$image">
           <link rel="stylesheet" href="{$cssbase}/imageviewer.css" type="text/css" />
@@ -203,7 +203,7 @@
         <xsl:if test="$image">
           <script src="{$jsbase}/imageviewer.js" charset="utf-8" type="module"></script>
         </xsl:if>
-        <script src="{$jsbase}/init.js?v=20260721" type="text/javascript" charset="utf-8"></script>
+        <script src="{$jsbase}/init.js?v=202607210449" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$analytics='yes'">
           <script>
             var _paq = window._paq = window._paq || [];

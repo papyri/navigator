@@ -520,6 +520,16 @@ ul#results-pagination {
   margin-bottom: 0;
 }
 
+@media (max-width: 640px) {
+  .utility-content-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .utility-content-wrapper nav {
+    margin-bottom: 1rem;
+  }
+}
+
 #canonical-uri {
   text-align: right;
   font-style: italic;
