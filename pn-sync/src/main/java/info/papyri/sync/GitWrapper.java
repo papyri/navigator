@@ -260,88 +260,45 @@ public class GitWrapper {
   
   public static String filenameToUri(String file, boolean resolve, String server) {
     StringBuilder result = new StringBuilder();
-    if (file.contains("DDB")) {
-      StringBuilder sparql = new StringBuilder();
-      sparql.append("prefix dc: <http://purl.org/dc/terms/> ")
-            .append("select ?id ")
-            .append("from <http://papyri.info/graph> ")
-            .append("where { ?id dc:identifier \"")
-            .append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."))
-            .append("\" }");
-      try {
-        // If the numbers server already knows the id for the filename, use that
-        // because it will be 100% accurate. 
-        URL m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
-        JsonNode root = getJson(m);
-        if (root.path("results").path("bindings").size() > 0) {
-          result.append(URLDecoder.decode(root.path("results").path("bindings").path(0).path("id").path("value").asText(),"UTF-8"));
-        // Otherwise, attempt to infer the identifier from the filename. 
-        } else {
-          result.append("http://papyri.info/ddbdp/");
-          String collection = file.substring(file.indexOf("DDB_EpiDoc_XML/") + "DDB_EpiDoc_XML/".length());
-          collection = collection.substring(0, collection.indexOf("/"));
-          sparql = new StringBuilder();
-          sparql.append("SELECT * ")
-                  .append("FROM <http://papyri.info/graph> ")
-                  .append("WHERE { <http://papyri.info/ddbdp/").append(collection).append("> ?p ?o }");
-          m = new URL(server + "?query=" + URLEncoder.encode(sparql.toString(), "UTF-8") + "&output=json");
-          root = getJson(m);
-          if (root.path("results").path("bindings").size() > 0) {
-            result.append(collection).append(";");
-            String rest = file.substring(file.lastIndexOf("/") + collection.length() + 2).replaceAll("\\.xml$", "");
-            if (rest.contains(".")) {
-              result.append(rest, 0, rest.indexOf("."));
-              result.append(";");
-              result.append(rest.substring(rest.indexOf(".") + 1));
-            } else {
-              result.append(";");
-              result.append(rest);
-            }
-            result.append("/source");
-            if (!result.toString().matches("http://papyri\\.info/ddbdp/(\\w|\\d|\\.)+;(\\w|\\d|\\(\\d+\\)|\\.)*;(\\w|\\d|-|,|\\.|\\(|\\))+/source")) {
-              throw new Exception("Malformed file name: " + file);
-            }
-          } else {
-            throw new Exception("Unknown collection in file: " + file);
-          }
-        }
-      } catch (Exception e) {
-        logger.log(Level.SEVERE, "Failed to resolve URI.", e);
-        result.delete(0, result.length());
-      }
-    } else {
-      if (file.contains("Historical")) {
-        result.append("https://papyri.info/editions/");
-        result.append(file.substring(file.lastIndexOf("Historical/") + 11, file.lastIndexOf(".")));
-        result.append("/source");
-      }
-
-      if (file.contains("HGV_meta")) {
-        result.append("https://papyri.info/hgv/");
-        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
-        result.append("/source");
-      }
-      if (file.contains("DCLP")) {
-        result.append("https://papyri.info/dclp/");
-        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
-        result.append("/source");
-      }
-      if (file.contains("APIS")) {
-        result.append("https://papyri.info/apis/");
-        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
-        result.append("/source");
-      }
-      if (file.contains("Biblio")) {
-        result.append("https://papyri.info/biblio/");
-        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
-        result.append("/ref");
-      }
-      if (file.contains("HGV_trans")) {
-        result.append("https://papyri.info/hgvtrans/");
-        result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
-        result.append("/source");
-      }
-      
+    if (file.contains("DDbDP")) {
+      result.append("https://papyri.info/current/");
+      result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+      result.append("/source");
+    }
+    if (file.contains("Historical")) {
+      result.append("https://papyri.info/editions/");
+      result.append(file.substring(file.lastIndexOf("Historical/") + 11, file.lastIndexOf(".")));
+      result.append("/source");
+    }
+    if (file.contains("HGV_meta")) {
+      result.append("https://papyri.info/hgv/");
+      result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+      result.append("/source");
+    }
+    if (file.contains("DCLP")) {
+      result.append("https://papyri.info/current/");
+      result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+      result.append("/source");
+    }
+    if (file.contains("APIS")) {
+      result.append("https://papyri.info/apis/");
+      result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+      result.append("/source");
+    }
+    if (file.contains("Biblio")) {
+      result.append("https://papyri.info/biblio/");
+      result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+      result.append("/ref");
+    }
+    if (file.contains("Translation")) {
+      result.append("https://papyri.info/translation/");
+      result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+      result.append("/source");
+    }
+    if (file.contains("HGV_trans")) {
+      result.append("https://papyri.info/hgvtrans/");
+      result.append(file, file.lastIndexOf("/") + 1, file.lastIndexOf("."));
+      result.append("/source");
     }
     logger.fine(result.toString());
     if (!resolve || result.toString().contains("/biblio/")) {
