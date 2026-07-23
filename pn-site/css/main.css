@@ -552,14 +552,6 @@ nav.breadcrumb .breadcrumb-item .breadcrumb-divider {
   margin-right: .5em;
 }
 
-/* nav.breadcrumb .breadcrumb-item:nth-last-child(2) .breadcrumb-divider {
-  margin-right: 0;
-} */
-
-nav.breadcrumb .breadcrumb-item+.breadcrumb-item {
-  padding-left: 0;
-}
-
 nav.breadcrumb li.breadcrumb-title {
   padding-right: .5rem;
 }

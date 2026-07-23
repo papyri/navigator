@@ -1001,8 +1001,10 @@
             <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are close representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
             <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
             <li class="breadcrumb-item active" aria-current="page">
-              <span class="breadcrumb-divider">; </span>
-              <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (<xsl:value-of select="$base-edition"/>)
+              <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (<xsl:value-of select="$base-edition"/>); 
+            </li>
+            <li class="breadcrumb-item">
+              <a href="https://www.trismegistos.org/text/{/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]}">TM: <xsl:value-of select="/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]"/></a>
             </li>
             <li class="breadcrumb-copy">
               <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
@@ -1030,8 +1032,10 @@
                 <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are faithful representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
                 <xsl:apply-templates select="$current//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="$historical-path"/></xsl:apply-templates>
                 <li class="breadcrumb-item">
-                  <xsl:if test="$current//t:body/t:head/t:ref"><span class="breadcrumb-divider">; </span></xsl:if>
-                  <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (Current)</a>
+                  <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (Current)</a>; 
+                </li>
+                <li class="breadcrumb-item">
+                  <a href="https://www.trismegistos.org/text/{/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]}">TM: <xsl:value-of select="/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]"/></a>
                 </li>
                 <li class="breadcrumb-copy">
                   <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
@@ -1053,33 +1057,60 @@
   <!-- Process head element in breadcrumb mode -->
   <xsl:template match="t:body/t:head" mode="breadcrumb">
     <xsl:param name="active"/>
-    <xsl:for-each select="t:ref">
-        <xsl:choose>
-          <xsl:when test="@target and not(contains(@target, $active))">
-            <li class="breadcrumb-item">
-              <xsl:if test="position() &gt; 1"><span class="breadcrumb-divider">; </span></xsl:if>
-              <a href="{replace(@target, 'https://papyri.info', '')}"><xsl:value-of select="t:title"/></a>
-              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
-            </li>
-          </xsl:when>
-          <xsl:when test="@target and contains(@target, $active)">
-            <li class="breadcrumb-item active" aria-current="page">
-              <xsl:if test="position() &gt; 1"><span class="breadcrumb-divider">; </span></xsl:if>
-              <xsl:value-of select="t:title"/>
-              <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
-            </li>
-          </xsl:when>
-          <xsl:otherwise>
-            <li class="breadcrumb-item">
-              <xsl:if test="position() &gt; 1"><span class="breadcrumb-divider">; </span></xsl:if>
-              <span class="unlinked-item" data-bs-toggle="tooltip" data-bs-placement="top" title="A link to this edition is not yet available">
-                <xsl:value-of select="t:title"/>
-                <xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>
-              </span>
-            </li>
-          </xsl:otherwise>
-        </xsl:choose>
-    </xsl:for-each>
+    <xsl:apply-templates select="t:ref" mode="breadcrumb"><xsl:with-param name="active" select="$active"/></xsl:apply-templates>
+  </xsl:template>
+  
+  <!-- Match refs with a target and a <title> -->
+  <xsl:template match="t:ref[@target][t:title]" mode="breadcrumb">
+    <xsl:param name="active"/>
+    <xsl:choose>
+      <xsl:when test="not(contains(@target, $active))">
+        <li class="breadcrumb-item">
+          <a href="{replace(@target, 'https://papyri.info', '')}"><xsl:value-of select="t:title"/></a><xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>;
+        </li>
+      </xsl:when>
+      <xsl:otherwise>
+        <li class="breadcrumb-item active" aria-current="page">
+          <xsl:value-of select="t:title"/><xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>;
+        </li>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <!-- Match refs with a <title> but no @target -->
+  <xsl:template match="t:ref[not(@target)][t:title]" mode="breadcrumb">
+    <xsl:param name="active"/>
+    <li class="breadcrumb-item">
+      <span class="unlinked-item" data-bs-toggle="tooltip" data-bs-placement="top" title="A link to this edition is not yet available">
+        <xsl:value-of select="t:title"/><xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if>;
+      </span>
+    </li>
+  </xsl:template>
+  
+  <!-- Match refs with a @target and no <title> -->
+  <xsl:template match="t:ref[@target][not(t:title)]" mode="breadcrumb">
+    <xsl:param name="active"/>
+    <xsl:choose>
+      <xsl:when test="not(contains(@target, $active))">
+        <li class="breadcrumb-item">
+          <a href="{replace(@target, 'https://papyri.info', '')}"><xsl:value-of select="."/></a>;
+        </li>
+      </xsl:when>
+      <xsl:otherwise>
+        <li class="breadcrumb-item active" aria-current="page">
+          <xsl:value-of select="."/>;
+        </li>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="t:ref[not(@target)][not(t:title)]" mode="breadcrumb">
+    <xsl:param name="active"/>
+    <li class="breadcrumb-item">
+      <span class="unlinked-item" data-bs-toggle="tooltip" data-bs-placement="top" title="A link to this edition is not yet available">
+        <xsl:value-of select="."/><xsl:if test="not(contains(t:title, t:date))"> (<xsl:value-of select="t:date"/>)</xsl:if><xsl:if test="position() ne last()">; </xsl:if>
+      </span>
+    </li>
   </xsl:template>
 
   <!-- Apparatus munging
