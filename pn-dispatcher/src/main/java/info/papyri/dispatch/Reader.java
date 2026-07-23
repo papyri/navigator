@@ -147,7 +147,7 @@ public class Reader extends HttpServlet {
     sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
     sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
     sparql.append("filter (!bound(?orig)) . ");
-    sparql.append("filter regex(str(?related), \"^https://papyri.info/(ddbdp|hgv|dclp)\") }");
+    sparql.append("filter regex(str(?related), \"^https://papyri.info/(editions|ddbdp|hgv|dclp)\") }");
     try {
       URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), StandardCharsets.UTF_8) + "&format=json");
       HttpURLConnection http = (HttpURLConnection)m.openConnection();
@@ -158,7 +158,7 @@ public class Reader extends HttpServlet {
       String uri;
       while (i.hasNext()) {
         uri = FileUtils.substringBefore(i.next().path("related").path("value").asText(), "/source");
-        if (uri.contains("ddbdp/") || uri.contains("hgv/") || uri.contains("dclp/")) {
+        if (uri.contains("editions/") || uri.contains("ddbdp/") || uri.contains("hgv/") || uri.contains("dclp/")) {
           result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, StandardCharsets.UTF_8));
         }
         assert result != null;
