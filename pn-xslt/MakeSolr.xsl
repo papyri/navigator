@@ -315,10 +315,13 @@
     <xsl:param name="docs"/> 
     <xsl:variable name="result">
       <xsl:for-each select="$docs">
+        <xsl:variable name="strip-note">
+          <xsl:apply-templates select=".//t:div[@type='edition']" mode="strip-note"/>
+        </xsl:variable>
         <xsl:variable name="text">
           <xsl:variable name="temp-reg-edition">
             <xsl:element name="reg-edition-wrapper">
-              <xsl:copy-of select=".//t:div[@type='edition']"></xsl:copy-of>
+              <xsl:copy-of select="$strip-note"/>
             </xsl:element>
           </xsl:variable>
           <xsl:call-template name="reg-text-processing">
@@ -327,7 +330,7 @@
         </xsl:variable>
         <xsl:variable name="temp-orig-edition">
           <xsl:element name="orig-edition-wrapper">
-            <xsl:copy-of select=".//t:div[@type = 'edition']"></xsl:copy-of>
+            <xsl:copy-of select="$strip-note"></xsl:copy-of>
           </xsl:element>
         </xsl:variable>
         <xsl:variable name="orig-text">
@@ -489,6 +492,15 @@
       <xsl:copy-of select="$result"/>
     </xsl:if>
   </xsl:template>
+  
+  <xsl:template match="t:*" mode="strip-note">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="strip-note"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="t:div[@type='edition']/t:note" mode="strip-note"/>
 
   <xsl:template name="idnos">
     <xsl:param name="idnos"/>
