@@ -190,6 +190,17 @@ h3 {
   color: var(--bs-secondary);
 }
 
+/* Reduce heading sizes for smallest viewports */
+@media (max-width: 576px) {
+  h1, .h1 {
+    font-size: 1.75rem;
+  }
+
+  h2, .h2 {
+    font-size: 1.35rem;
+  }
+}
+
 /* Improve spacing below elements that precede headings */
 *:has(+ h1),*:has(+ h2),*:has(+ h3),*:has(+ h4),*:has(+ h5),*:has(+ h6) {
   margin-bottom: 2rem;
@@ -1420,4 +1431,47 @@ div#olimage {
 .dul-branding img {
   max-width: 170px;
   filter: invert(60%);
+}
+
+/* ------------------------------ */
+/* Item page metadata tables      */
+/* ------------------------------ */
+
+.metadata h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.metadata h2 .metadata-toggle {
+  margin-left: auto;
+}
+
+#editthis {
+  margin-left: auto;
+}
+@media (max-width: 576px) {
+  .metadata h2::after {
+    content: "";
+    flex-basis: 100%;
+    order: 1;
+  }
+
+  .metadata h2 .btn {
+    order: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .table.metadata tr,
+  .table.metadata th,
+  .table.metadata td {
+    display: block;
+    width: 100%;
+  }
+
+  .table.metadata th {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
 }
