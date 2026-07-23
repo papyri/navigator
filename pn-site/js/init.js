@@ -16,7 +16,7 @@ function init() {
       dataType: "json",
       success: function(data, status, xhr) {
         if (data.user) {
-         jQuery("#login").html("<a href=\"/editor/user/user_dashboard\" class=\"btn btn-link btn-sm text-decoration-none\">home</a><a href=\"/editor/users/edit\" class=\"btn btn-link btn-sm text-decoration-none\">" + data.user.name + "</a><a href=\"/editor/user/signout\" class=\"btn btn-link btn-sm text-decoration-none\">sign out</a>");
+         jQuery('[id="login"]').html("<a href=\"/editor/user/user_dashboard\" class=\"btn btn-link btn-sm text-decoration-none\">home</a><a href=\"/editor/users/edit\" class=\"btn btn-link btn-sm text-decoration-none\">" + data.user.name + "</a> <a href=\"/editor/user/signout\" class=\"btn btn-link btn-sm text-decoration-none\">sign out</a> <a href=\"/editor/help\" class=\"btn btn-link btn-sm text-decoration-none\">help</a>");
         }
       },
       error: function (data, status, xhr) {
