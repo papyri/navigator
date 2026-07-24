@@ -66,6 +66,7 @@
           </xsl:otherwise>
         </xsl:choose>
         <div id="{$table-id}" class="metadata-collapse collapse show">
+        <div class="table-responsive">
         <table class="table metadata mb-5">
           <tbody>
             <xsl:choose>
@@ -183,6 +184,7 @@
           </tbody>
         </table>
         </div>
+        </div>
       </div>
     </div>
   </xsl:template>
@@ -190,7 +192,7 @@
   <!-- Control for collapsing/expanding a single metadata table -->
   <xsl:template name="metadata-collapse-toggle">
     <xsl:param name="table-id"/>
-    <button type="button" class="btn btn-link metadata-toggle" data-bs-toggle="collapse" data-bs-target="#{$table-id}" data-bs-title="Toggle metadata display" aria-expanded="true" aria-controls="{$table-id}">
+    <button type="button" class="btn btn-outline-info btn-sm metadata-toggle" data-bs-toggle="collapse" data-bs-target="#{$table-id}" data-bs-title="Toggle metadata display" aria-expanded="true" aria-controls="{$table-id}">
       <i class="bi bi-chevron-up" aria-hidden="true"></i>
       <span class="visually-hidden">Toggle metadata table</span>
     </button>
@@ -202,6 +204,7 @@
       <div class="metadata">
         <div class="tm data">
           <h2>Trismegistos: {format-number($doc('id'), '#')} [<a href="https://www.trismegistos.org/text/{format-number($doc('id'), '#')}">source</a>]</h2>
+          <div class="table-responsive">
           <table class="table metadata">
             <tbody>
               <!-- Publications -->
@@ -228,6 +231,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </xsl:if>

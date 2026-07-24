@@ -288,7 +288,7 @@
 
               <nav id="controls" class="d-flex flex-wrap align-items-center justify-content-start p-3 mb-4 sticky-top">
 
-                <button class="btn-back-to-top in-controls-nav show me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Back to Top" aria-label="Back to Top">
+                <button class="btn-back-to-top in-controls-nav show me-2 me-sm-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Back to Top" aria-label="Back to Top">
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
                   </svg>
@@ -297,7 +297,7 @@
                 <!-- TODO: restore $tm here when it is fixed -->
                 <!-- <xsl:if test="$hgv or $apis or $tm or $dclp"> -->
                 <xsl:if test="$hgv or $apis or $dclp">
-                  <div id="metadatacontrols" class="controls-section me-3">
+                  <div id="metadatacontrols" class="controls-section me-2 me-sm-3">
                     <a href="#metadata" class="text-decoration-none fw-semibold btn btn-light"><span class="visually-hidden">Skip to </span>Metadata</a>
 
                     <!-- create dropdown only if multiple metadata -->
@@ -337,7 +337,7 @@
                 </xsl:if>
 
                 <xsl:if test="$ddbdp or $translations or $dclp">
-                  <div id="textcontrols" class="me-3 controls-section">
+                  <div id="textcontrols" class="me-2 me-sm-3 controls-section">
                     <a href="#text" class="text-decoration-none fw-semibold btn btn-light"><span class="visually-hidden">Skip to </span>Text</a>
 
                     <!-- create dropdown only if multiple text -->
@@ -372,7 +372,7 @@
 
                 <!-- todo: add dclp handling here, similar to what's below for other collections -->
                 <xsl:if test="$current">
-                  <div id="editthis" class="me-3">
+                  <div id="editthis">
                     <a href="/editor/publications/create_from_identifier/papyri.info/current/{/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}" rel="nofollow" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-edit"></i> <span class="d-none d-sm-inline">open in editor</span></a>
                   </div>
