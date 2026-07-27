@@ -139,37 +139,70 @@ public class Reader extends HttpServlet {
   private File resolveFile(String page, String type) {
     File result = null;
     StringBuilder sparql = new StringBuilder();
-    sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ");
-    sparql.append("prefix dcterms: <http://purl.org/dc/terms/> ");
-    sparql.append("select ?related ");
-    sparql.append("from <");
-    sparql.append(GRAPH);
-    sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
-    sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
-    sparql.append("filter (!bound(?orig)) . ");
-    sparql.append("filter regex(str(?related), \"^https://papyri.info/(editions|ddbdp|hgv|dclp)\") }");
-    try {
-      URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), StandardCharsets.UTF_8) + "&format=json");
-      HttpURLConnection http = (HttpURLConnection)m.openConnection();
-      http.setConnectTimeout(2000);
-      ObjectMapper o = new ObjectMapper();
-      JsonNode root = o.readValue(http.getInputStream(), JsonNode.class);
-      Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
-      String uri;
-      while (i.hasNext()) {
-        uri = FileUtils.substringBefore(i.next().path("related").path("value").asText(), "/source");
-        if (uri.contains("editions/") || uri.contains("ddbdp/") || uri.contains("hgv/") || uri.contains("dclp/")) {
-          result = (File)util.getClass().getMethod("get"+type+"FileFromId", String.class).invoke(util, URLDecoder.decode(uri, StandardCharsets.UTF_8));
+    // APIS and HGV files, if linked, should only resolve to current
+    if (page.contains("/apis/") || page.contains("/hgv/")) {
+      sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ");
+      sparql.append("prefix dcterms: <http://purl.org/dc/terms/> ");
+      sparql.append("select ?related ");
+      sparql.append("from <");
+      sparql.append(GRAPH);
+      sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
+      sparql.append("filter regex(str(?related), \"^https://papyri.info/current\") }");
+      try {
+        URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), StandardCharsets.UTF_8) + "&format=json");
+        HttpURLConnection http = (HttpURLConnection) m.openConnection();
+        http.setConnectTimeout(2000);
+        ObjectMapper o = new ObjectMapper();
+        JsonNode root = o.readValue(http.getInputStream(), JsonNode.class);
+        Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
+        String uri;
+        while (i.hasNext()) {
+          uri = FileUtils.substringBefore(i.next().path("related").path("value").asText(), "/source");
+          if (uri.contains("current/")) {
+            result = (File) util.getClass().getMethod("get" + type + "FileFromId", String.class).invoke(util, URLDecoder.decode(uri, StandardCharsets.UTF_8));
+          }
+          assert result != null;
+          if (result.exists()) {
+            break;
+          }
         }
-        assert result != null;
-        if (result.exists()) {
-          break;
-        }
+      } catch (Exception e) {
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Unable to resolve file using query; " + sparql);
+        return null;
       }
-      
-    } catch (Exception e) {
-      DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Unable to resolve file using query; " + sparql);
-      return null;
+    // /ddbdp/ or /dclp/ URIs should resolve to editions
+    } else {
+      sparql.append("prefix dc: <http://purl.org/dc/elements/1.1/> ");
+      sparql.append("prefix dcterms: <http://purl.org/dc/terms/> ");
+      sparql.append("select ?related ");
+      sparql.append("from <");
+      sparql.append(GRAPH);
+      sparql.append("> where { <").append(page).append("> dcterms:relation ?related . ");
+      sparql.append("optional { ?related dcterms:isReplacedBy ?orig } . ");
+      sparql.append("filter (!bound(?orig)) . ");
+      sparql.append("filter regex(str(?related), \"^https://papyri.info/(editions|ddbdp|dclp)\") }");
+      try {
+        URL m = new URL(sparqlServer + "?query=" + URLEncoder.encode(sparql.toString(), StandardCharsets.UTF_8) + "&format=json");
+        HttpURLConnection http = (HttpURLConnection) m.openConnection();
+        http.setConnectTimeout(2000);
+        ObjectMapper o = new ObjectMapper();
+        JsonNode root = o.readValue(http.getInputStream(), JsonNode.class);
+        Iterator<JsonNode> i = root.path("results").path("bindings").iterator();
+        String uri;
+        while (i.hasNext()) {
+          uri = FileUtils.substringBefore(i.next().path("related").path("value").asText(), "/source");
+          if (uri.contains("editions/") || uri.contains("ddbdp/") || uri.contains("dclp/")) {
+            result = (File) util.getClass().getMethod("get" + type + "FileFromId", String.class).invoke(util, URLDecoder.decode(uri, StandardCharsets.UTF_8));
+          }
+          assert result != null;
+          if (result.exists()) {
+            break;
+          }
+        }
+      } catch (Exception e) {
+        DispatchErrbitConfigProvider.report(e, Level.SEVERE, "Unable to resolve file using query; " + sparql);
+        return null;
+      }
     }
     return result;
   }

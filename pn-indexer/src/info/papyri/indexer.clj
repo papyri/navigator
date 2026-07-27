@@ -33,6 +33,7 @@
              #^{:static true} [loadLemmas [] void]])
   (:require
     [clojure.java.io :as io]
+    [clojure.pprint :refer [pprint]]
     [clojure.string :as st])
   (:import
     (clojure.lang ISeq)
@@ -243,7 +244,7 @@
         (catch Exception e
           (when-not (nil? e)
             (println (str (.getMessage e) " processing " url ".")
-            (.printStackTrace e)))))]
+            (pprint (.getStackTrace e))))))]
         (if (and result (.exists (File. result)))
           result
           (throw (Exception. (str result " does not exist, processing " url "."))))))
@@ -252,24 +253,24 @@
   "Resolves the filename of the local text file associated with the given URL."
   [url]
   (try (if (.startsWith url "file:")
-    (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".txt") "/xml/" "/")
+    (.replace (str htpath (substring-before (substring-after url (str "file://" filepath)) ".xml") ".txt") "/xml/" "/")
     (.replace (.replace (get-filename url) filepath htpath) ".xml" ".txt"))
        (catch Exception e
          (when-not (nil? e)
            (println (str (.getMessage e) " processing " url ".")
-           (.printStackTrace e))))))
+           (pprint (.getStackTrace e)))))))
 
 
 (defn get-html-filename
   "Resolves the filename of the local HTML file associated with the given URL."
   [url]
   (try (if (.startsWith url "file:")
-    (.replace (str htpath (substring-before (substring-after url (str "file:" filepath)) ".xml") ".html") "/xml/" "/")
+    (.replace (str htpath (substring-before (substring-after url (str "file://" filepath)) ".xml") ".html") "/xml/" "/")
     (.replace (.replace (get-filename url) filepath htpath) ".xml" ".html"))
     (catch Exception e
        (when-not (nil? e)
          (println (str (.getMessage e) " processing " url ".")
-         (.printStackTrace e))))))
+         (pprint (.getStackTrace e)))))))
 
 (defn transform
   "Runs an XSLT transform on the `java.io.File` in the first parameter,
@@ -288,7 +289,7 @@
         (.transform transformer)
         (catch Exception e
           (println (str (.getMessage e) " transforming " url "."))
-          (.printStackTrace e))
+          (pprint (.getStackTrace e)))
         (finally
           (.add pool xslt)))))
 
@@ -597,7 +598,7 @@
       ;; This might be redundant, but we can't be sure.
       (if (not (first is-replaced-by))
         (try
-          (.add @html (list (str "file:" (get-filename url))
+          (.add @html (list (str "file://" (get-filename url))
                           (list "collection" (substring-before (substring-after url "https://papyri.info/") "/"))
                           (list "related" (apply str (interpose " " (for [x relations] (first x)))))
                           (list "replaces" (apply str (interpose " " (for [x replaces] (first x)))))
@@ -612,7 +613,7 @@
                           (list "server" nserver)))
             (catch Exception e
               (println (str (.getMessage e) " processing " url "."))
-              (.printStackTrace e)))
+              (pprint (.getStackTrace e))))
         (queue-item (first (last is-replaced-by))))
       (queue-item (first (last primary))))))
 
@@ -660,7 +661,7 @@
                             (filter (fn [x] (= (first x) (last item))) all-translations))
             ]
         (if (nil? exclusion)
-          (try (.add @html (list (str "file:" (get-filename (last item)))
+          (try (.add @html (list (str "file://" (get-filename (last item)))
                              (list "collection" (substring-before (substring-after (last item) "https://papyri.info/") "/"))
                              (list "related" (apply str (interpose " " (for [x related] (last x)))))
                              (list "replaces" (apply str (interpose " " (for [x reprint-from] (last x)))))
@@ -675,7 +676,7 @@
                              (list "server" nserver)))
             (catch Exception e
               (println (str (.getMessage e) " processing " (last item) "."))
-              (.printStackTrace e)))
+              (pprint (.getStackTrace e))))
           (do (.add @links (list (get-html-filename
                                    (.toString
                                      (last
@@ -693,7 +694,7 @@
 
 (defn queue-collections
   "Adds URLs to the HTML transform and indexing queues for processing.  Takes a URL, like
-  `https://papyri.info/ddbdp`, a set of collections to exclude and recurses down to the item level."
+  `https://papyri.info/current`, a set of collections to exclude and recurses down to the item level."
   [url exclude prev-urls]
   ;; queue for HTML generation
    (let [all-urls (cons url prev-urls)
@@ -791,7 +792,7 @@
                 (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9) (nth x 10) (nth x 11) (nth x 12)) 
                 (.newSerializer processor (FileOutputStream. (File. (get-html-filename (first x))))) @htmltemplates)
              (catch Exception e
-               (.printStackTrace e)
+               (pprint (.getStackTrace e))
                (println (str "Error converting file " (first x) " to " (get-html-filename (first x))))))))
        @html)]
     (doseq [^Future future (.invokeAll pool tasks)]
@@ -817,7 +818,7 @@
         (list (second x) (nth x 2) (nth x 3) (nth x 4))
         (.newSerializer processor (FileOutputStream. (File. (get-txt-filename (first x))))) @texttemplates)
         (catch Exception e
-          (.printStackTrace e)
+          (pprint (.getStackTrace e))
           (println (str "Error converting file " (first x) " to " (get-txt-filename (first x)))))))))
        @text)]
     (doseq [^Future future (.invokeAll pool tasks)]
@@ -935,10 +936,10 @@
       (queue-collections "https://papyri.info/editions" '() ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing HGV...")
-      (queue-collections "https://papyri.info/hgv" '("ddbdp", "dclp", "editions", "current") ())
+      (queue-collections "https://papyri.info/hgv" '("editions", "current") ())
       (println (str "Queued " (count @html) " documents."))
       (println "Queueing APIS...")
-      (queue-collections "https://papyri.info/apis" '("ddbdp", "dclp", "hgv", "editions", "current") ())
+      (queue-collections "https://papyri.info/apis" '("hgv", "editions", "current") ())
       (println (str "Queued " (count @html) " documents.")))
     (doseq [arg args] (queue-item arg))))
 

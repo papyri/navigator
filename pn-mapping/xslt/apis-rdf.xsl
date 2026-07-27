@@ -26,15 +26,16 @@
         </dct:isPartOf>        
         <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'HGV']">
           <xsl:for-each select="tokenize(., '\s')">
-            <xsl:variable name="dir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>
+            <xsl:variable name="hgvdir" select="ceiling(number(replace(., '[a-z]', '')) div 1000)"/>
+            <xsl:variable name="dir" select="floor(number(.) div 1000)"/>
             <xsl:if
-              test="doc-available(concat('file://', $root, '/HGV_meta_EpiDoc/HGV', $dir, '/', ., '.xml'))">
+              test="doc-available(concat('file://', $root, '/HGV_meta_EpiDoc/HGV', $hgvdir, '/', ., '.xml'))">
               <dct:relation>
                 <rdf:Description rdf:about="https://papyri.info/hgv/{.}/source">
                   <dct:relation rdf:resource="{$id}"/>
                 </rdf:Description>
               </dct:relation>
-              <xsl:if test="doc-available(concat('file://', $root, '/DDbDP/', $dir, '/', ., '.xml'))">
+              <xsl:if test="doc-available(concat('file://', $root, '/DDbDP/', $dir, '/', ., '.xml')) or doc-available(concat('file://', $root, '/DCLP/', $dir, '/', ., '.xml'))">
                 <dct:relation>
                   <rdf:Description rdf:about="https://papyri.info/current/{.}/source">
                     <dct:relation rdf:resource="{$id}"/>
@@ -47,13 +48,13 @@
         <xsl:for-each select="//tei:publicationStmt/tei:idno[@type = 'TM']">
           <xsl:variable name="HGV" select="exists(//tei:publicationStmt/tei:idno[@type = 'HGV'])"/>
           <xsl:for-each select="tokenize(., '\s')">
-            <xsl:variable name="dir" select="ceiling(number(.) div 1000)"/>
+            <xsl:variable name="dir" select="floor(number(.) div 1000)"/>
             <dct:relation>
-              <rdf:Description rdf:about="http://www.trismegistos.org/text/{.}">
+              <rdf:Description rdf:about="https://www.trismegistos.org/text/{.}">
                 <dct:relation rdf:resource="{$id}"/>
               </rdf:Description>
             </dct:relation>
-            <xsl:if test="not($HGV) and doc-available(concat('file://', $root, '/DDbDP/', $dir, '/', ., '.xml'))">
+            <xsl:if test="not($HGV) and (doc-available(concat('file://', $root, '/DDbDP/', $dir, '/', ., '.xml')) or doc-available(concat('file://', $root, '/DCLP/', $dir, '/', ., '.xml')))">
               <dct:relation>
                 <rdf:Description rdf:about="https://papyri.info/current/{.}/source">
                   <dct:relation rdf:resource="{$id}"/>

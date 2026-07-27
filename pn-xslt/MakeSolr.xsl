@@ -95,7 +95,10 @@
         </xsl:if>
         <xsl:if test="$collection = 'editions'">
           <field name="collection">editions</field>
-        </xsl:if>        
+        </xsl:if>     
+        <xsl:if test="$apis = true()">
+          <field name="collection">apis</field>
+        </xsl:if>
         <xsl:variable name="id"><xsl:value-of select="pi:get-identifier($collection, /t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt)"></xsl:value-of></xsl:variable>
         <xsl:choose>
           <xsl:when test="$ddbdp">
@@ -144,8 +147,6 @@
                     select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
                   <xsl:with-param name="dclp-docs"
                     select="pi:get-docs($relations[contains(., '/dclp/')], 'xml')"/>
-                  <xsl:with-param name="tm-docs" 
-                    select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
                   <xsl:with-param name="docs"
                     select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or
                     contains(., 'dclp/')], 'xml')"
@@ -204,8 +205,6 @@
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
               <xsl:with-param name="dclp-docs"
                 select="/"/>
-              <xsl:with-param name="tm-docs" 
-                select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., 'hgv/') or contains(., '/apis/') or
                 contains(., 'dclp/')], 'xml') union /"
@@ -246,8 +245,6 @@
               <xsl:with-param name="hgv-docs" select="/"/>
               <xsl:with-param name="apis-docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"/>
-              <xsl:with-param name="tm-docs" 
-                select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
               <xsl:with-param name="docs"
                 select="pi:get-docs($relations[contains(., '/apis/')], 'xml')"
               />
@@ -269,8 +266,6 @@
             </xsl:call-template>
             <xsl:call-template name="metadata">
               <xsl:with-param name="apis-docs" select="/"/>
-              <xsl:with-param name="tm-docs" 
-                select="pi:get-docs($relations[contains(.,'trismegistos.org')], 'xml')"/>
               <xsl:with-param name="docs" select="/"/>
             </xsl:call-template>
             <xsl:call-template name="translation">
@@ -507,22 +502,22 @@
     <xsl:for-each select="$idnos">
       <xsl:choose>
         <xsl:when test="@type='ddb-hybrid'">
-          <field name="identifier">http://papyri.info/ddbdp/<xsl:value-of select="." /></field>
+          <field name="identifier">https://papyri.info/ddbdp/<xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:when test="@type='TM'">
           <xsl:for-each select="tokenize(., ' ')">
-            <field name="identifier">http://www.trismegistos.org/tm/detail.php?quick=<xsl:value-of select="." /></field>
+            <field name="identifier">https://www.trismegistos.org/tm/detail.php?quick=<xsl:value-of select="." /></field>
             <field name="identifier"><xsl:value-of select="." /></field>
           </xsl:for-each>
         </xsl:when>
         <xsl:when test="@type='LDAB'">
-          <field name="identifier">http://www.trismegistos.org/ldab/text.php?quick=<xsl:value-of select="." /></field>
+          <field name="identifier">https://www.trismegistos.org/ldab/text.php?quick=<xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:when test="@type='dclp-hybrid'">
-          <field name="identifier">http://papyri.info/dclp/<xsl:value-of select="." /></field>
+          <field name="identifier">https://papyri.info/dclp/<xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:when test="@type='apisid'">
-          <field name="identifier">http://papyri.info/apis/<xsl:value-of select="." /></field>
+          <field name="identifier">https://papyri.info/apis/<xsl:value-of select="." /></field>
         </xsl:when>
         <xsl:otherwise>
           <xsl:choose>
@@ -863,7 +858,6 @@
     <xsl:param name="hgv-docs"/>
     <xsl:param name="apis-docs"/>
     <xsl:param name="dclp-docs"/>
-    <xsl:param name="tm-docs"/>
     <xsl:param name="docs"/>
     <xsl:call-template name="title">
       <xsl:with-param name="hgv-docs"><xsl:copy-of select="$hgv-docs"/></xsl:with-param>
@@ -1086,38 +1080,7 @@
           select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin[t:persName/@type = 'asn'], ' '))"/>
         <xsl:text> </xsl:text>
       </field></xsl:if>
-    
-    <field name="tm_metadata">
-      <xsl:for-each select="$tm-docs/text">
-        <xsl:value-of select="field[@n='6']"/><xsl:text> </xsl:text>
-        <xsl:value-of select="replace(field[@n='8'],'&lt;br&gt;',' ')"/><xsl:text> </xsl:text>
-        <!-- Inventory Number -->
-        <xsl:value-of select="collref[starts-with(field[@n='15'],'1.')]/field[@n='14']"/><xsl:text> </xsl:text>
-        <xsl:for-each select="collref[starts-with(field[@n='15'],'2.')]">
-          <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[not(starts-with(field[@n='15'],'1.'))]"><xsl:text> </xsl:text></xsl:if>
-        </xsl:for-each>
-        <xsl:for-each select="collref[starts-with(field[@n='15'],'3.')]">
-          <xsl:value-of select="field[@n='14']"/><xsl:if test="following-sibling::collref[starts-with(field[@n='15'],'3.')]"><xsl:text> </xsl:text></xsl:if>
-        </xsl:for-each>
-        <!-- Reuse -->
-        <xsl:if test="string-length(field[@n='13']) gt 0">
-          <xsl:value-of select="field[@n='13']"/><xsl:text> </xsl:text>
-          <xsl:for-each select="tokenize(field[@n='14'], ', ')"><xsl:value-of select="."/><xsl:text> </xsl:text></xsl:for-each>
-          <xsl:value-of select="field[@n='57']"/>
-        </xsl:if>
-        <!-- Date -->
-        <xsl:value-of select="replace(field[@n='89'],'&lt;br&gt;','; ')"/><xsl:text> </xsl:text>
-        <!-- Language -->
-        <xsl:value-of select="field[@n='21']"/><xsl:text> </xsl:text>
-        <!-- Provenance -->
-        <xsl:for-each select="geotex"><xsl:value-of select="field[@n='28']"/><xsl:text> </xsl:text></xsl:for-each>
-        <!-- Archive -->
-        <xsl:if test="archref">
-          <xsl:value-of select="archref/field[@n='37']"/><xsl:text> </xsl:text>
-        </xsl:if>
-      </xsl:for-each>
-    </field>
-    
+        
     <xsl:call-template name="place">
       <xsl:with-param name="docs" select="$docs"/>
     </xsl:call-template>
@@ -1278,27 +1241,35 @@
     <xsl:param name="apis-docs"/>
     <xsl:param name="dclp-docs"/>
     <xsl:param name="docs"/>
-    <xsl:if test="$docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
-      <field name="title">
+    <xsl:choose>
+      <xsl:when test="$apis and not($current or $historical)">
         <xsl:choose>
-          <xsl:when test="$hgv-docs">
-            <xsl:if test="$hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
-              <xsl:value-of
-                select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"/>
-            </xsl:if>
-          </xsl:when>
-          <xsl:when test="$dclp-docs">
-            <xsl:if test="$dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
-              <xsl:value-of
-                select="normalize-space(string-join($dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"/>
-            </xsl:if>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"></xsl:value-of>
-          </xsl:otherwise>
+          <xsl:when test="//t:msIdentifier/t:idno[@type = 'invNo']"><field name="title"><xsl:value-of select="//t:msIdentifier/t:idno[@type = 'invNo']"/></field></xsl:when>
+          <xsl:otherwise><field name="title"><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"/></field></xsl:otherwise>
         </xsl:choose>
-      </field>
-    </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <field name="title">
+          <xsl:choose>
+            <xsl:when test="$hgv-docs">
+              <xsl:if test="$hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
+                <xsl:value-of
+                  select="normalize-space(string-join($hgv-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"/>
+              </xsl:if>
+            </xsl:when>
+            <xsl:when test="$dclp-docs">
+              <xsl:if test="$dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title">
+                <xsl:value-of
+                  select="normalize-space(string-join($dclp-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"/>
+              </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="normalize-space(string-join($apis-docs/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title, '; '))"></xsl:value-of>
+            </xsl:otherwise>
+          </xsl:choose>
+        </field>
+      </xsl:otherwise>
+    </xsl:choose>    
   </xsl:template>
 
   <xsl:template name="display-place">

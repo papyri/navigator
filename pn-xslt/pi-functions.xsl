@@ -109,7 +109,7 @@
         <xsl:variable name="dir" select="floor(number($tm) div 1000)"/>
         <xsl:sequence select="concat($base, '/DCLP/', $dir, '/', $tm, '.', $format)"/>
       </xsl:when>
-      <!-- Like http://www.trismegistos.org/text/11999 -->
+      <!-- Like https://www.trismegistos.org/text/11999 -->
       <xsl:when test="contains($url, 'trismegistos')">
         <xsl:sequence select="concat($tmbase, '/', floor(number(substring-after($url,'https://www.trismegistos.org/text/')) div 1000), '/', substring-after($url,'https://www.trismegistos.org/text/'), '.json')"/>
       </xsl:when>

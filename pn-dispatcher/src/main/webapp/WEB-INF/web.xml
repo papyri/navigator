@@ -73,7 +73,7 @@
         </init-param>
         <init-param>
             <param-name>serverHome</param-name>
-            <param-value>http://papyri.info</param-value>
+            <param-value>https://papyri.info</param-value>
         </init-param>
     </servlet>
     <servlet>
