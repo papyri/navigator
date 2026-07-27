@@ -80,7 +80,7 @@
 
     <nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search & browse navigation">
       <div class="container-xl px-4">
-        <div id="mainNavbar" class="collapse navbar-collapse">
+        <div id="mainNavbar" class="collapse navbar-collapse text-center">
 
           <!-- hide for wider viewports -->
           <div id="login" class="d-md-none mt-3 mb-3">
@@ -117,9 +117,7 @@
 
   <!-- Hero Section - Homepage Only -->
 
-  <h1 class="visually-hidden">Welcome to Papyri.info</h1>
-
-  <section id="announcement" class="container-fluid p-0 bg-light d-flex flex-column">
+  <section role="alert" id="announcement" class="container-fluid p-0 bg-light d-flex flex-column">
     <div class="container-xl p-0 p-md-4 pb-md-0 my-0 bg-white flex-grow-1">
       <div class="content announcement-content">
         <p>Welcome to the newest version of <strong>Papyri.info</strong>! Learn more about <a href="/release-notes" target="_blank">changes and new features</a>. Contact <a href="mailto:papyri@duke.edu">papyri@duke.edu</a> with questions or feedback.</p>
@@ -127,7 +125,7 @@
     </div>
   </section>
 
-  <section id="hero" class="hero-section container-fluid p-0 bg-light d-flex flex-column">
+  <section id="hero" aria-label="Featured Content" class="hero-section container-fluid p-0 bg-light d-flex flex-column">
     <div class="container-xl p-0 p-md-4 my-0 bg-white flex-grow-1">
       <div class="content hero-content" id="features">
         <img src="/features/6.jpg" alt="Papyrus" class="hero-image" />
@@ -153,6 +151,8 @@
       <div class="content row">
         
         <div class="column col-12 col-md-6 intro-content">
+
+          <h1 class="visually-hidden">Welcome to Papyri.info</h1>
 
           <p>Papyri.info has two primary components. The <strong>Papyrological Navigator</strong> (PN) supports searching, browsing, and aggregation of ancient papyrological documents and related materials.</p>
 

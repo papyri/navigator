@@ -72,7 +72,7 @@
               <div class="d-flex justify-content-between align-items-center w-100">
                 <a href="/" class="navbar-brand">Papyri.info</a>
                 <div class="d-flex align-items-center">
-                  <div id="login">
+                  <div id="login" class="d-none d-md-flex">
                     <a href="/editor/user/signin" class="btn btn-link text-decoration-none d-none d-sm-inline">Sign In</a>
                   </div>
                   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
