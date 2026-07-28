@@ -1062,6 +1062,12 @@ body.author-browse .btn-group .btn {
   flex: 1;
 }
 
+/* fix for arabic text that shows up alongside greek, etc. */
+#edition .linecontent:has(> [lang="ar"]:only-child) {
+  direction: rtl;
+  text-align: right;
+}
+
 #edition .linecontent .gap.gap-text {
   letter-spacing: 0.05rem;
   padding-left: .5rem;

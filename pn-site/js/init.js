@@ -1,14 +1,34 @@
+// lets transcription content render while allowing for steps to fail
+function initStep(name, fn) {
+  try {
+    fn();
+  } catch (err) {
+    console.error("init step '" + name + "' failed:", err);
+    if (typeof _paq !== "undefined") {
+      _paq.push(['trackEvent', 'error.init', name, (err && err.message) || String(err)]);
+    }
+  }
+}
+
+// reveals #edition when the page is ready
+function revealEdition() {
+  if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
+    document.querySelectorAll('#edition').forEach(edition => edition.classList.add('ready'));
+  }
+}
+
 function init() {
-    
+  try {
 		// fix highlight bug in title (for searches)
     if (document.title.includes('<mark')) {
         document.title = document.title.replace(/<mark[^>]*>/g, '').replace(/<\/mark>/g, '');
     }
 
     if (jQuery("#image").length > 0) {
-        initImage();
+        initStep("initImage", initImage);
     }
-    alignRTL();
+    // Before anything that walks .text-line: this creates new ones.
+    initStep("splitOrphanedLines", splitOrphanedLines);
 
     jQuery.ajax({
       type: "GET",
@@ -44,41 +64,22 @@ function init() {
 
     var bibl = jQuery("div#bibliography li>a");
 
-    addLinearBrowseControls();
-		getAlert();
-		getCampaign();
-		initBootstrapTooltips();
-		initLineNumberVisibility();
-		initApparatusDetailsToggle();
-		initBootstrapScrollSpy();
-		initSidebar();
-		initBackToTop();
-    setCollection();
-    initConstraintBadges();
-    initMetadataCollapseAll();
-    initMetadataAnchorExpand();
-
-		// Initialize transformation for /current/ and /editions/ pages
-		if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
-
-					// Add resize listener to recalculate apparatus max-height
-					/*
-					let resizeTimer;
-					window.addEventListener('resize', () => {
-							clearTimeout(resizeTimer);
-							resizeTimer = setTimeout(() => {
-									setApparatusMaxHeight();
-							}, 250);
-					});
-					*/
-
-					// Fade in the #edition element
-					const editions = document.querySelectorAll('#edition');
-					if (editions) {
-							editions.forEach(edition => edition.classList.add('ready'));
-					}
-		}
-
+    initStep("addLinearBrowseControls", addLinearBrowseControls);
+		initStep("getAlert", getAlert);
+		initStep("getCampaign", getCampaign);
+		initStep("initBootstrapTooltips", initBootstrapTooltips);
+		initStep("initLineNumberVisibility", initLineNumberVisibility);
+		initStep("initApparatusDetailsToggle", initApparatusDetailsToggle);
+		initStep("initBootstrapScrollSpy", initBootstrapScrollSpy);
+		initStep("initSidebar", initSidebar);
+		initStep("initBackToTop", initBackToTop);
+    initStep("setCollection", setCollection);
+    initStep("initConstraintBadges", initConstraintBadges);
+    initStep("initMetadataCollapseAll", initMetadataCollapseAll);
+    initStep("initMetadataAnchorExpand", initMetadataAnchorExpand);
+  } finally {
+    revealEdition();
+  }
 }
 
 function initjQueryMigrate() {
@@ -469,78 +470,98 @@ function initConstraintBadges() {
   });
 }
 
-/**
- *  Pad
+/*
+ * DISABLED 2026-07-28 -- now fixed by CSS, old code kept for reference.
+ *
+ * alignRTL() faked right-alignment for Arabic runs by measuring rendered
+ * widths and injecting inline styles: a width on span.ab, plus <span> spacers
+ * before each RTL run. Two problems. It fought text wrapping, because a
+ * wrapped run's later line boxes still took the container's left alignment,
+ * and it crashed on any document where an Arabic span had no previous sibling.
+ *
  */
-function alignRTL() {
-  //return true;
-  jQuery("span.ab").each(function(i, ab) {
-    var width = jQuery(ab).width() + 50;
-    jQuery(ab).find("span[lang=ar]").each(function(i, elt) {
-      jQuery(ab).css("width", (width + 50) + "px");
-      //return true;
-      var e = jQuery(elt);
-      //var offset = ((width - e.width()) / e.parents("div.textpart").width()) * 100;
-      var breaks = e.find("br");
-      var r = document.createRange();
-      var line = document.createElement("span");
-      var frg;
-      if (breaks.length > 0) { // we have a multiline span
-        elt.removeAttribute("lang");
-        elt.removeAttribute("dir");
-        // deal with text before first line break
-        if (breaks[0].previousSibling.textContent.trim() != "") {
-          r.setStartBefore(elt.firstChild);
-          r.setEndBefore(breaks[0]);
-          line.appendChild(r.extractContents());
-          line.setAttribute("lang", "ar");
-          line.setAttribute("dir","rtl");
-          var l = jQuery(elt.insertBefore(line, breaks[0]));
-          if (elt.previousSibling.localName == "br" || elt.previousSibling.textContent.trim() == "") {
-            var offset = width - l.width();
-            l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
-          } else {
-            if (l[0].parentElement.getBoundingClientRect()["right"] < width) {
-              var offset = width - l.width();
-            } else {
-              var offset = l[0].parentElement.getBoundingClientRect()["left"] - 15;
-            }
-            l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
-          }
-          console.log("before; offset: " + offset + "; width: " + width );
-        }
-        //deal with text after line breaks
-        for (var i=0; i < breaks.length; i++) {
-          r = document.createRange();
-          line = document.createElement("span");
-          r.setStartAfter(breaks[i]);
-          if (i < breaks.length - 1) {
-            r.setEndBefore(breaks[i + 1]);
-          } else {
-            r.setEndAfter(elt.lastChild);
-          }
-          line.appendChild(r.extractContents());
-          line.setAttribute("lang", "ar");
-          line.setAttribute("dir","rtl");
-          jQuery(line).insertAfter(breaks[i]);
-          var l = jQuery(line);
-          var offset = width - l.width();
-          l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
-          //l.find(".linenumber").css("margin-left", "-" + (32 + (width - l.width())) + "px");
-          console.log("after; offset: " + offset + "; width: " + width );
-        }
-      } else {
-        var offset = width - e.width();
-        if ((e[0].previousSibling.textContent.trim() == "" && (e[0].previousElementSibling.localName == "br" || e[0].previousElementSibling.localName == "a")) || e[0].previousSibling.localName == 'span' && e[0].previousSibling.classList.contains('linenumber')) {
-          e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
-        }
-        e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
-        console.log("no lines; offset: " + offset + "; width: " + width );
-      }
-    });
-  });
-
-}
+// /**
+//  *  Pad
+//  */
+// function alignRTL() {
+//   //return true;
+//   jQuery("span.ab").each(function(i, ab) {
+//     var width = jQuery(ab).width() + 50;
+//     jQuery(ab).find("span[lang=ar]").each(function(i, elt) {
+//       jQuery(ab).css("width", (width + 50) + "px");
+//       //return true;
+//       var e = jQuery(elt);
+//       //var offset = ((width - e.width()) / e.parents("div.textpart").width()) * 100;
+//       var breaks = e.find("br");
+//       var r = document.createRange();
+//       var line = document.createElement("span");
+//       var frg;
+//       if (breaks.length > 0) { // we have a multiline span
+//         elt.removeAttribute("lang");
+//         elt.removeAttribute("dir");
+//         // deal with text before first line break
+//         if (breaks[0].previousSibling.textContent.trim() != "") {
+//           r.setStartBefore(elt.firstChild);
+//           r.setEndBefore(breaks[0]);
+//           line.appendChild(r.extractContents());
+//           line.setAttribute("lang", "ar");
+//           line.setAttribute("dir","rtl");
+//           var l = jQuery(elt.insertBefore(line, breaks[0]));
+//           if (elt.previousSibling.localName == "br" || elt.previousSibling.textContent.trim() == "") {
+//             var offset = width - l.width();
+//             l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+//           } else {
+//             if (l[0].parentElement.getBoundingClientRect()["right"] < width) {
+//               var offset = width - l.width();
+//             } else {
+//               var offset = l[0].parentElement.getBoundingClientRect()["left"] - 15;
+//             }
+//             l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+//           }
+//           console.log("before; offset: " + offset + "; width: " + width );
+//         }
+//         //deal with text after line breaks
+//         for (var i=0; i < breaks.length; i++) {
+//           r = document.createRange();
+//           line = document.createElement("span");
+//           r.setStartAfter(breaks[i]);
+//           if (i < breaks.length - 1) {
+//             r.setEndBefore(breaks[i + 1]);
+//           } else {
+//             r.setEndAfter(elt.lastChild);
+//           }
+//           line.appendChild(r.extractContents());
+//           line.setAttribute("lang", "ar");
+//           line.setAttribute("dir","rtl");
+//           jQuery(line).insertAfter(breaks[i]);
+//           var l = jQuery(line);
+//           var offset = width - l.width();
+//           l.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+//           //l.find(".linenumber").css("margin-left", "-" + (32 + (width - l.width())) + "px");
+//           console.log("after; offset: " + offset + "; width: " + width );
+//         }
+//       } else {
+//         var offset = width - e.width();
+//         var prev = e[0].previousSibling;
+//         var prevElt = e[0].previousElementSibling;
+//         // Guarded against a null previousSibling: in .text-line markup the
+//         // Arabic span is the first child of .linecontent and has nothing at
+//         // all before it. The unguarded original threw here, which aborted
+//         // init() and left #edition stuck at opacity 0.
+//         var startsLine = !prev
+//           || (prev.textContent.trim() == "" && prevElt != null
+//               && (prevElt.localName == "br" || prevElt.localName == "a"))
+//           || (prev.localName == 'span' && prev.classList.contains('linenumber'));
+//         if (startsLine) {
+//           e.before('<span style="display:inline-block;width:' + offset +'px;"> </span>');
+//         }
+//         e.find(".linenumber").css("margin-left", "-" + (32 + (width - e.width())) + "px");
+//         console.log("no lines; offset: " + offset + "; width: " + width );
+//       }
+//     });
+//   });
+//
+// }
 
 function getCampaign() {
 	if (canShowCampaign()) {
@@ -684,8 +705,81 @@ function initBootstrapScrollSpy() {
 
 
 /**
- * Allows for line number display on hover of text lines
+ * Allows for line number display on hover of text lines and fixes line breaks for orphaned lines so they will display correctly
  */
+function splitOrphanedLines() {
+  var LINE_INC = 5; // keep in step with $line-inc in MakeHTML.xsl
+  var marker;
+  var guard = 0;
+
+  // One marker at a time: a split can leave a further marker in the new line, so re-query rather than iterating a NodeList taken before the mutations.
+  while ((marker = document.querySelector('#edition .text-line pn-lb')) && guard++ < 500) {
+    var line = marker.closest('.text-line');
+    var content = marker.closest('.linecontent');
+    if (!line || !content) {
+      marker.remove(); // nothing sane to split; drop the inert marker
+      continue;
+    }
+
+    // extractContents() clones any ancestor the range only partly covers, which would duplicate that ancestor's id. 
+    var straddling = [];
+    for (var p = marker.parentNode; p && p !== content; p = p.parentNode) {
+      straddling.unshift(p);
+    }
+
+    var range = document.createRange();
+    range.setStartAfter(marker);
+    range.setEnd(content, content.childNodes.length);
+    var tail = range.extractContents();
+
+    var clone = tail.firstElementChild;
+    for (var d = 0; d < straddling.length && clone; d++) {
+      if (straddling[d].id) {
+        clone.removeAttribute('id');
+      }
+      clone = clone.firstElementChild;
+    }
+
+    var lineNo = marker.getAttribute('data-line');
+
+    var next = document.createElement('div');
+    next.className = 'text-line';
+    // The marker carries the source <lb/>'s attributes as data-*, the same way
+    // the stylesheet copies them onto the lines it does manage to group.
+    for (var i = 0; i < marker.attributes.length; i++) {
+      var attr = marker.attributes[i];
+      if (attr.name !== 'id') {
+        next.setAttribute(attr.name, attr.value);
+      }
+    }
+    next.id = marker.id;
+    next.setAttribute('aria-label', 'Line ' + lineNo);
+
+    if (marker.dataset.id) {
+      var target = document.createElement('a');
+      target.id = marker.dataset.id;
+      target.appendChild(document.createComment('0'));
+      next.appendChild(target);
+    }
+
+    var number = document.createElement('span');
+    number.className = 'linenumber';
+    var n = Number(lineNo);
+    if (!(n && n % LINE_INC === 0)) {
+      number.classList.add('initially-hidden');
+    }
+    number.textContent = lineNo;
+    next.appendChild(number);
+
+    var wrapper = document.createElement('span');
+    wrapper.className = 'linecontent';
+    wrapper.appendChild(tail);
+    next.appendChild(wrapper);
+
+    line.after(next);
+    marker.remove();
+  }
+}
 
 function initLineNumberVisibility() {
 	// Select all line number spans with initially-hidden class inside #edition
