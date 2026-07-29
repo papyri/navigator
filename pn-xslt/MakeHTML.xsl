@@ -203,7 +203,7 @@
         <xsl:if test="$image">
           <script src="{$jsbase}/imageviewer.js" charset="utf-8" type="module"></script>
         </xsl:if>
-        <script src="{$jsbase}/init.js?v=202607290926" type="text/javascript" charset="utf-8"></script>
+        <script src="{$jsbase}/init.js?v=202607291038" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$analytics='yes'">
           <script>
             var _paq = window._paq = window._paq || [];
