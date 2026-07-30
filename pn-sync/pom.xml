@@ -77,7 +77,7 @@
         <dependency>
           <groupId>info.papyri</groupId>
           <artifactId>map</artifactId>
-          <version>1.0.4</version>
+          <version>1.0.5</version>
         </dependency>
         <dependency>
           <groupId>org.apache.jena</groupId>
@@ -118,7 +118,7 @@
         <dependency>
           <groupId>info.papyri</groupId>
           <artifactId>indexer</artifactId>
-          <version>1.1.19</version>
+          <version>1.1.20</version>
         </dependency>
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
