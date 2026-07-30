@@ -724,7 +724,7 @@ public class FileUtils {
   public List<String> highlightMatches(String t, Pattern[] patterns) {
     String highlightedText = highlight(patterns, t);
     List<String> result = getNMatches(highlightedText, 3);
-    logger.log(Level.INFO, "Found " + result.size() + " matches in text");
+    logger.log(Level.FINEST, "Found " + result.size() + " matches in text");
     return result;
   }
 
