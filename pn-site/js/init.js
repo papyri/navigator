@@ -12,7 +12,11 @@ function initStep(name, fn) {
 
 // reveals #edition when the page is ready
 function revealEdition() {
-  if (window.location.pathname.includes('/current/') || window.location.pathname.includes('/editions/')) {
+  if (window.location.pathname.includes('/current/') 
+    || window.location.pathname.includes('/editions/')
+    || window.location.pathname.includes('/hgv/')
+    || window.location.pathname.includes('/apis/')
+  ) {
     document.querySelectorAll('#edition').forEach(edition => edition.classList.add('ready'));
   }
 }
