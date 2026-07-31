@@ -19,7 +19,7 @@ public class DispatchErrbitConfigProvider implements ServletContextListener {
   public static void report(Throwable throwable, Level level) {
     if (notifier != null)
       notifier.report(throwable);
-    log.log(level, null, throwable);
+    log.log(level, throwable.getMessage(), throwable);
   }
 
   public static void report(Throwable throwable, Level level, String message) {

@@ -61,7 +61,7 @@ public class FileUtilsTest extends TestCase {
   /**
    * Test of getTextFile method, of class FileUtils.
    */
-  public void testGetTextFile() {
+  public void testGetDDbDPTextFile() {
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
@@ -75,7 +75,7 @@ public class FileUtilsTest extends TestCase {
   /**
    * Test of getXmlFile method, of class FileUtils.
    */
-  public void testGetXmlFile() {
+  public void testGetDDbDPXmlFile() {
     String collection = "ddbdp";
     String item = "bgu;1;2";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
@@ -87,11 +87,25 @@ public class FileUtilsTest extends TestCase {
   }
 
   /**
+   * Test of getXmlFile method, of class FileUtils.
+   */
+  public void testGetHGVXmlFile() {
+    String collection = "hgv";
+    String item = "24600";
+    FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
+    File expResult = new File(BASEDATA + "HGV_meta_EpiDoc/HGV25/24600.xml");
+    File result = instance.getXmlFile(collection, item);
+    assertEquals(expResult, result);
+    assert(expResult.exists());
+    assert(result.exists());
+  }
+
+  /**
    * Test of findMatches method, of class FileUtils.
    */
   public void testFindMatchesWildcard() {
     String query = "ostrak*";
-    String id = "http://papyri.info/ddbdp/o.heid;;123";
+    String id = "https://papyri.info/ddbdp/o.heid;;123";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("Ostrakon");
@@ -110,7 +124,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesMultiple() {
     String query = "sheep";
-    String id = "http://papyri.info/ddbdp/p.ross.georg;2;15";
+    String id = "https://papyri.info/ddbdp/p.ross.georg;2;15";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("Sheep");
@@ -131,7 +145,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesMultipleTerms() {
     String query = "αναγκαιας χρειας";
-    String id = "http://papyri.info/ddbdp/bgu;12;2188";
+    String id = "https://papyri.info/ddbdp/bgu;12;2188";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("ἀναγκαία̣ς");
@@ -156,7 +170,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesBigFile() {
     String query = "sheep";
-    String id = "http://papyri.info/ddbdp/p.mich;2;123";
+    String id = "https://papyri.info/ddbdp/p.mich;2;123";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     String text = instance.loadHtmlFromId(id);
     //System.out.println(instance.highlight(query, text));
@@ -167,7 +181,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesSubstringPhrase() {
     String query = "\"#και# #στρατηγ\"";
-    String id = "http://papyri.info/ddbdp/bgu;14;2373";
+    String id = "https://papyri.info/ddbdp/bgu;14;2373";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("καὶ στρ]ατηγ");
@@ -186,7 +200,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesSubstringPhraseWordBoundaries() {
     String query = "transcription_ngram_ia:(\"μεν# #κα\")";
-    String id = "http://papyri.info/ddbdp/bgu;1;110";
+    String id = "https://papyri.info/ddbdp/bgu;1;110";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("μεν) κα");
@@ -206,7 +220,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesLinebreakInSupplied() {
     String query = "transcription_ngram_ia:(στρατηγωι)";
-    String id = "http://papyri.info/ddbdp/bgu;16;2629";
+    String id = "https://papyri.info/ddbdp/bgu;16;2629";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("στρ̣[ατη-]<br/>31. γῶι");
@@ -225,7 +239,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesLinebreak() {
     String query = "transcription_ngram_ia:(στρατηγ)";
-    String id = "http://papyri.info/ddbdp/bgu;2;432";
+    String id = "https://papyri.info/ddbdp/bgu;2;432";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("σ]τρατηγ</mark>είας");
@@ -244,7 +258,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesPlace() {
     String query = "place:Alexandria";
-    String id = "http://papyri.info/ddbdp/p.cair.zen;2;59195";
+    String id = "https://papyri.info/ddbdp/p.cair.zen;2;59195";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("Alexandria");
@@ -261,7 +275,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesElision() {
     String query = "τουτεστιν";
-    String id = "http://papyri.info/ddbdp/p.neph;;31";
+    String id = "https://papyri.info/ddbdp/p.neph;;31";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("τουτ’έστιν");
@@ -280,7 +294,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesAPIS() {
     String query = "sheep";
-    String id = "http://papyri.info/apis/michigan.apis.4520";
+    String id = "https://papyri.info/apis/michigan.apis.4520";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("sheep");
@@ -299,7 +313,7 @@ public class FileUtilsTest extends TestCase {
 
   public void testFindMatchesSheep() {
     String query = "sheep";
-    String id = "http://papyri.info/ddbdp/p.cair.zen;1;59068";
+    String id = "https://papyri.info/ddbdp/p.cair.zen;1;59068";
     FileUtils instance = new FileUtils(BASEDATA, BASEHTML);
     List<String> expResult = new ArrayList<String>();
     expResult.add("<mark class=\"highlight\">sheep</mark>");
