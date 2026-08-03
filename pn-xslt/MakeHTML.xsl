@@ -909,10 +909,15 @@
             <xsl:otherwise><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='dclp-hybrid'], ';;?', '/'))]/t:title"/></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
+        <xsl:variable name="tm-number" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM'][1]"/>
         <xsl:text>Current Edition: </xsl:text>
         <xsl:value-of select="$type"/>
         <xsl:text> </xsl:text>
         <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> (<xsl:value-of select="$base-edition"/>)
+        <xsl:if test="normalize-space($tm-number) != ''">
+          <xsl:text> ; TM </xsl:text>
+          <xsl:value-of select="normalize-space($tm-number)"/>
+        </xsl:if>
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:text>Historical Edition: </xsl:text>
