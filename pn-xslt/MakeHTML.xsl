@@ -913,10 +913,10 @@
         <xsl:text>Current Edition: </xsl:text>
         <xsl:value-of select="$type"/>
         <xsl:text> </xsl:text>
-        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> (<xsl:value-of select="$base-edition"/>)
+        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> (<xsl:value-of select="$base-edition"/><xsl:text>)</xsl:text>
         <xsl:if test="normalize-space($tm-number) != ''">
-          <xsl:text> ; TM </xsl:text>
-          <xsl:value-of select="normalize-space($tm-number)"/>
+          <xsl:text>; </xsl:text>
+          <a href="https://www.trismegistos.org/text/{normalize-space($tm-number)}" target="_blank">TM <xsl:value-of select="normalize-space($tm-number)"/></a>
         </xsl:if>
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
@@ -1006,10 +1006,7 @@
             <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are close representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
             <xsl:apply-templates select="//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="concat('/current/', $current-edition-id)"/></xsl:apply-templates>
             <li class="breadcrumb-item active" aria-current="page">
-              <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (<xsl:value-of select="$base-edition"/>); 
-            </li>
-            <li class="breadcrumb-item">
-              <a href="https://www.trismegistos.org/text/{/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]}">TM: <xsl:value-of select="/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]"/></a>
+              <xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (<xsl:value-of select="$base-edition"/>)
             </li>
             <li class="breadcrumb-copy">
               <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
@@ -1037,10 +1034,7 @@
                 <li class="breadcrumb-title"><a href="#" class="info" data-bs-toggle="tooltip" data-bs-title="Historical editions are faithful representations of print editions and are not editable or updated with emendations."><span class="visually-hidden">More Information</span><span class="bi bi-info-circle"></span></a>Editions:</li>
                 <xsl:apply-templates select="$current//t:body/t:head" mode="breadcrumb"><xsl:with-param name="active" select="$historical-path"/></xsl:apply-templates>
                 <li class="breadcrumb-item">
-                  <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (Current)</a>; 
-                </li>
-                <li class="breadcrumb-item">
-                  <a href="https://www.trismegistos.org/text/{/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]}">TM: <xsl:value-of select="/t:TEI//t:publicationStmt/t:idno[@type='TM'][1]"/></a>
+                  <a href="/current/{$current//t:idno[@type='filename']}"><xsl:value-of select="$type"/><xsl:text> </xsl:text><xsl:value-of select="$current-edition-id"/> (Current)</a>
                 </li>
                 <li class="breadcrumb-copy">
                   <button type="button" class="btn btn-link btn-sm p-0 breadcrumb-copy-btn" title="Copy editions" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Copy editions" data-bs-original-title="Copy editions">
