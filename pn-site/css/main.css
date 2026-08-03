@@ -175,6 +175,10 @@ h1, .h1 {
   font-size: 2.75rem; 
   padding-top: .5rem;
   
+  a {
+    color: var(--bs-primary);
+  }
+
   a:hover {
     color: var(--bs-link-hover-color);
     text-decoration-style: solid;
