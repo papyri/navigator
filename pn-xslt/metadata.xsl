@@ -50,7 +50,7 @@
           </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
-              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}"><i class="bi bi-external-link"></i>source</a> <a class="btn btn-link fw-semibold text-decoration-none" href="/hgv/{//t:idno[@type='filename']}/source" target="_new"><i class="bi bi-xml"></i>xml</a>
+              HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}" target="_blank"><i class="bi bi-external-link"></i>source</a> <a class="btn btn-link fw-semibold text-decoration-none" href="/hgv/{//t:idno[@type='filename']}/source" target="_new"><i class="bi bi-xml"></i>xml</a>
               <xsl:call-template name="metadata-collapse-toggle">
                 <xsl:with-param name="table-id" select="$table-id"/>
               </xsl:call-template>
@@ -201,9 +201,17 @@
   <xsl:template name="tm-metadata" expand-text="yes">
     <xsl:param name="doc"/>
     <xsl:if test="$doc instance of map(*) and map:contains($doc, 'publications')">
+      <xsl:variable name="tm-id" select="format-number($doc('id'), '#')"/>
+      <xsl:variable name="table-id" select="concat('tm-metadata-', $tm-id)"/>
       <div class="metadata">
-        <div class="tm data">
-          <h2>Trismegistos: {format-number($doc('id'), '#')} [<a href="https://www.trismegistos.org/text/{format-number($doc('id'), '#')}">source</a>]</h2>
+        <div id="tm-data" class="tm data">
+          <h2>
+            Trismegistos: {$tm-id} <a class="btn btn-link fw-semibold text-decoration-none" href="https://www.trismegistos.org/text/{$tm-id}" target="_blank"><i class="bi bi-external-link"></i>source</a>
+            <xsl:call-template name="metadata-collapse-toggle">
+              <xsl:with-param name="table-id" select="$table-id"/>
+            </xsl:call-template>
+          </h2>
+          <div id="{$table-id}" class="metadata-collapse collapse show">
           <div class="table-responsive">
           <table class="table metadata">
             <tbody>
@@ -231,6 +239,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
           </div>
         </div>
       </div>

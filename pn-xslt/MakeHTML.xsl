@@ -187,8 +187,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&amp;family=Noto+Sans+Coptic&amp;family=Noto+Sans+Symbols:wght@400..700&amp;family=Noto+Sans:ital,wght@0,400..700;1,400..700&amp;family=Noto+Serif:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet" />
 
-        <link rel="stylesheet" href="{$cssbase}/theme-variables.css?v=202607281317" type="text/css"/>
-        <link rel="stylesheet" href="{$cssbase}/main.css?v=202607281317" type="text/css"/>
+        <link rel="stylesheet" href="{$cssbase}/theme-variables.css?v=202608041613" type="text/css"/>
+        <link rel="stylesheet" href="{$cssbase}/main.css?v=202608041613" type="text/css"/>
 
         <xsl:if test="$image">
           <link rel="stylesheet" href="{$cssbase}/imageviewer.css" type="text/css" />
@@ -203,7 +203,7 @@
         <xsl:if test="$image">
           <script src="{$jsbase}/imageviewer.js" charset="utf-8" type="module"></script>
         </xsl:if>
-        <script src="{$jsbase}/init.js?v=202607291038" type="text/javascript" charset="utf-8"></script>
+        <script src="{$jsbase}/init.js?v=202608041613" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$analytics='yes'">
           <script>
             var _paq = window._paq = window._paq || [];
@@ -437,7 +437,7 @@
               <xsl:if test="$collection = 'current'">
                 <xsl:if test="$hgv or $apis or $tm or $dclp">
                   <div id="metadata" class="metadata mb-5">
-                    <xsl:if test="count($relations[contains(., 'hgv/')]) + count($relations[contains(., '/apis/')]) + count($relations[contains(., 'dclp/')]) gt 1">
+                    <xsl:if test="count($relations[contains(., 'hgv/')]) + count($relations[contains(., '/apis/')]) + count($relations[contains(., 'dclp/')]) + count($relations[contains(., 'trismegistos.org') and not(contains(., 'ldab'))]) gt 1">
                       <div class="text-end">
                         <button type="button" id="metadata-collapse-all" class="btn btn-outline-secondary btn-sm mb-4 metadata-toggle-all" aria-expanded="true">
                           <i class="bi bi-chevron-up" aria-hidden="true"></i>
