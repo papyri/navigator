@@ -981,55 +981,64 @@
         (do (queue-docs args)
             (generate-pages))))
 
+(defn post-solr-config!
+  [path body]
+  (let [retries 5
+        sleep-ms 5000
+        connect-timeout-ms 10000
+        read-timeout-ms 60000]
+    (loop [attempt 1]
+      (try
+        (let [url (URL. (str solrurl path))
+              conn (cast java.net.HttpURLConnection (.openConnection url))
+              payload (.getBytes body "UTF-8")]
+          (doto conn
+            (.setRequestMethod "POST")
+            (.setRequestProperty "Content-Type" "application/json")
+            (.setConnectTimeout connect-timeout-ms)
+            (.setReadTimeout read-timeout-ms)
+            (.setDoOutput true))
+          (with-open [os (.getOutputStream conn)]
+            (.write os payload))
+          (let [code (.getResponseCode conn)
+                stream (if (>= code 400) (.getErrorStream conn) (.getInputStream conn))
+                response (if (nil? stream) "" (with-open [in stream] (slurp in)))]
+            (if (and (>= code 200) (< code 300))
+              code
+              (throw (Exception. (str "HTTP " code " for " path " response: " response))))))
+        (catch Exception e
+          (if (< attempt retries)
+            (do
+              (println (str "Solr config request failed (attempt " attempt "/" retries ") for " path ": " (.getMessage e)))
+              (Thread/sleep sleep-ms)
+              (recur (inc attempt)))
+            (throw (Exception. (str "Solr config request failed after " retries " attempts for " path ": " (.getMessage e)) e))))))))
+
 (defn set-min-rf
   ;; min_rf=1 means the leader ACKs immediately without waiting for replica replication.
   ;; Dramatically reduces indexing time in SolrCloud. Replicas catch up asynchronously.
   [minRf]
-  (let [url (URL. (str solrurl "pn-search/config/params"))
-        conn (cast java.net.HttpURLConnection (.openConnection url))
-        body (.getBytes (str "{\"set\":{\"_UPDATE\":{\"min_rf\":\"" minRf "\"}}}") "UTF-8")]
-    (doto conn
-      (.setRequestMethod "POST")
-      (.setRequestProperty "Content-Type" "application/json")
-      (.setDoOutput true))
-    (with-open [os (.getOutputStream conn)]
-      (.write os body))
-    (.getResponseCode conn)))
+  (post-solr-config! "pn-search/config/params"
+                     (str "{\"set\":{\"_UPDATE\":{\"min_rf\":\"" minRf "\"}}}")))
 
 (defn set-auto-commit
   [maxTime]
-  (let [url (URL. (str solrurl "pn-search/config"))
-        conn (cast java.net.HttpURLConnection (.openConnection url))
-        body (.getBytes (str "{\"set-property\":{\"updateHandler.autoCommit.maxTime\":" maxTime "}}") "UTF-8")]
-    (doto conn
-      (.setRequestMethod "POST")
-      (.setRequestProperty "Content-Type" "application/json")
-      (.setDoOutput true))
-    (with-open [os (.getOutputStream conn)]
-      (.write os body))
-    (.getResponseCode conn)))
+  (post-solr-config! "pn-search/config"
+                     (str "{\"set-property\":{\"updateHandler.autoCommit.maxTime\":\"" maxTime "\"}}")))
 
 (defn set-soft-commit
   [maxTime]
-  (let [url (URL. (str solrurl "pn-search/config"))
-        conn (cast java.net.HttpURLConnection (.openConnection url))
-        body (.getBytes (str "{\"set-property\":{\"updateHandler.autoSoftCommit.maxTime\":" maxTime "}}") "UTF-8")]
-    (doto conn
-      (.setRequestMethod "POST")
-      (.setRequestProperty "Content-Type" "application/json")
-      (.setDoOutput true))
-    (with-open [os (.getOutputStream conn)]
-      (.write os body))
-    (.getResponseCode conn)))
+  (post-solr-config! "pn-search/config"
+                     (str "{\"set-property\":{\"updateHandler.autoSoftCommit.maxTime\":\"" maxTime "\"}}")))
 
 (defn -index
   "Runs the main PN indexing process."
   []
   (System/setProperty "solr.cloud.client.stallTime" "1000000") ;; 1000 seconds
-  (println "Disabling autoSoftCommit, autoCommit, and replication for bulk indexing...")
   ;; Disabling autoSoftCommit and autoCommit during bulk indexing significantly reduces Solr stalls.
   ;; Re-enable after the commit. Requires manual re-enable if the job crashes.
   (when (System/getenv "SOLR_CLOUD_BULK_INDEX")
+    (println "Disabling autoSoftCommit, autoCommit, and replication for bulk indexing...")
     (set-soft-commit -1)
     (set-auto-commit -1)
     (set-min-rf 1))
@@ -1063,8 +1072,8 @@
 
     (println "Committing...")
     (commit "pn-search")
-    (println "Re-enabling autoSoftCommit, autoCommit and replication...")
     (when (System/getenv "SOLR_CLOUD_BULK_INDEX")
+      (println "Re-enabling autoSoftCommit, autoCommit and replication...")
       (set-soft-commit 3000)
       (set-auto-commit 15000)
       (set-min-rf 2))
