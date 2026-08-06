@@ -985,9 +985,9 @@
   ;; min_rf=1 means the leader ACKs immediately without waiting for replica replication.
   ;; Dramatically reduces indexing time in SolrCloud. Replicas catch up asynchronously.
   [minRf]
-  (let [url (URL. (str solrurl "pn-search/config"))
+  (let [url (URL. (str solrurl "pn-search/config/params"))
         conn (cast java.net.HttpURLConnection (.openConnection url))
-        body (.getBytes (str "{\"update-requesthandler\":{\"name\":\"/update\",\"defaults\":{\"min_rf\":" minRf "}}}") "UTF-8")]
+        body (.getBytes (str "{\"set\":{\"_UPDATE\":{\"min_rf\":\"" minRf "\"}}}") "UTF-8")]
     (doto conn
       (.setRequestMethod "POST")
       (.setRequestProperty "Content-Type" "application/json")
