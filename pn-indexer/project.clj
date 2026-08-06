@@ -1,7 +1,7 @@
 (defproject info.papyri/indexer "1.1.20"
   :repositories {"github" "https://maven.pkg.github.com/papyri/navigator"
                  "apache" "https://repository.apache.org/content/repositories/releases/"}
-  :jvm-opts ["-Xms1G" "-Xmx1G" "-Djava.awt.headless=true"]
+  :jvm-opts ["-Djava.awt.headless=true"]
   :pom-addition [:distribution-management 
                 [:repository [:id "gitlab-maven"]
                             [:url "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven"]]
