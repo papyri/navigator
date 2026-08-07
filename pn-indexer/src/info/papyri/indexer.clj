@@ -1031,7 +1031,7 @@
   ;; Re-enable after the commit. Requires manual re-enable if the job crashes.
   (when (System/getenv "SOLR_CLOUD_BULK_INDEX")
     (set-soft-commit -1)
-    (set-auto-commit -1)
+    (set-auto-commit 60000)
     (set-min-rf 1))
   (let [c (.build (Http2SolrClient$Builder.))]
     (dosync (ref-set solr
