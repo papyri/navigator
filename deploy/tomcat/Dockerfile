@@ -1,3 +1,15 @@
+# Stamp ?v= into pn-site HTML. No minify: pn-indexer hashes these same source files.
+FROM alpine:3.20 AS assets
+COPY pn-site /site
+WORKDIR /site
+RUN CSSV=$(cat css/theme-variables.css css/main.css | sha256sum | cut -c1-8) \
+ && JSV=$(sha256sum js/init.js | cut -c1-8) \
+ && find . -name '*.html' -exec sed -i -E \
+      "s#(\.css)\?v=[^\"']*#\1?v=$CSSV#g; s#(\.js)\?v=[^\"']*#\1?v=$JSV#g" {} + \
+ && if find . -name '*.html' -exec grep -l '?v=dev' {} + ; then \
+      echo "ERROR: unstamped ?v=dev placeholders remain"; exit 1; \
+    fi
+
 FROM tomcat:10-jdk17-temurin-noble AS setup
 
 # Build arguments for versions
@@ -11,8 +23,9 @@ ENV LEIN_HOME=/tmp/.lein
 RUN apt-get update && apt-get install -y maven leiningen git
 
 COPY . /srv/data/papyri.info/git/navigator
+COPY --from=assets /site /srv/data/papyri.info/git/navigator/pn-site
 
-COPY pn-site /srv/data/papyri.info/pn/home
+COPY --from=assets /site /srv/data/papyri.info/pn/home
 
 # OpenShift runs containers with arbitrary user IDs
 # but always with group ID 0 (root group)

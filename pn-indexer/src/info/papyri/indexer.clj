@@ -63,6 +63,7 @@
 (def tmpath "/srv/data/papyri.info/TM")
 (def xsltpath "/srv/data/papyri.info/git/navigator/pn-xslt")
 (def htpath "/srv/data/papyri.info/pn/idp.html")
+(def sitepath (if (System/getenv "SITE_PATH") (System/getenv "SITE_PATH") "/srv/data/papyri.info/pn/home"))
 (def solrurl (if (System/getenv "SOLR_URL") (System/getenv "SOLR_URL") "http://localhost:8983/solr/"))
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
 (def server (if (System/getenv "NS_URL") (System/getenv "NS_URL") "http://localhost:8090/pi"))
@@ -83,6 +84,30 @@
 (def ^:dynamic *doc*)
 (def ^:dynamic *index*)
 (def processor (Processor. false))
+
+(defn asset-version
+  "Returns content hash of the given asset files, falls back to \"dev\" if the files can't be read."
+  [& paths]
+  (try
+    (let [digest (java.security.MessageDigest/getInstance "SHA-256")]
+      (doseq [path paths]
+        (.update digest (java.nio.file.Files/readAllBytes (.toPath (File. ^String path)))))
+      (apply str (map #(format "%02x" (bit-and % 0xff)) (take 4 (.digest digest)))))
+    (catch Exception e
+      (println (str "Unable to hash assets " (apply str (interpose ", " paths))
+                    " (" (.getMessage e) "); falling back to \"dev\"."))
+      "dev")))
+
+;; Computed once per run, on first use.
+(def css-version
+  (delay (asset-version (str sitepath "/css/theme-variables.css") (str sitepath "/css/main.css"))))
+(def js-version
+  (delay (asset-version (str sitepath "/js/init.js"))))
+
+(defn asset-params
+  "The XSLT parameter pairs for the cache-busting asset versions."
+  []
+  (list (list "cssversion" @css-version) (list "jsversion" @js-version)))
 
 (defn add-words
   "Adds the list of words provided to the set in the ref `words`."
@@ -789,7 +814,9 @@
                 (if (.startsWith (first x) "http")
                   (str (.replace (first x) "papyri.info" nserver) "/rdf")
                   (first x))
-                (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9) (nth x 10) (nth x 11) (nth x 12)) 
+                (concat
+                  (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9) (nth x 10) (nth x 11) (nth x 12))
+                  (asset-params))
                 (.newSerializer processor (FileOutputStream. (File. (get-html-filename (first x))))) @htmltemplates)
              (catch Exception e
                (pprint (.getStackTrace e))
@@ -910,7 +937,7 @@
                       (transform (str "file://" (.getAbsolutePath x)) () (bibliodochandler) @bibsolrtemplates)
                       (let [out (File. (str htmlpath (.getName (.getParentFile x)) "/" (.replace (.getName x) ".xml" ".html")))]
                         (.mkdirs (.getParentFile out))  
-                        (transform (str "file://" (.getAbsolutePath x)) ()
+                        (transform (str "file://" (.getAbsolutePath x)) (asset-params)
                                   (.newSerializer processor (FileOutputStream. out))
                                   @bibhtmltemplates))))
                     (filter #(.endsWith (.getName %) ".xml") files))]
