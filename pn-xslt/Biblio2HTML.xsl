@@ -11,6 +11,9 @@
   <xsl:variable name="outbase">/srv/data/papyri.info/pn/idp.html</xsl:variable>
   <xsl:variable name="tmbase">/srv/data/papyri.info/TM</xsl:variable>
   <xsl:variable name="resolve-uris" select="false()"/>
+  <!-- For cache-busting asset versions -->
+  <xsl:param name="cssversion">dev</xsl:param>
+  <xsl:param name="jsversion">dev</xsl:param>
   <xsl:include href="htm-teibibl.xsl"/>
   <xsl:include href="pi-functions.xsl"/>
 
@@ -34,8 +37,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&amp;family=Noto+Sans+Coptic&amp;family=Noto+Sans+Symbols:wght@400..700&amp;family=Noto+Sans:ital,wght@0,400..700;1,400..700&amp;family=Noto+Serif:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet" />
 
-        <link rel="stylesheet" href="/css/theme-variables.css?v=202608041613" type="text/css"/>
-        <link rel="stylesheet" href="/css/main.css?v=202608041613" type="text/css"/>
+        <link rel="stylesheet" href="/css/theme-variables.css?v={$cssversion}" type="text/css"/>
+        <link rel="stylesheet" href="/css/main.css?v={$cssversion}" type="text/css"/>
         <!-- TODO: determine which styles from master.css need to be ported -->
         <!--       over to main.css (if any) -->
         <!-- <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"> -->
@@ -45,7 +48,7 @@
         <script src="/js/bibliosearch.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- TODO: determine how much of init.js can be eliminated -->
-        <script src="/js/init.js?v=202608041613" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/init.js?v={$jsversion}" type="text/javascript" charset="utf-8"></script>
 
         <script>
           var _paq = window._paq = window._paq || [];

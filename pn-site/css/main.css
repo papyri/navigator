@@ -1112,6 +1112,32 @@ body.author-browse .btn-group .btn {
   overflow-y: auto;
 }
 
+/* hide windows scrollbars */
+#sidebar,
+#apparatus,
+#commentary,
+[id^="translation-"] {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+  &::-webkit-scrollbar { width: 8px; height: 8px; }
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  &::-webkit-scrollbar-track { background: transparent; }
+}
+#apparatus,
+#commentary,
+[id^="translation-"] {
+  &:hover {
+    scrollbar-color: rgba(0,0,0,0.3) transparent;
+    &::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.3); }
+  }
+}
+
 @media (max-width: 768px) {
   #edition {
     flex-direction: column;

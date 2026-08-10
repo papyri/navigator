@@ -94,6 +94,9 @@
   <!-- variables to assist in offline testing by controlling paths and behaviors in the output html -->
   <xsl:param name="cssbase">/css</xsl:param>
   <xsl:param name="jsbase">/js</xsl:param>
+  <!-- For cache-busting asset versions -->
+  <xsl:param name="cssversion">dev</xsl:param>
+  <xsl:param name="jsversion">dev</xsl:param>
   <xsl:param name="analytics">yes</xsl:param>
 
   <xsl:variable name="relations" select="tokenize($related, '\s+')"/>
@@ -187,8 +190,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&amp;family=Noto+Sans+Coptic&amp;family=Noto+Sans+Symbols:wght@400..700&amp;family=Noto+Sans:ital,wght@0,400..700;1,400..700&amp;family=Noto+Serif:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet" />
 
-        <link rel="stylesheet" href="{$cssbase}/theme-variables.css?v=202608041613" type="text/css"/>
-        <link rel="stylesheet" href="{$cssbase}/main.css?v=202608041613" type="text/css"/>
+        <link rel="stylesheet" href="{$cssbase}/theme-variables.css?v={$cssversion}" type="text/css"/>
+        <link rel="stylesheet" href="{$cssbase}/main.css?v={$cssversion}" type="text/css"/>
 
         <xsl:if test="$image">
           <link rel="stylesheet" href="{$cssbase}/imageviewer.css" type="text/css" />
@@ -203,7 +206,7 @@
         <xsl:if test="$image">
           <script src="{$jsbase}/imageviewer.js" charset="utf-8" type="module"></script>
         </xsl:if>
-        <script src="{$jsbase}/init.js?v=202608041613" type="text/javascript" charset="utf-8"></script>
+        <script src="{$jsbase}/init.js?v={$jsversion}" type="text/javascript" charset="utf-8"></script>
         <xsl:if test="$analytics='yes'">
           <script>
             var _paq = window._paq = window._paq || [];
