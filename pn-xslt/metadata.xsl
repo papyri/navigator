@@ -31,6 +31,7 @@
         <xsl:choose>
           <xsl:when test="$md-collection = 'dclp'">
             <h2>
+              <span class="visually-hidden">Data for </span>
               <xsl:choose>
                 <xsl:when test="string-length(descendant::t:idno[@type='TM'])!=6">
                   <xsl:variable name="file-uri1" select="substring(descendant::t:idno[@type='TM'],0,3)"/>
@@ -50,6 +51,7 @@
           </xsl:when>
           <xsl:when test="$md-collection = 'hgv'">
             <h2>
+              <span class="visually-hidden">Data for </span>
               HGV: <xsl:value-of select="//t:bibl[@type = 'publication' and @subtype='principal']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="http://aquila.zaw.uni-heidelberg.de/hgv/{//t:idno[@type = 'filename']}" target="_blank"><i class="bi bi-external-link"></i>source</a> <a class="btn btn-link fw-semibold text-decoration-none" href="/hgv/{//t:idno[@type='filename']}/source" target="_new"><i class="bi bi-xml"></i>xml</a>
               <xsl:call-template name="metadata-collapse-toggle">
                 <xsl:with-param name="table-id" select="$table-id"/>
@@ -58,7 +60,8 @@
           </xsl:when>
           <xsl:otherwise>
             <h2>
-              Catalog Record: <xsl:value-of select="//t:idno[@type='apisid']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="/apis/{//t:idno[@type='apisid']}/source"><i class="bi bi-xml"></i>xml</a>
+              <span class="visually-hidden">Catalog Record for </span>
+              APIS: <xsl:value-of select="//t:idno[@type='apisid']"/> <a class="btn btn-link fw-semibold text-decoration-none" href="/apis/{//t:idno[@type='apisid']}/source"><i class="bi bi-xml"></i>xml</a>
               <xsl:call-template name="metadata-collapse-toggle">
                 <xsl:with-param name="table-id" select="$table-id"/>
               </xsl:call-template>
@@ -67,7 +70,7 @@
         </xsl:choose>
         <div id="{$table-id}" class="metadata-collapse collapse show">
         <div class="table-responsive">
-        <table class="table metadata mb-5">
+        <table class="table metadata mb-3">
           <tbody>
             <xsl:choose>
               <xsl:when test="$md-collection = 'dclp'">
@@ -203,9 +206,10 @@
     <xsl:if test="$doc instance of map(*) and map:contains($doc, 'publications')">
       <xsl:variable name="tm-id" select="format-number($doc('id'), '#')"/>
       <xsl:variable name="table-id" select="concat('tm-metadata-', $tm-id)"/>
-      <div class="metadata">
+      <div class="metadata mb-3">
         <div id="tm-data" class="tm data">
           <h2>
+            <span class="visually-hidden">Data for </span>
             Trismegistos: {$tm-id} <a class="btn btn-link fw-semibold text-decoration-none" href="https://www.trismegistos.org/text/{$tm-id}" target="_blank"><i class="bi bi-external-link"></i>source</a>
             <xsl:call-template name="metadata-collapse-toggle">
               <xsl:with-param name="table-id" select="$table-id"/>
@@ -213,7 +217,7 @@
           </h2>
           <div id="{$table-id}" class="metadata-collapse collapse show">
           <div class="table-responsive">
-          <table class="table metadata">
+          <table class="table metadata mb-3">
             <tbody>
               <!-- Publications -->
               <tr>

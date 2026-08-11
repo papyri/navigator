@@ -306,9 +306,8 @@
                     <!-- create dropdown only if multiple metadata -->
                     <!-- sections exist. -->
 
-                    <!-- TODO: restore $tm here when it is fixed -->
-                    <!-- <xsl:if test="count(($hgv, $apis, $tm, $dclp)[.]) > 1"> -->
-                    <xsl:if test="count(($hgv, $apis, $dclp)[.]) > 1">
+                    <xsl:if test="count(($hgv, $apis, $tm, $dclp)[.]) > 1">
+                    <!-- <xsl:if test="count(($hgv, $apis, $dclp)[.]) > 1"> -->
                       <button class="btn btn-sm btn-light border-0 dropdown-toggle ms-1 py-0 px-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-label="Toggle metadata sections" aria-expanded="false"></button>
                       <ul class="dropdown-menu">
                         <xsl:if test="$hgv">
@@ -316,14 +315,11 @@
                             <a class="dropdown-item" href="#hgv-data">HGV data</a>
                           </li>
                         </xsl:if>
-                        <!-- TODO: restore $tm here when it is fixed -->
-                        <!--
                         <xsl:if test="$tm">
                           <li>
-                            <a class="dropdown-item" href="#tm-data">TM data: <xsl:value-of select="$tm"/> </a>
+                            <a class="dropdown-item" href="#tm-data">TM data</a>
                           </li>
                         </xsl:if>
-                        -->
                         <xsl:if test="$apis">
                           <li>
                             <a class="dropdown-item" href="#apis-data">APIS catalog record</a>
@@ -696,7 +692,7 @@
           <h2>DCLP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/dclp/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']}/source"><i class="bi bi-xml"></i>xml</a></h2>
         </xsl:when>
         <xsl:otherwise>
-          <h2>DDbDP transcription <a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
+          <h2><span class="visually-hidden">Transcription for</span><xsl:text> </xsl:text><xsl:call-template name="edition-label"/><xsl:text> </xsl:text><a class="btn btn-link fw-semibold text-decoration-none" href="/{$collection}/{t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
         </xsl:otherwise>
       </xsl:choose>
       
@@ -896,27 +892,33 @@
     <xsl:for-each select="tokenize($replaces, '\s')"> = <xsl:value-of select="pi:get-id(.)"></xsl:value-of></xsl:for-each>
   </xsl:template>
 
+  <!-- "DDbDP 372073 (O.Trim. 2 455)". Shared by the H1 and the transcription header. -->
+  <xsl:template name="edition-label">
+    <xsl:variable name="type">
+      <xsl:choose>
+        <xsl:when test="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
+        <xsl:otherwise>DDbDP</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="base-edition">
+      <xsl:choose>
+        <xsl:when test="$type = 'DDbDP'"><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='ddb-hybrid'], ';;?', '/'))]/t:title"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='dclp-hybrid'], ';;?', '/'))]/t:title"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:value-of select="$type"/>
+    <xsl:text> </xsl:text>
+    <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+    <xsl:text> (</xsl:text><xsl:value-of select="$base-edition"/><xsl:text>)</xsl:text>
+  </xsl:template>
+
   <!-- Generate parallel reference string -->
   <xsl:template name="get-references">
     <xsl:choose>
       <xsl:when test="$collection = 'current'">
-        <xsl:variable name="type">
-          <xsl:choose>
-            <xsl:when test="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
-            <xsl:otherwise>DDbDP</xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="base-edition">
-          <xsl:choose>
-            <xsl:when test="$type = 'DDbDP'"><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='ddb-hybrid'], ';;?', '/'))]/t:title"/></xsl:when>
-            <xsl:otherwise><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='dclp-hybrid'], ';;?', '/'))]/t:title"/></xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
         <xsl:variable name="tm-number" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM'][1]"/>
         <xsl:text>Current Edition: </xsl:text>
-        <xsl:value-of select="$type"/>
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/> (<xsl:value-of select="$base-edition"/><xsl:text>)</xsl:text>
+        <xsl:call-template name="edition-label"/>
         <xsl:if test="normalize-space($tm-number) != ''">
           <xsl:text>; </xsl:text>
           <a href="https://www.trismegistos.org/text/{normalize-space($tm-number)}" target="_blank">TM <xsl:value-of select="normalize-space($tm-number)"/></a>
