@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class Publisher implements Runnable {
   
   private final String base;
-  private static final String urlBase = "http://papyri.info/";
+  private static final String urlBase = "https://papyri.info/";
   private boolean success = true;
   public static String IDLE = "Currently idle.";
   public static String SYNCING = "Syncing files.";
@@ -108,7 +108,7 @@ public class Publisher implements Runnable {
         status = IDLE;
         started = null;
       } catch (Throwable e) {
-        logger.log(Level.SEVERE, e.getLocalizedMessage(), e);
+        logger.log(Level.SEVERE, "Publishing error.", e);
         success = false;
       }
     }
