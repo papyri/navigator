@@ -297,9 +297,7 @@
                   </svg>
                 </button>
 
-                <!-- TODO: restore $tm here when it is fixed -->
-                <!-- <xsl:if test="$hgv or $apis or $tm or $dclp"> -->
-                <xsl:if test="$hgv or $apis or $dclp">
+                <xsl:if test="$collection = 'current' and ($hgv or $apis or $tm or $dclp)">
                   <div id="metadatacontrols" class="controls-section me-2 me-sm-3">
                     <a href="#metadata" class="text-decoration-none fw-semibold btn btn-light"><span class="visually-hidden">Skip to </span>Metadata</a>
 
@@ -307,7 +305,6 @@
                     <!-- sections exist. -->
 
                     <xsl:if test="count(($hgv, $apis, $tm, $dclp)[.]) > 1">
-                    <!-- <xsl:if test="count(($hgv, $apis, $dclp)[.]) > 1"> -->
                       <button class="btn btn-sm btn-light border-0 dropdown-toggle ms-1 py-0 px-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-label="Toggle metadata sections" aria-expanded="false"></button>
                       <ul class="dropdown-menu">
                         <xsl:if test="$hgv">
@@ -2168,9 +2165,11 @@
         <xsl:copy-of select="$segment"/>
       </div>
 
-      <div id="sidebar">
-        <xsl:call-template name="tpl-apparatus"/>
-      </div>
+      <xsl:if test="number(boolean($has-apparatus)) + number(boolean($has-commentary)) + $translation-count > 0">
+        <div id="sidebar">
+          <xsl:call-template name="tpl-apparatus"/>
+        </div>
+      </xsl:if>
     </div>
     </xsl:if>
     <!-- Placeholder to render apparatus when not in sidebar -->
