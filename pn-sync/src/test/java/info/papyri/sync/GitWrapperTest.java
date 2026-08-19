@@ -146,8 +146,8 @@ public class GitWrapperTest {
   public void testMapping() {
     System.out.println("Testing Mapping");
     List<String> l = new ArrayList<String>();
-    l.add("/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.2.xml");
-    l.add("/srv/data/papyri.info/idp.data/DDB_EpiDoc_XML/bgu/bgu.1/bgu.1.3.xml");
+    l.add("/srv/data/papyri.info/idp.data/Historical/bgu/1/2.xml");
+    l.add("/srv/data/papyri.info/idp.data/Historical/bgu/1/3.xml");
     try {
       map.mapFiles(l);
     } catch (Throwable e) {
@@ -160,8 +160,8 @@ public class GitWrapperTest {
   public void testIndexing() {
     System.out.println("Indexing test disabled due to long duration of index optimization. Uncomment code in testIndexing() to run.");
     List<String> l = new ArrayList<String>();
-    l.add("http://papyri.info/ddbdp/bgu;1;2/source");
-    l.add("http://papyri.info/ddbdp/bgu;1;3/source");
+    l.add("http://papyri.info/ddbdp/bgu/1/2/source");
+    l.add("http://papyri.info/ddbdp/bgu/1/3/source");
     try {
       //indexer.index(l);
     } catch (Exception e) {
