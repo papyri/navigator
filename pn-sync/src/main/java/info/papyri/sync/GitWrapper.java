@@ -351,7 +351,7 @@ public class GitWrapper {
         }
       }
     } catch (IOException e) {
-      logger.log(Level.SEVERE, "Failed to look up query: \n" + sparql);
+      logger.log(Level.SEVERE, "Failed to look up query: \n" + server + "\n" + sparql, e);
     }
     return null;
   }
