@@ -903,10 +903,28 @@
         <xsl:otherwise><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='dclp-hybrid'], ';;?', '/'))]/t:title"/></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:value-of select="$type"/>
-    <xsl:text> </xsl:text>
-    <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
-    <xsl:text> (</xsl:text><xsl:value-of select="$base-edition"/><xsl:text>)</xsl:text>
+    <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+    <xsl:choose>
+      <!-- Historical file has no base-edition ref; take the title from the current file. -->
+      <xsl:when test="$collection = 'editions'">
+        <xsl:variable name="title">
+          <xsl:try>
+            <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
+            <xsl:if test="doc-available($current-file)">
+              <xsl:value-of select="doc($current-file)//t:body/t:head/t:ref[ends-with(@target, $filename)]/t:title"/>
+            </xsl:if>
+            <xsl:catch/>
+          </xsl:try>
+        </xsl:variable>
+        <xsl:value-of select="if (normalize-space($title) != '') then normalize-space($title) else $filename"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$type"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="$filename"/>
+        <xsl:text> (</xsl:text><xsl:value-of select="$base-edition"/><xsl:text>)</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Generate parallel reference string -->
