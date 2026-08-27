@@ -41,7 +41,9 @@ public class SyncServlet extends HttpServlet {
     // Read from environment variables first, then fallback to context params
     String postgresHost = System.getenv("POSTGRES_HOST") != null ? 
       System.getenv("POSTGRES_HOST") : config.getInitParameter("postgresHost");
-    String dbUser = System.getenv("PN_DB_USER") != null ? 
+    String numbersServer = System.getenv("NUMBERS_SERVER") != null?
+      System.getenv("NUMBERS_SERVER") : config.getInitParameter("numbersServer");
+    String dbUser = System.getenv("PN_DB_USER") != null ?
       System.getenv("PN_DB_USER") : config.getServletContext().getInitParameter("dbUser");
     String dbPass = System.getenv("PN_DB_PASSWORD") != null ? 
       System.getenv("PN_DB_PASSWORD") : config.getServletContext().getInitParameter("dbPass");
@@ -58,12 +60,14 @@ public class SyncServlet extends HttpServlet {
     logger.info("Using postgresHost: " + postgresHost);
     logger.info("Using dbUser: " + dbUser);
     logger.info("Using gitDir: " + gitDir);
+    logger.info("Using Numbers server: " + numbersServer);
     logger.info("Using mdDir: " + pnMdDir);
     logger.info("Using ipdDataBranch: " + ipdDataBranch);
     logger.info("Using siteDocsGitBranch: " + siteDocsGitBranch);
     
     GitWrapper.init(
       postgresHost,
+      numbersServer,
       gitDir,
       ipdDataBranch,
       dbUser,
@@ -103,10 +107,9 @@ public class SyncServlet extends HttpServlet {
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws IOException {
-    
-    PrintWriter out = response.getWriter();
-    String action = request.getParameter("action");
-    try {
+
+    try (PrintWriter out = response.getWriter()) {
+      String action = request.getParameter("action");
       if ("status".equals(action)) {
         response.setContentType("application/json;charset=UTF-8");
         out.println("{");
@@ -143,8 +146,6 @@ public class SyncServlet extends HttpServlet {
           }
         }
       }
-    } finally {
-      out.close();
     }
   }
 

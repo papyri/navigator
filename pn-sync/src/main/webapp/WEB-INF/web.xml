@@ -31,6 +31,10 @@
           <param-name>postgresHost</param-name>
           <param-value>localhost</param-value>
         </init-param>
+        <init-param>
+            <param-name>numbersServer</param-name>
+            <param-value>http://localhost:8090</param-value>
+        </init-param>
         <load-on-startup>0</load-on-startup>
      </servlet>
      <servlet-mapping>

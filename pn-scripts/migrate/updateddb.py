@@ -22,7 +22,7 @@ def main(argv=None):
   namespaces = {'tei': 'http://www.tei-c.org/ns/1.0'}
   
   with open('tm_checklist.csv', newline='') as tm:
-    reader = csv.DictReader(tm, fieldnames=['DDb', 'Checklist', 'TM', 'replace', 'regex', 'notes'])
+    reader = csv.DictReader(tm, fieldnames=['DDb', 'Checklist', 'TM', 'replace', 'regex'])
     for row in reader:
       if index.get(row['TM'][0:4]) is None:
         index[row['TM'][0:4]] = [row]
@@ -86,7 +86,10 @@ def main(argv=None):
 def get_replacement(title):
   if title.startswith('Année épigraphique'): # Let Ae refs pass through
     return title
-  key = title[0:4].strip()
+  if re.match(r'^[OPop]\.', title):
+    key = re.sub(r'^([OPop]\. ?.*)', r'\1', title[0:4].replace('ö', 'oe'))
+  else:
+    key = re.sub(r'^(\w+)( |;)*.*', r'\1', title[0:4].replace('ö', 'oe'))
   if index.get(key) is not None:
     for item in index[key]:
       if item['regex'] == 'TRUE':
