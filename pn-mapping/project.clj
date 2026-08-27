@@ -1,4 +1,4 @@
-(defproject info.papyri/map "1.0.5"
+(defproject info.papyri/map "1.0.6"
   :description "Loads triple data into the papyri.info numbers server"
   :license "GPL v3"
   :url "https://github.com/papyri/navigator"

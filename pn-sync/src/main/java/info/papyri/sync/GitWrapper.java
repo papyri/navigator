@@ -30,13 +30,13 @@ public class GitWrapper {
   
   private static GitWrapper git;
   private static final String PATH = "/pi/query";
-  private static final String SPARQLSERVER = "http://localhost:8090";
   private static final Logger logger = Logger.getLogger("pn-sync");
   
-  public static GitWrapper init (String postgresHost, String gitDir, String gitBranch, String dbUser, String dbPass) {
+  public static GitWrapper init (String postgresHost, String numbersServer, String gitDir, String gitBranch, String dbUser, String dbPass) {
     git = new GitWrapper();
     git.gitDir = new File(gitDir);
     git.postgresHost = postgresHost;
+    git.numbersServer = numbersServer;
     git.gitBranch = gitBranch;
     git.dbUser = dbUser;
     git.dbPass = dbPass;
@@ -58,6 +58,7 @@ public class GitWrapper {
 
   private File gitDir;
   private String postgresHost;
+  private String numbersServer;
   private String gitBranch;
   /*
    * success==false means that the repos could not be synchronized for some
@@ -251,14 +252,10 @@ public class GitWrapper {
   }
 
   public static String filenameToUri(String file) {
-    return filenameToUri(file, false, SPARQLSERVER + PATH);
-  }
-
-  public static String filenameToUri(String file, boolean resolve) {
-    return filenameToUri(file, resolve, SPARQLSERVER + PATH);
+    return filenameToUri(file, false);
   }
   
-  public static String filenameToUri(String file, boolean resolve, String server) {
+  public static String filenameToUri(String file, boolean resolve) {
     StringBuilder result = new StringBuilder();
     if (file.contains("DDbDP")) {
       result.append("https://papyri.info/current/");
@@ -316,7 +313,7 @@ public class GitWrapper {
   }
 
   public static String lookupMainId(String id) {
-    return lookupMainId(id, SPARQLSERVER + PATH);
+    return lookupMainId(id, git.numbersServer + PATH);
   }
 
   public static String lookupMainId(String id, String server) {
@@ -371,7 +368,7 @@ public class GitWrapper {
             + "where { <http://papyri.info/ddbdp> dc:hasPart ?id } "
             + "order by desc(?id)";
     try {
-        URL m = new URL(SPARQLSERVER + PATH + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&output=json");
+        URL m = new URL(git.numbersServer + PATH + "?query=" + URLEncoder.encode(sparql, "UTF-8") + "&output=json");
         JsonNode root = getJson(m);
         Iterator<JsonNode> i = root.path("results").path("bindings").elements();
         while (i.hasNext()) {

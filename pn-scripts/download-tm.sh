@@ -28,10 +28,11 @@ ls -R $1/DCLP | grep ".xml" | sed 's/[^0-9]*//g' >> tm_numbers.txt
 if [ -f replacements.txt ]; then
     cat replacements.txt >> tm_numbers.txt
 fi
+grep -ro -E "type=\"TM\">\d+" $1/APIS | sed 's/[^>]*>\([0-9]*\)/\1/' >> tm_numbers.txt
 sort -un tm_numbers.txt -o tm_numbers.txt
 
 # Build exclude list (files modified in last 2 weeks)
-find . -name "*.json" -ctime -8w | sed 's/.*\/\([0-9]*\).json$/\1/g' | sort -un > exclude.txt
+find . -name "*.json" -ctime -10w | sed 's/.*\/\([0-9]*\).json$/\1/g' | sort -un > exclude.txt
 sort -un exclude.txt -o exclude.txt
 # Get the list of TM numbers that haven't been updated in 2 weeks
 comm -23 tm_numbers.txt exclude.txt > process_tm.txt
