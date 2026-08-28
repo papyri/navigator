@@ -60,7 +60,7 @@ public class SyncServlet extends HttpServlet {
     logger.info("Using postgresHost: " + postgresHost);
     logger.info("Using dbUser: " + dbUser);
     logger.info("Using gitDir: " + gitDir);
-    logger.info("Using Numbers server: " + numbersServer);
+    logger.info("Using Numbers Server: " + numbersServer);
     logger.info("Using mdDir: " + pnMdDir);
     logger.info("Using ipdDataBranch: " + ipdDataBranch);
     logger.info("Using siteDocsGitBranch: " + siteDocsGitBranch);
