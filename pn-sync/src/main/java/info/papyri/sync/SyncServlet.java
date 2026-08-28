@@ -43,7 +43,6 @@ public class SyncServlet extends HttpServlet {
       System.getenv("POSTGRES_HOST") : config.getInitParameter("postgresHost");
     String numbersServer = System.getenv("NUMBERS_SERVER") != null?
       System.getenv("NUMBERS_SERVER") : config.getInitParameter("numbersServer");
-    System.getenv().put("NUMBERS_SERVER", numbersServer);
     String dbUser = System.getenv("PN_DB_USER") != null ?
       System.getenv("PN_DB_USER") : config.getServletContext().getInitParameter("dbUser");
     String dbPass = System.getenv("PN_DB_PASSWORD") != null ? 
