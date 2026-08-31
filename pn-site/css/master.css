@@ -1043,34 +1043,6 @@ div#campaign div.markdown a {
   color: black;
 }
 
-/* Begin Alert Section */
-
-div#alert {
-  background-color: rgba(255, 255, 255, .8);
-  font-family: Arial, Helvetica, sans-serif;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-div#alert a.closer {
-  color: black;
-  font-size: 2em;
-  position: absolute;
-  top: 0;
-  right: 1vw;
-  text-decoration: none;
-}
-
-div#alert div.markdown {
-  margin-bottom: .7em;
-  margin-top: .7em;
-  margin-left: auto;
-  margin-right: auto;
-  width: 75vw;
-}
-
 /* homepage banner styles */
 div#banner {
   background-color: #f8edc3;
