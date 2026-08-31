@@ -123,7 +123,7 @@
         <dependency>
           <groupId>info.papyri</groupId>
           <artifactId>indexer</artifactId>
-          <version>1.1.21</version>
+          <version>1.1.20</version>
         </dependency>
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
