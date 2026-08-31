@@ -1,4 +1,4 @@
-(defproject info.papyri/indexer "1.1.20"
+(defproject info.papyri/indexer "1.1.21"
   :repositories {"github" "https://maven.pkg.github.com/papyri/navigator"
                  "apache" "https://repository.apache.org/content/repositories/releases/"}
   :jvm-opts ["-Djava.awt.headless=true"]
