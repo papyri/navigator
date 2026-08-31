@@ -66,7 +66,7 @@
 (def sitepath (if (System/getenv "SITE_PATH") (System/getenv "SITE_PATH") "/srv/data/papyri.info/pn/home"))
 (def solrurl (if (System/getenv "SOLR_URL") (System/getenv "SOLR_URL") "http://localhost:8983/solr/"))
 (def nthreads (.availableProcessors (Runtime/getRuntime)))
-(def server (if (System/getenv "NS_URL") (System/getenv "NS_URL") "http://localhost:8090/pi"))
+(def server (if (System/getenv "NUMBERS_SERVER") (str (System/getenv "NUMBERS_SERVER") "/pi") "http://localhost:8090/pi"))
 (def nserver "localhost")
 (def collections (ref (ConcurrentLinkedQueue.)))
 (def htmltemplates (ref nil))
@@ -364,7 +364,7 @@
               filter(!regex(str(?a),'/%2$s/'))}" url collection)))
 
 (defn primary-query
-  "For HGV, APIS, or translations, finds the DDbDP or DCLP relation"
+  "For HGV, APIS, or translations, finds the Current DDbDP or DCLP relation"
   [url]
   (format "prefix dct: <http://purl.org/dc/terms/>
            select ?a
@@ -592,7 +592,9 @@
             result))))
     (catch Exception e
       (println (.getMessage e))
-      (println query))))
+      (println (str server "/query"))
+      (println query)
+      (pprint (.getStackTrace e)))))
 
 ;; ## Data queueing functions
 
@@ -806,8 +808,8 @@
            (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
             ;;(println "Transforming " (first x) " to " (get-html-filename (first x)))
             ;;(println x)
-              (delete-html (last (nth x 2)))
-              (delete-html (last (nth x 3)))
+              ;;(delete-html (last (nth x 2)))
+              ;;(delete-html (last (nth x 3)))
               (let [processor (Processor. false)
                     out (.newSerializer processor)])
               (transform 
@@ -837,8 +839,8 @@
          (fn []
            (when (not (.startsWith (first x) "http"))
       (try (.mkdirs (.getParentFile (File. (get-html-filename (first x)))))
-        (delete-text (last (nth x 2)))
-        (delete-text (last (nth x 3)))
+        ;;(delete-text (last (nth x 2)))
+        ;;(delete-text (last (nth x 3)))
         (transform (if (.startsWith (first x) "http")
         							   (str (.replace (first x) "papyri.info" nserver) "/rdf")
                          (first x))
