@@ -19,7 +19,7 @@
          </sourceDesc>
       </fileDesc>
      <encodingDesc>
-        <constraintDecl scheme="schematron" queryBinding="xpath31">
+        <constraintDecl scheme="schematron" queryBinding="xslt3">
            <sch:ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
            <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
         </constraintDecl>
@@ -53,7 +53,7 @@
                <constraint>
                   <sch:rule context="tei:idno[@type='ddb-hybrid']">
                      <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DDb-Hybrid idnos must be in the form series or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
-                     <sch:assert test="doc-available(concat('https://papyri.info/ddbdp/', ., '/source'))" role="WARN">The DDbDP document https://papyri.info/ddbdp/<sch:value-of select="."/> is not available.</sch:assert>
+                     <sch:assert test="doc-available(concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DDbDP document <sch:value-of select="concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
@@ -62,7 +62,7 @@
                <constraint>
                   <sch:rule context="tei:idno[@type='dclp-hybrid']">
                      <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DCLP-Hybrid idnos must be in the form eries or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
-                     <sch:assert test="doc-available(concat('https://papyri.info/dclp/', ., '/source'))" role="WARN">The DCLP document https://papyri.info/dclp/<sch:value-of select="."/> is not available.</sch:assert>
+                     <sch:assert test="doc-available(concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DCLP document <sch:value-of select="concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
@@ -90,7 +90,7 @@
                <constraint>
                   <sch:rule context="tei:idno[@type='HGV']">
                      <sch:assert test="matches(., '^[1-9][0-9]*[a-z]*$')">HGV idnos must be integers expressed in ASCII numerals, optionally followed by one or more lowercase ASCII letters.</sch:assert>
-                     <sch:assert test="doc-available(concat('https://papyri.info/hgv/', ., '/source'))" role="WARN">The HGV document https://papyri.info/hgv/<sch:value-of select="."/> is not available.</sch:assert>
+                     <sch:assert test="doc-available(concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml'))" role="WARN">The HGV document <sch:value-of select="concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
