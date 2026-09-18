@@ -52,8 +52,9 @@
             <constraintSpec xml:lang="en" ident="ddb-hybrid-idno" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:idno[@type='ddb-hybrid']">
+                     <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DDb-Hybrid idnos must be in the form series or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
-                     <sch:assert test="doc-available(concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DDbDP document <sch:value-of select="concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
+                     <sch:assert test="doc-available(concat($base, '/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DDbDP document <sch:value-of select="concat($base, '/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
@@ -61,8 +62,9 @@
             <constraintSpec xml:lang="en" ident="dclp-hybrid-idno" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:idno[@type='dclp-hybrid']">
+                     <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DCLP-Hybrid idnos must be in the form eries or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
-                     <sch:assert test="doc-available(concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DCLP document <sch:value-of select="concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
+                     <sch:assert test="doc-available(concat($base, '/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DCLP document <sch:value-of select="concat($base, '/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
@@ -89,8 +91,9 @@
             <constraintSpec xml:lang="en" ident="HGV-idno" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:idno[@type='HGV']">
+                     <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="matches(., '^[1-9][0-9]*[a-z]*$')">HGV idnos must be integers expressed in ASCII numerals, optionally followed by one or more lowercase ASCII letters.</sch:assert>
-                     <sch:assert test="doc-available(concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml'))" role="WARN">The HGV document <sch:value-of select="concat('https://raw.githubusercontent.com/papyri/idp.data/refs/heads/master/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml')"/> is not available.</sch:assert>
+                     <sch:assert test="doc-available(concat($base, '/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml'))" role="WARN">The HGV document <sch:value-of select="concat($base, '/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
