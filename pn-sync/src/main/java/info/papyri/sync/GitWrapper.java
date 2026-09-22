@@ -162,7 +162,11 @@ public class GitWrapper {
     logger.info("Starting pull on " + repo + ".");
     Process p;
     try {
-      ProcessBuilder pb = new ProcessBuilder("git", "pull", repo, git.gitBranch);
+      /* --no-rebase forces a merge commit if it's not a fast-forward,
+        --commit will automatically commit the merge, and --no-edit will
+        use the default merge message.
+       */
+      ProcessBuilder pb = new ProcessBuilder("git", "pull", "--no-rebase", "--commit", "--no-edit", repo, git.gitBranch);
       pb.directory(git.gitDir);
       pb.redirectError(new File("/dev/null"));
       p = pb.start();
