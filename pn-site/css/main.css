@@ -762,7 +762,7 @@ a {
   font-family: "Noto Naskh Arabic", "Noto Sans Symbols 2", var(--bs-font-sans-serif);
   font-size: 24px;
 }
-*[lang=ar] span.ab {
+*[lang=ar] span.ab, *[lang=ar] p {
   direction: rtl;
   padding-left: 0;
   padding-right: 2.5em;
