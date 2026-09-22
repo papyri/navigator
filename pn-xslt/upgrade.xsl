@@ -25,6 +25,7 @@
 </xsl:text>
   </xsl:template>
   
+  <!-- Squash default attributes -->
   <xsl:template match="@default"/>
   <xsl:template match="@full"/>
   <xsl:template match="@instant"/>
@@ -32,6 +33,7 @@
   <xsl:template match="@part"/>
   <xsl:template match="@sample"/>
   <xsl:template match="@status"/>
+  <xsl:template match="tei:teiHeader/@type"/>
   
   <xsl:template match="tei:body">
     <xsl:copy>
