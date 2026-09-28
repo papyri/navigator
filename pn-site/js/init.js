@@ -70,7 +70,6 @@ function init() {
 
     initStep("addLinearBrowseControls", addLinearBrowseControls);
 		initStep("getAlert", getAlert);
-		initStep("getCampaign", getCampaign);
 		initStep("initBootstrapTooltips", initBootstrapTooltips);
 		initStep("initLineNumberVisibility", initLineNumberVisibility);
 		initStep("initApparatusDetailsToggle", initApparatusDetailsToggle);
@@ -474,48 +473,15 @@ function initConstraintBadges() {
   });
 }
 
-function getCampaign() {
-	if (canShowCampaign()) {
-		getMessage("/docs/campaign")
-			.then(message => {
-				if (message) {
-					let popup = document.createElement("div");
-					popup.setAttribute("id", "campaign");
-					popup.innerHTML = '<div class="campaignheader"><a title="close" class="closer" href="#" onclick="return hideCampaign(1)">×</a></div>';
-					message.querySelectorAll("a").forEach(a => a.setAttribute("onclick", "return hideCampaign(14)"));
-					popup.appendChild(document.adoptNode(message));
-					document.body.appendChild(popup);
-				}
-			});
-	}
-}
-
-function hideCampaign(duration) {
-	const day = 86400000;
-	window.localStorage.setItem("Hide-papyriCampaign", (Date.now() + (duration * day)).toString());
-	let campaign = document.querySelector("#campaign");
-	campaign.parentElement.removeChild(campaign);
-}
-
-function canShowCampaign() {
-	return false; // comment out to launch; re-comment to suspend
-	let time = window.localStorage.getItem("Hide-papyriCampaign");
-	if (time) {
-		time = Number.parseInt(time);
-		if (Date.now() < time) {
-			return false;
-		}
-	}
-	return true;
-}
-
 function getAlert() {
 	getMessage("/docs/alert")
 		.then(message => {
 			if (message) {
 				let alert = document.createElement("div");
-				alert.setAttribute("id", "alert");
-				alert.innerHTML = '<a title="close" class="closer" href="#" onclick="return hideAlert()">×</a>';
+        alert.classList.add("alert");
+        alert.classList.add("alert-danger");
+				alert.setAttribute("role", "alert");
+				alert.innerHTML = '<a class="closer" aria-label="close" href="#" onclick="return hideAlert()">×</a>';
 				alert.appendChild(document.adoptNode(message));
 				if (canShowAlert(alert)) {
 					document.body.appendChild(alert);
@@ -525,7 +491,7 @@ function getAlert() {
 }
 
 function hideAlert() {
-	let alert = document.querySelector("#alert");
+	let alert = document.querySelector("div.alert");
 	window.localStorage.setItem("papyri.info-lastAlert", alert.outerHTML);
 	alert.parentElement.removeChild(alert);
 	return false;
