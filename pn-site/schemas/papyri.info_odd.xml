@@ -4,7 +4,8 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" 
      xml:lang="en"
      xmlns:sch="http://purl.oclc.org/dsdl/schematron" 
-     xmlns:tei="http://www.tei-c.org/ns/1.0" >
+     xmlns:tei="http://www.tei-c.org/ns/1.0" 
+     xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <teiHeader>
       <fileDesc>
          <titleStmt>
@@ -49,21 +50,35 @@
             <moduleRef key="dictionaries"/>
             
             <!-- DDb-Hybrid constraints -->
-            <constraintSpec xml:lang="en" ident="ddb-hybrid-idno" scheme="schematron">
+            <constraintSpec xml:lang="en" ident="ddb-hybrid-idno-form" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:idno[@type='ddb-hybrid']">
                      <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DDb-Hybrid idnos must be in the form series or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <constraintSpec xml:lang="en" ident="ddb-hybrid-idno-resolves" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type='ddb-hybrid']">
+                     <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="doc-available(concat($base, '/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DDbDP document <sch:value-of select="concat($base, '/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
             <!-- DCLP-Hybrid constraints -->
-            <constraintSpec xml:lang="en" ident="dclp-hybrid-idno" scheme="schematron">
+            <constraintSpec xml:lang="en" ident="dclp-hybrid-idno-form" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:idno[@type='dclp-hybrid']">
                      <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="matches(., '^[.a-z0-9]+;[a-zA-Z0-9]*;[a-zA-Z0-9_]+$')">DCLP-Hybrid idnos must be in the form eries or volume title;volume number;item number, with only ASCII characters, western numbers, dots, and underscores permitted.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <constraintSpec xml:lang="en" ident="dclp-hybrid-idno-resolves" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type='dclp-hybrid']">
+                     <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="doc-available(concat($base, '/Historical/', replace(., ';+','/'), '.xml'))" role="WARN">The DCLP document <sch:value-of select="concat($base, '/Historical/', replace(., ';+','/'), '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
@@ -88,11 +103,19 @@
                </constraint>
             </constraintSpec>
             <!-- HGV idnos are always integers optionally followed by letters. -->
-            <constraintSpec xml:lang="en" ident="HGV-idno" scheme="schematron">
+            <constraintSpec xml:lang="en" ident="HGV-idno-form" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:idno[@type='HGV']">
                      <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="matches(., '^[1-9][0-9]*[a-z]*$')">HGV idnos must be integers expressed in ASCII numerals, optionally followed by one or more lowercase ASCII letters.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- HGV idnos should resolve -->
+            <constraintSpec xml:lang="en" ident="HGV-idno-resolves" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:idno[@type='HGV']">
+                     <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:assert test="doc-available(concat($base, '/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml'))" role="WARN">The HGV document <sch:value-of select="concat($base, '/HGV_meta_EpiDoc/HGV', ceiling(xs:integer(replace(., '\D', '')) div 1000), '/', ., '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
@@ -105,12 +128,27 @@
                   </sch:rule>
                </constraint>
             </constraintSpec>
-            <!-- Lemma Header targets must be valid URLs -->
-            <constraintSpec xml:lang="en" ident="lemma-ref-targets" scheme="schematron">
+            <!-- Lemma Header @targets must be valid URLs and should point to real records-->
+            <constraintSpec xml:lang="en" ident="lemma-ref-target-path" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:body/tei:head/tei:ref[@target]">
                      <sch:report test="matches(@target, '[^:]//')">Missing path component</sch:report>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <constraintSpec xml:lang="en" ident="lemma-ref-target-chars" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:body/tei:head/tei:ref[@target]">
                      <sch:assert test="matches(@target, '^(?:[a-zA-Z0-9]|[-._~]|[:/?#\[\]@]|[!\$()*+,;=])+$')">Illegal URL character.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <constraintSpec xml:lang="en" ident="lemma-ref-target-resolves" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:body/tei:head/tei:ref[@target]">
+                     <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
+                     <sch:let name="target" value="substring-after(replace(@target, '/$', ''), '/editions/')"/>
+                     <sch:assert test="doc-available(concat($base, '/Historical/', $target, '.xml'))" role="WARN">The document <sch:value-of select="concat($base, '/Historical/', $target, '.xml')"/> is not available.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>
@@ -129,8 +167,7 @@
                      <sch:assert test="if (tei:idno[@type='ddb-hybrid']) then tei:idno[@type='HGV'] else true()">There must be an HGV idno for each DDbDP document.</sch:assert>
                   </sch:rule>
                </constraint>
-            </constraintSpec>
-                        
+            </constraintSpec>            
          </schemaSpec>
       </body>
   </text>
