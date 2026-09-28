@@ -645,7 +645,7 @@
 
           <h2><xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type = 'filename']"/> Translation (<xsl:value-of select="/t:TEI/t:teiHeader//t:langUsage/t:language[@ident = //t:body/t:div/@xml:lang]"/>)
             <a class="btn btn-link fw-semibold text-decoration-none" href="/translation/{/t:TEI/t:teiHeader//t:idno[@type = 'filename']}/source"><i class="bi bi-xml"></i>xml</a></h2>
-          <div lang="{@xml:lang}">
+          <div lang="{//t:div[@type = 'translation'][1]/@xml:lang}">
             <xsl:apply-templates select="//t:div[@type = 'translation']">
               <xsl:with-param name="parm-leiden-style" select="$leiden-style" tunnel="yes"/>
             </xsl:apply-templates>
