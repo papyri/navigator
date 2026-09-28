@@ -1325,6 +1325,14 @@ div#olimage {
   transform: translateY(0);
 }
 
+/* ------------------ */
+/* Alerts             */
+/* ------------------ */
+
+#alert p {
+  margin-bottom: 0;
+}
+
 
 /* ------------------ */
 /* Homepage           */

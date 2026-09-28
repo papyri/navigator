@@ -510,15 +510,20 @@ function canShowCampaign() {
 }
 
 function getAlert() {
+	let alert = document.querySelector("#alert");
+	let alertContainer = document.querySelector("#alert-container");
+	if (!alert) return;
 	getMessage("/docs/alert")
 		.then(message => {
 			if (message) {
-				let alert = document.createElement("div");
-				alert.setAttribute("id", "alert");
-				alert.innerHTML = '<a title="close" class="closer" href="#" onclick="return hideAlert()">×</a>';
 				alert.appendChild(document.adoptNode(message));
+				alert.insertAdjacentHTML("beforeend",
+					'<button type="button" class="btn-close" onclick="return hideAlert()" aria-label="Close"></button>');
 				if (canShowAlert(alert)) {
-					document.body.appendChild(alert);
+					alert.classList.remove("visually-hidden");
+					if (alertContainer) {
+						alertContainer.classList.remove("visually-hidden");
+					}	
 				}
 			}
 		});
@@ -526,8 +531,11 @@ function getAlert() {
 
 function hideAlert() {
 	let alert = document.querySelector("#alert");
-	window.localStorage.setItem("papyri.info-lastAlert", alert.outerHTML);
-	alert.parentElement.removeChild(alert);
+	let alertContainer = document.querySelector("#alert-container");
+	alert.remove();
+	if (alertContainer) {
+		alertContainer.remove();
+	}
 	return false;
 }
 
@@ -602,7 +610,7 @@ function initBootstrapTooltips() {
 }
 
 function initBootstrapScrollSpy() {
-	console.log("Initializing Bootstrap ScrollSpy");
+	// console.log("Initializing Bootstrap ScrollSpy");
 	// Initialize Bootstrap ScrollSpy for the record page navigation
 	const scrollSpy = new bootstrap.ScrollSpy(document.body, {
 		target: '#controls',

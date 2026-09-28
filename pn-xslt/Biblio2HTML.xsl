@@ -91,6 +91,7 @@
         <main id="main" class="container-fluid p-0 flex-grow-1 bg-light d-flex flex-column">
           <div class="container-xl px-4 py-4 my-0 bg-white flex-grow-1">
             <div class="content">
+              <div id="alert" role="alert" class="alert alert-danger alert-dismissible fade show rounded-0 text-center mb-5 visually-hidden"></div>
               <h1>Bibliographic Record <xsl:value-of select="t:bibl/t:idno[@type='pi']"/></h1>
 
               <xsl:apply-templates select="t:bibl"/>
