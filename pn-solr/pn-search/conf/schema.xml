@@ -73,6 +73,7 @@
   <field name="author_uri" type="string" multiValued="true" indexed="true" stored="true"/>
   <field name="author_work" type="string" default="unknown" multiValued="true" indexed="true" stored="true"/>
   <field name="collection" type="string" multiValued="true" indexed="true" required="true" stored="true"/>
+  <field name="current" type="string" multiValued="false" indexed="true" stored="true"/>
   <field name="date_edit_date" type="pdates" multiValued="false" indexed="true" stored="true"/>
   <field name="date_editor" type="string" multiValued="false" indexed="true" stored="true"/>
   <field name="dclp_full_identifier" type="string" multiValued="false" indexed="true" stored="true"/>
@@ -94,6 +95,7 @@
   <field name="facet_language" type="string" multiValued="true" indexed="true" stored="true"/>
   <field name="has_transcription" type="booleans" indexed="true" stored="false"/>
   <field name="has_translation" type="booleans" indexed="true" stored="true"/>
+  <field name="historical" type="string" multiValued="false" indexed="true" stored="true"/>
   <field name="hgv_full_identifier" type="string" multiValued="false" indexed="true" stored="true"/>
   <field name="hgv_identifier" type="string" default="0" multiValued="false" indexed="true" stored="true"/>
   <field name="hgv_item" type="plongs" default="0" multiValued="false" indexed="true" stored="true"/>
