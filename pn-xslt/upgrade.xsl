@@ -45,10 +45,8 @@
             <xsl:when test="//tei:idno[@type='dclp-hybrid']">{//tei:idno[@type='dclp-hybrid']}</xsl:when>
           </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="reprint-from">
-          <xsl:for-each select=".//tei:ref[@type='reprint-from']/@n">
-            <xsl:for-each select="tokenize(., '\|')">{.}</xsl:for-each>
-          </xsl:for-each>
+        <xsl:variable name="targets">
+          <xsl:sequence select="tei:head/tei:ref[@target]/xs:string(@target)"/>
         </xsl:variable>
         <xsl:variable name="TMout">
           <xsl:for-each select="//tei:idno[@type='TM']">
@@ -63,8 +61,9 @@
                         <xsl:when test="starts-with(substring-before($hybrid, ';'), $rows/tei:row[1]/tei:cell[@name='PN']) and contains(substring-after(.('title'), $rows/tei:row[1]/tei:cell[@name='TM']), substring-after(substring-after($hybrid, ';') , ';'))"><xsl:attribute name="target">https://papyri.info/editions/{tei:makeURI(replace($hybrid, ';+', '/'))}</xsl:attribute></xsl:when>
                         <xsl:otherwise>
                           <xsl:variable name="title" select=".('title')"/>
-                          <xsl:for-each select="$reprint-from">
-                            <xsl:if test="starts-with(substring-before(., ';'), $rows/tei:row[1]/tei:cell[@name='PN']) and contains(substring-after($title, $rows/tei:row[1]/tei:cell[@name='TM']), substring-after(substring-after(., ';') , ';'))"><xsl:attribute name="target">https://papyri.info/editions/{tei:makeURI(replace(., ';+', '/'))}</xsl:attribute></xsl:if>
+                          <xsl:for-each select="tokenize($targets)">
+                            <xsl:variable name="path" select="tokenize(substring-after(., 'https://papyri.info/editions/'), '/')"/>
+                            <xsl:if test="starts-with($path[1], $rows/tei:row[1]/tei:cell[@name='PN']) and contains($title, $path[last()])"><xsl:attribute name="target" select="."/></xsl:if>
                           </xsl:for-each>
                         </xsl:otherwise>
                       </xsl:choose>

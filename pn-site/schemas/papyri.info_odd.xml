@@ -128,15 +128,17 @@
                   </sch:rule>
                </constraint>
             </constraintSpec>
-            <!-- Lemma Header @targets must be valid URLs and should point to real records-->
-            <constraintSpec xml:lang="en" ident="lemma-ref-target-path" scheme="schematron">
+            <!-- Lemma Header targets must be valid URLs and should point to real records-->
+            <!-- No empty path components (//) -->
+            <constraintSpec xml:lang="en" ident="lemma-ref-target-path-components" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:body/tei:head/tei:ref[@target]">
                      <sch:report test="matches(@target, '[^:]//')">Missing path component</sch:report>
                   </sch:rule>
                </constraint>
             </constraintSpec>
-            <constraintSpec xml:lang="en" ident="lemma-ref-target-chars" scheme="schematron">
+            <!-- No illegal characters -->
+            <constraintSpec xml:lang="en" ident="lemma-ref-target-validity" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:body/tei:head/tei:ref[@target]">
                      <sch:assert test="matches(@target, '^(?:[a-zA-Z0-9]|[-._~]|[:/?#\[\]@]|[!\$()*+,;=])+$')">Illegal URL character.</sch:assert>
@@ -149,6 +151,14 @@
                      <sch:let name="base" value="if (contains(document-uri(), 'idp.data')) then concat(substring-before(document-uri(), 'idp.data'), 'idp.data') else '/srv/data/papyri.info/idp.data'"/>
                      <sch:let name="target" value="substring-after(replace(@target, '/$', ''), '/editions/')"/>
                      <sch:assert test="doc-available(concat($base, '/Historical/', $target, '.xml'))" role="WARN">The document <sch:value-of select="concat($base, '/Historical/', $target, '.xml')"/> is not available.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+            <!-- No terminal slash -->
+            <constraintSpec xml:lang="en" ident="lemma-ref-target-no-terminal-slash" scheme="schematron">
+               <constraint>
+                  <sch:rule context="tei:body/tei:head/tei:ref[@target]">
+                     <sch:report test="ends-with(@target, '/')">Target URL must not end in a slash.</sch:report>
                   </sch:rule>
                </constraint>
             </constraintSpec>

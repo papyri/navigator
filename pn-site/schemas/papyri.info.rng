@@ -5,7 +5,7 @@
          xmlns:xlink="http://www.w3.org/1999/xlink"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2026-09-24T15:32:42Z. . 
+Schema generated from ODD source 2026-09-29T00:28:23Z. . 
 TEI Edition:  
 TEI Edition Location: https://www.tei-c.org/Vault/P5// 
  EpiDoc customization for use in Papyri.info. 
@@ -16106,7 +16106,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-lemma-ref-target-path-constraint-rule-67">
+            id="papyri.info-lemma-ref-target-path-components-constraint-rule-67">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16115,7 +16115,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-lemma-ref-target-chars-constraint-rule-68">
+            id="papyri.info-lemma-ref-target-validity-constraint-rule-68">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16138,7 +16138,16 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-TM-required-constraint-rule-70">
+            id="papyri.info-lemma-ref-target-no-terminal-slash-constraint-rule-70">
+      <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
+                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                context="tei:body/tei:head/tei:ref[@target]">
+         <sch:report test="ends-with(@target, '/')">Target URL must not end in a slash.</sch:report>
+      </sch:rule>
+   </pattern>
+   <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+            id="papyri.info-TM-required-constraint-rule-71">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16147,7 +16156,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-HGV-required-for-DDb-constraint-rule-71">
+            id="papyri.info-HGV-required-for-DDb-constraint-rule-72">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
