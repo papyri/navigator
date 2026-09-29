@@ -474,26 +474,43 @@ function initConstraintBadges() {
 }
 
 function getAlert() {
+	let content = document.querySelector(".content");
+	let alertContainer = document.querySelector("#alert-container");
+	if (!content) return;
 	getMessage("/docs/alert")
 		.then(message => {
 			if (message) {
-				let alert = document.createElement("div");
-        alert.classList.add("alert");
-        alert.classList.add("alert-danger");
-				alert.setAttribute("role", "alert");
-				alert.innerHTML = '<a class="closer" aria-label="close" href="#" onclick="return hideAlert()">×</a>';
+        let alert = document.createElement("div");
+				alert.setAttribute("id", "alert");
+        alert.setAttribute("role", "alert");
+        if (alertContainer) {
+          alert.classList.add("alert", "alert-danger", "alert-dismissible", "fade", "show", "rounded-0", "text-center", "mb-0");
+        } else {
+          alert.classList.add("alert", "alert-danger", "alert-dismissible", "fade", "show", "rounded-0", "text-center", "mb-5");
+        }
 				alert.appendChild(document.adoptNode(message));
+				alert.insertAdjacentHTML("beforeend",
+					'<button type="button" class="btn-close" onclick="return hideAlert()" aria-label="Close"></button>');
 				if (canShowAlert(alert)) {
-					document.body.appendChild(alert);
+					if (alertContainer) {
+            alertContainer.querySelector("div").appendChild(alert);
+						alertContainer.classList.remove("visually-hidden");
+					}	else {
+            content.insertBefore(alert, content.firstChild);
+          }
 				}
 			}
 		});
 }
 
 function hideAlert() {
-	let alert = document.querySelector("div.alert");
-	window.localStorage.setItem("papyri.info-lastAlert", alert.outerHTML);
-	alert.parentElement.removeChild(alert);
+	let alert = document.querySelector("#alert");
+  window.localStorage.setItem("papyri.info-lastAlert", alert.outerHTML);
+	let alertContainer = document.querySelector("#alert-container");
+	alert.remove();
+	if (alertContainer) {
+		alertContainer.remove();
+	}
 	return false;
 }
 
@@ -568,7 +585,7 @@ function initBootstrapTooltips() {
 }
 
 function initBootstrapScrollSpy() {
-	console.log("Initializing Bootstrap ScrollSpy");
+	// console.log("Initializing Bootstrap ScrollSpy");
 	// Initialize Bootstrap ScrollSpy for the record page navigation
 	const scrollSpy = new bootstrap.ScrollSpy(document.body, {
 		target: '#controls',
