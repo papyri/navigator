@@ -70,7 +70,6 @@ function init() {
 
     initStep("addLinearBrowseControls", addLinearBrowseControls);
 		initStep("getAlert", getAlert);
-		initStep("getCampaign", getCampaign);
 		initStep("initBootstrapTooltips", initBootstrapTooltips);
 		initStep("initLineNumberVisibility", initLineNumberVisibility);
 		initStep("initApparatusDetailsToggle", initApparatusDetailsToggle);
@@ -474,56 +473,31 @@ function initConstraintBadges() {
   });
 }
 
-function getCampaign() {
-	if (canShowCampaign()) {
-		getMessage("/docs/campaign")
-			.then(message => {
-				if (message) {
-					let popup = document.createElement("div");
-					popup.setAttribute("id", "campaign");
-					popup.innerHTML = '<div class="campaignheader"><a title="close" class="closer" href="#" onclick="return hideCampaign(1)">×</a></div>';
-					message.querySelectorAll("a").forEach(a => a.setAttribute("onclick", "return hideCampaign(14)"));
-					popup.appendChild(document.adoptNode(message));
-					document.body.appendChild(popup);
-				}
-			});
-	}
-}
-
-function hideCampaign(duration) {
-	const day = 86400000;
-	window.localStorage.setItem("Hide-papyriCampaign", (Date.now() + (duration * day)).toString());
-	let campaign = document.querySelector("#campaign");
-	campaign.parentElement.removeChild(campaign);
-}
-
-function canShowCampaign() {
-	return false; // comment out to launch; re-comment to suspend
-	let time = window.localStorage.getItem("Hide-papyriCampaign");
-	if (time) {
-		time = Number.parseInt(time);
-		if (Date.now() < time) {
-			return false;
-		}
-	}
-	return true;
-}
-
 function getAlert() {
-	let alert = document.querySelector("#alert");
+	let content = document.querySelector(".content");
 	let alertContainer = document.querySelector("#alert-container");
-	if (!alert) return;
+	if (!content) return;
 	getMessage("/docs/alert")
 		.then(message => {
 			if (message) {
+        let alert = document.createElement("div");
+				alert.setAttribute("id", "alert");
+        alert.setAttribute("role", "alert");
+        if (alertContainer) {
+          alert.classList.add("alert", "alert-danger", "alert-dismissible", "fade", "show", "rounded-0", "text-center", "mb-0");
+        } else {
+          alert.classList.add("alert", "alert-danger", "alert-dismissible", "fade", "show", "rounded-0", "text-center", "mb-5");
+        }
 				alert.appendChild(document.adoptNode(message));
 				alert.insertAdjacentHTML("beforeend",
 					'<button type="button" class="btn-close" onclick="return hideAlert()" aria-label="Close"></button>');
 				if (canShowAlert(alert)) {
-					alert.classList.remove("visually-hidden");
 					if (alertContainer) {
+            alertContainer.querySelector("div").appendChild(alert);
 						alertContainer.classList.remove("visually-hidden");
-					}	
+					}	else {
+            content.insertBefore(alert, content.firstChild);
+          }
 				}
 			}
 		});
@@ -531,6 +505,7 @@ function getAlert() {
 
 function hideAlert() {
 	let alert = document.querySelector("#alert");
+  window.localStorage.setItem("papyri.info-lastAlert", alert.outerHTML);
 	let alertContainer = document.querySelector("#alert-container");
 	alert.remove();
 	if (alertContainer) {
