@@ -132,9 +132,23 @@
   
   <xsl:function name="pi:get-blame-url" as="xs:string">
     <xsl:param name="identifier"/>
+    <xsl:param name="type"/>
     <xsl:variable name="base">https://github.com/papyri/idp.data/blame/master/</xsl:variable>
     <xsl:variable name="id" select="tokenize($identifier, ';')"/>
     <xsl:choose>
+      <xsl:when test="$identifier/@type='filename'">
+        <xsl:choose>
+          <xsl:when test="$type = 'ddbdp'">
+            <xsl:sequence select="concat($base, 'DDbDP', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/>
+          </xsl:when>
+          <xsl:when test="$type = 'dclp'">
+            <xsl:sequence select="concat($base, 'DCLP', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:sequence select="concat($base, 'Historical/', $identifier, '.xml')"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
       <xsl:when test="$identifier/@type='dclp'"><xsl:sequence select="concat($base, 'DCLP/', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/></xsl:when>
       <!-- like https://papyri.info/ddbdp/c.etiq.mom;;165/source -->
       <xsl:when test="$id[2] = ''"><xsl:sequence select="concat($base, 'DDB_EpiDoc_XML/', $id[1], '/', $id[1], '.', replace(replace($id[3], '%2C', '-'), '%2F', '_'), '.xml')"/></xsl:when>

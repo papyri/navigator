@@ -773,14 +773,14 @@
           </div>
         </div>
         <p>
-          <xsl:choose>
-            <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">
-              <a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp'])}" target="_blank">Detailed history</a>
-            </xsl:when>
-            <xsl:otherwise>
-              <a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">Detailed history</a>
-            </xsl:otherwise>
-          </xsl:choose>
+          <xsl:variable name="type">
+            <xsl:choose>
+              <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']">ddbdp</xsl:when>
+              <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid']">dclp</xsl:when>
+              <xsl:otherwise>historical</xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
+          <a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], $type)}" target="_blank">Detailed history</a>
         </p>
       </div>
       <!-- closing #history -->
@@ -790,7 +790,7 @@
   </xsl:template>
 
   <xsl:template match="t:revisionDesc" mode="history">
-    <xsl:variable name="file-uri" select="ceiling(number(//t:idno[@type='TM']) div 1000)"/>
+    <xsl:variable name="file-uri" select="floor(number(//t:idno[@type='TM']) div 1000)"/>
     <div id="history" class="text mb-5">
       <div id="history-headers">
         <h3><span id="edit-history">Editorial History</span>;
@@ -941,8 +941,8 @@
       </xsl:when>
       <xsl:when test="$collection = 'editions'">
         <xsl:text>Historical Edition: </xsl:text>
+        <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
         <xsl:try>
-          <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
           <xsl:if test="doc-available($current-file)">
             <xsl:variable name="current" select="doc($current-file)"/>
             <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
@@ -950,7 +950,7 @@
             <xsl:value-of select="$ref/t:title"/> <xsl:if test="not(contains($ref/t:title, $ref/t:date))"> (<xsl:value-of select="$ref/t:date"/>)</xsl:if>
           </xsl:if> 
           <xsl:catch>
-            <xsl:message>ERROR: Can't find current file for <xsl:value-of select="document-uri(/)"/>. Sources for: <xsl:value-of select="$sources-for"/>.</xsl:message>
+            <xsl:message xmlns:err="http://www.w3.org/2005/xqt-errors">ERROR: <xsl:value-of select="$err:code"/>, <xsl:value-of select="$err:description"/>, line <xsl:value-of select="$err:line-number"/>, column: <xsl:value-of select="$err:column-number"/>. Can't find current file for <xsl:value-of select="$current-file"/>. Sources for: <xsl:value-of select="$sources-for"/>.</xsl:message>
           </xsl:catch>
         </xsl:try>
       </xsl:when>
