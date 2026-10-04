@@ -11,7 +11,7 @@
   
   <xsl:mode on-no-match="shallow-copy"/>
   
-  <xsl:param name="id"/>
+  <xsl:param name="id" select="//tei:idno[@type='filename']/text()"/>
   <xsl:param name="tmbase"/>
   <xsl:param name="hgvbase"/>
   <xsl:param name="tmCSV"/>
@@ -21,7 +21,8 @@
   
   <xsl:template match="processing-instruction()">
     <xsl:text>
-</xsl:text><xsl:copy-of select="."/><xsl:text>
+</xsl:text><xsl:processing-instruction name="xml-model">href="https://papyri.info/schemas/papyri.info.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction><xsl:text>
+</xsl:text><xsl:processing-instruction name="xml-model">href="https://papyri.info/schemas/papyri.info.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:processing-instruction><xsl:text>
 </xsl:text>
   </xsl:template>
   
@@ -45,55 +46,98 @@
             <xsl:when test="//tei:idno[@type='dclp-hybrid']">{//tei:idno[@type='dclp-hybrid']}</xsl:when>
           </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="reprint-from">
-          <xsl:for-each select=".//tei:ref[@type='reprint-from']/@n">
-            <xsl:for-each select="tokenize(., '\|')">{.}</xsl:for-each>
-          </xsl:for-each>
+        <xsl:variable name="targets">
+          <xsl:sequence select="tei:head/tei:ref[@target]/xs:string(@target)"/>
         </xsl:variable>
-        <xsl:variable name="TMout">
-          <xsl:for-each select="//tei:idno[@type='TM']">
-            <xsl:for-each select="tokenize(normalize-space(.), ' ')">
-              <xsl:variable name="TM" select="tei:getTM(.)"/>
-              <xsl:if test="$TM instance of map(*) and map:contains($TM, 'publications')">
-                <xsl:for-each select="array:flatten($TM('publications'))" >
-                  <xsl:variable name="rows" select="tei:matchTM(.('title'))"/>
-                  <xsl:if test="count($rows//tei:cell) gt 0">
-                    <ref n="{format-number(.('id'), '#')}">
-                      <xsl:choose>
-                        <xsl:when test="starts-with(substring-before($hybrid, ';'), $rows/tei:row[1]/tei:cell[@name='PN']) and contains(substring-after(.('title'), $rows/tei:row[1]/tei:cell[@name='TM']), substring-after(substring-after($hybrid, ';') , ';'))"><xsl:attribute name="target">https://papyri.info/editions/{tei:makeURI(replace($hybrid, ';+', '/'))}</xsl:attribute></xsl:when>
-                        <xsl:otherwise>
-                          <xsl:variable name="title" select=".('title')"/>
-                          <xsl:for-each select="$reprint-from">
-                            <xsl:if test="starts-with(substring-before(., ';'), $rows/tei:row[1]/tei:cell[@name='PN']) and contains(substring-after($title, $rows/tei:row[1]/tei:cell[@name='TM']), substring-after(substring-after(., ';') , ';'))"><xsl:attribute name="target">https://papyri.info/editions/{tei:makeURI(replace(., ';+', '/'))}</xsl:attribute></xsl:if>
-                          </xsl:for-each>
-                        </xsl:otherwise>
-                      </xsl:choose>
-                    <title>{replace(.('title'), $rows/tei:row[1]/tei:cell[@name='TM'], $rows/tei:row[1]/tei:cell[@name='Checklist'])}</title><date>{.('date')}</date></ref>
+        <xsl:choose>
+          <xsl:when test="contains(document-uri(/), 'DDbDP')">
+            <xsl:variable name="TMout">
+              <xsl:for-each select="//tei:idno[@type='TM']">
+                <xsl:for-each select="tokenize(normalize-space(.), ' ')">
+                  <xsl:variable name="TM" select="tei:getTM(.)"/>
+                  <xsl:if test="$TM instance of map(*) and map:contains($TM, 'publications')">
+                    <xsl:variable name="count" select="count(array:flatten($TM('publications')))"/>
+                    <xsl:for-each select="array:flatten($TM('publications'))" >
+                      <xsl:variable name="rows" select="tei:matchTM(.('title'))"/>
+                      <xsl:if test="count($rows//tei:cell) gt 0">
+                        <ref n="{format-number(.('id'), '#')}">
+                          <xsl:choose>
+                            <xsl:when test="starts-with(substring-before($hybrid, ';'), $rows/tei:row[1]/tei:cell[@name='PN']) and contains(substring-after(.('title'), $rows/tei:row[1]/tei:cell[@name='TM']), substring-after(substring-after($hybrid, ';') , ';'))"><xsl:attribute name="target">https://papyri.info/editions/{tei:makeURI(replace($hybrid, ';+', '/'))}</xsl:attribute></xsl:when>
+                            <xsl:otherwise>
+                              <xsl:variable name="title" select=".('title')"/>
+                              <xsl:for-each select="tokenize($targets)">
+                                <xsl:variable name="path" select="tokenize(substring-after(., 'https://papyri.info/editions/'), '/')"/>
+                                <xsl:if test="not(empty($rows/tei:row[1]/tei:cell[@name='PN'])) and starts-with($path[1], $rows/tei:row[1]/tei:cell[@name='PN']) and contains(replace($title, '\W', ''), substring-before(replace($path[last()], '\W', ''), ' '))"><xsl:attribute name="target" select="."/></xsl:if>
+                              </xsl:for-each>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                          <title>{replace(.('title'), $rows/tei:row[1]/tei:cell[@name='TM'], $rows/tei:row[1]/tei:cell[@name='Checklist'], 'q')}</title><date>{.('date')}</date></ref>
+                      </xsl:if>
+                    </xsl:for-each>
                   </xsl:if>
                 </xsl:for-each>
-              </xsl:if>
-            </xsl:for-each>
-          </xsl:for-each>
-        </xsl:variable>
-        <!-- If there's nothing in TM, use the HGV biblio instead. -->
-        <xsl:choose>
-          <xsl:when test="count($TMout//tei:ref) = 0">
-            <xsl:for-each select="$HGV">
-              <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='principalEdition']//tei:bibl">
-                <ref><title>{normalize-space(.)}</title></ref>
               </xsl:for-each>
-              <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='otherPublications']//tei:bibl">
-                <ref><title>{normalize-space(.)}</title></ref>
-              </xsl:for-each>
-            </xsl:for-each>
+            </xsl:variable>
+            <!-- If there's nothing in TM, use the HGV biblio instead. -->
+            <xsl:choose>
+              <xsl:when test="count($TMout//tei:ref) = 0">
+                <xsl:for-each select="$HGV">
+                  <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='principalEdition']//tei:bibl">
+                    <ref><title>{normalize-space(.)}</title></ref><xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
+                  </xsl:for-each>
+                  <xsl:for-each select=".//tei:div[@type='bibliography'][@subtype='otherPublications']//tei:bibl">
+                    <ref><title>{normalize-space(.)}</title></ref><xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
+                  </xsl:for-each>
+                </xsl:for-each>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:for-each select="$TMout/tei:ref">
+                  <xsl:sort select="tei:date/text()" order="ascending"/>
+                  <xsl:sort select="tei:title/text()" order="ascending"/>
+                  <xsl:copy-of select="."/><xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
+                </xsl:for-each>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
+            <!-- DCLP might have a TM title match, but it's less likely -->
+            <xsl:variable name="TMout">
+              <xsl:for-each select="//tei:idno[@type='TM']">
+                <xsl:for-each select="tokenize(normalize-space(.), ' ')">
+                  <xsl:variable name="TM" select="tei:getTM(.)"/>
+                  <xsl:if test="$TM instance of map(*) and map:contains($TM, 'publications')">
+                    <xsl:variable name="count" select="count(array:flatten($TM('publications')))"/>
+                    <xsl:for-each select="array:flatten($TM('publications'))" >
+                      <xsl:variable name="rows" select="tei:matchTM(.('title'))"/>
+                      <xsl:choose>
+                        <xsl:when test="count($rows//tei:cell) gt 0">
+                          <ref n="{format-number(.('id'), '#')}">
+                            <xsl:choose>
+                              <xsl:when test="starts-with(substring-before($hybrid, ';'), $rows/tei:row[1]/tei:cell[@name='PN']) and contains(substring-after(.('title'), $rows/tei:row[1]/tei:cell[@name='TM']), substring-after(substring-after($hybrid, ';') , ';'))"><xsl:attribute name="target">https://papyri.info/editions/{tei:makeURI(replace($hybrid, ';+', '/'))}</xsl:attribute></xsl:when>
+                              <xsl:otherwise>
+                                <xsl:variable name="title" select=".('title')"/>
+                                <xsl:for-each select="tokenize($targets)">
+                                  <xsl:variable name="path" select="tokenize(substring-after(., 'https://papyri.info/editions/'), '/')"/>
+                                  <xsl:if test="not(empty($rows/tei:row[1]/tei:cell[@name='PN'])) and starts-with($path[1], $rows/tei:row[1]/tei:cell[@name='PN']) and contains(replace($title, '\W', ''), substring-before(replace($path[last()], '\W', ''), ' '))"><xsl:attribute name="target" select="."/></xsl:if>
+                                </xsl:for-each>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                            <title>{replace(.('title'), $rows/tei:row[1]/tei:cell[@name='TM'], $rows/tei:row[1]/tei:cell[@name='Checklist'], 'q')}</title><date>{.('date')}</date></ref>
+                        </xsl:when>
+                        <xsl:otherwise><ref n="{format-number(.('id'), '#')}"><title>{.('title')}</title><date>{.('date')}</date></ref></xsl:otherwise>
+                      </xsl:choose>
+                    </xsl:for-each>
+                  </xsl:if>
+                </xsl:for-each>
+              </xsl:for-each>
+            </xsl:variable>
             <xsl:for-each select="$TMout/tei:ref">
               <xsl:sort select="tei:date/text()" order="ascending"/>
-              <xsl:copy-of select="."/>
+              <xsl:sort select="tei:title/text()" order="ascending"/>
+              <xsl:copy-of select="."/><xsl:if test="position() != last()"><xsl:text>; </xsl:text></xsl:if>
             </xsl:for-each>
           </xsl:otherwise>
-        </xsl:choose>
+        </xsl:choose>        
       </head>
       <xsl:apply-templates select="*[not(self::tei:head)]"/>
     </xsl:copy>    
@@ -114,7 +158,7 @@
       <xsl:apply-templates select="*[not(self::tei:head)]"/>
     </xsl:copy>
   </xsl:template>
-  
+    
   <xsl:function name="tei:getHGV">
     <xsl:param name="root"/>
     <xsl:for-each select="$root//tei:idno[@type='HGV']">
@@ -192,11 +236,21 @@
   <xsl:function name="tei:matchTM">
     <xsl:param name="TM"/>
     <rows>
-      <xsl:for-each select="$tmTable//tei:row[string-length(tei:cell[@name='TM']) gt 0]">
-        <xsl:if test="starts-with($TM, tei:cell[@name='TM'])">
-          <xsl:copy-of select="."/>
-        </xsl:if>
-      </xsl:for-each>
+      <xsl:choose>
+        <!-- TM uses AÉ for some stuff. It's not in the Checklist, so we fake it. -->
+        <xsl:when test="starts-with($TM, 'Année épigraphique')">
+          <row><cell name="PN">ae</cell><cell name="Checklist">Année épigraphique</cell><cell name="TM">Année épigraphique</cell></row>
+        </xsl:when>
+        <!-- If we don't have a title, return nothing -->
+        <xsl:when test="empty($TM)"></xsl:when>
+        <xsl:otherwise>
+          <xsl:for-each select="$tmTable//tei:row[string-length(tei:cell[@name='TM']) gt 0]">
+            <xsl:if test="starts-with($TM, tei:cell[@name='TM'])">
+              <xsl:copy-of select="."/>
+            </xsl:if>
+          </xsl:for-each>
+        </xsl:otherwise>
+      </xsl:choose>
     </rows>
   </xsl:function>
   

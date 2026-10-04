@@ -50,8 +50,9 @@ public class AuthorBrowse extends HttpServlet {
     TEMPLATE = config.getInitParameter("template");
     solrUrl = System.getenv("SOLR_URL") != null ? System.getenv("SOLR_URL") : config.getInitParameter("solrUrl");
     PN_SEARCH = config.getInitParameter("pnSearchPath");
-    logger.info("Template: " + TEMPLATE);
-    logger.info("Solr URL: " + solrUrl);
+    logger.finest("Template: " + TEMPLATE);
+    logger.finest("Solr URL: " + solrUrl);
+    logger.finest("PN SEARCH: " + PN_SEARCH);
   }
 
   /**

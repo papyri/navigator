@@ -817,6 +817,7 @@
                   (str (.replace (first x) "papyri.info" nserver) "/rdf")
                   (first x))
                 (concat
+                  ;; collection, related, replaces, isPartOf, sources, sources-for, images, citationForm, biblio, translations, selfUrl, server
                   (list (second x) (nth x 2) (nth x 3) (nth x 4) (nth x 5) (nth x 6) (nth x 7) (nth x 8) (nth x 9) (nth x 10) (nth x 11) (nth x 12))
                   (asset-params))
                 (.newSerializer processor (FileOutputStream. (File. (get-html-filename (first x))))) @htmltemplates)
@@ -1082,7 +1083,8 @@
             (fn []
         (when (not (.startsWith (first x) "http"))
           (transform (first x)
-                (list (second x) (nth x 2) (nth x 7) (nth x 10)) ;; collection, related, images, translations
+                ;; collection, related, sources, sources-for, images, translations
+                (list (second x) (nth x 2) (nth x 5) (nth x 6) (nth x 7) (nth x 10)) 
                 (dochandler) @solrtemplates)))) @text)]
       (doseq [^Future future (.invokeAll pool tasks)]
         (.get future))

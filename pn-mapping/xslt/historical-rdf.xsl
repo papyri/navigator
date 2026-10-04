@@ -79,8 +79,8 @@
       </dct:isPartOf>
       
       <xsl:choose>
-        <xsl:when test="//tei:idno[@type = 'HGV'][not(contains(., ' '))]">
-          <xsl:for-each select="//tei:idno[@type = 'HGV' and string-length(normalize-space(.)) gt 0]">
+        <xsl:when test="//tei:idno[@type = 'HGV']">
+          <xsl:for-each select="$hgv">
             <!-- We don't currently use source-for directly, but needed a reciprocal term for dc:source so we could do this: -->
             <pi:source-for>
               <rdf:Description rdf:about="https://{$domain}/current/{.}/source">

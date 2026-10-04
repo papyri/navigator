@@ -59,6 +59,8 @@
   <xsl:param name="related"/>
   <xsl:param name="images"/>
   <xsl:param name="translations"/>
+  <xsl:param name="sources"/>
+  <xsl:param name="sources-for"/>
   <xsl:variable name="relations" select="tokenize($related, ' ')"/>
   <xsl:variable name="path">/srv/data/papyri.info/idp.data</xsl:variable>
   <xsl:variable name="outbase"/>
@@ -92,9 +94,30 @@
           <xsl:if test="$apis = true()">
             <field name="collection">apis</field>
           </xsl:if>
+            <xsl:variable name="type">
+              <xsl:choose>
+                <xsl:when test="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp']">DCLP</xsl:when>
+                <xsl:otherwise>DDbDP</xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <xsl:choose>
+              <xsl:when test="$type = 'DDbDP'"><field name="current"><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='ddb-hybrid'], ';;?', '/'))]/t:title"/> (<xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>)</field></xsl:when>
+              <xsl:otherwise><field name="current"><xsl:value-of select="//t:body/t:head/t:ref[ends-with(@target, replace(//t:idno[@type='dclp-hybrid'], ';;?', '/'))]/t:title"/> (<xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>)</field></xsl:otherwise>
+            </xsl:choose>
         </xsl:if>
         <xsl:if test="$collection = 'editions'">
           <field name="collection">editions</field>
+          <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
+          <xsl:variable name="title">
+            <xsl:try>
+              <xsl:variable name="current-file" select="pi:get-filename($sources-for[contains(., '/current/')], 'xml')"/>
+              <xsl:if test="doc-available($current-file)">
+                <xsl:value-of select="doc($current-file)//t:body/t:head/t:ref[ends-with(@target, $filename)]/t:title"/>
+              </xsl:if>
+              <xsl:catch/>
+            </xsl:try>
+          </xsl:variable>
+          <field name="historical"><xsl:value-of select="if (normalize-space($title) != '') then normalize-space($title) else replace($filename, '/', ' ')"/></field>
         </xsl:if>     
         <xsl:if test="$apis = true()">
           <field name="collection">apis</field>

@@ -168,7 +168,7 @@
               </xsl:apply-templates>
               <div id="history">
                 <div id="history-headers">
-                <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])}" target="_blank">detailed</a>)</h3>
+                <h3><span id="edit-history">Editorial History</span>; <span id="all-history">All History</span>; (<a href="{pi:get-blame-url(//t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], 'ddbdp')}" target="_blank">detailed</a>)</h3>
                 </div>
                 <!-- closing #history-headers -->
                 <div id="history-lists">

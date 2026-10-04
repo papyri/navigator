@@ -455,8 +455,15 @@ public class FacetBrowser extends HttpServlet {
         String translationLanguages = noTranslationLanguages ? "None" : (String) doc.getFieldValue(SolrField.translation_language.name()).toString().replaceAll("[\\[\\]]", "");
         ArrayList<String> imagePaths = doc.getFieldValue(SolrField.image_path.name()) == null ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(doc.getFieldValue(SolrField.image_path.name()).toString().replaceAll("[\\[\\]]", "").split(",")));
         Boolean hasIllustration = doc.getFieldValue(SolrField.illustrations.name()) == null ? false : true;
+        String preferredId = "";
         ArrayList<String> allIds = getAllSortedIds(doc);
-        String preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
+        if (doc.containsKey("current")) {
+          preferredId = doc.getFieldValue("current").toString();
+        } else if (doc.containsKey("historical")) {
+          preferredId = doc.getFieldValue("historical").toString();
+        } else {
+          preferredId = (allIds == null || allIds.isEmpty()) ? "No id supplied" : allIds.remove(0);
+        }
         Boolean isCurrent = doc.getFieldValues("collection").stream().anyMatch(isCurrentCollection);
         DocumentBrowseRecord record = new DocumentBrowseRecord(preferredId, allIds, url, documentTitles, place, date, language, imagePaths, translationLanguages, hasIllustration, searchClauses, isCurrent);
         setLinearBrowseData(solrQuery, queryResponse, counter, record);
