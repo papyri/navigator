@@ -19,7 +19,6 @@ bsac,BSAC,Bulletin de la Société d'archéologie copte (BSAC),TRUE,FALSE
 c.clerge,C.Clergé,C. Pap. Gr. Clergé,TRUE,FALSE
 c.epist.lat,C.Epist.Lat.,"Cugusi, Corpus epistularum Latinarum (CEL) 1",TRUE,FALSE
 c.erbstreit,C.Erbstreit,P. Erbstreit (2017),TRUE,FALSE
-c.etiq.mom,C.Étiq.Mom.,C. Étiq. Mom.,TRUE,FALSE
 c.gloss.biling,C.Gloss.Biling.,C. Gloss. Biling.,TRUE,FALSE
 c.illum.pap,C.Illum.Pap.,"Horak, Illuminierte Papyri",TRUE,FALSE
 c.jud.syr.eg,C.Jud.Syr.Eg.,P. Conflict,TRUE,FALSE
@@ -596,7 +595,7 @@ t.alb,T.Alb.,T. Albertini,TRUE,FALSE
 t.bm.arlt,T.BM Arlt,T. BM Arlt,TRUE,FALSE
 t.moeller,T.Möller,T. Möller,TRUE,FALSE
 t.moeller,T.Möller,T. Möller,TRUE,FALSE
-t.mom.louvre,T.Mom.Louvre,"Cahier de rech\. de l'Inst\. de pap\. et égypt\. de Lille \(CRIPEL\) 3 \(197\d\), p. \d+ no\. CEML",TRUE,TRUE
+t.mom.louvre,C.Étiq.Mom.,C. Étiq. Mom.,TRUE,TRUE
 t.spiegelberg,T.Spiegelberg,T. Spiegelberg,TRUE,FALSE
 t.varie,T.Varie,T. Varie,TRUE,FALSE
 t.vindol,T.Vindol.,T. Vindol.,TRUE,FALSE

@@ -5,7 +5,7 @@
          xmlns:xlink="http://www.w3.org/1999/xlink"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2026-09-29T00:28:23Z. . 
+Schema generated from ODD source 2026-10-01T16:36:10Z. . 
 TEI Edition:  
 TEI Edition Location: https://www.tei-c.org/Vault/P5// 
  EpiDoc customization for use in Papyri.info. 
@@ -9281,6 +9281,8 @@ Suggested values include: 1] sent; 2] received; 3] transmitted; 4] redirected; 5
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">to contain all editorial commentary, historical/prosopographical discussion, etc.</a:documentation>
                <value>edition</value>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">to contain the text of the edition itself; may include multiple text-parts</a:documentation>
+               <value>figure</value>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">contains figures representing images of parts of the document.</a:documentation>
                <value>textpart</value>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">used to divide a div[type=edition] into multiple parts (fragments, columns, faces, etc.)</a:documentation>
                <value>translation</value>

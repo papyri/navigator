@@ -946,7 +946,7 @@
           <xsl:if test="doc-available($current-file)">
             <xsl:variable name="current" select="doc($current-file)"/>
             <xsl:variable name="filename" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename']"/>
-            <xsl:variable name="ref" select="$current//t:body/t:head/t:ref[contains(@target, $filename)]"/>
+            <xsl:variable name="ref" select="$current//t:body/t:head/t:ref[contains(@target, $filename)][1]"/>
             <xsl:value-of select="$ref/t:title"/> <xsl:if test="not(contains($ref/t:title, $ref/t:date))"> (<xsl:value-of select="$ref/t:date"/>)</xsl:if>
           </xsl:if> 
           <xsl:catch>

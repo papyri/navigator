@@ -48,7 +48,7 @@
             <moduleRef key="textcrit"/>
             <moduleRef key="figures"/>
             <moduleRef key="dictionaries"/>
-            
+                        
             <!-- DDb-Hybrid constraints -->
             <constraintSpec xml:lang="en" ident="ddb-hybrid-idno-form" scheme="schematron">
                <constraint>
@@ -170,11 +170,12 @@
                   </sch:rule>
                </constraint>
             </constraintSpec>
-            <!-- All DDbDP documents must have an HGV idno -->
+            <!-- All DDbDP documents must have an HGV idno INCORRECT FOR HGV-->
             <constraintSpec xml:lang="en" ident="HGV-required-for-DDb" scheme="schematron">
                <constraint>
                   <sch:rule context="tei:publicationStmt">
-                     <sch:assert test="if (tei:idno[@type='ddb-hybrid']) then tei:idno[@type='HGV'] else true()">There must be an HGV idno for each DDbDP document.</sch:assert>
+                     <sch:let name="ddb" value="contains(document-uri(), 'DDbDP')"/>
+                     <sch:assert test="if ($ddb) then tei:idno[@type='HGV'] else true()">There must be an HGV idno for each DDbDP document.</sch:assert>
                   </sch:rule>
                </constraint>
             </constraintSpec>            
