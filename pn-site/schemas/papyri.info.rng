@@ -5,7 +5,7 @@
          xmlns:xlink="http://www.w3.org/1999/xlink"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2026-10-01T16:36:10Z. . 
+Schema generated from ODD source 2026-10-12T19:45:58Z. . 
 TEI Edition:  
 TEI Edition Location: https://www.tei-c.org/Vault/P5// 
  EpiDoc customization for use in Papyri.info. 
@@ -5660,6 +5660,26 @@ Normalization 13. Critical Apparatus]</a:documentation>
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
                       context="tei:gap">
                <sch:report test="@quantity and @extent">gap may have @quantity (a figure) or @extent (a descriptive text value) but not both</sch:report>
+            </sch:rule>
+         </pattern>
+         <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+                  xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                  id="papyri.info-gap-gap-quantity-unit-constraint-rule-19">
+            <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
+                      xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                      context="tei:gap">
+               <sch:report test="@quantity and not(@unit)">If gap has @quantity then @unit is required</sch:report>
+            </sch:rule>
+         </pattern>
+         <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+                  xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                  id="papyri.info-gap-gap-constraint-rule-20">
+            <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
+                      xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                      context="tei:gap">
+               <sch:report test="@quantity and @extent">gap may have @quantity (a figure) or @extent (a descriptive text value) but not both</sch:report>
                <sch:report test="@quantity and not(@unit)">If gap has @quantity then @unit is required</sch:report>
                <sch:report test="not(@reason='ellipsis') and ancestor::tei:supplied[not(@reason='undefined')]">gap may not appear within supplied text</sch:report>
             </sch:rule>
@@ -6070,7 +6090,7 @@ Sample values include: 1] suspension (suspension); 2] contraction (contraction);
          <ref name="tei_macro.phraseSeq"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-expan-expan-constraint-rule-19">
+                  id="papyri.info-expan-expan-constraint-rule-21">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -6090,7 +6110,7 @@ Sample values include: 1] suspension (suspension); 2] contraction (contraction);
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-ptr-ptrAtts-constraint-rule-20">
+                  id="papyri.info-ptr-ptrAtts-constraint-rule-22">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -6114,7 +6134,7 @@ Sample values include: 1] suspension (suspension); 2] contraction (contraction);
          <ref name="tei_macro.paraContent"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-ref-refAtts-constraint-rule-21">
+                  id="papyri.info-ref-refAtts-constraint-rule-23">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -6180,7 +6200,7 @@ Sample values include: 1] suspension (suspension); 2] contraction (contraction);
          </group>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-list-gloss-list-must-have-labels-constraint-rule-22">
+                  id="papyri.info-list-gloss-list-must-have-labels-constraint-rule-24">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -7177,7 +7197,7 @@ Suggested values include: 1] appendix; 2] book; 3] chapter; 4] column; 5] databa
          </optional>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-relatedItem-targetorcontent1-constraint-rule-23">
+                  id="papyri.info-relatedItem-targetorcontent1-constraint-rule-25">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -7213,7 +7233,7 @@ Suggested values include: 1] appendix; 2] book; 3] chapter; 4] column; 5] databa
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-l-abstractModel-structure-l-in-l-constraint-rule-24">
+                  id="papyri.info-l-abstractModel-structure-l-in-l-constraint-rule-26">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -7265,7 +7285,7 @@ Suggested values include: 1] appendix; 2] book; 3] chapter; 4] column; 5] databa
          </group>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-lg-atleast1oflggapl-constraint-rule-25">
+                  id="papyri.info-lg-atleast1oflggapl-constraint-rule-27">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -7275,7 +7295,7 @@ Suggested values include: 1] appendix; 2] book; 3] chapter; 4] column; 5] databa
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-lg-abstractModel-structure-lg-in-l-constraint-rule-26">
+                  id="papyri.info-lg-abstractModel-structure-lg-in-l-constraint-rule-28">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -8011,7 +8031,7 @@ Suggested values include: 1] ISBN; 2] ISSN; 3] DOI; 4] URI; 5] VIAF; 6] ESTC; 7]
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-quotation-quotationContents-constraint-rule-27">
+                  id="papyri.info-quotation-quotationContents-constraint-rule-29">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -8297,7 +8317,7 @@ Sample values include: 1] first-line; 2] first-letter; 3] before; 4] after</a:do
          </attribute>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-citeStructure-match-citestructure-outer-match-constraint-rule-28">
+                  id="papyri.info-citeStructure-match-citestructure-outer-match-constraint-rule-30">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -8308,7 +8328,7 @@ Sample values include: 1] first-line; 2] first-letter; 3] before; 4] after</a:do
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-citeStructure-match-citestructure-inner-match-constraint-rule-29">
+                  id="papyri.info-citeStructure-match-citestructure-inner-match-constraint-rule-31">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9230,7 +9250,7 @@ Suggested values include: 1] sent; 2] received; 3] transmitted; 4] redirected; 5
          </group>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-div-div-constraint-rule-30">
+                  id="papyri.info-div-div-constraint-rule-32">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -9242,7 +9262,7 @@ Suggested values include: 1] sent; 2] received; 3] transmitted; 4] redirected; 5
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-div-abstractModel-structure-div-in-l-constraint-rule-31">
+                  id="papyri.info-div-abstractModel-structure-div-in-l-constraint-rule-33">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -9254,7 +9274,7 @@ Suggested values include: 1] sent; 2] received; 3] transmitted; 4] redirected; 5
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-div-abstractModel-structure-div-in-ab-or-p-constraint-rule-32">
+                  id="papyri.info-div-abstractModel-structure-div-in-ab-or-p-constraint-rule-34">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -9281,8 +9301,6 @@ Suggested values include: 1] sent; 2] received; 3] transmitted; 4] redirected; 5
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">to contain all editorial commentary, historical/prosopographical discussion, etc.</a:documentation>
                <value>edition</value>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">to contain the text of the edition itself; may include multiple text-parts</a:documentation>
-               <value>figure</value>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">contains figures representing images of parts of the document.</a:documentation>
                <value>textpart</value>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">used to divide a div[type=edition] into multiple parts (fragments, columns, faces, etc.)</a:documentation>
                <value>translation</value>
@@ -9651,7 +9669,7 @@ Suggested values include: 1] sent; 2] received; 3] transmitted; 4] redirected; 5
          </group>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-facsimile-no_facsimile_text_nodes-constraint-rule-33">
+                  id="papyri.info-facsimile-no_facsimile_text_nodes-constraint-rule-35">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9791,7 +9809,7 @@ Sample values include: 1] glued; 2] pinned; 3] sewn</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-path-pathmustnotbeclosed-constraint-rule-34">
+                  id="papyri.info-path-pathmustnotbeclosed-constraint-rule-36">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9845,7 +9863,7 @@ Sample values include: 1] glued; 2] pinned; 3] sewn</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-addSpan-addSpan-requires-spanTo-constraint-rule-35">
+                  id="papyri.info-addSpan-addSpan-requires-spanTo-constraint-rule-37">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9856,7 +9874,7 @@ Sample values include: 1] glued; 2] pinned; 3] sewn</a:documentation>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-addSpan-addSpan-requires-spanTo-fr-constraint-rule-36">
+                  id="papyri.info-addSpan-addSpan-requires-spanTo-fr-constraint-rule-38">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9889,7 +9907,7 @@ Sample values include: 1] glued; 2] pinned; 3] sewn</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-delSpan-delSpan-requires-spanTo-constraint-rule-37">
+                  id="papyri.info-delSpan-delSpan-requires-spanTo-constraint-rule-39">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9900,7 +9918,7 @@ Sample values include: 1] glued; 2] pinned; 3] sewn</a:documentation>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-delSpan-delSpan-requires-spanTo-fr-constraint-rule-38">
+                  id="papyri.info-delSpan-delSpan-requires-spanTo-fr-constraint-rule-40">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9923,7 +9941,7 @@ Sample values include: 1] glued; 2] pinned; 3] sewn</a:documentation>
          <ref name="tei_macro.xtext"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-ex-ex-constraint-rule-39">
+                  id="papyri.info-ex-ex-constraint-rule-41">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -10015,7 +10033,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum (page number); 4] lineNu
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-space-space-constraint-rule-40">
+                  id="papyri.info-space-space-constraint-rule-42">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -10090,7 +10108,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum (page number); 4] lineNu
          </oneOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-subst-substContents1-constraint-rule-41">
+                  id="papyri.info-subst-substContents1-constraint-rule-43">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -10578,7 +10596,7 @@ Sample values include: 1] no; 2] yes; 3] weak; 4] strong</a:documentation>
          <ref name="tei_macro.phraseSeq"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-s-noNestedS-constraint-rule-42">
+                  id="papyri.info-s-noNestedS-constraint-rule-44">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -11900,7 +11918,7 @@ Sample values include: 1] Unicode (Unicode); 2] Bridwell (E. Nelson Bridwell); 3
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-link-linkTargets3-constraint-rule-43">
+                  id="papyri.info-link-linkTargets3-constraint-rule-45">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -11943,7 +11961,7 @@ Sample values include: 1] Unicode (Unicode); 2] Bridwell (E. Nelson Bridwell); 3
          <ref name="tei_macro.abContent"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-ab-abstractModel-structure-ab-in-l-constraint-rule-44">
+                  id="papyri.info-ab-abstractModel-structure-ab-in-l-constraint-rule-46">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -11997,7 +12015,7 @@ Sample values include: 1] Unicode (Unicode); 2] Bridwell (E. Nelson Bridwell); 3
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-join-joinTargets3-constraint-rule-45">
+                  id="papyri.info-join-joinTargets3-constraint-rule-47">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -12044,7 +12062,7 @@ Sample values include: 1] Unicode (Unicode); 2] Bridwell (E. Nelson Bridwell); 3
          </oneOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-standOff-nested_standOff_should_be_typed-constraint-rule-46">
+                  id="papyri.info-standOff-nested_standOff_should_be_typed-constraint-rule-48">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -12248,7 +12266,7 @@ Sample values include: 1] Unicode (Unicode); 2] Bridwell (E. Nelson Bridwell); 3
          </group>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-msDesc-one_ms_singleton_max-constraint-rule-47">
+                  id="papyri.info-msDesc-one_ms_singleton_max-constraint-rule-49">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -12274,7 +12292,7 @@ Sample values include: 1] Unicode (Unicode); 2] Bridwell (E. Nelson Bridwell); 3
          <ref name="tei_macro.phraseSeq"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-catchwords-catchword_in_msDesc-constraint-rule-48">
+                  id="papyri.info-catchwords-catchword_in_msDesc-constraint-rule-50">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -12298,7 +12316,7 @@ Sample values include: 1] Unicode (Unicode); 2] Bridwell (E. Nelson Bridwell); 3
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-dimensions-duplicateDim-constraint-rule-49">
+                  id="papyri.info-dimensions-duplicateDim-constraint-rule-51">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -12695,7 +12713,7 @@ Suggested values include: 1] archaeological-context; 2] internal-date; 3] letter
          <ref name="tei_macro.phraseSeq"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-secFol-secFol_in_msDesc-constraint-rule-50">
+                  id="papyri.info-secFol-secFol_in_msDesc-constraint-rule-52">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -12714,7 +12732,7 @@ Suggested values include: 1] archaeological-context; 2] internal-date; 3] letter
          <ref name="tei_macro.specialPara"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-signatures-signatures_in_msDesc-constraint-rule-51">
+                  id="papyri.info-signatures-signatures_in_msDesc-constraint-rule-53">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -12794,7 +12812,7 @@ Suggested values include: 1] archaeological-context; 2] internal-date; 3] letter
          </group>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-msIdentifier-msId_minimal-constraint-rule-52">
+                  id="papyri.info-msIdentifier-msId_minimal-constraint-rule-54">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -14965,7 +14983,7 @@ Sample values include: 1] e (e); 2] he (he); 3] she (she); 4] they (they)</a:doc
          </optional>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-relation-ref-or-key-or-name-constraint-rule-53">
+                  id="papyri.info-relation-ref-or-key-or-name-constraint-rule-55">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -14976,7 +14994,7 @@ Sample values include: 1] e (e); 2] he (he); 3] she (she); 4] they (they)</a:doc
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-relation-active-mutual-constraint-rule-54">
+                  id="papyri.info-relation-active-mutual-constraint-rule-56">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -14987,7 +15005,7 @@ Sample values include: 1] e (e); 2] he (he); 3] she (she); 4] they (they)</a:doc
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-relation-active-passive-constraint-rule-55">
+                  id="papyri.info-relation-active-passive-constraint-rule-57">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -15531,7 +15549,7 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
          </group>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-rdgGrp-only1lem-constraint-rule-56">
+                  id="papyri.info-rdgGrp-only1lem-constraint-rule-58">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -15580,7 +15598,7 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
          </attribute>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
                   xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  id="papyri.info-variantEncoding-location-variantEncodingLocation-constraint-rule-57">
+                  id="papyri.info-variantEncoding-location-variantEncodingLocation-constraint-rule-59">
             <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16012,7 +16030,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
            prefix="sch1x"
            uri="http://www.ascc.net/xml/schematron"/>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-ddb-hybrid-idno-form-constraint-rule-58">
+            id="papyri.info-ddb-hybrid-idno-form-constraint-rule-60">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16023,7 +16041,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-ddb-hybrid-idno-resolves-constraint-rule-59">
+            id="papyri.info-ddb-hybrid-idno-resolves-constraint-rule-61">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16035,7 +16053,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-dclp-hybrid-idno-form-constraint-rule-60">
+            id="papyri.info-dclp-hybrid-idno-form-constraint-rule-62">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16046,7 +16064,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-dclp-hybrid-idno-resolves-constraint-rule-61">
+            id="papyri.info-dclp-hybrid-idno-resolves-constraint-rule-63">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16058,7 +16076,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-idno-types-constraint-rule-62">
+            id="papyri.info-idno-types-constraint-rule-64">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16067,7 +16085,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-filename-idno-constraint-rule-63">
+            id="papyri.info-filename-idno-constraint-rule-65">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16076,7 +16094,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-HGV-idno-form-constraint-rule-64">
+            id="papyri.info-HGV-idno-form-constraint-rule-66">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16087,7 +16105,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-HGV-idno-resolves-constraint-rule-65">
+            id="papyri.info-HGV-idno-resolves-constraint-rule-67">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16099,7 +16117,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-TM-LDAB-idno-constraint-rule-66">
+            id="papyri.info-TM-LDAB-idno-constraint-rule-68">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16108,7 +16126,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-lemma-ref-target-path-components-constraint-rule-67">
+            id="papyri.info-lemma-ref-target-path-components-constraint-rule-69">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16117,7 +16135,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-lemma-ref-target-validity-constraint-rule-68">
+            id="papyri.info-lemma-ref-target-validity-constraint-rule-70">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16126,7 +16144,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-lemma-ref-target-resolves-constraint-rule-69">
+            id="papyri.info-lemma-ref-target-resolves-constraint-rule-71">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16140,7 +16158,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-lemma-ref-target-no-terminal-slash-constraint-rule-70">
+            id="papyri.info-lemma-ref-target-no-terminal-slash-constraint-rule-72">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16149,7 +16167,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-TM-required-constraint-rule-71">
+            id="papyri.info-TM-required-constraint-rule-73">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -16158,12 +16176,13 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="papyri.info-HGV-required-for-DDb-constraint-rule-72">
+            id="papyri.info-HGV-required-for-DDb-constraint-rule-74">
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 context="tei:publicationStmt">
-         <sch:assert test="if (tei:idno[@type='ddb-hybrid']) then tei:idno[@type='HGV'] else true()">There must be an HGV idno for each DDbDP document.</sch:assert>
+         <sch:let name="ddb" value="contains(document-uri(), 'DDbDP')"/>
+         <sch:assert test="if ($ddb) then tei:idno[@type='HGV'] else true()">There must be an HGV idno for each DDbDP document.</sch:assert>
       </sch:rule>
    </pattern>
 </grammar>
