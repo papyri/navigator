@@ -179,24 +179,25 @@
                   </sch:rule>
                </constraint>
             </constraintSpec>        
-            
+                        
             <elementSpec ident="gap" module="core" mode="change">
                <!-- testing for <gap> with both quantity/extent, no unit, or contained in supplied -->
                <!-- Remove third report. -->
-               <constraintSpec xml:lang="en" ident="gap" scheme="schematron">
+               <constraintSpec xml:lang="en" ident="gap" scheme="schematron" mode="replace">
                   <constraint>
                      <sch:rule context="tei:gap">
                         <sch:report test="@quantity and @extent">gap may have @quantity (a figure) or @extent (a descriptive text value) but not both</sch:report>
                      </sch:rule>
                   </constraint>
                </constraintSpec>     
-               <constraintSpec xml:lang="en" ident="gap-quantity-unit" scheme="schematron">
+               <constraintSpec xml:lang="en" ident="gap-quantity-unit" scheme="schematron" mode="replace">
                   <constraint>
                      <sch:rule context="tei:gap">
                         <sch:report test="@quantity and not(@unit)">If gap has @quantity then @unit is required</sch:report>
                      </sch:rule>
                   </constraint>
                </constraintSpec>
+
             </elementSpec>
          </schemaSpec>
       </body>
