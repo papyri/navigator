@@ -139,13 +139,23 @@
       <xsl:when test="$identifier/@type='filename'">
         <xsl:choose>
           <xsl:when test="$type = 'ddbdp'">
-            <xsl:sequence select="concat($base, 'DDbDP', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/>
+            <xsl:sequence select="concat($base, 'DDbDP/', floor(number($identifier) div 1000), '/', $identifier, '.xml')"/>
           </xsl:when>
           <xsl:when test="$type = 'dclp'">
-            <xsl:sequence select="concat($base, 'DCLP', floor(number($identifier) div 1000) + 1, '/', $identifier, '.xml')"/>
+            <xsl:sequence select="concat($base, 'DCLP/', floor(number($identifier) div 1000), '/', $identifier, '.xml')"/>
           </xsl:when>
-          <xsl:otherwise>
+          <xsl:when test="$type = 'hgv'">
+            <xsl:sequence select="concat($base, 'HGV_meta_EpiDoc/HGV', ceiling(number($identifier) div 1000), '/', $identifier, '.xml')"/>
+          </xsl:when>
+          <xsl:when test="$type = 'apis'">
+            <xsl:sequence select="concat($base, 'APIS/', $identifier, '.xml')"/>
+          </xsl:when>
+          <xsl:when test="$type = 'historical'">
             <xsl:sequence select="concat($base, 'Historical/', $identifier, '.xml')"/>
+          </xsl:when>
+          <!-- "otherwise" will not work as-is -->
+          <xsl:otherwise>
+            <xsl:sequence select="$base"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>

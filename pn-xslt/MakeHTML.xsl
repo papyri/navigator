@@ -775,9 +775,13 @@
         <p>
           <xsl:variable name="type">
             <xsl:choose>
+              <xsl:when test="contains(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '/')">historical</xsl:when>
               <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid']">ddbdp</xsl:when>
               <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='dclp-hybrid']">dclp</xsl:when>
-              <xsl:otherwise>historical</xsl:otherwise>
+              <!-- HGV and APIS records have not yet been upgraded; the APIS check should continue to work, but HGV will get a new 'HGV' authority -->
+              <xsl:when test="not(t:teiHeader/t:fileDesc/t:publicationStmt/t:authority)">hgv</xsl:when>
+              <xsl:when test="t:teiHeader/t:fileDesc/t:publicationStmt/t:authority = 'APIS'">apis</xsl:when>
+              <xsl:otherwise>other</xsl:otherwise>
             </xsl:choose>
           </xsl:variable>
           <a href="{pi:get-blame-url(t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], $type)}" target="_blank">Detailed history</a>
