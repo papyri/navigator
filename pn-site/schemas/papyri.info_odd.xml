@@ -105,7 +105,7 @@
                   file paths used the ceiling value. -->
             <constraintSpec xml:lang="en" ident="filename-idno-well-formed" scheme="schematron">
                <constraint>
-                  <sch:rule context="tei:idno[@type='filename'][matches(., '^[1-9][0-9]*[a-z]*$')]">
+                  <sch:rule context="tei:idno[@type='filename'][matches(., '^[1-9][0-9]*[a-z]*$')][preceding-sibling::tei:authority]">
                      <sch:let name="parent" value="floor(xs:integer(replace(., '[a-z]+', '')) div 1000)"/>
                      <sch:let name="path" value="base-uri(root(.))"/>
                      <sch:assert test="contains($path, concat('/', $parent, '/', .))">Current documents using TM or HGV-style filename idnos must be located on a path where the floor of the idno (converted to an integer) is the name of the parent directory, e.g. <sch:value-of select="concat($parent, '/', ., '.xml')"/>.</sch:assert>

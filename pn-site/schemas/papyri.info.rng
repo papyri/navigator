@@ -5,7 +5,7 @@
          xmlns:xlink="http://www.w3.org/1999/xlink"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2026-10-26T13:31:57Z. . 
+Schema generated from ODD source 2026-10-28T20:03:51Z. . 
 TEI Edition:  
 TEI Edition Location: https://www.tei-c.org/Vault/P5// 
  EpiDoc customization for use in Papyri.info. 
@@ -16085,7 +16085,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                context="tei:idno[@type='filename'][matches(., '^[1-9][0-9]*[a-z]*$')]">
+                context="tei:idno[@type='filename'][matches(., '^[1-9][0-9]*[a-z]*$')][preceding-sibling::tei:authority]">
          <sch:let name="parent"
                   value="floor(xs:integer(replace(., '[a-z]+', '')) div 1000)"/>
          <sch:let name="path" value="base-uri(root(.))"/>
